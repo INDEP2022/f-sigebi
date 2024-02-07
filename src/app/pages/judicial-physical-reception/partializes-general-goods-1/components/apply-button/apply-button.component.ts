@@ -25,7 +25,7 @@ import { FunctionButtons } from '../../models/function-buttons';
 })
 export class ApplyButtonComponent extends FunctionButtons implements OnInit {
   @Input() set press(value: boolean) {
-    // debugger;
+    // //
     if (this.service) {
       if (!this.good || this.loading || this.bienesPar.length === 0) {
         return;
@@ -79,7 +79,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
   }
 
   private fillDescriptions(item: IBienesPar, vimpbien: number) {
-    // debugger;
+    // //
     let vobserv_padre = 'Bien(es) parcializado(s): ';
     let vdesc_padre = 'Bien(es) generado(s): ';
 
@@ -159,7 +159,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
   ) {
     // return this.partializeGoodService.pupInsertGood()
     // return true;
-    // debugger;
+    // //
     console.log('Entro a insertaBien', good, pno_acta);
     delete good.statusDetails;
     delete good.expediente;
@@ -241,7 +241,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     v_estatus = this.good.status;
     // vaccion = 'FINAL';
     // vproextdom = this.good.extDomProcess;
-    // debugger;
+    // //
     try {
       const { status, process } = await this.getStatusProcessxPantalla();
       console.log(status, process);
@@ -442,7 +442,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     v_verif_des: number
   ) {
     // let vobservaciones: string;
-    // debugger;
+    // //
     if (vsumimp < v_importe) {
       // vfactor = (v_importe - vsumimp) / v_importe;
       // vfactornum = (v_importe - vsumimp) / (v_importe - vsumimp);
@@ -461,7 +461,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         val12: null,
         val13: null,
       };
-      // debugger;
+      // //
       const { v_cantidad, v_unidad, v_avaluo } = await this.setMeasureData();
       const clasificador = this.good.goodClassNumber;
       const numerarioValidation = await firstValueFrom(
@@ -617,7 +617,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
   }
 
   private async finishApply(vobserv_padre: string, vdesc_padre: string) {
-    // debugger;
+    // //
     const oldObservations = this.good.observations
       ? this.good.observations
       : '';
@@ -693,7 +693,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         );
         return;
       }
-      // debugger;
+      // //
       const result = await this.validationsV1(v_importe, v_estatus);
       console.log(result, this.good);
       // return;
@@ -821,7 +821,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
               console.log('FINALIZO');
               this.loader.load = false;
               // this.fillPagedRow.emit();
-              // debugger;
+              // //
               const no_bien = await this.fillRestRow(
                 vsumimp,
                 v_importe,
@@ -902,7 +902,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
   }
 
   async apply() {
-    // debugger;
+    // //
     // this.loading = true;
     this.msgSaveModal(
       'Aceptar',

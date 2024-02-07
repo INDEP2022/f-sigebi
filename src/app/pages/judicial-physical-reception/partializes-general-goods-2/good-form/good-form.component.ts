@@ -122,7 +122,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
       const statusGood = good.status
         ? await firstValueFrom(this.statusService.getById(good.status))
         : null;
-      // debugger;
+      // //
       const sssubtype = good.goodClassNumber
         ? await firstValueFrom(
             this.goodSssubtypeService.getAll2(

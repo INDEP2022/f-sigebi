@@ -134,7 +134,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
 
   async addGood() {
     // console.log(row);
-    // debugger;
+    // //
     const good = await firstValueFrom(
       this.goodService.getById(this.formGood.get('goodId').value)
     );
@@ -344,7 +344,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
         next: response => {
           console.log(response);
           // if(response)
-          // debugger;
+          // //
           const toDeleteds = response.filter(x =>
             x.hasOwnProperty('numberGood')
           );
@@ -353,7 +353,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
               .deleteMassiveDetails(this.rowsSelected)
               .subscribe({
                 next: response => {
-                  // debugger;
+                  // //
                   this.alert('success', 'Bienes Actualizados', message);
                   this.updateTable.emit();
                 },

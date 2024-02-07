@@ -46,7 +46,7 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   }
 
   ngOnInit() {
-    // debugger;
+    // //
     this.resetSelectedGoods();
     this.activatedRoute.queryParams.subscribe({
       next: param => {

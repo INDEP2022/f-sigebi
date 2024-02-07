@@ -8,7 +8,7 @@ export class Partialize extends PartializeFunctions {
   cantidad: number;
   vres: number;
   execute(cantPar: number, cantidad: number) {
-    // debugger;
+    // //
     if (!this.validationImporte()) return null;
     this.cantidad = cantidad;
     this.vsum = 0;
@@ -41,7 +41,7 @@ export class Partialize extends PartializeFunctions {
   }
 
   private fillAvaluo() {
-    // debugger;
+    // //
     if (this.good.appraisedValue) {
       return +(+(this.good.appraisedValue + '') * this.vfactor).toFixed(2);
     } else {
@@ -110,7 +110,7 @@ export class Partialize extends PartializeFunctions {
   }
 
   private validationImporte() {
-    // debugger;
+    // //
     const cantidad = this.good.quantity;
     if (!this.validationClasif()) {
       this.vimporte = +(cantidad + '');

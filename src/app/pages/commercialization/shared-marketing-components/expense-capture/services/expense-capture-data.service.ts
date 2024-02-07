@@ -480,7 +480,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   VALIDA_DET(V_VALIDA_DET: boolean = null) {
-    debugger;
+    //
     if (V_VALIDA_DET === false || V_VALIDA_DET === null) {
       const VALIDA_DET = this.dataCompositionExpenses.filter(
         row => row.changeStatus && row.changeStatus === true
@@ -549,7 +549,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     V_VALIDA_DET: boolean = null,
     showExtramessage: boolean = null
   ) {
-    // debugger;
+    // //
     const resultParams = await this.readParams(this.conceptNumber.value);
     console.log(resultParams);
 
@@ -609,7 +609,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   async updateByGoods(sendToSIRSAE: boolean) {
-    // debugger;
+    // //
     console.log(this.dataCompositionExpenses);
     // this.ENVIA_MOTIVOS();
     // return;
@@ -679,7 +679,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   private async MONTO_TOT_EVENTO() {
-    debugger;
+    //
     let lotFinalPrice = await firstValueFrom(
       this.accountingService.getLotFinalTotal(this.eventNumber.value)
     );
@@ -703,7 +703,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   private VALIDA_CHATARRA_MOR_SIN_FLUJO() {
-    debugger;
+    //
     if (this.isrWithholding <= 0) {
       this.alert(
         'warning',
@@ -1078,7 +1078,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     //   this.alert('error','Validación Solicitu')
     //   return false;
     // }
-    debugger;
+    //
     if (!this.expenseNumber.value) {
       this.alert(
         'warning',
@@ -1204,7 +1204,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .pipe(take(1))
       .subscribe({
         next: response => {
-          // debugger;
+          // //
           // this.alert('success', 'Procedimiento ejecutado correctamente', '');
           if (!response.COMER_GASTOS_ID_SOLICITUDPAGO) {
             this.alert('warning', 'No se pudo realizar el envio a sirsae', '');
@@ -1357,7 +1357,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .pipe(take(1))
       .subscribe({
         next: response => {
-          // debugger;
+          // //
           // this.alert('success', 'Procedimiento ejecutado correctamente', '');
           if (!response.COMER_GASTOS_ID_SOLICITUDPAGO) {
             this.alert('error', 'No se pudo realizar el envio a sirsae', '');
@@ -1420,7 +1420,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     spentId: string,
     envio_sirsae: boolean
   ) {
-    // debugger;
+    // //
     this.lotService
       .VALIDA_SUBTOTAL_PRECIO({ eventId, lotId, spentId })
       .pipe(take(1))
@@ -1455,7 +1455,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   private async VERIFICA_ACTUALIZACION_EST(envio_sirsae = false) {
-    // debugger;
+    // //
     this.P_PRUEBA = 0;
     if (this.PDEVPARCIAL === 'S') {
       this.DEVOLUCION_PARCIAL(envio_sirsae);

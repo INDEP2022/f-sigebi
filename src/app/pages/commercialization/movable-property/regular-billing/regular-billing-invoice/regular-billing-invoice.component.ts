@@ -259,7 +259,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       modmandato: {
         title: 'Matrícula',
         sort: false,
-        type: 'custom',
+        // type: 'custom',
         // renderComponent: InputCellComponent,
         // onComponentInitFunction: (instance: any) => {
         //   instance.inputChange.subscribe({
@@ -735,10 +735,11 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             value.downloadcvman = data[index].mandato;
             value.modmandato = data[index].matricula;
           });
-
-          this.dataFilter2.load(result);
-          this.dataFilter2.refresh();
-          this.loading2 = false;
+          Promise.all(result).then(resp => {
+            this.dataFilter2.load(result);
+            this.dataFilter2.refresh();
+            this.loading2 = false;
+          });
         },
         error: () => {
           this.loading2 = false;

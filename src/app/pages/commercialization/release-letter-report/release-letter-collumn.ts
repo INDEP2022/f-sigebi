@@ -73,6 +73,7 @@ export const COMEMR_BIENES_COLUMNS = {
   description: {
     title: 'Descripción',
     sort: false,
+    filter: false,
     width: '85%',
     valuePrepareFunction: (cell: any, row: any) => {
       return row.good.description;

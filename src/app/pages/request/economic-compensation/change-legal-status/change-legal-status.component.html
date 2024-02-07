@@ -157,6 +157,7 @@
     <div class="row">
       <div class="m-3">
         <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive'"
           [settings]="settingsTwo"
           [source]="dataThree"
           (userRowSelect)="checkAcceptDelegations($event)"></ng2-smart-table>
