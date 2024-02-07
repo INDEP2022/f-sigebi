@@ -27,7 +27,8 @@ import { ScheduledMaintenance } from '../scheduled-maintenance/scheduled-mainten
 })
 export class ScheduledMaintenanceComponent
   extends ScheduledMaintenance
-  implements OnInit {
+  implements OnInit
+{
   selecteds: IProceedingDeliveryReception[] = [];
 
   constructor(
@@ -46,7 +47,7 @@ export class ScheduledMaintenanceComponent
       'paramsActaProgramaciones'
     );
 
-    // debugger;
+    // //
 
     this.settings1 = {
       ...this.settings1,
@@ -77,7 +78,7 @@ export class ScheduledMaintenanceComponent
         'success',
         'Eliminación Acta',
         `Se eliminaron las actas No. ${proceedings} ` +
-        this.showMessageProceedingsNotRemoved(notRemoveds)
+          this.showMessageProceedingsNotRemoved(notRemoveds)
       );
     } else {
       if (notRemoveds.length > 0) {
@@ -281,5 +282,5 @@ export class ScheduledMaintenanceComponent
     });
   }
 
-  fillElementsToExport() { }
+  fillElementsToExport() {}
 }

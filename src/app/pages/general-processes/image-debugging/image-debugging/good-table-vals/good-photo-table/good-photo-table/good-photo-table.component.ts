@@ -270,7 +270,7 @@ export class GoodPhotoTable extends BasePage implements OnInit {
     // console.log(this.clasification);
     // this.service.goodChange.subscribe({
     //   next: response => {
-    //     // debugger;
+    //     // //
     //     if (response) {
     //     } else {
     //       this.loading = false;
@@ -335,7 +335,7 @@ export class GoodPhotoTable extends BasePage implements OnInit {
         ? row.value.split('/')
         : []
       : [];
-    // debugger;
+    // //
     const isNormal = this.disabled || row.attribute !== 'SITUACION JURIDICA';
     this.openModalSelect(
       {
@@ -376,7 +376,7 @@ export class GoodPhotoTable extends BasePage implements OnInit {
       service: this.service,
       callback: (cadena: string) => {
         //if (next)
-        // debugger;
+        // //
         // console.log(cadena, this.selectedAttribute, this.dataTemp);
         this.data.forEach((x: any) => {
           if (x.attribute === this.selectedAttribute) {
@@ -426,7 +426,7 @@ export class GoodPhotoTable extends BasePage implements OnInit {
   private getValue(good: any, item: IAttribClassifGoods) {
     const column = 'val' + item.columnNumber;
     if (item.dataType === 'D' || item.attribute.includes('FECHA')) {
-      // debugger;
+      // //
     }
     return good[column]
       ? item.dataType === 'D' || item.attribute.includes('FECHA')
@@ -474,7 +474,7 @@ export class GoodPhotoTable extends BasePage implements OnInit {
       .subscribe(change => {
         if (change.action === 'filter') {
           // this.data = this.dataOld;
-          // debugger;
+          // //
           let filters = change.filter.filters;
           filters.map((filter: any, index: number) => {
             // console.log(filter, index);

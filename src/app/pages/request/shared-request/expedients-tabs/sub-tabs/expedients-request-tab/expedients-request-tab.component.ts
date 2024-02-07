@@ -6,9 +6,10 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EXPEDIENTS_REQUEST_COLUMNS } from './expedients-request-columns';
@@ -30,12 +31,14 @@ export class ExpedientsRequestTabComponent
   totalItems: number = 0;
   paragraphs: any[] = [];
   requestId: number = 0;
+  allDocumentExpedient: any[] = [];
   screen: 'expedient-tab';
   task: any;
   statusTask: any;
   constructor(
     private activatedRoute: ActivatedRoute,
-    private requestService: RequestService
+    private requestService: RequestService,
+    private wContentService: WContentService
   ) {
     super();
     this.settings = {
@@ -120,6 +123,33 @@ export class ExpedientsRequestTabComponent
         break;
       default:
         break;
+    }
+  }
+
+  getRequestData() {
+    this.requestService.getById(this.requestId).subscribe(data => {
+      this.getIdExpediente = data.recordId;
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getData());
+    });
+  }
+  getData() {
+    if (this.requestId && this.getIdExpediente) {
+      this.loading = true;
+      const body = {
+        //xidSolicitud: this.idRequest,
+        xidExpediente: this.getIdExpediente,
+      };
+
+      this.wContentService.getDocumentos(body).subscribe({
+        next: async (data: any) => {
+          //this.paragraphs = data.data;
+          //this.allDocumentExpedient = this.paragraphs;
+          //this.totalItems = this.paragraphs.length;
+          this.loading = false;
+        },
+      });
     }
   }
 }

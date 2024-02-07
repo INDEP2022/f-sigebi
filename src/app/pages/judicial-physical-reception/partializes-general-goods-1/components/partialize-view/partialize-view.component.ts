@@ -86,10 +86,10 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   }
 
   filledRow() {
-    // debugger;
+    // //
     const final = this.page * this.params.value.limit;
     if (this.bienesPar && this.bienesPar.length > 0) {
-      // debugger;
+      // //
       const bienesNotTotal = this.bienesPar.slice(0, this.bienesPar.length - 1);
       this.service.pagedBienesPar = [
         ...bienesNotTotal
@@ -178,7 +178,7 @@ export class PartializeViewComponent extends BasePage implements OnInit {
             .slice(0, row.index)
             .concat(this.bienesPar[this.bienesPar.length - 1]);
         }
-        // debugger;
+        // //
         if (row.data.cantidad) {
           this.bienesPar[this.bienesPar.length - 1].cantidad -= +(
             row.data.cantidad + ''

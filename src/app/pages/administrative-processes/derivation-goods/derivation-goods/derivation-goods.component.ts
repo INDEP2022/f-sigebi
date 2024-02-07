@@ -382,7 +382,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
 
   updateAttributes() {
-    // debugger;
+    // //
     let body: any = {
       id: this.goodForTableChar.id,
       goodId: this.goodForTableChar.goodId,

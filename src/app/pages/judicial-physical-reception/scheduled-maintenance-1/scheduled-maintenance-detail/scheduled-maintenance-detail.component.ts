@@ -54,7 +54,8 @@ import { columnsGoods, settingsGoods } from './const';
 })
 export class ScheduledMaintenanceDetailComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   form: FormGroup;
   formDate: FormGroup;
   // statusList = [
@@ -395,7 +396,7 @@ export class ScheduledMaintenanceDetailComponent
     if (
       newData.fec_aprobacion_x_admon !== data.fec_aprobacion_x_admon ||
       newData.fec_indica_usuario_aprobacion !==
-      data.fec_indica_usuario_aprobacion
+        data.fec_indica_usuario_aprobacion
     ) {
       let index = this.data.findIndex(x => x.no_bien === newData.no_bien);
       if (index === -1) {
@@ -552,7 +553,7 @@ export class ScheduledMaintenanceDetailComponent
       newData.fec_aprobacion_x_admon &&
       newData.fec_indica_usuario_aprobacion &&
       new Date(newData.fec_aprobacion_x_admon) >
-      new Date(newData.fec_indica_usuario_aprobacion)
+        new Date(newData.fec_indica_usuario_aprobacion)
     ) {
       this.alertTableRangeError();
       return;
@@ -620,7 +621,7 @@ export class ScheduledMaintenanceDetailComponent
         'success',
         'Bienes',
         `Se ${text} los bienes No. ${message} ` +
-        this.showMessageNotRemoved(notRemoveds, 'pero no')
+          this.showMessageNotRemoved(notRemoveds, 'pero no')
       );
     } else {
       this.alert('error', 'Bienes', this.showMessageNotRemoved(notRemoveds));
@@ -704,7 +705,7 @@ export class ScheduledMaintenanceDetailComponent
   }
 
   private fillColumnsGoods() {
-    // debugger;
+    // //
     let columnGoodId = {
       title: 'Localidad Ent. Transferente.',
       type: 'string',
@@ -722,7 +723,7 @@ export class ScheduledMaintenanceDetailComponent
       )
       .subscribe({
         next: response => {
-          // debugger;
+          // //
           let newColumns;
           this.proceedingIndicators = response.filter(indicator => {
             return (

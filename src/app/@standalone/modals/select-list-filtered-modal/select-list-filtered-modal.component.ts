@@ -347,7 +347,7 @@ export class SelectListFilteredModalComponent
     data: any;
   }) {
     console.log(event);
-    // debugger;
+    // //
     const selecteds = event.selected;
 
     if (selecteds.length === 0) {

@@ -53,7 +53,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
   }
 
   private getPaginated(params: ListParams) {
-    // debugger;
+    // //
     const cantidad = params.page * params.limit;
     this.datatoShow.load([
       ...this.data.slice(
@@ -86,7 +86,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
       .subscribe(change => {
         if (change.action === 'filter' && !this.haveServerPagination) {
           // this.data = this.dataOld;
-          // debugger;
+          // //
           let filters = change.filter.filters;
           filters.map((filter: any, index: number) => {
             // console.log(filter, index);
@@ -109,7 +109,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    // debugger;
+    // //
     const data = changes['data'];
     if (data && !data.firstChange) {
       if (this.statusActaValue) {
@@ -149,7 +149,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
   }
 
   private updateSettingsGoods(value = this.statusActaValue) {
-    // debugger;
+    // //
     this.settingsTable = {
       ...this.settingsTable,
       actions: {

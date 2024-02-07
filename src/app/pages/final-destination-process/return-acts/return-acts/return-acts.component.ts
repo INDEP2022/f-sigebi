@@ -930,7 +930,7 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
   }
   //PUP_MOVIMIENTO_ACTA
   openactas() {
-    //debugger;
+    ////
     let statusacta = this.formadd.get('estado').value;
     this.alertQuestion(
       'info',

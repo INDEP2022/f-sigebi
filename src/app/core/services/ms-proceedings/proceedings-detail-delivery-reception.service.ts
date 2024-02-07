@@ -79,7 +79,7 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
       { goods, action }
     ).pipe(
       map(items => {
-        // debugger;
+        // //
         let dictamenes = [
           ...new Set(
             items.data.map(item => this.getColumnByAreaTramite(action, item))
