@@ -39,6 +39,10 @@ import {
   SETTING_RFC_REWORK,
 } from './massive-conversion-columns';
 
+interface IExcelToJson {
+  NO_BIEN: number;
+}
+
 @Component({
   selector: 'app-massive-conversion-main',
   templateUrl: './massive-conversion-main.component.html',
@@ -137,6 +141,10 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   form: ModelForm<any>;
 
   validityDate: any;
+
+  tipoConsul: string;
+
+  fileReader = new FileReader();
 
   constructor(
     private excelService: ExcelService,
@@ -517,7 +525,10 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       `¿Insertar el archivo?`
     );
     if (result.isConfirmed) {
-      this.isLoadingLoadFile = true;
+      this.tipoConsul = 'INSERT';
+      //	PUP_ABRIR_ARCHIVO
+
+      //this.isLoadingLoadFile = true;
 
       /*const file = event.target.files[0];
       const formData = new FormData();
@@ -559,6 +570,64 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
             event.target.value = null;
           },
         });*/
+    }
+  }
+
+  onFileChange(event?: Event) {
+    console.log('Evento: ', event);
+
+    this.alertQuestion('question', 'Atención', `¿Insertar el archivo?`).then(
+      question => {
+        if (question.isConfirmed) {
+          this.tipoConsul = 'INSERT';
+
+          try {
+            const files = (event.target as HTMLInputElement).files;
+            if (!files || files.length !== 1) {
+              throw new Error('Please select one file.');
+            }
+
+            // Limpia cualquier evento onload anterior
+            this.fileReader.onload = null;
+
+            // Asigna el evento onload para manejar la lectura del archivo
+            this.fileReader.onload = loadEvent => {
+              if (loadEvent.target && loadEvent.target.result) {
+                // Llama a la función para procesar el archivo
+                this.readExcel(loadEvent.target.result);
+
+                // Limpia el input de archivo para permitir cargar el mismo archivo nuevamente
+                // (event.target as HTMLInputElement).value = '';
+              }
+              console.log(this.fileReader.onload);
+            };
+
+            // Lee el contenido binario del archivo
+            this.fileReader.readAsBinaryString(files[0]);
+          } catch (error) {
+            console.error('Error:', error);
+            // Maneja el error de acuerdo a tus necesidades
+          }
+        }
+      }
+    );
+  }
+
+  dataExcel: any = [];
+  propertyValues: string[] = [];
+  commaSeparatedString: string = '';
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      this.dataExcel = this.excelService.getData<IExcelToJson>(binaryExcel);
+      this.propertyValues = this.dataExcel.map((item: any) => item.no_bien);
+
+      // Unir las cadenas con comas para obtener una cadena separada por comas
+      this.commaSeparatedString = this.propertyValues.join(',');
+
+      console.log(this.commaSeparatedString);
+      console.log(this.dataExcel);
+    } catch (error) {
+      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
     }
   }
 
