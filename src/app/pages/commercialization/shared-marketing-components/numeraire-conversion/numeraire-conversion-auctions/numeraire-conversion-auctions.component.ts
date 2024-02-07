@@ -156,7 +156,7 @@ export class NumeraireConversionAuctionsComponent
 
   private async calculaParcBody() {
     this.loader.load = true;
-    // debugger;
+    // //
     // let resultBorra = await firstValueFrom(
     //   this.convNumeraryService
     //     .SPBorraNumera(+(this.selectedEvent.id + ''))

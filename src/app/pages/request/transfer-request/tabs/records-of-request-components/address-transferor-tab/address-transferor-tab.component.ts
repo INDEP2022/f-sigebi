@@ -252,7 +252,7 @@ export class AddressTransferorTabComponent
       // console.log(this.domicileForm.value);
       return;
     }
-    // debugger;
+    // //
     if (this.countMunicipaly !== undefined) {
       params.limit = this.countMunicipaly;
     }
@@ -337,7 +337,7 @@ export class AddressTransferorTabComponent
 
   //obtener la colonia
   getLocality(params: ListParams, municipalityId?: number) {
-    // debugger;
+    // //
     if (this.municipalityId === null || this.keyStateOfRepublic === null) {
       // console.log(this.domicileForm.value);
 
@@ -349,7 +349,7 @@ export class AddressTransferorTabComponent
     params['filter.township'] = `$ilike:${params.text}`;
     this.goodsinvService.getAllTownshipByFilter(params).subscribe({
       next: resp => {
-        // debugger;
+        // //
         if (this.localityId !== 0 && this.localityId !== null) {
           if (this.combineLocalityId) {
             const newParams = {
@@ -359,7 +359,7 @@ export class AddressTransferorTabComponent
             this.goodsinvService.getAllTownshipByFilter(newParams).subscribe({
               next: response => {
                 console.log(response);
-                // debugger;
+                // //
                 const newData = resp.data.filter(
                   (item: any) => item.townshipKey + '' !== this.localityId + ''
                 );

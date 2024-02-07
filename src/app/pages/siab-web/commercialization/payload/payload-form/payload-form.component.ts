@@ -55,7 +55,8 @@ export class PayloadFormComponent extends BasePage implements OnInit {
       this.form.patchValue(this.paymentLoad);
       //this.form.get('id_factura').setValue(this.factura);
       const formatDate = this.valuePrepareFunction(this.paymentLoad.FechaMov);
-      //console.log(formatDate);
+
+      console.log(formatDate);
       this.form.get('FechaMov').setValue(formatDate);
       this.form.get('NoMovimiento').disable();
       this.form.get('FechaMov').disable();
@@ -72,12 +73,8 @@ export class PayloadFormComponent extends BasePage implements OnInit {
   }
 
   valuePrepareFunction(date: number): string {
-    const fechaString = date.toString();
-    const año = fechaString.substring(0, 4);
-    const mes = fechaString.substring(4, 6);
-    const dia = fechaString.substring(6, 8);
-    const fecha = new Date(`${año}-${mes}-${dia}`);
-    var formatted = new DatePipe('en-EN').transform(fecha, 'dd/MM/yyyy', 'UTC');
+    var raw = new Date(date);
+    var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
     return formatted;
   }
 
@@ -128,26 +125,27 @@ export class PayloadFormComponent extends BasePage implements OnInit {
     console.log(this.paymentLoad);
 
     let body = {
-      pReference: this.paymentLoad.Referencia,
+      pReference: Number.parseInt(this.paymentLoad.Referencia),
       pReferenceOri: this.paymentLoad.ReferenciaOrdenIngreso,
-      pDateMov: this.paymentLoad.FechaMov,
+      pDateMov: this.paymentLoad.FechaMov.toString().replace(/-/g, ''),
       pvDate: this.paymentLoad.V_Fecha,
       pAmount: this.paymentLoad.Monto,
       pType: this.paymentLoad.Tipo,
       pDescPag: this.paymentLoad.DescPago,
       pNoMovime: this.paymentLoad.NoMovimiento,
       pCveBank: this.paymentLoad.Banco,
-      pCode: this.paymentLoad.Codigo_Banco,
+      pCode:
+        this.paymentLoad.Codigo_Banco != '' ? this.paymentLoad.Codigo_Banco : 0,
       pSucurs: this.paymentLoad.Sucursal,
       pResult: this.paymentLoad.Resultado,
       pVal: this.paymentLoad.Valido,
       pIdPag: this.paymentLoad.idPago,
-      pIdLot: this.paymentLoad.Id_Lote,
+      pIdLot: Number.parseInt(this.paymentLoad.Id_Lote),
       pIdOrdenIng: this.paymentLoad.OrdenIngreso,
-      pEvent: this.paymentLoad.Evento,
-      pLotPubl: this.paymentLoad.LotePublico,
+      pEvent: Number.parseInt(this.paymentLoad.Evento),
+      pLotPubl: Number.parseInt(this.paymentLoad.LotePublico),
       pCuenta: this.paymentLoad.Cuenta,
-      pIdTypeSat: this.paymentLoad.Id_Tipo_SAT,
+      pIdTypeSat: Number.parseInt(this.paymentLoad.Id_Tipo_SAT),
     };
     console.log(body, this.paymentLoad);
     this.paymentService.postComerpagrefweb(body).subscribe({

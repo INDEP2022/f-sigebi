@@ -64,7 +64,8 @@ import { MassRullingResponses } from '../tools/mass-rulling-responses';
 })
 export class MassRulingComponent
   extends MassRullingResponses
-  implements OnInit, OnDestroy {
+  implements OnInit, OnDestroy
+{
   @ViewChild('fileExpedient') fileInput: ElementRef;
   expedientNumber: number = null;
   wheelNumber: number = null;
@@ -405,7 +406,7 @@ export class MassRulingComponent
         this.documentsDictumStatetMService
           .deleteDocumentXGood(this.goodNumber)
           .subscribe({
-            next: resp => { },
+            next: resp => {},
             error: err => {
               this.alert('error', 'Ocurrio un Error', 'Al Elimnar el Bien');
             },
@@ -1036,7 +1037,7 @@ export class MassRulingComponent
       p_tipo_dictaminacion: this.form.get('typeDict').getRawValue(),
     };
     console.log(body);
-    // debugger;
+    // //
     ////////////////////////////////////Hay que revisar por que si se le envia todo no realiza la insercion correctamente.
     // console.log(body);
     this.dictationService.postCargaMasDesahogob(body).subscribe({
@@ -1098,8 +1099,9 @@ export class MassRulingComponent
 
   getVolante() {
     if (this.form.get('wheelNumber').value) {
-      const params = `?filter.wheelNumber=${this.form.get('wheelNumber').value
-        }&page=1&limit=1`;
+      const params = `?filter.wheelNumber=${
+        this.form.get('wheelNumber').value
+      }&page=1&limit=1`;
 
       this.notificationsService.getAllFilter(params).subscribe({
         next: data => {
@@ -1263,7 +1265,7 @@ export class MassRulingComponent
               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
               type: 'pdf',
             },
-            callback: (data: any) => { },
+            callback: (data: any) => {},
           },
           class: 'modal-lg modal-dialog-centered',
           ignoreBackdropClick: true,
@@ -1331,7 +1333,7 @@ export class MassRulingComponent
               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
               type: 'pdf',
             },
-            callback: (data: any) => { },
+            callback: (data: any) => {},
           }, //pasar datos por aca
           class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
           ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -1346,7 +1348,7 @@ export class MassRulingComponent
               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
               type: 'pdf',
             },
-            callback: (data: any) => { },
+            callback: (data: any) => {},
           }, //pasar datos por aca
           class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
           ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -1418,7 +1420,7 @@ export class MassRulingComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.onClose.pipe(take(1)).subscribe(result => { });
+    modalRef.content.onClose.pipe(take(1)).subscribe(result => {});
   }
 
   btnImprimeRelacionBienes() {
@@ -1452,7 +1454,7 @@ export class MassRulingComponent
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => { },
+              callback: (data: any) => {},
             },
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,

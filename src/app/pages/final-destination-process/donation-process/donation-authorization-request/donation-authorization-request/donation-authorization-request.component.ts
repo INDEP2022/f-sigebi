@@ -177,7 +177,7 @@ export class DonationAuthorizationRequestComponent
   @Input() fillData: Function;
   @ViewChild('file') file: any;
   @Input() set files(files: any[]) {
-    // debugger;
+    // //
     if (files.length === 0) return;
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);
@@ -953,7 +953,7 @@ export class DonationAuthorizationRequestComponent
   }
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
-      // debugger;
+      // //
       this.data.load([]);
       this.totalItems = 0;
       this.selectedGooodsValid = [];
@@ -980,7 +980,7 @@ export class DonationAuthorizationRequestComponent
 
   private fillSelectedRows() {
     setTimeout(() => {
-      // debugger;
+      // //
       console.log(this.selectedGooods, this.table);
       const currentPage = this.params.getValue().page;
       const selectedPage = this.pageSelecteds.find(

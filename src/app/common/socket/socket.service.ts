@@ -12,10 +12,11 @@ export class SocketService extends HttpService {
     super();
   }
   goodsTrackerExcel(token: string) {
+    console.log(token);
     return this.socket.fromEvent(token).pipe(
-      tap(res => {
+      tap((res: any) => {
         console.log('Conexion establecida');
-        console.log({ res });
+        console.log(res);
       })
     );
   }
