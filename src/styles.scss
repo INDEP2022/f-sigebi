@@ -176,10 +176,11 @@
   vertical-align: -50% !important;
   background-position: center;
   background-repeat: no-repeat;
-  background-size: 100px 100px;
+  background-size: 50px 50px;
   z-index: 100;
-  content: 'Cargando... por favor espere...';
-  font-size: 25px;
+  content: 'Cargando, por favor espere...';
+  padding-top: 80px !important;
+  font-size: 14px;
   text-align: center;
   font-weight: bold;
   line-height: 26px;
