@@ -1082,115 +1082,126 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     let res = await this.forArrayFilters_();
     console.log('res', res);
     if (res) {
+      this.params = new BehaviorSubject<ListParams>(new ListParams());
+      this.params2 = new BehaviorSubject<ListParams>(new ListParams());
+      this.data.load([]);
+      this.data.refresh();
+      this.totalItems = 0;
+      this.loading = false;
+      this.data2.load([]);
+      this.data2.refresh();
+      this.totalItems2 = 0;
+      this.selectedbillings = [];
+      this.selectedbillingsDet = [];
+      this.resetInput();
     } else {
-    }
+      this.loading = true;
+      this.totalItems = 0;
 
-    this.loading = true;
-    this.totalItems = 0;
+      if (params['filter.impressionDate_']) {
+        const fechas = params['filter.impressionDate_'].split(',');
+        console.log('fechas', fechas);
+        var fecha1 = new Date(fechas[0]);
+        var fecha2 = new Date(fechas[1]);
 
-    if (params['filter.impressionDate_']) {
-      const fechas = params['filter.impressionDate_'].split(',');
-      console.log('fechas', fechas);
-      var fecha1 = new Date(fechas[0]);
-      var fecha2 = new Date(fechas[1]);
+        // Obtener los componentes de la fecha (año, mes y día)
+        var ano1 = fecha1.getFullYear();
+        var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+        var dia1 = ('0' + fecha1.getDate()).slice(-2);
 
-      // Obtener los componentes de la fecha (año, mes y día)
-      var ano1 = fecha1.getFullYear();
-      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
-      var dia1 = ('0' + fecha1.getDate()).slice(-2);
+        // Obtener los componentes de la fecha (año, mes y día)
+        var ano2 = fecha2.getFullYear();
+        var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+        var dia2 = ('0' + fecha2.getDate()).slice(-2);
 
-      // Obtener los componentes de la fecha (año, mes y día)
-      var ano2 = fecha2.getFullYear();
-      var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
-      var dia2 = ('0' + fecha2.getDate()).slice(-2);
+        // Crear la cadena de fecha en el formato yyyy-mm-dd
+        var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+        var fechaFormateada2 = ano2 + '-' + mes2 + '-' + dia2;
+        params[
+          'filter.impressionDate'
+        ] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
+        delete params['filter.impressionDate_'];
+      }
 
-      // Crear la cadena de fecha en el formato yyyy-mm-dd
-      var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
-      var fechaFormateada2 = ano2 + '-' + mes2 + '-' + dia2;
-      params[
-        'filter.impressionDate'
-      ] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
-      delete params['filter.impressionDate_'];
-    }
+      params['filter.address'] = `$eq:I`;
+      if (!this.valSortBy) params['sortBy'] = `eventId:DESC`;
+      // this.msInvoiceService.getAllBillings
+      this.comerInvoiceService.getAllSumInvoice(params).subscribe({
+        next: response => {
+          console.log('response ', response);
 
-    params['filter.address'] = `$eq:I`;
-    if (!this.valSortBy) params['sortBy'] = `eventId:DESC`;
-    // this.msInvoiceService.getAllBillings
-    this.comerInvoiceService.getAllSumInvoice(params).subscribe({
-      next: response => {
-        console.log('response ', response);
+          let result = response.data.map(async (item: any) => {
+            item['impressionDate_'] = item.impressionDate;
+            const params = new ListParams();
+            // params['filter.id'] = `$eq:${item.delegationNumber}`;
+            // const delegationDes: any = await this.billingsService.getDelegation(
+            //   params
+            // );
+            item['desDelegation'] = item.delegation
+              ? item.delegation.description
+              : 'INVÁLIDA';
 
-        let result = response.data.map(async (item: any) => {
-          item['impressionDate_'] = item.impressionDate;
-          const params = new ListParams();
-          // params['filter.id'] = `$eq:${item.delegationNumber}`;
-          // const delegationDes: any = await this.billingsService.getDelegation(
-          //   params
-          // );
-          item['desDelegation'] = item.delegation
-            ? item.delegation.description
-            : 'INVÁLIDA';
+            // const params_ = new ListParams();
+            // params['filter.tpinvoiceId'] = `$eq:${item.Type}`;
+            // const comerTpinvoice: any = await this.billingsService.getComerTpinvoices(params_);
+            item['txtDescTipo'] = await this.typeBilling(item.Type);
 
-          // const params_ = new ListParams();
-          // params['filter.tpinvoiceId'] = `$eq:${item.Type}`;
-          // const comerTpinvoice: any = await this.billingsService.getComerTpinvoices(params_);
-          item['txtDescTipo'] = await this.typeBilling(item.Type);
+            // comerTpinvoice
+            // ? comerTpinvoice.description
+            // : 'NO IDENTIFICADA';
+            let obj = {
+              type: 'RFC',
+              data: item.rfc,
+            };
+            const FaValidCurpRfc: any = 'M';
+            // await this.billingsService.getApplicationFaValidCurpRfc(obj);
+            item['valRFC'] = 'M';
+            // FaValidCurpRfc ? FaValidCurpRfc : null;
 
-          // comerTpinvoice
-          // ? comerTpinvoice.description
-          // : 'NO IDENTIFICADA';
-          let obj = {
-            type: 'RFC',
-            data: item.rfc,
-          };
-          const FaValidCurpRfc: any = 'M';
-          // await this.billingsService.getApplicationFaValidCurpRfc(obj);
-          item['valRFC'] = 'M';
-          // FaValidCurpRfc ? FaValidCurpRfc : null;
-
-          // let obj_ = {
-          //   idEvent: item.eventId,
-          //   idBill: item.billId,
-          // };
-          // const total = await this.getBillsTotal(item, obj_);
-          // item['totaling'] = total.totaling;
-          // item['totaleg'] = total.totaleg;
-          // const vat = await this.getBillsIva(item, obj_);
-          // item['ivaing'] = vat.ivaing;
-          // item['ivaeg'] = vat.ivaeg;
-          // const price = await this.getBillsPrice(item, obj_);
-          // item['priceing'] = price.priceing;
-          // item['priceeg'] = price.priceeg;
-        });
-        Promise.all(result).then(async resp => {
-          if (response.count > 0) {
-            await this.funcPriceVatTotal(response.data[0]);
-            this.billingSelected = response.data[0];
-          } else {
-            if (filter == 'si')
-              this.alert('warning', 'No se encontraron facturas', '');
-            this.resetInput();
-          }
-          this.form2.get('counter').patchValue(response.count);
-          this.getSum(); // OBTENER SUMAS TOTALES
-          this.data.load(response.data);
+            // let obj_ = {
+            //   idEvent: item.eventId,
+            //   idBill: item.billId,
+            // };
+            // const total = await this.getBillsTotal(item, obj_);
+            // item['totaling'] = total.totaling;
+            // item['totaleg'] = total.totaleg;
+            // const vat = await this.getBillsIva(item, obj_);
+            // item['ivaing'] = vat.ivaing;
+            // item['ivaeg'] = vat.ivaeg;
+            // const price = await this.getBillsPrice(item, obj_);
+            // item['priceing'] = price.priceing;
+            // item['priceeg'] = price.priceeg;
+          });
+          Promise.all(result).then(async resp => {
+            if (response.count > 0) {
+              await this.funcPriceVatTotal(response.data[0]);
+              this.billingSelected = response.data[0];
+            } else {
+              if (filter == 'si')
+                this.alert('warning', 'No se encontraron facturas', '');
+              this.resetInput();
+            }
+            this.form2.get('counter').patchValue(response.count);
+            this.getSum(); // OBTENER SUMAS TOTALES
+            this.data.load(response.data);
+            this.data.refresh();
+            this.totalItems = response.count;
+            this.loading = false;
+            if (this.valSelects) this.selectAllFromModal();
+          });
+        },
+        error: error => {
+          this.data.load([]);
           this.data.refresh();
-          this.totalItems = response.count;
+          this.totalItems = 0;
           this.loading = false;
-          if (this.valSelects) this.selectAllFromModal();
-        });
-      },
-      error: error => {
-        this.data.load([]);
-        this.data.refresh();
-        this.totalItems = 0;
-        this.loading = false;
-        if (filter == 'si')
-          this.alert('warning', 'No se encontraron facturas', '');
+          if (filter == 'si')
+            this.alert('warning', 'No se encontraron facturas', '');
 
-        this.resetInput();
-      },
-    });
+          this.resetInput();
+        },
+      });
+    }
   }
   resetInput() {
     this.form2.get('amountPay').setValue(null);
@@ -1247,34 +1258,41 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
     this.loading2 = true;
     this.totalItems2 = 0;
+    if (!params['filter.billId'] && !params['filter.eventId']) {
+      this.loading2 = false;
+      this.totalItems2 = 0;
+      this.data2.load([]);
+      this.data2.refresh();
+      this.selectedbillingsDet = [];
+    } else {
+      // this.msInvoiceService.getComerCetinvoices(params)
+      this.comerDetInvoice.getAllCustom(params).subscribe({
+        next: response => {
+          console.log(response);
+          // let result = response.data.map(async (item: any) => {
+          //   // item['rfc'] = item.customers ? item.customers.rfc : null;
+          // });
+          // Promise.all(result).then(resp => {
+          this.form2.get('counter2').patchValue(response.count);
+          this.form2.get('total8').patchValue(response.data[0].sum.importe);
+          this.form2.get('total7').patchValue(response.data[0].sum.iva);
+          this.form2.get('total3').patchValue(response.data[0].sum.total);
+          // this.form2.get('countTotal').patchValue(response.data[0].sum.amount);
 
-    // this.msInvoiceService.getComerCetinvoices(params)
-    this.comerDetInvoice.getAllCustom(params).subscribe({
-      next: response => {
-        console.log(response);
-        // let result = response.data.map(async (item: any) => {
-        //   // item['rfc'] = item.customers ? item.customers.rfc : null;
-        // });
-        // Promise.all(result).then(resp => {
-        this.form2.get('counter2').patchValue(response.count);
-        this.form2.get('total8').patchValue(response.data[0].sum.importe);
-        this.form2.get('total7').patchValue(response.data[0].sum.iva);
-        this.form2.get('total3').patchValue(response.data[0].sum.total);
-        // this.form2.get('countTotal').patchValue(response.data[0].sum.amount);
-
-        this.data2.load(response.data[0].result);
-        this.data2.refresh();
-        this.totalItems2 = response.count;
-        this.loading2 = false;
-        // });
-      },
-      error: error => {
-        this.data2.load([]);
-        this.data2.refresh();
-        this.totalItems2 = 0;
-        this.loading2 = false;
-      },
-    });
+          this.data2.load(response.data[0].result);
+          this.data2.refresh();
+          this.totalItems2 = response.count;
+          this.loading2 = false;
+          // });
+        },
+        error: error => {
+          this.data2.load([]);
+          this.data2.refresh();
+          this.totalItems2 = 0;
+          this.loading2 = false;
+        },
+      });
+    }
   }
 
   async getInconsistencies_() {

@@ -1560,7 +1560,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
 
             if (filter.search !== '') {
               if (filter.field == 'amount') {
-                this.columnFiltersBank[
+                this.columnFiltersBankAccount[
                   field
                 ] = `${searchFilter}:${filter.search.replace(/,/g, '')}`;
               } else {
@@ -1573,7 +1573,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
                     'yyyy-MM-dd'
                   );
                 }
-                this.columnFiltersBank[
+                this.columnFiltersBankAccount[
                   field
                 ] = `${searchFilter}:${filter.search}`;
               }
@@ -1600,7 +1600,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   }
 
   getBankAccountData() {
-    // this.loadingBankAccount = true;
+    this.loadingBankAccount = true;
     let params = {
       ...this.dataTableParamsBankAccount.getValue(),
       ...this.columnFiltersBankAccount,

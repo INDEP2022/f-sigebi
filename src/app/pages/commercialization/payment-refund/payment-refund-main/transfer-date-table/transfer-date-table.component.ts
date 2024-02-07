@@ -294,6 +294,7 @@ export class TransferDateTableComponent extends BasePage implements OnInit {
         paymentId: item.paymentId,
         paymentComments: observations,
         paymentDate: transferDate,
+        batchId: item.batchId,
       };
       let resp = await this.updateCtlDevPagP(data);
       console.log('resp', resp);

@@ -324,8 +324,8 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
 
     console.log(params);
     this.siabService
-      .fetchReport('RCOMERCARTALIB', params)
-      // .fetchReportBlank('blank')
+      // .fetchReport('RCOMERCARTALIB', params)
+      .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });
