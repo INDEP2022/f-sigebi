@@ -14,7 +14,7 @@
         <div class="col-md-6 mt-3">
           <form-field [control]="form.get('bankKey')">
             <ngx-select
-              [readonly]="valScroll"
+              [readonly]="valScroll || edit"
               [searchOnInit]="true"
               [form]="form"
               control="bankKey"
@@ -29,7 +29,7 @@
         <div class="col-md-6 mt-3">
           <form-field [control]="form.get('date')" label="Fecha">
             <input
-              [ngClass]="{ 'not-press bg-gray': valScroll }"
+              [ngClass]="{ 'not-press bg-gray': valScroll || edit }"
               maxlength="11"
               bsDatepicker
               type="text"
@@ -43,7 +43,7 @@
             [control]="form.get('movementNumber')"
             label="No. Movimiento">
             <input
-              [readonly]="valScroll"
+              [readonly]="valScroll || edit"
               maxlength="11"
               type="text"
               class="form-control"
