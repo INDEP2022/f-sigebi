@@ -17,6 +17,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerInvoiceFacPapelService } from 'src/app/core/services/ms-invoice/ms-comer-invoice-fac-papel.service';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
@@ -68,13 +69,22 @@ export class RegularBillingGenerationAssetsComponent
   @ViewChild('fileExcel', { static: true }) file: ElementRef<HTMLInputElement>;
   btnLoading: boolean = false;
   btnLoading2: boolean = false;
+  jsonToCsv: any[] = [
+    {
+      BIEN: '421146',
+      SERIE: 'H',
+      FOLIO: '18574',
+      OBSERVACIONES: 'CANCELACION',
+    },
+  ];
   constructor(
     private authService: AuthService,
     private massiveGoodService: MassiveGoodService,
     private comerInvoiceFacPapel: ComerInvoiceFacPapelService,
     private fb: FormBuilder,
     private comerInvoiceService: ComerInvoiceService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private excelService: ExcelService
   ) {
     super();
     this.settings = {
@@ -167,7 +177,7 @@ export class RegularBillingGenerationAssetsComponent
           //   COMER_VNR.P_CANCELAPAPEL_VNR('FCOMER086','C_VNR',VAUDSID );
           await this.pkComerVNRCancel(7545034, 'FCOMER086', 'C_VNR');
 
-          this.paramsList = new BehaviorSubject(new ListParams());
+          // this.paramsList = new BehaviorSubject(new ListParams());
           this.columnFilters = [];
           this.paramsList.getValue()[
             'filter.sessionId'
@@ -219,9 +229,18 @@ export class RegularBillingGenerationAssetsComponent
     );
   }
 
-  exportAsXLSX(): void {
+  async exportAsXLSX() {
     const { status } = this.form.value;
     this.btnLoading2 = true;
+    console.log(status);
+    if (status || status == 0) {
+      let resp = await this.validCount(status);
+      if (resp == 0) {
+        this.btnLoading2 = false;
+        return this.alert('warning', 'No se tienen registros a exportar', '');
+      }
+    }
+
     this.massiveGoodService.getCSVStatus(status).subscribe({
       next: resp => {
         const linkSource = `data:application/xlsx;base64,${resp.resultExcel.base64File}`;
@@ -244,6 +263,17 @@ export class RegularBillingGenerationAssetsComponent
     });
   }
 
+  async validCount(status: string | number) {
+    const params = new ListParams();
+    params['filter.status'] = `$eq:${status}`;
+
+    return firstValueFrom(
+      this.comerInvoiceFacPapel.getAll(params).pipe(
+        map(resp => resp.count),
+        catchError(() => of(0))
+      )
+    );
+  }
   getAllComerPapel() {
     this.loading = true;
     const params = {
@@ -264,5 +294,9 @@ export class RegularBillingGenerationAssetsComponent
         this.dataFilter.refresh();
       },
     });
+  }
+  exportCsv() {
+    const filename: string = 'COMERINSBIENES_FORMATO';
+    this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
   }
 }

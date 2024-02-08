@@ -19,7 +19,7 @@ export const REGULAR_BILLING_INCONSISTENCIES_COLUMNS = {
     },
   },
   descripcion: {
-    title: 'Descripicón',
+    title: 'Descripición',
     sort: false,
     filter: {
       type: 'custom',
