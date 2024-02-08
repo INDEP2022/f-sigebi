@@ -770,7 +770,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     let res = await this.forArrayFilters_();
     console.log('res', res);
     if (res) {
-      this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
+      // this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
       this.paramsList.getValue()['limit'] = 500;
       this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
 
@@ -860,7 +860,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       !params['filter.vouchertype'] &&
       !params['filter.impressionDate']
     ) {
-      this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
+      // this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
       this.paramsList.getValue()['limit'] = 500;
       this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
 
@@ -1025,7 +1025,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           this.alert('warning', 'Ha ocurrido un fallo en la operación', '');
           this.btnLoading = false;
         } else if (pk_comer.p_RESUL == 'Correcto.') {
-          this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
+          // this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
           this.paramsList.getValue()['limit'] = 500;
           this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
           this.paramsList.getValue()[
@@ -1358,7 +1358,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       await this.generateInvoiceCtrl(String(event), tp_event);
 
       if (c_indN == 'F') {
-        this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
+        // this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
         this.paramsList.getValue()[
           'filter.eventId'
         ] = `${SearchFilter.EQ}:${event}`;
