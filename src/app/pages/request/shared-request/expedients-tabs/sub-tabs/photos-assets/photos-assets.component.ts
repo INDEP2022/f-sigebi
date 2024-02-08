@@ -33,8 +33,7 @@ import { UploadFileComponent } from './upload-file/upload-file.component';
 })
 export class PhotosAssetsComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   @Input() requestId: number = null;
   parentRef: BsModalRef;
   showSearchFilter: boolean = true;
@@ -210,6 +209,7 @@ export class PhotosAssetsComponent
       } else {
         this.paragraphs = filter;
         this.onLoadToast('warning', 'No se encontró ningún bien', '');
+        return;
       }
     }
 
@@ -224,6 +224,7 @@ export class PhotosAssetsComponent
       } else {
         this.paragraphs = filter;
         this.onLoadToast('warning', 'No se encontró ningún bien', '');
+        return;
       }
     }
 
@@ -237,6 +238,7 @@ export class PhotosAssetsComponent
         this.totalItems = filter.length;
       } else {
         this.onLoadToast('warning', 'No se encontró ningún bien', '');
+        return;
       }
     }
   }
