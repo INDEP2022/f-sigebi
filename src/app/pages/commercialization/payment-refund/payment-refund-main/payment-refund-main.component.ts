@@ -1632,10 +1632,10 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
               this.controlForm2
                 .get('txtMsg')
                 .setValue('Sin CLABE(s) errónea(s)');
-            this.testDataBankAccount = res.data;
-            this.dataTableBankAccount.load(this.testDataBankAccount);
-            this.accountTotalItemsP = res.count;
-            this.totalAmountAccount = res.paymentsAmountTotal;
+            this.testDataBankAccount = res.data[0].data;
+            this.dataTableBankAccount.load(res.data[0].data);
+            this.accountTotalItemsP = res.data[0].count;
+            this.totalAmountAccount = res.data[1].amountTotal;
             this.loadingBankAccount = false;
           });
           console.log('DATA BankAccount', res);
