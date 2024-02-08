@@ -40,7 +40,14 @@ import {
 } from './massive-conversion-columns';
 
 interface IExcelToJson {
-  NO_BIEN: number;
+  id: number;
+  CLIENTEID: number;
+  PALETAID: number;
+  LOTE: number;
+  MONTO_INT: number;
+  NO_CHEQUE_IN: number;
+  EXP_CHEQUE_IN: string;
+  FECVIGENCIA_IN: string;
 }
 
 @Component({
@@ -135,16 +142,17 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   activeTab: string = 'tab1';
   reProTabActive: boolean = true;
   tab3Active: boolean = false;
-
   reprocesSource: [];
-
   form: ModelForm<any>;
-
   validityDate: any;
-
   tipoConsul: string;
-
   fileReader = new FileReader();
+  isLoadingExportFile = false;
+  //data: IExcelToJson[] = [];
+  consecutiveTmp: number;
+  numRecordsCsv: number;
+  data: any;
+  fechaHoy: string;
 
   constructor(
     private excelService: ExcelService,
@@ -158,9 +166,12 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     private datePipe: DatePipe
   ) {
     super();
+    //this.today = new Date();
   }
 
   ngOnInit(): void {
+    this.dateToday();
+
     this.prepareForm();
 
     this.rfcSettings.columns = this.modifyColumns(this.rfcSettings.columns);
@@ -365,7 +376,9 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       ...this.paramsD.getValue(),
       ...this.columnFiltersD,
     };
-    params['filter.eventId'] = `$eq:${this.form.controls['eventId'].value}`;
+    if (this.form.controls['eventId'].value) {
+      params['filter.eventId'] = `$eq:${this.form.controls['eventId'].value}`;
+    }
 
     if (this.form.controls['batchId'].value) {
       params['filter.batchId'] = `$eq:${this.form.controls['batchId'].value}`;
@@ -573,67 +586,178 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     }
   }
 
-  onFileChange(event?: Event) {
-    console.log('Evento: ', event);
-
+  onFileChange(event: Event) {
     this.alertQuestion('question', 'Atención', `¿Insertar el archivo?`).then(
       question => {
         if (question.isConfirmed) {
           this.tipoConsul = 'INSERT';
 
-          try {
-            const files = (event.target as HTMLInputElement).files;
-            if (!files || files.length !== 1) {
-              throw new Error('Please select one file.');
-            }
-
-            // Limpia cualquier evento onload anterior
-            this.fileReader.onload = null;
-
-            // Asigna el evento onload para manejar la lectura del archivo
-            this.fileReader.onload = loadEvent => {
-              if (loadEvent.target && loadEvent.target.result) {
-                // Llama a la función para procesar el archivo
-                this.readExcel(loadEvent.target.result);
-
-                // Limpia el input de archivo para permitir cargar el mismo archivo nuevamente
-                // (event.target as HTMLInputElement).value = '';
-              }
-              console.log(this.fileReader.onload);
-            };
-
-            // Lee el contenido binario del archivo
-            this.fileReader.readAsBinaryString(files[0]);
-          } catch (error) {
-            console.error('Error:', error);
-            // Maneja el error de acuerdo a tus necesidades
-          }
+          const files = (event.target as HTMLInputElement).files;
+          if (files.length != 1)
+            throw 'No files selected, or more than of allowed';
+          const fileReader = new FileReader();
+          /*fileReader.onload = (e) => {
+            console.log("Entrando a fileReader.onload");
+            const fileContent = fileReader.result as string;
+            const rows = fileContent.split('\n'); // Suponiendo que cada fila del archivo CSV está separada por una nueva línea
+            const data = rows.map(row => {
+              const columns = row.split(','); // Suponiendo que las columnas están separadas por comas
+              // Asumiendo que la fecha está en la primera columna
+              const dateParts = columns[6].split('/'); // Dividir la fecha en partes: día, mes, año
+              // Crear un objeto Date con las partes de la fecha en el orden correcto (año, mes - 1, día)
+              const date = new Date(parseInt(dateParts[2]), parseInt(dateParts[1]) - 1, parseInt(dateParts[0]));
+              // Suponiendo que las otras columnas contienen otros datos
+              // Aquí puedes procesar las otras columnas según sea necesario
+              return {
+                date: date,
+                // Otras propiedades de las filas...
+              };
+            });
+            console.log(data);
+          }*/
+          fileReader.readAsBinaryString(files[0]);
+          fileReader.onload = () => this.readExcel(fileReader.result);
         }
       }
     );
   }
 
-  dataExcel: any = [];
-  propertyValues: string[] = [];
-  commaSeparatedString: string = '';
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
-      this.dataExcel = this.excelService.getData<IExcelToJson>(binaryExcel);
-      this.propertyValues = this.dataExcel.map((item: any) => item.no_bien);
-
-      // Unir las cadenas con comas para obtener una cadena separada por comas
-      this.commaSeparatedString = this.propertyValues.join(',');
-
-      console.log(this.commaSeparatedString);
-      console.log(this.dataExcel);
+      this.data = this.excelService.getData<IExcelToJson>(binaryExcel);
+      this.numRecordsCsv = this.data.length;
+      //Verificar que el archivo sea correcto
+      //Subir archivo
+      this.uploadToTpmLcComer(this.numRecordsCsv, this.data);
     } catch (error) {
       this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
     }
   }
 
-  //#endregion on click load file
+  correcto: boolean = true;
+  incorrecto: boolean = false;
 
-  isLoadingExportFile = false;
+  async uploadToTpmLcComer(numRecords: number, dataCsv: IExcelToJson) {
+    console.log('Número de registros', numRecords);
+    console.log('Evento campo: ', this.form.controls['eventId'].value);
+
+    if (this.form.controls['eventId'].value === null) {
+      this.alertQuestion(
+        'question',
+        'Sin Evento Ingresado',
+        'La inserción se hará sin ID de Evento'
+      ).then(async question => {
+        if (question.isConfirmed) {
+          for (let i = 0; i < numRecords; i++) {
+            let consecutiveMax: any = await this.getConsecutiveMaxTmc();
+            consecutiveMax = consecutiveMax + 1;
+            console.log('consecutiveMax', consecutiveMax);
+            console.log('consecutiveMax siguiente ');
+            console.log('Registros: ', dataCsv[i]);
+
+            const dataJson = {
+              id: consecutiveMax,
+              //eventId: this.form.controls['eventId'].value,
+              customerId: dataCsv[i].CLIENTEID,
+              palletteId: dataCsv[i].PALETAID,
+              batchId: dataCsv[i].LOTE,
+              amount: dataCsv[i].MONTO_IN,
+              checkNumber: dataCsv[i].NO_CHEQUE_IN,
+              bankExpCheck: dataCsv[i].EXP_CHEQUE_IN,
+              validityDate: this.fechaHoy,
+              //validityDate: dataCsv[i].FECVIGENCIA_IN
+            };
+
+            console.log('Objeto a enviar ', dataJson);
+
+            this.capturelineService.postTmpLcComer(dataJson).subscribe({
+              next: resp => {
+                this.correcto = true;
+                console.log('Inserción Masiva desde Excel Correcto: ', resp);
+              },
+              error: error => {
+                this.correcto = false;
+                console.log('Inserción Masiva desde Excel incorrecto: ', error);
+              },
+            });
+          }
+
+          this.alertInfo(
+            'success',
+            'Archivo Insertado',
+            'Se actualizará la tabla solo con los registros válidos'
+          ).then(question => {
+            if (question.isConfirmed) {
+              this.searchData();
+            }
+          });
+        }
+      });
+    }
+
+    if (this.form.controls['eventId'].value != null) {
+      for (let i = 0; i < numRecords; i++) {
+        let consecutiveMax: any = await this.getConsecutiveMaxTmc();
+        console.log('consecutiveMax', consecutiveMax);
+        consecutiveMax = consecutiveMax + 1;
+
+        console.log('consecutiveMax siguiente ', consecutiveMax);
+        console.log('Registros: ', dataCsv[i]);
+
+        const dataJson = {
+          id: consecutiveMax,
+          eventId: this.form.controls['eventId'].value,
+          customerId: dataCsv[i].CLIENTEID,
+          palletteId: dataCsv[i].PALETAID,
+          batchId: dataCsv[i].LOTE,
+          amount: dataCsv[i].MONTO_IN,
+          checkNumber: dataCsv[i].NO_CHEQUE_IN,
+          bankExpCheck: dataCsv[i].EXP_CHEQUE_IN,
+          validityDate: this.fechaHoy,
+          //validityDate: dataCsv[i].FECVIGENCIA_IN
+        };
+
+        console.log('Objeto a enviar ', dataJson);
+
+        this.capturelineService.postTmpLcComer(dataJson).subscribe({
+          next: resp => {
+            this.correcto = true;
+            console.log('Inserción Masiva desde Excel Correcto: ', resp);
+          },
+          error: error => {
+            this.correcto = false;
+            console.log('Inserción Masiva desde Excel incorrecto: ', error);
+          },
+        });
+      }
+
+      this.alertInfo(
+        'success',
+        'Archivo Insertado',
+        'Se actualizará la tabla solo con los registros válidos'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.searchData();
+        }
+      });
+    }
+  }
+
+  getConsecutiveMaxTmc() {
+    return new Promise((resolve, reject) => {
+      //Consultar el número más grande
+      this.capturelineService.getTmpLcComer().subscribe({
+        next: resp => {
+          this.consecutiveTmp = resp.data[0].id;
+          resolve(this.consecutiveTmp);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
   exportFile() {
     if (!this.form.get('eventId').value) {
       this.alert('warning', this.title, 'No se ha seleccionado un evento');
@@ -1067,6 +1191,12 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   onTabSelected(event: any) {
     console.log('Tab seleccionado', event);
+  }
+
+  dateToday() {
+    const fecha = new Date();
+    const isoDateString = fecha.toISOString();
+    this.fechaHoy = isoDateString.split('T')[0];
   }
 
   // getData(listParams?: ListParams, notValidate: boolean = false): void {
