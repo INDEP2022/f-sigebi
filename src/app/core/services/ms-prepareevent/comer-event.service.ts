@@ -161,4 +161,10 @@ export class ComerEventService extends HttpService {
       params
     );
   }
+  getNotification_(idEvent: number, idLote: number, params?: _Params) {
+    return this.get<IListResponse<any>>(
+      `${PrepareEventEndpoints.ShowNotification}?pEvent=${idEvent}&pBatch=${idLote}`,
+      params
+    );
+  }
 }

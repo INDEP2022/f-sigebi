@@ -3110,7 +3110,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   printerMasivePDF() {
-    this.alert('warning', 'Debe seleccionar una factura', '');
+    if (this.isSelect.length == 0)
+      return this.alert('warning', 'Debe seleccionar una factura', '');
     this.path = '';
     let L_PATH = '';
     let L_FILE: any;
