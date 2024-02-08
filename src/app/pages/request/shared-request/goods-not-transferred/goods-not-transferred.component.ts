@@ -100,6 +100,7 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
 
   getDrawers() {
     this.loading = true;
+    this.getData();
     this.getAllNotTransferred();
     this.loading = false;
   }
@@ -112,14 +113,18 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.onLoadToast('success', 'Eliminado correctamente', '');
-      }
 
-      this.tranferService
-        .removeNoTransfer(data.goodNumbertransferredId)
-        .subscribe({
-          next: data => this.getDrawers(),
-          error: error => (this.loading = false),
-        });
+        this.tranferService
+          .removeNoTransfer(data.goodNumbertransferredId)
+          .subscribe({
+            next: response => {
+              this.data = response.data;
+
+              this.getAllNotTransferred();
+            },
+            error: error => (this.loading = false),
+          });
+      }
     });
   }
 }
