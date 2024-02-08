@@ -10,12 +10,16 @@
   <div class="col-12">
     <form-loader *ngIf="loading"></form-loader>
     <div>
-      <ng2-smart-table
-        [ngStyle]="{ height: loading ? '0px' : 'auto' }"
-        [attr.class]="'table-bordered table-responsive mb-4'"
-        [settings]="settings"
-        [source]="dataFilter">
-      </ng2-smart-table>
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{ height: loading ? '0px' : '300px' }">
+        <ng2-smart-table
+          [ngStyle]="{ height: loading ? '0px' : 'auto' }"
+          [attr.class]="'table-bordered table-responsive mb-4'"
+          [settings]="settings"
+          [source]="dataFilter">
+        </ng2-smart-table>
+      </ng-scrollbar>
     </div>
     <app-pagination [params]="paramsList" [totalItems]="totalItems">
     </app-pagination>
