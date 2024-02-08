@@ -1051,27 +1051,59 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     return this.eventId ? this.eventId.value : null;
   }
 
-  generateLcs(type: string) {
-    console.log('Tipo seleccionado', type);
-
+  generateLcs() {
     if (this.form.controls['eventId'].value == null) {
       this.alert('warning', 'Atención', 'Se necesita un ID de Evento');
       return;
     }
 
-    if (type === 'CONSULTA') {
-      this.alertInfo('success', 'CONSULTA', null);
-    } else if (type === 'UPDATE') {
-      this.alertInfo('success', 'ACTUALIZACIÓN', null);
-    }
-
-    /*this.alertQuestion('question', 'Atención', '¿Generar las Líneas de Captura?').then(question => {
+    this.alertQuestion(
+      'question',
+      'Atención',
+      '¿Generar las Líneas de Captura?'
+    ).then(question => {
       if (question.isConfirmed) {
-        
-        this.alertInfo('success', 'Líneas de Captura', 'Proceso Terminado');
+        const masiveData = {
+          TMP_LC_COMER: [
+            {
+              OBSERVACIONES: 'hola',
+              ESTATUS: 0,
+              FEC_VIGENCIA: '2017-09-06',
+              ID_EVENTO: 15226,
+              ID_LOTE: 713034,
+              ID_CLIENTE: 59170,
+              MONTO: 5000.0,
+              NO_CHEQUE: 2144977,
+              BANCO_EXP_CHEQUE: 'HSBC',
+            },
+          ],
+          n_NUM_DIAS: null,
+          c_TIPO_LC: null,
+          c_TABLA_APLICA: null,
+          c_IND_FEC: null,
+          c_IND_MONTO: null,
+          c_RESUL: 'ok',
+        };
 
+        console.log('Objeto a enviar', masiveData);
+
+        //	PUP_GEN_LCS_MASIV
+        this.comerEventService.pupGenLcsMasiv(masiveData).subscribe({
+          next: resp => {
+            console.log('Respuesta', resp);
+            this.alertInfo('success', 'Líneas de Captura', 'Proceso Terminado');
+            this.searchData();
+            this.guarantyData();
+          },
+          error: error => {
+            console.log('Error', error);
+            this.alertInfo('warning', 'Líneas de Captura', error.error);
+          },
+        });
+
+        //	PUP_GEN_CONSULTA
       }
-    });*/
+    });
 
     // this.lcsColumns = this.lcsTestData;
     // this.lcsTotalItems = this.lcsColumns.length;
