@@ -116,10 +116,10 @@ export const SETTING_DATA = {
       valuePrepareFunction: (_cell: any, item: any) => {
         let observation = '';
         if (!item.customerId) {
-          observation += 'No se ingreso el cliente. ';
+          observation += 'No se ingresó el cliente. ';
         }
         if (!item.batchId) {
-          observation += 'No se ingreso el lote. ';
+          observation += 'No se ingresó el lote. ';
         }
         if (!item.comerClient == null) {
           observation += 'El ID Cliente no Existe. ';
@@ -130,17 +130,17 @@ export const SETTING_DATA = {
         }
 
         if (!item.amount) {
-          observation += 'No se ingreso el monto. ';
+          observation += 'No se ingresó el monto. ';
         }
 
         if (!item.validityDate) {
-          observation += 'No se ingreso la fecha de vigencia. ';
+          observation += 'No se ingresó la fecha de vigencia. ';
         }
         if (!item.checkNumber) {
-          observation += 'No se ingreso el número de cheque. ';
+          observation += 'No se ingresó el número de cheque. ';
         }
         if (!item.bankExpCheck) {
-          observation += 'No se ingreso el Expide. Cheque. ';
+          observation += 'No se ingresó el Expide. Cheque. ';
         }
         // console.log({ observation });
         return observation;
