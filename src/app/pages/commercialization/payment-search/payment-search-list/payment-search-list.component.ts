@@ -1246,7 +1246,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           'warning',
           'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
           this.msgPaymentChange && this.msgPaymentChange.length > 0
-            ? this.msgPaymentChange.toLowerCase()
+            ? this.msgPaymentChange
             : 'No se encontraron datos'
         );
       }
