@@ -205,4 +205,8 @@ export class ComerEventosService extends HttpService {
       map(x => (x.data.length > 0 ? +x.data[0].suma_monto : 0))
     );
   }
+
+  pupGenLcsMasiv(body: any) {
+    return this.post(EventEndpoints.PupGenLcsMasiv, body);
+  }
 }
