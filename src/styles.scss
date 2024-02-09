@@ -176,13 +176,16 @@
   vertical-align: -50% !important;
   background-position: center;
   background-repeat: no-repeat;
-  background-size: 100px 100px;
+  background-size: 50px 50px;
   z-index: 100;
-  content: 'Cargando... por favor espere...';
-  font-size: 25px;
+  content: 'Cargando, por favor espere...';
+  padding-top: 90px !important;
+  font-size: 14px;
   text-align: center;
   font-weight: bold;
   line-height: 26px;
+  min-height: 180px !important;
+  height: 100% !important;
 }
 
 .btn-header {
@@ -799,6 +802,7 @@ custom-view-component {
 }
 
 .cell_right {
+  margin-top: 12px !important;
   width: 100% !important;
   height: 100% !important;
   text-align: right !important;
@@ -913,4 +917,17 @@ div:where(.swal2-container).swal2-top,
 div:where(.swal2-container).swal2-center,
 div:where(.swal2-container).swal2-bottom {
   z-index: 10000 !important;
+}
+
+.bs-datepicker-head button.current {
+  margin-left: -15px !important;
+  padding: 0px !important;
+}
+
+.current.ng-star-inserted {
+  margin-right: -15px !important;
+}
+
+.modal-dialog-centered-top {
+  margin-top: -100px !important;
 }

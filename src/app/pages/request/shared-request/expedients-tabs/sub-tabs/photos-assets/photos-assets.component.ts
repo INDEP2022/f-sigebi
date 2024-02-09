@@ -210,6 +210,7 @@ export class PhotosAssetsComponent
       } else {
         this.paragraphs = filter;
         this.onLoadToast('warning', 'No se encontró ningún bien', '');
+        return;
       }
     }
 
@@ -224,6 +225,7 @@ export class PhotosAssetsComponent
       } else {
         this.paragraphs = filter;
         this.onLoadToast('warning', 'No se encontró ningún bien', '');
+        return;
       }
     }
 
@@ -237,6 +239,7 @@ export class PhotosAssetsComponent
         this.totalItems = filter.length;
       } else {
         this.onLoadToast('warning', 'No se encontró ningún bien', '');
+        return;
       }
     }
   }

@@ -9,9 +9,8 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
-import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, map, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ILegalAffair } from 'src/app/core/models/catalogs/legal-affair-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -73,9 +72,10 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   isSelected: boolean = false;
 
   settingsTwo: any;
-  dataThree: LocalDataSource = new LocalDataSource();
+  dataThree: any[] = [];
   dataCheckDelegation: any[] = [];
-  paramsDelegation = new BehaviorSubject(new ListParams());
+  paramsDelegation = new BehaviorSubject<ListParams>(new ListParams());
+
   totalItemsDelegation: number = 0;
 
   private requestService = inject(RequestService);
@@ -88,12 +88,55 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
     }
 
     if (this.isDelegationsVisible) {
-      this.queryDelegation();
       this.isJuridicVisible = false;
+      console.log('entra a delegaciones');
+      this.paramsDelegation
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(data => {
+          console.log('entra a delegaciones 2' + data);
+          this.getData(data);
+        });
     }
 
     this.getAffair(new ListParams());
     this.prepareForm();
+  }
+
+  /*queryDelegation() {
+    let params = {
+      ...this.paramsDelegation.getValue(),
+    };
+    this.serviceDelegations.getAllTwo(params).subscribe({
+      next: response => {
+        if (Array.isArray(response.data)) {
+          this.dataThree.load(response.data);
+          this.totalItemsDelegation = response.count || 0;
+          this.dataThree.refresh();
+        }
+      },
+      error: error => (this.loading = false),
+    });
+  }*/
+
+  getData(params: ListParams) {
+    this.serviceDelegations.getAllTwo(params).subscribe({
+      next: resp => {
+        console.log('Respuesta del servidor:', resp); // Imprime la respuesta completa
+        const result = resp.data.map(async (item: any) => {
+          this.loading = false;
+        });
+        this.loading = true;
+
+        Promise.all(result).then(data => {
+          this.dataThree = resp.data;
+          console.log('dataThree: ', this.dataThree);
+          this.totalItemsDelegation = resp.count;
+          setTimeout(() => {
+            this.loading = false;
+          }, 300);
+        });
+      },
+    });
   }
 
   private prepareForm() {
@@ -229,7 +272,8 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
 
           this.recDoc['affair'] = resp['affair']['affairId'].toString();
 
-          this.recDoc.signatureBySubstitution = resp.signatureBySubstitution === '1';
+          this.recDoc.signatureBySubstitution =
+            resp.signatureBySubstitution === '1';
           this.form.patchValue(this.recDoc);
         },
         error: error => {
@@ -239,53 +283,42 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   }
 
   //Table
-  queryDelegation() {
-    let params = {
-      ...this.paramsDelegation.getValue(),
-    };
-    this.serviceDelegations.getAllTwo(params).subscribe({
-      next: response => {
-        if (Array.isArray(response.data)) {
-          this.dataThree.load(response.data);
-          this.totalItemsDelegation = response.count || 0;
-          this.dataThree.refresh();
-        }
-      },
-      error: error => (this.loading = false),
-    });
-  }
 
   save() {
     if (this.isJuridicVisible) {
-      let object = this.form.getRawValue();
+      if (this.form.valid) {
+        let object = this.form.getRawValue();
 
-      object.signatureBySubstitution = object.signatureBySubstitution ? '1' : '0';
+        object.signatureBySubstitution = object.signatureBySubstitution
+          ? '1'
+          : '0';
 
-      console.log('object: ', object);
+        console.log('object: ', object);
 
-      object['applicationId'] = this.requestId;
+        object['applicationId'] = this.requestId;
 
-      let splitId = this.getTime();
+        let splitId = this.getTime();
 
-      const user: any = this.authService.decodeToken();
+        const user: any = this.authService.decodeToken();
 
-      object['creationUser'] = user.username;
-      object['modificationDate'] = moment(new Date()).format('YYYY-MM-DD');
-      object['modificationUser'] = user.username;
-      object['creationDate'] = moment(new Date()).format('YYYY-MM-DD');
-      object['version'] = 1;
-      object['documentTypeId'] = this.docTypeId;
+        object['creationUser'] = user.username;
+        object['modificationDate'] = moment(new Date()).format('YYYY-MM-DD');
+        object['modificationUser'] = user.username;
+        object['creationDate'] = moment(new Date()).format('YYYY-MM-DD');
+        object['version'] = 1;
+        object['documentTypeId'] = this.docTypeId;
 
-      if (isNullOrEmpty(this.recDoc)) {
-        object['jobLegalId'] = splitId;
-        this.createLegalDoc(object);
-      } else {
-        object['providedDate'] = new DatePipe('en-EN').transform(
-          object['providedDate'],
-          'dd/MM/yyyy'
-        );
-        object['jobLegalId'] = this.recDoc['jobLegalId'];
-        this.updatedLegalDoc(object);
+        if (isNullOrEmpty(this.recDoc)) {
+          object['jobLegalId'] = splitId;
+          this.createLegalDoc(object);
+        } else {
+          object['providedDate'] = new DatePipe('en-EN').transform(
+            object['providedDate'],
+            'dd/MM/yyyy'
+          );
+          object['jobLegalId'] = this.recDoc['jobLegalId'];
+          this.updatedLegalDoc(object);
+        }
       }
     } else {
       if (!isNullOrEmpty(this.dataCheckDelegation)) {

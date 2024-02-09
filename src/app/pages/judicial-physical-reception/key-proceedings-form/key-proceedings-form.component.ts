@@ -338,7 +338,7 @@ export class KeyProceedingsFormComponent
   }
 
   private async transferInit() {
-    // debugger;
+    // //
     const expedientnumber = this.numFile;
     const { transference, type } = this.registerControls;
     if (!expedientnumber) {
@@ -388,7 +388,7 @@ export class KeyProceedingsFormComponent
       transference,
       type,
     } = this.registerControls;
-    // debugger;
+    // //
     const splitedArea = keysProceedings?.value?.split('/');
     const _area = splitedArea ? splitedArea[3] : null;
     const cons = splitedArea ? splitedArea[5] : null;

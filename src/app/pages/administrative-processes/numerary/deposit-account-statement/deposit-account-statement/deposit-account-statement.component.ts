@@ -599,7 +599,7 @@ export class DepositAccountStatementComponent
     this.updatePupReturnsByDates = false;
     // this.disabledAccount = true;
     // this.disabledMovement = true;
-    // debugger;
+    // //
     console.log(this.userChecks);
     if (this.userChecks.bankkey) {
       this.form.controls['bank'].setValue(this.userChecks.bankkey);
@@ -898,7 +898,7 @@ export class DepositAccountStatementComponent
         this.transferDate = firstFormatDateToDate(date);
       }
       console.log(date);
-      // debugger;
+      // //
       if (
         this.toReturn.value &&
         this.form.controls['depositDate'].value &&
@@ -951,7 +951,7 @@ export class DepositAccountStatementComponent
     if (!this.updatePupReturnsByDates) return;
     if (date) {
       this.loader.load = true;
-      // debugger;
+      // //
       this.expeditionDate.setValue(date);
       // this.form
       if (
@@ -1152,7 +1152,7 @@ export class DepositAccountStatementComponent
 
   private async calculateReturn() {
     console.log('Calculate return');
-    // debugger;
+    // //
     if (!this.updatePupReturnsByDates) {
       return;
     }
@@ -1229,7 +1229,7 @@ export class DepositAccountStatementComponent
   }
 
   private async detailReturn() {
-    // debugger;
+    // //
     if (!this.updatePupReturnsByDates) {
       return null;
     }

@@ -70,7 +70,7 @@ export class GoodsManagementSocialTable extends BasePage {
       });
     this.goodsManagementService.refreshTable.subscribe({
       next: response => {
-        // debugger;
+        // //
         if (response) {
           this.data = [
             ...this.goodsManagementService.getByProcess(this.process),
@@ -84,7 +84,7 @@ export class GoodsManagementSocialTable extends BasePage {
     });
     this.goodsManagementService.selectedGoodSubject.subscribe({
       next: response => {
-        // debugger;
+        // //
         console.log(response, this.data);
         let index = this.data.findIndex(
           row => row.goodNumber === response + ''
@@ -153,7 +153,7 @@ export class GoodsManagementSocialTable extends BasePage {
       .subscribe(change => {
         if (change.action === 'filter') {
           // this.data = this.dataOld;
-          // debugger;
+          // //
           let filters = change.filter.filters;
           filters.map((filter: any, index: number) => {
             // console.log(filter, index);

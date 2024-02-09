@@ -23,7 +23,6 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { secondFormatDateToDate2 } from 'src/app/shared/utils/date';
 @Component({
   selector: 'app-new-and-update',
   templateUrl: './new-and-update.component.html',
@@ -153,7 +152,8 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         paymentId: this.data.paymentId,
         reference: this.data.reference,
         movementNumber: this.data.movementNumber,
-        date: secondFormatDateToDate2(this.returnParseDate_(this.data.date)),
+        date: await this.correctDate(this.data.date),
+        // secondFormatDateToDate2(this.returnParseDate_(this.data.date)),
         amount: this.data.amount,
         bankKey: this.data.bankKey,
         code: this.data.code,
@@ -708,5 +708,9 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         },
       });
     });
+  }
+  async correctDate(date: string) {
+    const dateUtc = new Date(date);
+    return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
   }
 }

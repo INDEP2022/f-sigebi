@@ -55,6 +55,7 @@ export class ValuedTableComponent
       .pipe(take(1))
       .subscribe({
         next: response => {
+          console.log(response);
           if (response && response.data && response.data.length > 0) {
             this.data = response.data.map((row: any) => {
               return { ...row };

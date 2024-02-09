@@ -1,6 +1,6 @@
 <app-card [header]="true">
-  <div class="ch-content" header>
-    <h5 class="title">devolución de pagos</h5>
+  <div #scrollContainer class="ch-content" header>
+    <h5 class="title">Devolución de Pagos</h5>
   </div>
   <div body>
     <div *ngIf="layout == 'MAIN'" @OnInOut>
@@ -211,6 +211,7 @@
                     [ngStyle]="{ height: loadingBank ? '0px' : '400px' }">
                     <ng2-smart-table
                       id="accountTable"
+                      (dblclick)="method2($event)"
                       [settings]="accountSettings"
                       [source]="dataTableBank"
                       (userRowSelect)="selectAccounts($event.data)">
@@ -222,6 +223,20 @@
                   </app-pagination>
                 </div>
                 <div class="col-md-12">
+                  <div class="row mt-2">
+                    <form class="form-material" [formGroup]="controlForm2">
+                      <div class="col-sm-9">
+                        <form-field [control]="controlForm2.get('txtMsg')">
+                          <input
+                            readonly
+                            type="text"
+                            maxlenght="100"
+                            class="form-control"
+                            formControlName="txtMsg" />
+                        </form-field>
+                      </div>
+                    </form>
+                  </div>
                   <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                       <strong>DESCRIPCIÓN</strong>
@@ -276,9 +291,10 @@
                     }">
                     <ng2-smart-table
                       id="paymentTable"
+                      (dblclick)="method3($event)"
                       [settings]="paymentSettings"
                       [source]="dataTableBankAccount"
-                      (userRowSelect)="selectPayment($event.selected)">
+                      (userRowSelect)="selectPayment($event.data)">
                     </ng2-smart-table>
                   </ng-scrollbar>
                   <app-pagination
@@ -313,31 +329,43 @@
               class="row row-cols-sm-1 row row-cols-1 row-cols-md-2 row row-cols-lg-3 row-cols-xl-4 g-3">
               <div class="col">
                 <button
+                  [ngClass]="{ loading: btnLoading }"
+                  [disabled]="btnLoading"
                   class="btn btn-sm btn-info btn-block active me-2 font-size-13"
                   (click)="getComerCreationData()">
                   Crear Control
-                  <i class="bx bx-plus bx-sm float-icon"></i>
+                  <i
+                    *ngIf="!btnLoading"
+                    class="bx bx-plus bx-sm float-icon"></i>
                 </button>
               </div>
               <div class="col">
                 <button
+                  [ngClass]="{ loading: btnLoading2 }"
+                  [disabled]="btnLoading2"
                   class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
                   (click)="requestSpentGenerator()"
                   [disabled]="!disabledBtn">
                   Generar Solicitudes Gastos
+                  <i *ngIf="!btnLoading2" class="bi bi-cash"></i>
                 </button>
                 <!-- (click)="changeLayout('EXPENSE REQUEST')" -->
               </div>
               <div class="col">
                 <button
+                  [ngClass]="{ loading: btnLoading3 }"
+                  [disabled]="btnLoading3"
                   class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
                   (click)="sendRequests()"
                   [disabled]="!disabledBtn">
                   Enviar Solicitudes a SIRSAE
+                  <i *ngIf="!btnLoading3" class="bx bx-send"></i>
                 </button>
               </div>
               <div class="col">
                 <button
+                  [ngClass]="{ loading: btnLoading4 }"
+                  [disabled]="btnLoading4"
                   class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
                   (click)="verifyPaysSirsae()"
                   [disabled]="!disabledBtn">
@@ -346,16 +374,20 @@
               </div>
               <div class="col">
                 <button
+                  [disabled]="!valBtns"
                   class="btn btn-sm btn-danger btn-block active me-2 font-size-13"
                   (click)="changeLayout()">
                   Mantenimiento de Layouts
+                  <i class="fas fa-wrench"></i>
                 </button>
               </div>
               <div class="col">
                 <button
+                  [disabled]="!valBtns"
                   class="btn btn-sm btn-danger btn-block active me-2 font-size-13"
                   (click)="openCreationModal()">
                   Permisos de Creaci&oacute;n
+                  <i class="bx bxs-file"></i>
                 </button>
               </div>
             </div>

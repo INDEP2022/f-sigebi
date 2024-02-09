@@ -10,7 +10,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class ExpensesRequestModalComponent extends BasePage implements OnInit {
-  title: string = 'Dato Variable';
+  title: string = 'Registro';
   data: any;
   edit: boolean = false;
   dataForm: FormGroup = new FormGroup({});
@@ -30,7 +30,7 @@ export class ExpensesRequestModalComponent extends BasePage implements OnInit {
       beneficiary: [null, [Validators.required]],
       name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       amount: [null, [Validators.required]],
-      service: [
+      commentary: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],

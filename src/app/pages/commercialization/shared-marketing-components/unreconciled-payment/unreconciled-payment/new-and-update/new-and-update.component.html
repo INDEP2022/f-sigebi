@@ -4,7 +4,7 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row p-1" style="height: 300px; overflow-y: scroll">
+      <div class="row p-1">
         <div class="col-md-6 mt-3">
           <form-field [control]="form.get('paymentId')" label="Id Pago">
             <input
@@ -69,6 +69,7 @@
               control="lotId"
               [data]="lotes"
               value="idLot"
+              [showTooltip]="true"
               bindLabel="idAndDesc"
               label="Lote"
               (fetchItems)="getLotes($event)">

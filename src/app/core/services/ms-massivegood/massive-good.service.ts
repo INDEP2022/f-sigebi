@@ -311,4 +311,8 @@ export class MassiveGoodService extends HttpService {
       data
     );
   }
+
+  applicationPupGenLayouts(data: any) {
+    return this.post(`${MassiveGoodEndpoints.ApplicationPupGenLayouts}`, data);
+  }
 }

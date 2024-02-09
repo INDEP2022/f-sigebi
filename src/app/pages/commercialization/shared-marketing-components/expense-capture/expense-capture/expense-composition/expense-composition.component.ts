@@ -1130,7 +1130,7 @@ export class ExpenseCompositionComponent
       this.vatWithholding += row.retencionIva ? +row.retencionIva : 0;
       this.total += row.total ? +row.total : 0;
       let reportDelit = false;
-      // debugger;
+      // //
       if (this.expenseCaptureDataService.V_VALCON_ROBO > 0) {
         if (row.labelNumber + '' === '6') {
           reportDelit = false;
@@ -1334,7 +1334,7 @@ export class ExpenseCompositionComponent
           if (response.data && response.data.length > 0) {
             this.loader.load = false;
             console.log(response.data, row);
-            // debugger;
+            // //
             let result = response.data.filter(
               x => x.id_detgasto + '' == row.detPaymentsId + ''
             );
@@ -1470,7 +1470,7 @@ export class ExpenseCompositionComponent
   }
 
   private async modifyEstatusM() {
-    // debugger;
+    // //
     if (this.LS_ESTATUS) {
       const response = await this.alertQuestion(
         'question',
@@ -1572,7 +1572,7 @@ export class ExpenseCompositionComponent
     }
   }
   async modifyEstatus() {
-    // debugger;
+    // //
     if (this.expenseCaptureDataService.formaModificada()) {
       return;
     }

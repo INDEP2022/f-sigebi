@@ -155,4 +155,16 @@ export class ComerEventService extends HttpService {
       map(x => x.count)
     );
   }
+  getAllFilterLetter_(id: number, params: ListParams) {
+    return this.get<IListResponse<any>>(
+      `comer-good-xlot?filter.lotId=$eq:${id}`,
+      params
+    );
+  }
+  getNotification_(idEvent: number, idLote: number, params?: _Params) {
+    return this.get<IListResponse<any>>(
+      `${PrepareEventEndpoints.ShowNotification}?pEvent=${idEvent}&pBatch=${idLote}`,
+      params
+    );
+  }
 }

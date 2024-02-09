@@ -205,7 +205,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     let bandera;
     let clasif: number;
     this.service.verif_des = 0;
-    // debugger;
+    // //
     if (!good) {
       this.service.good = null;
       // const lastGood = this.form.get('noBien').value;
@@ -214,7 +214,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
       return;
     }
     if (this.version === 1) {
-      // debugger;
+      // //
       let vb_estatus_valido;
       // vb_estatus_valido = await this.validateStatusXPantalla(good);
       try {
@@ -310,7 +310,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
       ? await firstValueFrom(this.statusService.getById(good.status))
       : null;
     this.service.goodStatusDesc = statusGood ? statusGood.description : '';
-    // debugger;
+    // //
     const sssubtype = good.goodClassNumber
       ? await firstValueFrom(
           this.goodSssubtypeService.getAll2(

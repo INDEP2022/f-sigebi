@@ -270,20 +270,9 @@
               </form-field>
             </div>
           </div>
-          <div clas="row">
-            <div class="d-flex">
-              <div class="ml-auto" *ngIf="btnMotCan">
-                <button
-                  class="btn btn-primary btn-sm active"
-                  (click)="showModal()">
-                  Motivos de Cambio a REV
-                </button>
-              </div>
-            </div>
-          </div>
           <!--  -->
           <div class="row mb-3">
-            <div class="col-md-6">
+            <div class="col-md-4">
               <div
                 [class]="loadingExcel ? 'disabled' : ''"
                 (click)="exportExcel()">
@@ -294,10 +283,19 @@
                   text="Exportar a Excel"></app-excel-report>
               </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
               <button type="button" class="btn btn-sm btn-success active">
                 Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
               </button>
+            </div>
+            <div class="col-md-4">
+              <div *ngIf="btnMotCan">
+                <button
+                  class="btn btn-primary btn-sm active"
+                  (click)="showModal()">
+                  Motivos de Cambio a REV
+                </button>
+              </div>
             </div>
           </div>
           <!--  -->

@@ -80,7 +80,7 @@ export class ParamsConceptsModalComponent
   }
 
   override getParams() {
-    // debugger;
+    // //
     let newColumnFilters = this.columnFilters;
     if (newColumnFilters['filter.address']) {
       let filterAddress = this.getAddressCode(
@@ -136,7 +136,7 @@ export class ParamsConceptsModalComponent
   }
 
   private prepareForm() {
-    // debugger;
+    // //
     this.form = this.fb.group({
       parameter: [null, [Validators.required]],
       value: [null, [Validators.required]],

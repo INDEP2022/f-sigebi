@@ -176,3 +176,11 @@ export function getFaStageCreda(
     )
   );
 }
+
+export function showFormatDateEs(
+  date: any,
+  format = 'dd/MM/yyyy',
+  lang = 'en-US'
+): any {
+  return formatDate(new Date(date), format, lang);
+}

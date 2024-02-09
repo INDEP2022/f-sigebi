@@ -625,7 +625,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
 
   private async checkPartialize() {
     let vb_parcial = false;
-    // debugger;
+    // //
     const delegaciones = await this.getDelegacionJoinSubdelDepartamentos();
     if (delegaciones) {
       if (delegaciones.length > 1) {
@@ -672,7 +672,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   // private async
 
   async postQuery() {
-    // debugger;
+    // //
     this.errorMessage = null;
     await this.postRecord(true);
     this.loading = false;
@@ -976,7 +976,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   }
 
   private async fillSelectedBad() {
-    // debugger;
+    // //
     this.selectedBad = await firstValueFrom(
       this.attribGoodBadService.getById(this.good.id).pipe(
         takeUntil(this.$unSubscribe),
@@ -986,7 +986,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   }
 
   async searchGood(byPage = false) {
-    // debugger;
+    // //
     this.loading = true;
     this.getByIdGood(this.form.value.noBien);
     if (this.fillParams(byPage)) {
@@ -1120,7 +1120,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       .pipe(map(x => (x.data ? x.data : [])));
   }
 
-  // debugger;
+  // //
   private async postRecord(isPostQuery = false) {
     const filterParams = new FilterParams();
     filterParams.addFilter('typeNumber', 'CARBIEN');
@@ -1203,7 +1203,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   }
 
   private async getValidations() {
-    // debugger;
+    // //
     const response = await firstValueFrom(
       this.getStatusXPantalla().pipe(catchError(x => of(null)))
     );

@@ -215,16 +215,25 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   async save() {
     // Llamar servicio para guardar informacion
 
+    let obj = null;
     let validate = this.guidelinesColumns.every(objeto => {
+      obj = objeto;
       return Object.values(objeto).every(valor => !isNullOrEmpty(valor));
     });
 
     if (!validate) {
-      this.msgModal(
-        'Debe llenar todos los campos'.concat(),
-        'Campos requeridos',
-        'warning'
-      );
+      let message = 'Debe llenar todos los campos:\n\n' + obj.guideline + '\n';
+      message += isNullOrEmpty(obj.firstRevision) ? '(Revisión 1), ' : '';
+      message += isNullOrEmpty(obj.secondRevision) ? '(Revisión 2), ' : '';
+      message += isNullOrEmpty(obj.firstRevisionObserv)
+        ? '(Observaciones 1), '
+        : '';
+      message += isNullOrEmpty(obj.secondRevisionObserv)
+        ? '(Observaciones 2), '
+        : '';
+      message = message.substring(0, message.length - 2);
+
+      this.msgModal(message, 'Campos requeridos', 'warning');
       return;
     }
 

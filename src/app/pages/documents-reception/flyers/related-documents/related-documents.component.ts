@@ -1163,7 +1163,7 @@ export class RelatedDocumentsComponent
           data['filter.managementNumber'] =
             this.formJobManagement.value.managementNumber;
           const goodManagementResult = await this.getGoodsJobManagement(data);
-          // debugger;
+          // //
           this.dataTableGoodsJobManagement = goodManagementResult.data;
           console.log('BIENES ', this.dataTableGoodsJobManagement);
           this.formVariables.get('b').setValue('S');
@@ -2336,7 +2336,7 @@ export class RelatedDocumentsComponent
   ) {
     //console.log(this.dataTableGoodsJobManagement);
     //LOOP BIENES_OFICIO_ESTATUS
-    // debugger;
+    // //
     const body: any = {
       managementNumber: managementNumber,
       insertDate: insertDate,
@@ -2573,7 +2573,7 @@ export class RelatedDocumentsComponent
   //   if (filter != 'Todos') {
   //     params['filter.goodClassNumber'] = `$eq:${filter}`;
   //   }
-  //   debugger;
+  //   //
   //   //this.filtroTipos(this.paramsGestionDictamen.expediente);
   //   this.goodServices.getByExpedientAndParams(params).subscribe({
   //     next: response => {
@@ -4904,7 +4904,7 @@ export class RelatedDocumentsComponent
   }
 
   goBack() {
-    debugger;
+    //
     if (this.origin == 'FACTGENACTDATEX') {
       this.router.navigate(['/pages/juridical/file-data-update'], {
         queryParams: { wheelNumber: this.formJobManagement.value.flyerNumber },
@@ -4957,7 +4957,7 @@ export class RelatedDocumentsComponent
         this.formJobManagement.value.managementNumber;
       params.limit = limit;
       params.page = page;
-      // debugger;
+      // //
       this.serviceOficces.getGoodsJobManagement(params).subscribe({
         next: resp => {
           resolve(resp);

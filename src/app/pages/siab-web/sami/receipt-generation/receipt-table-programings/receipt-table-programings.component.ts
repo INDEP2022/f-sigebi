@@ -100,7 +100,7 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
   }
 
   override getParams() {
-    // debugger;
+    // //
     let newColumnFilters = this.columnFilters;
     if (this.id_programacion) {
       newColumnFilters['filter.id_programacion'] =

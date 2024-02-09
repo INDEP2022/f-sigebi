@@ -27,7 +27,7 @@ export class FractionTableComponent extends BasePageTableNotServerPagination<IFr
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    // debugger;
+    // //
     if (changes['goodNumber']) {
       if (changes['goodNumber'].currentValue) {
         this.getData();

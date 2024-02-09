@@ -95,4 +95,22 @@ export class PaymentDevolutionService extends HttpService {
   updateCtlDevPagH(data: any, id: number | string) {
     return this.put(`${PaymentDevolutionEndPoints.EatCtldevpagH}/${id}`, data);
   }
+
+  applicationPupSendSirsae(data: any) {
+    return this.post(
+      `${PaymentDevolutionEndPoints.ApplicationPupSendSirsae}`,
+      data
+    );
+  }
+
+  applicationPupVerifPagoSirsae(data: any) {
+    return this.post(
+      `${PaymentDevolutionEndPoints.ApplicationPupVerifPagoSirsae}`,
+      data
+    );
+  }
+
+  updateCtlDevPagP(data: any) {
+    return this.put(`${PaymentDevolutionEndPoints.ComerCtldevpagP}`, data);
+  }
 }
