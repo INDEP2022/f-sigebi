@@ -11,6 +11,7 @@ import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/samp
 import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
+import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
 
 @Component({
   selector: 'app-annex-j-assets-classification',
@@ -19,8 +20,7 @@ import { ModelForm } from '../../../../../core/interfaces/model-form';
 })
 export class AnnexJAssetsClassificationComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   signForm: ModelForm<any>;
   form: FormGroup = new FormGroup({});
   typeAnnex: string = '';
@@ -28,12 +28,18 @@ export class AnnexJAssetsClassificationComponent
   checked: string = 'checked';
   idSample: number = 0;
   sampleInfo: ISample;
+
+  requestId: number = 0;
+  reportId: number = 0;
+  reportTable: string = '';
+
   constructor(
     private fb: FormBuilder,
     private bsModalRef: BsModalRef,
     private modalService: BsModalService,
     private samplingGoodService: SamplingGoodService,
-    private signatoriesService: SignatoriesService
+    private signatoriesService: SignatoriesService,
+    private reportgoodService: ReportgoodService,
   ) {
     super();
   }
@@ -42,6 +48,8 @@ export class AnnexJAssetsClassificationComponent
     this.initForm();
     this.getInfoSample();
   }
+
+
 
   getInfoSample() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
@@ -148,7 +156,7 @@ export class AnnexJAssetsClassificationComponent
   }
 
   async signAnnexJ() {
-    const typeDocument = 218;
+    const typeDocument = this.reportId > 0 ? this.reportId : 218;
     if (this.typeAnnex == 'annexJ-assets-classification') {
       const responsibleSae = this.form.get('responsibleSae').value;
       const saePosition = this.form.get('saePosition').value;
@@ -192,11 +200,11 @@ export class AnnexJAssetsClassificationComponent
           );
 
           if (checkSignature) {
-            this.alert(
+            /*this.alert(
               'success',
               'Acción Correcta',
               'Firmante agregado correctamente'
-            );
+            );*/
             this.bsModalRef.content.callback(typeDocument, typeSign);
             this.close();
           }
@@ -209,11 +217,11 @@ export class AnnexJAssetsClassificationComponent
         );
 
         if (registerInfoSample) {
-          this.alert(
+          /*this.alert(
             'success',
             'Acción Correcta',
             'Información registrada correctamente'
-          );
+          );*/
           this.bsModalRef.content.callback(typeDocument, typeSign);
           this.close();
         }
@@ -318,7 +326,7 @@ export class AnnexJAssetsClassificationComponent
             next: () => {
               resolve(true);
             },
-            error: error => {},
+            error: error => { },
           });
       });
     });
