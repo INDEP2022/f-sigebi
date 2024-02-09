@@ -83,7 +83,7 @@
       </form>
     </div>
 
-    <div *ngIf="typeAnnex == 'sign-annexJ-assets-classification'">
+    <div *ngIf="typeAnnex == 'sign-annexJ-assets-classification' || typeAnnex == 'sign-tasks-report'">
       <form [formGroup]="signForm" class="form-material">
         <div class="row pt-4">
           <div class="col-md-12">
@@ -147,7 +147,7 @@
         </div>
         <div
           class="m-3"
-          *ngIf="typeAnnex == 'sign-annexJ-assets-classification'">
+          *ngIf="typeAnnex == 'sign-annexJ-assets-classification' || typeAnnex == 'sign-tasks-report'">
           <confirm-button
             [disabled]="!signForm.valid"
             [loading]="loading"

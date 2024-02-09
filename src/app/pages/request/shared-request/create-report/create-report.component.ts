@@ -27,6 +27,8 @@ import { ShowReportComponentComponent } from '../../programming-request-componen
 import { UploadReportReceiptComponent } from '../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { SignatureTypeComponent } from '../signature-type/signature-type.component';
+import { fi } from 'date-fns/locale';
+import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 
 const font = Quill.import('formats/font');
 font.whitelist = ['mirza', 'roboto', 'aref', 'serif', 'sansserif', 'monospace'];
@@ -93,7 +95,8 @@ export class CreateReportComponent extends BasePage implements OnInit {
     private readonly authService: AuthService,
     private reportgoodService: ReportgoodService,
     private reportService: ReportService,
-    private wContentService: WContentService
+    private wContentService: WContentService,
+    private samplingGoodService: SamplingGoodService,
   ) {
     super();
   }
@@ -161,7 +164,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
     });
   }
 
-  async saveVersionsDoc(close = true) {
+  async saveVersionsDoc(close = true, data = null) {
     if (isNullOrEmpty(this.version.content)) return;
 
     const user: any = this.authService.decodeToken();
@@ -173,7 +176,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
       tableName: this.tableName,
       registryId: this.requestId,
       documentTypeId: this.format.doctoTypeId.id,
-      content: this.format.content,
+      content: this.version.content,
       signedReport: 'N',
       version: '1',
       ucmDocumentName: null,
@@ -185,6 +188,13 @@ export class CreateReportComponent extends BasePage implements OnInit {
       modificationUser: user.username,
       modificationDate: moment(new Date()).format('YYYY-MM-DD'),
     };
+
+    if (!isNullOrEmpty(data)) {
+      doc = { ...data };
+      doc.modificationUser = user.username;
+      doc.modificationDate = moment(new Date()).format('YYYY-MM-DD');
+    }
+
 
     this.reportgoodService.saveReportDynamic(doc, !this.template).subscribe({
       next: resp => {
@@ -301,48 +311,94 @@ export class CreateReportComponent extends BasePage implements OnInit {
     }*/
   }
 
-  attachDocument() {
-    this.alertQuestion(
-      'warning',
-      'Confirmación',
-      '¿Está seguro que desea adjuntar el documento?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        //Ejecutar el servicio
-        this.onLoadToast('success', 'Documento adjuntado correctamente', '');
-        this.close();
-      }
-    });
-  }
-
   generateReport() {
-    return new Promise((resolve, reject) => {
-      this.wContentService
-        .downloadDinamycReport(
-          'sae.rptdesign',
-          'SOLICITUDES',
-          this.requestId,
-          this.documentTypeId
-        )
-        .subscribe({
-          next: (resp: any) => {
-            if (resp) {
-              resolve(resp);
-            } else {
-              resolve(null);
-            }
-          },
-          error: error => {
-            this.loader.load = false;
-            this.alert(
-              'error',
-              'Error en el reporte',
-              'No se pudo generar el reporte'
-            );
-            reject('false');
-          },
-        });
-    });
+
+    this.wContentService
+      .downloadDinamycReport(
+        'sae.rptdesign',
+        'SOLICITUDES',
+        this.requestId,
+        this.documentTypeId
+      )
+      .subscribe({
+        next: response => {
+          //let blob = this.dataURItoBlob(response);
+          //let file = new Blob([response], { type: 'application/pdf' });
+          //const fileURL = URL.createObjectURL(file);
+          //this.openPrevPdf(fileURL);
+
+          /*
+           nombreDoc: string,
+    contentType: string,
+    docData: any,
+    file: any,
+    extension: string
+          */
+          let token = this.authService.decodeToken();
+
+          const formData = {
+            keyDoc: 'SOLICITUDES',
+            xDelegacionRegional: 0,//this.programming?.regionalDelegationNumber,
+            dDocTitle: "Reporte",
+            xNombreProceso: 'SOLICITUDES',
+            xTipoDocumento: this.version.documentTypeId,
+            xNivelRegistroNSBDB: 'NA',
+            dDocType: ".pdf",
+            dDocAuthor: token.name,
+            dInDate: new Date(),
+            xidProgramacion: "",
+          };
+
+          this.wContentService.addDocumentToContent(
+            'Reporte',
+            '.pdf',
+            JSON.stringify(formData),
+            response,
+            '.pdf'
+          ).subscribe({
+            next: async resp => {
+
+              this.version.ucmDocumentName = resp.dDocName;
+
+              const sample: any = {
+                regionalDelegationId: 0,
+                startDate: moment(new Date()).format('YYYY-MM-DD'),
+                endDate: moment(new Date()).format('YYYY-MM-DD'),
+                speciesInstance: 'DOC_COMPLEMENTARIA',
+                numeraryInstance: 'DOC_COMPLEMENTARIA',
+                warehouseId: this.requestId,
+                version: 1,
+                transfereeId: this.documentTypeId,
+                contentId: resp.dDocName
+              };
+
+              this.samplingGoodService.createSample(sample).subscribe({
+                next: response => {
+                  this.version.reportFolio = response.sampleId;
+                  this.saveVersionsDoc(false, this.version);
+
+                  this.sign.emit(this.version);
+                  this.close();
+                },
+                error: error => {
+                  this.alert('error', 'Error', 'Error al crear');
+                },
+              });
+
+            },
+            error: error => { },
+          });
+
+        },
+        error: error => {
+          this.alert(
+            'error',
+            'Error en el reporte',
+            'No se pudo generar el reporte'
+          );
+        },
+      });
+
   }
 
   showFile() {
@@ -352,10 +408,13 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   openSignature() {
-    this.sign.emit({
 
-    });
-    this.close();
+    if (isNullOrEmpty(this.version.ucmDocumentName)) {
+      this.generateReport();
+    } else {
+      this.sign.emit(this.version);
+      this.close();
+    }
   }
 
 }

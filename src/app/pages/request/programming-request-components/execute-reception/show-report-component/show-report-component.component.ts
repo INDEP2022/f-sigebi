@@ -271,7 +271,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       next: response => {
         //this.createPersonsSing(response.data[0]);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -332,7 +332,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
             type: 'pdf',
           },
-          callback: (response: any) => {},
+          callback: (response: any) => { },
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
         keyboard: false,
@@ -444,7 +444,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 );
                 if (createSignatore) this.getSignatories();
               },
-              error: error => {},
+              error: error => { },
             });
         },
         error: async error => {
@@ -483,7 +483,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -877,7 +877,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 this.close();
               }
             },
-            error: error => {},
+            error: error => { },
           });
       });
     } else {
@@ -950,7 +950,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   }
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 107 && this.typeFirm == 'electronica') {
@@ -1006,7 +1006,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 210 && this.typeFirm == 'electronica') {
@@ -1062,7 +1062,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 106 && this.typeFirm == 'electronica') {
@@ -1118,7 +1118,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 197 && this.typeFirm == 'electronica') {
@@ -1168,7 +1168,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idOrderService && this.typeFirm == 'electronica') {
@@ -1222,7 +1222,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 218 && this.typeFirm == 'electronica') {
@@ -1270,7 +1270,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 219 && this.typeFirm == 'electronica') {
@@ -1319,7 +1319,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       }
@@ -1339,7 +1339,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1357,7 +1357,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {},
+          error: error => { },
         });
       });
     });
@@ -1394,7 +1394,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {},
+          error: error => { },
         });
       });
     });
