@@ -611,6 +611,74 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           },
         });
     }
+    if (
+      this.typeDoc == 2 ||
+      174 ||
+      7 ||
+      192 ||
+      108 ||
+      183 ||
+      26 ||
+      27 ||
+      50 ||
+      68 ||
+      217 ||
+      94 ||
+      40 ||
+      101 ||
+      105 ||
+      104 ||
+      72 ||
+      222 ||
+      223 ||
+      224 ||
+      225 ||
+      245 ||
+      246 ||
+      249
+    ) {
+      const token = this.authService.decodeToken();
+      console.log('entro', token);
+
+      const formData = {
+        keyDoc: this.idSample,
+        xNivelRegistroNSBDB: 'Reporte',
+        xNombreProceso: 'Reporte',
+        xDelegacionRegional: token.department,
+        DocTitle: 'Reporte',
+        dSecurityGroup: 'Public',
+        xTipoDocumento: this.typeDoc,
+      };
+
+      const extension = '.pdf';
+      const docName = 'Reporte';
+
+      this.wContentService
+        .addDocumentToContent(
+          docName,
+          extension,
+          JSON.stringify(formData),
+          this.selectedFile,
+          extension
+        )
+        .subscribe({
+          next: async response => {
+            const updateSample = await this.updateSamplek(response.dDocName);
+            if (updateSample) {
+              this.alertInfo(
+                'success',
+                'Acción Correcta',
+                'Documento adjuntado correctamente'
+              ).then(question => {
+                if (question.isConfirmed) {
+                  this.close();
+                  this.modalRef.content.callback(true);
+                }
+              });
+            }
+          },
+        });
+    }
   }
 
   updateSample(dDocName: string) {
