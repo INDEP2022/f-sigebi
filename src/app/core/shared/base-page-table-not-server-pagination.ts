@@ -71,6 +71,8 @@ export abstract class BasePageTableNotServerPagination<
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
+          console.log(response);
+
           if (response && response.data && response.data.length > 0) {
             this.data = response.data.map((row: any) => {
               return { ...row };

@@ -60,12 +60,12 @@
                     name="file"
                     #file
                     class="d-none"
-                    accept=".csv"
+                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                     (change)="onFileChange($event)" />
                 </div>
                 <div class="col-12">
                   <button
-                    [disabled]="!validGenerateLCs"
+                    [disabled]="!validGenerateLCs || !eventId.value"
                     class="btn btn-sm btn-secondary btn-block active me-2 font-size-14"
                     (click)="loadChecks()">
                     <!-- <i class="bx bx-upload text-light float-icon"></i> -->
@@ -73,38 +73,18 @@
                   </button>
                 </div>
                 <div class="col-12">
-                  <div class="btn-group d-block" dropdown>
+                  <div class="btn-group d-block">
                     <button
-                      [ngClass]="{ disabled: !validGenerateLCs }"
-                      dropdownToggle
+                      (click)="generateLcs()"
+                      [ngClass]="{
+                        disabled: !validGenerateLCs || !eventId.value
+                      }"
                       id="loadBtn2"
                       type="button"
-                      class="btn btn-sm btn-primary btn-block active me-2 font-size-14 dropdown-toggle"
-                      aria-controls="dropdown-animated">
+                      class="btn btn-sm btn-primary btn-block active me-2 font-size-14">
                       <!-- <i class="bx bx-send text-light float-icon"></i> -->
-                      Generar LCs <span class="caret"></span>
+                      Generar LCs
                     </button>
-                    <ul
-                      id="dropdown-animated"
-                      *dropdownMenu
-                      class="dropdown-menu"
-                      role="menu"
-                      aria-labelledby="loadBtn2">
-                      <li role="menuitem">
-                        <a
-                          class="dropdown-item bg-primary text-light"
-                          (click)="generateLcs('CONSULTA')"
-                          >CONSULTA</a
-                        >
-                      </li>
-                      <li role="menuitem">
-                        <a
-                          class="dropdown-item bg-primary text-light"
-                          (click)="generateLcs('UPDATE')"
-                          >ACTUALIZACIÓN</a
-                        >
-                      </li>
-                    </ul>
                   </div>
                 </div>
 
@@ -112,7 +92,7 @@
                   <button
                     class="btn btn-sm btn-primary btn-block active me-2 font-size-14"
                     (click)="reprocess()"
-                    [disabled]="!validGenerateLCs">
+                    [disabled]="!validGenerateLCs || !eventId.value">
                     <!-- <i class="bx bx-send text-light float-icon"></i> -->
                     Mantto y Reprocesos
                   </button>

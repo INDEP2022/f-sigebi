@@ -5,27 +5,6 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
-        <div class="col-xs-12 col-12 col-md-2 mb-3 mb-3 mt-3">
-          <form-field label="Fecha 1" [control]="form.get('startDate')">
-            <input
-              class="form-control"
-              formControlName="startDate"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-xs-12 col-12 col-md-2 mb-3 mb-3 mt-3">
-          <form-field label="Fecha 2" [control]="form.get('endDate')">
-            <input
-              class="form-control"
-              formControlName="endDate"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-xs-12 col-12 col-md-2 mb-3 mb-3 mt-3">
-          <form-field label="Lote" [control]="form.get('batch')">
-            <input class="form-control" formControlName="batch" type="text" />
-          </form-field>
-        </div>
         <!--Events Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
           <form-field [control]="form.get('event')">
@@ -41,6 +20,27 @@
             </ngx-select>
           </form-field>
           <!--<app-events-shared [form]="form"></app-events-shared>-->
+        </div>
+        <div class="col-xs-12 col-12 col-md-2 mb-3 mb-3 mt-3">
+          <form-field label="Lote" [control]="form.get('batch')">
+            <input class="form-control" formControlName="batch" type="text" />
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-2 mb-3 mb-3 mt-3">
+          <form-field label="Fecha 1" [control]="form.get('startDate')">
+            <input
+              class="form-control"
+              formControlName="startDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-2 mb-3 mb-3 mt-3">
+          <form-field label="Fecha 2" [control]="form.get('endDate')">
+            <input
+              class="form-control"
+              formControlName="endDate"
+              bsDatepicker />
+          </form-field>
         </div>
       </div>
       <div class="row mb-3 mt-3">

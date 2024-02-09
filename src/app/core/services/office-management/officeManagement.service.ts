@@ -52,6 +52,10 @@ export class OfficeManagementService extends HttpService {
     const route = OfficeManagementEndpoint.DeleteJobGestion;
     return this.post(`${route}`, body);
   }
+  getPaTriggerOAppraise(body: any): Observable<any> {
+    const route = OfficeManagementEndpoint.paTriggerOAppraise;
+    return this.post(`${route}`, body);
+  }
 
   createMJobManagementExtSSF3(body: IMJobManagementExtSSF3) {
     return this.post(OfficeManagementEndpoint.MJobManagementExtSSF3, body);

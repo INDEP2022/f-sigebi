@@ -40,7 +40,14 @@ import {
 } from './massive-conversion-columns';
 
 interface IExcelToJson {
-  NO_BIEN: number;
+  id: number;
+  CLIENTEID: number;
+  PALETAID: number;
+  LOTE: number;
+  MONTO_INT: number;
+  NO_CHEQUE_IN: number;
+  EXP_CHEQUE_IN: string;
+  FECVIGENCIA_IN: string;
 }
 
 @Component({
@@ -135,16 +142,19 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   activeTab: string = 'tab1';
   reProTabActive: boolean = true;
   tab3Active: boolean = false;
-
   reprocesSource: [];
-
   form: ModelForm<any>;
-
   validityDate: any;
-
   tipoConsul: string;
-
   fileReader = new FileReader();
+  isLoadingExportFile = false;
+  //data: IExcelToJson[] = [];
+  consecutiveTmp: number;
+  numRecordsCsv: number;
+  data: any;
+  fechaHoy: string;
+
+  paramsGetMax = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
     private excelService: ExcelService,
@@ -158,9 +168,12 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     private datePipe: DatePipe
   ) {
     super();
+    //this.today = new Date();
   }
 
   ngOnInit(): void {
+    this.dateToday();
+
     this.prepareForm();
 
     this.rfcSettings.columns = this.modifyColumns(this.rfcSettings.columns);
@@ -361,10 +374,46 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   searchData(fromButton?: boolean) {
     this.loading = true;
+
+    if (this.searchInsertFile == true) {
+      let params = {
+        ...this.paramsD.getValue(),
+        ...this.columnFiltersD,
+      };
+
+      this.capturelineService
+        .getTmpLcComer(params)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: res => {
+            this.dataSource.load(res.data);
+            this.dataSource.refresh();
+            this.totalItemsD = res.count;
+            this.loading = false;
+            this.validGenerateLCs = true;
+            this.form.enable();
+            console.log('datos: ', res.data, 'count: ', res.count);
+            this.validityDate = res.data[0].validityDate;
+          },
+          error: error => {
+            console.log('Error', error);
+            this.loading = false;
+            this.validGenerateLCs = false;
+            this.dataSource.load([]);
+            this.dataSource.refresh();
+            this.totalItemsD = 0;
+            if (fromButton) {
+              this.alert('warning', 'Advertencia', 'No se encontraron Datos');
+            }
+          },
+        });
+    }
+
     let params = {
       ...this.paramsD.getValue(),
       ...this.columnFiltersD,
     };
+
     params['filter.eventId'] = `$eq:${this.form.controls['eventId'].value}`;
 
     if (this.form.controls['batchId'].value) {
@@ -573,67 +622,215 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     }
   }
 
-  onFileChange(event?: Event) {
-    console.log('Evento: ', event);
+  onFileChange(event: Event) {
+    if (this.form.controls['eventId'].value != null) {
+      this.alertQuestion('question', 'Atención', `¿Insertar el archivo?`).then(
+        question => {
+          if (question.isConfirmed) {
+            this.tipoConsul = 'INSERT';
 
-    this.alertQuestion('question', 'Atención', `¿Insertar el archivo?`).then(
-      question => {
-        if (question.isConfirmed) {
-          this.tipoConsul = 'INSERT';
-
-          try {
             const files = (event.target as HTMLInputElement).files;
-            if (!files || files.length !== 1) {
-              throw new Error('Please select one file.');
-            }
-
-            // Limpia cualquier evento onload anterior
-            this.fileReader.onload = null;
-
-            // Asigna el evento onload para manejar la lectura del archivo
-            this.fileReader.onload = loadEvent => {
-              if (loadEvent.target && loadEvent.target.result) {
-                // Llama a la función para procesar el archivo
-                this.readExcel(loadEvent.target.result);
-
-                // Limpia el input de archivo para permitir cargar el mismo archivo nuevamente
-                // (event.target as HTMLInputElement).value = '';
-              }
-              console.log(this.fileReader.onload);
-            };
-
-            // Lee el contenido binario del archivo
-            this.fileReader.readAsBinaryString(files[0]);
-          } catch (error) {
-            console.error('Error:', error);
-            // Maneja el error de acuerdo a tus necesidades
+            if (files.length != 1)
+              throw 'No files selected, or more than of allowed';
+            const fileReader = new FileReader();
+            /*fileReader.onload = (e) => {
+            console.log("Entrando a fileReader.onload");
+            const fileContent = fileReader.result as string;
+            const rows = fileContent.split('\n'); // Suponiendo que cada fila del archivo CSV está separada por una nueva línea
+            const data = rows.map(row => {
+              const columns = row.split(','); // Suponiendo que las columnas están separadas por comas
+              // Asumiendo que la fecha está en la primera columna
+              const dateParts = columns[6].split('/'); // Dividir la fecha en partes: día, mes, año
+              // Crear un objeto Date con las partes de la fecha en el orden correcto (año, mes - 1, día)
+              const date = new Date(parseInt(dateParts[2]), parseInt(dateParts[1]) - 1, parseInt(dateParts[0]));
+              // Suponiendo que las otras columnas contienen otros datos
+              // Aquí puedes procesar las otras columnas según sea necesario
+              return {
+                date: date,
+                // Otras propiedades de las filas...
+              };
+            });
+            console.log(data);
+          }*/
+            fileReader.readAsBinaryString(files[0]);
+            fileReader.onload = () => this.readExcel(fileReader.result);
           }
         }
-      }
-    );
+      );
+    } else if (this.form.controls['eventId'].value === null) {
+      this.alertQuestion(
+        'question',
+        'Sin Evento Ingresado',
+        'La inserción se hará sin ID de Evento'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.alertQuestion(
+            'question',
+            'Atención',
+            `¿Insertar el archivo?`
+          ).then(question => {
+            if (question.isConfirmed) {
+              this.tipoConsul = 'INSERT';
+
+              const files = (event.target as HTMLInputElement).files;
+              if (files.length != 1)
+                throw 'No files selected, or more than of allowed';
+              const fileReader = new FileReader();
+              /*fileReader.onload = (e) => {
+            console.log("Entrando a fileReader.onload");
+            const fileContent = fileReader.result as string;
+            const rows = fileContent.split('\n'); // Suponiendo que cada fila del archivo CSV está separada por una nueva línea
+            const data = rows.map(row => {
+              const columns = row.split(','); // Suponiendo que las columnas están separadas por comas
+              // Asumiendo que la fecha está en la primera columna
+              const dateParts = columns[6].split('/'); // Dividir la fecha en partes: día, mes, año
+              // Crear un objeto Date con las partes de la fecha en el orden correcto (año, mes - 1, día)
+              const date = new Date(parseInt(dateParts[2]), parseInt(dateParts[1]) - 1, parseInt(dateParts[0]));
+              // Suponiendo que las otras columnas contienen otros datos
+              // Aquí puedes procesar las otras columnas según sea necesario
+              return {
+                date: date,
+                // Otras propiedades de las filas...
+              };
+            });
+            console.log(data);
+          }*/
+              fileReader.readAsBinaryString(files[0]);
+              fileReader.onload = () => this.readExcel(fileReader.result);
+            } else return;
+          });
+        }
+      });
+    }
   }
 
-  dataExcel: any = [];
-  propertyValues: string[] = [];
-  commaSeparatedString: string = '';
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
-      this.dataExcel = this.excelService.getData<IExcelToJson>(binaryExcel);
-      this.propertyValues = this.dataExcel.map((item: any) => item.no_bien);
-
-      // Unir las cadenas con comas para obtener una cadena separada por comas
-      this.commaSeparatedString = this.propertyValues.join(',');
-
-      console.log(this.commaSeparatedString);
-      console.log(this.dataExcel);
+      this.data = this.excelService.getData<IExcelToJson>(binaryExcel);
+      this.numRecordsCsv = this.data.length;
+      //Verificar que el archivo sea correcto
+      //Subir archivo
+      this.uploadToTpmLcComer(this.numRecordsCsv, this.data);
     } catch (error) {
       this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
     }
   }
 
-  //#endregion on click load file
+  searchInsertFile: boolean = false;
 
-  isLoadingExportFile = false;
+  async uploadToTpmLcComer(numRecords: number, dataCsv: IExcelToJson) {
+    console.log('Número de registros', numRecords);
+    console.log('Evento campo: ', this.form.controls['eventId'].value);
+
+    if (this.form.controls['eventId'].value === null) {
+      for (let i = 0; i < numRecords; i++) {
+        let consecutiveMax: any = await this.getConsecutiveMaxTmc();
+        console.log('consecutiveMax siguiente', consecutiveMax);
+        console.log('Registros: ', dataCsv[i]);
+
+        const dataJson = {
+          id: consecutiveMax,
+          //eventId: this.form.controls['eventId'].value,
+          customerId: dataCsv[i].CLIENTEID,
+          palletteId: dataCsv[i].PALETAID,
+          batchId: dataCsv[i].LOTE,
+          amount: dataCsv[i].MONTO_IN,
+          checkNumber: dataCsv[i].NO_CHEQUE_IN,
+          bankExpCheck: dataCsv[i].EXP_CHEQUE_IN,
+          validityDate: this.fechaHoy,
+          //validityDate: dataCsv[i].FECVIGENCIA_IN
+        };
+
+        console.log('Objeto a enviar ', dataJson);
+
+        this.capturelineService.postTmpLcComer(dataJson).subscribe({
+          next: resp => {
+            console.log('Inserción Masiva desde Excel Correcto: ', resp);
+          },
+          error: error => {
+            console.log('Inserción Masiva desde Excel incorrecto: ', error);
+          },
+        });
+      }
+
+      this.alertInfo(
+        'success',
+        'Archivo Insertado',
+        'Se actualizará la tabla solo con los registros válidos'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.searchInsertFile = true;
+          this.searchData();
+        }
+      });
+    }
+
+    if (this.form.controls['eventId'].value != null) {
+      for (let i = 0; i < numRecords; i++) {
+        let consecutiveMax: any = await this.getConsecutiveMaxTmc();
+        console.log('consecutiveMax siguiente', consecutiveMax);
+        console.log('Registros: ', dataCsv[i]);
+        const dataJson = {
+          id: consecutiveMax,
+          eventId: this.form.controls['eventId'].value,
+          customerId: dataCsv[i].CLIENTEID,
+          palletteId: dataCsv[i].PALETAID,
+          batchId: dataCsv[i].LOTE,
+          amount: dataCsv[i].MONTO_IN,
+          checkNumber: dataCsv[i].NO_CHEQUE_IN,
+          bankExpCheck: dataCsv[i].EXP_CHEQUE_IN,
+          validityDate: this.fechaHoy,
+          //validityDate: dataCsv[i].FECVIGENCIA_IN
+        };
+
+        console.log('Objeto a enviar ', dataJson);
+
+        this.capturelineService.postTmpLcComer(dataJson).subscribe({
+          next: resp => {
+            console.log('Inserción Masiva desde Excel Correcto: ', resp);
+          },
+          error: error => {
+            console.log('Inserción Masiva desde Excel incorrecto: ', error);
+          },
+        });
+      }
+
+      this.alertInfo(
+        'success',
+        'Archivo Insertado',
+        'Se actualizará la tabla solo con los registros válidos'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.searchData();
+        }
+      });
+    }
+  }
+
+  getConsecutiveMaxTmc() {
+    return new Promise((resolve, reject) => {
+      //Consultar el número más grande
+      this.paramsGetMax;
+      let params = {
+        ...this.paramsGetMax.getValue(),
+      };
+
+      params['sortBy'] = 'id:DESC';
+
+      this.capturelineService.getTmpLcComer(params).subscribe({
+        next: resp => {
+          this.consecutiveTmp = resp.data[0].id;
+          console.log('consecutiveMax Actual ', this.consecutiveTmp);
+          const consecutiveMax = this.consecutiveTmp + 1;
+          resolve(consecutiveMax);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
   exportFile() {
     if (!this.form.get('eventId').value) {
       this.alert('warning', this.title, 'No se ha seleccionado un evento');
@@ -678,6 +875,11 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   loadChecks() {
+    if (this.form.controls['eventId'].value == null) {
+      this.alert('warning', 'Atención', 'Se necesita un ID de Evento');
+      return;
+    }
+
     if (this.form.controls['validityDate'].value != null) {
       const fechaOriginal: Date = new Date(
         this.form.controls['validityDate'].value
@@ -799,6 +1001,11 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }*/
 
   async reprocess() {
+    if (this.form.controls['eventId'].value == null) {
+      this.alert('warning', 'Atención', 'Se necesita un ID de Evento');
+      return;
+    }
+
     this.searchEvent();
 
     this.tabset.tabs.forEach((tab, i) => {
@@ -844,22 +1051,51 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     return this.eventId ? this.eventId.value : null;
   }
 
-  generateLcs(type: string) {
-    console.log('Tipo seleccionado', type);
-
-    if (type === 'CONSULTA') {
-      this.alertInfo('success', 'CONSULTA', null);
-    } else if (type === 'UPDATE') {
-      this.alertInfo('success', 'ACTUALIZACIÓN', null);
+  generateLcs() {
+    if (this.form.controls['eventId'].value == null) {
+      this.alert('warning', 'Atención', 'Se necesita un ID de Evento');
+      return;
     }
 
-    /*this.alertQuestion('question', 'Atención', '¿Generar las Líneas de Captura?').then(question => {
+    this.alertQuestion(
+      'question',
+      'Atención',
+      '¿Generar las Líneas de Captura?'
+    ).then(question => {
       if (question.isConfirmed) {
-        
-        this.alertInfo('success', 'Líneas de Captura', 'Proceso Terminado');
+        const masiveData = {
+          event_id: this.form.controls['eventId'].value,
+          n_NUM_DIAS: null,
+          c_TIPO_LC: null,
+          c_TABLA_APLICA: null,
+          c_IND_FEC: null,
+          c_IND_MONTO: null,
+          c_RESUL: null,
+        };
 
+        console.log('Objeto a enviar', masiveData);
+
+        //	PUP_GEN_LCS_MASIV
+        this.comerEventService.pupGenLcsMasiv(masiveData).subscribe({
+          next: resp => {
+            console.log('Respuesta', resp);
+            this.alertInfo('success', 'Líneas de Captura', 'Proceso Terminado');
+            this.searchData();
+            this.guarantyData();
+          },
+          error: error => {
+            console.log('Error', error);
+            this.alertInfo(
+              'warning',
+              'Líneas de Captura',
+              'No se crearon las LC´s'
+            );
+          },
+        });
+
+        //	PUP_GEN_CONSULTA
       }
-    });*/
+    });
 
     // this.lcsColumns = this.lcsTestData;
     // this.lcsTotalItems = this.lcsColumns.length;
@@ -1069,42 +1305,57 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     console.log('Tab seleccionado', event);
   }
 
-  // getData(listParams?: ListParams, notValidate: boolean = false): void {
-  //   if (this.form.invalid && !notValidate) {
-  //     this.form.markAllAsTouched();
-  //     return;
-  //   }
-  //   this.loading = true;
-  //   const params = this.makeParams();
-  //   params.page = listParams?.page || 1;
-  //   params.limit = listParams?.pageSize || 10;
-  //   this.capturelineService.getTmpLcComer(params.getParams()).subscribe({
-  //     next: (res: any) => {
-  //       this.loading = false;
-  //       this.dataColumns.load(res.data);
-  //       this.totalEntries = res.count;
-  //     },
-  //     error: (err: any) => {
-  //       this.loading = false;
-  //       this.onLoadToast('error', 'Error', err);
-  //     },
-  //   });
-  // }
+  dateToday() {
+    const fecha = new Date();
+    const isoDateString = fecha.toISOString();
+    this.fechaHoy = isoDateString.split('T')[0];
+  }
 
-  // makeParams(): FilterParams {
-  //   const params = new FilterParams();
-  //   const values = this.form.value as any;
-  //   params.addFilter('eventId', values.eventId);
-  //   if (values.batchId) params.addFilter('batchId', values.batchId);
-  //   if (values.status) params.addFilter('status', values.status);
-  //   if (values.operationId) params.addFilter('operationId', values.operationId);
-  //   if (values.insertDate)
-  //     params.addFilter('insertDate', convertFormatDate(values.insertDate));
-  //   if (values.validityDate)
-  //     params.addFilter('validityDate', convertFormatDate(values.validityDate));
-  //   if (values.rfc) params.addFilter('rfc', values.rfc, SearchFilter.IN);
-  //   if (values.clientId)
-  //     params.addFilter('clientId', values.clientId, SearchFilter.IN);
-  //   return params;
-  // }
+  generateWhereClause(
+    tipoProc: string,
+    evento: string,
+    lote: string,
+    fecInsert: Date,
+    estatus: number,
+    idOperacion: string,
+    param02: string,
+    param03: string
+  ): string {
+    let whereClause: string = '1 = 1';
+
+    if (tipoProc === 'TMP_LC_COMER') {
+      if (evento !== null && evento !== undefined) {
+        whereClause += ` AND ID_EVENTO IN (${evento})`;
+      }
+
+      if (lote !== null && lote !== undefined) {
+        whereClause += ` AND ID_LOTE IN (${lote})`;
+      }
+
+      if (fecInsert !== null && fecInsert !== undefined) {
+        const formattedDate = fecInsert.toLocaleDateString('en-US', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        });
+        whereClause += ` AND TRUNC(FEC_INSERT) = TO_DATE('${formattedDate}', 'MM/DD/YYYY')`;
+      }
+
+      if (estatus !== null && estatus !== undefined) {
+        whereClause += ` AND ESTATUS = ${estatus}`;
+      }
+
+      if (idOperacion !== null && idOperacion !== undefined) {
+        whereClause += ` AND ID_OPERACION IN (${idOperacion})`;
+      }
+    }
+
+    if (whereClause === '1 = 1') {
+      whereClause = ''; // No es necesario incluir WHERE si no hay condiciones.
+    } else {
+      whereClause = whereClause.replace('1 = 1 AND ', ''); // Remover la primera ocurrencia de '1 = 1 AND'
+    }
+
+    return whereClause;
+  }
 }
