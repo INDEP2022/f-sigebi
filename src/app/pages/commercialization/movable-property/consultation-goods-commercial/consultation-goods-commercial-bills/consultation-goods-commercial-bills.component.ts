@@ -83,8 +83,10 @@ export class ConsultationGoodsCommercialBillsComponent
 
   selectRow(row: IGoodSpent, selected: boolean) {
     if (selected) {
+      console.log(row);
       this.selectedRows.push(row);
     } else {
+      console.log(row);
       this.selectedRows = this.selectedRows.filter(
         _row => JSON.stringify(row) != JSON.stringify(_row)
       );
@@ -221,21 +223,21 @@ export class ConsultationGoodsCommercialBillsComponent
 
   private transFormColums(row: any) {
     return {
-      'No. Bien': row.no_bien,
-      Descripción: row.bien_descripcion,
       Expediente: row.no_expediente,
-      Estatus: row.estatus,
+      'No. Siab': row.no_bien,
+      // Descripción: row.bien_descripcion,
       Cantidad: row.cantidad,
+      Estatus: row.estatus,
       Mandato: row.cvman,
-      'Clave Transferente': row.no_transferente,
+      // 'Clave Transferente': row.no_transferente,
       'Sol. Pago': row.id_solicitudpago,
       Beneficiario: row.nombreprov,
       'Importe Gasto': row['?column?'],
       'No. Factura': row.no_factura_rec,
-      'Fecha Factura': row.to_char,
-      Solicita: row.nom_empl_solicita,
-      Autorizó: row.nom_empl_autoriza,
-      Capturó: row.nom_empl_captura,
+      // 'Fecha Factura': row.to_char,
+      // Solicita: row.nom_empl_solicita,
+      // Autorizó: row.nom_empl_autoriza,
+      // Capturó: row.nom_empl_captura,
     };
   }
 
