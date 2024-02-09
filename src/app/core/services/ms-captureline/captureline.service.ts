@@ -41,4 +41,10 @@ export class CapturelineService extends HttpService {
       body
     );
   }
+  pkComerLcObtainPostDateSkilled(body: any) {
+    return this.post<IListResponse<any>>(
+      this.route.PkComerLcObtainPostDateSkilled,
+      body
+    );
+  }
 }

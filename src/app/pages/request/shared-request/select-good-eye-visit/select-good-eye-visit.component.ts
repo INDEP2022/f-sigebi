@@ -303,7 +303,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
         requestId: this.idRequest,
         goods: this.selectedList,
       },
-      class: 'modal-lg modal-dialog-centered',
+      class: 'modal-lg modal-dialog-centered modal-dialog-centered-top',
       ignoreBackdropClick: true,
     };
     this.bsModalRef = this.modalService.show(ModifyDatesModalComponent, config);
@@ -396,7 +396,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
       initialState: {
         data,
         typeInfo,
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => { },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

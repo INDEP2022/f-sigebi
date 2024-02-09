@@ -50,7 +50,7 @@ export class CheckboxReportDelitComponent implements OnInit {
   constructor(private expenseCaptureDataService: ExpenseCaptureDataService) {}
 
   ngOnInit(): void {
-    // debugger;
+    // //
     this.checked = this.value;
     const row = this.rowData;
     if (this.expenseCaptureDataService.SELECT_CAMBIA_CLASIF_ENABLED === false) {

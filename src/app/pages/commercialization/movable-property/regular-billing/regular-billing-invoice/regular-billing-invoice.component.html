@@ -82,7 +82,7 @@
                   </button>
                   <!-- LISTO -->
                   <button
-                    [disabled]="buttons"
+                    [disabled]="true"
                     type="button"
                     class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
                     (click)="viewInvoice()">
@@ -117,10 +117,13 @@
                 <div class="col-12">
                   <!-- LISTO -->
                   <button
+                    [ngClass]="{ loading: btnLoading3 }"
+                    [disabled]="btnLoading3"
                     type="button"
                     class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
                     (click)="updateData()">
-                    Actualiza Datos <i class="fas fa-sync-alt"> </i>
+                    Actualiza Datos
+                    <i *ngIf="!btnLoading3" class="fas fa-sync-alt"> </i>
                   </button>
                   <!-- LISTO -->
                   <button
@@ -248,7 +251,7 @@
                   <!-- LISTO -->
                   <button
                     [ngClass]="{ loading: btnLoading11 }"
-                    [disabled]="buttons || btnLoading11"
+                    [disabled]="true"
                     type="button"
                     class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
                     (click)="removeInvoice()">
@@ -561,24 +564,26 @@
   <div class="row pt-3">
     <div class="col-12 d-flex justify-content-end pb-3">
       <div>
-        <button
+        <!-- <button
+          tooltip=""
+          containerClass="tooltip-style"
           [ngClass]="{ loading: btnLoadAU }"
           [disabled]="btnLoadAU"
           (click)="updateDetFact('AU')"
           type="button"
           class="btn btn-primary active btn-sm mr-2 mb-2">
           <span *ngIf="!btnLoadAU">AU</span>
-        </button>
+        </button> -->
       </div>
       <div>
-        <button
+        <!-- <button
           [ngClass]="{ loading: btnLoadAP }"
           [disabled]="btnLoadAP"
           (click)="updateDetFact('AP')"
           type="button"
           class="btn btn-info active btn-sm mr-2 mb-2">
           <span *ngIf="!btnLoadAP">AP</span>
-        </button>
+        </button> -->
       </div>
       <app-columns-select
         [(settings)]="settings2"

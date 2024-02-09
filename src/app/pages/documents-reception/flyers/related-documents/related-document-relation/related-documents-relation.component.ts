@@ -120,7 +120,8 @@ export interface IGoodJobManagement {
 })
 export class RelatedDocumentsRelationComponent
   extends RelateDocumentsResponseRelation
-  implements OnInit {
+  implements OnInit
+{
   @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
   @ViewChild('tableDocs') tableDocs: Ng2SmartTableComponent;
 
@@ -623,7 +624,7 @@ export class RelatedDocumentsRelationComponent
                   this.copyOficio = arr;
                   this.onLoadToast('success', 'Se eliminó correctamente', '');
                 },
-                error: err => { },
+                error: err => {},
               });
           }
         }
@@ -939,10 +940,10 @@ export class RelatedDocumentsRelationComponent
           addressee:
             mJobManagement.jobType == 'INTERNO' || mJobManagement?.addressee
               ? ({
-                usuario: mJobManagement.addressee,
-                nombre: null,
-                userAndName: mJobManagement.addressee as any,
-              } as any)
+                  usuario: mJobManagement.addressee,
+                  nombre: null,
+                  userAndName: mJobManagement.addressee as any,
+                } as any)
               : null,
         });
         if (this.formJobManagement.value.statusOf === 'ENVIADO') {
@@ -992,7 +993,7 @@ export class RelatedDocumentsRelationComponent
                 userAndName: res.usuario + ' - ' + res.nombre,
               } as any);
             },
-            () => { }
+            () => {}
           );
         }
 
@@ -2449,7 +2450,7 @@ export class RelatedDocumentsRelationComponent
   //   if (filter != 'Todos') {
   //     params['filter.goodClassNumber'] = `$eq:${filter}`;
   //   }
-  //   debugger;
+  //   //
   //   //this.filtroTipos(this.paramsGestionDictamen.expediente);
   //   this.goodServices.getByExpedientAndParams(params).subscribe({
   //     next: response => {
@@ -2798,7 +2799,7 @@ export class RelatedDocumentsRelationComponent
         const count = await this.getDocJobManagementCount(params);
         console.log('COUNT DOCUMENTS', count);
         if (count > 0) {
-          // debugger;
+          // //
           this.isDisabledBtnDocs = true;
         }
       }
@@ -3315,7 +3316,7 @@ export class RelatedDocumentsRelationComponent
     }
   }
 
-  _PUP_ENVIA_PGR() { }
+  _PUP_ENVIA_PGR() {}
 
   // changeSender(sender) {
   //   console.log({sender});

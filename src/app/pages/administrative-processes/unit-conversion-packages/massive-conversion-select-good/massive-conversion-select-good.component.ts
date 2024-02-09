@@ -464,10 +464,10 @@ export class MassiveConversionSelectGoodComponent
     let V_BANR = true;
     let packageEnc: IPackageGoodEnc = this.noPackage.value;
 
-    // debugger;
+    // //
     const results = await goodCheck.map(async good => {
       console.log(good);
-      // debugger;
+      // //
       const row = good.row;
       const goodNumber = row.goodNumber;
       const numberTransferee = row.numberTransferee;
@@ -972,7 +972,7 @@ export class MassiveConversionSelectGoodComponent
   } */
 
   pbIngresar() {
-    // debugger;
+    // //
     if (goodCheck.length > 0) {
       this.clearPrevisualizationData();
     } else {

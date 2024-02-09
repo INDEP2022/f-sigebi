@@ -16,6 +16,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -31,16 +32,15 @@ import Swal from 'sweetalert2';
 import { DELEGATION_COLUMNS_REPORT } from '../../../../../app/pages/siab-web/commercialization/report-unsold-goods/report-unsold-goods/columns';
 import { SendRequestEmailComponent } from '../../destination-information-request/send-request-email/send-request-email.component';
 import { ChangeLegalStatusComponent } from '../../economic-compensation/change-legal-status/change-legal-status.component';
+import { AnnexJAssetsClassificationComponent } from '../../generate-sampling-supervision/assets-classification/annex-j-assets-classification/annex-j-assets-classification.component';
+import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
+import { UploadReportReceiptComponent } from '../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { CreateReportComponent } from '../../shared-request/create-report/create-report.component';
 import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/mail-field-modal.component';
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { UploadReportReceiptComponent } from '../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
-import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
-import { AnnexJAssetsClassificationComponent } from '../../generate-sampling-supervision/assets-classification/annex-j-assets-classification/annex-j-assets-classification.component';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -49,8 +49,7 @@ import { AnnexJAssetsClassificationComponent } from '../../generate-sampling-sup
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
   protected override btnGrouper: boolean;
   protected override formatReport: boolean;
   protected override signReport: boolean;
@@ -320,7 +319,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   async openReport(): Promise<void> {
     if (!this.nextTurn) {
@@ -610,7 +609,7 @@ export class RequestCompDocTasksComponent
   async turnNotificationTask(email: string) {
     const params = new ListParams();
     params['filter.applicationId'] = `$eq:56817`; //`$eq:${this.requestId}`;
-    debugger;
+    //
     const goodResDevResult: any = await this.getGoodResDev(params);
     if (goodResDevResult.count == 0) {
       this.onLoadToast('error', 'No se han seleccionado bienes del Inventario');
@@ -914,7 +913,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1625,7 +1624,7 @@ export class RequestCompDocTasksComponent
     this.validate.registerAppointment = event.isValid;
   }
 
-  onSetData(event) {}
+  onSetData(event) { }
 
   onOrder(event) {
     this.validate.orderEntry = event.isValid;
@@ -1645,7 +1644,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1661,7 +1660,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1723,7 +1722,6 @@ export class RequestCompDocTasksComponent
   }
 
   openModalLegal(context?: Partial<ChangeLegalStatusComponent>) {
-
     if (this.requestInfo.detail.reportSheet == 'OCSJ') {
       this.openSignature();
       return;
@@ -1748,12 +1746,12 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
 
   showReport(data) {
     console.log(data);
 
-    if (false) {
+    if (true) {
       this.wContentService
         .downloadDinamycReport(
           'sae.rptdesign',
@@ -1763,7 +1761,11 @@ export class RequestCompDocTasksComponent
         )
         .subscribe({
           next: response => {
-            console.log(response);
+            //let blob = this.dataURItoBlob(response);
+            let file = new Blob([response], { type: 'application/pdf' });
+            const fileURL = URL.createObjectURL(file);
+            this.openPrevPdf(fileURL);
+
           },
           error: error => {
             this.showError('Vista previa no dipoonible');
@@ -1777,7 +1779,7 @@ export class RequestCompDocTasksComponent
           const fileURL = URL.createObjectURL(file);
           this.openPrevPdf(fileURL);
         },
-        error: error => {},
+        error: error => { },
       });
     }
   }
@@ -1847,7 +1849,7 @@ export class RequestCompDocTasksComponent
   openSignature() {
     this.openModal(
       AnnexJAssetsClassificationComponent,
-      "328",
+      '328',
       'sign-annexJ-assets-classification'
     );
   }
@@ -1879,10 +1881,10 @@ export class RequestCompDocTasksComponent
     const idTypeDoc = typeDocument;
     const idSample = this.requestId;
     const typeFirm = typeSign;
-    const tableName = "";//this.tableName;
-    const reportName = ""//this.tableName;
+    const tableName = ''; //this.tableName;
+    const reportName = ''; //this.tableName;
     const dynamic = true;
-    const signed = !this.signReport;//!this.isSigned;
+    const signed = !this.signReport; //!this.isSigned;
 
     //Modal que genera el reporte
     let config: ModalOptions = {

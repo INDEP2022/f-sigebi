@@ -8,7 +8,7 @@ export const SETTING_DATA = {
   actions: false,
   columns: {
     eventId: {
-      title: 'Id Evento',
+      title: 'ID Evento',
       type: 'number',
       sort: false,
     },
@@ -17,12 +17,22 @@ export const SETTING_DATA = {
       type: 'number',
       sort: false,
     },
-    batch: {
+    comerLots: {
       title: 'Lote Público',
       type: 'number',
       sort: false,
-      valuePrepareFunction: (_cell: any, item: any) => {
-        return item?.comerLots?.lotPublic;
+
+      valuePrepareFunction: (value: any) => {
+        return value != null ? value.lotPublic : '';
+      },
+
+      filterFunction(cell?: any, search?: string): boolean {
+        let column = cell.lotPublic;
+        if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+          return true;
+        } else {
+          return false;
+        }
       },
     },
     customerId: {
@@ -30,12 +40,20 @@ export const SETTING_DATA = {
       type: 'number',
       sort: false,
     },
-    rfc: {
+    comerClient: {
       title: 'R.F.C.',
       type: 'string',
       sort: false,
-      valuePrepareFunction: (_cell: any, item: any) => {
-        return item?.comerClient?.rfc;
+      valuePrepareFunction: (value: any) => {
+        return value != null ? value.rfc : '';
+      },
+      filterFunction(cell?: any, search?: string): boolean {
+        let column = cell.rfc;
+        if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+          return true;
+        } else {
+          return false;
+        }
       },
     },
     amount: {
@@ -98,10 +116,10 @@ export const SETTING_DATA = {
       valuePrepareFunction: (_cell: any, item: any) => {
         let observation = '';
         if (!item.customerId) {
-          observation += 'No se ingreso el cliente. ';
+          observation += 'No se ingresó el cliente. ';
         }
         if (!item.batchId) {
-          observation += 'No se ingreso el lote. ';
+          observation += 'No se ingresó el lote. ';
         }
         if (!item.comerClient == null) {
           observation += 'El ID Cliente no Existe. ';
@@ -112,17 +130,17 @@ export const SETTING_DATA = {
         }
 
         if (!item.amount) {
-          observation += 'No se ingreso el monto. ';
+          observation += 'No se ingresó el monto. ';
         }
 
         if (!item.validityDate) {
-          observation += 'No se ingreso la fecha de vigencia. ';
+          observation += 'No se ingresó la fecha de vigencia. ';
         }
         if (!item.checkNumber) {
-          observation += 'No se ingreso el número de cheque. ';
+          observation += 'No se ingresó el número de cheque. ';
         }
         if (!item.bankExpCheck) {
-          observation += 'No se ingreso el Expide. Cheque. ';
+          observation += 'No se ingresó el Expide. Cheque. ';
         }
         // console.log({ observation });
         return observation;
@@ -156,6 +174,11 @@ export const SETTING_DATA = {
       type: 'string',
       sort: false,
     },
+    operationId: {
+      title: 'ID Operación',
+      type: 'string',
+      sort: false,
+    },
   },
 };
 
@@ -165,22 +188,22 @@ export const SETTING_LCS = {
   actions: false,
   columns: {
     idlcg: {
-      title: 'Id Lcg',
+      title: 'ID LCG',
       type: 'number',
       sort: false,
     },
     idEvent: {
-      title: 'Id Evento',
+      title: 'ID Evento',
       type: 'number',
       sort: false,
     },
     idBatch: {
-      title: 'Id Lote',
+      title: 'ID Lote',
       type: 'number',
       sort: false,
     },
     idCustomer: {
-      title: 'Id Cliente',
+      title: 'ID Cliente',
       type: 'number',
       sort: false,
     },
@@ -285,7 +308,7 @@ export const SETTING_RFC = {
       sort: false,
     },
     batch: {
-      title: 'Id Lote',
+      title: 'ID Lote',
       type: 'number',
       sort: false,
     },
@@ -353,12 +376,12 @@ export const SETTING_CLIENT_ID = {
   },
   columns: {
     clientId: {
-      title: 'Id cliente',
+      title: 'ID cliente',
       type: 'number',
       sort: false,
     },
     batch: {
-      title: 'Id Evento',
+      title: 'ID Evento',
       type: 'number',
       sort: false,
     },
@@ -457,80 +480,75 @@ export const SETTING_RFC_REWORK = {
 
 export const SETTING_REPROCESS = {
   ...TABLE_SETTINGS,
-  actions: {
-    columnTitle: 'Acciones',
-    position: 'right',
-    add: true,
-    edit: true,
-    delete: true,
-  },
+  hideSubHeader: false,
+  actions: false,
   columns: {
     idlcg: {
-      title: 'Id Lcg',
+      title: 'ID LCG',
       type: 'number',
       sort: false,
     },
     idEvent: {
-      title: 'Id Evento',
+      title: 'ID Evento',
       type: 'number',
       sort: false,
     },
-    FOLIO_APROBACION: {
+    invoiceApproval: {
       title: 'Folio Aprobación',
       type: 'number',
       sort: false,
     },
-    BANCO_EMISOR: {
+    bankTransmitter: {
       title: 'Banco Emisor',
       type: 'string',
       sort: false,
     },
-    USER_GENERA: {
+    generateUser: {
       title: 'User Genera',
       type: 'string',
       sort: false,
     },
-    INDICADOR: {
+    indicator: {
       title: 'Indicador',
       type: 'string',
       sort: false,
     },
-    FEC_APRO_PAGO: {
+    approPayDate: {
       title: 'Fecha Aprobación Pago',
       type: 'string',
       sort: false,
     },
-    NO_PALETA: {
+    palletteNumber: {
       title: 'No. Paleta',
       type: 'string',
       sort: false,
     },
     idBatch: {
-      title: 'Id Lote',
+      title: 'ID Lote',
       type: 'number',
       sort: false,
     },
     idCustomer: {
-      title: 'Id Cliente',
+      title: 'ID Cliente',
       type: 'number',
       sort: false,
     },
-    idPublicBatch: {
-      title: 'Id Lote Público',
+    /*idPublicBatch: {
+      title: 'Lote Público',
       type: 'number',
       sort: false,
-    },
+    },*/
     amount: {
       title: 'Monto',
       type: 'number',
       sort: false,
     },
-    PALETA: {
+    /*PALETA: {
       title: 'Paleta',
       type: 'string',
       sort: false,
-    },
-    numberCheck: {
+    },*/
+    checkNumber: {
       title: 'N° Cheque',
       type: 'number',
       sort: false,
@@ -555,18 +573,23 @@ export const SETTING_REPROCESS = {
       type: 'number',
       sort: false,
     },
-    description: {
+    /*description: {
       title: 'Descripción',
       type: 'string',
       sort: false,
-    },
+    },*/
     status: {
       title: 'Estatus',
       type: 'string',
       sort: false,
     },
-    dateRecord: {
+    recordDate: {
       title: 'Fecha Registro',
+      type: 'string',
+      sort: false,
+    },
+    idTypeSat: {
+      title: 'Tipo de Pago',
       type: 'string',
       sort: false,
     },

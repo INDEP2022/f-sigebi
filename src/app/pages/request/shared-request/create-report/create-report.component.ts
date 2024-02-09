@@ -117,6 +117,9 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   async getCatFormats(params: ListParams) {
+
+    console.log('getCatFormats', this.documentTypeId);
+
     params['shortBy'] = 'reportName';
     params['limit'] = 100;
 

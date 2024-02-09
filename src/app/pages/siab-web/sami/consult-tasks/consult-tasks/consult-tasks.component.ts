@@ -364,7 +364,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     params['filter.reviewers'] = `$ilike:${user.username}`;
     params['filter.idDelegationRegional'] = `$eq:${idDeleReg}`;
     params['sortBy'] = 'id:DESC';
-    debugger;
+    //
     const result: any = await this.getTaskRepostBase64(params);
     const base64String = result.base64File;
     const filename: string = result.nameFile;

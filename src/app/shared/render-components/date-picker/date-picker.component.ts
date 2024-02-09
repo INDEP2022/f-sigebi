@@ -25,7 +25,7 @@ export class DatePickerComponent extends DefaultEditor implements OnInit {
       if (this.cell.getValue() !== null) {
         const strings = (this.cell.getValue() + '').split('/');
         const date = new Date(+strings[2], +strings[1] - 1, +strings[0]);
-        // debugger;
+        // //
         // let date = new Date(this.cell.getValue());
         // if (dateIsValid(date)) {
         //   console.log(date);

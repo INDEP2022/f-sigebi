@@ -9,7 +9,7 @@
   <div body>
     <div class="md-tabs">
       <tabset #myTabset>
-        <tab id="A" heading="FACTURAS">
+        <tab id="A" heading="Facturas">
           <section>
             <app-card [header]="false" [footer]="false">
               <div body style="margin-bottom: 0px !important">
@@ -58,9 +58,19 @@
                             <input
                               type="text"
                               class="form-control"
+                              bsDatepicker
+                              [bsConfig]="{
+                                withTimepicker: true,
+                                dateInputFormat: 'DD/MM/YYYY h:mm a',
+                                keepDatepickerOpened: true
+                              }"
+                              formControlName="date" />
+                            <!-- <input
+                              type="text"
+                              class="form-control"
                               formControlName="date"
                               bsDatepicker
-                              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+                              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" /> -->
                           </form-field>
                         </div>
                       </div>
@@ -189,7 +199,7 @@
                                 Exporta a CSV
                                 <i
                                   *ngIf="!btnLoading7"
-                                  class="bx bx-upload float-icon"></i>
+                                  class="bx bx-download float-icon"></i>
                               </button>
                             </div>
                           </div>
@@ -685,7 +695,7 @@
             </app-card>
           </section>
         </tab>
-        <tab id="B" heading="ERRORES Y DATOS NULOS">
+        <tab id="B" heading="Errores y Datos Nulos">
           <section>
             <app-card [header]="false" [footer]="false">
               <div class="row" body>
@@ -715,7 +725,7 @@
             </app-card>
           </section>
         </tab>
-        <tab id="C" heading="SIN FOLIO EN SIRSAE">
+        <tab id="C" heading="Sin Folio en Sirsae">
           <section>
             <app-card [header]="false" [footer]="false">
               <div class="row" body>
@@ -745,7 +755,7 @@
             </app-card>
           </section>
         </tab>
-        <tab id="D" heading="ACTUALIZACIÓN DE EVENTOS">
+        <tab id="D" heading="Actualización de Eventos">
           <section>
             <app-card [header]="false" [footer]="false">
               <div class="row" body>

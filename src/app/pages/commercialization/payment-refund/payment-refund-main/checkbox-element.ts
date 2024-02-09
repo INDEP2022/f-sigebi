@@ -36,7 +36,7 @@ import {
     `,
   ],
 })
-export class CheckboxElementComponent<T = any> implements OnInit {
+export class CheckboxElementComponent2<T = any> implements OnInit {
   checked: boolean;
   disabled: boolean;
   @ViewChild('box', { static: true }) box: ElementRef<HTMLInputElement>;
@@ -49,8 +49,8 @@ export class CheckboxElementComponent<T = any> implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    ////
     this.checked = this.value;
+    if (this.rowData) if (this.rowData['idwaste'] == null) this.disabled = true;
   }
 
   onToggle($event: Event) {

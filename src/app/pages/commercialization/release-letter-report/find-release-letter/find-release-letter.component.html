@@ -4,29 +4,31 @@
       <h5 class="modal-title">BÚSQUEDA DE CARTAS DE LIBERACIÓN DE INMUEBLES</h5>
     </div>
   </div>
-
   <div body>
-    <div class="table-padding"></div>
-    <!-- <div class="justify-content-end d-flex mb-2">
-      <app-columns-select [(settings)]="settings"></app-columns-select>
-    </div> -->
-    <!-- <ng-scrollbar track="horizontal" [autoHeightDisabled]="false"> -->
-    <form-loader *ngIf="loading"></form-loader>
-    <div class="table-padding"></div>
-    <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
-      <!-- <div [class]="loading ? 'table-loading' : ''"> -->
-      <ng2-smart-table
-        class="table-responsive"
-        [attr.class]="'table-responsive table-bordered'"
-        [settings]="settings"
-        [source]="dataFactLetter"
-        (userRowSelect)="onUserRowSelect($event)">
-      </ng2-smart-table>
-      <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination>
-      <div class="table-padding"></div>
-      <!-- </div> -->
-    </ng-scrollbar>
+    <div class="col-12 mb-3">
+      <div class="d-flex flex-row-reverse">
+        <app-columns-select
+          [defaultColumns]="7"
+          [(settings)]="settings"></app-columns-select>
+      </div>
+    </div>
+    <div class="col-12">
+      <form-loader *ngIf="loading"></form-loader>
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{ height: loading ? '0px' : '400px' }">
+        <ng2-smart-table
+          class="table-responsive"
+          [attr.class]="'table-responsive table-bordered'"
+          [settings]="settings"
+          (delete)="remove($event.data)"
+          [source]="dataFactLetter"
+          (userRowSelect)="onUserRowSelect($event)">
+        </ng2-smart-table>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+      </ng-scrollbar>
+    </div>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">

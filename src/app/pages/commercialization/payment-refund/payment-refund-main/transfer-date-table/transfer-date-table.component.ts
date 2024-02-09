@@ -12,7 +12,8 @@ import {
 import { PaymentDevolutionService } from 'src/app/core/services/ms-paymentdevolution/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { CheckboxElementComponent } from '../../../shared-marketing-components/payment-dispersion-monitor/dispersion-payment-details/checkbox-element/checkbox-element.component';
+// import { CheckboxElementComponent } from '../../../shared-marketing-components/payment-dispersion-monitor/dispersion-payment-details/checkbox-element/checkbox-element.component';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { PaysService } from '../services/services';
 // import { CREATION_PERMISSIONS_COLUMNS } from './creation-permissions-columns';
 
@@ -44,13 +45,7 @@ export class TransferDateTableComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
-      actions: {
-        columnTitle: 'Acciones',
-        delete: false,
-        edit: true,
-        add: false,
-        position: 'right',
-      },
+      actions: false,
       edit: {
         editButtonContent:
           '<i class="fa fa-pencil-alt text-warning mx-2 pl-4"></i>',
@@ -146,9 +141,7 @@ export class TransferDateTableComponent extends BasePage implements OnInit {
     });
   }
   isBankSelected(data: any) {
-    const exists = this.selectBanksCheck.find(
-      (item: any) => item.paymentId == data.paymentId
-    );
+    const exists = this.selectBanksCheck.find((item: any) => item == data);
     return !exists ? false : true;
   }
   billingDetSelectedChange(data: any, selected: boolean) {
@@ -156,7 +149,7 @@ export class TransferDateTableComponent extends BasePage implements OnInit {
       this.selectBanksCheck.push(data);
     } else {
       this.selectBanksCheck = this.selectBanksCheck.filter(
-        (item: any) => item.paymentId != data.paymentId
+        (item: any) => item != data
       );
     }
   }
@@ -168,7 +161,7 @@ export class TransferDateTableComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.dateForm = this.fb.group({
-      transferDate: [null, [Validators.required]],
+      transferDate: [null, Validators.required],
       observations: [null, Validators.pattern(STRING_PATTERN)],
     });
   }
@@ -280,5 +273,59 @@ export class TransferDateTableComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  cpyDate() {}
+  cpyDate() {
+    const { transferDate, observations } = this.dateForm.value;
+    if (!transferDate) {
+      this.dateForm.controls['transferDate'].markAllAsTouched();
+      this.alert('warning', 'Debe indicar la Fecha de Transferencia', '');
+      return;
+    }
+    console.log('this.selectBanksCheck', this.selectBanksCheck);
+    if (this.selectBanksCheck.length == 0) {
+      this.alert('warning', 'No hay registros seleccionados', '');
+      return;
+    }
+    let val = 0;
+    let result = this.selectBanksCheck.map(async item => {
+      let data = {
+        devPaymentControlId: item.devPaymentControlId,
+        bankCode: item.bankCode,
+        account: item.account,
+        paymentId: item.paymentId,
+        paymentComments: observations,
+        paymentDate: transferDate,
+        batchId: item.batchId,
+      };
+      let resp = await this.updateCtlDevPagP(data);
+      console.log('resp', resp);
+      if (resp) val = val + 1;
+    });
+
+    Promise.all(result).then(resp => {
+      this.selectBanksCheck = [];
+      this.getData();
+      if (val > 0) {
+        this.alert(
+          'success',
+          'Se actualizaron los registros correctamente',
+          ''
+        );
+      } else {
+        this.alert('warning', 'No se pudieron actualizar los registros', '');
+      }
+    });
+  }
+
+  updateCtlDevPagP(data: any) {
+    return new Promise((resolve, reject) => {
+      this.svPaymentDevolutionService.updateCtlDevPagP(data).subscribe({
+        next: value => {
+          resolve(true);
+        },
+        error: err => {
+          resolve(false);
+        },
+      });
+    });
+  }
 }

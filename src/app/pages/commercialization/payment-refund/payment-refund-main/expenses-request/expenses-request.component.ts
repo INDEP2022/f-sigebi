@@ -5,7 +5,11 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IMandExpenseCont } from 'src/app/core/models/ms-accounting/mand-expensecont';
 import {
   IComerExpenseDTO2,
@@ -276,11 +280,15 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
   }
 
   getUsers(params: ListParams) {
+    const params_ = new FilterParams();
     if (params.text) {
-      params['filter.clkdet'] = `$eq:${params.text}`;
+      params_.addFilter('clkdet', params.text, SearchFilter.EQ);
+      // params['filter.clkdet'] = `$eq:${params.text}`;
     }
+    params_.limit = params.limit;
+    params_.page = params.page;
     this.interfaceesirsaeService
-      .ApplicationGetReturnPayments(params)
+      .ApplicationGetReturnPayments(params_.getParams())
       .subscribe({
         next: value => {
           this.userItems = new DefaultSelect(value.data, value.count);

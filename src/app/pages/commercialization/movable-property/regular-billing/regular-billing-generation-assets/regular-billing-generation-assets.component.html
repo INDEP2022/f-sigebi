@@ -23,14 +23,53 @@
   </div>
   <div class="col-md-9 d-flex justify-content-end">
     <div>
+      <div
+        class="btn-group mt-0 me-2"
+        placement="bottom right"
+        dropdown
+        [isDisabled]="btnLoading">
+        <button
+          #actionsBtn
+          dropdownToggle
+          type="button"
+          class="btn btn-sm btn-success btn-block active me-2 font-size-14 dropdown-toggle"
+          aria-controls="dropdown-actions">
+          Carga CSV <span class="caret"></span>
+        </button>
+        <ul
+          id="dropdown-csv"
+          *dropdownMenu
+          class="dropdown-menu dropdown-menu-right"
+          role="menu"
+          aria-labelledby="processBtn">
+          <li role="menuitem">
+            <a
+              class="dropdown-item bg-success text-light"
+              (click)="fileExcel.click()"
+              >Cargar CSV
+              <i class="bx bx-upload float-icon"></i>
+            </a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item bg-success text-light" (click)="exportCsv()"
+              >Descargar Formato de Archivo</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!-- <div>
       <button
+        [ngClass]="{ loading: btnLoading }"
+        [disabled]="btnLoading"
         type="button"
         class="btn btn-sm btn-success active mr-2"
         (click)="fileExcel.click()">
         Carga CSV
-        <i class="bi bi-file-earmark-excel-fill"></i>
+        <i *ngIf="!btnLoading" class="bx bx-upload float-icon"></i>
+        <i *ngIf="!btnLoading" class="bi bi-file-earmark-excel-fill"></i>
       </button>
-    </div>
+    </div> -->
     <div>
       <input
         type="file"
@@ -40,10 +79,12 @@
         class="d-none"
         accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
       <button
+        [ngClass]="{ loading: btnLoading2 }"
+        [disabled]="btnLoading2"
         class="btn btn-sm btn-success active mr-2"
         (click)="exportAsXLSX()">
         Exportar a Excel
-        <i class="bx bx-download float-icon"></i>
+        <i *ngIf="!btnLoading2" class="bx bx-download float-icon"></i>
       </button>
     </div>
     <app-columns-select
@@ -54,14 +95,15 @@
 <div class="row">
   <form-loader *ngIf="loading"></form-loader>
   <div>
-    <ng2-smart-table
-      [ngStyle]="{
-        height: loading ? '0px' : 'auto'
-      }"
-      [attr.class]="'table-bordered table-responsive mb-4'"
-      [settings]="settings"
-      [source]="dataFilter">
-    </ng2-smart-table>
+    <ng-scrollbar
+      [track]="'all'"
+      [ngStyle]="{ height: loading ? '0px' : '400px' }">
+      <ng2-smart-table
+        [attr.class]="'table-bordered table-responsive mb-4'"
+        [settings]="settings"
+        [source]="dataFilter">
+      </ng2-smart-table>
+    </ng-scrollbar>
   </div>
   <app-pagination [params]="paramsList" [totalItems]="totalItems">
   </app-pagination>
