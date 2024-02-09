@@ -998,7 +998,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     }
 
     this.alertQuestion(
-      'warning',
+      'question',
       `Se generarán ${valid.contador} factura(s)`,
       '¿Desea continuar?'
     ).then(async ans => {
@@ -1020,7 +1020,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           partiality: null,
           type: null,
         });
-
+        console.log('pk_comer', pk_comer);
         if (!pk_comer) {
           this.alert('warning', 'Ha ocurrido un fallo en la operación', '');
           this.btnLoading = false;
@@ -1898,32 +1898,34 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       PEVENTO: eventId,
       PFACTURA: factura,
     };
+    console.log('data ', data);
     if (pTipo == 1) {
       if (count > 0) {
-        this.getReportNull();
-        // this.getReport('RCOMERFACTURAS_VEH_VNR', data);
+        // this.getReportNull();
+        this.getReport('RCOMERFACTURAS_VEH_VNR', data); // FUNCIONA
       } else {
-        this.getReportNull();
-        // this.getReport('RCOMERFACTURAS_VEH', data);
+        // this.getReportNull();
+        this.getReport('RCOMERFACTURAS_VEH', data);
       }
     } else if (pTipo == 2) {
       const v_val = await this.etapaNexo(impressionDate);
+      console.log('v_val', v_val);
       if (v_val == 1) {
-        this.getReportNull();
-        // this.getReport('RCOMERFACTURAS_DIVERSOS', data);
+        // this.getReportNull();
+        this.getReport('RCOMERFACTURAS_DIVERSOS', data); // FUNCIONA
       } else if (v_val == 2) {
-        // this.getReport('RCOMERFAC_GRALSNANX', data);
-        this.getReportNull();
+        this.getReport('RCOMERFAC_GRALSNANX', data); // FUNCIONA
+        // this.getReportNull();
       } else {
         this.alert('warning', 'No se puede visualizar el reporte', '');
       }
     } else if (pTipo == 3) {
       if (count > 0) {
-        this.getReportNull();
-        // this.getReport('RCOMERFACTURAS_DIV_SA_VNR', data);
+        // this.getReportNull();
+        this.getReport('RCOMERFACTURAS_DIV_SA_VNR', data);
       } else {
-        this.getReportNull();
-        // this.getReport('RCOMERFACTURAS_DIVSANEXO', data);
+        // this.getReportNull();
+        this.getReport('RCOMERFACTURAS_DIVSANEXO', data); // FUNCIONA
       }
     } else if (pTipo == 4) {
       if (count > 0) {
@@ -1933,12 +1935,13 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       }
     } else if (pTipo == 5) {
       const v_val = await this.etapaNexo(impressionDate);
+      console.log(v_val);
       if (v_val == 1) {
-        // this.getReport('RCOMERFACTURAS_CHCONANEXO', data);
-        this.getReportNull();
+        this.getReport('RCOMERFACTURAS_CHCONANEXO', data); // FUNCIONA
+        // this.getReportNull();
       } else if (v_val == 2) {
-        // this.getReport('RCOMERFAC_GRALSNANX', data);
-        this.getReportNull();
+        this.getReport('RCOMERFAC_GRALSNANX', data); // FUNCIONA
+        // this.getReportNull();
       } else {
         this.alert('warning', 'No se puede visualizar el reporte', '');
       }
