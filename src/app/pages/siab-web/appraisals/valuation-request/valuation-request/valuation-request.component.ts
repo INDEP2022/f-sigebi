@@ -101,7 +101,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
         this.event = params['event'];
       });
     this.user = localStorage.getItem('username');
-    // this.event = 6185;
+    this.event = 6185;
     this.form.controls['event'].setValue(this.event);
     this.getsContent();
   }
@@ -580,18 +580,23 @@ export class valuationRequestComponent extends BasePage implements OnInit {
         let mComer = await this.getTrade(this.event);
         console.log(mComer);
         this.m_comer = mComer;
+        console.log(this.m_comer);
+
         if (this.m_comer.cve_oficio != null) {
           this.m_comer.id_evento = type;
           this.m_comer.remitente = this.form.controls['sender'].value;
           this.m_comer.destinatario = this.form.controls['addressee'].value;
           this.m_comer.usuario_insert = this.user;
-          this.m_comer.ciudad = this.form.controls['Ciudad'].value;
+          debugger;
+          this.m_comer.ciudad = this.form.controls['city'].value;
           this.m_comer.texto1 = this.form.controls['paragraph1'].value;
           this.m_comer.texto2 = this.form.controls['paragraph2'].value;
           this.m_comer.texto3 = this.form.controls['paragraph3'].value;
           this.m_comer.cve_oficio = this.m_comer.cve_oficio;
           this.m_comer.num_cv_armada = this.form.controls['folio'].value;
+
           let rest: any = await this.officeManagement('A', this.m_comer);
+          console.log(rest);
           if (rest != 0) {
             let mComer: any = await this.getTrade(this.event);
             this.idOficio = mComer.id_oficio;
@@ -599,6 +604,8 @@ export class valuationRequestComponent extends BasePage implements OnInit {
           }
           for (const values of this.lsbConCopiaList) {
             //InsertaUsuConCopia  SP_INSERTAR_CONCOPIA_OFICIO
+            console.log(values);
+            this.postInsertUsuCopia('I', this.m_comer, values);
           }
           if (rest > 0) {
             this.alert('success', 'Datos Guardados', '');
@@ -623,6 +630,8 @@ export class valuationRequestComponent extends BasePage implements OnInit {
           this.num_armada = mComer.num_cv_armada;
           for (const values of this.lsbConCopiaList) {
             //InsertaUsuConCopia  SP_INSERTAR_CONCOPIA_OFICIO
+            console.log(values);
+            this.postInsertUsuCopia('I', this.m_comer, values);
           }
           if (rest > 0) {
             this.alert('success', 'Datos Guardados', '');
@@ -683,34 +692,56 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   }
   async officeManagement(acction: string, mComer: any) {
     return new Promise((res, rej) => {
-      //falta endpoit del PROCEDIMIENTO -	PA_GENERAR_O_AVALUADO
-      // this.usersService.getUserOt(acction).subscribe({
-      //   next: resp => {
-      //     console.log(resp);
-      //     res(resp);
-      //   },
-      //   error: eror => {
-      //     this.loader.load = false;
-      //     res(eror);
-      //   },
-      // });
-      res(0);
+      let data = {
+        actionIn: acction,
+        idJobIn: mComer.id_oficio,
+        idEventIn: mComer.id_evento.id_evento,
+        jobKeyIn: mComer.cve_oficio,
+        userInsertIn: mComer.usuario_insert,
+        userSendIn: mComer.usuario_envia,
+        idJobReferenceIn: mComer.id_oficio_referencia,
+        senderIn: mComer.remitente,
+        addresseeIn: mComer.destinatario,
+        cityIn: mComer.ciudad,
+        text1In: mComer.texto1,
+        text2In: mComer.texto2,
+        text3In: mComer.texto3,
+        navyNumberKeyIn: mComer.num_cv_armada,
+      };
+      console.log(data);
+      this.officeManagementService.getPaTriggerOAppraise(data).subscribe({
+        next: resp => {
+          console.log(resp.data);
+          res(resp.data[0]);
+        },
+        error: eror => {
+          this.loader.load = false;
+          res(eror);
+        },
+      });
     });
   }
-  async postInsertUsuCopia(acction: string) {
+  async postInsertUsuCopia(acction: string, mComer: any, value: any) {
     return new Promise((res, rej) => {
-      //falta endpoit del PROCEDIMIENTO -	PA_GENERAR_O_AVALUADO
-      // this.usersService.getUserOt(acction).subscribe({
-      //   next: resp => {
-      //     console.log(resp);
-      //     res(resp);
-      //   },
-      //   error: eror => {
-      //     this.loader.load = false;
-      //     res(eror);
-      //   },
-      // });
-      res(0);
+      // falta endpoit del PROCEDIMIENTO -	SP_INSERTAR_CONCOPIA_OFICIO
+      let data = {
+        user: value.usuario,
+        jobId: mComer.id_oficio,
+        action: acction,
+        userType: 'INTERNO',
+      };
+
+      this.usersService.postSpInsertWithcopyOfficia(data).subscribe({
+        next: resp => {
+          console.log(resp);
+          res(resp);
+        },
+        error: eror => {
+          this.loader.load = false;
+          res(eror);
+        },
+      });
+      // res(0);
     });
   }
   async postInsertUsuConCopia(acction: string) {
