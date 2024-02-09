@@ -1064,25 +1064,13 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         const masiveData = {
-          TMP_LC_COMER: [
-            {
-              OBSERVACIONES: 'hola',
-              ESTATUS: 0,
-              FEC_VIGENCIA: '2017-09-06',
-              ID_EVENTO: 15226,
-              ID_LOTE: 713034,
-              ID_CLIENTE: 59170,
-              MONTO: 5000.0,
-              NO_CHEQUE: 2144977,
-              BANCO_EXP_CHEQUE: 'HSBC',
-            },
-          ],
+          event_id: this.form.controls['eventId'].value,
           n_NUM_DIAS: null,
           c_TIPO_LC: null,
           c_TABLA_APLICA: null,
           c_IND_FEC: null,
           c_IND_MONTO: null,
-          c_RESUL: 'ok',
+          c_RESUL: null,
         };
 
         console.log('Objeto a enviar', masiveData);
@@ -1097,7 +1085,11 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           },
           error: error => {
             console.log('Error', error);
-            this.alertInfo('warning', 'Líneas de Captura', error.error);
+            this.alertInfo(
+              'warning',
+              'Líneas de Captura',
+              'No se crearon las LC´s'
+            );
           },
         });
 
