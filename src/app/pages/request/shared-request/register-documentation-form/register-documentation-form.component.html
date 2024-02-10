@@ -163,10 +163,8 @@
           type="text"
           class="form-control"
           [maxDate]="maxDate"
-          #dp="bsDatepicker"
-          bsDatepicker
-          [bsValue]="bsPaperValue"
-          (bsValueChange)="changeDateEvent($event)" />
+          formControlName="paperDate"
+          bsDatepicker />
       </form-field>
     </div>
     <div class="col-md-4">

@@ -428,6 +428,31 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       (this.idTypeDoc == 197 && this.typeFirm == 'electronica') ||
       (this.idTypeDoc == 218 && this.typeFirm == 'electronica') ||
       (this.idTypeDoc == 219 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 174 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 185 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 186 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 187 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 192 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 108 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 183 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 26 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 27 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 50 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 68 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 217 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 94 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 40 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 101 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 105 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 104 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 72 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 222 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 223 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 224 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 225 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 245 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 246 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 249 && this.typeFirm == 'electronica') ||
       (this.idOrderService && this.typeFirm == 'electronica')
     ) {
       if (!this.listSigns && this.printReport && !this.isAttachDoc) {

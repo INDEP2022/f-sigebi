@@ -7,8 +7,10 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { Subscription } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
@@ -43,6 +45,8 @@ export class RegisterDocumentationFormComponent
   registerForm: FormGroup = new FormGroup({});
   @Output() onRegister = new EventEmitter<any>();
   @Output() onChange = new EventEmitter<any>();
+
+  @ViewChild('dp') datePicker: BsDatepickerDirective;
 
   priorityCheck: boolean = false;
   bsPriorityDate: any;
@@ -296,6 +300,7 @@ export class RegisterDocumentationFormComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.registerForm.reset();
+        this.datePicker.bsValue = null; // Restablecer el valor del bsDatepicker
         this.getRequestInfo();
         this.registerForm.markAsUntouched();
       }

@@ -49,7 +49,8 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
   protected override btnGrouper: boolean;
   protected override formatReport: boolean;
   protected override signReport: boolean;
@@ -319,7 +320,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) { }
+  requestRegistered(request: any) {}
 
   async openReport(): Promise<void> {
     if (!this.nextTurn) {
@@ -908,12 +909,13 @@ export class RequestCompDocTasksComponent
       const taskForm: ITask = {
         State: state,
         taskDefinitionId: null,
+        endDate: new Date(),
       };
       this.taskService.update(id, taskForm).subscribe({
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -1624,7 +1626,7 @@ export class RequestCompDocTasksComponent
     this.validate.registerAppointment = event.isValid;
   }
 
-  onSetData(event) { }
+  onSetData(event) {}
 
   onOrder(event) {
     this.validate.orderEntry = event.isValid;
@@ -1644,7 +1646,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1660,7 +1662,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1746,10 +1748,9 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  createDictumReturn() { }
+  createDictumReturn() {}
 
   async showReport(data) {
-
     let report = await this.getStatusReport();
     report = report.isValid ? report.data[0] : report;
 
@@ -1767,7 +1768,6 @@ export class RequestCompDocTasksComponent
             let file = new Blob([response], { type: 'application/pdf' });
             const fileURL = URL.createObjectURL(file);
             this.openPrevPdf(fileURL);
-
           },
           error: error => {
             this.showError('Vista previa no dipoonible');
@@ -1781,7 +1781,7 @@ export class RequestCompDocTasksComponent
           const fileURL = URL.createObjectURL(file);
           this.openPrevPdf(fileURL);
         },
-        error: error => { },
+        error: error => {},
       });
     }
   }
@@ -1857,7 +1857,6 @@ export class RequestCompDocTasksComponent
   }
 
   openModal(component: any, idSample?: any, typeAnnex?: string): void {
-
     if (!this.signReport) {
       let config: ModalOptions = {
         initialState: {
@@ -1904,7 +1903,6 @@ export class RequestCompDocTasksComponent
         reportName,
         signed,
         callback: data => {
-
           console.log(data);
 
           if (data) {
