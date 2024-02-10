@@ -49,7 +49,8 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
   protected override btnGrouper: boolean;
   protected override formatReport: boolean;
   protected override signReport: boolean;
@@ -319,7 +320,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) { }
+  requestRegistered(request: any) {}
 
   async openReport(): Promise<void> {
     if (!this.nextTurn) {
@@ -351,7 +352,7 @@ export class RequestCompDocTasksComponent
 
     modalRef.content.sign.subscribe(response => {
       if (response) {
-        this.openSignature();
+        this.openSignature(response);
       }
     });
 
@@ -913,7 +914,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -1624,7 +1625,7 @@ export class RequestCompDocTasksComponent
     this.validate.registerAppointment = event.isValid;
   }
 
-  onSetData(event) { }
+  onSetData(event) {}
 
   onOrder(event) {
     this.validate.orderEntry = event.isValid;
@@ -1644,7 +1645,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1660,7 +1661,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1723,7 +1724,7 @@ export class RequestCompDocTasksComponent
 
   openModalLegal(context?: Partial<ChangeLegalStatusComponent>) {
     if (this.requestInfo.detail.reportSheet == 'OCSJ') {
-      this.openSignature();
+      this.openSignature(0);
       return;
     }
 
@@ -1746,12 +1747,13 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  createDictumReturn() { }
+  createDictumReturn() {}
 
-  showReport(data) {
-    console.log(data);
+  async showReport(data) {
+    let report = await this.getStatusReport();
+    report = report.isValid ? report.data[0] : report;
 
-    if (true) {
+    if (isNullOrEmpty(report.ucmDocumentName)) {
       this.wContentService
         .downloadDinamycReport(
           'sae.rptdesign',
@@ -1765,21 +1767,20 @@ export class RequestCompDocTasksComponent
             let file = new Blob([response], { type: 'application/pdf' });
             const fileURL = URL.createObjectURL(file);
             this.openPrevPdf(fileURL);
-
           },
           error: error => {
             this.showError('Vista previa no dipoonible');
           },
         });
     } else {
-      this.wContentService.obtainFile('SAE568245').subscribe({
+      this.wContentService.obtainFile(report.ucmDocumentName).subscribe({
         next: response => {
           let blob = this.dataURItoBlob(response);
           let file = new Blob([blob], { type: 'application/pdf' });
           const fileURL = URL.createObjectURL(file);
           this.openPrevPdf(fileURL);
         },
-        error: error => { },
+        error: error => {},
       });
     }
   }
@@ -1846,10 +1847,10 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  openSignature() {
+  openSignature(object) {
     this.openModal(
       AnnexJAssetsClassificationComponent,
-      '328',
+      object.reportFolio,
       'sign-annexJ-assets-classification'
     );
   }
@@ -1858,6 +1859,9 @@ export class RequestCompDocTasksComponent
     if (!this.signReport) {
       let config: ModalOptions = {
         initialState: {
+          requestId: this.requestId,
+          reportId: this.reportId,
+          reportTable: this.reportTable,
           idSample: idSample,
           typeAnnex: typeAnnex,
           callback: async (typeDocument: number, typeSign: string) => {
@@ -1881,8 +1885,8 @@ export class RequestCompDocTasksComponent
     const idTypeDoc = typeDocument;
     const idSample = this.requestId;
     const typeFirm = typeSign;
-    const tableName = ''; //this.tableName;
-    const reportName = ''; //this.tableName;
+    const tableName = this.reportTable; //this.tableName;
+    const reportName = 'sae.rptdesign'; //this.tableName;
     const dynamic = true;
     const signed = !this.signReport; //!this.isSigned;
 
@@ -1898,6 +1902,8 @@ export class RequestCompDocTasksComponent
         reportName,
         signed,
         callback: data => {
+          console.log(data);
+
           if (data) {
             if (typeFirm != 'electronica') {
               this.uploadDocument(this.requestId, typeDocument);
