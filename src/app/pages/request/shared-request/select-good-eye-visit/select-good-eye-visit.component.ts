@@ -396,7 +396,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
       initialState: {
         data,
         typeInfo,
-        callback: (next: boolean) => { },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
