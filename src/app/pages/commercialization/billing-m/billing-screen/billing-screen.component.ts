@@ -1082,8 +1082,8 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     let res = await this.forArrayFilters_();
     console.log('res', res);
     if (res) {
-      this.params = new BehaviorSubject<ListParams>(new ListParams());
-      this.params2 = new BehaviorSubject<ListParams>(new ListParams());
+      // this.params = new BehaviorSubject<ListParams>(new ListParams());
+      // this.params2 = new BehaviorSubject<ListParams>(new ListParams());
       this.data.load([]);
       this.data.refresh();
       this.totalItems = 0;

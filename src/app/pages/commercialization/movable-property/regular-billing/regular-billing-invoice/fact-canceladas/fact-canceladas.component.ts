@@ -155,9 +155,7 @@ export class FactCanceladasComponent extends BasePage implements OnInit {
           cf_leyenda = `Este CFDI refiere a la factura ${invoice.seriefact} - ${invoice.folio}`;
         }
         if (yyyy > 2011) {
-          // CF_NUEVAFACT := COPIA_FACTURADEV(:FACT_CANCELADAS.ID_EVENTO_FACT,:FACT_CANCELADAS.ID_LOTE_FACT, :FACT_CANCELADAS.ID_FACTURA_FACT, CF_LEYENDA, :BLK_CTRL.USUARIO_AUT, 'PREF', 1,2,:GLOBAL.PID_GASTO,:BLK_TOOLBAR.TOOLBAR_NO_DELEGACION,:BLK_CTRL.CAUSA);
           cf_nuevafact = await this.copyFactDev();
-          // SELECT SUM(PRECIOVTA),SUM(IVA),SUM(TOTAL)
           const params = new ListParams();
           params['filter.eventId'] = `$eq:${invoice.id_evento}`;
           params['filter.billId'] = `$eq:${cf_nuevafact}`;
@@ -171,11 +169,7 @@ export class FactCanceladasComponent extends BasePage implements OnInit {
             totalBsatKey: dataSum.total,
             SubtotalBsatKey: dataSum.importe,
           };
-          // PRECIO = V_PRECIOVTA, IVA = V_IVA, TOTAL=V_TOTAL,
-          // CVE_SUBTOTAL_BSAT = V_PRECIOVTA, CVE_TOTAL_BSAT = V_TOTAL
-          // UPDATE COMER_FACTURAS
           await this.billingsService.updateBillings(body);
-          // MONTO_VALIDADO:= PUF_verificamontos(:FACT_CANCELADAS.ID_EVENTO_FACT,:FACT_CANCELADAS.ID_LOTE_FACT,:FACT_CANCELADAS.ID_FACTURA_FACT);
           let bodyAmount = {
             pEvent: invoice.id_evento,
             pBatch: invoice.id_lote,
@@ -209,10 +203,8 @@ export class FactCanceladasComponent extends BasePage implements OnInit {
             pCause: Number(causerebillId),
             pDeletedEmits: Number(this.user.department),
           };
-          // :GLOBAL.CF_NUEVAFACT:=COPIA_FACTURADEVA(:FACT_CANCELADAS.ID_EVENTO_FACT,:FACT_CANCELADAS.ID_LOTE_FACT, :FACT_CANCELADAS.ID_FACTURA_FACT, CF_LEYENDA, :BLK_CTRL.USUARIO_AUT, 'PREF', 1,2,:BLK_CTRL.CAUSA,:BLK_TOOLBAR.TOOLBAR_NO_DELEGACION);
           let global_cf_nuevafact = await this.copyInovice(body);
 
-          // let global_cf_nuevafact = await this.copyFactDeva()
           if (global_cf_nuevafact) {
             const success = await this.cancelInvoiceComer(body);
             if (success) {
@@ -244,9 +236,6 @@ export class FactCanceladasComponent extends BasePage implements OnInit {
             SubtotalBsatKey: dataSum.importe,
             vouchertype: 'FAC',
           };
-          // PRECIO = V_PRECIOVTA, IVA = V_IVA, TOTAL=V_TOTAL,
-          // CVE_SUBTOTAL_BSAT = V_PRECIOVTA, CVE_TOTAL_BSAT = V_TOTAL
-          // UPDATE COMER_FACTURAS
           await this.billingsService.updateBillings(body_);
         } else if (yyyy <= 2009) {
           this.alert('warning', '2009 proceso por definir', '');
@@ -261,8 +250,6 @@ export class FactCanceladasComponent extends BasePage implements OnInit {
             vouchertype: 'NCR',
             causerebillId: 141,
           };
-          // UPDATE COMER_FACTURAS
-          // SET ID_SOLICITUDPAGO=:BLK_CTRL.FOLIO_SP,DOCUMENTO='NCR',ID_CAUSAREFACTURA=141,TIPOCOMPROBANTE='NCR'
           let resp = await this.billingsService.updateBillings(body_);
           if (!resp)
             this.alert(

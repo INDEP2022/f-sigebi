@@ -541,4 +541,9 @@ export class GoodService extends HttpService {
     const route = `${GoodEndpoints.GetAllGoodQuery}`;
     return this.get(route, params);
   }
+
+  getTransAva(params?: string) {
+    const route = `${GoodEndpoints.GoodsTransAva}?${params}`;
+    return this.get(route);
+  }
 }
