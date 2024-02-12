@@ -339,6 +339,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   resetFilter() {
     this.enableInputEvent();
+    this.cleanFiltersTable();
     this.form.controls['batchId'].setValue(null);
     this.form.controls['status'].setValue(null);
     this.form.controls['operationId'].setValue(null);
@@ -353,6 +354,15 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     });
 
     this.validGenerateLCs = false;
+  }
+
+  //ViewChild('dataSource') miTabla: Ng2SmartTableComponent;
+  cleanFiltersTable(): void {
+    this.dataSource.setFilter([]);
+    this.lcsSource.setFilter([]);
+    this.rfcSource.setFilter([]);
+    this.clientSource.setFilter([]);
+    //this.reprocesSource.setFilter([]);
   }
 
   consultInServer() {
@@ -945,7 +955,11 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
         },
         error: error => {
           console.log('Error', error);
-          this.alert('error', 'Error', 'Error al generar la búsqueda');
+          this.alert(
+            'warning',
+            'Atención',
+            'No hay resultados para este evento'
+          );
         },
       });
   }

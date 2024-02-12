@@ -54,6 +54,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   bsModalRef: BsModalRef;
   checked: string = 'checked';
   userName: string = '';
+  isUserNameValid: boolean = false;
   nickName: string = '';
   idTransferer: number = null;
   idStation: number = null;
@@ -457,6 +458,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     );
     this.bsModalRef.content.event.subscribe((res: any) => {
       this.userName = res.firstName + ' ' + res.lastName;
+      this.isUserNameValid = true;
       this.nickName = res.username;
       this.requestForm.controls['targetUser'].setValue(res.id);
     });

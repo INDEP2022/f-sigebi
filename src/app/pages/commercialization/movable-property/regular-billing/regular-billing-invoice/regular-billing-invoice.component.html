@@ -46,7 +46,6 @@
                   }"
                   formControlName="date" />
               </form-field>
-              <!-- [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" -->
             </div>
           </div>
           <div class="row mt-4">
@@ -140,7 +139,7 @@
                     type="button"
                     class="btn btn-block btn-primary btn-sm active mr-2 mb-2"
                     (click)="actMatricula()">
-                    Act. Matricula
+                    Act. Matrícula
                     <i *ngIf="!btnLoading9" class="fas fa-sync-alt"> </i>
                   </button>
                   <!-- LISTO -->
@@ -263,11 +262,15 @@
                   </button>
                   <!-- FALTA VALIDAR -->
                   <button
+                    [ngClass]="{ loading: btnLoading1 }"
+                    [disabled]="btnLoading1"
                     (click)="printerMasivePDF()"
                     type="button"
                     class="btn btn-primary btn-block active btn-sm mr-2 mb-2">
                     Imprime Masivo .pdf
-                    <i class="bx bx-printer bx-sm float-icon"></i>
+                    <i
+                      *ngIf="!btnLoading1"
+                      class="bx bx-printer bx-sm float-icon"></i>
                   </button>
                   <!-- LISTO -->
                   <button
@@ -563,28 +566,8 @@
 
   <div class="row pt-3">
     <div class="col-12 d-flex justify-content-end pb-3">
-      <div>
-        <!-- <button
-          tooltip=""
-          containerClass="tooltip-style"
-          [ngClass]="{ loading: btnLoadAU }"
-          [disabled]="btnLoadAU"
-          (click)="updateDetFact('AU')"
-          type="button"
-          class="btn btn-primary active btn-sm mr-2 mb-2">
-          <span *ngIf="!btnLoadAU">AU</span>
-        </button> -->
-      </div>
-      <div>
-        <!-- <button
-          [ngClass]="{ loading: btnLoadAP }"
-          [disabled]="btnLoadAP"
-          (click)="updateDetFact('AP')"
-          type="button"
-          class="btn btn-info active btn-sm mr-2 mb-2">
-          <span *ngIf="!btnLoadAP">AP</span>
-        </button> -->
-      </div>
+      <div></div>
+      <div></div>
       <app-columns-select
         [(settings)]="settings2"
         [leftList]="true"></app-columns-select>

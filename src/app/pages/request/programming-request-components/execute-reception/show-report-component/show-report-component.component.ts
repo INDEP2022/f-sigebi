@@ -343,6 +343,38 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   signDocument() {
+    console.log('Firmar Documento');
+    console.log(this.idTypeDoc);
+    if (
+      this.idTypeDoc == 2 ||
+      174 ||
+      7 ||
+      192 ||
+      108 ||
+      183 ||
+      26 ||
+      27 ||
+      50 ||
+      68 ||
+      217 ||
+      94 ||
+      40 ||
+      101 ||
+      105 ||
+      104 ||
+      72 ||
+      222 ||
+      223 ||
+      224 ||
+      225 ||
+      245 ||
+      246 ||
+      (249 && this.typeFirm == 'autografa')
+    ) {
+      this.modalRef.content.callback(true, this.typeFirm);
+      this.modalRef.hide();
+    }
+
     if (this.idTypeDoc == 107 && this.typeFirm == 'autografa') {
       this.modalRef.content.callback(true, this.typeFirm);
       this.modalRef.hide();

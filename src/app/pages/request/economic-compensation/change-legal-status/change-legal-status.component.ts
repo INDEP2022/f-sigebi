@@ -286,37 +286,39 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
 
   save() {
     if (this.isJuridicVisible) {
-      let object = this.form.getRawValue();
+      if (this.form.valid) {
+        let object = this.form.getRawValue();
 
-      object.signatureBySubstitution = object.signatureBySubstitution
-        ? '1'
-        : '0';
+        object.signatureBySubstitution = object.signatureBySubstitution
+          ? '1'
+          : '0';
 
-      console.log('object: ', object);
+        console.log('object: ', object);
 
-      object['applicationId'] = this.requestId;
+        object['applicationId'] = this.requestId;
 
-      let splitId = this.getTime();
+        let splitId = this.getTime();
 
-      const user: any = this.authService.decodeToken();
+        const user: any = this.authService.decodeToken();
 
-      object['creationUser'] = user.username;
-      object['modificationDate'] = moment(new Date()).format('YYYY-MM-DD');
-      object['modificationUser'] = user.username;
-      object['creationDate'] = moment(new Date()).format('YYYY-MM-DD');
-      object['version'] = 1;
-      object['documentTypeId'] = this.docTypeId;
+        object['creationUser'] = user.username;
+        object['modificationDate'] = moment(new Date()).format('YYYY-MM-DD');
+        object['modificationUser'] = user.username;
+        object['creationDate'] = moment(new Date()).format('YYYY-MM-DD');
+        object['version'] = 1;
+        object['documentTypeId'] = this.docTypeId;
 
-      if (isNullOrEmpty(this.recDoc)) {
-        object['jobLegalId'] = splitId;
-        this.createLegalDoc(object);
-      } else {
-        object['providedDate'] = new DatePipe('en-EN').transform(
-          object['providedDate'],
-          'dd/MM/yyyy'
-        );
-        object['jobLegalId'] = this.recDoc['jobLegalId'];
-        this.updatedLegalDoc(object);
+        if (isNullOrEmpty(this.recDoc)) {
+          object['jobLegalId'] = splitId;
+          this.createLegalDoc(object);
+        } else {
+          object['providedDate'] = new DatePipe('en-EN').transform(
+            object['providedDate'],
+            'dd/MM/yyyy'
+          );
+          object['jobLegalId'] = this.recDoc['jobLegalId'];
+          this.updatedLegalDoc(object);
+        }
       }
     } else {
       if (!isNullOrEmpty(this.dataCheckDelegation)) {

@@ -10,21 +10,18 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import Quill from 'quill';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Components
 import * as moment from 'moment';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ReportService } from 'src/app/core/services/catalogs/reports.service';
 import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
+import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { AnnexJAssetsClassificationComponent } from '../../generate-sampling-supervision/assets-classification/annex-j-assets-classification/annex-j-assets-classification.component';
-import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
-import { UploadReportReceiptComponent } from '../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { SignatureTypeComponent } from '../signature-type/signature-type.component';
 
@@ -93,7 +90,8 @@ export class CreateReportComponent extends BasePage implements OnInit {
     private readonly authService: AuthService,
     private reportgoodService: ReportgoodService,
     private reportService: ReportService,
-    private wContentService: WContentService
+    private wContentService: WContentService,
+    private samplingGoodService: SamplingGoodService
   ) {
     super();
   }
@@ -117,7 +115,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   async getCatFormats(params: ListParams) {
-
     console.log('getCatFormats', this.documentTypeId);
 
     params['shortBy'] = 'reportName';
@@ -157,11 +154,11 @@ export class CreateReportComponent extends BasePage implements OnInit {
           this.isSigned = this.version.signedReport == 'Y';
         }
       },
-      error: err => { },
+      error: err => {},
     });
   }
 
-  async saveVersionsDoc(close = true) {
+  async saveVersionsDoc(close = true, data = null) {
     if (isNullOrEmpty(this.version.content)) return;
 
     const user: any = this.authService.decodeToken();
@@ -173,7 +170,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
       tableName: this.tableName,
       registryId: this.requestId,
       documentTypeId: this.format.doctoTypeId.id,
-      content: this.format.content,
+      content: this.version.content,
       signedReport: 'N',
       version: '1',
       ucmDocumentName: null,
@@ -186,6 +183,12 @@ export class CreateReportComponent extends BasePage implements OnInit {
       modificationDate: moment(new Date()).format('YYYY-MM-DD'),
     };
 
+    if (!isNullOrEmpty(data)) {
+      doc = { ...data };
+      doc.modificationUser = user.username;
+      doc.modificationDate = moment(new Date()).format('YYYY-MM-DD');
+    }
+
     this.reportgoodService.saveReportDynamic(doc, !this.template).subscribe({
       next: resp => {
         this.template = true;
@@ -193,7 +196,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
           this.onLoadToast('success', 'Documento guardado correctamente', '');
         }
       },
-      error: err => { },
+      error: err => {},
     });
   }
 
@@ -301,48 +304,91 @@ export class CreateReportComponent extends BasePage implements OnInit {
     }*/
   }
 
-  attachDocument() {
-    this.alertQuestion(
-      'warning',
-      'Confirmación',
-      '¿Está seguro que desea adjuntar el documento?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        //Ejecutar el servicio
-        this.onLoadToast('success', 'Documento adjuntado correctamente', '');
-        this.close();
-      }
-    });
-  }
-
   generateReport() {
-    return new Promise((resolve, reject) => {
-      this.wContentService
-        .downloadDinamycReport(
-          'sae.rptdesign',
-          'SOLICITUDES',
-          this.requestId,
-          this.documentTypeId
-        )
-        .subscribe({
-          next: (resp: any) => {
-            if (resp) {
-              resolve(resp);
-            } else {
-              resolve(null);
-            }
-          },
-          error: error => {
-            this.loader.load = false;
-            this.alert(
-              'error',
-              'Error en el reporte',
-              'No se pudo generar el reporte'
-            );
-            reject('false');
-          },
-        });
-    });
+    this.wContentService
+      .downloadDinamycReport(
+        'sae.rptdesign',
+        'SOLICITUDES',
+        this.requestId,
+        this.documentTypeId
+      )
+      .subscribe({
+        next: response => {
+          //let blob = this.dataURItoBlob(response);
+          //let file = new Blob([response], { type: 'application/pdf' });
+          //const fileURL = URL.createObjectURL(file);
+          //this.openPrevPdf(fileURL);
+
+          /*
+           nombreDoc: string,
+    contentType: string,
+    docData: any,
+    file: any,
+    extension: string
+          */
+          let token = this.authService.decodeToken();
+
+          const formData = {
+            keyDoc: 'SOLICITUDES',
+            xDelegacionRegional: 0, //this.programming?.regionalDelegationNumber,
+            dDocTitle: 'Reporte',
+            xNombreProceso: 'SOLICITUDES',
+            xTipoDocumento: this.version.documentTypeId,
+            xNivelRegistroNSBDB: 'NA',
+            dDocType: '.pdf',
+            dDocAuthor: token.name,
+            dInDate: new Date(),
+            xidProgramacion: '',
+          };
+
+          this.wContentService
+            .addDocumentToContent(
+              'Reporte',
+              '.pdf',
+              JSON.stringify(formData),
+              response,
+              '.pdf'
+            )
+            .subscribe({
+              next: async resp => {
+                this.version.ucmDocumentName = resp.dDocName;
+
+                const sample: any = {
+                  regionalDelegationId: 0,
+                  startDate: moment(new Date()).format('YYYY-MM-DD'),
+                  endDate: moment(new Date()).format('YYYY-MM-DD'),
+                  speciesInstance: 'DOC_COMPLEMENTARIA',
+                  numeraryInstance: 'DOC_COMPLEMENTARIA',
+                  warehouseId: this.requestId,
+                  version: 1,
+                  transfereeId: this.documentTypeId,
+                  contentId: resp.dDocName,
+                };
+
+                this.samplingGoodService.createSample(sample).subscribe({
+                  next: response => {
+                    this.version.reportFolio = response.sampleId;
+                    this.saveVersionsDoc(false, this.version);
+
+                    this.sign.emit(this.version);
+                    this.close();
+                  },
+                  error: error => {
+                    this.alert('error', 'Error', 'Error al crear');
+                  },
+                });
+              },
+              error: error => {},
+            });
+        },
+        error: error => {
+          this.alert(
+            'error',
+            'Error en el reporte',
+            'No se pudo generar el reporte'
+          );
+        },
+      });
   }
 
   showFile() {
@@ -352,10 +398,11 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   openSignature() {
-    this.sign.emit({
-
-    });
-    this.close();
+    if (isNullOrEmpty(this.version.ucmDocumentName)) {
+      this.generateReport();
+    } else {
+      this.sign.emit(this.version);
+      this.close();
+    }
   }
-
 }
