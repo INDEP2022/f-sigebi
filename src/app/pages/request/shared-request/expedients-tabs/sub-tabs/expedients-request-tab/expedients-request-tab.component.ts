@@ -26,10 +26,12 @@ export class ExpedientsRequestTabComponent
   @Input() typeDoc: string = '';
   @Input() typeModule?: string = '';
   title: string = 'Solicitudes del Expediente';
+
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsRequest = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   paragraphs: any[] = [];
+
   requestId: number = 0;
   allDocumentExpedient: any[] = [];
   screen: 'expedient-tab';
@@ -60,6 +62,9 @@ export class ExpedientsRequestTabComponent
       console.log('statustask', this.statusTask);
     }
 
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      this.getData(data);
+    });
     this.getIdExpediente();
   }
 
@@ -127,14 +132,12 @@ export class ExpedientsRequestTabComponent
   }
 
   getRequestData() {
-    this.requestService.getById(this.requestId).subscribe(data => {
-      this.getIdExpediente = data.recordId;
-      this.params
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getData());
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      this.getData(data);
     });
   }
-  getData() {
+
+  /*getData() {
     if (this.requestId && this.getIdExpediente) {
       this.loading = true;
       const body = {
@@ -144,12 +147,33 @@ export class ExpedientsRequestTabComponent
 
       this.wContentService.getDocumentos(body).subscribe({
         next: async (data: any) => {
-          //this.paragraphs = data.data;
-          //this.allDocumentExpedient = this.paragraphs;
-          //this.totalItems = this.paragraphs.length;
+          this.paragraphs = data.data;
+          this.allDocumentExpedient = this.paragraphs;
+          this.totalItems = data.count;
           this.loading = false;
         },
       });
     }
+  }*/
+
+  getData(params: ListParams) {
+    this.requestService.getAll(this.params.getValue()).subscribe({
+      next: async data => {
+        const filterInfo = data.data.map(items => {
+          items.authorityId = items.authority.authorityName;
+          items.regionalDelegationId = items.regionalDelegation.description;
+          items.transferenceId = items.transferent.name;
+          items.stationId = items.emisora.stationName;
+          items.state = items.state.descCondition;
+          return items;
+        });
+        this.paragraphs = data.data;
+        this.totalItems = data.count;
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
   }
 }
