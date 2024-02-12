@@ -128,7 +128,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         onComponentInitFunction(instance) {
           if (!isNullOrEmpty(instance)) {
             instance.key = 'firstRevision';
-            instance.cellChanged.subscribe(row => { });
+            instance.cellChanged.subscribe(row => {});
           }
         },
       },
@@ -141,7 +141,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         onComponentInitFunction(instance) {
           if (!isNullOrEmpty(instance)) {
             instance.key = 'firstRevisionObserv';
-            instance.cellChanged.subscribe(row => { });
+            instance.cellChanged.subscribe(row => {});
           }
         },
       },
@@ -153,7 +153,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         onComponentInitFunction(instance) {
           if (!isNullOrEmpty(instance)) {
             instance.key = 'secondRevision';
-            instance.cellChanged.subscribe(row => { });
+            instance.cellChanged.subscribe(row => {});
           }
         },
       },
@@ -166,7 +166,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         onComponentInitFunction(instance) {
           if (!isNullOrEmpty(instance)) {
             instance.key = 'secondRevisionObserv';
-            instance.cellChanged.subscribe(row => { });
+            instance.cellChanged.subscribe(row => {});
           }
         },
       },
@@ -222,19 +222,18 @@ export class GuidelinesComponent extends BasePage implements OnInit {
     });
 
     if (!validate) {
-
       let message = 'Debe llenar todos los campos:\n\n' + obj.guideline + '\n';
       message += isNullOrEmpty(obj.firstRevision) ? '(Revisión 1), ' : '';
       message += isNullOrEmpty(obj.secondRevision) ? '(Revisión 2), ' : '';
-      message += isNullOrEmpty(obj.firstRevisionObserv) ? '(Observaciones 1), ' : '';
-      message += isNullOrEmpty(obj.secondRevisionObserv) ? '(Observaciones 2), ' : '';
+      message += isNullOrEmpty(obj.firstRevisionObserv)
+        ? '(Observaciones 1), '
+        : '';
+      message += isNullOrEmpty(obj.secondRevisionObserv)
+        ? '(Observaciones 2), '
+        : '';
       message = message.substring(0, message.length - 2);
 
-      this.msgModal(
-        message,
-        'Campos requeridos',
-        'warning'
-      );
+      this.msgModal(message, 'Campos requeridos', 'warning');
       return;
     }
 

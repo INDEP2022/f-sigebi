@@ -7,6 +7,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
+import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -28,12 +29,18 @@ export class AnnexJAssetsClassificationComponent
   checked: string = 'checked';
   idSample: number = 0;
   sampleInfo: ISample;
+
+  requestId: number = 0;
+  reportId: number = 0;
+  reportTable: string = '';
+
   constructor(
     private fb: FormBuilder,
     private bsModalRef: BsModalRef,
     private modalService: BsModalService,
     private samplingGoodService: SamplingGoodService,
-    private signatoriesService: SignatoriesService
+    private signatoriesService: SignatoriesService,
+    private reportgoodService: ReportgoodService
   ) {
     super();
   }
@@ -148,7 +155,7 @@ export class AnnexJAssetsClassificationComponent
   }
 
   async signAnnexJ() {
-    const typeDocument = 218;
+    const typeDocument = this.reportId > 0 ? this.reportId : 218;
     if (this.typeAnnex == 'annexJ-assets-classification') {
       const responsibleSae = this.form.get('responsibleSae').value;
       const saePosition = this.form.get('saePosition').value;
@@ -192,11 +199,11 @@ export class AnnexJAssetsClassificationComponent
           );
 
           if (checkSignature) {
-            this.alert(
+            /*this.alert(
               'success',
               'Acción Correcta',
               'Firmante agregado correctamente'
-            );
+            );*/
             this.bsModalRef.content.callback(typeDocument, typeSign);
             this.close();
           }
@@ -209,11 +216,11 @@ export class AnnexJAssetsClassificationComponent
         );
 
         if (registerInfoSample) {
-          this.alert(
+          /*this.alert(
             'success',
             'Acción Correcta',
             'Información registrada correctamente'
-          );
+          );*/
           this.bsModalRef.content.callback(typeDocument, typeSign);
           this.close();
         }
