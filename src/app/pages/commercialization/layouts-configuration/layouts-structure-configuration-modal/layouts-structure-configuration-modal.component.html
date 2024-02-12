@@ -1,19 +1,12 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar' : 'Agregar' }} {{ title }} {{ id }}
+    </h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="providerForm">
       <div class="row">
-        <!-- <div class="col-md-3">
-          <form-field [control]="providerForm.get('idLayout')" label="Layout">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="idLayout"
-              readonly />
-          </form-field>
-        </div> -->
         <div class="col-md-2">
           <form-field [control]="providerForm.get('position')" label="Posición">
             <input
@@ -24,12 +17,24 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="providerForm.get('column')" label="Columna">
-            <input
+          <form-field [control]="providerForm.get('column')">
+            <ngx-select
+              [form]="providerForm"
+              [data]="dataItems"
+              value="column"
+              (fetchItems)="getColumns($event)"
+              (change)="changeOpt($event)"
+              bindLabel="column"
+              control="column"
+              label="Columna"
+              [searchOnInit]="true"
+              [showTooltip]="true">
+            </ngx-select>
+            <!-- <input
               type="text"
               class="form-control"
               formControlName="column"
-              maxlength="35" />
+              maxlength="35" /> -->
           </form-field>
         </div>
         <div class="col-md-2">
@@ -50,19 +55,20 @@
               maxlength="3" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12 mt-2">
           <form-field
             [control]="providerForm.get('constant')"
             label="Constante">
             <textarea
               class="form-control"
               formControlName="constant"
-              rows="4"
+              rows="3"
+              cols="3"
               maxlength="500">
             </textarea>
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 mt-2">
           <form-field
             [control]="providerForm.get('carFilling')"
             label="Car&aacute;cter de Relleno">
@@ -73,18 +79,17 @@
               maxlength="1" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 mt-2">
           <form-field
             [control]="providerForm.get('justification')"
             label="Justificaci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="justification"
-              maxlength="1" />
+            <ng-select formControlName="justification" class="form-control">
+              <ng-option value="I">Izquierda</ng-option>
+              <ng-option value="D">Derecha</ng-option>
+            </ng-select>
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 mt-2">
           <form-field [control]="providerForm.get('decimal')" label="Decimal">
             <input
               type="text"
@@ -93,7 +98,7 @@
               maxlength="2" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 mt-2">
           <form-field
             [control]="providerForm.get('dateFormat')"
             label="Formato de Fecha">
@@ -110,15 +115,20 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
+        <button
           [disabled]="providerForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()"
-          >Agregar estructura</confirm-button
-        >
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          Guardar
+          <i class="fa fa-save"></i>
+        </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
           Cancelar
         </button>
       </div>
