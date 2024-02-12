@@ -231,6 +231,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
         if (!filter.search) {
           return;
         }
+        console.log(filter);
         params.addFilter(
           filter.field,
           filter.search,

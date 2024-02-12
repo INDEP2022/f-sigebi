@@ -4,9 +4,10 @@ import { BasePage } from 'src/app/core/shared/base-page';
 
 import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { SocketService } from 'src/app/common/socket/socket.service';
 import { IGoodSpent } from 'src/app/core/models/ms-spent/good-spent.model';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
@@ -18,6 +19,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { isEmpty } from 'src/app/utils/validations/is-empty';
 import { CommercialSpentForm } from '../../consultation-goods-commercial-process-tabs/utils/commercial-spents.form';
 import { CONSULTATION_GOODS_BILLS_COLUMNS } from './consultation-goods-commercial-bills-columns';
+
 @Component({
   selector: 'app-consultation-goods-commercial-bills',
   templateUrl: './consultation-goods-commercial-bills.component.html',
@@ -44,7 +46,8 @@ export class ConsultationGoodsCommercialBillsComponent
     private goodSpentService: GoodSpentService,
     private transferentService: TransferenteService,
     private spentService: SpentService,
-    private stationService: StationService
+    private stationService: StationService,
+    private socketService: SocketService
   ) {
     super();
     this.settings = {
@@ -156,13 +159,38 @@ export class ConsultationGoodsCommercialBillsComponent
     }
   }
 
+  subscribeExcel(token: any) {
+    console.log(token);
+
+    return this.socketService.goodsTrackerExcel(token.channel).pipe(
+      catchError(error => {
+        this.loader.load = false;
+        return throwError(() => error);
+      }),
+      tap(res => {
+        console.warn('RESPUESTA DEL SOCKET');
+        console.log(res);
+        /* if (res.path != null) {
+          this.getExcel(res.path);
+        } */
+      })
+      // switchMap(() => )
+    );
+  }
+
   exportAll() {
     this.loading = true;
     console.log(this.modelSave2);
     if (this.modelSave2 != null) {
       this.spentService.getChargeSpentsExcel(this.modelSave2).subscribe(
         res => {
-          this.downloadDocument('TODO_GASTOS', 'excel', res.base64File);
+          console.log(res);
+          console.log(res.data);
+          console.log(res.data[0]['channel']);
+          const token = res.data.channel;
+
+          // switchMap(() => )
+          // this.downloadDocument('TODO_GASTOS', 'excel', res.base64File);
         },
         err => {
           this.loading = false;
