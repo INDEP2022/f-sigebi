@@ -85,6 +85,16 @@ export class ConsigmentsEventsComponent extends BasePage implements OnInit {
     this.loading = true;
     params.addFilter('address', this.parameters.pDirection);
     params.addFilter('eventTpId', this.preparation ? 10 : 6);
+
+    for (const key in params.filters) {
+      const str = params.filters[key];
+      const subStr = 'filter.catDelegation';
+      const newSubStr = 'filter.catDelegation.description';
+      if (str.includes(subStr)) {
+        params.filters[key] = str.replace(subStr, newSubStr);
+      }
+    }
+    console.log(params);
     return this.comerEventService.getEatEvents(params.getParams()).pipe(
       catchError(error => {
         this.loading = false;

@@ -400,6 +400,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
             : null,
           failureDate: event?.failureDate ? new Date(event?.failureDate) : null,
         });
+        this.eventForm.reset();
         console.log(this.eventForm.value);
       }),
       catchError(error => {
@@ -477,7 +478,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Verificar fecha',
-        'La fecha de fallo no puede menor o igual a la fecha del evento XD'
+        'La fecha de fallo no puede menor o igual a la fecha del evento'
       );
       return;
     }
