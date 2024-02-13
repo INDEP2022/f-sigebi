@@ -47,6 +47,8 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   userInfo: any;
   sampleOrder: ISamplingOrder = null;
   idSample: number = 0;
+  fileSelected: boolean = false;
+
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
@@ -186,6 +188,12 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   }
 
   selectFile(event?: any) {
+    this.selectedFile = event.target.files[0];
+
+    // Encender la bandera cuando se selecciona un archivo
+    if (this.selectedFile) {
+      this.fileSelected = true;
+    }
     this.selectedFile = event.target.files[0];
     if (this.selectedFile?.size > 100000000) {
       this.validateSizePDF = true;
