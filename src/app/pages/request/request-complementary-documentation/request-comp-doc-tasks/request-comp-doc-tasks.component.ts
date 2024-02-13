@@ -41,6 +41,7 @@ import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/m
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -909,6 +910,7 @@ export class RequestCompDocTasksComponent
       const taskForm: ITask = {
         State: state,
         taskDefinitionId: null,
+        endDate: new Date(),
       };
       this.taskService.update(id, taskForm).subscribe({
         next: response => {
@@ -1828,7 +1830,7 @@ export class RequestCompDocTasksComponent
             resolve({
               data: resp.data,
               isValid: resp.data.length > 0,
-              isSigned: true, //resp.data[0].signedReport == 'Y',
+              isSigned: true//resp.data[0].signedReport == 'Y',
             });
           } else {
             resolve({
@@ -1845,6 +1847,17 @@ export class RequestCompDocTasksComponent
         },
       });
     });
+  }
+
+  //Validar firmantes de reportes
+  //En parametro validationocsp
+  getStatusFirmantes() {
+
+    console.log('getStatusFirmantes');
+
+    //Servicio http://sigebimsqa.indep.gob.mx/electronicfirm/api/v1/signatories
+
+    //validationocsp ? firmarReporte : na
   }
 
   openSignature(object) {
@@ -1867,7 +1880,7 @@ export class RequestCompDocTasksComponent
           callback: async (typeDocument: number, typeSign: string) => {
             if (typeAnnex == 'sign-annexJ-assets-classification') {
               if (typeDocument && typeSign) {
-                this.showReportInfo(typeDocument, typeSign, typeAnnex);
+                this.showReportInfo(idSample, typeDocument, typeSign, typeAnnex);
               }
             }
           },
@@ -1877,13 +1890,15 @@ export class RequestCompDocTasksComponent
       };
       this.modalService.show(component, config);
     } else {
-      this.showReportInfo(0, '', '');
+      this.showReportInfo(0, 0, '', '');
     }
   }
 
-  showReportInfo(typeDocument: number, typeSign: string, typeAnnex: string) {
+  showReportInfo(id: number, typeDocument: number, typeSign: string, typeAnnex: string) {
     const idTypeDoc = typeDocument;
-    const idSample = this.requestId;
+    const idSample = id;
+    const orderSampleId = id;
+    const requestId = this.requestId;
     const typeFirm = typeSign;
     const tableName = this.reportTable; //this.tableName;
     const reportName = 'sae.rptdesign'; //this.tableName;
@@ -1895,21 +1910,21 @@ export class RequestCompDocTasksComponent
       initialState: {
         idTypeDoc,
         idSample,
+        orderSampleId,
         typeFirm,
         typeAnnex,
         dynamic,
         tableName,
         reportName,
         signed,
+        requestId,
         callback: data => {
-          console.log(data);
-
-          if (data) {
-            if (typeFirm != 'electronica') {
-              this.uploadDocument(this.requestId, typeDocument);
-            } else {
-              //this.getInfoSample();
+          if (typeFirm != 'electronica') {
+            if (data) {
+              this.uploadDocument(idSample, typeDocument);
             }
+          } else if (typeFirm == 'electronica') {
+            this.getStatusFirmantes();
           }
         },
       },
@@ -1924,9 +1939,11 @@ export class RequestCompDocTasksComponent
     config.initialState = {
       typeDoc: typeDocument,
       idSample: id,
-      callback: data => {
+      callback: async data => {
         if (data) {
           //this.getInfoSample();
+          //reporte dinamico marcar como firmado
+          this.firmarReporte();
         }
       },
     };
@@ -1936,7 +1953,25 @@ export class RequestCompDocTasksComponent
 
   //Reportes dinamicos
   //Firma de reportes
+
+  async firmarReporte() {
+
+    const user: any = this.authService.decodeToken();
+    let report = await this.getStatusReport();
+    report = report.data[0];
+    report.signedReport = 'Y';
+    report.modificationUser = user.username;
+    report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
+    this.reportgoodService.saveReportDynamic(report).subscribe({
+      next: resp => { },
+      error: err => { },
+    });
+
+  }
+
 }
+
+
 
 export function isNullOrEmpty(value: any): boolean {
   return value === null || value === undefined || (value + '').trim() === '';

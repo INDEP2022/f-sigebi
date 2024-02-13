@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import * as moment from 'moment';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -267,7 +268,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     if (this.typeDoc == 'good' && this.process == 'programming') {
       this.loading = true;
       const formData = {
-        dInDate: new Date(),
+        dInDate: moment(new Date()).format('DD-MMM-YYYY'),
         dDocAuthor: this.userLogName,
         dSecurityGroup: 'Public',
         ddocCreator: this.userLogName,
@@ -346,7 +347,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => { },
         });
     }
 
@@ -358,7 +359,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       this.loading = true;
       const user: any = this.authService.decodeToken();
       const formData = {
-        dInDate: new Date(),
+        dInDate: moment(new Date()).format('DD-MMM-YYYY'),
         dDocAuthor: this.userLogName,
         dSecurityGroup: 'Public',
         xidExpediente: this.idExpedient,
@@ -437,7 +438,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => { },
         });
     }
 
@@ -445,7 +446,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       this.loading = true;
       const formData = {
         dDocAuthor: this.userLogName,
-        dInDate: new Date(),
+        dInDate: moment(new Date()).format('DD-MMM-YYYY'),
         dSecurityGroup: 'Public',
         ddocCreator: this.userLogName,
         xidcProfile: 'NSBDB_Gral',
@@ -520,13 +521,13 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => { },
         });
     }
 
     if (this.typeDoc == 'doc-expedient' && this.process != 'sampling-assets') {
       const formData = {
-        dInDate: new Date(),
+        dInDate: moment(new Date()).format('DD-MMM-YYYY'),
         dSecurityGroup: 'Public',
         xidcProfile: 'NSBDB_Gral',
         xNombreProceso: 'Clasificar Bien',
@@ -602,7 +603,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => { },
         });
     }
 
@@ -687,7 +688,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => { },
         });
     }
   }
@@ -696,7 +697,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  handleSuccess() {}
+  handleSuccess() { }
 
   getStateSelect(params?: ListParams) {
     params['filter.sortBy'] = 'descCondition:ASC';

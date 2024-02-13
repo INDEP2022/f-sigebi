@@ -7,8 +7,10 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { Subscription } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
@@ -43,6 +45,8 @@ export class RegisterDocumentationFormComponent
   registerForm: FormGroup = new FormGroup({});
   @Output() onRegister = new EventEmitter<any>();
   @Output() onChange = new EventEmitter<any>();
+
+  @ViewChild('dp') datePicker: BsDatepickerDirective;
 
   priorityCheck: boolean = false;
   bsPriorityDate: any;
@@ -200,12 +204,14 @@ export class RegisterDocumentationFormComponent
 
           if (resp.receptionDate) {
             this.bsReceptionValue = this.parseDateNoOffset(resp.receptionDate);
+            console.log('error' + this.bsReceptionValue);
           } else {
             this.bsReceptionValue = new Date();
           }
 
           if (resp.paperDate) {
             this.bsPaperValue = this.parseDateNoOffset(resp.paperDate);
+            console.log('error' + this.bsPaperValue);
           }
 
           this.transference = +resp.transferenceId;
@@ -296,6 +302,7 @@ export class RegisterDocumentationFormComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.registerForm.reset();
+        //this.datePicker.bsValue = null; // Restablecer el valor del bsDatepicker
         this.getRequestInfo();
         this.registerForm.markAsUntouched();
       }
@@ -365,10 +372,12 @@ export class RegisterDocumentationFormComponent
   }
 
   changeDateEvent(event: any) {
-    this.bsPaperValue = event;
+    console.log('error' + this.bsPaperValue);
+    //this.bsPaperValue = event;
     if (this.bsPaperValue) {
-      const date = this.bsPaperValue.toISOString();
-      this.registerForm.controls['paperDate'].setValue(date);
+      //const date = this.bsPaperValue.toISOString();
+      console.log('error' + this.bsPaperValue);
+      this.registerForm.controls['paperDate'].patchValue(this.bsPaperValue);
     } else {
       this.registerForm.controls['paperDate'].setValue(null);
     }
@@ -389,6 +398,15 @@ export class RegisterDocumentationFormComponent
     return new Date(
       dateLocal.valueOf() + dateLocal.getTimezoneOffset() * 60 * 1000
     );
+  }
+
+  convertDateFormat(dateString: string): string {
+    const date = new Date(dateString);
+    const day = ('0' + date.getDate()).slice(-2);
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
   }
 
   getAffair(id: string | number) {
