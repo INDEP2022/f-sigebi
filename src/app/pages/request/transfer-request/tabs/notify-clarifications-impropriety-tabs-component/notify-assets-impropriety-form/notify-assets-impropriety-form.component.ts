@@ -296,26 +296,23 @@ export class NotifyAssetsImproprietyFormComponent
     });
 
     this.clarificationForm = this.fb.group({
-      addresseeName: [
-        this.infoRequest?.nameOfOwner || null,
-        [Validators.pattern(STRING_PATTERN)],
-      ],
+      addresseeName: [null, [Validators.pattern(STRING_PATTERN)]],
 
       positionAddressee: [
         //Cargo Destinatario - Titular de la solicitud
-        this.infoRequest?.holderCharge || null,
+        null,
         [Validators.pattern(STRING_PATTERN)],
       ],
 
       senderName: [
         //Nombre Remitente - DELEGADO
-        null,
+        this.infoRequest?.nameOfOwner || null,
         [Validators.pattern(STRING_PATTERN)],
       ],
 
       senderCharge: [
         //Cargo Remitente - DELEGADO
-        null,
+        this.infoRequest?.holderCharge || null,
         [Validators.pattern(STRING_PATTERN)],
       ],
 
