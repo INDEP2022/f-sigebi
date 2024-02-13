@@ -13,6 +13,7 @@ export class SocketService extends HttpService {
   }
   goodsTrackerExcel(token: string) {
     console.log(token);
+    console.log('Se suscribió');
     return this.socket.fromEvent(token).pipe(
       tap((res: any) => {
         console.log('Conexion establecida');

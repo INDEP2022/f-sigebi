@@ -24,7 +24,6 @@ import { ParameterModService } from 'src/app/core/services/ms-parametercomer/par
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { PaymentDevolutionService } from 'src/app/core/services/ms-paymentdevolution/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { CheckboxElementComponent_ } from 'src/app/pages/final-destination-process/donation-process/maintenance-commitment-donation/data-in-table/CheckboxDisabled';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 import { ChangeRfcModalComponent } from './change-rfc-modal/change-rfc-modal.component';
@@ -351,7 +350,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         _fis: {
           title: 'FIS',
           sort: false,
-          type: 'custom',
+          type: 'html',
           width: '10%',
           // showAlways: true,
           filter: {
@@ -364,12 +363,24 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
               ],
             },
           },
-          renderComponent: CheckboxElementComponent_,
-          onComponentInitFunction(instance: any) {
-            instance.toggle.subscribe((data: any) => {
-              console.log(data);
-            });
+          valuePrepareFunction: (value: any) => {
+            if (value !== null) {
+              switch (value) {
+                case true:
+                  value = `<div class="badge badge-pill bg-success text-wrap ml-3 mr-2">Activo</div>`;
+                  return value;
+                default:
+                  value = `<div class="badge badge-pill bg-danger text-wrap ml-2 mr-2">Inactivo</div>`;
+                  return value;
+              }
+            }
           },
+          // renderComponent: CheckboxElementComponent_,
+          // onComponentInitFunction(instance: any) {
+          //   instance.toggle.subscribe((data: any) => {
+          //     console.log(data);
+          //   });
+          // },
           filterFunction: () => {
             return true;
           },
@@ -377,7 +388,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         _cnt: {
           title: 'CNT',
           sort: false,
-          type: 'custom',
+          type: 'html',
           width: '10%',
           // showAlways: true,
           filter: {
@@ -390,11 +401,17 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
               ],
             },
           },
-          renderComponent: CheckboxElementComponent_,
-          onComponentInitFunction(instance: any) {
-            instance.toggle.subscribe((data: any) => {
-              console.log(data);
-            });
+          valuePrepareFunction: (value: any) => {
+            if (value !== null) {
+              switch (value) {
+                case true:
+                  value = `<div class="badge badge-pill bg-success text-wrap ml-3 mr-2">Activo</div>`;
+                  return value;
+                default:
+                  value = `<div class="badge badge-pill bg-danger text-wrap ml-2 mr-2">Inactivo</div>`;
+                  return value;
+              }
+            }
           },
           filterFunction: () => {
             return true;
@@ -403,7 +420,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         _pto: {
           title: 'PTO',
           sort: false,
-          type: 'custom',
+          type: 'html',
           width: '10%',
           // showAlways: true,
           filter: {
@@ -416,11 +433,17 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
               ],
             },
           },
-          renderComponent: CheckboxElementComponent_,
-          onComponentInitFunction(instance: any) {
-            instance.toggle.subscribe((data: any) => {
-              console.log(data);
-            });
+          valuePrepareFunction: (value: any) => {
+            if (value !== null) {
+              switch (value) {
+                case true:
+                  value = `<div class="badge badge-pill bg-success text-wrap ml-3 mr-2">Activo</div>`;
+                  return value;
+                default:
+                  value = `<div class="badge badge-pill bg-danger text-wrap ml-2 mr-2">Inactivo</div>`;
+                  return value;
+              }
+            }
           },
           filterFunction: () => {
             return true;
@@ -429,7 +452,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         _tsr: {
           title: 'TSR',
           sort: false,
-          type: 'custom',
+          type: 'html',
           width: '10%',
           // showAlways: true,
           filter: {
@@ -442,11 +465,17 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
               ],
             },
           },
-          renderComponent: CheckboxElementComponent_,
-          onComponentInitFunction(instance: any) {
-            instance.toggle.subscribe((data: any) => {
-              console.log(data);
-            });
+          valuePrepareFunction: (value: any) => {
+            if (value !== null) {
+              switch (value) {
+                case true:
+                  value = `<div class="badge badge-pill bg-success text-wrap ml-3 mr-2">Activo</div>`;
+                  return value;
+                default:
+                  value = `<div class="badge badge-pill bg-danger text-wrap ml-2 mr-2">Inactivo</div>`;
+                  return value;
+              }
+            }
           },
           filterFunction: () => {
             return true;
@@ -585,7 +614,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         },
         _statusClabe: {
           title: 'Clabe Válida',
-          type: 'custom',
+          type: 'html',
           sort: false,
           filter: {
             type: 'list',
@@ -597,11 +626,17 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
               ],
             },
           },
-          renderComponent: CheckboxElementComponent_,
-          onComponentInitFunction(instance: any) {
-            instance.toggle.subscribe((data: any) => {
-              console.log(data);
-            });
+          valuePrepareFunction: (value: any) => {
+            if (value !== null) {
+              switch (value) {
+                case true:
+                  value = `<div class="badge badge-pill bg-success text-wrap ml-3 mr-2">Activo</div>`;
+                  return value;
+                default:
+                  value = `<div class="badge badge-pill bg-danger text-wrap ml-2 mr-2">Inactivo</div>`;
+                  return value;
+              }
+            }
           },
           filterFunction: () => {
             return true;
@@ -1068,13 +1103,11 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   }
 
   changeLayout() {
-    this.router.navigate(
-      ['/pages/commercialization/layouts-configuration']
-      // {
-      //   queryParams: {
-      //   },
-      // }
-    );
+    this.router.navigate(['/pages/commercialization/layouts-configuration'], {
+      queryParams: {
+        origin: 'FCOMERCTLDPAG',
+      },
+    });
   }
 
   async sendRequests() {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -16,6 +16,7 @@ import {
 import { addDays, format, subDays } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { SocketService } from 'src/app/common/socket/socket.service';
 import { maxDate, minDate } from 'src/app/common/validations/date.validators';
 import { IGoodCharge } from 'src/app/core/models/ms-good/good';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
@@ -72,7 +73,8 @@ export class ConsultationGoodsCommercialSalesComponent
     private transferentService: TransferenteService,
     private delegationService: DelegationService,
     private stationService: StationService,
-    private ComerEvent: ComerEventService
+    private ComerEvent: ComerEventService,
+    private socketService: SocketService
   ) {
     super();
     this.settings = {
@@ -350,13 +352,29 @@ export class ConsultationGoodsCommercialSalesComponent
     };
   }
 
+  //Esperar excel socket
+  subscribeExcel(token: any) {
+    return this.socketService.goodsTrackerExcel(token.channel).pipe(
+      catchError(error => {
+        this.loader.load = false;
+        console.log(error);
+        return throwError(() => error);
+      }),
+      tap(res => {
+        console.warn('RESPUESTA DEL SOCKET');
+        console.log(res);
+        this.downloadDocument('TODO_VENTAS', 'excel', res.file);
+      })
+    );
+  }
+
   //Exportar Excel todo
   exportAll() {
     this.loading = true;
     if (this.modelSave != null) {
       this.goodService.chargeGoodsExcel(this.modelSave).subscribe(
         res => {
-          this.downloadDocument('TODO_VENTAS', 'excel', res.base64File);
+          this.subscribeExcel(res).subscribe();
         },
         err => {
           this.loading = false;
