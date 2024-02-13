@@ -1906,12 +1906,14 @@ export class RequestCompDocTasksComponent
         signed,
         requestId,
         callback: data => {
+
           console.log(data);
 
           if (data) {
             if (typeFirm != 'electronica') {
-              this.uploadDocument(this.requestId, typeDocument);
+              this.uploadDocument(idSample, typeDocument);
             } else {
+              //reporte dinamico marcar como firmado
               //this.getInfoSample();
             }
           }
@@ -1931,6 +1933,7 @@ export class RequestCompDocTasksComponent
       callback: data => {
         if (data) {
           //this.getInfoSample();
+          //reporte dinamico marcar como firmado
         }
       },
     };
