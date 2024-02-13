@@ -26,9 +26,9 @@ import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.serv
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared';
 import { environment } from 'src/environments/environment';
+import { isNullOrEmpty } from '../../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { LIST_REPORTS_COLUMN } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/list-reports-column';
 import { UploadFielsModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/upload-fiels-modal/upload-fiels-modal.component';
-import { isNullOrEmpty } from '../../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-show-report-component',
@@ -273,7 +273,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       next: response => {
         //this.createPersonsSing(response.data[0]);
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -339,7 +339,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
             type: 'pdf',
           },
-          callback: (response: any) => { },
+          callback: (response: any) => {},
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
         keyboard: false,
@@ -350,35 +350,18 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   signDocument() {
-    console.log('Firmar Documento');
+    let signs = [
+      2, 174, 7, 192, 108, 183, 26, 27, 50, 68, 217, 94, 40, 101, 105, 104, 72,
+      222, 223, 224, 225, 245, 246, 249,
+    ];
+
     console.log(this.idTypeDoc);
     console.log(this.typeFirm);
 
     if (
-      (this.idTypeDoc == 2 ||
-        174 ||
-        7 ||
-        192 ||
-        108 ||
-        183 ||
-        26 ||
-        27 ||
-        50 ||
-        68 ||
-        217 ||
-        94 ||
-        40 ||
-        101 ||
-        105 ||
-        104 ||
-        72 ||
-        222 ||
-        223 ||
-        224 ||
-        225 ||
-        245 ||
-        246 ||
-        249) && this.typeFirm == 'autografa') {
+      signs.includes(parseInt('' + this.idTypeDoc)) &&
+      this.typeFirm == 'autografa'
+    ) {
       this.modalRef.content.callback(true, this.typeFirm);
       this.modalRef.hide();
     }
@@ -427,41 +410,15 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       this.modalRef.hide();
     }
 
+    let electronic = [
+      2, 221, 210, 103, 106, 107, 197, 218, 219, 174, 185, 186, 187, 192, 108,
+      183, 26, 27, 50, 68, 217, 94, 40, 101, 105, 104, 72, 222, 223, 224, 225,
+      245, 246, 249,
+    ];
+
     if (
-      (this.idTypeDoc == 221 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 210 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 103 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 106 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 107 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 197 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 218 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 219 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 174 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 185 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 186 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 187 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 192 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 108 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 183 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 26 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 27 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 50 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 68 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 217 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 94 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 40 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 101 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 105 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 104 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 72 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 222 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 223 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 224 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 225 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 245 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 246 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 249 && this.typeFirm == 'electronica') ||
-      (this.idOrderService && this.typeFirm == 'electronica')
+      electronic.includes(parseInt('' + this.idTypeDoc)) &&
+      this.typeFirm == 'electronica'
     ) {
       if (!this.listSigns && this.printReport && !this.isAttachDoc) {
         this.printReport = false;
@@ -510,7 +467,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 );
                 if (createSignatore) this.getSignatories();
               },
-              error: error => { },
+              error: error => {},
             });
         },
         error: async error => {
@@ -549,7 +506,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -943,7 +900,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 this.close();
               }
             },
-            error: error => { },
+            error: error => {},
           });
       });
     } else {
@@ -1016,7 +973,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   }
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idTypeDoc == 107 && this.typeFirm == 'electronica') {
@@ -1072,7 +1029,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idTypeDoc == 210 && this.typeFirm == 'electronica') {
@@ -1128,7 +1085,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idTypeDoc == 106 && this.typeFirm == 'electronica') {
@@ -1184,7 +1141,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idTypeDoc == 197 && this.typeFirm == 'electronica') {
@@ -1234,7 +1191,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idOrderService && this.typeFirm == 'electronica') {
@@ -1288,7 +1245,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idTypeDoc == 218 && this.typeFirm == 'electronica') {
@@ -1336,7 +1293,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idTypeDoc == 219 && this.typeFirm == 'electronica') {
@@ -1385,7 +1342,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       }
@@ -1405,7 +1362,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -1423,7 +1380,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => { },
+          error: error => {},
         });
       });
     });
@@ -1460,7 +1417,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => { },
+          error: error => {},
         });
       });
     });
