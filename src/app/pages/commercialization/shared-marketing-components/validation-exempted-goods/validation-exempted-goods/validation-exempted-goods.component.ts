@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NewValidationExemptedGoodModalComponent } from '../new-validation-exempted-goods-modal/new-validation-exempted-goods-modal.component';
 import { GOODS_COLUMS } from './validation-exempted-goods-columns';
 
 @Component({
@@ -30,7 +32,10 @@ export class ValidationExemptedGoodsComponent
     columns: GOODS_COLUMS,
   };
 
-  constructor(private goodService: GoodService) {
+  constructor(
+    private goodService: GoodService,
+    private modalService: BsModalService
+  ) {
     super();
   }
 
@@ -70,5 +75,14 @@ export class ValidationExemptedGoodsComponent
     );
   }
 
-  openModalNew() {}
+  openModalNew() {
+    let config: ModalOptions = {
+      initialState: {
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(NewValidationExemptedGoodModalComponent, config);
+  }
 }
