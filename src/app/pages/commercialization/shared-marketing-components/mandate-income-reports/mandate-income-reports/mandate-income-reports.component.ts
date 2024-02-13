@@ -150,7 +150,7 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
     let params = {
       //PN_DEVOLUCION: this.data,
       P_ORIGIN: null,
-      P_CONSEC: 1545,
+      P_CONSEC: null,
       IDEVENTO: this.form.get('event').value,
     };
     console.log(this.data);

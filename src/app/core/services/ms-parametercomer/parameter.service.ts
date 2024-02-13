@@ -229,4 +229,8 @@ export class ParameterModService
   getAll_(params?: ListParams): Observable<IListResponse<IParameter_>> {
     return this.get(this.route, params);
   }
+
+  aplicationVwColumnsBd(params: _Params) {
+    return this.get(ParameterComerEndpoints.AplicationVwColumnsBd, params);
+  }
 }
