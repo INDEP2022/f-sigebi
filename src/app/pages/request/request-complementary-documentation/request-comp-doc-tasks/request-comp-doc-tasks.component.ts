@@ -41,6 +41,7 @@ import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/m
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -1828,7 +1829,7 @@ export class RequestCompDocTasksComponent
             resolve({
               data: resp.data,
               isValid: resp.data.length > 0,
-              isSigned: true, //resp.data[0].signedReport == 'Y',
+              isSigned: true//resp.data[0].signedReport == 'Y',
             });
           } else {
             resolve({
@@ -1845,6 +1846,17 @@ export class RequestCompDocTasksComponent
         },
       });
     });
+  }
+
+  //Validar firmantes de reportes
+  //En parametro validationocsp
+  getStatusFirmantes() {
+
+    console.log('getStatusFirmantes');
+
+    //Servicio http://sigebimsqa.indep.gob.mx/electronicfirm/api/v1/signatories
+
+    //validationocsp ? firmarReporte : na
   }
 
   openSignature(object) {
@@ -1906,16 +1918,12 @@ export class RequestCompDocTasksComponent
         signed,
         requestId,
         callback: data => {
-
-          console.log(data);
-
-          if (data) {
-            if (typeFirm != 'electronica') {
+          if (typeFirm != 'electronica') {
+            if (data) {
               this.uploadDocument(idSample, typeDocument);
-            } else {
-              //reporte dinamico marcar como firmado
-              //this.getInfoSample();
             }
+          } else if (typeFirm == 'electronica') {
+            this.getStatusFirmantes();
           }
         },
       },
@@ -1930,10 +1938,11 @@ export class RequestCompDocTasksComponent
     config.initialState = {
       typeDoc: typeDocument,
       idSample: id,
-      callback: data => {
+      callback: async data => {
         if (data) {
           //this.getInfoSample();
           //reporte dinamico marcar como firmado
+          this.firmarReporte();
         }
       },
     };
@@ -1943,7 +1952,25 @@ export class RequestCompDocTasksComponent
 
   //Reportes dinamicos
   //Firma de reportes
+
+  async firmarReporte() {
+
+    const user: any = this.authService.decodeToken();
+    let report = await this.getStatusReport();
+    report = report.data[0];
+    report.signedReport = 'Y';
+    report.modificationUser = user.username;
+    report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
+    this.reportgoodService.saveReportDynamic(report).subscribe({
+      next: resp => { },
+      error: err => { },
+    });
+
+  }
+
 }
+
+
 
 export function isNullOrEmpty(value: any): boolean {
   return value === null || value === undefined || (value + '').trim() === '';
