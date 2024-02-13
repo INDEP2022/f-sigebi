@@ -1039,7 +1039,7 @@ export class ExpenseCompositionComponent
   //   return this.expenseCaptureDataService.validPayment;
   // }
   private fillData(data: IComerDetExpense2[]) {
-    this.data = data;
+    this.data = this.fillTotalsAndNewData(data);
     this.expenseCaptureDataService.dataCompositionExpenses = [...this.data];
     this.totalItems = this.data.length;
     this.dataTemp = [...this.data];
@@ -1115,22 +1115,15 @@ export class ExpenseCompositionComponent
     }, 300);
   }
 
-  private setData(
-    data,
-    loadContMands = false,
-    loadGoodsLote = false,
-    initializeds = false
-  ) {
-    this.expenseCaptureDataService.V_BIEN_REP_ROBO = 0;
-    if (!initializeds) {
-      this.total = 0;
-      this.amount = 0;
-      this.vat = 0;
-      this.isrWithholding = 0;
-      this.vatWithholding = 0;
-    }
-    let newData = data.map(row => {
-      // //
+  private fillTotalsAndNewData(data) {
+    this.total = 0;
+    this.amount = 0;
+    this.vat = 0;
+    this.isrWithholding = 0;
+    this.vatWithholding = 0;
+
+    return data.map(row => {
+      // debugger;
       this.amount += row.amount ? +row.amount : 0;
       this.vat += row.iva ? +row.iva : 0;
       this.isrWithholding += row.retencionIsr ? +row.retencionIsr : 0;
@@ -1163,7 +1156,12 @@ export class ExpenseCompositionComponent
         goodDescription: row.description,
       };
     });
-    this.fillData(newData);
+  }
+
+  private setData(data, loadContMands = false, loadGoodsLote = false) {
+    this.expenseCaptureDataService.V_BIEN_REP_ROBO = 0;
+
+    this.fillData(data);
     this.fillSelectedRows();
     if (loadGoodsLote && this.expenseCaptureDataService.callNextItemLote) {
       this.expenseCaptureDataService.callNextItemLoteSubject.next(true);
@@ -1224,7 +1222,7 @@ export class ExpenseCompositionComponent
       .subscribe({
         next: response => {
           if (response && response.data && response.data.length > 0) {
-            this.setData(response.data, loadContMands, false, true);
+            this.setData(response.data, loadContMands, false);
           } else {
             this.notGetData();
           }

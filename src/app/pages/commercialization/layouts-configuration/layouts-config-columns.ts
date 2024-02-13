@@ -132,101 +132,9 @@ export const LAYOUTS_COLUMNS4 = {
   },
 };
 
-export const LAYOUTS_COLUMNS5 = {
-  id: {
-    title: 'Id',
-    type: 'number',
-    sort: false,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.idLayout.id;
-    // },
-  },
-  descLayout: {
-    title: 'Descripción',
-    type: 'string',
-    sort: false,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.idLayout.descLayout;
-    // },
-  },
-  screenKey: {
-    title: 'Pantalla',
-    type: 'string',
-    sort: false,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.idLayout.screenKey;
-    // },
-  },
-  table: {
-    title: 'TablaOVista',
-    type: 'string',
-    sort: false,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.idLayout.table;
-    // },
-  },
-  criterion: {
-    title: 'Filtro de Selección',
-    type: 'string',
-    sort: false,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.idLayout.criterion;
-    // },
-  },
-  // registryNumber: {
-  //   title: 'Número de registro',
-  //   type: 'number',
-  //   sort: false,
-  //   valuePrepareFunction: (cell: any, row: any) => {
-  //     return row.idLayout.registryNumber;
-  //   },
-  // },
-  status_active: {
-    title: 'Activo',
-    sort: false,
-    // type: 'custom',
-    type: 'html',
-    // renderComponent: CheckboxElementComponent,
-    // onComponentInitFunction(instance: any) {
-    //   instance.toggle.subscribe((data: any) => {
-    //     console.log(data);
-
-    //     // data.row.to = data.toggle;
-    //   });
-    // },
-
-    valuePrepareFunction: (value: any) => {
-      if (value !== null) {
-        switch (value) {
-          case true:
-            value = `<div class="badge badge-pill bg-success text-wrap ml-2 mr-2">Activo</div>`;
-            return value;
-          default:
-            value = `<div class="badge badge-pill bg-danger text-wrap ml-2 mr-2">Inactivo</div>`;
-            return value;
-        }
-      }
-    },
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.idLayout.indActive;
-    // },
-  },
-};
+export const LAYOUTS_COLUMNS5 = {};
 
 export const LAYOUTS_COLUMNS6 = {
-  // idLayout: {
-  //   title: 'Layout',
-  //   type: 'number',
-  //   sort: false,
-  //   valuePrepareFunction: (cell: any, row: any) => {
-  //     return row.idLayout.id;
-  //   },
-  // },
-  // idConsec: {
-  //   title: 'Consec',
-  //   type: 'number',
-  //   sort: false,
-  // },
   position: {
     title: 'Posición',
     type: 'number',
@@ -261,6 +169,31 @@ export const LAYOUTS_COLUMNS6 = {
     title: 'Justificación',
     type: 'string',
     sort: false,
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Todos',
+        list: [
+          { value: 'I', title: 'Izquierda' },
+          { value: 'D', title: 'Derecha' },
+        ],
+      },
+    },
+    valuePrepareFunction: (value: any) => {
+      if (value !== null) {
+        switch (value) {
+          case 'I':
+            value = `Izquierda`;
+            return value;
+          default:
+            value = `Derecha`;
+            return value;
+        }
+      }
+    },
+    filterFunction: () => {
+      return true;
+    },
   },
   decimal: {
     title: 'Decimales',
@@ -402,232 +335,3 @@ export const LAYOUTS_COLUMNS56 = {
     sort: true,
   },
 };
-
-export const EXAMPLE_DATA = [
-  {
-    id: 1,
-    clave: 'clave',
-    status: 'activo',
-    d: 'ejemplo',
-    tipoDispersion: 'ejemplo',
-    origen: 'ejemplo',
-    fechaCreacion: new Date(),
-    fechaTermino: new Date(),
-  },
-  {
-    id: 1,
-    clave: 'clave',
-    status: 'activo',
-    d: 'ejemplo',
-    tipoDispersion: 'ejemplo',
-    origen: 'ejemplo',
-    fechaCreacion: new Date(),
-    fechaTermino: new Date(),
-  },
-  {
-    id: 1,
-    clave: 'clave',
-    status: 'activo',
-    d: 'ejemplo',
-    tipoDispersion: 'ejemplo',
-    origen: 'ejemplo',
-    fechaCreacion: new Date(),
-    fechaTermino: new Date(),
-  },
-  {
-    id: 1,
-    clave: 'clave',
-    status: 'activo',
-    d: 'ejemplo',
-    tipoDispersion: 'ejemplo',
-    origen: 'ejemplo',
-    fechaCreacion: new Date(),
-    fechaTermino: new Date(),
-  },
-  {
-    id: 1,
-    clave: 'clave',
-    status: 'activo',
-    d: 'ejemplo',
-    tipoDispersion: 'ejemplo',
-    origen: 'ejemplo',
-    fechaCreacion: new Date(),
-    fechaTermino: new Date(),
-  },
-];
-
-export const EXAMPLE_DAT2 = [
-  {
-    id: 1,
-    cveProceso: 'proceso',
-    cantidad: 5,
-    monto: 500,
-  },
-  {
-    id: 1,
-    cveProceso: 'proceso',
-    cantidad: 5,
-    monto: 500,
-  },
-  {
-    id: 1,
-    cveProceso: 'proceso',
-    cantidad: 5,
-    monto: 500,
-  },
-  {
-    id: 1,
-    cveProceso: 'proceso',
-    cantidad: 5,
-    monto: 500,
-  },
-  {
-    id: 1,
-    cveProceso: 'proceso',
-    cantidad: 5,
-    monto: 500,
-  },
-  {
-    id: 1,
-    cveProceso: 'proceso',
-    cantidad: 5,
-    monto: 500,
-  },
-  {
-    id: 1,
-    cveProceso: 'proceso',
-    cantidad: 5,
-    monto: 500,
-  },
-];
-
-export const EXAMPLE_DAT3 = [{}, {}, {}, {}];
-
-export const EXAMPLE_DAT4 = [
-  {
-    fechaTransf: new Date(),
-  },
-  {
-    fechaTransf: new Date(),
-  },
-  {
-    fechaTransf: new Date(),
-  },
-  {
-    fechaTransf: new Date(),
-  },
-];
-
-export const EXAMPLE_DAT5 = [
-  {
-    id: 1,
-    descripcion: 'ejemplo',
-    pantalla: 'ejemplo',
-    tablaVista: 'pantalla',
-    filtro: 'criterio',
-  },
-  {
-    id: 1,
-    descripcion: 'ejemplo',
-    pantalla: 'ejemplo',
-    tablaVista: 'pantalla',
-    filtro: 'criterio',
-  },
-  {
-    id: 1,
-    descripcion: 'ejemplo',
-    pantalla: 'ejemplo',
-    tablaVista: 'pantalla',
-    filtro: 'criterio',
-  },
-  {
-    id: 1,
-    descripcion: 'ejemplo',
-    pantalla: 'ejemplo',
-    tablaVista: 'pantalla',
-    filtro: 'criterio',
-  },
-  {
-    id: 1,
-    descripcion: 'ejemplo',
-    pantalla: 'ejemplo',
-    tablaVista: 'pantalla',
-    filtro: 'criterio',
-  },
-  {
-    id: 1,
-    descripcion: 'ejemplo',
-    pantalla: 'ejemplo',
-    tablaVista: 'pantalla',
-    filtro: 'criterio',
-  },
-];
-
-export const EXAMPLE_DAT6 = [
-  {
-    posicion: 1,
-    columna: 'ejemplo',
-    tipoDato: 'ejemplo',
-    longitud: 3,
-    constante: 'criterio',
-    caracterRelleno: 'caracter',
-    relleno: 'relleno',
-    decimales: 3,
-    formatoFecha: 'dd/mm/aaaa',
-  },
-  {
-    posicion: 1,
-    columna: 'ejemplo',
-    tipoDato: 'ejemplo',
-    longitud: 3,
-    constante: 'criterio',
-    caracterRelleno: 'caracter',
-    relleno: 'relleno',
-    decimales: 3,
-    formatoFecha: 'dd/mm/aaaa',
-  },
-  {
-    posicion: 1,
-    columna: 'ejemplo',
-    tipoDato: 'ejemplo',
-    longitud: 3,
-    constante: 'criterio',
-    caracterRelleno: 'caracter',
-    relleno: 'relleno',
-    decimales: 3,
-    formatoFecha: 'dd/mm/aaaa',
-  },
-  {
-    posicion: 1,
-    columna: 'ejemplo',
-    tipoDato: 'ejemplo',
-    longitud: 3,
-    constante: 'criterio',
-    caracterRelleno: 'caracter',
-    relleno: 'relleno',
-    decimales: 3,
-    formatoFecha: 'dd/mm/aaaa',
-  },
-  {
-    posicion: 1,
-    columna: 'ejemplo',
-    tipoDato: 'ejemplo',
-    longitud: 3,
-    constante: 'criterio',
-    caracterRelleno: 'caracter',
-    relleno: 'relleno',
-    decimales: 3,
-    formatoFecha: 'dd/mm/aaaa',
-  },
-  {
-    posicion: 1,
-    columna: 'ejemplo',
-    tipoDato: 'ejemplo',
-    longitud: 3,
-    constante: 'criterio',
-    caracterRelleno: 'caracter',
-    relleno: 'relleno',
-    decimales: 3,
-    formatoFecha: 'dd/mm/aaaa',
-  },
-];

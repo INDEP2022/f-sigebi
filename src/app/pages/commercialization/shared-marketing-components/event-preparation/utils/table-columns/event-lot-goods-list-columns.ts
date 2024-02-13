@@ -42,6 +42,9 @@ export const EVENT_LOT_GOODS_LIST_COLUMNS = {
   lotepubremesa: {
     title: 'Lote Participa',
     sort: false,
+    valuePrepareFunction: (empty: any, row: any) => {
+      return row.lotepubremesa?.description ?? null;
+    },
   },
   remittanceEventId: {
     title: 'Evento Rem / Pre',
@@ -50,6 +53,9 @@ export const EVENT_LOT_GOODS_LIST_COLUMNS = {
   lotrepuborig: {
     title: 'Lote Rem / Pre',
     sort: false,
+    valuePrepareFunction: (empty: any, row: any) => {
+      return row.lotrepuborig?.description ?? null;
+    },
   },
   baseValue: {
     title: 'Valor Base',

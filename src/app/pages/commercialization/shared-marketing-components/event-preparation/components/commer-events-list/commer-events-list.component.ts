@@ -80,8 +80,15 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
     if (dataSource.action == 'filter') {
       const filters = dataSource.filter.filters;
       filters.forEach((filter: any) => {
+        console.log(filter.field, filter.search, filter);
         const columns = this.settings.columns as any;
         const operator = columns[filter.field]?.operator;
+        if (filter.field == 'comerStatusvta') {
+          filter.field = 'comerStatusvta.description';
+        }
+        if (filter.field == 'comerTpevents') {
+          filter.field = 'comerTpevents.description';
+        }
         if (!filter.search) {
           return;
         }
@@ -104,6 +111,16 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
     this.resetEventSelected();
     this.loading = true;
     params.addFilter('address', this.parameters.pDirection);
+
+    for (const key in params.filters) {
+      const str = params.filters[key];
+      const subStr = 'filter.catDelegation';
+      const newSubStr = 'filter.catDelegation.description';
+      if (str.includes(subStr)) {
+        params.filters[key] = str.replace(subStr, newSubStr);
+      }
+    }
+
     // params.sortBy = 'id:DESC';
     return this.comerEventService.getEatEvents(params.getParams()).pipe(
       catchError(error => {

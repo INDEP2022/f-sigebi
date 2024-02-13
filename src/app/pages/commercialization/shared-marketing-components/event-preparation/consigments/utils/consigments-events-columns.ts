@@ -25,5 +25,8 @@ export const CONSIGMENTS_EVENTS_COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value?.description ?? '';
     },
+    filterFunction: (cell?: any, search?: string) => {
+      return true;
+    },
   },
 };
