@@ -14,7 +14,7 @@ import { CompensationService } from 'src/app/core/services/compensation-option/c
 import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
@@ -72,15 +72,15 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       this.dictumForm = this.fb.group({
         opinionNumber: [
           null,
-          [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+          [Validators.required, Validators.pattern(STRING_PATTERN)],
         ],
         veredict: [
           null,
-          [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+          [Validators.required, Validators.pattern(STRING_PATTERN)],
         ],
         nullityTrial: [
           null,
-          [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+          [Validators.required, Validators.pattern(STRING_PATTERN)],
         ],
       });
 
@@ -95,12 +95,12 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
         payOrderNo: [null],
         opinionNumber: [
           Validators.required,
-          [Validators.pattern(NUMBERS_PATTERN)],
+          [Validators.pattern(STRING_PATTERN)],
         ],
-        veredict: [Validators.required, [Validators.pattern(NUMBERS_PATTERN)]],
+        veredict: [Validators.required, [Validators.pattern(STRING_PATTERN)]],
         nullityTrial: [
           Validators.required,
-          [Validators.pattern(NUMBERS_PATTERN)],
+          [Validators.pattern(STRING_PATTERN)],
         ],
         modificationUser: [null, [Validators.pattern(STRING_PATTERN)]],
         opinionDate: [null],

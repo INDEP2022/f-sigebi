@@ -615,7 +615,7 @@ export class RegistrationOfRequestsComponent
   returnar() {
     const typeCommit = 'returnar';
     this.msgSaveModal(
-      'Returnar la Solicitud',
+      'Returnar',
       '¿Está seguro de returnar la solicitud actual?',
       'Confirmación',
       'question',
