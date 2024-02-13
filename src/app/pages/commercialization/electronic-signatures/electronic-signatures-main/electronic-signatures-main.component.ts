@@ -513,10 +513,10 @@ export class ElectronicSignaturesMainComponent
     // params.page = this.dataTableParamsPending.value.page;
     // params = { ...this.columnFiltersPending, params };
 
-    params['filter.user'] = `$eq:${
-      this.authService.decodeToken().preferred_username
-    }`;
-    params['filter.firmdate'] = `$is:$null`;
+    // params['filter.user'] = `$eq:${
+    //   this.authService.decodeToken().preferred_username
+    // }`;
+    // params['filter.firmdate'] = `$is:$null`;
     // params['filter.creationdate'] = `$order:desc`
 
     console.log('PARAMS ', params);
