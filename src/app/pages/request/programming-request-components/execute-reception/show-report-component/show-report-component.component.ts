@@ -28,6 +28,7 @@ import { BasePage } from 'src/app/core/shared';
 import { environment } from 'src/environments/environment';
 import { LIST_REPORTS_COLUMN } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/list-reports-column';
 import { UploadFielsModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/upload-fiels-modal/upload-fiels-modal.component';
+import { isNullOrEmpty } from '../../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-show-report-component',
@@ -90,6 +91,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   typeAnnex: string = '';
   dynamic: boolean = false;
   signed: boolean = true;
+  requestId: number = 0;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -258,7 +260,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     }
 
     if (this.dynamic) {
-      let linkDoc: string = `${this.urlBaseReport}${this.reportName}&ID_TABLA=NOMBRE_TABLA,ID_REGISTRO,ID_TIPO_DOCTO&NOM_TABLA=REPORTES_DINAMICOS&NOM_CAMPO=CONTENIDO&ID_REGISTRO=${this.tableName},${this.idSample},${this.idTypeDoc}`;
+      let linkDoc: string = `${this.urlBaseReport}${this.reportName}&ID_TABLA=NOMBRE_TABLA,ID_REGISTRO,ID_TIPO_DOCTO&NOM_TABLA=REPORTES_DINAMICOS&NOM_CAMPO=CONTENIDO&ID_REGISTRO=${this.tableName},${this.requestId},${this.idTypeDoc}`;
       this.src = linkDoc;
       this.formLoading = false;
     }
@@ -271,7 +273,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       next: response => {
         //this.createPersonsSing(response.data[0]);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -290,9 +292,14 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       learnedId = this.programming?.id;
     }
 
+    if (isNullOrEmpty(learnedId)) {
+      learnedId = this.idSample;
+    }
+
     if (this.idTypeDoc == 197) {
       learnedId = this.orderSampleId;
     }
+
     this.loading = true;
     this.signatoriesService
       .getSignatoriesFilter(learnedType, learnedId)
@@ -332,7 +339,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
             type: 'pdf',
           },
-          callback: (response: any) => {},
+          callback: (response: any) => { },
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
         keyboard: false,
@@ -345,32 +352,33 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   signDocument() {
     console.log('Firmar Documento');
     console.log(this.idTypeDoc);
+    console.log(this.typeFirm);
+
     if (
-      this.idTypeDoc == 2 ||
-      174 ||
-      7 ||
-      192 ||
-      108 ||
-      183 ||
-      26 ||
-      27 ||
-      50 ||
-      68 ||
-      217 ||
-      94 ||
-      40 ||
-      101 ||
-      105 ||
-      104 ||
-      72 ||
-      222 ||
-      223 ||
-      224 ||
-      225 ||
-      245 ||
-      246 ||
-      (249 && this.typeFirm == 'autografa')
-    ) {
+      (this.idTypeDoc == 2 ||
+        174 ||
+        7 ||
+        192 ||
+        108 ||
+        183 ||
+        26 ||
+        27 ||
+        50 ||
+        68 ||
+        217 ||
+        94 ||
+        40 ||
+        101 ||
+        105 ||
+        104 ||
+        72 ||
+        222 ||
+        223 ||
+        224 ||
+        225 ||
+        245 ||
+        246 ||
+        249) && this.typeFirm == 'autografa') {
       this.modalRef.content.callback(true, this.typeFirm);
       this.modalRef.hide();
     }
@@ -459,6 +467,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         this.printReport = false;
         this.listSigns = true;
         this.title = 'Firma electrónica';
+        this.getSignatories();
       } else if (!this.listSigns && this.printReport && this.isAttachDoc) {
         //adjuntar el reporte
         this.openMessage2();
@@ -501,7 +510,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 );
                 if (createSignatore) this.getSignatories();
               },
-              error: error => {},
+              error: error => { },
             });
         },
         error: async error => {
@@ -540,7 +549,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -934,7 +943,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 this.close();
               }
             },
-            error: error => {},
+            error: error => { },
           });
       });
     } else {
@@ -1007,7 +1016,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   }
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 107 && this.typeFirm == 'electronica') {
@@ -1063,7 +1072,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 210 && this.typeFirm == 'electronica') {
@@ -1119,7 +1128,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 106 && this.typeFirm == 'electronica') {
@@ -1175,7 +1184,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 197 && this.typeFirm == 'electronica') {
@@ -1225,7 +1234,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idOrderService && this.typeFirm == 'electronica') {
@@ -1279,7 +1288,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 218 && this.typeFirm == 'electronica') {
@@ -1327,7 +1336,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 219 && this.typeFirm == 'electronica') {
@@ -1376,7 +1385,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       }
@@ -1396,7 +1405,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1414,7 +1423,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {},
+          error: error => { },
         });
       });
     });
@@ -1451,7 +1460,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {},
+          error: error => { },
         });
       });
     });
