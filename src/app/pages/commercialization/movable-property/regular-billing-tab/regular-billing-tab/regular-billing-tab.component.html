@@ -29,7 +29,8 @@
             [form]="form"></app-regular-billing-unsettled>
         </tab>
         <tab heading="Inconsistencias">
-          <app-regular-billing-inconsistencies></app-regular-billing-inconsistencies>
+          <app-regular-billing-inconsistencies
+            [eventID]="event"></app-regular-billing-inconsistencies>
         </tab>
         <tab heading="Cancelación en Papel">
           <app-regular-billing-generation-assets></app-regular-billing-generation-assets>
