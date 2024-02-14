@@ -19,6 +19,7 @@ import {
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITmpLcComer } from 'src/app/core/models/ms-captureline/captureline';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { CapturelineService } from 'src/app/core/services/ms-captureline/captureline.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { GuarantyService } from 'src/app/core/services/ms-guaranty/guaranty.service';
@@ -83,7 +84,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   toggleFilter: boolean = true;
   maintenance: boolean = false;
   rowsAdded: boolean = false;
-  operationId: number = 0;
+  operationIdValue: string = '0';
   totalEntries: number = 0;
   generatedLcs: number = 0;
   dataTotalItems: number = 0;
@@ -165,7 +166,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     private prepareEventService: ComerEventService,
     private httpClient: HttpClient,
     private fb: FormBuilder,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private authService: AuthService
   ) {
     super();
     //this.today = new Date();
@@ -403,7 +405,10 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
             this.validGenerateLCs = true;
             this.form.enable();
             console.log('datos: ', res.data, 'count: ', res.count);
-            this.validityDate = res.data[0].validityDate;
+            this.validityDate = res.data[0]?.validityDate;
+            this.operationIdValue = res.data[0]?.operationId;
+            console.log('this.operationIdValue', this.operationIdValue);
+            this.generatedLcs = res.count;
           },
           error: error => {
             console.log('Error', error);
@@ -467,7 +472,9 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           this.validGenerateLCs = true;
           this.form.enable();
           console.log('datos: ', res.data, 'count: ', res.count);
-          this.validityDate = res.data[0].validityDate;
+          this.validityDate = res.data[0]?.validityDate;
+          this.operationIdValue = res.data[0]?.operationId;
+          console.log('this.operationIdValue', this.operationIdValue);
         },
         error: error => {
           console.log('Error', error);
@@ -729,6 +736,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   searchInsertFile: boolean = false;
 
   async uploadToTpmLcComer(numRecords: number, dataCsv: IExcelToJson) {
+    const user: any = this.authService.decodeToken();
     console.log('Número de registros', numRecords);
     console.log('Evento campo: ', this.form.controls['eventId'].value);
 
@@ -756,6 +764,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
         this.capturelineService.postTmpLcComer(dataJson).subscribe({
           next: resp => {
             console.log('Inserción Masiva desde Excel Correcto: ', resp);
+            this.totalEntries = this.totalEntries + 1;
           },
           error: error => {
             console.log('Inserción Masiva desde Excel incorrecto: ', error);
@@ -790,6 +799,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           checkNumber: dataCsv[i].NO_CHEQUE_IN,
           bankExpCheck: dataCsv[i].EXP_CHEQUE_IN,
           validityDate: this.fechaHoy,
+          operationId: this.operationIdValue,
+          usrinsert: user.username,
           //validityDate: dataCsv[i].FECVIGENCIA_IN
         };
 
@@ -797,6 +808,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
         this.capturelineService.postTmpLcComer(dataJson).subscribe({
           next: resp => {
+            this.totalEntries = this.totalEntries + 1;
             console.log('Inserción Masiva desde Excel Correcto: ', resp);
           },
           error: error => {
@@ -1093,6 +1105,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
         this.comerEventService.pupGenLcsMasiv(masiveData).subscribe({
           next: resp => {
             console.log('Respuesta', resp);
+            console.log('Count', resp.count);
+            this.generatedLcs = resp.count;
             this.alertInfo('success', 'Líneas de Captura', 'Proceso Terminado');
             this.searchData();
             this.guarantyData();
