@@ -126,7 +126,7 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
 
   getEvent(params: ListParams) {
     if (params.text) {
-      params['search'] = `${params.text}`;
+      params['filter.id'] = `$eq:${params.text}`;
       //params['filter.status'] = `$ilike:${params.text}`;
     }
     this.comerEventService.getAllEvent(params).subscribe({
