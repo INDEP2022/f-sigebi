@@ -374,7 +374,9 @@ export class ConsultationGoodsCommercialSalesComponent
     if (this.modelSave != null) {
       this.goodService.chargeGoodsExcel(this.modelSave).subscribe(
         res => {
-          this.subscribeExcel(res).subscribe();
+          console.log(res);
+          this.downloadDocument('TODO_VENTAS', 'excel', res.file);
+          // this.subscribeExcel(res).subscribe();
         },
         err => {
           this.loading = false;
@@ -499,7 +501,11 @@ export class ConsultationGoodsCommercialSalesComponent
     document.body.removeChild(a);
     this._toastrService.clear();
     this.loading = false;
-    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    this.alert(
+      'success',
+      'Reporte Excel',
+      'Descarga Finalizada. \nSi el archivo descargado no se abre, por favor cambiar la extensión a csv.'
+    );
     URL.revokeObjectURL(objURL);
   }
 
