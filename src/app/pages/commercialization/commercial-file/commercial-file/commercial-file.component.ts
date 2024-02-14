@@ -56,13 +56,14 @@ export class CommercialFileComponent extends BasePage implements OnInit {
   }
 
   fcom() {
-    this.loading = true;
+    this.alert('warning', 'Reporte no disponible', '');
+    /*this.loading = true;
     let params = {
       P_NO_BIEN: this.form.controls['noGood'].value,
     };
     this.goodNumber = this.form.controls['noGood'].value;
     this.viewPhoto = true;
-    this.downloadReport('FICHACOMERCIAL', params); //Cuando el reporte este disponible en jasper, sustituir el nombre a -> 'FICHACOMERCIAL'
+    this.downloadReport('FICHACOMERCIAL', params); //Cuando el reporte este disponible en jasper, sustituir el nombre a -> 'FICHACOMERCIAL'*/
   }
 
   ftec() {
@@ -82,7 +83,7 @@ export class CommercialFileComponent extends BasePage implements OnInit {
     let params = {
       P_NO_BIEN: this.form.controls['noGood'].value,
       P_NO_EXPEDIENTE: this.goodSelect?.associatedFileNumber,
-      P_TRANSFERENTE: this.goodSelect?.origin,
+      P_TRANSFERENTE: '',
     };
     this.downloadReport('REINGRESOSEGRESOS', params); //Cuando el reporte este disponible en jasper, sustituir el nombre a -> 'RINGRESOSEGRESOS'
   }

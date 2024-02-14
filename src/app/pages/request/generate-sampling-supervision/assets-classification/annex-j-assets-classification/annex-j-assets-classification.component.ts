@@ -7,11 +7,11 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
+import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
-import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
 
 @Component({
   selector: 'app-annex-j-assets-classification',
@@ -20,7 +20,8 @@ import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgoo
 })
 export class AnnexJAssetsClassificationComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   signForm: ModelForm<any>;
   form: FormGroup = new FormGroup({});
   typeAnnex: string = '';
@@ -39,7 +40,7 @@ export class AnnexJAssetsClassificationComponent
     private modalService: BsModalService,
     private samplingGoodService: SamplingGoodService,
     private signatoriesService: SignatoriesService,
-    private reportgoodService: ReportgoodService,
+    private reportgoodService: ReportgoodService
   ) {
     super();
   }
@@ -48,8 +49,6 @@ export class AnnexJAssetsClassificationComponent
     this.initForm();
     this.getInfoSample();
   }
-
-
 
   getInfoSample() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
@@ -326,7 +325,7 @@ export class AnnexJAssetsClassificationComponent
             next: () => {
               resolve(true);
             },
-            error: error => { },
+            error: error => {},
           });
       });
     });

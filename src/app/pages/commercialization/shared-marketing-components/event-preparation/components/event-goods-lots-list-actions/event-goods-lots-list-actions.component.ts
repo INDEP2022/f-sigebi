@@ -263,7 +263,11 @@ export class EventGoodsLotsListActionsComponent
       }),
       tap(res => {
         this.loader.load = false;
-        this._downloadExcelFromBase64(res.base64File, `Evento-${id.value}`);
+        this._downloadExcelFromBase64(
+          res.base64File,
+          `Evento-${id.value}`,
+          'csv'
+        );
       })
     );
   }
@@ -282,7 +286,11 @@ export class EventGoodsLotsListActionsComponent
       }),
       tap(res => {
         this.loader.load = false;
-        this._downloadExcelFromBase64(res.base64File, `Evento-${id.value}`);
+        this._downloadExcelFromBase64(
+          res.base64File,
+          `Evento-${id.value}`,
+          'csv'
+        );
       })
     );
   }
@@ -973,7 +981,11 @@ export class EventGoodsLotsListActionsComponent
         this.loader.load = false;
         console.log(res);
 
-        this._downloadExcelFromBase64(res.base64File, `Evento-${id.value}`);
+        this._downloadExcelFromBase64(
+          res.base64File,
+          `Evento-${id.value}`,
+          'csv'
+        );
       })
     );
   }

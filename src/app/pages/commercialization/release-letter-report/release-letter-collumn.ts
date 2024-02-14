@@ -76,7 +76,25 @@ export const COMEMR_BIENES_COLUMNS = {
     filter: false,
     width: '85%',
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.good.description;
+      let str =
+        row.camp1 +
+        ' ' +
+        row.camp2 +
+        ' ' +
+        row.camp3 +
+        ' ' +
+        row.camp4 +
+        ' ' +
+        row.camp5 +
+        ' ' +
+        row.camp6 +
+        ' ' +
+        row.camp7 +
+        ' ' +
+        row.camp8 +
+        ' ' +
+        row.camp9;
+      return str;
     },
   },
   // baseValue: {

@@ -33,7 +33,8 @@ import { UploadFileComponent } from './upload-file/upload-file.component';
 })
 export class PhotosAssetsComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   @Input() requestId: number = null;
   parentRef: BsModalRef;
   showSearchFilter: boolean = true;
