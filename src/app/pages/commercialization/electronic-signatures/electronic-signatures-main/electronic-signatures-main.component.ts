@@ -517,7 +517,7 @@ export class ElectronicSignaturesMainComponent
       this.authService.decodeToken().preferred_username
     }`;
     params['filter.firmdate'] = `$is:$null`;
-    // params['filter.creationdate'] = `$order:desc`
+    params['filter.creationdate'] = `$order:desc`;
 
     console.log('PARAMS ', params);
     this.svElectronicSignatures.getAllComerDocumentsXml_(params).subscribe({

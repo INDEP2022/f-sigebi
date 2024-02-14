@@ -482,7 +482,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           title: 'Fecha',
           sort: false,
           valuePrepareFunction: (val: string) => {
-            return val ? val.split('-').reverse().join('/') : '';
+            return val ? val.split('-').reverse().join('/') + ' 00:00:00' : '';
           },
           filterFunction: () => {
             return true;
@@ -987,7 +987,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             await this.billingsService.getEatInconsistences(params);
           this.btnLoading = false;
           if (countInconsistencias.count > 0) {
-            this.numb.emit({ numberTab: 4, event: event });
+            this.numb.emit({ numberTab: 2, event: event });
           }
         }
       } else {
