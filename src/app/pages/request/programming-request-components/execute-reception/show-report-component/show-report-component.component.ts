@@ -518,11 +518,40 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   openMessage(message: string): void {
+    let electronic = [
+      2, 174, 185, 186, 187, 192, 108, 183, 221, 26, 27, 50, 68, 217, 94, 40,
+      101, 105, 104, 72, 222, 223, 224, 225, 245, 246, 249,
+    ];
+
     this.alertQuestion('question', 'Confirmación', `${message}`).then(
       question => {
         if (question.isConfirmed) {
           this.loadingButton = true;
-          if (this.idTypeDoc == 221) {
+          if (electronic.includes(parseInt('' + this.idTypeDoc))) {
+            this.gelectronicFirmService
+              .firmDocument(210, 'ProgramacionRecibo', {})
+              .subscribe({
+                next: () => {
+                  this.loadingButton = false;
+                  this.msjCheck = true;
+
+                  this.alert(
+                    'success',
+                    'Correcto',
+                    'Documento firmado correctamente'
+                  );
+                },
+                error: () => {
+                  this.alert(
+                    'error',
+                    'Acción Invalida',
+                    'Errror al firmar el documento'
+                  );
+                  this.loadingButton = false;
+                },
+              });
+          }
+          if (this.idTypeDoc == 218) {
             this.gelectronicFirmService
               .firmDocument(this.programming?.id, 'ProgramacionRecibo', {})
               .subscribe({
