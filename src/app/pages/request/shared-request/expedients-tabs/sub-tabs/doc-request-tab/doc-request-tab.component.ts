@@ -263,8 +263,11 @@ export class DocRequestTabComponent
       .subscribe({
         next: async res => {
           this.data = [];
-
-          if (this.typeDoc == 'doc-request') {
+          console.log('res', this.typeDoc);
+          if (
+            this.typeDoc == 'doc-request' ||
+            this.typeDoc == 'request-expedient'
+          ) {
             if (this.requestInfo.transferenceId == 1) {
               const filterDoc = res.data.filter((item: any) => {
                 if (
@@ -366,7 +369,10 @@ export class DocRequestTabComponent
             }
           }
 
-          if (this.typeDoc == 'doc-expedient') {
+          if (
+            this.typeDoc == 'doc-expedient' ||
+            this.typeDoc == 'request-assets'
+          ) {
             if (
               this.requestInfo.transferenceId != 1 &&
               this.requestInfo.recordId
