@@ -10,7 +10,7 @@
             (fetchItems)="getGoods($event)"
             [data]="goods"
             [form]="newForm"
-            bindLabel="cveAccount"
+            bindLabel="bindValue"
             label="Bien"
             control="goodNumber">
           </ngx-select>
@@ -19,10 +19,10 @@
       <div class="row">
         <form-field [control]="newForm.get('process')">
           <ngx-select
-            (fetchItems)="getProcesses($event)"
             [data]="processes"
             [form]="newForm"
-            bindLabel="cveAccount"
+            bindLabel="bindValue"
+            [searchable]="false"
             label="Proceso"
             control="process">
           </ngx-select>
@@ -32,8 +32,13 @@
     <div class="row text-center">
       <div class="col">
         <button
-          class="btn btn-danger btn-sm active mr-3"
-          (click)="closeModal()">
+          type="button"
+          (click)="saveNewGood()"
+          class="btn btn-primary btn-sm active mr-3">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+        <button class="btn btn-danger btn-sm active" (click)="closeModal()">
           Cancelar
         </button>
       </div>
