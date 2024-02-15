@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
@@ -22,7 +22,12 @@ export class RegularBillingInconsistenciesComponent
   columnFilters: any = [];
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-
+  @Input() set eventID(val: number) {
+    if (val) {
+      this.paramsList.getValue()['eventId'] = val;
+      this.getAllComerFact();
+    }
+  }
   constructor(private comerFactIncService: ComerFactInconsistenciesService) {
     super();
     this.settings = {
