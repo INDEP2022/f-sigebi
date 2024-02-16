@@ -1923,7 +1923,7 @@ export class RequestCompDocTasksComponent
               this.uploadDocument(idSample, typeDocument);
             }
           } else if (typeFirm == 'electronica') {
-            this.getStatusFirmantes();
+            this.firmarReporte();
           }
         },
       },
