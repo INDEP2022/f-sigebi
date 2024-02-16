@@ -1588,12 +1588,9 @@ export class RequestCompDocTasksComponent
   onChangeRegDoc(event) {
 
     this.validate.regdoc = event.isValid;
-
     if (event.update) {
       this.requestInfo.detail = event.object;
-      console.log(this.requestInfo.detail);
     }
-
 
     //Agreagar validaciones en especifico
   }
