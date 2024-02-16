@@ -27,7 +27,7 @@ export class CommercializationSignatureModalComponent
   dataFirmType = new DefaultSelect();
   formGroup: FormGroup = new FormGroup({});
   @Output() onConfirm = new EventEmitter<boolean>();
-
+  idDocumentsxml: any;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -45,7 +45,7 @@ export class CommercializationSignatureModalComponent
     this.formGroup = this.fb.group({
       // recordNumber: [{ value: null, disabled: false }],
       numberconsec: [{ value: null, disabled: false }],
-      idDocumentsxml: [{ value: null, disabled: false }],
+      idDocumentsxml: [this.idDocumentsxml],
       user: [
         { value: null, disabled: false },
         [
@@ -66,9 +66,16 @@ export class CommercializationSignatureModalComponent
       ],
     });
     console.log(this.data);
-    if (this.data !== undefined) {
+    if (this.edit) {
       // this.edit = true;
-      this.formGroup.patchValue(this.data);
+      this.formGroup.patchValue({
+        idDocumentsxml: this.data.id_docums_xml,
+        user: this.data.usuario,
+        idGuySignatory: this.data.id_tipo_firmante,
+        name: this.data.nombre,
+        post: this.data.cargo,
+        numberconsec: this.data.no_consec,
+      });
     }
   }
 
@@ -85,7 +92,7 @@ export class CommercializationSignatureModalComponent
     }
     if (this.edit == false) {
       let params = new ListParams();
-      params['filter.id_docums_xml'] = `$eq:${this.data.idDocumentsxml}`;
+      params['filter.id_docums_xml'] = `$eq:${this.idDocumentsxml}`;
       this.svSignatureAuxiliaryCatalogsService
         .getAllComerceDocumentsXmlTCatFelec(params)
         .subscribe({
@@ -141,6 +148,7 @@ export class CommercializationSignatureModalComponent
   changeUsers(event: any) {
     console.log(event);
     this.formGroup.get('name').setValue(event ? event.nombre : null);
+    this.formGroup.get('post').setValue(event ? event.otvalor : null);
   }
 
   getUsers(paramsData: ListParams, getByValue: boolean = false) {
@@ -161,7 +169,7 @@ export class CommercializationSignatureModalComponent
         next: data => {
           this.dataUser = new DefaultSelect(
             data.data.map((i: any) => {
-              i['description'] = i.usuario + ' -- ' + i.nombre;
+              i['description'] = i.usuario + ' - ' + i.nombre;
               return i;
             }),
             data.count
@@ -178,7 +186,6 @@ export class CommercializationSignatureModalComponent
 
   changeFirm(event: any) {
     console.log(event);
-    this.formGroup.get('post').setValue(event ? event.denomination : null);
   }
 
   getFirmType(paramsData: ListParams, getByValue: boolean = false) {

@@ -1,22 +1,14 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} Firmantes</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Agregar' }} Firmantes</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="formGroup">
       <div class="row">
-        <div class="col-sm-12 col-md-6">
-          <!-- <form-field
-            [control]="formGroup.get('usuario')"
-            label="Usuario">
-            <input
-              type="usuario"
-              class="form-control" maxlength="50"
-              formControlName="email" />
-          </form-field> -->
+        <div class="col-sm-4 col-md-4">
           <ngx-select
             [data]="dataUser"
-            bindLabel="description"
+            bindLabel="usuario"
             label="Usuario"
             value="usuario"
             (fetchItems)="getUsers($event)"
@@ -27,16 +19,30 @@
             termMaxLength="100"
             control="user"></ngx-select>
         </div>
-        <div class="col-sm-12 col-md-6">
-          <!-- <form-field
-            [control]="formGroup.get('id_tipo_firmante')"
-            label="Tipo">
+        <div class="col-sm-8 col-md-8">
+          <form-field [control]="formGroup.get('name')" label="Nombre">
             <input
+              readonly
               type="text"
               class="form-control"
-              maxlength="200"
-              formControlName="id_tipo_firmante" />
-          </form-field> -->
+              maxlength="100"
+              formControlName="name" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-12">
+          <form-field [control]="formGroup.get('post')" label="Cargo">
+            <textarea
+              cols="2"
+              rows="2"
+              readonly
+              type="text"
+              class="form-control"
+              maxlength="300"
+              formControlName="post">
+            </textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
           <ngx-select
             [data]="dataFirmType"
             bindLabel="denomination"
@@ -57,13 +63,17 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
+          [className]="'btn-primary btn-sm mr-3'"
           [disabled]="formGroup.invalid"
           [loading]="loading"
           (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
           Cancelar
         </button>
       </div>
