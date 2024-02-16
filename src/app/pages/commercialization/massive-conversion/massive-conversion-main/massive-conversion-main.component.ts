@@ -19,6 +19,7 @@ import {
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITmpLcComer } from 'src/app/core/models/ms-captureline/captureline';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { CapturelineService } from 'src/app/core/services/ms-captureline/captureline.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { GuarantyService } from 'src/app/core/services/ms-guaranty/guaranty.service';
@@ -83,7 +84,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   toggleFilter: boolean = true;
   maintenance: boolean = false;
   rowsAdded: boolean = false;
-  operationId: number = 0;
+  operationIdValue: string = '0';
   totalEntries: number = 0;
   generatedLcs: number = 0;
   dataTotalItems: number = 0;
@@ -165,7 +166,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     private prepareEventService: ComerEventService,
     private httpClient: HttpClient,
     private fb: FormBuilder,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private authService: AuthService
   ) {
     super();
     //this.today = new Date();
@@ -403,7 +405,10 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
             this.validGenerateLCs = true;
             this.form.enable();
             console.log('datos: ', res.data, 'count: ', res.count);
-            this.validityDate = res.data[0].validityDate;
+            this.validityDate = res.data[0]?.validityDate;
+            this.operationIdValue = res.data[0]?.operationId;
+            console.log('this.operationIdValue', this.operationIdValue);
+            this.generatedLcs = res.count;
           },
           error: error => {
             console.log('Error', error);
@@ -467,7 +472,9 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           this.validGenerateLCs = true;
           this.form.enable();
           console.log('datos: ', res.data, 'count: ', res.count);
-          this.validityDate = res.data[0].validityDate;
+          this.validityDate = res.data[0]?.validityDate;
+          this.operationIdValue = res.data[0]?.operationId;
+          console.log('this.operationIdValue', this.operationIdValue);
         },
         error: error => {
           console.log('Error', error);
@@ -632,7 +639,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     }
   }
 
-  onFileChange(event: Event) {
+  onFileChange(event: any) {
+    console.log('Ejecutando: OnFileChange');
     if (this.form.controls['eventId'].value != null) {
       this.alertQuestion('question', 'Atención', `¿Insertar el archivo?`).then(
         question => {
@@ -640,30 +648,23 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
             this.tipoConsul = 'INSERT';
 
             const files = (event.target as HTMLInputElement).files;
+            //let file = event.target.files[0];
+
             if (files.length != 1)
-              throw 'No files selected, or more than of allowed';
+              this.alertInfo(
+                'warning',
+                'Atención',
+                'No hay archivos seleccionados o hay más de los permitidos'
+              );
+
             const fileReader = new FileReader();
-            /*fileReader.onload = (e) => {
-            console.log("Entrando a fileReader.onload");
-            const fileContent = fileReader.result as string;
-            const rows = fileContent.split('\n'); // Suponiendo que cada fila del archivo CSV está separada por una nueva línea
-            const data = rows.map(row => {
-              const columns = row.split(','); // Suponiendo que las columnas están separadas por comas
-              // Asumiendo que la fecha está en la primera columna
-              const dateParts = columns[6].split('/'); // Dividir la fecha en partes: día, mes, año
-              // Crear un objeto Date con las partes de la fecha en el orden correcto (año, mes - 1, día)
-              const date = new Date(parseInt(dateParts[2]), parseInt(dateParts[1]) - 1, parseInt(dateParts[0]));
-              // Suponiendo que las otras columnas contienen otros datos
-              // Aquí puedes procesar las otras columnas según sea necesario
-              return {
-                date: date,
-                // Otras propiedades de las filas...
-              };
-            });
-            console.log(data);
-          }*/
+
             fileReader.readAsBinaryString(files[0]);
-            fileReader.onload = () => this.readExcel(fileReader.result);
+            fileReader.onload = () => {
+              this.readExcel(fileReader.result);
+              (event.target as HTMLInputElement).value = '';
+            };
+            //files.nativeElement.value = '';
           }
         }
       );
@@ -684,29 +685,19 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
               const files = (event.target as HTMLInputElement).files;
               if (files.length != 1)
-                throw 'No files selected, or more than of allowed';
+                this.alertInfo(
+                  'warning',
+                  'Atención',
+                  'No hay archivos seleccionados o hay más de los permitidos'
+                );
+
               const fileReader = new FileReader();
-              /*fileReader.onload = (e) => {
-            console.log("Entrando a fileReader.onload");
-            const fileContent = fileReader.result as string;
-            const rows = fileContent.split('\n'); // Suponiendo que cada fila del archivo CSV está separada por una nueva línea
-            const data = rows.map(row => {
-              const columns = row.split(','); // Suponiendo que las columnas están separadas por comas
-              // Asumiendo que la fecha está en la primera columna
-              const dateParts = columns[6].split('/'); // Dividir la fecha en partes: día, mes, año
-              // Crear un objeto Date con las partes de la fecha en el orden correcto (año, mes - 1, día)
-              const date = new Date(parseInt(dateParts[2]), parseInt(dateParts[1]) - 1, parseInt(dateParts[0]));
-              // Suponiendo que las otras columnas contienen otros datos
-              // Aquí puedes procesar las otras columnas según sea necesario
-              return {
-                date: date,
-                // Otras propiedades de las filas...
-              };
-            });
-            console.log(data);
-          }*/
+
               fileReader.readAsBinaryString(files[0]);
-              fileReader.onload = () => this.readExcel(fileReader.result);
+              fileReader.onload = () => {
+                this.readExcel(fileReader.result);
+                (event.target as HTMLInputElement).value = '';
+              };
             } else return;
           });
         }
@@ -729,6 +720,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   searchInsertFile: boolean = false;
 
   async uploadToTpmLcComer(numRecords: number, dataCsv: IExcelToJson) {
+    const user: any = this.authService.decodeToken();
     console.log('Número de registros', numRecords);
     console.log('Evento campo: ', this.form.controls['eventId'].value);
 
@@ -753,14 +745,17 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
         console.log('Objeto a enviar ', dataJson);
 
-        this.capturelineService.postTmpLcComer(dataJson).subscribe({
-          next: resp => {
-            console.log('Inserción Masiva desde Excel Correcto: ', resp);
-          },
-          error: error => {
-            console.log('Inserción Masiva desde Excel incorrecto: ', error);
-          },
-        });
+        setTimeout(() => {
+          this.capturelineService.postTmpLcComer(dataJson).subscribe({
+            next: resp => {
+              console.log('Inserción Masiva desde Excel Correcto: ', resp);
+              this.totalEntries = this.totalEntries + 1;
+            },
+            error: error => {
+              console.log('Inserción Masiva desde Excel incorrecto: ', error);
+            },
+          });
+        }, 500);
       }
 
       this.alertInfo(
@@ -790,6 +785,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           checkNumber: dataCsv[i].NO_CHEQUE_IN,
           bankExpCheck: dataCsv[i].EXP_CHEQUE_IN,
           validityDate: this.fechaHoy,
+          operationId: this.operationIdValue,
+          usrinsert: user.username,
           //validityDate: dataCsv[i].FECVIGENCIA_IN
         };
 
@@ -797,6 +794,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
         this.capturelineService.postTmpLcComer(dataJson).subscribe({
           next: resp => {
+            this.totalEntries = this.totalEntries + 1;
             console.log('Inserción Masiva desde Excel Correcto: ', resp);
           },
           error: error => {
@@ -1093,6 +1091,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
         this.comerEventService.pupGenLcsMasiv(masiveData).subscribe({
           next: resp => {
             console.log('Respuesta', resp);
+            console.log('Count', resp.count);
+            this.generatedLcs = resp.count;
             this.alertInfo('success', 'Líneas de Captura', 'Proceso Terminado');
             this.searchData();
             this.guarantyData();

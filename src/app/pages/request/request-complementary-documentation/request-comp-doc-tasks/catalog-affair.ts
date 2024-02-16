@@ -4,6 +4,7 @@
  * @interface
  */
 export function getConfigAffair(requestId, affair, path, request: any = {}) {
+
   let contributor =
     'Contribuyente: ' +
     request.indicatedTaxpayer +

@@ -65,18 +65,18 @@ export class MandateIncomeReportsIComponent extends BasePage implements OnInit {
       batch: [null, []],
       event: [null, [Validators.required]],
       startDate: [null, []],
-      //endDate: [null, [Validators.required]],
-      capturingUser: [null, [Validators.required]],
-      capturingUserName: [null, [Validators.required]],
-      capturingUserPost: [null, [Validators.required]],
-      authorizingUser: [null, [Validators.required]],
-      authorizingUserName: [null, [Validators.required]],
-      authorizingUserPost: [null, [Validators.required]],
-      requestingUser: [null, [Validators.required]],
-      requestingUserName: [null, [Validators.required]],
-      requestingUserPost: [null, [Validators.required]],
+      //endDate: [null, []],
+      capturingUser: [null, []],
+      capturingUserName: [null, []],
+      capturingUserPost: [null, []],
+      authorizingUser: [null, []],
+      authorizingUserName: [null, []],
+      authorizingUserPost: [null, []],
+      requestingUser: [null, []],
+      requestingUserName: [null, []],
+      requestingUserPost: [null, []],
       incomeOrder: [null, []],
-      //reportNumber: [null, [Validators.required]],
+      //reportNumber: [null, []],
     });
     setTimeout(() => {
       this.getEvent(new ListParams());
@@ -107,13 +107,14 @@ export class MandateIncomeReportsIComponent extends BasePage implements OnInit {
 
   getEvent(params: ListParams) {
     if (params.text) {
-      params['search'] = `${params.text}`;
+      params['filter.id'] = `$eq:${params.text}`;
       //params['filter.status'] = `$ilike:${params.text}`;
     }
     this.comerEventService.getAllEvent(params).subscribe({
       next: resp => {
         this.result1 = resp.data.map(async (item: any) => {
-          item['keyObservation'] = item.processKey + ' - ' + item.observations;
+          item['keyObservation'] =
+            item.id + ' - ' + item.processKey + ' - ' + item.observations;
         });
         this.eventSelect = new DefaultSelect(resp.data, resp.count);
       },

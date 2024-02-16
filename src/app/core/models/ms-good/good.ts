@@ -906,3 +906,8 @@ export interface IValidationExempte {
   goodNumber?: number;
   process?: string;
 }
+
+export interface IGoodsTransAva {
+  goodNumber: string;
+  process: string;
+}

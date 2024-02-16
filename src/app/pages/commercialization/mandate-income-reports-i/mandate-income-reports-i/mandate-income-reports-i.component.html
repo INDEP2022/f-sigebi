@@ -5,6 +5,21 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
+        <!--Events Component-->
+        <div class="col-md-5">
+          <form-field [control]="form.get('event')">
+            <ngx-select
+              (fetchItems)="getEvent($event)"
+              [data]="eventSelect"
+              [form]="form"
+              value="id"
+              bindLabel="keyObservation"
+              label="Evento"
+              control="event"
+              (change)="changeEvent($event)">
+            </ngx-select>
+          </form-field>
+        </div>
         <div class="col-md-2">
           <form-field label="Fecha" [control]="form.get('startDate')">
             <input
@@ -38,21 +53,6 @@
             <input class="form-control" formControlName="batch" type="number" />
           </form-field>
         </div>-->
-        <!--Events Component-->
-        <div class="col-md-5">
-          <form-field [control]="form.get('event')">
-            <ngx-select
-              (fetchItems)="getEvent($event)"
-              [data]="eventSelect"
-              [form]="form"
-              value="id"
-              bindLabel="keyObservation"
-              label="Evento"
-              control="event"
-              (change)="changeEvent($event)">
-            </ngx-select>
-          </form-field>
-        </div>
       </div>
       <div class="row mb-3 mt-3">
         <!--Employees Component-->
@@ -181,7 +181,7 @@
       <div class="row mb-3 mt-3">
         <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 col-12">
           <label for=""
-            >Si desea una orden de ingreso en especial índiquela</label
+            >Si desea una orden de ingreso en especial indíquela</label
           >
           <div class="row mb-3 mt-3">
             <div class="col-6 mb-3 mb-3 mt-3">

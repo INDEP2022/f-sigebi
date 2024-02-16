@@ -9,7 +9,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { Subscription } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -26,6 +26,7 @@ import {
   STRING_PATTERN_LETTER,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-register-documentation-form',
@@ -34,8 +35,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class RegisterDocumentationFormComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   fileTypes: any[] = [];
   infoOrigins: any[] = [];
   maxDate: Date = new Date();
@@ -65,6 +65,7 @@ export class RegisterDocumentationFormComponent
 
   private subscription: Subscription;
   private loadInfo: boolean = false;
+  private requestIfo: any = {};
 
   /* injections */
   private readonly requestService = inject(RequestService);
@@ -147,8 +148,13 @@ export class RegisterDocumentationFormComponent
   }
 
   formChanges() {
+
+    let requiredFields = this.getRequiredFields(this.registerForm);
+    console.log(requiredFields);
+    let isValid = this.validateParameters(this.requestIfo, requiredFields["keys"]);
+
     this.onChange.emit({
-      isValid: this.registerForm.valid && this.loadInfo,
+      isValid: this.registerForm.valid && isValid && this.loadInfo,
       object: this.registerForm.getRawValue(),
     });
   }
@@ -217,6 +223,7 @@ export class RegisterDocumentationFormComponent
           this.transference = +resp.transferenceId;
           this.typeTransference = resp.typeOfTransfer;
           this.registerForm.patchValue(resp);
+          this.requestIfo = resp;
           this.getAffair(resp.affair);
           this.getPublicMinister(new ListParams());
           this.setFieldsRequired();
@@ -473,4 +480,32 @@ export class RegisterDocumentationFormComponent
 
     return input.includes(comp);
   }
+
+  getRequiredFields(formGroup: FormGroup): { [key: string]: any } {
+    let requiredFields: { [key: string]: any } = {};
+
+    Object.keys(formGroup.controls).forEach(key => {
+
+      let control: any = formGroup.get(key)
+      if (control.validator && control.validator({} as AbstractControl) && control.validator({} as AbstractControl).required) {
+        requiredFields[key] = control.value;
+      }
+    });
+
+    return {
+      data: requiredFields,
+      keys: Object.keys(requiredFields)
+    };
+  }
+
+  validateParameters(obj: { [key: string]: any }, params: string[]): boolean {
+    for (let param of params) {
+      if (!obj[param] || isNullOrEmpty(obj[param])) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
 }
