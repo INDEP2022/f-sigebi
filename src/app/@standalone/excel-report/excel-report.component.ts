@@ -49,6 +49,7 @@ export class ExcelReportComponent implements OnInit {
 
   exportToExcel() {
     if (this.elementToExport && this.elementToExport.length > 0) {
+      console.log(this.nameExcel + 'd<>>>>>>>>>>>>>>>', this.elementToExport);
       this.loading = true;
       this.onLoadToast('info', 'Descargando Excel', this.nameExcel, 1000);
       // let element = document.getElementById(this.elementToExport);

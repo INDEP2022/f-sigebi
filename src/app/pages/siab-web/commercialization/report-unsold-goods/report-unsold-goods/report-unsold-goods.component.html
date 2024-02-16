@@ -49,8 +49,9 @@
                 label="Tipo de Bien"
                 [data]="fullGoods"
                 [form]="form"
-                bindLabel="nombre_tipo_bien"
+                bindLabel="goodTypeName"
                 control="typeGood"
+                value="typeNumber"
                 (change)="querySubtypeGoods()">
               </ngx-select>
             </form-field>

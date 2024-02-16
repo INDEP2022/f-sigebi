@@ -18,6 +18,9 @@ export class JobDictumTextsService extends HttpService {
       params
     );
   }
+  getcomerJobsDet(params: _Params) {
+    return this.get<any>(JobDictumTextsEndpoints.comerJobsDet, params);
+  }
 
   getById(obj: any) {
     return this.post<IListResponse<IJobDictumTexts>>(

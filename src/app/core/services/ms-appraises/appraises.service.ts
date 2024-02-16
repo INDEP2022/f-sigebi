@@ -33,7 +33,10 @@ export class AppraisesService extends HttpService {
     const url = `${environment.API_URL}appraise/api/v1/appraisal-x-good`;
     return this.http.get(url);
   }
-
+  getPaTriggerOAppraise(body: any): Observable<any> {
+    const route = AppraiseEndpoints.PaTriggerOAppraise;
+    return this.post(`${route}`, body);
+  }
   getRequestAppraisalById(id: string | number) {
     const route = `request-x-appraisal/${id}`;
     return this.get(route);

@@ -24,7 +24,7 @@ export const APPRAISAL_COLUMNS = {
     sort: false,
   },
   insertDate: {
-    title: 'Fecha captura',
+    title: 'Fecha Captura',
     sort: false,
     valuePrepareFunction: (value: string) =>
       value ? format(new Date(value), 'dd/MM/yyyy') : '',

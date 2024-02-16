@@ -40,7 +40,7 @@ export class ValuedTableComponent
   }
 
   onUserRowSelect(event: any) {
-    this.dataService.selectedRowsValueds = event.selected;
+    this.dataService.selectedRowsValues = event.selected;
   }
 
   override getData() {
