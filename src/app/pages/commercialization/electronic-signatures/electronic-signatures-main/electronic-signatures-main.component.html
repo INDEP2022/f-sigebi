@@ -13,40 +13,22 @@
               @OnInOut>
               <div class="col-11">
                 <div class="d-flex justify-content-center text-light ms-3">
-                  <i class="bx bx-error text-light float-icon me-2"></i>
                   {{ messageText }}
-                  <!-- Tiene
-                  {{ pendingColumns.length }} documentos pendientes de firmar. -->
+                  <i class="bx bx-error text-light float-icon me-2 ml-2"></i>
                 </div>
               </div>
             </div>
-            <div
-              class="row rounded-3 bk-success py-2"
-              *ngIf="alertMsg2"
-              @OnInOut>
+            <div *ngIf="alertMsg2" class="row rounded-3 bg-success py-2">
               <div class="col-11">
                 <div class="d-flex justify-content-center text-light ms-3">
-                  <i class="fa fa-check" aria-hidden="true"></i>
-                  <!-- <i class="bx bx-error text-light float-icon me-2"></i> -->
                   {{ messageText }}
-                  <!-- Tiene
-                  {{ pendingColumns.length }} documentos pendientes de firmar. -->
+                  <i
+                    class="fa fa-check text-light float-icon me-2 ml-2"
+                    aria-hidden="true"></i>
                 </div>
               </div>
             </div>
             <div class="row mt-5">
-              <!-- <div
-                class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
-                *ngIf="loadingPending">
-                <div class="d-flex justify-content-center">
-                  <div class="d-flex justify-content-center">
-                    <div class="loader"></div>
-                    <h6 class="loader-msg pt-3">
-                      Cargando... por favor espere...
-                    </h6>
-                  </div>
-                </div>
-              </div> -->
               <div class="col-md-8"></div>
               <div class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
                 <div>
@@ -54,28 +36,28 @@
                     [(settings)]="pendingSettings"
                     [leftList]="true"></app-columns-select>
                 </div>
-                <!-- <div>
-                  <button
-                    class="btn btn-sm btn-info active me-2 font-size-14"
-                    (click)="refresh()">
-                    <i class="bx bx-revision text-light float-icon"></i>
-                  </button>
-                </div> -->
                 <div>
                   <button
-                    class="btn btn-sm btn-primary active me-2 font-size-14"
+                    class="btn btn-sm btn-primary active me-2"
                     (click)="openSignWindow()">
-                    <i class="bx bx-pen text-light float-icon"></i>
                     Firmar Documento
+                    <i class="bx bx-pen text-light float-icon"></i>
                   </button>
                 </div>
                 <div>
-                  <!-- LISTO -->
                   <button
-                    class="btn btn-sm btn-success active me-2 font-size-14"
+                    class="btn btn-sm btn-primary active me-2"
                     (click)="viewDocument()">
-                    <i class="bx bx-show-alt text-light float-icon"></i>
                     Ver Documento
+                    <i class="bx bx-show-alt text-light float-icon"></i>
+                  </button>
+                </div>
+                <div>
+                  <button
+                    class="btn btn-sm btn-primary active me-2"
+                    (click)="refresh()">
+                    Refrescar
+                    <i class="fas fa-sync-alt"> </i>
                   </button>
                 </div>
               </div>
@@ -137,7 +119,7 @@
                 </div>
                 <div>
                   <button
-                    class="btn btn-sm btn-primary active me-2 font-size-14"
+                    class="btn btn-sm btn-primary active me-2 "
                     (click)="openSignWindow()">
                     <i class="bx bx-pen text-light float-icon"></i>
                     Firmar Documento
@@ -145,7 +127,7 @@
                 </div>
                 <div>
                   <button
-                    class="btn btn-sm btn-success active me-2 font-size-14"
+                    class="btn btn-sm btn-success active me-2 "
                     (click)="viewDocument()">
                     <i class="bx bx-show-alt text-light float-icon"></i>
                     Ver Documento
@@ -191,10 +173,10 @@
                 </div>
                 <div>
                   <button
-                    class="btn btn-sm btn-success active me-2 font-size-14"
+                    class="btn btn-sm btn-primary active me-2"
                     (click)="viewDocument()">
-                    <i class="bx bx-show-alt text-light float-icon"></i>
                     Ver Documento
+                    <i class="bx bx-show-alt text-light float-icon"></i>
                   </button>
                 </div>
               </div>
