@@ -931,3 +931,8 @@ div:where(.swal2-container).swal2-bottom {
 .modal-dialog-centered-top {
   margin-top: -100px !important;
 }
+
+
+.fixed-datepicker .bs-datepicker-container {
+  position: fixed !important;
+}
