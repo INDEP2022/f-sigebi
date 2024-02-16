@@ -466,7 +466,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
               ],
             },
           },
-          valuePrepareFunction: (value: any) => {
+          valuePrepareFunction: (value: any, row: any) => {
             if (value !== null) {
               switch (value) {
                 case true:
@@ -627,10 +627,10 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
               ],
             },
           },
-          valuePrepareFunction: (value: any) => {
-            if (value !== null) {
-              switch (value) {
-                case true:
+          valuePrepareFunction: (value: any, row: any) => {
+            if (row !== null) {
+              switch (row.statusClabe) {
+                case 1:
                   value = `<div class="badge badge-pill bg-success text-wrap ml-3 mr-2">Activo</div>`;
                   return value;
                 default:
@@ -643,7 +643,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
             return true;
           },
         },
-        dateTransfer: {
+        transferDate: {
           title: 'Fecha Transf.',
           type: 'string',
           sort: false,
