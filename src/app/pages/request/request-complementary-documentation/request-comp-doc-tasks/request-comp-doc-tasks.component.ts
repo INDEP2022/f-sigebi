@@ -738,7 +738,7 @@ export class RequestCompDocTasksComponent
         this.requestId,
         this.affair,
         this.process,
-        this.requestInfo
+        this.requestInfo.detail
       );
 
     const user: any = this.authService.decodeToken();
@@ -1586,8 +1586,15 @@ export class RequestCompDocTasksComponent
   }
 
   onChangeRegDoc(event) {
+
     this.validate.regdoc = event.isValid;
-    this.requestInfo.detail = event.object;
+
+    if (event.update) {
+      this.requestInfo.detail = event.object;
+      console.log(this.requestInfo.detail);
+    }
+
+
     //Agreagar validaciones en especifico
   }
 
