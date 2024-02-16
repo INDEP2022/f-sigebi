@@ -41,6 +41,8 @@
                 class="row row-cols-sm-2 row-cols-md-2 row-cols-lg-auto g-2 align-items-center">
                 <div class="col-12">
                   <button
+                    [ngClass]="{ loading: loadingBtn }"
+                    [disabled]="loading || loadingBtn"
                     type="submit"
                     class="btn btn-sm btn-success btn-block active me-2 font-size-14"
                     (click)="consultInServer()">
@@ -50,6 +52,8 @@
                 </div>
                 <div class="col-12">
                   <button
+                    [ngClass]="{ loading: loadingBtn2 }"
+                    [disabled]="loadingBtn2"
                     class="btn btn-sm btn-success btn-block active me-2 font-size-14"
                     type="button"
                     (click)="file.click()">
@@ -65,7 +69,10 @@
                 </div>
                 <div class="col-12">
                   <button
-                    [disabled]="!validGenerateLCs || !eventId.value"
+                    [ngClass]="{ loading: loadingBtn3 }"
+                    [disabled]="
+                      !validGenerateLCs || !eventId.value || loadingBtn3
+                    "
                     class="btn btn-sm btn-secondary btn-block active me-2 font-size-14"
                     (click)="loadChecks()">
                     <!-- <i class="bx bx-upload text-light float-icon"></i> -->
@@ -75,11 +82,11 @@
                 <div class="col-12">
                   <div class="btn-group d-block">
                     <button
+                      [ngClass]="{ loading: loadingBtn4 }"
                       (click)="generateLcs()"
-                      [ngClass]="{
-                        disabled: !validGenerateLCs || !eventId.value
-                      }"
-                      id="loadBtn2"
+                      [disabled]="
+                        !validGenerateLCs || !eventId.value || loadingBtn4
+                      "
                       type="button"
                       class="btn btn-sm btn-primary btn-block active me-2 font-size-14">
                       <!-- <i class="bx bx-send text-light float-icon"></i> -->
