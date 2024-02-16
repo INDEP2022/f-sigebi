@@ -275,6 +275,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
           }
         }
       } else {
+        this.loader.load = false;
         this.onLoadToast('error', 'Error', 'No se pudo carga la caratula');
       }
     }
