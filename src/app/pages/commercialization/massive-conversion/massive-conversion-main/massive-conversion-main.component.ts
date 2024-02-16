@@ -654,7 +654,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
               this.alertInfo(
                 'warning',
                 'Atención',
-                'No files selected, or more than of allowed'
+                'No hay archivos seleccionados o hay más de los permitidos'
               );
 
             const fileReader = new FileReader();
@@ -688,7 +688,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
                 this.alertInfo(
                   'warning',
                   'Atención',
-                  'No files selected, or more than of allowed'
+                  'No hay archivos seleccionados o hay más de los permitidos'
                 );
 
               const fileReader = new FileReader();
