@@ -83,7 +83,7 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3" *ngIf="editReport && !signReport">
+      <div class="m-3" *ngIf="editReport && !isSigned">
         <confirm-button
           [disabled]="!form.valid"
           [loading]="loading"
