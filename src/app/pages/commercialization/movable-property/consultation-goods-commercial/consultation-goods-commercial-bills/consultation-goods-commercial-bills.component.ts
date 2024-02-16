@@ -185,12 +185,9 @@ export class ConsultationGoodsCommercialBillsComponent
       this.spentService.getChargeSpentsExcel(this.modelSave2).subscribe(
         res => {
           console.log(res);
-          console.log(res.data);
-          console.log(res.data[0]['channel']);
-          const token = res.data.channel;
 
           // switchMap(() => )
-          // this.downloadDocument('TODO_GASTOS', 'excel', res.base64File);
+          this.downloadDocument('TODO_GASTOS', 'excel', res.base64File);
         },
         err => {
           this.loading = false;
