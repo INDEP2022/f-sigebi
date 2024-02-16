@@ -164,22 +164,10 @@ export class ElectronicSignaturesMainComponent
                   filter.search,
                   'yyyy-MM-dd'
                 );
-
-                // let params = `${filter.search}T00:00:00.000Z,${filter.search}T23:59:59.999Z`;
-                // filter.search = params;
               }
               this.columnFiltersHistorical[
                 field
               ] = `${searchFilter}:${filter.search}`;
-              // if (this.filterByUserH == true) {
-              //   this.columnFiltersHistorical[
-              //     'user'
-              //   ] = `${SearchFilter.EQ}:${this.dataUserLogged.user}`; //ADABDOUBG
-              // }
-              // this.columnFiltersHistorical['firmdate'] = `$not:$null`;
-              // this.columnFiltersHistorical[
-              //   'filter.creationdate'
-              // ] = `$order:desc`;
             } else {
               delete this.columnFiltersHistorical[field];
             }
@@ -235,7 +223,7 @@ export class ElectronicSignaturesMainComponent
             if (filter.field == 'reference') {
               field = `filter.${filter.field + 'id'}`;
             } else if (filter.field == 'document') {
-              field = `filter.documentid'`;
+              field = `filter.documentid`;
             } else {
               field = `filter.${filter.field}`;
             }
@@ -517,7 +505,7 @@ export class ElectronicSignaturesMainComponent
       this.authService.decodeToken().preferred_username
     }`;
     params['filter.firmdate'] = `$is:$null`;
-    params['filter.creationdate'] = `$order:desc`;
+    // params['filter.creationdate'] = `$order:desc`;
 
     console.log('PARAMS ', params);
     this.svElectronicSignatures.getAllComerDocumentsXml_(params).subscribe({

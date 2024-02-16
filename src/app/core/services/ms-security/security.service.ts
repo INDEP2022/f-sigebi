@@ -166,4 +166,10 @@ export class SecurityService extends HttpService {
       params
     );
   }
+  getScreensAplicationTracking(params: _Params) {
+    return this.get<IListResponse<any>>(
+      `${SecurityEndpoints.ScreensAplicationTracking}`,
+      params
+    );
+  }
 }

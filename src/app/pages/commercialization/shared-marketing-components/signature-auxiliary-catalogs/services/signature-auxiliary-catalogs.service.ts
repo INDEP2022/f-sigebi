@@ -4,7 +4,6 @@ import { _Params } from 'src/app/common/services/http.service';
 import {
   ComerceDocumentsXmlH,
   ComerceDocumentsXmlT,
-  IComerDocumsXmlT,
 } from 'src/app/core/models/ms-documents/documents-comerce.model';
 import {
   IComerDestXML,
@@ -15,6 +14,7 @@ import { IParameter } from 'src/app/core/models/ms-parametercomer/parameter';
 import { DocumentsComerceService } from 'src/app/core/services/ms-documents/documents-comerce.service';
 import { ElectronicFirmService } from 'src/app/core/services/ms-electronicfirm/ms-electronicfirm.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 
@@ -27,7 +27,8 @@ export class SignatureAuxiliaryCatalogsService {
     private msDocumentsComerceService: DocumentsComerceService,
     private msParameterModService: ParameterModService,
     private msUsersService: UsersService,
-    private msIndUserService: IndUserService
+    private msIndUserService: IndUserService,
+    private msSecurityService: SecurityService
   ) {}
 
   getComerOrigins(params: _Params) {
@@ -71,7 +72,7 @@ export class SignatureAuxiliaryCatalogsService {
   createComerceDocumentsXmlT(body: Partial<ComerceDocumentsXmlT>) {
     return this.msDocumentsComerceService.createComerceDocumentsXmlT(body);
   }
-  deleteComerceDocumentsXmlT(body: Partial<IComerDocumsXmlT>) {
+  deleteComerceDocumentsXmlT(body: Partial<any>) {
     return this.msDocumentsComerceService.deleteComerceDocumentsXmlT(body);
   }
   getAllComerceDocumentsXmlH(params: _Params) {
@@ -100,5 +101,21 @@ export class SignatureAuxiliaryCatalogsService {
   }
   getAllNameOtval(params: _Params) {
     return this.msIndUserService.getAllNameOtval(params);
+  }
+
+  deleteComerOrigins(id: number) {
+    return this.msElectronicFirmService.deleteComerOrigins(id);
+  }
+
+  deleteComerTypeSignatories(id: number) {
+    return this.msElectronicFirmService.deleteComerTypeSignatories(id);
+  }
+
+  getScreensAplicationTracking(params: _Params) {
+    return this.msSecurityService.getScreensAplicationTracking(params);
+  }
+
+  deleteComerDestXML(body: any) {
+    return this.msElectronicFirmService.deleteComerDestXML(body);
   }
 }

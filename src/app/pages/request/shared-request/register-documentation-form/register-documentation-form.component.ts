@@ -147,15 +147,15 @@ export class RegisterDocumentationFormComponent
     });
   }
 
-  formChanges() {
+  formChanges(update = false) {
 
     let requiredFields = this.getRequiredFields(this.registerForm);
-    console.log(requiredFields);
     let isValid = this.validateParameters(this.requestIfo, requiredFields["keys"]);
 
     this.onChange.emit({
       isValid: this.registerForm.valid && isValid && this.loadInfo,
-      object: this.registerForm.getRawValue(),
+      object: this.requestIfo,
+      update: update
     });
   }
 
@@ -194,7 +194,7 @@ export class RegisterDocumentationFormComponent
 
   /* METODO QUE LLAMA AL SERVICIO DE SOLICITUDES
   ============================================== */
-  getRequestInfo() {
+  getRequestInfo(update = false) {
     if (this.requestId) {
       this.requestService.getById(this.requestId).subscribe({
         next: resp => {
@@ -210,14 +210,12 @@ export class RegisterDocumentationFormComponent
 
           if (resp.receptionDate) {
             this.bsReceptionValue = this.parseDateNoOffset(resp.receptionDate);
-            console.log('error' + this.bsReceptionValue);
           } else {
             this.bsReceptionValue = new Date();
           }
 
           if (resp.paperDate) {
             this.bsPaperValue = this.parseDateNoOffset(resp.paperDate);
-            console.log('error' + this.bsPaperValue);
           }
 
           this.transference = +resp.transferenceId;
@@ -228,6 +226,8 @@ export class RegisterDocumentationFormComponent
           this.getPublicMinister(new ListParams());
           this.setFieldsRequired();
           this.loadInfo = this.registerForm.valid;
+
+          this.formChanges(update);
         },
         error: error => {
           console.log('No se cargaron datos de la solicitud. ', error);
@@ -310,7 +310,7 @@ export class RegisterDocumentationFormComponent
       if (question.isConfirmed) {
         this.registerForm.reset();
         //this.datePicker.bsValue = null; // Restablecer el valor del bsDatepicker
-        this.getRequestInfo();
+        this.getRequestInfo(true);
         this.registerForm.markAsUntouched();
       }
     });
@@ -341,13 +341,12 @@ export class RegisterDocumentationFormComponent
             request[key] = null;
           }
         }
-        console.log(request);
         this.requestService.update(request.id, request).subscribe({
           next: resp => {
             console.log(resp);
             if (resp.statusCode == 200) {
               this.loadInfo = true;
-              this.formChanges();
+              this.getRequestInfo(true);
               this.alert('success', 'Correcto', 'Registro Actualizado');
             }
           },
