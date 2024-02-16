@@ -368,6 +368,7 @@ export class RequestCompDocTasksComponent
   }
 
   async turnRequest() {
+
     if (this.process == 'register-taxpayer-date') {
       let result = await this.openDelegation();
       if (!result) return;
@@ -1586,6 +1587,7 @@ export class RequestCompDocTasksComponent
 
   onChangeRegDoc(event) {
     this.validate.regdoc = event.isValid;
+    this.requestInfo.detail = event.object;
     //Agreagar validaciones en especifico
   }
 
