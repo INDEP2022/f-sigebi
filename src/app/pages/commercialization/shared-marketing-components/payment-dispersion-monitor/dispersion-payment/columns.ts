@@ -48,6 +48,7 @@ export const COLUMNSCUSTOMER = {
     type: 'custom',
     sort: false,
     hide: false,
+    filter: false,
     renderComponent: CheckboxElementComponent,
     valuePrepareFunction: (isSelected: any, row: any) => {
       return goodCheckCustomer.find((e: any) => e.row.ClientId == row.ClientId)
@@ -112,6 +113,7 @@ export const COLUMNS_LOT_EVENT_TRUE = {
     title: 'Procesar',
     type: 'custom',
     sort: false,
+    filter: false,
     hide: false,
     renderComponent: CheckboxElementComponent,
     valuePrepareFunction: (isSelected: any, row: any) => {
