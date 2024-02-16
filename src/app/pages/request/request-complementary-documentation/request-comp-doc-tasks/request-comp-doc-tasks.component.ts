@@ -368,6 +368,7 @@ export class RequestCompDocTasksComponent
   }
 
   async turnRequest() {
+
     if (this.process == 'register-taxpayer-date') {
       let result = await this.openDelegation();
       if (!result) return;
@@ -737,7 +738,7 @@ export class RequestCompDocTasksComponent
         this.requestId,
         this.affair,
         this.process,
-        this.requestInfo
+        this.requestInfo.detail
       );
 
     const user: any = this.authService.decodeToken();
@@ -1585,7 +1586,12 @@ export class RequestCompDocTasksComponent
   }
 
   onChangeRegDoc(event) {
+
     this.validate.regdoc = event.isValid;
+    if (event.update) {
+      this.requestInfo.detail = event.object;
+    }
+
     //Agreagar validaciones en especifico
   }
 
@@ -1923,7 +1929,7 @@ export class RequestCompDocTasksComponent
               this.uploadDocument(idSample, typeDocument);
             }
           } else if (typeFirm == 'electronica') {
-            this.getStatusFirmantes();
+            this.firmarReporte();
           }
         },
       },

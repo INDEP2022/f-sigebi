@@ -154,7 +154,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
           this.isSigned = this.version.signedReport == 'Y';
         }
       },
-      error: err => {},
+      error: err => { },
     });
   }
 
@@ -196,7 +196,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
           this.onLoadToast('success', 'Documento guardado correctamente', '');
         }
       },
-      error: err => {},
+      error: err => { },
     });
   }
 
@@ -310,7 +310,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
         'sae.rptdesign',
         'SOLICITUDES',
         this.requestId,
-        this.documentTypeId
+        this.version.documentTypeId
       )
       .subscribe({
         next: response => {
@@ -361,7 +361,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
                   numeraryInstance: 'DOC_COMPLEMENTARIA',
                   warehouseId: this.requestId,
                   version: 1,
-                  transfereeId: this.documentTypeId,
+                  transfereeId: this.version.documentTypeId,
                   contentId: resp.dDocName,
                 };
 
@@ -378,7 +378,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
                   },
                 });
               },
-              error: error => {},
+              error: error => { },
             });
         },
         error: error => {
@@ -392,7 +392,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   showFile() {
-    this.version.documentTypeId = this.documentTypeId;
     this.version.isSigned = this.isSigned;
     this.show.emit(this.version);
   }
