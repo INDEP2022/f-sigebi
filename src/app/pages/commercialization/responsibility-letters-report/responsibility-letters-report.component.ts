@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -12,6 +12,7 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { IGood } from 'src/app/core/models/good/good.model';
@@ -43,7 +44,13 @@ import { COMEMR_BIENES_COLUMNS } from './resp-letter-columns';
 @Component({
   selector: 'app-responsibility-letters-report',
   templateUrl: './responsibility-letters-report.component.html',
-  styles: [],
+  styles: [
+    `
+      .bg-gray {
+        background-color: #eee !important;
+      }
+    `,
+  ],
 })
 export class ResponsibilityLettersReportComponent
   extends BasePage
@@ -101,6 +108,7 @@ export class ResponsibilityLettersReportComponent
   selectDataLote = new DefaultSelect();
   P_DIRECCION: string = 'M';
   origin: string = '';
+  dataVal: any = null;
 
   get oficio() {
     return this.comerLibsForm.get('oficio');
@@ -166,6 +174,11 @@ export class ResponsibilityLettersReportComponent
     return this.respForm.get('paragraph3');
   }
 
+  valLote: boolean = false;
+  valOficio: boolean = false;
+  selectDataOficio = new DefaultSelect<any>();
+  columnFilters: any = [];
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
   constructor(
     private fb: FormBuilder,
     private securityService: SecurityService,
@@ -189,7 +202,7 @@ export class ResponsibilityLettersReportComponent
     super();
     this.settings = {
       ...TABLE_SETTINGS,
-      hideSubHeader: true,
+      hideSubHeader: false,
       actions: false,
       columns: {
         ...COMEMR_BIENES_COLUMNS,
@@ -200,6 +213,7 @@ export class ResponsibilityLettersReportComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    this.prepareTableBienXLot();
     this.dateFinal = this.datePipe.transform(this.maxDate, 'dd/MM/yyyy');
     const token = this.authService.decodeToken();
     this.dataUserLoggedTokenData = token;
@@ -213,6 +227,39 @@ export class ResponsibilityLettersReportComponent
       });
   }
 
+  prepareTableBienXLot() {
+    this.dataTableGood
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            const search: any = {
+              goodNumber: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.ILIKE),
+            };
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.comerBienesLetter();
+        }
+      });
+
+    this.paramsBienes.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      if (this.totalItems > 0) this.comerBienesLetter();
+    });
+  }
   prepareForm() {
     this.department = this.authService.decodeToken().department;
     this.delegationName = this.authService.decodeToken().delegacionreg;
@@ -226,7 +273,11 @@ export class ResponsibilityLettersReportComponent
     this.comerLibsForm = this.fb.group({
       oficio: [
         null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(50)],
+        [
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(50),
+          Validators.required,
+        ],
       ],
       adjudicatorio: [null, [Validators.pattern(STRING_PATTERN)]],
       factura: [
@@ -237,7 +288,7 @@ export class ResponsibilityLettersReportComponent
           Validators.required,
         ],
       ],
-      fechaFactura: [{ value: null, disabled: true }, [Validators.required]],
+      fechaFactura: [null, [Validators.required]],
       fechaCarta: [null],
       fechaFallo: [null],
       cveProceso: [null],
@@ -267,12 +318,13 @@ export class ResponsibilityLettersReportComponent
       delegacion: [null],
       estado: [null],
       cp: [null],
+      adjudicatorio: [null],
     });
     this.respForm = this.fb.group({
       id: [null],
-      paragraph1: [null],
-      paragraph2: [null],
-      paragraph3: [null],
+      paragraph1: [null, Validators.required],
+      paragraph2: [null, Validators.required],
+      paragraph3: [null, Validators.required],
     });
   }
   confirm(): void {
@@ -368,7 +420,6 @@ export class ResponsibilityLettersReportComponent
         this.comerLibsForm.get('fechaFactura').setValue(this.start);
         this.getComerLotes(this.letter.lotsId);
         this.getComerRespById(this.letter.id);
-        this.comerBienesLetter(this.letter.lotsId, this.params.getValue());
         // this.comerLibsForm.value.paragraph1 =
         //   'Derivado de la ' +
         //   this.bienesLotesForm.get('description').value +
@@ -381,23 +432,6 @@ export class ResponsibilityLettersReportComponent
         // this.comerLibsForm
         //   .get('paragraph1')
         //   .setValue(this.comerLibsForm.value.paragraph1);
-        console.log('ID DE CARTA', this.letter.id);
-        this.comerLetterService
-          .getByIdResponsability(this.letter.id) // 1 EL UNO ES PARA PROBAR
-          .subscribe({
-            next: data => {
-              console.log('DATA DE RESPONSABILIDAD ', data);
-
-              this.loading = false;
-              this.respForm.get('paragraph1').setValue(data.paragraph1);
-              this.respForm.get('paragraph2').setValue(data.paragraph2);
-              this.respForm.get('paragraph3').setValue(data.paragraph3);
-            },
-            error: () => {
-              this.loading = false;
-              console.log('error');
-            },
-          });
       },
       error: () => {
         this.loading = false;
@@ -439,15 +473,25 @@ export class ResponsibilityLettersReportComponent
   }
 
   searchComer(provider?: IComerLetter) {
-    if (!this.comerLibsForm.get('lote').value) {
-      this.alert('warning', 'Selecciona un lote para continuar', '');
+    const { lote, oficio } = this.comerLibsForm.value;
+    if (!lote) {
+      this.alert('warning', 'Selecciona un Lote para continuar', '');
       return;
     }
+
+    if (!oficio) {
+      this.alert('warning', 'Selecciona un Oficio para continuar', '');
+      return;
+    }
+    this.getAllComerLetterResp(oficio);
+    this.comerBienesLetter();
+    return;
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       provider,
       P_DIRECCION: this.P_DIRECCION,
-      loteId: this.comerLibsForm.get('lote').value,
+      loteId: lote,
+      oficio,
     };
     // Reset on search
     this.comerLibsForm.get('oficio').reset();
@@ -661,60 +705,42 @@ export class ResponsibilityLettersReportComponent
     this.totalItems = 0;
     this.respForm.reset();
     this.clientForm.reset();
+    this.dataVal = null;
+    this.valLote = false;
+    this.valOficio = false;
   }
   goBack() {}
 
   actualizarLetter() {}
 
-  // async getDepartment() {
-  //   const params = new ListParams();
-  //   params['filter.id'] = this.department;
-  //   params['filter.numDelegation'] = this.delegation;
-  //   params['filter.numSubDelegation'] = this.subDelegation;
-  //   params['filter.phaseEdo'] = this.faEtapaCreada;
-  //   this.departamentService.getbyDelegation(this.delegation, '').subscribe({
-  //     next: data => {
-  //       console.log(data)
-  //     }
-  //   })
-
-  // }
-
-  comerBienesLetter(lotId: number, params1: ListParams) {
-    // this.bienesLoading = true;
-    // this.filterParams.getValue().removeAllFilters();
-    // this.filterParams.getValue().page = params.page;
-    // this.filterParams.getValue().search = params.text;
-    // this.filterParams
-    //   .getValue()
-    //   .addFilter('lotId', this.letter.lotsId, SearchFilter.EQ);
-    const params: any = new FilterParams();
-    params['filter.lotId'] = '$eq:' + this.letter.lotsId;
-    // params.addFilter('lotId', this.letter.lotsId);
+  comerBienesLetter() {
+    const { lote } = this.comerLibsForm.value;
+    if (!lote) return;
+    this.bienesLoading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
     params.page = this.paramsBienes.value.page;
     params.limit = this.paramsBienes.value.limit;
-    delete params['search'];
-    delete params['sortBy'];
-    console.log(params);
-    this.comerEventService.getFindAllComerGoodXlotTotal(params).subscribe({
+    this.comerEventService.getAllFilterLetter_(lote, params).subscribe({
       next: (data: any) => {
-        this.bienesLoading = false;
-        if (data) {
-          this.bienes = data.items.map((i: any) => {
-            i['description'] = i.good ? i.good.description : '';
-            return i;
-          });
-          console.log(this.bienes);
-          this.dataTableGood.load(this.bienes);
+        console.log(data);
+        let result = data.data.map(i => {
+          i['description'] = i.good ? i.good.description : '';
+        });
+        Promise.all(result).then(resp => {
+          this.dataTableGood.load(data.data);
           this.dataTableGood.refresh();
           this.totalItems = data.count;
-        }
+          this.bienesLoading = false;
+        });
       },
       error: () => {
+        this.bienesLoading = false;
         this.dataTableGood.load([]);
         this.dataTableGood.refresh();
         this.totalItems = 0;
-        console.error('error al filtrar bienes');
       },
     });
   }
@@ -722,6 +748,26 @@ export class ResponsibilityLettersReportComponent
 
   changeEvent(event: any) {
     console.log(event);
+    if (event) {
+      this.valLote = true;
+      this.valOficio = false;
+    } else {
+      this.valLote = false;
+      this.valOficio = false;
+    }
+
+    this.comerLibsForm.get('fechaFactura').reset();
+    this.comerLibsForm.get('factura').reset();
+    this.comerLibsForm.get('oficio').reset();
+    this.clientForm.get('adjudicatorio').reset();
+    this.clientForm.get('rfc').reset();
+    this.clientForm.get('calle').reset();
+    this.clientForm.get('colonia').reset();
+    this.clientForm.get('ciudad').reset();
+    this.clientForm.get('delegacion').reset();
+    this.clientForm.get('estado').reset();
+    this.clientForm.get('cp').reset();
+
     this.comerLibsForm.get('lote').reset();
     this.comerLibsForm
       .get('evento_descripcion') //.reset();
@@ -738,26 +784,21 @@ export class ResponsibilityLettersReportComponent
       paramsData['filter.id'] = '$eq:' + this.comerLibsForm.get('evento').value;
     }
     // paramsData['filter.observations'] = '$ilike:' + paramsData['search'];
-    paramsData['filter.id'] = '$eq:' + paramsData['search'];
     if (this.P_DIRECCION) {
       paramsData['filter.address'] = `$eq:${this.P_DIRECCION}`;
     }
-    paramsData['sortBy'] = 'observations:ASC';
+    if (paramsData.text) {
+      paramsData['filter.id'] = `$eq:${paramsData.text}`;
+    }
+    // paramsData['sortBy'] = 'observations:ASC';
     delete paramsData['search'];
     delete paramsData['text'];
     console.log('DATA SELECT ', paramsData);
-    '$eq:' + this.comerLibsForm.get('evento').value;
+    // '$eq:' + this.comerLibsForm.get('evento').value;
     this.comerEventService.getAllEvent(paramsData).subscribe({
       next: data => {
         console.log('DATA SELECT ', data.data);
-        this.selectDataEvent = new DefaultSelect(
-          // data.data.map((i: any) => {
-          //   i['description_data'] = i.id + ' --- ' + i.observations;
-          //   return i;
-          // }),
-          data.data,
-          data.count
-        );
+        this.selectDataEvent = new DefaultSelect(data.data, data.count);
         console.log(data, this.selectDataEvent);
       },
       error: error => {
@@ -768,14 +809,50 @@ export class ResponsibilityLettersReportComponent
 
   changeLote(event: any) {
     console.log(event);
+    if (event) {
+      this.valOficio = true;
+    } else {
+      this.valOficio = false;
+    }
+    this.comerLibsForm.get('fechaFactura').reset();
+    this.comerLibsForm.get('factura').reset();
+    this.comerLibsForm.get('oficio').reset();
+    if (event)
+      if (!event.client) {
+        this.clientForm.get('adjudicatorio').reset();
+        this.clientForm.get('rfc').reset();
+        this.clientForm.get('calle').reset();
+        this.clientForm.get('colonia').reset();
+        this.clientForm.get('ciudad').reset();
+        this.clientForm.get('delegacion').reset();
+        this.clientForm.get('estado').reset();
+        this.clientForm.get('cp').reset();
+        this.alert('warning', 'Lote sin cliente asignado', '');
+      } else {
+        this.clientForm.get('rfc').setValue(event.client.rfc);
+        this.clientForm.get('calle').setValue(event.client.street);
+        this.clientForm.get('colonia').setValue(event.client.neighborhood);
+        this.clientForm.get('ciudad').setValue(event.client.city);
+        this.clientForm.get('delegacion').setValue(event.client.delegation);
+        this.clientForm.get('estado').setValue(event.client.state);
+        this.clientForm.get('cp').setValue(event.client.zipCode);
+        this.clientForm.get('adjudicatorio').setValue(event.client.nomRazon);
+      }
+    else {
+      this.clientForm.get('adjudicatorio').reset();
+      this.clientForm.get('rfc').reset();
+      this.clientForm.get('calle').reset();
+      this.clientForm.get('colonia').reset();
+      this.clientForm.get('ciudad').reset();
+      this.clientForm.get('delegacion').reset();
+      this.clientForm.get('estado').reset();
+      this.clientForm.get('cp').reset();
+    }
     this.comerLibsForm
       .get('lote_descripcion')
       .setValue(event ? event.description : null);
-    if (event) {
-      this.getDataCustomers(event.idLot);
-    } else {
-      this.clientForm.reset();
-    }
+
+    this.getOficioData(new ListParams());
   }
 
   getLoteData(paramsData: ListParams, getByValue: boolean = false) {
@@ -820,5 +897,185 @@ export class ResponsibilityLettersReportComponent
         this.selectDataLote = new DefaultSelect();
       },
     });
+  }
+
+  getOficioData(paramsData: ListParams) {
+    const { lote } = this.comerLibsForm.value;
+    if (!lote) return;
+    if (paramsData.text) paramsData['filter.oficio'] = `$eq:${paramsData.text}`;
+    paramsData['filter.lotsId'] = `$eq:${lote}`;
+    this.comerLetterService.getAll(paramsData).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        let result = data.data.map(i => {});
+        Promise.all(result).then(resp => {
+          this.selectDataOficio = new DefaultSelect(data.data, data.count);
+        });
+      },
+      error: () => {
+        this.selectDataOficio = new DefaultSelect();
+      },
+    });
+  }
+  changeOficio(event: any) {
+    if (event) {
+      this.comerLibsForm.get('factura').setValue(event.invoiceNumber);
+      let date = this.datePipe.transform(event.invoiceDate, 'dd/MM/yyyy');
+      this.comerLibsForm.get('fechaFactura').setValue(date);
+    } else {
+      this.comerLibsForm.get('factura').reset();
+      this.comerLibsForm.get('fechaFactura').reset();
+      this.respForm.reset();
+    }
+  }
+
+  getAllComerLetterResp(oficio: string | number) {
+    this.comerLetterService.getByIdResponsability(oficio).subscribe({
+      next: data => {
+        this.alertInfo('success', 'Carta de Responsabilidad Cargada', '').then(
+          quesition => {
+            if (quesition.isConfirmed) {
+              setTimeout(() => {
+                this.performScroll();
+              }, 200);
+            }
+          }
+        );
+        this.dataVal = data;
+        this.respForm.get('id').setValue(data.id);
+        this.respForm.get('paragraph1').setValue(data.paragraph1);
+        this.respForm.get('paragraph2').setValue(data.paragraph2);
+        this.respForm.get('paragraph3').setValue(data.paragraph3);
+      },
+      error: () => {
+        this.alertQuestion(
+          'warning',
+          'No se encontraron Cartas de Responsabilidad',
+          '¿Desea crear una?'
+        ).then(quesition => {
+          this.dataVal = null;
+          if (quesition.isConfirmed) {
+            this.llenarParrafos();
+            setTimeout(() => {
+              this.performScroll();
+            }, 200);
+          }
+        });
+      },
+    });
+  }
+
+  async llenarParrafos() {
+    const { rfc } = this.clientForm.value;
+    const { factura, fechaFactura } = this.comerLibsForm.value;
+    console.log(this.comerLibsForm.value);
+    console.log('fechaFactura', fechaFactura);
+    let fechaFactura_ = fechaFactura.split('/');
+    const yy1 = fechaFactura_[2];
+    const mm1 = fechaFactura_[1];
+    const dd1 = fechaFactura_[0];
+    const v_mes = await this.obtenerNombreMes(Number(mm1));
+
+    const yy2 = this.datePipe.transform(new Date(), 'yyyy');
+    const mm2 = this.datePipe.transform(new Date(), 'MM');
+    const dd2 = this.datePipe.transform(new Date(), 'dd');
+    const v_mes2 = await this.obtenerNombreMes(Number(mm2));
+
+    let v_fecha_letras = `${dd1} de ${v_mes} del ${yy1}`;
+    let v_fecha_letras2 = `${dd2} de ${v_mes2} del ${yy2}`;
+    let parrafo1 = `Con registro Federal de Contribuyentes ${
+      rfc ? rfc : ''
+    }, manifiesto que a partir de esta fecha, soy el responsable del uso y destino que se de a la Mercancía: `;
+    let parrafo2 = `Así mismo declaro que soy el único responsable del uso y cuidado de la factura ${factura} de fecha ${v_fecha_letras}, que me fue expedida por el Servicio de Administración y Enajenación de Bienes derivado de la subasta arriba señalada y con la cual acredito que soy el único y legal propietario de la mercancía.`;
+    let parrafo3 = `Conocedor de los alcances de lo que anteriormente he manifestado, así como de las responsabilidades civiles, penales y administrativas en que puedo incurrir por el mal uso del Bien antes citado y de la documentación legal que acredita la propiedad de la misma, expido la presente CARTA DE ACEPTACIÓN DE RESPONSABILIDADES al Gobierno Federal de los Estados Unidos Mexicanos, para los usos y fines que al mismo convengan, en la Ciudad de México, Distrito Federal el ${v_fecha_letras2}.`;
+
+    this.respForm.get('paragraph1').setValue(parrafo1);
+    this.respForm.get('paragraph2').setValue(parrafo2);
+    this.respForm.get('paragraph3').setValue(parrafo3);
+  }
+
+  async obtenerNombreMes(numeroMes: number) {
+    switch (numeroMes) {
+      case 1:
+        return 'Enero';
+      case 2:
+        return 'Febrero';
+      case 3:
+        return 'Marzo';
+      case 4:
+        return 'Abril';
+      case 5:
+        return 'Mayo';
+      case 6:
+        return 'Junio';
+      case 7:
+        return 'Julio';
+      case 8:
+        return 'Agosto';
+      case 9:
+        return 'Septiembre';
+      case 10:
+        return 'Octubre';
+      case 11:
+        return 'Noviembre';
+      case 12:
+        return 'Diciembre';
+      default:
+        return null;
+    }
+  }
+
+  performScroll() {
+    if (this.scrollContainer) {
+      this.scrollContainer.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  }
+  loadingSave: boolean = false;
+  saveData() {
+    this.respForm.value.id = this.comerLibsForm.value.oficio;
+    if (!this.dataVal) {
+      this.comerLetterService
+        .createComerLetterResp(this.respForm.value)
+        .subscribe({
+          next: data => {
+            this.dataVal = true;
+            this.alert(
+              'success',
+              'Carta de Responsabilidad Guardada Correctamente',
+              ''
+            );
+          },
+          error: () => {
+            this.alert(
+              'warning',
+              'No se pudo crear la Carta de Responsabilidad',
+              ''
+            );
+          },
+        });
+    } else {
+      this.comerLetterService
+        .updateComerLetterResp(this.respForm.value, this.respForm.value.id)
+        .subscribe({
+          next: data => {
+            this.dataVal = true;
+            this.alert(
+              'success',
+              'Carta de Responsabilidad Actualizada Correctamente',
+              ''
+            );
+          },
+          error: () => {
+            this.alert(
+              'warning',
+              'No se pudo actualizar la Carta de Responsabilidad',
+              ''
+            );
+          },
+        });
+    }
   }
 }
