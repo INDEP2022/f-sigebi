@@ -14,7 +14,7 @@
               <div class="col-11">
                 <div class="d-flex justify-content-center text-light ms-3">
                   {{ messageText }}
-                  <i class="bx bx-error text-light float-icon me-2"></i>
+                  <i class="bx bx-error text-light float-icon me-2 ml-2"></i>
                 </div>
               </div>
             </div>
@@ -23,7 +23,7 @@
                 <div class="d-flex justify-content-center text-light ms-3">
                   {{ messageText }}
                   <i
-                    class="fa fa-check text-light float-icon me-2"
+                    class="fa fa-check text-light float-icon me-2 ml-2"
                     aria-hidden="true"></i>
                 </div>
               </div>
@@ -38,19 +38,26 @@
                 </div>
                 <div>
                   <button
-                    class="btn btn-sm btn-primary active me-2 font-size-14"
+                    class="btn btn-sm btn-primary active me-2"
                     (click)="openSignWindow()">
-                    <i class="bx bx-pen text-light float-icon"></i>
                     Firmar Documento
+                    <i class="bx bx-pen text-light float-icon"></i>
                   </button>
                 </div>
                 <div>
-                  <!-- LISTO -->
                   <button
-                    class="btn btn-sm btn-success active me-2 font-size-14"
+                    class="btn btn-sm btn-primary active me-2"
                     (click)="viewDocument()">
-                    <i class="bx bx-show-alt text-light float-icon"></i>
                     Ver Documento
+                    <i class="bx bx-show-alt text-light float-icon"></i>
+                  </button>
+                </div>
+                <div>
+                  <button
+                    class="btn btn-sm btn-primary active me-2"
+                    (click)="refresh()">
+                    Refrescar
+                    <i class="fas fa-sync-alt"> </i>
                   </button>
                 </div>
               </div>
@@ -112,7 +119,7 @@
                 </div>
                 <div>
                   <button
-                    class="btn btn-sm btn-primary active me-2 font-size-14"
+                    class="btn btn-sm btn-primary active me-2 "
                     (click)="openSignWindow()">
                     <i class="bx bx-pen text-light float-icon"></i>
                     Firmar Documento
@@ -120,7 +127,7 @@
                 </div>
                 <div>
                   <button
-                    class="btn btn-sm btn-success active me-2 font-size-14"
+                    class="btn btn-sm btn-success active me-2 "
                     (click)="viewDocument()">
                     <i class="bx bx-show-alt text-light float-icon"></i>
                     Ver Documento
@@ -166,10 +173,10 @@
                 </div>
                 <div>
                   <button
-                    class="btn btn-sm btn-success active me-2 font-size-14"
+                    class="btn btn-sm btn-primary active me-2"
                     (click)="viewDocument()">
-                    <i class="bx bx-show-alt text-light float-icon"></i>
                     Ver Documento
+                    <i class="bx bx-show-alt text-light float-icon"></i>
                   </button>
                 </div>
               </div>
