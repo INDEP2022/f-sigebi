@@ -328,37 +328,34 @@ export class ResponsibilityLettersReportComponent
     });
   }
   confirm(): void {
-    if (this.letterDefault == null) {
-      this.alert('warning', 'Realiza una consulta para continuar', '');
+    if (!this.dataVal) {
+      this.alert(
+        'warning',
+        'Realiza una consulta o cree un nuevo registro para continuar',
+        'Registro requerido: Carta de Responsabilidad'
+      );
       return;
     }
-    this.loading = true;
-    // console.log(this.comerLibsForm.value);
-    this.carta = this.datePipe.transform(this.letter.invoiceDate, 'dd/MM/yyyy');
-    this.start = this.datePipe.transform(this.letter.invoiceDate, 'dd/MM/yyyy');
+    const { paragraph1, paragraph2, paragraph3 } = this.respForm.value;
+    const { cp, estado, delegacion, colonia, calle, adjudicatorio } =
+      this.clientForm.value;
+    const { lote } = this.comerLibsForm.value;
     let params = {
-      DESTYPE: this.bienesLotesForm.value.description,
-      ID_LOTE: this.bienesLotesForm.controls['lote'].value,
-      OFICIO_CARTALIB: this.comerLibsForm.value.oficio,
-      // DIRIGIDO_A: this.comerLibsForm.controls['diridoA'].value,
-      // PUESTO: this.comerLibsForm.controls['puesto'].value,
-      PARRAFO1: this.respForm.controls['paragraph1'].value,
-      ADJUDICATARIO: this.comerLibsForm.controls['adjudicatorio'].value,
-      NO_FACTURA: this.comerLibsForm.controls['factura'].value,
-      FECHA_FACTURA: this.start,
-      PARRAFO2: this.respForm.controls['paragraph2'].value,
-      // FIRMANTE: this.comerLibsForm.controls['firmante'].value,
-      // PUESTOFIRMA: this.comerLibsForm.controls['puestoFirma'].value,
-      // CCP1: this.comerLibsForm.controls['ccp1'].value,
-      // CCP2: this.comerLibsForm.controls['ccp1'].value,
-      // PUESTOCCP1: this.comerLibsForm.controls['puestoCcp1'].value,
-      // PUESTOCCP2: this.comerLibsForm.controls['puestoCcp2'].value,
-      FECHA_CARTA: this.carta,
+      ID_LOTE: lote,
+      ADJUDICATARIO: adjudicatorio,
+      DOMICILIO: calle,
+      COLONIA: colonia,
+      DELEGACION: delegacion,
+      ESTADO: estado,
+      CP: cp,
+      PARRAFO1: paragraph1,
+      PARRAFO2: paragraph2,
+      PARRAFO3: paragraph3,
     };
 
     console.log(params);
     this.siabService
-      // .fetchReport('RCOMERCARTALIB', params)
+      // .fetchReport('RCOMERCARTARESP', params)
       .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
@@ -751,9 +748,11 @@ export class ResponsibilityLettersReportComponent
     if (event) {
       this.valLote = true;
       this.valOficio = false;
+      this.dataVal = null;
     } else {
       this.valLote = false;
       this.valOficio = false;
+      this.dataVal = null;
     }
 
     this.comerLibsForm.get('fechaFactura').reset();
@@ -811,8 +810,10 @@ export class ResponsibilityLettersReportComponent
     console.log(event);
     if (event) {
       this.valOficio = true;
+      this.dataVal = null;
     } else {
       this.valOficio = false;
+      this.dataVal = null;
     }
     this.comerLibsForm.get('fechaFactura').reset();
     this.comerLibsForm.get('factura').reset();
@@ -922,10 +923,12 @@ export class ResponsibilityLettersReportComponent
       this.comerLibsForm.get('factura').setValue(event.invoiceNumber);
       let date = this.datePipe.transform(event.invoiceDate, 'dd/MM/yyyy');
       this.comerLibsForm.get('fechaFactura').setValue(date);
+      this.dataVal = null;
     } else {
       this.comerLibsForm.get('factura').reset();
       this.comerLibsForm.get('fechaFactura').reset();
       this.respForm.reset();
+      this.dataVal = null;
     }
   }
 
@@ -1041,7 +1044,7 @@ export class ResponsibilityLettersReportComponent
         .createComerLetterResp(this.respForm.value)
         .subscribe({
           next: data => {
-            this.dataVal = true;
+            this.dataVal = data;
             this.alert(
               'success',
               'Carta de Responsabilidad Guardada Correctamente',
@@ -1061,7 +1064,6 @@ export class ResponsibilityLettersReportComponent
         .updateComerLetterResp(this.respForm.value, this.respForm.value.id)
         .subscribe({
           next: data => {
-            this.dataVal = true;
             this.alert(
               'success',
               'Carta de Responsabilidad Actualizada Correctamente',
