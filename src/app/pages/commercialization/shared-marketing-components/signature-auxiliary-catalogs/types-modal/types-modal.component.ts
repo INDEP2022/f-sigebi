@@ -69,6 +69,13 @@ export class TypesModalComponent extends BasePage implements OnInit {
       return;
     }
     if (this.edit == false) {
+      const { orderId } = this.formGroup.value;
+      if (orderId <= 0)
+        return this.alert(
+          'warning',
+          'Debe ingresar un número de Orden válido.',
+          ''
+        );
       this.svSignatureAuxiliaryCatalogsService
         .createComerTypeSignatories(this.formGroup.value)
         .subscribe({
