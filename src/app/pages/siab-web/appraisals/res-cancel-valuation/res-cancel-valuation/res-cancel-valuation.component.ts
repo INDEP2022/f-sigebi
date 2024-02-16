@@ -2,8 +2,9 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { LocalDataSource } from 'ng2-smart-table';
 import {
+  BehaviorSubject,
   catchError,
   debounceTime,
   firstValueFrom,
@@ -15,12 +16,15 @@ import {
   tap,
 } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { AppraiseService } from 'src/app/core/services/ms-appraise/appraise.service';
+import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
 import { GenerateCveService } from 'src/app/core/services/ms-security/application-generate-clave';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AppraisalsDataService } from '../../appraisals-data.service';
@@ -111,6 +115,18 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   // Modal #1
   formDialogOne: FormGroup;
 
+  dataGood: LocalDataSource = new LocalDataSource();
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  settings2 = {
+    ...this.settings,
+    hideSubHeader: false,
+    actions: false,
+    columns: VALUATION_REQUEST_COLUMNS_VALIDATED,
+  };
+  dataGood2: LocalDataSource = new LocalDataSource();
+  totalItems2: number = 0;
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
   //#endregion
 
   //
@@ -127,10 +143,12 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private serviceUser: GenerateCveService,
+    private usersService: UsersService,
     private serviceDelegations: DelegationService,
     private serviceDepartments: DepartamentService,
-    private modalService: BsModalService,
-    private cdr: ChangeDetectorRef
+    private jobDictumTextsService: JobDictumTextsService,
+    private cdr: ChangeDetectorRef,
+    private excelService: ExcelService
   ) {
     super();
     this.settings = {
@@ -140,9 +158,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       hideSubHeader: false,
       columns: { ...VALUATION_REQUEST_COLUMNS },
     };
-
     this.prepareForm();
     this.form
+
       .get('event')
       .valueChanges.pipe(takeUntil(this.$unSubscribe), debounceTime(500))
       .subscribe({
@@ -233,25 +251,34 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     // } else {
     //   this.alert('warning', 'Debe seleccionar un usuario', '');
     // }
-    this.alertQuestion(
-      'question',
-      'Agregar Usuario',
-      '¿Desea agregar un usuario?'
-    ).then(x => {
-      if (x.isConfirmed) {
-        let countCopyLocal = this.countCopy + 1;
-        this.countCopy = countCopyLocal;
-        if (this.radioValueThree == false) {
-          this.arrayCopy.push(
-            `${countCopyLocal}/${this.formThree.controls['user'].value}`
-          );
-        } else {
-          this.arrayCopy.push(
-            `${countCopyLocal}/EXTERNO-${this.formThree.controls['depar'].value?.descripcion}`
-          );
+    console.log(this.formThree.controls['user'].value);
+    if (
+      this.formThree.controls['user'].value == null &&
+      this.formThree.controls['depar'].value == null
+    ) {
+      this.alert('warning', 'Debe seleccionar un usuario', '');
+      return;
+    } else {
+      this.alertQuestion(
+        'question',
+        'Agregar Usuario',
+        '¿Desea agregar un usuario?'
+      ).then(x => {
+        if (x.isConfirmed) {
+          let countCopyLocal = this.countCopy + 1;
+          this.countCopy = countCopyLocal;
+          if (this.radioValueThree == false) {
+            this.arrayCopy.push(
+              `${countCopyLocal}/${this.formThree.controls['user'].value}`
+            );
+          } else {
+            this.arrayCopy.push(
+              `${countCopyLocal}/EXTERNO-${this.formThree.controls['depar'].value?.descripcion}`
+            );
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   removeUserCopy() {
@@ -484,7 +511,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   validateBienesSelect() {
     let tpOfi = this.officeType;
     if (tpOfi === 2) {
-      if (this.dataService.selectedRowsValueds.length === 0) {
+      if (this.dataService.selectedRowsValues.length === 0) {
         this.alert(
           'warning',
           'Para continuar es necesario seleccionar bienes Valuados',
@@ -538,6 +565,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
   async viewOffice() {
     try {
+      this.loader.load = true;
       let dataOffice: any[] = [];
       let type: ValidationResponseFile = new ValidationResponseFile();
       let body: OfficesSend = new OfficesSend();
@@ -553,8 +581,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         type.typeOffice = x.id_tpsolaval;
         type.address = x.direccion;
       }
-
+      console.log(type.typeOffice);
       if (type.typeOffice == 2) {
+        console.log(this.form.get('radio').value);
         if (this.form.get('radio').value == 2) {
           tituloOficio = this.getDescriptionParameters('OFI_RES_V');
           myBody = await this.getDataByOffice();
@@ -566,7 +595,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           myBody.subject = tituloOficio;
           this.generateReport(myBody, type.address);
         }
-      } else if (type.typeOffice == 3) {
+      } else if (type.typeOffice == 1) {
         if (this.form.get('radio').value == 2) {
           tituloOficio = this.getDescriptionParameters('OFI_RES_A');
           myBody = await this.getDataByOffice();
@@ -613,25 +642,77 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       myBody.senderPosition = x.cargo_rem;
     }
 
-    let noGood: any[] = [];
-    noGood = this.getGoodsWithOffice(this.returnIdOffice());
-    for (const x of noGood) {
-      listGoods = listGoods + x.no_bien + ', ';
-    }
+    let noGood: any;
+    noGood = await this.getGoodsWithOffice(this.returnIdOffice());
+    console.log(noGood);
+    let noGood2: any;
+    noGood2 = await this.getGoodsWithOfficeAll(
+      this.returnIdOffice(),
+      noGood.count
+    );
 
+    for (const x of noGood2) {
+      listGoods = listGoods + x.goodNumber.goodId + ', ';
+    }
+    console.log(listGoods);
     myBody.goodsList = listGoods;
 
     return myBody;
   }
 
-  //No hay servicio en la documentacion
-  getGoodsWithOffice(idOffice: number) {
-    let arrayNumGoods: [] = [];
-
-    return arrayNumGoods;
+  async getGoodsWithOffice(idOffice: number) {
+    return new Promise((resolve, reject) => {
+      let params = new ListParams();
+      params['filter.jobId'] = idOffice;
+      this.jobDictumTextsService.getcomerJobsDet(params).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          reject(error);
+        },
+      });
+    });
   }
+  async getGoodsWithOfficeAll(idOffice: number, count: number) {
+    return new Promise((resolve, reject) => {
+      let params = new ListParams();
+      params['filter.jobId'] = idOffice;
+      params.limit = count;
+      this.jobDictumTextsService.getcomerJobsDet(params).subscribe({
+        next: response => {
+          resolve(response.data);
+        },
+        error: error => {
+          reject(error);
+        },
+      });
+    });
+  }
+  //No hay servicio en la documentacion
+  // getGoodsWithOffice(idOffice: number) {
+  //   let arrayNumGoods: any[] = [];
+  //   let params = new ListParams();
+  //   params['filter.jobId'] = idOffice;
+  //   this.jobDictumTextsService.getcomerJobsDet(params).subscribe({
+  //     next: response => {
+  //       console.log(response);
+  //       arrayNumGoods = response.data;
+  //       console.log(arrayNumGoods);
+  //       return arrayNumGoods;
+  //     },
+  //     error: error => {
+  //       arrayNumGoods = [];
+  //       return arrayNumGoods;
+  //     },
+  //   });
+  // }
 
-  generateReport(myBody: MyBody, address: any) {}
+  generateReport(myBody: MyBody, address: any) {
+    console.log(myBody);
+    console.log(address);
+    this.loader.load = false;
+  }
 
   returnIdOffice(): number {
     let num: number = 0;
@@ -701,9 +782,15 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       if (type == 2) {
         this.obtainsValuedAssets(2, 0);
         // this.radioValueOne = true;
+        this.form
+          .get('radio')
+          .setValue('2', { onlySelf: true, emitEvent: false });
         this.btnMotCan = false;
       } else if (type == 3) {
         this.obtainsValuedAssets(3, 0);
+        this.form
+          .get('radio')
+          .setValue('3', { onlySelf: true, emitEvent: false });
         // this.redioValueTwo = true;
         this.btnMotCan = true;
       }
@@ -717,6 +804,12 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   async findOffice(body: any) {
+    this.dataGood.load([]);
+    this.dataGood.refresh();
+    this.totalItems = 0;
+    this.dataGood2.load([]);
+    this.dataGood2.refresh;
+    this.totalItems2 = 0;
     this.idOficio = this.form.controls['office'].value?.jobId;
     this.form.patchValue({
       dest: null,
@@ -736,6 +829,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       let statusOffice: string;
       for (const [index, i] of array.entries()) {
         await firstValueFrom(this.getCityById(i?.ciudad));
+        console.log(this.city);
         if (this.city) {
           if (i?.tipo_oficio == 2) {
             this.form
@@ -768,22 +862,28 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       this.setButtons(3);
       this.resetVariables();
       this.pnlControles = true;
+      console.log(this.pnlControles);
       this.pnlControles2 = true;
+
       if (this.form.get('radio').value == 2) {
         this.settings = {
           ...this.settings,
           actions: false,
           columns: { ...VALUATION_REQUEST_COLUMNS },
         };
+        this.obtainsValuedAssets(4, this.idOficio);
       } else if (this.form.get('radio').value == 3) {
+        this.obtainsCancelAssets(5, this.idOficio);
       }
     }
+    //Marca Bienes
   }
 
   validateFindOfficeOne(status: any) {
     // //
     if (status == 'ENVIADO') {
       this.pnlControles = false;
+      console.log(this.pnlControles);
       this.pnlControles2 = false;
       this.setButtons(1);
       if (this.form.get('radio').value == 2) {
@@ -796,6 +896,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       }
     } else {
       this.pnlControles = true;
+
       this.pnlControles2 = true;
       this.setButtons(2);
       if (this.form.get('radio').value == 2) {
@@ -886,10 +987,57 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
   obtainsValuedAssets(numOne: number, numTwo: number) {
     this.body1 = { idEventIn: this.event, tpJobIn: numOne, idJobIn: numTwo };
+    this.loading = true;
+    let data = {
+      idEventIn: this.event,
+      tpJobIn: numOne,
+      idJobIn: numTwo,
+    };
+
+    this.serviceAppraise.postGetAppraise(data).subscribe({
+      next: response => {
+        console.log(response);
+        this.dataGood.load(response.data);
+        this.dataGood.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => {
+        console.log(error);
+        this.dataGood.load([]);
+        this.dataGood.refresh();
+        this.totalItems = 0;
+        this.loading = false;
+      },
+    });
   }
 
   obtainsCancelAssets(numOne: number, numTwo: number) {
     this.body2 = { idEventIn: this.event, tpJobIn: numOne, idJobIn: numTwo };
+    console.log(this.body2);
+    this.loading = true;
+    let data = {
+      idEventIn: this.event,
+      tpJobIn: numOne,
+      idJobIn: numTwo,
+    };
+
+    this.serviceAppraise.postGetAppraise(data).subscribe({
+      next: response => {
+        console.log(response);
+        this.dataGood2.load(response.data);
+        this.dataGood2.refresh();
+        this.totalItems2 = response.count;
+        this.loading = false;
+      },
+      error: error => {
+        console.log(error);
+        this.dataGood2.load([]);
+        this.dataGood2.refresh();
+        this.totalItems2 = 0;
+        this.loading = false;
+      },
+    });
   }
 
   updateHour(): void {
@@ -915,14 +1063,17 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   get selectedRowsValueds() {
-    return this.dataService.selectedRowsValueds;
+    return this.dataService.selectedRowsValues;
   }
 
   //#region Excel
   //Export and Import Excel
   exportExcel() {
     // //
+
     this.loadingExcel = true;
+    this.loader.load = true;
+    console.log(this.officeType);
     if (this.officeType + '' === '3') {
       if (this.cancelData.length > 0) {
         let haveMotives = false;
@@ -949,13 +1100,21 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           });
           return newRow;
         });
+        const filename: string = this.nameExcel;
+        this.excelService.export(this.elementsToExport, {
+          type: 'xlsx',
+          filename,
+        });
         console.log(this.elementsToExport);
 
         console.log(this.nameExcel);
-        this.flagDownload = !this.flagDownload;
+        // this.flagDownload = !this.flagDownload;
         this.loadingExcel = false;
+        this.loader.load = false;
       } else {
         this.loadingExcel = false;
+        this.loader.load = false;
+
         this.alert('warning', 'Sin bienes para descargar', '');
       }
     } else if (this.officeType + '' === '2') {
@@ -967,8 +1126,11 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         });
         this.flagDownload = !this.flagDownload;
         this.loadingExcel = false;
+        this.loader.load = false;
       } else {
         this.loadingExcel = false;
+        this.loader.load = false;
+
         this.alert('warning', 'Sin bienes para descargar', '');
       }
     }
@@ -1026,6 +1188,25 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     ) {
       return;
     }
+    this.arrayCopy.forEach(element => {
+      console.log(element);
+      // let data = {
+      //   user: value.usuario,
+      //   jobId: mComer.id_oficio,
+      //   action: acction,
+      //   userType: 'INTERNO',
+      // };
+
+      // this.usersService.postSpInsertWithcopyOfficia(data).subscribe({
+      //   next: resp => {
+      //     console.log(resp);
+
+      //   },
+      //   error: eror => {
+      //     this.loader.load = false;
+      //   },
+      // });
+    });
     // add setButtons(2) edit setButtons(4)
   }
 
@@ -1035,6 +1216,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
   showModal() {
     this.showModalCambioRev++;
+  }
+  senders() {
+    //AGREGAR FUNCION ENVIAR
   }
 
   reset() {

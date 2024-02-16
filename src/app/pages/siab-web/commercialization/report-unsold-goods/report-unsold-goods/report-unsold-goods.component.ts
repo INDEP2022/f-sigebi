@@ -256,14 +256,12 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
       };
       let params = new HttpParams();
       params = params.append('onlyType', 2);
-      params = params.append(
-        'pType',
-        this.form.controls['typeGood'].value?.no_tipo
-      );
+      params = params.append('pType', this.form.controls['typeGood'].value);
       this.serviceGoods.getTypesGoods(params, paramsPaginated).subscribe({
         next: response => {
           this.columns = [];
           this.columns = response.data;
+          console.log(this.columns);
           this.dataTwo?.load(this.columns);
           this.dataTwo?.refresh();
           this.totalItemsSubtype = response.count || 0;

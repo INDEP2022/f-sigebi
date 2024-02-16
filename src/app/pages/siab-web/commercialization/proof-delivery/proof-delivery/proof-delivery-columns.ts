@@ -15,7 +15,7 @@ export const PROOF_DELIVERY_COLUMNS = {
     title: 'LP',
     sort: false,
   },
-  cliente: {
+  customerId: {
     title: 'Cliente',
     sort: false,
   },
@@ -26,6 +26,7 @@ export const PROOF_DELIVERY_COLUMNS = {
   signedDate: {
     title: 'Fecha Timbrado',
     sort: false,
+    filter: false,
   },
   voucher: {
     title: 'Factura',

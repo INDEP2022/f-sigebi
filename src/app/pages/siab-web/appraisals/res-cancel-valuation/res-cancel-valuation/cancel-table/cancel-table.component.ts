@@ -96,6 +96,13 @@ export class CancelTableComponent
   set selectedRowsCancel(value) {
     this.dataService.selectedRowsCancel = value;
   }
+  get selectedRowsValues() {
+    return this.dataService.selectedRowsValues;
+  }
+
+  set selectedRowsValues(value) {
+    this.dataService.selectedRowsValues = value;
+  }
 
   onUserRowSelectCancel(event: any): void {
     this.selectedRowsCancel = event.selected; // Aquí, event.selected te dará todas las filas seleccionadas
@@ -147,15 +154,18 @@ export class CancelTableComponent
       motivos +=
         row.descripcion_motivo + (index < this.selectedRows.length ? '/' : '');
     });
-    // console.log(this.selectedRowsCancel);
 
     this.selectedRowsCancel.forEach(row => {
       if (row.motivos + ''.trim() === '') {
         row.motivos += motivos;
       }
     });
-
+    console.log(this.selectedRowsCancel);
+    console.log(this.selectedRows);
+    this.dataService.selectedRowsValues = this.selectedRows;
+    this.dataService.selectedRowsCancel = this.selectedRowsCancel;
     this.dataPaginated.refresh();
+    this.modalService.hide();
   }
 
   private validatedReasons() {
