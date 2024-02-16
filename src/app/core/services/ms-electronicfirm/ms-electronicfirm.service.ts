@@ -139,4 +139,20 @@ export class ElectronicFirmService extends HttpService {
   getAllComerDocumentsXml_(params: _Params) {
     return this.get(ElectronicFirmEndpoint.ComerDocumentsXml, params);
   }
+
+  deleteComerOrigins(id: number): Observable<IListResponse<any>> {
+    return this.delete<IListResponse<any>>(
+      ElectronicFirmEndpoint.ComerOrigins + '/' + id
+    );
+  }
+
+  deleteComerDestXML(params: any) {
+    return this.delete(ElectronicFirmEndpoint.ComerDestXML, params);
+  }
+
+  deleteComerTypeSignatories(id: number): Observable<IListResponse<any>> {
+    return this.delete<IListResponse<any>>(
+      ElectronicFirmEndpoint.ComerTypeSignatories + '/' + id
+    );
+  }
 }

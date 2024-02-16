@@ -388,7 +388,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
     return this.comerEventsService.createEvent(this.eventForm.value).pipe(
       tap(event => {
         this.loading = false;
-        this.alert('success', 'El Evento ha sido Guardado', '');
+        this.alert('success', 'El evento ha sido guardado', '');
         this.eventForm.patchValue({
           ...event,
           thirdId: event.thirdId ? `${event.thirdId}` : null,
@@ -427,7 +427,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
           return throwError(() => error);
         }),
         tap(event => {
-          this.alert('success', 'El Evento ha sido Guardado', '');
+          this.alert('success', 'El evento ha sido actualizado', '');
           this.loading = false;
         })
       );

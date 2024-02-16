@@ -66,17 +66,34 @@ export const RESPO_REPORT_COLUMNS = {
 export const COMEMR_BIENES_COLUMNS = {
   goodNumber: {
     title: 'No. Bien',
-    type: 'text',
     sort: false,
+    width: '15%',
   },
   description: {
     title: 'Descripción',
-    type: 'text',
     sort: false,
+    filter: false,
+    width: '85%',
+    valuePrepareFunction: (cell: any, row: any) => {
+      let str =
+        row.camp1 +
+        ' ' +
+        row.camp2 +
+        ' ' +
+        row.camp3 +
+        ' ' +
+        row.camp4 +
+        ' ' +
+        row.camp5 +
+        ' ' +
+        row.camp6 +
+        ' ' +
+        row.camp7 +
+        ' ' +
+        row.camp8 +
+        ' ' +
+        row.camp9;
+      return str;
+    },
   },
-  // baseValue: {
-  //   title: 'Valor',
-  //   type: 'text',
-  //   sort: false,
-  // },
 };

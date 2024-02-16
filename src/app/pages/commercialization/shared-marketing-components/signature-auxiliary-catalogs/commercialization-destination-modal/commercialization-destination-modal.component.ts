@@ -93,7 +93,7 @@ export class CommercializationDestinationModalComponent
           next: res => {
             console.log('RESPONSE', res);
             this.onConfirm.emit(this.formGroup.value);
-            this.alert('success', 'Registro creado correctamente', '');
+            this.alert('success', 'Registro Creado Correctamente', '');
             this.formGroup.reset();
             this.close();
           },

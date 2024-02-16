@@ -224,7 +224,6 @@
                   <div class="row">
                     <form-loader *ngIf="bienesLoading"></form-loader>
                     <div class="col-md-12">
-                      <!-- <div [class]="loading ? 'table-loading' : ''"> -->
                       <ng-scrollbar
                         [track]="'all'"
                         [ngStyle]="{
@@ -236,7 +235,6 @@
                           [source]="dataTableGood">
                         </ng2-smart-table>
                       </ng-scrollbar>
-                      <!-- </div> -->
                     </div>
                     <app-pagination
                       [params]="paramsBienes"

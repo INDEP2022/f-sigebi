@@ -653,6 +653,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.bienes = [];
     this.dataTableGood.load([]);
     this.dataTableGood.refresh();
+    this.totalItems = 0;
   }
   goBack() {}
 
@@ -1152,7 +1153,14 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
           this.alert('success', 'Registro creado correctamente', '');
         },
         error: err => {
-          this.alert('warning', 'No se pudo crear el registro', '');
+          if (
+            err.error.message ==
+            'El o los trade_letterlibs ya fueron registrados'
+          ) {
+            this.alert('warning', 'Ya existe un registro con estos datos', '');
+          } else {
+            this.alert('error', 'No se pudo crear el registro', '');
+          }
         },
       });
     }
@@ -1280,7 +1288,13 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.comerLibsForm
       .get('parrafo1')
       .setValue(
-        `Derivado de la ${descEvent} para la enajenación de vehiculos y/o bienes diversos ${cveProceso} celebrada el dia ${v_fecha_fallo} . Solicito a usted sea entegada(s) la siguente(s) mercancias que a continuación se describe.`
+        `Derivado de la ${
+          descEvent ? descEvent : ''
+        } para la enajenación de vehiculos y/o bienes diversos ${
+          cveProceso ? cveProceso : ''
+        } celebrada el dia ${
+          v_fecha_fallo ? v_fecha_fallo : ''
+        } . Solicito a usted sea entegada(s) la siguente(s) mercancias que a continuación se describe.`
       );
   }
 

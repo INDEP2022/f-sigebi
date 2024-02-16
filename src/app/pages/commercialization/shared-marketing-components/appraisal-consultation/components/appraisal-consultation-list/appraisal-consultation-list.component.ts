@@ -143,6 +143,7 @@ export class AppraisalConsultationListComponent
         console.warn('RESPUESTA DEL SOCKET');
         console.log(res);
         if (res.path != null) {
+          this.loader.load = false;
           this.getExcel(res.path);
         }
       })

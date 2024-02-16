@@ -10,4 +10,5 @@ export enum JobDictumTextsEndpoints {
   cursorCopys = 'application/cursorCopys',
   cursorGoods2 = 'application/cursorGoods2',
   getDatas = 'application/getDatas',
+  comerJobsDet = 'comer-jobs-det',
 }
