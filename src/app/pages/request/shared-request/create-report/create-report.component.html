@@ -1,12 +1,12 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ template ? 'EDITAR' : 'NUEVO' }} REPORTE</h5>
+    <h5 class="modal-title">{{ isSigned ? 'CONSULTA' :  (template ? 'EDITAR' : 'NUEVO') }} REPORTE</h5>
   </div>
   <div body>
     <div class="md-tabs">
       <form class="form-material" [formGroup]="form">
         <div class="row justify-content-start">
-          <div class="col-xs-12 col-12 col-md-6" *ngIf="editReport">
+          <div class="col-xs-12 col-12 col-md-6" *ngIf="editReport && !isSigned">
             <ngx-select
               [form]="form"
               control="template"
@@ -53,7 +53,7 @@
 
       <br />
       <tabset #tabsReport>
-        <tab heading="Reporte" id="editReport" *ngIf="editReport">
+        <tab heading="Reporte" id="editReport" *ngIf="editReport && !isSigned">
           <!--Templates Editor-->
           <quill-editor
             [sanitize]="true"
@@ -65,7 +65,7 @@
           </quill-editor>
         </tab>
 
-        <tab heading="Vista Previa" id="previewTab" *ngIf="!editReport">
+        <tab heading="Vista Previa" id="previewTab" *ngIf="!editReport || isSigned">
           <div style="height: 40vh !important; overflow: auto !important">
             <quill-view
               [content]="version.content"
@@ -83,7 +83,7 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3" *ngIf="editReport">
+      <div class="m-3" *ngIf="editReport && !signReport">
         <confirm-button
           [disabled]="!form.valid"
           [loading]="loading"
