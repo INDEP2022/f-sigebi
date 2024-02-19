@@ -181,4 +181,8 @@ export class MJobManagementService extends HttpService {
       pFlyerNumber,
     });
   }
+
+  getJobs(params?: _Params) {
+    return this.get('jobs', params);
+  }
 }
