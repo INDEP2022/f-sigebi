@@ -42,11 +42,6 @@
                 [control]="conciliationForm.get('date')"
                 label="Fecha">
                 <input
-                  [ngClass]="{
-                    'bg-gray': selectedEvent,
-                    'not-press': !selectedEvent
-                  }"
-                  [readonly]="true"
                   type="text"
                   class="form-control"
                   formControlName="date"

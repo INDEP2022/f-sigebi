@@ -50,7 +50,7 @@ export class CheckboxElementComponent2<T = any> implements OnInit {
 
   ngOnInit(): void {
     this.checked = this.value;
-    if (this.rowData) if (this.rowData['idwaste'] == null) this.disabled = true;
+    if (this.rowData) if (this.rowData['idwaste'] != null) this.disabled = true;
   }
 
   onToggle($event: Event) {
