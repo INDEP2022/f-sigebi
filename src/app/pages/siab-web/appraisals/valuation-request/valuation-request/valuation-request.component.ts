@@ -5,6 +5,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
+import { AppraisesService } from 'src/app/core/services/ms-appraises/appraises.service';
 import { EventAppService } from 'src/app/core/services/ms-event/event-app.service';
 import { FIndicaService } from 'src/app/core/services/ms-good/findica.service';
 import { GenerateCveService } from 'src/app/core/services/ms-security/application-generate-clave';
@@ -69,7 +70,8 @@ export class valuationRequestComponent extends BasePage implements OnInit {
     private generateCveService: GenerateCveService,
     private cityService: CityService,
     private usersService: UsersService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private appraisesService: AppraisesService
   ) {
     super();
     this.settings = {
@@ -587,7 +589,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
           this.m_comer.remitente = this.form.controls['sender'].value;
           this.m_comer.destinatario = this.form.controls['addressee'].value;
           this.m_comer.usuario_insert = this.user;
-          debugger;
+
           this.m_comer.ciudad = this.form.controls['city'].value;
           this.m_comer.texto1 = this.form.controls['paragraph1'].value;
           this.m_comer.texto2 = this.form.controls['paragraph2'].value;
@@ -617,7 +619,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
           this.m_comer.remitente = this.form.controls['sender'].value;
           this.m_comer.destinatario = this.form.controls['addressee'].value;
           this.m_comer.usuario_insert = this.user;
-          this.m_comer.ciudad = this.form.controls['Ciudad'].value;
+          this.m_comer.ciudad = this.form.controls['city'].value;
           this.m_comer.texto1 = this.form.controls['paragraph1'].value;
           this.m_comer.texto2 = this.form.controls['paragraph2'].value;
           this.m_comer.texto3 = this.form.controls['paragraph3'].value;
@@ -709,7 +711,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
         navyNumberKeyIn: mComer.num_cv_armada,
       };
       console.log(data);
-      this.officeManagementService.getPaTriggerOAppraise(data).subscribe({
+      this.appraisesService.getPaTriggerOAppraise(data).subscribe({
         next: resp => {
           console.log(resp.data);
           res(resp.data[0]);

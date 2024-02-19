@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BehaviorSubject, firstValueFrom, takeUntil } from 'rxjs';
 import {
@@ -65,6 +65,26 @@ interface IExcelToJson {
         border-radius: 50%;
         border: none;
         right: 5px;
+      }
+
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
       }
     `,
   ],
@@ -156,6 +176,10 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   fechaHoy: string;
 
   paramsGetMax = new BehaviorSubject<ListParams>(new ListParams());
+  loadingBtn: boolean = false;
+  loadingBtn2: boolean = false;
+  loadingBtn3: boolean = false;
+  loadingBtn4: boolean = false;
 
   constructor(
     private excelService: ExcelService,
@@ -369,6 +393,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   consultInServer() {
     let fromButton = true;
+    this.loadingBtn = true;
 
     if (this.form.controls['eventId'].value == null) {
       this.alert(
@@ -409,6 +434,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
             this.operationIdValue = res.data[0]?.operationId;
             console.log('this.operationIdValue', this.operationIdValue);
             this.generatedLcs = res.count;
+            this.loadingBtn = false;
           },
           error: error => {
             console.log('Error', error);
@@ -417,6 +443,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
             this.dataSource.load([]);
             this.dataSource.refresh();
             this.totalItemsD = 0;
+            this.loadingBtn = false;
             if (fromButton) {
               this.alert('warning', 'Advertencia', 'No se encontraron Datos');
             }
@@ -475,6 +502,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           this.validityDate = res.data[0]?.validityDate;
           this.operationIdValue = res.data[0]?.operationId;
           console.log('this.operationIdValue', this.operationIdValue);
+          this.loadingBtn = false;
         },
         error: error => {
           console.log('Error', error);
@@ -486,6 +514,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           if (fromButton) {
             this.alert('warning', 'Advertencia', 'No se encontraron Datos');
           }
+          this.loadingBtn = false;
         },
       });
   }
@@ -507,44 +536,20 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           this.lcsSource.refresh();
           this.totalItemsLc = res.count;
           this.isLoadingLcs = false;
+          this.loadingBtn = false;
         },
         error: error => {
           this.lcsSource.load([]);
           this.lcsSource.refresh();
           this.isLoadingLcs = false;
           this.totalItemsLc = 0;
+          this.loadingBtn = false;
           if (fromButton) {
             this.alert('warning', 'Advertencia', 'No se encontraron Lc´s');
           }
         },
       });
   }
-
-  /*searchLcs(listParams?: ListParams) {
-    this.isLoadingLcs = true;
-    
-    //TODO: decirle a Eduardo que haga opcional el campo de validityDate
-    const paramsPaginate = {
-      page: listParams?.page || 1,
-      limit: listParams?.limit || 10,
-    };
-    this.capturelineService
-      .postComerRefGuaranteesSearch({ ...this.form.value, ...paramsPaginate })
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: res => {
-          this.isLoadingLcs = false;
-          this.lcsSource.load(res.data);
-          this.totalItems = res.count;
-
-          this.isLoadingLcs = false;
-        },
-        error: () => {
-          this.lcsSource.load([]);
-          this.isLoadingLcs = false;
-        },
-      });
-  }*/
 
   makeFiltersParams(
     list?: ListParams,
@@ -592,54 +597,12 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     );
     if (result.isConfirmed) {
       this.tipoConsul = 'INSERT';
-      //	PUP_ABRIR_ARCHIVO
-
-      //this.isLoadingLoadFile = true;
-
-      /*const file = event.target.files[0];
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('pmode', 'W');
-      let url = '';
-      if (type === 'client_id') {
-        url = `${environment.API_URL}massivecaptureline/api/v1/application/pupInsertRecord`;
-      } else {
-        url = `${environment.API_URL}massivecaptureline/api/v1/application/pupInsertRecordMassively`;
-      }
-
-      this.httpClient
-        .post(url, formData)
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: (res: any) => {
-            this.alert(
-              'success',
-              this.title,
-              'Se insertó correctamente a datos'
-            );
-            this.isLoadingLoadFile = false;
-            event.target.value = null;
-            //
-            let listParams = new ListParams();
-            listParams['filter.operationId'] = '$eq:' + res.data.operationId;
-            //this.searchData(listParams);
-          },
-          error: err => {
-            console.log({ err });
-            this.alert(
-              'error',
-              this.title,
-              err?.error?.message ||
-                'Ocurrió un error al insertar los datos vuelve a intentarlo'
-            );
-            this.isLoadingLoadFile = false;
-            event.target.value = null;
-          },
-        });*/
     }
   }
 
-  onFileChange(event: Event) {
+  onFileChange(event: any) {
+    this.loadingBtn2 = true;
+    console.log('Ejecutando: OnFileChange');
     if (this.form.controls['eventId'].value != null) {
       this.alertQuestion('question', 'Atención', `¿Insertar el archivo?`).then(
         question => {
@@ -647,30 +610,23 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
             this.tipoConsul = 'INSERT';
 
             const files = (event.target as HTMLInputElement).files;
+            //let file = event.target.files[0];
+
             if (files.length != 1)
-              throw 'No files selected, or more than of allowed';
+              this.alertInfo(
+                'warning',
+                'Atención',
+                'No hay archivos seleccionados o hay más de los permitidos'
+              );
+
             const fileReader = new FileReader();
-            /*fileReader.onload = (e) => {
-            console.log("Entrando a fileReader.onload");
-            const fileContent = fileReader.result as string;
-            const rows = fileContent.split('\n'); // Suponiendo que cada fila del archivo CSV está separada por una nueva línea
-            const data = rows.map(row => {
-              const columns = row.split(','); // Suponiendo que las columnas están separadas por comas
-              // Asumiendo que la fecha está en la primera columna
-              const dateParts = columns[6].split('/'); // Dividir la fecha en partes: día, mes, año
-              // Crear un objeto Date con las partes de la fecha en el orden correcto (año, mes - 1, día)
-              const date = new Date(parseInt(dateParts[2]), parseInt(dateParts[1]) - 1, parseInt(dateParts[0]));
-              // Suponiendo que las otras columnas contienen otros datos
-              // Aquí puedes procesar las otras columnas según sea necesario
-              return {
-                date: date,
-                // Otras propiedades de las filas...
-              };
-            });
-            console.log(data);
-          }*/
+
             fileReader.readAsBinaryString(files[0]);
-            fileReader.onload = () => this.readExcel(fileReader.result);
+            fileReader.onload = () => {
+              this.readExcel(fileReader.result);
+              (event.target as HTMLInputElement).value = '';
+            };
+            //files.nativeElement.value = '';
           }
         }
       );
@@ -691,29 +647,19 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
               const files = (event.target as HTMLInputElement).files;
               if (files.length != 1)
-                throw 'No files selected, or more than of allowed';
+                this.alertInfo(
+                  'warning',
+                  'Atención',
+                  'No hay archivos seleccionados o hay más de los permitidos'
+                );
+
               const fileReader = new FileReader();
-              /*fileReader.onload = (e) => {
-            console.log("Entrando a fileReader.onload");
-            const fileContent = fileReader.result as string;
-            const rows = fileContent.split('\n'); // Suponiendo que cada fila del archivo CSV está separada por una nueva línea
-            const data = rows.map(row => {
-              const columns = row.split(','); // Suponiendo que las columnas están separadas por comas
-              // Asumiendo que la fecha está en la primera columna
-              const dateParts = columns[6].split('/'); // Dividir la fecha en partes: día, mes, año
-              // Crear un objeto Date con las partes de la fecha en el orden correcto (año, mes - 1, día)
-              const date = new Date(parseInt(dateParts[2]), parseInt(dateParts[1]) - 1, parseInt(dateParts[0]));
-              // Suponiendo que las otras columnas contienen otros datos
-              // Aquí puedes procesar las otras columnas según sea necesario
-              return {
-                date: date,
-                // Otras propiedades de las filas...
-              };
-            });
-            console.log(data);
-          }*/
+
               fileReader.readAsBinaryString(files[0]);
-              fileReader.onload = () => this.readExcel(fileReader.result);
+              fileReader.onload = () => {
+                this.readExcel(fileReader.result);
+                (event.target as HTMLInputElement).value = '';
+              };
             } else return;
           });
         }
@@ -761,15 +707,17 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
         console.log('Objeto a enviar ', dataJson);
 
-        this.capturelineService.postTmpLcComer(dataJson).subscribe({
-          next: resp => {
-            console.log('Inserción Masiva desde Excel Correcto: ', resp);
-            this.totalEntries = this.totalEntries + 1;
-          },
-          error: error => {
-            console.log('Inserción Masiva desde Excel incorrecto: ', error);
-          },
-        });
+        setTimeout(() => {
+          this.capturelineService.postTmpLcComer(dataJson).subscribe({
+            next: resp => {
+              console.log('Inserción Masiva desde Excel Correcto: ', resp);
+              this.totalEntries = this.totalEntries + 1;
+            },
+            error: error => {
+              console.log('Inserción Masiva desde Excel incorrecto: ', error);
+            },
+          });
+        }, 500);
       }
 
       this.alertInfo(
@@ -780,6 +728,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
         if (question.isConfirmed) {
           this.searchInsertFile = true;
           this.searchData();
+          this.loadingBtn2 = false;
         }
       });
     }
@@ -824,6 +773,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       ).then(question => {
         if (question.isConfirmed) {
           this.searchData();
+          this.loadingBtn2 = false;
         }
       });
     }
@@ -897,8 +847,11 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   loadChecks() {
+    this.loadingBtn3 = true;
+
     if (this.form.controls['eventId'].value == null) {
       this.alert('warning', 'Atención', 'Se necesita un ID de Evento');
+      this.loadingBtn3 = false;
       return;
     }
 
@@ -923,6 +876,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
             this.form.controls['validityDate'].value,
             true
           );
+        } else {
+          this.loadingBtn3 = false;
         }
       });
     } else {
@@ -944,6 +899,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
             this.validityDate,
             true
           );
+        } else {
+          this.loadingBtn3 = false;
         }
       });
     }
@@ -964,6 +921,10 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
             'Cheques cargados',
             'Se cargaron los cheques correctamente'
           );
+          //Abrir modal
+          const datacheck = [resp];
+          this.openCheckPortal(datacheck);
+          this.loadingBtn3 = false;
         },
         error: error => {
           console.log('Error', error);
@@ -972,59 +933,26 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
             'Atención',
             'No hay resultados para este evento'
           );
+          this.loadingBtn3 = false;
         },
       });
   }
 
-  /*async loadCheckLc(
-    form: FormGroup,
-    capturelineService: CapturelineService,
-    cbOpenCheckPortal: (item: any) => void
-  ) {
-    const { validityDate, eventId } = form.getRawValue();
-    let p_FLAG = Boolean(validityDate);
-    console.log(form.getRawValue());
-    const res = await this.alertQuestion(
-      'question',
-      this.title,
-      validityDate
-        ? `La fecha de vigencia será ${convertFormatDate(
-            validityDate
-          )}. ¿Desea continuar?`
-        : 'La Fecha de vigencia se tomará de la tabla. ¿Desea continuar?'
-    );
-    if (res.isConfirmed) {
-      capturelineService
-        .postLoadCheckPortal({
-          event: eventId,
-          validation: validityDate ? convertFormatDate(validityDate) : '',
-          p_FLAG,
-        })
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: res => {
-            console.log(res);
-            if (res.data) {
-              this.alert(
-                'success',
-                this.title,
-                'Se cargaron los cheques correctamente'
-              );
-              cbOpenCheckPortal({ list: res.data });
-            } else {
-              this.alert('warning', this.title, 'No se encontraron cheques');
-            }
-          },
-          error: () => {
-            this.alert(
-              'error',
-              this.title,
-              'Ocurrió un error al intentar cargar cheques'
-            );
-          },
-        });
-    }
-  }*/
+  openCheckPortal(datacheck: any) {
+    let config: ModalOptions = {
+      initialState: {
+        datacheck,
+
+        callback: (next: boolean) => {
+          if (next) {
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(TableCheckPortalDialogComponent, config);
+  }
 
   async reprocess() {
     if (this.form.controls['eventId'].value == null) {
@@ -1078,8 +1006,10 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   generateLcs() {
+    this.loadingBtn4 = true;
     if (this.form.controls['eventId'].value == null) {
       this.alert('warning', 'Atención', 'Se necesita un ID de Evento');
+      this.loadingBtn4 = false;
       return;
     }
 
@@ -1110,6 +1040,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
             this.alertInfo('success', 'Líneas de Captura', 'Proceso Terminado');
             this.searchData();
             this.guarantyData();
+            this.loadingBtn4 = false;
           },
           error: error => {
             console.log('Error', error);
@@ -1118,71 +1049,16 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
               'Líneas de Captura',
               'No se crearon las LC´s'
             );
+            this.loadingBtn4 = false;
           },
         });
 
         //	PUP_GEN_CONSULTA
+      } else {
+        this.loadingBtn4 = false;
       }
     });
-
-    // this.lcsColumns = this.lcsTestData;
-    // this.lcsTotalItems = this.lcsColumns.length;
-    // if (this.layout == 'RFC') {
-    //   this.rfcColumns = this.rfcTestdata;
-    //   this.rfcColumns = this.modifyType(this.rfcColumns);
-    //   this.rfcTotalItems = this.rfcColumns.length;
-    //   // this.lcSource = new LocalDataSource(this.rfcColumns);
-    // }
-    // if (this.layout == 'clientId') {
-    //   this.clientIdColumns = this.clientIdTestData;
-    //   this.clientIdColumns = this.modifyType(this.clientIdColumns);
-    //   this.clientIdTotalItems = this.clientIdColumns.length;
-    //   // this.lcSource = new LocalDataSource(this.clientIdColumns);
-    // }
-    // this.batchReworkColumns = this.batchReworkTestData;
-    // this.batchReworkTotalItems = this.batchReworkColumns.length;
-    // this.rfcReworkColumns = this.rfcReworkTestData;
-    // this.rfcReworkTotalItems = this.rfcReworkColumns.length;
-    // this.maintenance = true;
-    // this.lcsTabs.tabs[1].active = true;
   }
-
-  // hideActions() {
-  //   setTimeout(() => {
-  //     let actions = document.querySelectorAll('a.ng2-smart-action');
-  //     actions.forEach((a, i) => {
-  //       let action = actions.item(i);
-  //       action.classList.add('d-none');
-  //     });
-  //   }, 400);
-  // }
-
-  // modifyType(columns: any[]) {
-  //   columns = columns.map((c, i) => {
-  //     let type: boolean;
-  //     c.type == 'CHECK' ? (type = true) : (type = false);
-  //     c = {
-  //       ...c,
-  //       typeCheck: type,
-  //       typeLine: !type,
-  //     };
-  //     delete c.type;
-  //     return c;
-  //   });
-  //   return columns;
-  // }
-
-  // revertType(obj: any) {
-  //   let type: string;
-  //   obj.typeCheck == true ? (type = 'CHECK') : (type = 'LINE');
-  //   obj = {
-  //     ...obj,
-  //     type: type,
-  //   };
-  //   delete obj.typeCheck;
-  //   delete obj.typeLine;
-  //   return obj;
-  // }
 
   modifyColumns(columns: any) {
     columns = {
@@ -1257,32 +1133,19 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        // this.lcSource.remove(lc);
-        // let row = this.revertType(lc);
-        // let idx = this.addRows.findIndex(
-        //   c => JSON.stringify(c) == JSON.stringify(row)
-        // );
-        // if (idx != -1) {
-        //   this.addRows.splice(idx, 1);
-        // }
       }
     });
   }
 
   addRow(lc: any) {
     let arr = [lc];
-    // arr = this.modifyType(arr);
-    // this.lcSource.append(arr[0]);
-    // this.layout == 'RFC'
-    //   ? (this.rfcTotalItems = this.lcSource.count())
-    //   : (this.clientIdTotalItems = this.lcSource.count());
+
     this.addRows.push(lc);
   }
 
   editRow(lc: any) {
     let arr = [lc];
-    // arr = this.modifyType(arr);
-    // this.lcSource.update(this.editedRowTable, arr[0]);
+
     let idx = this.addRows.findIndex(
       c => JSON.stringify(c) == JSON.stringify(this.editedRowModal)
     );

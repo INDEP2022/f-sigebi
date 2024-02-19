@@ -36,13 +36,17 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
+          [className]="'btn-primary btn-sm mr-3'"
           [disabled]="formGroup.invalid"
           [loading]="loading"
           (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

@@ -27,20 +27,23 @@
                 bindLabel="eventProcess"
                 label="Evento"
                 control="event"
+                value="eventId"
                 (change)="loadDataEventSelected($event)">
               </ngx-select>
             </form-field>
           </div>
-          <div class="col-md-6">
+          <!-- <div class="col-md-6">
             <form-field [control]="form.get('delegation')">
               <ngx-select
+                (fetchItems)="filterInvoices()"
                 [searchOnInit]="true"
                 [data]="delegationsDe"
                 [form]="form"
                 control="delegation"
                 bindLabel="descDescription"
                 label="Delegaci&oacute;n"
-                (change)="delegationChangeIndex($event)">
+                value="descDescription"
+                (change)="filterInvoices()">
               </ngx-select>
             </form-field>
           </div>
@@ -69,14 +72,14 @@
                 (change)="rfcChangeIndex($event)">
               </ngx-select>
             </form-field>
-          </div>
+          </div> -->
         </div>
       </form>
     </div>
     <!--  -->
     <div class="d-flex mb-3">
       <div class="ml-auto">
-        <button class="btn btn-danger btn-sm active mr-3">
+        <button class="btn btn-danger btn-sm active mr-3" (click)="clear()">
           Limpiar Filtros <i class="fas fa-eraser"> </i>
         </button>
         <button
@@ -101,6 +104,8 @@
           [settings]="settings"
           [source]="data"></ng2-smart-table>
       </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
     </div>
   </div>
 </app-card>

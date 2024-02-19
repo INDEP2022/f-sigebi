@@ -92,12 +92,12 @@ export const GOODS_COLUMNS = {
 };
 
 export const SUBTYPE_COLUMNS_REPORT = {
-  no_subtipo: {
+  subtypeNumber: {
     title: 'No. Subtipo',
     sort: false,
     type: 'string',
   },
-  nombre_subtipo_bien: {
+  goodSubtypeName: {
     title: 'Descripción',
     sort: false,
     type: 'string',

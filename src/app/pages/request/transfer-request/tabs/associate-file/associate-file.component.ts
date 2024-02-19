@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { catchError, of } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -59,8 +60,15 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   ) {
     super();
   }
+  @ViewChildren(BsDatepickerDirective) datepicker: BsDatepickerDirective;
+  scrollListener: any;
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.scrollListener = () => {
+      //this.datepicker.hide();
+    };
+    document.addEventListener('scroll', this.scrollListener, true); // Capturing event
+
     this.prepareForm();
     if (this.parameter.value != null || this.parameter.value != undefined) {
       this.request = this.parameter.getRawValue() as IRequest;
@@ -275,6 +283,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
           }
         }
       } else {
+        this.loader.load = false;
         this.onLoadToast('error', 'Error', 'No se pudo carga la caratula');
       }
     }

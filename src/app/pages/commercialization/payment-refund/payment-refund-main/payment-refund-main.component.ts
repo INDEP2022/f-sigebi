@@ -32,6 +32,7 @@ import { CommunicationService } from './communication-service/communication-serv
 import { CreateControlModalComponent } from './create-control-modal/create-control-modal.component';
 import { ExpensesRequestComponent } from './expenses-request/expenses-request.component';
 import { FilterCheckboxComponent } from './filterCheckbox-elements';
+import { FComer084Component } from './goToFcomer084';
 import { KeyChangeModalComponent } from './key-change-modal/key-change-modal.component';
 import {
   REFUND_CONTROL_COLUMNS,
@@ -39,6 +40,7 @@ import {
 } from './payment-refund-columns';
 import { TablePermissionsModalComponent } from './table-permissions-modal/table-permissions-modal.component';
 import { TransferDateTableComponent } from './transfer-date-table/transfer-date-table.component';
+import { ValidClabeComponent } from './validClabe';
 @Component({
   selector: 'app-payment-refund-main',
   templateUrl: './payment-refund-main.component.html',
@@ -192,6 +194,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   btnLoading3: boolean = false;
   btnLoading4: boolean = false;
   btnLoading5: boolean = false;
+  btnLoadingCSV: boolean = false;
   valBtns: boolean = false;
   private _unsubscribeAll: Subject<void>;
   toggleAll: boolean = false;
@@ -287,9 +290,20 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         },
         idwaste: {
           title: 'Id Gasto',
-          type: 'number',
+          type: 'custom',
           sort: false,
           width: '10%',
+          renderComponent: FComer084Component,
+          onComponentInitFunction: (instance: any) => {
+            instance.funcionEjecutada.subscribe(rowData => {
+              console.log(rowData);
+              this.selectedAccountB = rowData;
+              this.method2();
+            });
+            // instance.loadingConciliar.subscribe(() => {
+            //   this.miSegundaFuncion(); // Nueva segunda función independiente
+            // });
+          },
         },
         payIdmentrequest: {
           title: 'Id Pago',
@@ -465,7 +479,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
               ],
             },
           },
-          valuePrepareFunction: (value: any) => {
+          valuePrepareFunction: (value: any, row: any) => {
             if (value !== null) {
               switch (value) {
                 case true:
@@ -491,7 +505,6 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
           type: 'custom',
           showAlways: true,
           width: '10%',
-
           valuePrepareFunction: (isSelected: boolean, row: any) =>
             this.isBankSelected(row),
           renderComponent: CheckboxElementComponent2,
@@ -592,8 +605,19 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         },
         interbankCode: {
           title: 'Clabe Interbancaria',
-          type: 'string',
+          type: 'custom',
           sort: false,
+          renderComponent: ValidClabeComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.funcionEjecutada.subscribe(rowData => {
+              console.log(rowData);
+              this.selectedPayment = rowData;
+              this.openKeyChangeModal();
+            });
+            // instance.loadingConciliar.subscribe(() => {
+            //   this.miSegundaFuncion(); // Nueva segunda función independiente
+            // });
+          },
         },
         authorizes: {
           title: 'Autoriza Cambio Clabe',
@@ -626,10 +650,10 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
               ],
             },
           },
-          valuePrepareFunction: (value: any) => {
-            if (value !== null) {
-              switch (value) {
-                case true:
+          valuePrepareFunction: (value: any, row: any) => {
+            if (row !== null) {
+              switch (row.statusClabe) {
+                case 1:
                   value = `<div class="badge badge-pill bg-success text-wrap ml-3 mr-2">Activo</div>`;
                   return value;
                 default:
@@ -642,7 +666,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
             return true;
           },
         },
-        dateTransfer: {
+        transferDate: {
           title: 'Fecha Transf.',
           type: 'string',
           sort: false,
@@ -676,7 +700,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     let data = await this.dataTableBank.getAll();
     if (toggle) {
       for (const item of data) {
-        if (item.idwaste) this.selectBanksCheck.push(item);
+        if (!item.idwaste) this.selectBanksCheck.push(item);
       }
       this.dataTableBank.refresh();
     } else {
@@ -1901,12 +1925,13 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       '¿Desea Continuar?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.loadingreferenceRequest = true;
+        // this.loadingreferenceRequest = true;
+        this.btnLoadingCSV = false;
         this.svPaymentService
           .getExpRefSol(this.selectRowCtrol.ctlDevPagId)
           .subscribe({
             next: (data: any) => {
-              this.loadingreferenceRequest = false;
+              this.btnLoadingCSV = false;
               // console.log(data);
 
               this.alert('success', 'Archivo generado correctamente', ``);
@@ -1916,7 +1941,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
               );
             },
             error: error => {
-              this.loadingreferenceRequest = false;
+              this.btnLoadingCSV = false;
               this.alert('error', 'Error al generar el archivo', '');
             },
           });
@@ -2163,20 +2188,23 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         // PUP_EXP_CSV_RELDEVGAR
         // this.svPaymentDevolutionService.applicationPupExpCsvReldevGar(body).subscribe({
+        this.btnLoadingCSV = true;
         this.massiveGoodService.applicationPupExpCsvReldevgar(body).subscribe({
           next: (data: any) => {
-            // this.loadingreferenceRequest = false;
-            // console.log(data);
-
             this.alert('success', 'Archivo generado correctamente', ``);
             this.downloadFile(
               data.base64,
               `RELACIÓN_DE_DEVOLUCIONES_DE_GARANTIA_DE_SERIEDAD`
             );
+            this.btnLoadingCSV = false;
           },
           error: error => {
-            // this.loadingreferenceRequest = false;
-            this.alert('error', 'Error al generar el archivo', '');
+            this.btnLoadingCSV = false;
+            if (error.error.message == 'No hay data para exportar') {
+              this.alert('warning', 'No hay data para exportar', '');
+            } else {
+              this.alert('error', 'Error al generar el archivo', '');
+            }
           },
         });
       }
@@ -2224,7 +2252,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     }
   }
 
-  method2(data: any) {
+  method2() {
     setTimeout(() => {
       this.goExpenseCapture();
     }, 100);
