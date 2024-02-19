@@ -32,6 +32,7 @@ import { CommunicationService } from './communication-service/communication-serv
 import { CreateControlModalComponent } from './create-control-modal/create-control-modal.component';
 import { ExpensesRequestComponent } from './expenses-request/expenses-request.component';
 import { FilterCheckboxComponent } from './filterCheckbox-elements';
+import { FComer084Component } from './goToFcomer084';
 import { KeyChangeModalComponent } from './key-change-modal/key-change-modal.component';
 import {
   REFUND_CONTROL_COLUMNS,
@@ -39,6 +40,7 @@ import {
 } from './payment-refund-columns';
 import { TablePermissionsModalComponent } from './table-permissions-modal/table-permissions-modal.component';
 import { TransferDateTableComponent } from './transfer-date-table/transfer-date-table.component';
+import { ValidClabeComponent } from './validClabe';
 @Component({
   selector: 'app-payment-refund-main',
   templateUrl: './payment-refund-main.component.html',
@@ -288,9 +290,20 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         },
         idwaste: {
           title: 'Id Gasto',
-          type: 'number',
+          type: 'custom',
           sort: false,
           width: '10%',
+          renderComponent: FComer084Component,
+          onComponentInitFunction: (instance: any) => {
+            instance.funcionEjecutada.subscribe(rowData => {
+              console.log(rowData);
+              this.selectedAccountB = rowData;
+              this.method2();
+            });
+            // instance.loadingConciliar.subscribe(() => {
+            //   this.miSegundaFuncion(); // Nueva segunda función independiente
+            // });
+          },
         },
         payIdmentrequest: {
           title: 'Id Pago',
@@ -492,7 +505,6 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
           type: 'custom',
           showAlways: true,
           width: '10%',
-
           valuePrepareFunction: (isSelected: boolean, row: any) =>
             this.isBankSelected(row),
           renderComponent: CheckboxElementComponent2,
@@ -593,8 +605,19 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         },
         interbankCode: {
           title: 'Clabe Interbancaria',
-          type: 'string',
+          type: 'custom',
           sort: false,
+          renderComponent: ValidClabeComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.funcionEjecutada.subscribe(rowData => {
+              console.log(rowData);
+              this.selectedPayment = rowData;
+              this.openKeyChangeModal();
+            });
+            // instance.loadingConciliar.subscribe(() => {
+            //   this.miSegundaFuncion(); // Nueva segunda función independiente
+            // });
+          },
         },
         authorizes: {
           title: 'Autoriza Cambio Clabe',
@@ -677,7 +700,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     let data = await this.dataTableBank.getAll();
     if (toggle) {
       for (const item of data) {
-        if (item.idwaste) this.selectBanksCheck.push(item);
+        if (!item.idwaste) this.selectBanksCheck.push(item);
       }
       this.dataTableBank.refresh();
     } else {
@@ -2229,7 +2252,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     }
   }
 
-  method2(data: any) {
+  method2() {
     setTimeout(() => {
       this.goExpenseCapture();
     }, 100);
