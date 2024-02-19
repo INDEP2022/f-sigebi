@@ -270,8 +270,11 @@ export class ConciliationExecutionMainComponent
     this.conciliationForm = this.fb.group({
       event: [null, [Validators.required]],
       description: [null],
-      // date: [this.datePipe.transform(new Date(), 'dd-MM-yyyy')],
-      date: [null],
+      date: [
+        this.datePipe.transform(new Date(), 'dd/MM/yyyy'),
+        Validators.required,
+      ],
+      // date: [null],
       phase: [null],
       batch: [null],
       price: [null],
@@ -2586,6 +2589,9 @@ export class ConciliationExecutionMainComponent
     this.mostrarLotes = false;
     this.getComerEvents(new ListParams());
     this.clearSubheaderFields();
+    this.conciliationForm
+      .get('date')
+      .setValue(this.datePipe.transform(new Date(), 'dd/MM/yyyy'));
     if (this.layout == 'I') {
       this.faseAnt = false;
       this.faseAct = false;
@@ -2598,6 +2604,7 @@ export class ConciliationExecutionMainComponent
     const filterConf = subheaderFields.filterConf;
     filterConf.filters = [];
     this.columnFilters = [];
+    this.data.refresh();
   }
   allNo() {
     if (!this.selectedEvent) {
