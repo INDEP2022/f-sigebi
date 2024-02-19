@@ -1873,12 +1873,22 @@ export class RequestCompDocTasksComponent
     );
   }
 
-  openModal(component: any, idSample?: any, typeAnnex?: string): void {
+  async openModal(component: any, idSample?: any, typeAnnex?: string): Promise<void> {
+
+    let report = await this.getStatusReport();
+    report = report.isValid ? report.data[0] : report;
+
+    /*console.log('openModal');
+    console.log(this.requestId);
+    console.log(report.documentTypeId);
+    console.log(this.reportTable);
+    console.log(idSample);*/
+
     if (!this.signReport) {
       let config: ModalOptions = {
         initialState: {
           requestId: this.requestId,
-          reportId: this.reportId,
+          reportId: report.documentTypeId,
           reportTable: this.reportTable,
           idSample: idSample,
           typeAnnex: typeAnnex,
