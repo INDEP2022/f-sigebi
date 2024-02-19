@@ -410,4 +410,8 @@ export class ProceedingsService extends HttpService {
   paConstDelivery(body: IPaConstDelivery) {
     return this.post('aplication/pa-const-delivery', body);
   }
+
+  getAplicationValidaClave(body: any) {
+    return this.post(`${ProceedingsEndpoints.AplicationValidaClave}`, body);
+  }
 }
