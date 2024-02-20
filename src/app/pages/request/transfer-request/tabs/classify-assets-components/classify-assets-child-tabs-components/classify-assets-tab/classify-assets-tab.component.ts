@@ -38,6 +38,7 @@ import { ChangeOfGoodCharacteristicService } from 'src/app/pages/administrative-
 import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 import { AdvancedSearchComponent } from '../advanced-search/advanced-search.component';
 
+import { FractionSelectedService } from './classify-assets-tab-service';
 @Component({
   selector: 'app-classify-assets-tab',
   templateUrl: './classify-assets-tab.component.html',
@@ -55,11 +56,13 @@ export class ClassifyAssetsTabComponent
   @Input() process: string = '';
   @Input() goodSelect: any;
   @Input() typeOfTransfer?: string = '';
+  //@Input() noFracction: any;
   @Output() updateClassifyAssetTableEvent?: EventEmitter<any> =
     new EventEmitter();
   @Output() classifyChildSaveFraction?: EventEmitter<any> = new EventEmitter();
 
   classiGoodsForm: IFormGroup<IGood>; //bien
+  noFracction: any;
   private bsModalRef: BsModalRef;
   private advSearch: boolean = false;
   private listAdvancedFractions: any = [];
@@ -87,6 +90,7 @@ export class ClassifyAssetsTabComponent
   domicileSelected: any = null;
 
   service = inject(ChangeOfGoodCharacteristicService);
+  showButtonSave: boolean = true;
 
   constructor(
     private fb: FormBuilder,
@@ -101,12 +105,14 @@ export class ClassifyAssetsTabComponent
     private goodDataAsetService: GoodDataAsetService,
     private authService: AuthService,
     private historyGoodService: HistoryGoodService,
-    private goodsInvService: GoodsInvService
+    private goodsInvService: GoodsInvService,
+    private fractionSelectedService: FractionSelectedService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    console.log('Bien, ', this.good);
     this.task = JSON.parse(localStorage.getItem('Task'));
     this.typeTransfer = this.typeOfTransfer;
     // DISABLED BUTTON - FINALIZED //
@@ -738,7 +744,9 @@ export class ClassifyAssetsTabComponent
           this.showHideErrorInterceptorService.showHideError(false);
           this.selectSection = data.data;
         },
-        error: error => {},
+        error: error => {
+          console.log('Error al obtener la sección 1');
+        },
       });
   }
 
@@ -769,7 +777,9 @@ export class ClassifyAssetsTabComponent
           }
           this.advSearch = false;
         },
-        error: error => {},
+        error: error => {
+          console.log('Error al obtener la sección');
+        },
       });
   }
 
@@ -809,6 +819,7 @@ export class ClassifyAssetsTabComponent
         },
         error: error => {
           this.formLoading = false;
+          console.log('Error al obtener el capítulo');
         },
       });
   }
@@ -851,6 +862,7 @@ export class ClassifyAssetsTabComponent
         },
         error: error => {
           this.formLoading = false;
+          console.log('Error al obtener el nivel 1');
         },
       });
   }
@@ -883,6 +895,7 @@ export class ClassifyAssetsTabComponent
         },
         error: error => {
           this.formLoading = false;
+          console.log('Error al obtener el nivel 2');
         },
       });
   }
@@ -915,6 +928,7 @@ export class ClassifyAssetsTabComponent
         },
         error: error => {
           this.formLoading = false;
+          console.log('Error al obtener el nivel 3');
         },
       });
   }
@@ -953,6 +967,7 @@ export class ClassifyAssetsTabComponent
         error: error => {
           this.loading = false;
           this.formLoading = false;
+          console.log('Error al obtener el nivel 4');
         },
       });
   }
@@ -961,8 +976,38 @@ export class ClassifyAssetsTabComponent
     let config: ModalOptions = {
       initialState: {
         parameter: '',
-        callback: (next: boolean) => {
-          //if(next) this.getExample();
+        callback: (next: boolean, fractionSelect: any) => {
+          if (next) {
+            console.log('Se cerró el modal de búsqueda avanzada');
+          }
+          console.log('Proceso: ', this.typeDoc);
+
+          const noFracction2 = Number(fractionSelect.id);
+          this.fractionSelectedService.updateShareValue(noFracction2);
+
+          const fractionOrigin = this.good?.fractionId;
+          console.log('Fracción del Bien original ', fractionOrigin);
+          console.log('Fracción seleccionada de la búsqueda', noFracction2);
+          console.log(
+            'Original: ',
+            fractionOrigin,
+            'VS Nuevo: ',
+            Number(noFracction2)
+          );
+          console.log('Formulario de capitulos: ');
+
+          if (this.typeDoc === 'classify-assets') {
+            if (noFracction2 != 0) {
+              if (fractionOrigin != Number(noFracction2)) {
+                console.log(
+                  'Actualizando bien automáticamente al cerrar modal'
+                );
+                setTimeout(() => {
+                  this.saveGoodAut(Number(noFracction2));
+                }, 3000);
+              }
+            }
+          }
         },
       },
       class: 'modalSizeXL modal-dialog-centered',
@@ -972,7 +1017,211 @@ export class ClassifyAssetsTabComponent
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       this.matchLevelFraction(res);
+      console.log('this.matchLevelFraction(res)', res);
+      this.noFracction = res.id;
     });
+  }
+
+  saveGoodAut(fractionSelect: number) {
+    //Creando objeto de la información del Bien
+    let goodObj = this.classiGoodsForm.value;
+
+    //Seteando nuevos valores por la clasificación
+    goodObj.goodTypeId = this.classiGoodsForm.controls['goodTypeId'].value;
+    goodObj.ligieSection = this.classiGoodsForm.controls['ligieSection'].value;
+    goodObj.ligieChapter = this.classiGoodsForm.controls['ligieChapter'].value;
+    goodObj.ligieLevel1 = this.classiGoodsForm.controls['ligieLevel1'].value;
+    goodObj.ligieLevel2 = this.classiGoodsForm.controls['ligieLevel2'].value;
+    goodObj.ligieLevel3 = this.classiGoodsForm.controls['ligieLevel3'].value;
+    goodObj.ligieLevel4 = this.classiGoodsForm.controls['ligieLevel4'].value;
+    goodObj.goodClassNumber =
+      this.classiGoodsForm.controls['goodClassNumber'].value;
+    goodObj.fractionId = fractionSelect;
+
+    //Eliminando valores anteriores
+    goodObj.val1 = null;
+    goodObj.val2 = null;
+    goodObj.val3 = null;
+    goodObj.val4 = null;
+    goodObj.val5 = null;
+    goodObj.val6 = null;
+    goodObj.val7 = null;
+    goodObj.val8 = null;
+    goodObj.val9 = null;
+    goodObj.val10 = null;
+    goodObj.val11 = null;
+    goodObj.val12 = null;
+    goodObj.val13 = null;
+    goodObj.val14 = null;
+    goodObj.val15 = null;
+    goodObj.val16 = null;
+    goodObj.val17 = null;
+    goodObj.val18 = null;
+    goodObj.val19 = null;
+    goodObj.val20 = null;
+    goodObj.val21 = null;
+    goodObj.val22 = null;
+    goodObj.val23 = null;
+    goodObj.val24 = null;
+    goodObj.val25 = null;
+    goodObj.val26 = null;
+    goodObj.val27 = null;
+    goodObj.val28 = null;
+    goodObj.val29 = null;
+    goodObj.val30 = null;
+    goodObj.val31 = null;
+    goodObj.val32 = null;
+    goodObj.val33 = null;
+    goodObj.val34 = null;
+    goodObj.val35 = null;
+    goodObj.val36 = null;
+    goodObj.val37 = null;
+    goodObj.val38 = null;
+    goodObj.val39 = null;
+    goodObj.val40 = null;
+    goodObj.val41 = null;
+    goodObj.val42 = null;
+    goodObj.val43 = null;
+    goodObj.val44 = null;
+    goodObj.val45 = null;
+    goodObj.val46 = null;
+    goodObj.val47 = null;
+    goodObj.val48 = null;
+    goodObj.val49 = null;
+    goodObj.val50 = null;
+    goodObj.val51 = null;
+    goodObj.val52 = null;
+    goodObj.val53 = null;
+    goodObj.val54 = null;
+    goodObj.val55 = null;
+    goodObj.val56 = null;
+    goodObj.val57 = null;
+    goodObj.val58 = null;
+    goodObj.val59 = null;
+    goodObj.val60 = null;
+    goodObj.val61 = null;
+    goodObj.val62 = null;
+    goodObj.val63 = null;
+    goodObj.val64 = null;
+    goodObj.val65 = null;
+    goodObj.val66 = null;
+    goodObj.val67 = null;
+    goodObj.val68 = null;
+    goodObj.val69 = null;
+    goodObj.val70 = null;
+    goodObj.val71 = null;
+    goodObj.val72 = null;
+    goodObj.val73 = null;
+    goodObj.val74 = null;
+    goodObj.val75 = null;
+    goodObj.val76 = null;
+    goodObj.val77 = null;
+    goodObj.val78 = null;
+    goodObj.val79 = null;
+    goodObj.val80 = null;
+    goodObj.val81 = null;
+    goodObj.val82 = null;
+    goodObj.val83 = null;
+    goodObj.val84 = null;
+    goodObj.val85 = null;
+    goodObj.val86 = null;
+    goodObj.val87 = null;
+    goodObj.val88 = null;
+    goodObj.val89 = null;
+    goodObj.val90 = null;
+    goodObj.val91 = null;
+    goodObj.val92 = null;
+    goodObj.val93 = null;
+    goodObj.val94 = null;
+    goodObj.val95 = null;
+    goodObj.val96 = null;
+    goodObj.val97 = null;
+    goodObj.val98 = null;
+    goodObj.val99 = null;
+    goodObj.val100 = null;
+    goodObj.val101 = null;
+    goodObj.val102 = null;
+    goodObj.val103 = null;
+    goodObj.val104 = null;
+    goodObj.val105 = null;
+    goodObj.val106 = null;
+    goodObj.val107 = null;
+    goodObj.val108 = null;
+    goodObj.val109 = null;
+    goodObj.val110 = null;
+    goodObj.val111 = null;
+    goodObj.val112 = null;
+    goodObj.val113 = null;
+    goodObj.val114 = null;
+    goodObj.val115 = null;
+    goodObj.val116 = null;
+    goodObj.val117 = null;
+    goodObj.val118 = null;
+    goodObj.val119 = null;
+    goodObj.val120 = null;
+    goodObj.manufacturingYear = null;
+    goodObj.operationalState = null;
+    goodObj.tuition = null;
+    goodObj.model = null;
+    goodObj.enginesNumber = null;
+    goodObj.serie = null;
+    goodObj.origin = null;
+    goodObj.airplaneType = null;
+    goodObj.dgacRegistry = null;
+    goodObj.armor = null;
+    goodObj.engineNumber = null;
+    goodObj.flag = null;
+    goodObj.useType = null;
+    goodObj.brand = null;
+    goodObj.shipName = null;
+    goodObj.publicRegistry = null;
+    goodObj.cabin = null;
+    goodObj.openwork = null;
+    goodObj.volume = null;
+    goodObj.length = null;
+    goodObj.sleeve = null;
+    goodObj.capacity = null;
+    goodObj.ships = null;
+    //goodObj.physicalStatus = null;
+    goodObj.caratage = null;
+    goodObj.material = null;
+    goodObj.weight = null;
+    goodObj.axesNumber = null;
+    goodObj.subBrand = null;
+    goodObj.fitCircular = null;
+    goodObj.theftReport = null;
+    goodObj.chassis = null;
+    goodObj.doorsNumber = null;
+
+    this.goodService.updateGoodTable(goodObj).subscribe({
+      next: resp => {
+        this.resetFractionValue();
+        console.log('Se actualizó de forma automática: ', resp);
+        this.message(
+          'success',
+          'Fracción del bien cambiada',
+          `Asegúrese de guardar sus atributos`
+        );
+        this.classifyChildSaveFraction.emit(resp.result);
+      },
+      error: error => {
+        console.log('No se actualizó ', error);
+        this.message(
+          'warning',
+          'Fracción del bien no cambió',
+          `Verifique la fracción seleccionada`
+        );
+      },
+    });
+
+    /*console.log(this.classiGoodsForm.controls['goodTypeId'].value);
+    console.log(this.classiGoodsForm.controls['ligieSection'].value);
+    console.log(this.classiGoodsForm.controls['ligieChapter'].value);
+    console.log(this.classiGoodsForm.controls['ligieLevel1'].value);
+    console.log(this.classiGoodsForm.controls['ligieLevel2'].value);
+    console.log(this.classiGoodsForm.controls['ligieLevel3'].value);
+    console.log(this.classiGoodsForm.controls['ligieLevel4'].value);
+    console.log(this.classiGoodsForm.controls['goodClassNumber'].value);*/
   }
 
   matchLevelFraction(res: any) {
@@ -1025,9 +1274,9 @@ export class ClassifyAssetsTabComponent
   }
 
   async saveRequest(): Promise<void> {
-    console.log(this.dataAtribute);
-
+    console.log('this.dataAtribute', this.dataAtribute);
     const goods = this.classiGoodsForm.getRawValue();
+    console.log('const goods', goods);
     if (goods.addressId === null) {
       this.message(
         'warning',
@@ -1037,19 +1286,28 @@ export class ClassifyAssetsTabComponent
       return;
     }
 
-    if (this.fractionCode.length < 8) {
+    if (this.fractionCode == null) {
       this.message(
         'warning',
-        'Código de Fracción:',
-        'Todos los Bienes deben tener una fracción de 8 números'
+        'Sin código de fracción',
+        'Todos los Bienes deben tener una fracción'
       );
       return;
+    } else {
+      if (this.fractionCode.length < 8) {
+        this.message(
+          'warning',
+          'Código de fracción inválida',
+          'Todos los Bienes deben tener una fracción de 8 números'
+        );
+        return;
+      }
     }
 
     /**
      * descomentar en caso de usar la tabla
      */
-    /* if (goods.goodId) {
+    /*if (goods.goodId) {
       let noCumply: boolean = false;
       if (this.dataAtribute.length > 0) {
         for (let index = 0; index < this.dataAtribute.length; index++) {
@@ -1073,12 +1331,12 @@ export class ClassifyAssetsTabComponent
           return;
         }
       }
-    } */
+    }*/
 
-    // if (!goods.idGoodProperty) {
-    //   goods.idGoodProperty =
-    //     Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
-    // }
+    if (!goods.idGoodProperty) {
+      goods.idGoodProperty =
+        Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
+    }
 
     if (goods.fractionId.id) {
       goods.fractionId = Number(goods.fractionId.id);
@@ -1185,8 +1443,24 @@ export class ClassifyAssetsTabComponent
           this.domicileSelected.colonia != null
             ? this.domicileSelected.colonia
             : ' ';
-        goods.val3 = this.domicileSelected.regionalDelegationId.description;
-        goods.val4 = this.domicileSelected.stateOfRepublicName;
+        goods.val3 =
+          this.domicileSelected.regionalDelegationId.description != null
+            ? this.domicileSelected.regionalDelegationId.description
+            : ' ';
+        goods.val4 =
+          this.domicileSelected.stateOfRepublicName != null
+            ? this.domicileSelected.stateOfRepublicName
+            : ' ';
+      }
+
+      if (goods.goodTypeId == 8) {
+        if (goods?.physicalStatus == 1) {
+          goods.val1 = 'BUENO';
+        } else if (goods?.physicalStatus == 2) {
+          goods.val1 = 'MALO';
+        }
+
+        goods.val2 = goods?.origin;
       }
 
       goodResult = await this.createGood(goods);
@@ -1689,5 +1963,9 @@ export class ClassifyAssetsTabComponent
     }
 
     return good;
+  }
+
+  resetFractionValue() {
+    this.fractionSelectedService.updateShareValue(0);
   }
 }

@@ -154,7 +154,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
           this.isSigned = this.version.signedReport == 'Y';
         }
       },
-      error: err => { },
+      error: err => {},
     });
   }
 
@@ -196,7 +196,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
           this.onLoadToast('success', 'Documento guardado correctamente', '');
         }
       },
-      error: err => { },
+      error: err => {},
     });
   }
 
@@ -378,7 +378,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
                   },
                 });
               },
-              error: error => { },
+              error: error => {},
             });
         },
         error: error => {

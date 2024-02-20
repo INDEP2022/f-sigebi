@@ -196,7 +196,7 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
 export const EXPEDIENT_DOC_REQ_COLUMNS = {
   associate: {
     defaultValue: 'Ver Bienes',
-    title: '',
+    title: 'Acción',
     type: 'custom',
     class: 'custom-field',
     filter: false,
@@ -464,7 +464,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
 
 export const EXPEDIENT_DOC_EST_COLUMNS = {
   goodId: {
-    title: 'Número de Gestión',
+    title: 'No. Gestión',
     type: 'number',
     sort: false,
   },
@@ -493,19 +493,28 @@ export const EXPEDIENT_DOC_EST_COLUMNS = {
     sort: false,
   },
 
-  message: {
-    title: 'Mensaje',
+  menaje: {
+    title: 'Menaje',
     type: 'string',
     sort: false,
   },
 
-  physicalStatusName: {
+  descriptionPhysicalStatus: {
     title: 'Estado Físico',
     type: 'string',
     sort: false,
+    /*valuePrepareFunction: (value: Number) => {
+      if (value == 1) {
+        return 'BUENO';
+      } else if (value == 2) {
+        return 'MALO';
+      } else {
+        return '';
+      }
+    },*/
   },
 
-  unitMeasure: {
+  measureUnitTransferent: {
     title: 'Unidad de Medida Transferente',
     type: 'string',
     sort: false,
@@ -517,13 +526,13 @@ export const EXPEDIENT_DOC_EST_COLUMNS = {
     sort: false,
   },
 
-  destinyName: {
+  descriptionDestinyTransferent: {
     title: 'Destino Ligie',
     type: 'string',
     sort: false,
   },
 
-  fractionName: {
+  codeFracction: {
     title: 'Fracción',
     type: 'string',
     sort: false,
@@ -532,7 +541,7 @@ export const EXPEDIENT_DOC_EST_COLUMNS = {
 
 export const EXPEDIENT_DOC_SEA_COLUMNS = {
   dDocName: {
-    title: 'Nom. Documento',
+    title: 'Nombre Documento',
     type: 'string',
     sort: false,
   },

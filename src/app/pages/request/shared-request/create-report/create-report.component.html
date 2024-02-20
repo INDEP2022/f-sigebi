@@ -1,12 +1,16 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ isSigned ? 'CONSULTA' :  (template ? 'EDITAR' : 'NUEVO') }} REPORTE</h5>
+    <h5 class="modal-title">
+      {{ isSigned ? 'CONSULTA' : template ? 'EDITAR' : 'NUEVO' }} REPORTE
+    </h5>
   </div>
   <div body>
     <div class="md-tabs">
       <form class="form-material" [formGroup]="form">
         <div class="row justify-content-start">
-          <div class="col-xs-12 col-12 col-md-6" *ngIf="editReport && !isSigned">
+          <div
+            class="col-xs-12 col-12 col-md-6"
+            *ngIf="editReport && !isSigned">
             <ngx-select
               [form]="form"
               control="template"
@@ -65,7 +69,10 @@
           </quill-editor>
         </tab>
 
-        <tab heading="Vista Previa" id="previewTab" *ngIf="!editReport || isSigned">
+        <tab
+          heading="Vista Previa"
+          id="previewTab"
+          *ngIf="!editReport || isSigned">
           <div style="height: 40vh !important; overflow: auto !important">
             <quill-view
               [content]="version.content"

@@ -12,6 +12,7 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 //Components
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BehaviorSubject } from 'rxjs';
@@ -41,7 +42,6 @@ import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/m
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
-import * as moment from 'moment';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -50,7 +50,8 @@ import * as moment from 'moment';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
   protected override btnGrouper: boolean;
   protected override formatReport: boolean;
   protected override signReport: boolean;
@@ -320,7 +321,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) { }
+  requestRegistered(request: any) {}
 
   async openReport(): Promise<void> {
     if (!this.nextTurn) {
@@ -368,7 +369,6 @@ export class RequestCompDocTasksComponent
   }
 
   async turnRequest() {
-
     if (this.process == 'register-taxpayer-date') {
       let result = await this.openDelegation();
       if (!result) return;
@@ -916,7 +916,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -1586,7 +1586,6 @@ export class RequestCompDocTasksComponent
   }
 
   onChangeRegDoc(event) {
-
     this.validate.regdoc = event.isValid;
     if (event.update) {
       this.requestInfo.detail = event.object;
@@ -1632,7 +1631,7 @@ export class RequestCompDocTasksComponent
     this.validate.registerAppointment = event.isValid;
   }
 
-  onSetData(event) { }
+  onSetData(event) {}
 
   onOrder(event) {
     this.validate.orderEntry = event.isValid;
@@ -1652,7 +1651,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1668,7 +1667,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1754,7 +1753,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  createDictumReturn() { }
+  createDictumReturn() {}
 
   async showReport(data) {
     let report = await this.getStatusReport();
@@ -1787,7 +1786,7 @@ export class RequestCompDocTasksComponent
           const fileURL = URL.createObjectURL(file);
           this.openPrevPdf(fileURL);
         },
-        error: error => { },
+        error: error => {},
       });
     }
   }
@@ -1835,7 +1834,7 @@ export class RequestCompDocTasksComponent
             resolve({
               data: resp.data,
               isValid: resp.data.length > 0,
-              isSigned: true//resp.data[0].signedReport == 'Y',
+              isSigned: true, //resp.data[0].signedReport == 'Y',
             });
           } else {
             resolve({
@@ -1857,7 +1856,6 @@ export class RequestCompDocTasksComponent
   //Validar firmantes de reportes
   //En parametro validationocsp
   getStatusFirmantes() {
-
     console.log('getStatusFirmantes');
 
     //Servicio http://sigebimsqa.indep.gob.mx/electronicfirm/api/v1/signatories
@@ -1895,7 +1893,12 @@ export class RequestCompDocTasksComponent
           callback: async (typeDocument: number, typeSign: string) => {
             if (typeAnnex == 'sign-annexJ-assets-classification') {
               if (typeDocument && typeSign) {
-                this.showReportInfo(idSample, typeDocument, typeSign, typeAnnex);
+                this.showReportInfo(
+                  idSample,
+                  typeDocument,
+                  typeSign,
+                  typeAnnex
+                );
               }
             }
           },
@@ -1909,7 +1912,12 @@ export class RequestCompDocTasksComponent
     }
   }
 
-  showReportInfo(id: number, typeDocument: number, typeSign: string, typeAnnex: string) {
+  showReportInfo(
+    id: number,
+    typeDocument: number,
+    typeSign: string,
+    typeAnnex: string
+  ) {
     const idTypeDoc = typeDocument;
     const idSample = id;
     const orderSampleId = id;
@@ -1970,7 +1978,6 @@ export class RequestCompDocTasksComponent
   //Firma de reportes
 
   async firmarReporte() {
-
     const user: any = this.authService.decodeToken();
     let report = await this.getStatusReport();
     report = report.data[0];
@@ -1978,15 +1985,11 @@ export class RequestCompDocTasksComponent
     report.modificationUser = user.username;
     report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
     this.reportgoodService.saveReportDynamic(report).subscribe({
-      next: resp => { },
-      error: err => { },
+      next: resp => {},
+      error: err => {},
     });
-
   }
-
 }
-
-
 
 export function isNullOrEmpty(value: any): boolean {
   return value === null || value === undefined || (value + '').trim() === '';
