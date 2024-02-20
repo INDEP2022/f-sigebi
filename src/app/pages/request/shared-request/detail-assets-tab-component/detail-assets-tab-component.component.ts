@@ -1599,6 +1599,17 @@ export class DetailAssetsTabComponentComponent
 
       let body: any = {};
 
+      //Cuando se crean por primera vez, se deben de crear con el estatus ROP
+      body.status = 'ROP';
+
+      //Según la transferente será el Identificador
+      console.log('info solicitud2', this.requestObject);
+      if (this.requestObject.transferenceId == 1) {
+        body.identifier = 'ASEG';
+      } else {
+        body.identifier = 'TRANS';
+      }
+
       //Recorre el objeto del formulario y setea al body aquellos que tienen información
       for (const clave in dataGood) {
         if (dataGood.hasOwnProperty(clave)) {
