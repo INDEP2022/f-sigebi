@@ -1,8 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  BehaviorSubject,
+  debounceTime,
+  distinctUntilChanged,
+  takeUntil,
+  tap,
+} from 'rxjs';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NewValidationExemptedGoodModalComponent } from '../new-validation-exempted-goods-modal/new-validation-exempted-goods-modal.component';
@@ -23,9 +32,11 @@ export class ValidationExemptedGoodsComponent
 
   override settings = {
     ...this.settings,
+    hideSubHeader: false,
     actions: {
       columnTitle: 'Eliminar',
       position: 'right',
+      subHeader: false,
       edit: false,
       delete: true,
     },
@@ -49,6 +60,36 @@ export class ValidationExemptedGoodsComponent
       console.log(value);
       this.getData();
     });
+  }
+
+  columnsFilter() {
+    return this.goods.onChanged().pipe(
+      distinctUntilChanged(),
+      debounceTime(500),
+      takeUntil(this.$unSubscribe),
+      tap(dataSource => this.buildColumnFilter(dataSource))
+    );
+  }
+
+  buildColumnFilter(dataSource: any) {
+    const params = new FilterParams();
+    if (dataSource.action == 'filter') {
+      const filters = dataSource.filter.filters;
+      filters.forEach((filter: any) => {
+        const columns = this.settings.columns as any;
+        const operator = columns[filter.field]?.operator;
+        if (!filter.search) {
+          return;
+        }
+        console.log(filter);
+        params.addFilter(
+          filter.field,
+          filter.search,
+          operator || SearchFilter.EQ
+        );
+      });
+      this.params.next(params);
+    }
   }
 
   getData() {

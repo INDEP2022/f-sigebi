@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -102,7 +103,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
       position: 'right',
       add: false,
       edit: true,
-      delete: false,
+      delete: true,
     },
   };
   addresseeSettings = {
@@ -113,7 +114,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
       position: 'right',
       add: false,
       edit: true,
-      delete: false,
+      delete: true,
     },
   };
   typeSettings = {
@@ -124,7 +125,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
       position: 'right',
       add: false,
       edit: true,
-      delete: false,
+      delete: true,
     },
   };
   eventSettings = {
@@ -141,16 +142,40 @@ export class SignatureAuxiliaryCatalogsMainComponent
   signatureSettings = {
     ...TABLE_SETTINGS,
     hideSubHeader: false,
-    actions: false,
+    actions: {
+      columnTitle: 'Acciones',
+      position: 'right',
+      add: false,
+      edit: true,
+      delete: true,
+    },
   };
 
   constructor(
     private route: ActivatedRoute,
     private modalService: BsModalService,
-    private svSignatureAuxiliaryCatalogsService: SignatureAuxiliaryCatalogsService
+    private svSignatureAuxiliaryCatalogsService: SignatureAuxiliaryCatalogsService,
+    private datePipe: DatePipe
   ) {
     super();
-    this.reportSettings.columns = ELECTRONIC_SIGNATURE_REPORT_COLUMNS;
+    this.reportSettings.edit = {
+      editButtonContent:
+        '<i class="fa fa-pencil-alt text-warning mx-2 pl-3"></i>',
+    };
+    this.addresseeSettings.edit = {
+      editButtonContent:
+        '<i class="fa fa-pencil-alt text-warning mx-2 pl-3"></i>',
+    };
+    this.typeSettings.edit = {
+      editButtonContent:
+        '<i class="fa fa-pencil-alt text-warning mx-2 pl-3"></i>',
+    };
+
+    (this.eventSettings.delete = {
+      deleteButtonContent: '<i class="fa fa-trash text-danger mx-2 pl-5"></i>',
+      confirmDelete: true,
+    }),
+      (this.reportSettings.columns = ELECTRONIC_SIGNATURE_REPORT_COLUMNS);
     this.addresseeSettings.columns = ELECTRONIC_SIGNATURE_ADDRESSEE_COLUMNS;
     this.typeSettings.columns = ELECTRONIC_SIGNATURE_TYPE_COLUMNS;
     this.eventSettings.columns = ELECTRONIC_SIGNATURE_EVENT_COLUMNS;
@@ -170,6 +195,8 @@ export class SignatureAuxiliaryCatalogsMainComponent
     this.loadingDataTableReport();
     this.loadingDataTableType();
     this.loadingDataTableEvent();
+    this.loadingDataTableAddresee();
+    this.loadingDataTableSignature();
   }
 
   selectReport(event: any) {
@@ -182,7 +209,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
       this.totalAddresee = 0;
       this.dataTableAddresee.reset();
       setTimeout(() => {
-        this.loadingDataTableAddresee();
+        this.getAddreseeData();
       }, 300);
     } else {
       this.originId = null;
@@ -204,7 +231,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
       this.totalSignature = 0;
       this.dataTableSignature.reset();
       setTimeout(() => {
-        this.loadingDataTableSignature();
+        this.getSignatureData();
       }, 300);
     } else {
       this.idDocumentsXml = null;
@@ -259,11 +286,8 @@ export class SignatureAuxiliaryCatalogsMainComponent
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = '';
-            //Default busqueda SearchFilter.ILIKE
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-
-            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
               screenKey: () => (searchFilter = SearchFilter.EQ),
               signatoriesNumber: () => (searchFilter = SearchFilter.EQ),
@@ -283,13 +307,9 @@ export class SignatureAuxiliaryCatalogsMainComponent
           this.dataTableParamsReport = this.pageFilter(
             this.dataTableParamsReport
           );
-          //Su respectivo metodo de busqueda de datos
           this.getReportData();
         }
       });
-
-    // this.columnFiltersReport['filter.creationdate'] = `$order:desc`;
-    //observador para el paginado
     this.dataTableParamsReport
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getReportData());
@@ -330,11 +350,8 @@ export class SignatureAuxiliaryCatalogsMainComponent
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = '';
-            //Default busqueda SearchFilter.ILIKE
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-
-            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
               denomination: () => (searchFilter = SearchFilter.ILIKE),
               orderId: () => (searchFilter = SearchFilter.EQ),
@@ -350,13 +367,9 @@ export class SignatureAuxiliaryCatalogsMainComponent
             }
           });
           this.dataTableParamsType = this.pageFilter(this.dataTableParamsType);
-          //Su respectivo metodo de busqueda de datos
           this.getTypeData();
         }
       });
-
-    // this.columnFiltersType['filter.creationdate'] = `$order:desc`;
-    //observador para el paginado
     this.dataTableParamsType
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getTypeData());
@@ -389,7 +402,6 @@ export class SignatureAuxiliaryCatalogsMainComponent
       });
   }
   loadingDataTableAddresee() {
-    //Filtrado por columnas
     this.dataTableAddresee
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -398,11 +410,9 @@ export class SignatureAuxiliaryCatalogsMainComponent
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = '';
-            //Default busqueda SearchFilter.ILIKE
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
 
-            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
               email: () => (searchFilter = SearchFilter.ILIKE),
               name: () => (searchFilter = SearchFilter.ILIKE),
@@ -420,31 +430,32 @@ export class SignatureAuxiliaryCatalogsMainComponent
           this.dataTableParamsAddresee = this.pageFilter(
             this.dataTableParamsAddresee
           );
-          //Su respectivo metodo de busqueda de datos
           this.getAddreseeData();
         }
       });
 
-    this.columnFiltersAddresee['filter.originId'] = `$eq:${this.originId}`;
-    // this.columnFiltersAddresee['filter.creationdate'] = `$order:desc`;
-    //observador para el paginado
     this.dataTableParamsAddresee
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAddreseeData());
+      .subscribe(() => {
+        if (this.totalAddresee > 0) this.getAddreseeData();
+      });
   }
 
   getAddreseeData() {
+    if (!this.originId) return;
     this.loadingAddresee = true;
     let params = {
       ...this.dataTableParamsAddresee.getValue(),
       ...this.columnFiltersAddresee,
     };
+    params['filter.originId'] = `$eq:${this.originId}`;
     console.log('PARAMS ', params);
     this.svSignatureAuxiliaryCatalogsService.getComerDestXML(params).subscribe({
       next: res => {
         console.log('DATA ADDRESEE', res);
         this.testDataAddresee = res.data;
-        this.dataTableAddresee.load(this.testDataAddresee);
+        this.dataTableAddresee.load(res.data);
+        this.dataTableAddresee.refresh();
         this.totalAddresee = res.count;
         this.loadingAddresee = false;
       },
@@ -452,6 +463,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
         console.log(error);
         this.testDataAddresee = [];
         this.dataTableAddresee.load([]);
+        this.dataTableAddresee.refresh();
         this.totalAddresee = 0;
         this.loadingAddresee = false;
       },
@@ -478,11 +490,19 @@ export class SignatureAuxiliaryCatalogsMainComponent
               documentsXMLId: () => (searchFilter = SearchFilter.EQ),
               origin: () => (searchFilter = SearchFilter.EQ),
               documentId: () => (searchFilter = SearchFilter.EQ),
+              creationDate: () => (searchFilter = SearchFilter.EQ),
               title: () => (searchFilter = SearchFilter.ILIKE),
             };
             search[filter.field]();
 
             if (filter.search !== '') {
+              console.log('filter.field', filter.field);
+              if (filter.field == 'creationDate') {
+                filter.search = this.datePipe.transform(
+                  filter.search,
+                  'yyyy-MM-dd'
+                );
+              }
               this.columnFiltersEvent[
                 field
               ] = `${searchFilter}:${filter.search}`;
@@ -497,8 +517,6 @@ export class SignatureAuxiliaryCatalogsMainComponent
           this.getEventData();
         }
       });
-    this.columnFiltersEvent['filter.documentStatus'] = `$eq:0`;
-    this.columnFiltersEvent['filter.documentsXMLId'] = `$order:desc`;
     //observador para el paginado
     this.dataTableParamsEvent
       .pipe(takeUntil(this.$unSubscribe))
@@ -511,58 +529,54 @@ export class SignatureAuxiliaryCatalogsMainComponent
       ...this.dataTableParamsEvent.getValue(),
       ...this.columnFiltersEvent,
     };
+    params['filter.documentStatus'] = `$eq:0`;
+    params['sortBy'] = `documentsXMLId:DESC`;
     console.log('PARAMS ', params);
     this.svSignatureAuxiliaryCatalogsService
       .getAllComerceDocumentsXmlH(params)
       .subscribe({
         next: res => {
           console.log('DATA EVENT', res);
-          this.testDataEvent = res.data.map((i: any) => {
+
+          let result = res.data.map(async (i: any) => {
             i['origin'] = i.originId ? i.originId.originId : '';
-            return i;
+            i['description'] = await this.getDescriptions(i.documentStatus);
           });
-          setTimeout(() => {
+
+          Promise.all(result).then(resp => {
+            this.dataTableEvent.load(res.data);
+            this.dataTableEvent.refresh();
+            this.loadingEvent = false;
             this.totalEvent = res.count;
-            this.getDescriptions();
-          }, 200);
+          });
         },
         error: error => {
-          console.log(error);
           this.testDataEvent = [];
           this.dataTableEvent.load([]);
+          this.dataTableEvent.refresh();
           this.totalEvent = 0;
           this.loadingEvent = false;
         },
       });
   }
 
-  getDescriptions() {
-    this.testDataEvent.forEach((element, count) => {
-      if (element) {
-        const params = new ListParams();
-        params['filter.parameter'] = '$eq:EST_REP_FIRMA';
-        params['filter.value'] = '$eq:' + element.documentStatus;
-        // params['sortBy'] = 'goodId:ASC';
-        this.svSignatureAuxiliaryCatalogsService
-          .getParameterMod(params)
-          .subscribe({
-            next: res => {
-              // console.log('DATA DESCRIPCION', res);
-              element['description'] =
-                element.documentStatus + ' ' + res.data[0].description;
-              if (this.testDataEvent.length - 1 == count) {
-                this.endDescription();
-              }
-            },
-            error: error => {
-              // console.log(error);
-              element['description'] = element.documentStatus + ' Verificar';
-              if (this.testDataEvent.length - 1 == count) {
-                this.endDescription();
-              }
-            },
-          });
-      }
+  async getDescriptions(documentStatus: any) {
+    const params = new ListParams();
+    params['filter.parametro'] = 'EST_REP_FIRMA';
+    params['filter.valor'] = `${documentStatus}`;
+    return new Promise((resolve, reject) => {
+      this.svSignatureAuxiliaryCatalogsService
+        .getParameterMod(params)
+        .subscribe({
+          next: res => {
+            resolve(
+              documentStatus + ' - ' + res.data[0]['descriptionparameter']
+            );
+          },
+          error: error => {
+            resolve(documentStatus + ' - ' + 'Verificar');
+          },
+        });
     });
   }
 
@@ -611,15 +625,11 @@ export class SignatureAuxiliaryCatalogsMainComponent
           this.getSignatureData();
         }
       });
-
-    this.columnFiltersSignature[
-      'filter.id_docums_xml'
-    ] = `$eq:${this.idDocumentsXml}`;
-    // this.columnFiltersSignature['filter.creationdate'] = `$order:desc`;
-    //observador para el paginado
     this.dataTableParamsSignature
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getSignatureData());
+      .subscribe(() => {
+        if (this.totalSignature > 0) this.getSignatureData();
+      });
   }
 
   getSignatureData() {
@@ -628,37 +638,58 @@ export class SignatureAuxiliaryCatalogsMainComponent
       ...this.dataTableParamsSignature.getValue(),
       ...this.columnFiltersSignature,
     };
+    params['filter.id_docums_xml'] = `$eq:${this.idDocumentsXml}`;
     console.log('PARAMS ', params);
     this.svSignatureAuxiliaryCatalogsService
       .getAllComerceDocumentsXmlTCatFelec(params)
       .subscribe({
         next: res => {
           console.log('DATA SIGNATURE', res);
-          this.testDataSignature = res.data.map((i: any) => {
+          let result = res.data.map(async (i: any) => {
             i['signatoryType'] = i.signatoryTypeId
               ? i.signatoryTypeId.signatoryTypeId
               : '';
             i['documentsXML'] = i.documentsXMLId
               ? i.documentsXMLId.documentsXMLId
               : '';
-            return i;
+            i['description'] = await this.getDescriptionsT(i.id_tipo_firmante);
           });
-          setTimeout(() => {
+
+          Promise.all(result).then(resp => {
             this.totalSignature = res.count;
-            this.getDescriptionsT();
-          }, 200);
+            this.dataTableSignature.load(res.data);
+            this.dataTableSignature.refresh();
+            this.loadingSignature = false;
+          });
         },
         error: error => {
-          console.log(error);
           this.testDataSignature = [];
           this.dataTableSignature.load([]);
+          this.dataTableSignature.refresh();
           this.totalSignature = 0;
           this.loadingSignature = false;
         },
       });
   }
 
-  getDescriptionsT() {
+  async getDescriptionsT(id_tipo_firmante: any) {
+    const params = new ListParams();
+    params['filter.signatoryType'] = `$eq:${id_tipo_firmante}`;
+    return new Promise((resolve, reject) => {
+      this.svSignatureAuxiliaryCatalogsService
+        .getComerTypeSignatories(params)
+        .subscribe({
+          next: res => {
+            resolve(res.data[0].denomination);
+          },
+          error: error => {
+            resolve('Verificar');
+          },
+        });
+    });
+  }
+
+  getDescriptionsT2() {
     this.testDataSignature.forEach((element, count) => {
       if (element) {
         if (element.id_tipo_firmante) {
@@ -711,7 +742,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
     );
     modalRef.content.onConfirm.subscribe(data => {
       console.log(data);
-      this.loadingDataTableReport();
+      this.getReportData();
     });
   }
 
@@ -752,7 +783,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
     );
     modalRef.content.onConfirm.subscribe(data => {
       console.log(data);
-      this.loadingDataTableAddresee();
+      this.getAddreseeData();
     });
   }
 
@@ -809,18 +840,23 @@ export class SignatureAuxiliaryCatalogsMainComponent
     );
     modalRef.content.onConfirm.subscribe(data => {
       console.log(data);
-      this.loadingDataTableEvent();
+      this.getEventData();
     });
   }
 
   deleteCommercializationEvent(event: any) {
     console.log(event);
     if (event) {
-      // this.openModalCommercializationEvent({
-      //   data: event.data,
-      //   edit: true,
-      // });
-      this.loadingEvent = true;
+      this.alertQuestion(
+        'question',
+        'Se eliminará el registro',
+        '¿Desea continuar?'
+      ).then(quesition => {
+        if (quesition.isConfirmed) {
+          this.deleteEvent(event.data);
+        }
+      });
+      return;
       const params = new FilterParams();
       params.addFilter('id_docums_xml', event.data.documentsXMLId);
       this.svSignatureAuxiliaryCatalogsService
@@ -869,27 +905,44 @@ export class SignatureAuxiliaryCatalogsMainComponent
       .subscribe({
         next: res => {
           console.log('RESPONSE', res);
-          this.loadingEvent = false;
-          this.loadingDataTableEvent();
-          this.alert(
-            'success',
-            'Eliminar Registro',
-            'El registro se eliminó correctamente'
-          );
+          // this.loadingEvent = false;
+          this.getEventData();
+          this.alert('success', 'Registro Eliminado Correctamente', '');
         },
         error: error => {
           console.log(error);
-          this.loadingEvent = false;
-          this.alert(
-            'error',
-            'Error',
-            'Ocurrió un error al eliminar registros relacionados'
-          );
+          // this.loadingEvent = false;
+          if (
+            error.error.message ==
+            `update or delete on table \"comer_docums_xml_h\" violates foreign key constraint \"comer_docums_xml_t_h_fk\" on table \"comer_docums_xml_t\"`
+          ) {
+            this.alert(
+              'warning',
+              'No se pudo eliminar el registro porque tiene firmantes asociados',
+              'Verifique la tabla Firmantes e intente nuevamente'
+            );
+          } else {
+            this.alert(
+              'error',
+              'No se pudo eliminar el registro',
+              'Verifique e intente nuevamente'
+            );
+          }
+          // this.alert(
+          //   'error',
+          //   'Error',
+          //   'Ocurrió un error al eliminar registros relacionados'
+          // );
         },
       });
   }
 
-  openCommercializationSignature() {
+  valNewFirmante(): boolean {
+    if (this.totalSignature == this.totalType) return false;
+    return true;
+  }
+
+  async openCommercializationSignature() {
     if (!this.idDocumentsXml) {
       this.alert(
         'warning',
@@ -898,10 +951,16 @@ export class SignatureAuxiliaryCatalogsMainComponent
       );
       return;
     }
+    let resp = this.valNewFirmante();
+    if (!resp)
+      return this.alert(
+        'warning',
+        'No se puede agregar otra firma.',
+        'Total de firmas: ' + this.totalSignature
+      );
     this.openModalCommercializationSignature({
-      data: {
-        idDocumentsxml: this.idDocumentsXml,
-      },
+      data: null,
+      idDocumentsxml: this.idDocumentsXml,
       countTypeSignatures: this.totalType,
     });
   }
@@ -921,7 +980,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
     );
     modalRef.content.onConfirm.subscribe(data => {
       console.log(data);
-      this.loadingDataTableSignature();
+      this.getSignatureData();
     });
   }
 
@@ -933,5 +992,125 @@ export class SignatureAuxiliaryCatalogsMainComponent
         edit: true,
       });
     }
+  }
+
+  deleteCommercializationOrigin(event: any) {
+    // console.log(event)
+    this.alertQuestion(
+      'question',
+      'Se eliminará el registro',
+      '¿Desea Continuar?'
+    ).then(resp => {
+      if (resp.isConfirmed) {
+        this.svSignatureAuxiliaryCatalogsService
+          .deleteComerOrigins(event.data.originId)
+          .subscribe({
+            next: res => {
+              this.alert('success', 'Registro Eliminado Correctamente', '');
+              this.getReportData();
+            },
+            error: error => {
+              console.log(error);
+              if (
+                error.error.message ==
+                `update or delete on table "comer_origenes" violates foreign key constraint "comer_dest_xml_o_fk" on table "comer_dest_xml"`
+              ) {
+                this.alert(
+                  'warning',
+                  'No se pudo eliminar el registro porque tiene correos asociados',
+                  'Verifique la tabla Comercialización Destino XML e intente nuevamente'
+                );
+              } else {
+                this.alert(
+                  'error',
+                  'No se pudo eliminar el registro',
+                  'Verifique e intente nuevamente'
+                );
+              }
+            },
+          });
+      }
+    });
+  }
+
+  deleteCommercializationOriginEmail(event: any) {
+    this.alertQuestion(
+      'question',
+      'Se eliminará el registro',
+      '¿Desea Continuar?'
+    ).then(resp => {
+      if (resp.isConfirmed) {
+        let obj = {
+          originId: event.data.originId,
+          email: event.data.email,
+        };
+        this.svSignatureAuxiliaryCatalogsService
+          .deleteComerDestXML(obj)
+          .subscribe({
+            next: res => {
+              this.alert(
+                'success',
+                'Correo Electrónico Eliminado Correctamente',
+                ''
+              );
+              this.getAddreseeData();
+            },
+            error: error => {
+              this.alert('warning', 'No se pudo eliminar el registro', '');
+            },
+          });
+      }
+    });
+  }
+
+  deleteCommercializationType(event: any) {
+    this.alertQuestion(
+      'question',
+      'Se eliminará el registro',
+      '¿Desea Continuar?'
+    ).then(resp => {
+      if (resp.isConfirmed) {
+        this.svSignatureAuxiliaryCatalogsService
+          .deleteComerTypeSignatories(event.data.signatoryType)
+          .subscribe({
+            next: res => {
+              this.alert(
+                'success',
+                'Tipo de Firmante Eliminado Correctamente',
+                ''
+              );
+              this.getTypeData();
+            },
+            error: error => {
+              this.alert('warning', 'No se pudo eliminar el registro', '');
+            },
+          });
+      }
+    });
+  }
+  deleteCommercializationSignature(event: any) {
+    this.alertQuestion(
+      'question',
+      'Se eliminará el registro',
+      '¿Desea Continuar?'
+    ).then(resp => {
+      if (resp.isConfirmed) {
+        let obj = {
+          numberconsec: event.data['no_consec'],
+          idDocumentsxml: event.data['id_docums_xml'],
+        };
+        this.svSignatureAuxiliaryCatalogsService
+          .deleteComerceDocumentsXmlT(obj)
+          .subscribe({
+            next: res => {
+              this.alert('success', 'Firmante Eliminado Correctamente', '');
+              this.getSignatureData();
+            },
+            error: error => {
+              this.alert('warning', 'No se pudo eliminar el registro', '');
+            },
+          });
+      }
+    });
   }
 }

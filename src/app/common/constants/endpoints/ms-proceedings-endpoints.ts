@@ -51,4 +51,5 @@ export enum ProceedingsEndpoints {
   AplicationGetTypeActa = 'aplication/getTypeActa',
   AplicationGetTypeActaDetail = 'aplication/getDetalleActaByNoActaPag',
   TmpEspPrograming = 'tmp-est-programming',
+  AplicationValidaClave = 'aplication/valida-clave',
 }

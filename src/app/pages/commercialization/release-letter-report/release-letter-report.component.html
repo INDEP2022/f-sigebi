@@ -198,7 +198,8 @@
                           maxlength="500"
                           class="form-control text-justify"
                           formControlName="parrafo1"
-                          rows="5">
+                          cols="3"
+                          rows="3">
                         </textarea>
                       </form-field>
                     </div>
@@ -224,7 +225,6 @@
                   <div class="row">
                     <form-loader *ngIf="bienesLoading"></form-loader>
                     <div class="col-md-12">
-                      <!-- <div [class]="loading ? 'table-loading' : ''"> -->
                       <ng-scrollbar
                         [track]="'all'"
                         [ngStyle]="{
@@ -236,7 +236,6 @@
                           [source]="dataTableGood">
                         </ng2-smart-table>
                       </ng-scrollbar>
-                      <!-- </div> -->
                     </div>
                     <app-pagination
                       [params]="paramsBienes"
@@ -282,7 +281,8 @@
                       maxlength="500"
                       class="form-control text-justify"
                       formControlName="parrafo2"
-                      rows="5"></textarea>
+                      cols="3"
+                      rows="3"></textarea>
                   </form-field>
                 </div>
                 <div class="col-md-4 mt-3">
