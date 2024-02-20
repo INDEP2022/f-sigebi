@@ -252,7 +252,7 @@
     <form-loader *ngIf="loading"></form-loader>
     <div>
       <ng2-smart-table
-        #table
+        #myTable
         [ngStyle]="{
           height: loading ? '0px' : totalItems > 10 ? '600px' : 'auto'
         }"
@@ -275,7 +275,7 @@
         <div class="col-md-3">
           <form-field
             [control]="form.get('numberInvoices')"
-            label="N&uacute;mero de facturas: &nbsp;:">
+            label="N&uacute;mero de facturas:">
             <input
               readonly
               type="text"
