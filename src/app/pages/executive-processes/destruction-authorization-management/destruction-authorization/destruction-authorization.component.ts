@@ -552,21 +552,6 @@ export class DestructionAuthorizationComponent
     this.getUserInfo();
     this.conserveState = false;
 
-    /*  this.$unSubscribe.subscribe({
-      complete: () => {
-        if (!this.conserveState) {
-          this.store.dispatch(ResetDestructionAuth());
-          return;
-        }
-        const destructionAuth: IDestructionAuth = {
-          ...this.state,
-          form: this.proceedingForm.value,
-          trackerGoods: this.goodTrackerGoods,
-        };
-        this.store.dispatch(SetDestructionAuth({ destructionAuth }));
-      },
-    }); */
-
     this.show = true;
     this.show2 = true;
     this.globalVarService

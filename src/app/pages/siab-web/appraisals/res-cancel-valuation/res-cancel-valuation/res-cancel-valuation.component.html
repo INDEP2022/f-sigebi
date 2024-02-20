@@ -238,12 +238,46 @@
         </button>
       </div>
     </div>
+    <div class="row mb-3">
+      <div class="col-md-12 p-3">
+        <div class="table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              #table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="dataGood">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+      </div>
+    </div>
     <!--  -->
-    <app-valued-table [body]="body1" [settings1]="settings"></app-valued-table>
+    <!-- <app-valued-table [body]="body1" [settings1]="settings"></app-valued-table> -->
     <!--  -->
+    <div class="row">
+      <div class="col-md-12 p-3">
+        <div class="table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              #table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings2"
+              [source]="dataGood2">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination [params]="params2" [totalItems]="totalItems2">
+        </app-pagination>
+      </div>
+    </div>
+    <!-- [source]="dataPaginated" (userRowSelect)="onUserRowSelectCancel($event)"> -->
     <app-cancel-table
       [body]="body2"
       [officeType]="officeType"
+      [event]="form.get('event').value"
       [showModalCambioRev]="showModalCambioRev"></app-cancel-table>
     <!--  -->
     <div>
@@ -270,34 +304,40 @@
               </form-field>
             </div>
           </div>
-          <div clas="row">
-            <div class="d-flex">
-              <div class="ml-auto" *ngIf="btnMotCan">
+          <!--  -->
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <button
+                class="btn btn-success btn-sm active"
+                type="submit"
+                size="small"
+                (click)="exportExcel()">
+                Exportar a Excel
+                <i class="bx bx-download float-icon"></i>
+              </button>
+              <!-- <div
+                [class]="loadingExcel ? 'disabled' : ''"
+                >
+                <app-excel-report
+                  [elementToExport]="elementsToExport"
+                  [externalClick]="flagDownload"
+                  [nameExcel]="nameExcel"
+                  text="Exportar a Excel"></app-excel-report>
+              </div> -->
+            </div>
+            <div class="col-md-4">
+              <button type="button" class="btn btn-sm btn-success active">
+                Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
+              </button>
+            </div>
+            <div class="col-md-4">
+              <div *ngIf="btnMotCan">
                 <button
                   class="btn btn-primary btn-sm active"
                   (click)="showModal()">
                   Motivos de Cambio a REV
                 </button>
               </div>
-            </div>
-          </div>
-          <!--  -->
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <div
-                [class]="loadingExcel ? 'disabled' : ''"
-                (click)="exportExcel()">
-                <app-excel-report
-                  [elementToExport]="elementsToExport"
-                  [externalClick]="flagDownload"
-                  [nameExcel]="nameExcel"
-                  text="Exportar a Excel"></app-excel-report>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <button type="button" class="btn btn-sm btn-success active">
-                Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
-              </button>
             </div>
           </div>
           <!--  -->
@@ -337,15 +377,14 @@
                 <form class="form-material" [formGroup]="formThree">
                   <!--  -->
                   <div class="row" style="margin-left: -20px">
-                    <form-radio label="Por Delegación">
+                    <form-check label="Por Delegación" for="radioThree">
                       <input
-                        type="radio"
-                        value="cat"
+                        id="radioThree"
+                        type="checkbox"
                         [(ngModel)]="radioValueThree"
                         (change)="onRadioChangeThree()"
-                        [value]="true"
                         formControlName="radioThree" />
-                    </form-radio>
+                    </form-check>
                   </div>
                   <!--  -->
                   <div class="row pt-5">
@@ -494,7 +533,10 @@
               </button>
             </div>
             <div class="m-3" *ngIf="btnEnviar">
-              <button type="button" class="btn btn-primary btn-sm active">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="senders()">
                 Enviar Oficio
               </button>
             </div>

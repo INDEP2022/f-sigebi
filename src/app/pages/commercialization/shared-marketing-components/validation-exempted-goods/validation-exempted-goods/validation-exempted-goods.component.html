@@ -3,6 +3,18 @@
     <h5 class="title">Bienes exentos de verificación</h5>
   </div>
   <div body>
+    <div class="row text-right">
+      <div class="col">
+        <button
+          type="button"
+          tooltip="Nuevo"
+          containerClass="tooltip-style"
+          (click)="openModalNew()"
+          class="btn btn-info btn-sm active ml-2 mr-2">
+          Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div>
     <!--TABLE GOODS-->
     <div class="row pt-4">
       <div class="col-md-12">
@@ -10,16 +22,26 @@
           <ng2-smart-table
             [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
-            [source]="goods"
-            (userRowSelect)="rowsSelected($event)">
+            [source]="goods">
           </ng2-smart-table>
+          <app-pagination [filterParams]="params" [totalItems]="totalItems">
+          </app-pagination>
         </div>
       </div>
     </div>
-    <app-pagination
-      [params]="params"
-      [totalItems]="totalItems"></app-pagination>
-    <app-validation-exempted
-      [proccessList]="proccessList"></app-validation-exempted>
+    <div class="row text-center">
+      <div class="col">
+        <button type="button" class="btn btn-primary active btn-sm mr-3">
+          Insertar via rastreador
+        </button>
+        <button type="button" class="btn btn-sm btn-success active mr-3">
+          Insertar via archivo plano
+          <i class="bi bi-file-earmark-excel-fill"></i>
+        </button>
+        <button type="button" class="btn btn-primary active btn-sm mr-3">
+          Copia proceso
+        </button>
+      </div>
+    </div>
   </div>
 </app-card>

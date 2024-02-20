@@ -5,6 +5,7 @@ import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-s
 import { SharedModule } from 'src/app/shared/shared.module';
 
 import { AccordionModule } from 'ngx-bootstrap/accordion';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { GetCfdiComponent } from './get-cfdi/get-cfdi.component';
 import { RegularBillingGenerationAssetsComponent } from './regular-billing-generation-assets/regular-billing-generation-assets.component';
@@ -16,6 +17,7 @@ import { ReferenceModalComponent } from './regular-billing-invoice/reference/ref
 import { RegularBillingInvoiceComponent } from './regular-billing-invoice/regular-billing-invoice.component';
 import { RegularBillingRoutingModule } from './regular-billing-routing.module';
 import { RegularBillingUnsettledComponent } from './regular-billing-unsettled/regular-billing-unsettled.component';
+
 @NgModule({
   declarations: [
     RegularBillingInvoiceComponent,
@@ -35,6 +37,7 @@ import { RegularBillingUnsettledComponent } from './regular-billing-unsettled/re
     AccordionModule,
     EventsSharedComponent,
     FormLoaderComponent,
+    TooltipModule,
   ],
   exports: [
     RegularBillingInvoiceComponent,

@@ -25,7 +25,7 @@ export class CheckboxDisabledElementComponent<T = any>
   checked: boolean = null;
   @Input()
   set value(value: { checked: boolean; disabled: boolean }) {
-    // debugger;
+    // //
     this.disabled = value.disabled;
     this.checked = value.checked;
     this.form = this.fb.group({
@@ -40,7 +40,7 @@ export class CheckboxDisabledElementComponent<T = any>
   }
 
   ngOnInit(): void {
-    // debugger;
+    // //
     console.log(this.checked);
     this.form = this.fb.group({
       check: [this.checked],

@@ -65,8 +65,8 @@ export class TablePermissionsModalComponent extends BasePage implements OnInit {
             const search: any = {
               user: () => (searchFilter = SearchFilter.ILIKE),
               name: () => (searchFilter = SearchFilter.EQ),
-              indGuarantee: () => (searchFilter = SearchFilter.EQ),
-              inddisp: () => (searchFilter = SearchFilter.ILIKE),
+              _indGuarantee: () => (searchFilter = SearchFilter.EQ),
+              _inddisp: () => (searchFilter = SearchFilter.EQ),
             };
             search[filter.field]();
 
@@ -93,6 +93,14 @@ export class TablePermissionsModalComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     params['sortBy'] = `user:ASC`;
+    if (params['filter._indGuarantee']) {
+      params['filter.indGuarantee'] = params['filter._indGuarantee'] + '';
+      delete params['filter._indGuarantee'];
+    }
+    if (params['filter._inddisp']) {
+      params['filter.inddisp'] = params['filter._inddisp'] + '';
+      delete params['filter._inddisp'];
+    }
     let res: any = await this.paysService.getCrtlCreate(params);
     let result = res.data.map(async item => {
       let params_ = new ListParams();
@@ -102,6 +110,9 @@ export class TablePermissionsModalComponent extends BasePage implements OnInit {
       let res: any = await this.paysService.segUsers(params_);
       if (res) item['name'] = res.name;
       else item['name'] = '';
+
+      item['_indGuarantee'] = item.indGuarantee == 1 ? true : false;
+      item['_inddisp'] = item.inddisp == 1 ? true : false;
     });
     Promise.all(result).then(resp => {
       this.data.load(res.data);

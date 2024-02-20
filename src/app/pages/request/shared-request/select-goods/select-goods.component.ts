@@ -449,15 +449,16 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   } */
 
   openReserveModal(good: any) {
-
-    let exitGood: any = this.selectedGoodColumns.find(x => x.goodId == good.goodId);
+    let exitGood: any = this.selectedGoodColumns.find(
+      x => x.goodId == good.goodId
+    );
 
     if (this.processDet == 'DEVOLUCION' || this.processDet == 'RES_NUMERARIO') {
       const modalRef = this.modalService.show(ReserveGoodModalComponent, {
         initialState: {
           good: good,
           requestId: this.requestInfo.id,
-          exitGood: exitGood
+          exitGood: exitGood,
         },
         class: 'modal-md modal-dialog-centered',
         ignoreBackdropClick: true,
@@ -468,7 +469,9 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     } else if (this.processDet != 'INFORMACION') {
       const modalRef = this.modalService.show(ReserveGoodModalComponent, {
         initialState: {
-          good: good, requestId: this.requestInfo.id, exitGood: exitGood
+          good: good,
+          requestId: this.requestInfo.id,
+          exitGood: exitGood,
         },
         class: 'modal-md modal-dialog-centered',
         ignoreBackdropClick: true,
@@ -477,13 +480,11 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         if (data) this.getInfoRequest();
       });
     } else {
-
       if (isNullOrEmpty(exitGood)) {
         this.addGoodForInformation(good);
       } else {
         this.onLoadToast('warning', 'El bien ya ha sido agregado');
       }
-
     }
   }
 
@@ -535,6 +536,11 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
             this.selectedGoodTotalItems = this.selectedGoodColumns.length;
             this.selectedGoods = [];
             this.onLoadToast('success', 'Los Bienes se eliminaron');
+          } else {
+            this.onLoadToast(
+              'error',
+              'Ocurrió un error al eliminar los Bienes'
+            );
           }
         });
 
@@ -650,7 +656,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         },
         error: error => {
           reject(error);
-          this.onLoadToast('error', 'No se pudieron eliminar los Bienes');
+          //this.onLoadToast('error', 'No se pudieron eliminar los Bienes');
         },
       });
     });

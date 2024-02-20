@@ -1,19 +1,31 @@
 <app-modal>
   <div header>
     <h5 class="modal-title">
-      {{ edit ? 'Editar' : 'Nuevo' }} Comercializaci&oacute;n Origenes
+      {{ edit ? 'Editar' : 'Agregar' }} Comercializaci&oacute;n Orígenes
     </h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="formGroup">
       <div class="row">
         <div class="col-sm-12 col-md-4">
-          <form-field [control]="formGroup.get('screenKey')" label="Pantalla">
-            <input
+          <form-field [control]="formGroup.get('screenKey')">
+            <ngx-select
+              [readonly]="edit"
+              [searchOnInit]="true"
+              (change)="setValuesForm($event)"
+              [form]="formGroup"
+              control="screenKey"
+              [data]="screens"
+              value="screenKey"
+              bindLabel="screenKey"
+              label="Pantalla"
+              (fetchItems)="getScreens($event)">
+            </ngx-select>
+            <!-- <input
               type="text"
               class="form-control"
               maxlength="30"
-              formControlName="screenKey" />
+              formControlName="screenKey" /> -->
           </form-field>
         </div>
         <div class="col-sm-12 col-md-4">
@@ -32,6 +44,7 @@
             [control]="formGroup.get('signatoriesNumber')"
             label="N&uacute;mero de Firmantes">
             <input
+              [readonly]="edit"
               type="number"
               class="form-control"
               maxlength="2"
@@ -56,13 +69,17 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
+          [className]="'btn-primary btn-sm mr-3'"
           [disabled]="formGroup.invalid"
           [loading]="loading"
           (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

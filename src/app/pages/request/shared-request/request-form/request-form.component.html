@@ -29,7 +29,7 @@
       </div>
       <div class="p-2">
         <button
-          [disabled]="requestForm.invalid || !requestId"
+          [disabled]="requestForm.invalid || !requestId || !isUserNameValid"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="turnRequest()">
@@ -65,7 +65,7 @@
               <div class="col-md-2">
                 <form-field
                   [control]="requestForm.get('applicationDate')"
-                  label="Fecha de solicitud">
+                  label="Fecha de Solicitud">
                   <input
                     class="form-control"
                     #dp="bsDatepicker"
@@ -246,7 +246,8 @@
                 class="form-control"
                 [ngModelOptions]="{ standalone: true }"
                 [(ngModel)]="userName"
-                [readOnly]="true" />
+                [readOnly]="true"
+                value="userName" />
             </div>
           </div>
         </div>

@@ -777,7 +777,7 @@ export class ClarificationsComponent
   updateStatusTable(body: any) {
     this.assetsArray.getElements().then(data => {
       data.map((item: any) => {
-        //debugger;
+        ////
         if (item.id === body.id) {
           item.processStatus = body.processStatus;
           item.goodStatus = body.goodStatus;
@@ -969,7 +969,7 @@ export class ClarificationsComponent
         goodId: item.goodId,
         descriptionGoodSae: item.descriptionGoodSae,
       };
-      //debugger;
+      ////
       const updateResult: any = await this.updateGood(body);
       if (this.goodSaeModified.length == index) {
         this.loading = false;

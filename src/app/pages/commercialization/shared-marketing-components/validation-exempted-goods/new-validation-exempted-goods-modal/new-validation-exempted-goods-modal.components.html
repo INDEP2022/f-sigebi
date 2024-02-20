@@ -1,0 +1,47 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Nuevo</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="newForm">
+      <div class="row">
+        <form-field [control]="newForm.get('goodNumber')">
+          <ngx-select
+            (fetchItems)="getGoods($event)"
+            [data]="goods"
+            [form]="newForm"
+            bindLabel="bindValue"
+            label="Bien"
+            control="goodNumber">
+          </ngx-select>
+        </form-field>
+      </div>
+      <div class="row">
+        <form-field [control]="newForm.get('process')">
+          <ngx-select
+            [data]="processes"
+            [form]="newForm"
+            bindLabel="bindValue"
+            [searchable]="false"
+            label="Proceso"
+            control="process">
+          </ngx-select>
+        </form-field>
+      </div>
+    </form>
+    <div class="row text-center">
+      <div class="col">
+        <button
+          type="button"
+          (click)="saveNewGood()"
+          class="btn btn-primary btn-sm active mr-3">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+        <button class="btn btn-danger btn-sm active" (click)="closeModal()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

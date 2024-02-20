@@ -265,7 +265,7 @@ export class TableGoodsComponent
   }
 
   override getParams() {
-    // debugger;
+    // //
     let newColumnFilters = this.columnFilters;
     if (
       this.selectedGoodsByQueryParams &&

@@ -233,12 +233,21 @@
       </div>
 
       <div class="row pt-4">
+        <div class="col-md-6" *ngIf="false">
+          <form-field label="">
+            <input
+              class="form-control fixed-datepicker"
+              bsDatepicker
+              ngModel
+              [maxDate]="maxDate" />
+          </form-field>
+        </div>
         <div class="col-md-6">
           <form-field
             [control]="associateFileForm.get('expedientDate')"
             label="Fecha Expediente">
             <input
-              class="form-control"
+              class="form-control fixed-datepicker"
               formControlName="expedientDate"
               bsDatepicker
               ngModel
@@ -264,9 +273,10 @@
             [control]="associateFileForm.get('reserveDateInai')"
             label="Fecha de Reserva">
             <input
-              class="form-control"
+              class="form-control fixed-datepicker"
               formControlName="reserveDateInai"
-              bsDatepicker />
+              bsDatepicker
+              ngModel />
           </form-field>
         </div>
 
@@ -333,9 +343,7 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <div class="form-group">
-            <label class="col-lg-6 text-right"
-              >Delegación Regional:</label
-            >
+            <label class="col-lg-6 text-right">Delegación Regional:</label>
             <span> {{ regionalDelegacionName }} </span>
           </div>
         </div>

@@ -68,7 +68,7 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
   }
 
   private async completeLoadFiles() {
-    // debugger;
+    // //
     this.loading = false;
     const result = await this.alertQuestion(
       'question',

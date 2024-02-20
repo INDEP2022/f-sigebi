@@ -107,7 +107,7 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
     const status = error.status;
     //console.log(error);
     //debugger;
-    console.log(this.showError);
+    //console.log(this.showError);
 
     const message = 'Error en el servidor'; // error?.error?.message ?? 'Error en el servidor';
     if (this.showError === false) {

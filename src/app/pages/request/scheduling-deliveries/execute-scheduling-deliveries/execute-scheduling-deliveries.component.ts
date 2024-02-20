@@ -362,7 +362,7 @@ export class ExecuteSchedulingDeliveriesComponent
         edit: true,
         callback: (next: boolean) => {
           if (next) {
-            debugger;
+            //
             this.getSchedulingDelivery();
           }
         },

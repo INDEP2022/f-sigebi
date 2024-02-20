@@ -5,7 +5,11 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IMandExpenseCont } from 'src/app/core/models/ms-accounting/mand-expensecont';
 import {
   IComerExpenseDTO2,
@@ -27,7 +31,29 @@ import { PAYMENT_REQUEST_COLUMNS } from './expense-request-columns';
 @Component({
   selector: 'app-expenses-request',
   templateUrl: './expenses-request.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class ExpensesRequestComponent extends BasePage implements OnInit {
   requestForm: FormGroup = new FormGroup({});
@@ -152,6 +178,7 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
 
   blkBankPays: any[];
   selectRowCtrol: any = null;
+  btnLoading: boolean = false;
   constructor(
     private interfaceesirsaeService: InterfaceesirsaeService,
     private fb: FormBuilder,
@@ -253,11 +280,15 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
   }
 
   getUsers(params: ListParams) {
+    const params_ = new FilterParams();
     if (params.text) {
-      params['filter.clkdet'] = `$eq:${params.text}`;
+      params_.addFilter('clkdet', params.text, SearchFilter.EQ);
+      // params['filter.clkdet'] = `$eq:${params.text}`;
     }
+    params_.limit = params.limit;
+    params_.page = params.page;
     this.interfaceesirsaeService
-      .ApplicationGetReturnPayments(params)
+      .ApplicationGetReturnPayments(params_.getParams())
       .subscribe({
         next: value => {
           this.userItems = new DefaultSelect(value.data, value.count);
@@ -346,6 +377,7 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
       if (data.length == 0)
         return this.alert('warning', 'No se tienen solicitudes a generar.', '');
 
+      this.btnLoading = true;
       this.alertQuestion(
         'question',
         'Se generarán las Solicitudes de Pago',
@@ -354,6 +386,8 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
         if (question.isConfirmed) {
           // PUP_GEN_SOLPAGOS
           this.pupGenSolPagos(data);
+        } else {
+          this.btnLoading = false;
         }
       });
     }
@@ -434,7 +468,7 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
         idOrdinginter: null,
         exchangeRate: null,
         nomEmplRequest: userRequestName,
-        nomEmplAuthorizes: userCaptureName,
+        nomEmplAuthorizes: userAuthorizeName,
         nomEmplcapture: userCaptureName,
         ur_coordregional: null,
         descurcoord: null,
@@ -526,7 +560,8 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
             idCtldevpag: this.selectRowCtrol.ctlDevPagId,
           };
           // UPDATE COMER_CTLDEVPAG_B
-          await this.updateCtlDevPagB(bodyUpdate);
+          await this.updateCtlDevPagBOrigen2(resInsert.expenseNumber);
+          // await this.updateCtlDevPagB(bodyUpdate);
         }
       }
     });
@@ -544,9 +579,10 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
         await this.pupSendSirsae(body);
       });
       Promise.all(result2).then(resp2 => {
+        this.btnLoading = false;
+        this.alert('success', 'Proceso Terminado Correctamente', '');
         this.modalRef.hide();
         this.modalRef.content.callback(true);
-        this.alert('success', 'Proceso Terminado Correctamente', '');
       });
     });
   }
@@ -563,7 +599,6 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
     });
   }
   saveComerDetExpenses(data: any) {
-    return console.log('data2', data);
     return new Promise((resolve, reject) => {
       this.comerDetexpensesService.create_(data).subscribe({
         next: value => {
@@ -588,7 +623,38 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
       });
     });
   }
+  async updateCtlDevPagBOrigen2(expenseNumber: any) {
+    const params = new ListParams();
+    params['filter.idCtldevpag'] = `$eq:${this.selectRowCtrol.ctlDevPagId}`;
+    params.limit = 100;
+    let data: any = await this.getCtlDevPagB(params);
+    let result = data.map(async item => {
+      let bodyUpdate = {
+        idCtldevpag: this.selectRowCtrol.ctlDevPagId,
+        cveBank: item.cveBank,
+        account: item.account,
+        idwaste: expenseNumber,
+      };
 
+      await this.updateCtlDevPagB(bodyUpdate);
+    });
+
+    Promise.all(result).then(resp => {
+      return true;
+    });
+  }
+  getCtlDevPagB(params: any) {
+    return new Promise((resolve, reject) => {
+      this.svPaymentService.getCtlDevPagB(params).subscribe({
+        next: value => {
+          resolve(value.data);
+        },
+        error: err => {
+          resolve([]);
+        },
+      });
+    });
+  }
   updateCtlDevPagB(data: any) {
     return new Promise((resolve, reject) => {
       this.svPaymentService.updateComerCtldevpagB(data).subscribe({

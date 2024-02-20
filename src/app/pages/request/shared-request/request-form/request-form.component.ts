@@ -54,6 +54,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   bsModalRef: BsModalRef;
   checked: string = 'checked';
   userName: string = '';
+  isUserNameValid: boolean = false;
   nickName: string = '';
   idTransferer: number = null;
   idStation: number = null;
@@ -456,7 +457,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
       config
     );
     this.bsModalRef.content.event.subscribe((res: any) => {
-      this.userName = res.firstName;
+      this.userName = res.firstName + ' ' + res.lastName;
+      this.isUserNameValid = true;
       this.nickName = res.username;
       this.requestForm.controls['targetUser'].setValue(res.id);
     });
@@ -465,7 +467,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   save() {
     Swal.fire({
       title: 'Guardar Solicitud',
-      text: '¿Desea Guardar la solicitud?',
+      text: '¿Desea guardar la solicitud?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
@@ -514,7 +516,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       'Turnar Solicitud',
-      '¿Desea Turnar la solicitud?'
+      '¿Desea turnar la solicitud?'
     ).then(async question => {
       if (question.isConfirmed) {
         if (this.op == 2) {

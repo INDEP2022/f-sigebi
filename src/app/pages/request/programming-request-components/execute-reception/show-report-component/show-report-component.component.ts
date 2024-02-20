@@ -26,6 +26,7 @@ import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.serv
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared';
 import { environment } from 'src/environments/environment';
+import { isNullOrEmpty } from '../../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { LIST_REPORTS_COLUMN } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/list-reports-column';
 import { UploadFielsModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/upload-fiels-modal/upload-fiels-modal.component';
 
@@ -90,6 +91,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   typeAnnex: string = '';
   dynamic: boolean = false;
   signed: boolean = true;
+  requestId: number = 0;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -258,7 +260,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     }
 
     if (this.dynamic) {
-      let linkDoc: string = `${this.urlBaseReport}${this.reportName}&ID_TABLA=NOMBRE_TABLA,ID_REGISTRO,ID_TIPO_DOCTO&NOM_TABLA=REPORTES_DINAMICOS&NOM_CAMPO=CONTENIDO&ID_REGISTRO=${this.tableName},${this.idSample},${this.idTypeDoc}`;
+      let linkDoc: string = `${this.urlBaseReport}${this.reportName}&ID_TABLA=NOMBRE_TABLA,ID_REGISTRO,ID_TIPO_DOCTO&NOM_TABLA=REPORTES_DINAMICOS&NOM_CAMPO=CONTENIDO&ID_REGISTRO=${this.tableName},${this.requestId},${this.idTypeDoc}`;
       this.src = linkDoc;
       this.formLoading = false;
     }
@@ -290,9 +292,14 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       learnedId = this.programming?.id;
     }
 
+    if (isNullOrEmpty(learnedId)) {
+      learnedId = this.idSample;
+    }
+
     if (this.idTypeDoc == 197) {
       learnedId = this.orderSampleId;
     }
+
     this.loading = true;
     this.signatoriesService
       .getSignatoriesFilter(learnedType, learnedId)
@@ -343,6 +350,22 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   signDocument() {
+    let signs = [
+      2, 174, 7, 192, 108, 183, 26, 27, 50, 68, 217, 94, 40, 101, 105, 104, 72,
+      222, 223, 224, 225, 245, 246, 249,
+    ];
+
+    console.log(this.idTypeDoc);
+    console.log(this.typeFirm);
+
+    if (
+      signs.includes(parseInt('' + this.idTypeDoc)) &&
+      this.typeFirm == 'autografa'
+    ) {
+      this.modalRef.content.callback(true, this.typeFirm);
+      this.modalRef.hide();
+    }
+
     if (this.idTypeDoc == 107 && this.typeFirm == 'autografa') {
       this.modalRef.content.callback(true, this.typeFirm);
       this.modalRef.hide();
@@ -387,21 +410,21 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       this.modalRef.hide();
     }
 
+    let electronic = [
+      2, 221, 210, 103, 106, 107, 197, 218, 219, 174, 185, 186, 187, 192, 108,
+      183, 26, 27, 50, 68, 217, 94, 40, 101, 105, 104, 72, 222, 223, 224, 225,
+      245, 246, 249,
+    ];
+
     if (
-      (this.idTypeDoc == 221 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 210 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 103 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 106 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 107 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 197 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 218 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 219 && this.typeFirm == 'electronica') ||
-      (this.idOrderService && this.typeFirm == 'electronica')
+      electronic.includes(parseInt('' + this.idTypeDoc)) &&
+      this.typeFirm == 'electronica'
     ) {
       if (!this.listSigns && this.printReport && !this.isAttachDoc) {
         this.printReport = false;
         this.listSigns = true;
         this.title = 'Firma electrónica';
+        this.getSignatories();
       } else if (!this.listSigns && this.printReport && this.isAttachDoc) {
         //adjuntar el reporte
         this.openMessage2();
@@ -495,11 +518,40 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   openMessage(message: string): void {
+    let electronic = [
+      2, 174, 185, 186, 187, 192, 108, 183, 221, 26, 27, 50, 68, 217, 94, 40,
+      101, 105, 104, 72, 222, 223, 224, 225, 245, 246, 249,
+    ];
+
     this.alertQuestion('question', 'Confirmación', `${message}`).then(
       question => {
         if (question.isConfirmed) {
           this.loadingButton = true;
-          if (this.idTypeDoc == 221) {
+          if (electronic.includes(parseInt('' + this.idTypeDoc))) {
+            this.gelectronicFirmService
+              .firmDocument(210, 'ProgramacionRecibo', {})
+              .subscribe({
+                next: () => {
+                  this.loadingButton = false;
+                  this.msjCheck = true;
+
+                  this.alert(
+                    'success',
+                    'Correcto',
+                    'Documento firmado correctamente'
+                  );
+                },
+                error: () => {
+                  this.alert(
+                    'error',
+                    'Acción Invalida',
+                    'Errror al firmar el documento'
+                  );
+                  this.loadingButton = false;
+                },
+              });
+          }
+          if (this.idTypeDoc == 218) {
             this.gelectronicFirmService
               .firmDocument(this.programming?.id, 'ProgramacionRecibo', {})
               .subscribe({
@@ -795,22 +847,19 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   openMessage2(): void {
+    let electronic = [
+      2, 221, 210, 103, 106, 107, 197, 218, 219, 174, 185, 186, 187, 192, 108,
+      183, 26, 27, 50, 68, 217, 94, 40, 101, 105, 104, 72, 222, 223, 224, 225,
+      245, 246, 249,
+    ];
+
     this.alertQuestion(
       'question',
       '¿Quiere continuar con el proceso?',
       ''
     ).then(question => {
       if (question.isConfirmed) {
-        if (
-          (this.idTypeDoc == 107 && this.typeFirm == 'electronica') ||
-          (this.idTypeDoc == 106 && this.typeFirm == 'electronica') ||
-          (this.idTypeDoc == 103 && this.typeFirm == 'electronica') ||
-          (this.idTypeDoc == 210 && this.typeFirm == 'electronica') ||
-          (this.idTypeDoc == 221 && this.typeFirm == 'electronica') ||
-          (this.idTypeDoc == 197 && this.typeFirm == 'electronica') ||
-          (this.idTypeDoc == 218 && this.typeFirm == 'electronica') ||
-          (this.idTypeDoc == 219 && this.typeFirm == 'electronica')
-        ) {
+        if (electronic.includes(parseInt('' + this.idTypeDoc))) {
           this.validAttachDoc();
         }
         /*if (
@@ -835,6 +884,11 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   validAttachDoc() {
+    let electronic = [
+      2, 174, 185, 186, 187, 192, 108, 183, 26, 27, 50, 68, 217, 94, 40, 101,
+      105, 104, 72, 222, 223, 224, 225, 245, 246, 249,
+    ];
+
     if (this.idTypeDoc == 221 && this.typeFirm == 'electronica') {
       let token = this.authService.decodeToken();
       const extension = '.pdf';
@@ -1306,6 +1360,55 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 const updateSample = await this.updateSampleK(
                   response.dDocName
                 );
+                if (updateSample) {
+                  this.alertInfo(
+                    'success',
+                    'Acción Correcta',
+                    'Documento adjuntado correctamente'
+                  ).then(question => {
+                    if (question.isConfirmed) {
+                      this.close();
+                      this.modalRef.content.callback(true, this.typeFirm);
+                    }
+                  });
+                }
+              },
+              error: error => {},
+            });
+        });
+      } else if (electronic.includes(parseInt('' + this.idTypeDoc))) {
+        const token = this.authService.decodeToken();
+        const formData = {
+          keyDoc: `${this.idSample} -K`,
+          dDocTitle: 'Documenación Complementaria',
+          xDelegacionRegional: token.department,
+          xNombreProceso: 'Documentación complementaria',
+          xTipoDocumento: this.idTypeDoc,
+          xNivelRegistroNSBDB: 'Bien',
+          dSecurityGroup: 'Public',
+        };
+
+        const extension = '.pdf';
+        const docName = 'Documentación complementaria';
+        const contentType: string = '.pdf';
+
+        this.pdf.getData().then(u8 => {
+          let blob = new Blob([u8.buffer], {
+            type: 'application/pdf',
+          });
+          this.wContentService
+            .addDocumentToContent(
+              docName,
+              contentType,
+              JSON.stringify(formData),
+              blob,
+              extension
+            )
+            .subscribe({
+              next: async response => {
+                console.log(response);
+                const updateSample = await this.updateSample(response.dDocName);
+                console.log(updateSample);
                 if (updateSample) {
                   this.alertInfo(
                     'success',

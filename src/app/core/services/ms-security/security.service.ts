@@ -160,4 +160,16 @@ export class SecurityService extends HttpService {
       `${SecurityEndpoints.ApplicationAux}?p_user=${user}&pdelega=${delegation}`
     );
   }
+  getApplicationGetUserTvaltable(params: _Params) {
+    return this.get<IListResponse<any>>(
+      `${SecurityEndpoints.ApplicationGetUserTvaltable}`,
+      params
+    );
+  }
+  getScreensAplicationTracking(params: _Params) {
+    return this.get<IListResponse<any>>(
+      `${SecurityEndpoints.ScreensAplicationTracking}`,
+      params
+    );
+  }
 }

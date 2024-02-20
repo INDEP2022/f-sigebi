@@ -8,17 +8,9 @@ export const DATA_COLUMNS = {
   FechaMov: {
     title: 'Fecha Movimiento',
     sort: false,
-    valuePrepareFunction: (date: number): string => {
-      const fechaString = date.toString();
-      const año = fechaString.substring(0, 4);
-      const mes = fechaString.substring(4, 6);
-      const dia = fechaString.substring(6, 8);
-      const fecha = new Date(`${año}-${mes}-${dia}`);
-      var formatted = new DatePipe('en-EN').transform(
-        fecha,
-        'dd/MM/yyyy',
-        'UTC'
-      );
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
       return formatted;
     },
   },

@@ -263,8 +263,10 @@ export class DocRequestTabComponent
       .subscribe({
         next: async res => {
           this.data = [];
-
-          if (this.typeDoc == 'doc-request') {
+          if (
+            this.typeDoc == 'doc-request' ||
+            this.typeDoc == 'request-expedient'
+          ) {
             if (this.requestInfo.transferenceId == 1) {
               const filterDoc = res.data.filter((item: any) => {
                 if (
@@ -307,7 +309,7 @@ export class DocRequestTabComponent
 
                   this.loading = false;
                   this.onChanges();
-                  //this.allDataDocReq = x;
+                  this.allDataDocReq = this.docRequest; // Asigna los datos a allDataDocReq
                   //this.paragraphs.load(x);
                 });
               } else {
@@ -356,7 +358,7 @@ export class DocRequestTabComponent
                   this.totalItems = data.length;
                   this.loading = false;
                   this.onChanges();
-                  //this.allDataDocReq = x;
+                  this.allDataDocReq = this.docRequest; // Asigna los datos a allDataDocReq
                   //this.paragraphs.load(x);
                 });
               } else {
@@ -366,7 +368,10 @@ export class DocRequestTabComponent
             }
           }
 
-          if (this.typeDoc == 'doc-expedient') {
+          if (
+            this.typeDoc == 'doc-expedient' ||
+            this.typeDoc == 'request-assets'
+          ) {
             if (
               this.requestInfo.transferenceId != 1 &&
               this.requestInfo.recordId
@@ -410,7 +415,7 @@ export class DocRequestTabComponent
                   this.totalItems = data.length;
                   this.loading = false;
                   this.onChanges();
-                  //this.allDataDocReq = x;
+                  this.allDataDocReq = this.docRequest; // Asigna los datos a allDataDocReq
                   //this.paragraphs.load(x);
                 });
               } else {
@@ -462,7 +467,7 @@ export class DocRequestTabComponent
                   this.totalItems = data.length;
                   this.loading = false;
                   this.onChanges();
-                  //this.allDataDocReq = x
+                  this.allDataDocReq = this.docRequest; // Asigna los datos a allDataDocReq
                   //this.paragraphs.load(x)
                 });
               } else {
@@ -588,48 +593,38 @@ export class DocRequestTabComponent
   }
 
   search(): void {
-    const typeDocument = this.docRequestForm.get('docType').value;
-    const titleDocument = this.docRequestForm.get('docTitle').value;
-    const typeTrasf = this.docRequestForm.get('typeTrasf').value;
-    const dDocName = this.docRequestForm.get('dDocName').value;
-    const contribuyente = this.docRequestForm.get('contributor').value;
-    const author = this.docRequestForm.get('author').value;
-    const noOfice = this.docRequestForm.get('noOfice').value;
-    const remitente = this.docRequestForm.get('sender').value;
-    const senderCharge = this.docRequestForm.get('senderCharge').value;
-    const noRequest = this.docRequestForm.get('noRequest').value;
-    const comment = this.docRequestForm.get('comment').value;
-    const responsible = this.docRequestForm.get('responsible').value;
-    const regDelega = this.docRequestForm.get('regDelega').value;
-    const state = this.docRequestForm.get('state').value;
-    const tranfe = this.docRequestForm.get('tranfe').value;
+    let object = this.docRequestForm.getRawValue();
     if (
-      noRequest &&
-      !typeDocument &&
-      !titleDocument &&
-      !noOfice &&
-      !dDocName &&
-      !contribuyente &&
-      !responsible &&
-      !author &&
-      !comment &&
-      !remitente &&
-      !senderCharge &&
-      !regDelega &&
-      !state &&
-      !tranfe
+      object.noRequest &&
+      !object.docType &&
+      !object.docTitle &&
+      !object.noOfice &&
+      !object.dDocName &&
+      !object.contributor &&
+      !object.responsible &&
+      !object.author &&
+      !object.comment &&
+      !object.sender &&
+      !object.senderCharge &&
+      !object.regDelega &&
+      !object.state &&
+      !object.tranfe
     ) {
       this.params
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(params => this.getData(params));
     }
 
-    if (typeDocument) {
+    if (object.docType) {
       const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xtipoDocumento == typeDocument) return items;
+        if (items.xtipoDocumento == object.docType) {
+          return true; // Devuelve true para mantener este elemento
+        }
+        return false; // Devuelve false para eliminar este elemento
       });
 
       if (filter.length > 0) {
+        this.docRequest = filter; // Asigna los datos filtrados a docRequest
         this.paragraphs.load(filter);
         this.totalItems = this.paragraphs.count();
       } else {
@@ -640,12 +635,39 @@ export class DocRequestTabComponent
       }
     }
 
-    if (titleDocument) {
+    if (object.docTitle) {
       const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.ddocTitle == titleDocument) return items;
+        if (items.ddocTitle == object.docTitle) {
+          return true; // Devuelve true para mantener este elemento
+        }
+        return false; // Devuelve false para eliminar este elemento
+      });
+
+      console.log('filter', filter);
+
+      if (filter.length > 0) {
+        this.docRequest = filter; // Asigna los datos filtrados a docRequest
+        this.paragraphs.load(filter);
+        this.totalItems = this.paragraphs.count();
+      } else {
+        console.log('object.docTitle', object.docTitle);
+
+        this.paragraphs.load(filter);
+        this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
+      }
+    }
+
+    if (object.dDocName) {
+      const filter = this.allDataDocReq.filter((items: any) => {
+        if (items.dDocName == object.dDocName) {
+          return true; // Devuelve true para mantener este elemento
+        }
+        return false; // Devuelve false para eliminar este elemento
       });
 
       if (filter.length > 0) {
+        this.docRequest = filter; // Asigna los datos filtrados a docRequest
         this.paragraphs.load(filter);
         this.totalItems = this.paragraphs.count();
       } else {
@@ -655,12 +677,16 @@ export class DocRequestTabComponent
       }
     }
 
-    if (dDocName) {
+    if (object.tranfe) {
       const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.dDocName == dDocName) return items;
+        if (items.xtipoTransferencia == object.tranfe) {
+          return true; // Devuelve true para mantener este elemento
+        }
+        return false; // Devuelve false para eliminar este elemento
       });
 
       if (filter.length > 0) {
+        this.docRequest = filter; // Asigna los datos filtrados a docRequest
         this.paragraphs.load(filter);
         this.totalItems = this.paragraphs.count();
       } else {
@@ -670,12 +696,16 @@ export class DocRequestTabComponent
       }
     }
 
-    if (typeTrasf) {
+    if (object.contributor) {
       const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xtipoTransferencia == typeTrasf) return items;
+        if (items.xcontribuyente == object.contributor) {
+          return true; // Devuelve true para mantener este elemento
+        }
+        return false; // Devuelve false para eliminar este elemento
       });
 
       if (filter.length > 0) {
+        this.docRequest = filter; // Asigna los datos filtrados a docRequest
         this.paragraphs.load(filter);
         this.totalItems = this.paragraphs.count();
       } else {
@@ -685,12 +715,16 @@ export class DocRequestTabComponent
       }
     }
 
-    if (contribuyente) {
+    if (object.author) {
       const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xcontribuyente == contribuyente) return items;
+        if (items.dDocAuthor == object.author) {
+          return true; // Devuelve true para mantener este elemento
+        }
+        return false; // Devuelve false para eliminar este elemento
       });
 
       if (filter.length > 0) {
+        this.docRequest = filter; // Asigna los datos filtrados a docRequest
         this.paragraphs.load(filter);
         this.totalItems = this.paragraphs.count();
       } else {
@@ -700,12 +734,16 @@ export class DocRequestTabComponent
       }
     }
 
-    if (author) {
+    if (object.sender) {
       const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.dDocAuthor == author) return items;
+        if (items.xremitente == object.sender) {
+          return true; // Devuelve true para mantener este elemento
+        }
+        return false; // Devuelve false para eliminar este elemento
       });
 
       if (filter.length > 0) {
+        this.docRequest = filter; // Asigna los datos filtrados a docRequest
         this.paragraphs.load(filter);
         this.totalItems = this.paragraphs.count();
       } else {
@@ -715,12 +753,16 @@ export class DocRequestTabComponent
       }
     }
 
-    if (remitente) {
+    if (object.noOfice) {
       const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xremitente == remitente) return items;
+        if (items.xoficio == object.noOfice) {
+          return true; // Devuelve true para mantener este elemento
+        }
+        return false; // Devuelve false para eliminar este elemento
       });
 
       if (filter.length > 0) {
+        this.docRequest = filter; // Asigna los datos filtrados a docRequest
         this.paragraphs.load(filter);
         this.totalItems = this.paragraphs.count();
       } else {
@@ -730,12 +772,16 @@ export class DocRequestTabComponent
       }
     }
 
-    if (noOfice) {
+    if (object.senderCharge) {
       const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xnoOficio == noOfice) return items;
+        if (items.xcargoRemitente == object.senderCharge) {
+          return true; // Devuelve true para mantener este elemento
+        }
+        return false; // Devuelve false para eliminar este elemento
       });
 
       if (filter.length > 0) {
+        this.docRequest = filter; // Asigna los datos filtrados a docRequest
         this.paragraphs.load(filter);
         this.totalItems = this.paragraphs.count();
       } else {
@@ -745,12 +791,16 @@ export class DocRequestTabComponent
       }
     }
 
-    if (senderCharge) {
+    if (object.comment) {
       const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xcargoRemitente == senderCharge) return items;
+        if (items.xcomentario == object.comment) {
+          return true; // Devuelve true para mantener este elemento
+        }
+        return false; // Devuelve false para eliminar este elemento
       });
 
       if (filter.length > 0) {
+        this.docRequest = filter; // Asigna los datos filtrados a docRequest
         this.paragraphs.load(filter);
         this.totalItems = this.paragraphs.count();
       } else {
@@ -760,12 +810,16 @@ export class DocRequestTabComponent
       }
     }
 
-    if (comment) {
+    if (object.responsible) {
       const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xcomments == comment) return items;
+        if (items.xresponsable == object.responsible) {
+          return true; // Devuelve true para mantener este elemento
+        }
+        return false; // Devuelve false para eliminar este elemento
       });
 
       if (filter.length > 0) {
+        this.docRequest = filter; // Asigna los datos filtrados a docRequest
         this.paragraphs.load(filter);
         this.totalItems = this.paragraphs.count();
       } else {
@@ -775,12 +829,16 @@ export class DocRequestTabComponent
       }
     }
 
-    if (responsible) {
+    if (object.regDelega && !object.state && !object.tranfe) {
       const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xresponsable == responsible) return items;
+        if (items.xdelegacionRegional == object.regDelega) {
+          return true; // Devuelve true para mantener este elemento
+        }
+        return false; // Devuelve false para eliminar este elemento
       });
 
       if (filter.length > 0) {
+        this.docRequest = filter; // Asigna los datos filtrados a docRequest
         this.paragraphs.load(filter);
         this.totalItems = this.paragraphs.count();
       } else {
@@ -790,49 +848,42 @@ export class DocRequestTabComponent
       }
     }
 
-    if (regDelega && !state && !tranfe) {
-      const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xdelegacionRegional == regDelega) return items;
-      });
-
-      if (filter.length > 0) {
-        this.paragraphs.load(filter);
-        this.totalItems = this.paragraphs.count();
-      } else {
-        this.paragraphs.load(filter);
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
-        return;
-      }
-    }
-
-    if (regDelega && state && !tranfe) {
-      const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xestado == state && items.xdelegacionRegional == regDelega)
-          return items;
-      });
-
-      if (filter.length > 0) {
-        this.paragraphs.load(filter);
-        this.totalItems = this.paragraphs.count();
-      } else {
-        this.paragraphs.load(filter);
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
-        return;
-      }
-    }
-
-    if (regDelega && state && tranfe) {
+    if (object.regDelega && object.state && !object.tranfe) {
       const filter = this.allDataDocReq.filter((items: any) => {
         if (
-          items.xestado == state &&
-          items.xdelegacionRegional == regDelega &&
-          items.xdelegacionRegional &&
-          items.xidTransferente == tranfe
-        )
-          return items;
+          items.xestado == object.state &&
+          items.xdelegacionRegional == object.regDelega
+        ) {
+          return true; // Devuelve true para mantener este elemento
+        }
+        return false; // Devuelve false para eliminar este elemento
       });
 
       if (filter.length > 0) {
+        this.docRequest = filter; // Asigna los datos filtrados a docRequest
+        this.paragraphs.load(filter);
+        this.totalItems = this.paragraphs.count();
+      } else {
+        this.paragraphs.load(filter);
+        this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
+      }
+    }
+
+    if (object.regDelega && object.state && object.tranfe) {
+      const filter = this.allDataDocReq.filter((items: any) => {
+        if (
+          items.xestado == object.state &&
+          items.xdelegacionRegional == object.regDelega &&
+          items.xtipoTransferencia == object.tranfe
+        ) {
+          return true; // Devuelve true para mantener este elemento
+        }
+        return false; // Devuelve false para eliminar este elemento
+      });
+
+      if (filter.length > 0) {
+        this.docRequest = filter; // Asigna los datos filtrados a docRequest
         this.paragraphs.load(filter);
         this.totalItems = this.paragraphs.count();
       } else {
@@ -846,6 +897,7 @@ export class DocRequestTabComponent
   cleanForm(): void {
     this.docRequestForm.reset();
     this.docRequestForm.get('noRequest').patchValue(this.idRequest);
+    this.docRequestForm.get('recordId').patchValue(this.recordId);
     this.allDataDocReq = [];
     this.paragraphs.load([]);
     this.totalItems = 0;

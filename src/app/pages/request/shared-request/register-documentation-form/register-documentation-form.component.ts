@@ -7,8 +7,15 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { Subscription } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
@@ -24,6 +31,7 @@ import {
   STRING_PATTERN_LETTER,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-register-documentation-form',
@@ -44,6 +52,8 @@ export class RegisterDocumentationFormComponent
   @Output() onRegister = new EventEmitter<any>();
   @Output() onChange = new EventEmitter<any>();
 
+  @ViewChild('dp') datePicker: BsDatepickerDirective;
+
   priorityCheck: boolean = false;
   bsPriorityDate: any;
   bsReceptionValue: any;
@@ -61,6 +71,7 @@ export class RegisterDocumentationFormComponent
 
   private subscription: Subscription;
   private loadInfo: boolean = false;
+  private requestIfo: any = {};
 
   /* injections */
   private readonly requestService = inject(RequestService);
@@ -107,11 +118,15 @@ export class RegisterDocumentationFormComponent
       affair: [null],
       receiptRoute: [null],
       typeOfTransfer: [null],
-      nameOfOwner: [null, [Validators.pattern(STRING_PATTERN)]],
+      nameOfOwner: [null, [Validators.pattern(STRING_PATTERN_LETTER)]],
       holderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
       phoneOfOwner: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(13)],
+        [
+          Validators.maxLength(13),
+          Validators.minLength(10),
+          Validators.pattern(NUM_POSITIVE),
+        ],
       ],
       emailOfOwner: [null, [Validators.pattern(EMAIL_PATTERN)]],
       trialType: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -138,10 +153,17 @@ export class RegisterDocumentationFormComponent
     });
   }
 
-  formChanges() {
+  formChanges(update = false) {
+    let requiredFields = this.getRequiredFields(this.registerForm);
+    let isValid = this.validateParameters(
+      this.requestIfo,
+      requiredFields['keys']
+    );
+
     this.onChange.emit({
-      isValid: this.registerForm.valid && this.loadInfo,
-      object: this.registerForm.getRawValue(),
+      isValid: this.registerForm.valid && isValid && this.loadInfo,
+      object: this.requestIfo,
+      update: update,
     });
   }
 
@@ -180,7 +202,7 @@ export class RegisterDocumentationFormComponent
 
   /* METODO QUE LLAMA AL SERVICIO DE SOLICITUDES
   ============================================== */
-  getRequestInfo() {
+  getRequestInfo(update = false) {
     if (this.requestId) {
       this.requestService.getById(this.requestId).subscribe({
         next: resp => {
@@ -207,10 +229,13 @@ export class RegisterDocumentationFormComponent
           this.transference = +resp.transferenceId;
           this.typeTransference = resp.typeOfTransfer;
           this.registerForm.patchValue(resp);
+          this.requestIfo = resp;
           this.getAffair(resp.affair);
           this.getPublicMinister(new ListParams());
           this.setFieldsRequired();
           this.loadInfo = this.registerForm.valid;
+
+          this.formChanges(update);
         },
         error: error => {
           console.log('No se cargaron datos de la solicitud. ', error);
@@ -292,7 +317,8 @@ export class RegisterDocumentationFormComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.registerForm.reset();
-        this.getRequestInfo();
+        //this.datePicker.bsValue = null; // Restablecer el valor del bsDatepicker
+        this.getRequestInfo(true);
         this.registerForm.markAsUntouched();
       }
     });
@@ -323,13 +349,12 @@ export class RegisterDocumentationFormComponent
             request[key] = null;
           }
         }
-        console.log(request);
         this.requestService.update(request.id, request).subscribe({
           next: resp => {
             console.log(resp);
             if (resp.statusCode == 200) {
               this.loadInfo = true;
-              this.formChanges();
+              this.getRequestInfo(true);
               this.alert('success', 'Correcto', 'Registro Actualizado');
             }
           },
@@ -361,10 +386,12 @@ export class RegisterDocumentationFormComponent
   }
 
   changeDateEvent(event: any) {
-    this.bsPaperValue = event;
+    console.log('error' + this.bsPaperValue);
+    //this.bsPaperValue = event;
     if (this.bsPaperValue) {
-      const date = this.bsPaperValue.toISOString();
-      this.registerForm.controls['paperDate'].setValue(date);
+      //const date = this.bsPaperValue.toISOString();
+      console.log('error' + this.bsPaperValue);
+      this.registerForm.controls['paperDate'].patchValue(this.bsPaperValue);
     } else {
       this.registerForm.controls['paperDate'].setValue(null);
     }
@@ -387,6 +414,15 @@ export class RegisterDocumentationFormComponent
     );
   }
 
+  convertDateFormat(dateString: string): string {
+    const date = new Date(dateString);
+    const day = ('0' + date.getDate()).slice(-2);
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  }
+
   getAffair(id: string | number) {
     this.affairService.getByIdAndOrigin(id, 'SAMI').subscribe({
       next: data => {
@@ -403,6 +439,14 @@ export class RegisterDocumentationFormComponent
   =============================================================== */
   displayNotifyMailsInput() {
     this.displayNotifyMails = this.process == 'register-request-similar-goods';
+  }
+
+  numericOnly(event): boolean {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
   }
 
   showInput(comp) {
@@ -442,5 +486,35 @@ export class RegisterDocumentationFormComponent
     }
 
     return input.includes(comp);
+  }
+
+  getRequiredFields(formGroup: FormGroup): { [key: string]: any } {
+    let requiredFields: { [key: string]: any } = {};
+
+    Object.keys(formGroup.controls).forEach(key => {
+      let control: any = formGroup.get(key);
+      if (
+        control.validator &&
+        control.validator({} as AbstractControl) &&
+        control.validator({} as AbstractControl).required
+      ) {
+        requiredFields[key] = control.value;
+      }
+    });
+
+    return {
+      data: requiredFields,
+      keys: Object.keys(requiredFields),
+    };
+  }
+
+  validateParameters(obj: { [key: string]: any }, params: string[]): boolean {
+    for (let param of params) {
+      if (!obj[param] || isNullOrEmpty(obj[param])) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }

@@ -68,4 +68,8 @@ export class BankMovementType extends HttpService {
       `${ParameterComerEndpoints.ParameterMod}?filter.parameter=$eq:${params}&filter.value=$eq:${user}`
     );
   }
+
+  getProcess(params?: string) {
+    return this.get(`parameters-mod/getAllV2`, params);
+  }
 }

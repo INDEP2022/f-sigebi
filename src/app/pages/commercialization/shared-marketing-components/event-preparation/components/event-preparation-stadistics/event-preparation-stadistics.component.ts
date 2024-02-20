@@ -5,7 +5,7 @@ import { EventStadisticsForm } from '../../utils/forms/event-stadistics-form';
 @Component({
   selector: 'event-preparation-stadistics',
   templateUrl: './event-preparation-stadistics.component.html',
-  styles: [],
+  styleUrls: ['./event-preparation-stadistics.component.css'],
 })
 export class EventPreparationStadisticsComponent implements OnInit {
   @Input() stadisticsForm: FormGroup<EventStadisticsForm>;

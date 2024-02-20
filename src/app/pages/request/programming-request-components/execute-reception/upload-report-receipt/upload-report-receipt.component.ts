@@ -47,6 +47,8 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   userInfo: any;
   sampleOrder: ISamplingOrder = null;
   idSample: number = 0;
+  fileSelected: boolean = false;
+
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
@@ -186,6 +188,12 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   }
 
   selectFile(event?: any) {
+    this.selectedFile = event.target.files[0];
+
+    // Encender la bandera cuando se selecciona un archivo
+    if (this.selectedFile) {
+      this.fileSelected = true;
+    }
     this.selectedFile = event.target.files[0];
     if (this.selectedFile?.size > 100000000) {
       this.validateSizePDF = true;
@@ -584,6 +592,74 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
 
       const extension = '.pdf';
       const docName = 'Anexo K';
+
+      this.wContentService
+        .addDocumentToContent(
+          docName,
+          extension,
+          JSON.stringify(formData),
+          this.selectedFile,
+          extension
+        )
+        .subscribe({
+          next: async response => {
+            const updateSample = await this.updateSamplek(response.dDocName);
+            if (updateSample) {
+              this.alertInfo(
+                'success',
+                'Acción Correcta',
+                'Documento adjuntado correctamente'
+              ).then(question => {
+                if (question.isConfirmed) {
+                  this.close();
+                  this.modalRef.content.callback(true);
+                }
+              });
+            }
+          },
+        });
+    }
+    if (
+      this.typeDoc == 2 ||
+      174 ||
+      7 ||
+      192 ||
+      108 ||
+      183 ||
+      26 ||
+      27 ||
+      50 ||
+      68 ||
+      217 ||
+      94 ||
+      40 ||
+      101 ||
+      105 ||
+      104 ||
+      72 ||
+      222 ||
+      223 ||
+      224 ||
+      225 ||
+      245 ||
+      246 ||
+      249
+    ) {
+      const token = this.authService.decodeToken();
+      console.log('entro', token);
+
+      const formData = {
+        keyDoc: this.idSample,
+        xNivelRegistroNSBDB: 'Reporte',
+        xNombreProceso: 'Reporte',
+        xDelegacionRegional: token.department,
+        DocTitle: 'Reporte',
+        dSecurityGroup: 'Public',
+        xTipoDocumento: this.typeDoc,
+      };
+
+      const extension = '.pdf';
+      const docName = 'Reporte';
 
       this.wContentService
         .addDocumentToContent(

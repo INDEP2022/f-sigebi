@@ -703,7 +703,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
 
   async getCsv(event: Event) {
     console.log(' n_CONT finalv -> ', this.n_CONT);
-    //debugger;
+    ////
     if (this.n_CONT == 0) {
       await this.msgUser(this.n_CONT);
     }
@@ -883,7 +883,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   }
 
   getTableData(byPage = false) {
-    // debugger;
+    // //
     let params = this.getFilterParams(byPage);
     this.dataRows = [];
     this.localdata.load(this.dataRows);
@@ -1161,7 +1161,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   }
 
   private async pupProcesa() {
-    debugger;
+    //
     const processType = this.processTypes.find(
       x => x.value == this.searchForm.get('processType').value
     );
@@ -1246,7 +1246,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           'warning',
           'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
           this.msgPaymentChange && this.msgPaymentChange.length > 0
-            ? this.msgPaymentChange.toLowerCase()
+            ? this.msgPaymentChange
             : 'No se encontraron datos'
         );
       }

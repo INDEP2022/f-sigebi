@@ -45,7 +45,8 @@
         [control]="dictumForm.get('opinionNumber')"
         label="N&uacute;mero Dictamen">
         <input
-          type="number"
+          type="text"
+          maxlength="100"
           formControlName="opinionNumber"
           class="form-control" />
       </form-field>
@@ -54,7 +55,11 @@
       <form-field
         [control]="dictumForm.get('veredict')"
         label="Juzgado &#47; Sala">
-        <input type="number" formControlName="veredict" class="form-control" />
+        <input
+          type="text"
+          maxlength="100"
+          formControlName="veredict"
+          class="form-control" />
       </form-field>
     </div>
     <div class="col-md-4">
@@ -62,7 +67,8 @@
         [control]="dictumForm.get('nullityTrial')"
         label="Juicio Nulidad">
         <input
-          type="number"
+          type="text"
+          maxlength="100"
           formControlName="nullityTrial"
           class="form-control" />
       </form-field>

@@ -141,6 +141,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   btnLoading: boolean = false;
+  btnLoading1: boolean = false;
   btnLoading2: boolean = false;
   btnLoading3: boolean = false;
   btnLoading4: boolean = false;
@@ -259,7 +260,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       modmandato: {
         title: 'Matrícula',
         sort: false,
-        type: 'custom',
+        // type: 'custom',
         // renderComponent: InputCellComponent,
         // onComponentInitFunction: (instance: any) => {
         //   instance.inputChange.subscribe({
@@ -373,18 +374,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         eventId: {
           title: 'Evento',
           sort: false,
-          // filter: {
-          //   type: 'custom',
-          //   component: CustomFilterComponent,
-          // },
         },
         batchId: {
           title: 'Lote',
           sort: false,
-          // filter: {
-          //   type: 'custom',
-          //   component: CustomFilterComponent,
-          // },
         },
         customer: {
           title: 'Cliente',
@@ -468,18 +461,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
               return '';
             }
           },
-          // valuePrepareFunction: (val: number) => {
-          //   const values = [
-          //     { id: 1, desc: 'Vehículo' },
-          //     { id: 2, desc: 'Diversos c/Anexo' },
-          //     { id: 3, desc: 'Diversos s/Anexo' },
-          //     { id: 4, desc: 'Aeronaves' },
-          //     { id: 5, desc: 'Chatarra c/Anexo' },
-          //     { id: 6, desc: 'Chatarra s/Anexo' },
-          //     { id: 7, desc: 'Venta de Bases' },
-          //   ];
-          //   return values.filter(m => m.id == val)[0]?.desc ?? '';
-          // },
         },
         factstatusId: {
           title: 'Estatus',
@@ -492,10 +473,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         Invoice: {
           title: 'Folio',
           sort: false,
-          // filter: {
-          //   type: 'custom',
-          //   component: CustomFilterComponent,
-          // },
         },
         document: {
           title: 'Tipo',
@@ -504,17 +481,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         impressionDate: {
           title: 'Fecha',
           sort: false,
-          // valuePrepareFunction: (text: string) => {
-          //   if (!text) return null;
-          //   let data = text.split(' ');
-          //   return `${
-          //     text
-          //       ? data[0].split('T')[0].split('-').reverse().join('/') + ' ' + data[1]
-          //       : ''
-          //   }`;
-          // },
           valuePrepareFunction: (val: string) => {
-            return val ? val.split('-').reverse().join('/') : '';
+            return val ? val.split('-').reverse().join('/') + ' 00:00:00' : '';
           },
           filterFunction: () => {
             return true;
@@ -687,27 +655,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       ...this.paramsList2.getValue(),
       ...this.columnFilters2,
     };
-    if (
-      // !params['filter.goodNot'] &&
-      // !params['filter.amount'] &&
-      // !params['filter.description'] &&
-      // !params['filter.price'] &&
-      // !params['filter.vat'] &&
-      // !params['filter.total'] &&
-      // !params['filter.brand'] &&
-      // !params['filter.subBrand'] &&
-
-      // !params['filter.model'] &&
-      // !params['filter.series'] &&
-      // !params['filter.downloadcvman'] &&
-
-      // !params['filter.tuition'] &&
-      // !params['filter.unit'] &&
-      // !params['filter.prod'] &&
-
-      !params['filter.billId'] &&
-      !params['filter.eventId']
-    ) {
+    if (!params['filter.billId'] && !params['filter.eventId']) {
       this.loading2 = false;
       this.totalItems2 = 0;
       this.dataFilter2.load([]);
@@ -735,10 +683,11 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             value.downloadcvman = data[index].mandato;
             value.modmandato = data[index].matricula;
           });
-
-          this.dataFilter2.load(result);
-          this.dataFilter2.refresh();
-          this.loading2 = false;
+          Promise.all(result).then(resp => {
+            this.dataFilter2.load(result);
+            this.dataFilter2.refresh();
+            this.loading2 = false;
+          });
         },
         error: () => {
           this.loading2 = false;
@@ -760,27 +709,16 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     );
   }
 
-  getAllComer(val?: string) {
+  async getAllComer(val?: string) {
     const params = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
       //...{ sortBy: 'batchId:ASC' },
     };
-
-    if (
-      !params['filter.eventId'] &&
-      !params['filter.batchId'] &&
-      !params['filter.customer'] &&
-      !params['filter.delegationNumber'] &&
-      !params['filter.Type'] &&
-      !params['filter.document'] &&
-      !params['filter.series'] &&
-      !params['filter.Invoice'] &&
-      !params['filter.factstatusId'] &&
-      !params['filter.vouchertype'] &&
-      !params['filter.impressionDate']
-    ) {
-      this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
+    let res = await this.forArrayFilters_();
+    console.log('res', res);
+    if (res) {
+      // this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
       this.paramsList.getValue()['limit'] = 500;
       this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
 
@@ -809,6 +747,97 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.formDetalle.get('total').patchValue(0);
       this.formDetalle.get('countTotal').patchValue(0);
 
+      delete this.paramsList.getValue()['filter.eventId'];
+      delete this.paramsList2.getValue()['filter.eventId'];
+      delete this.paramsList2.getValue()['filter.billId'];
+    } else {
+      this.loading = true;
+      this.comerInvoice.getAllSumInvoice(params).subscribe({
+        next: resp => {
+          this.loading = false;
+          this.formFactura.get('count').patchValue(resp.count);
+          this.totalItems = resp.count;
+          this.dataFilter.load(resp.data);
+          this.dataFilter.refresh();
+
+          if (resp.data[0]?.eventId)
+            this.paramsList2.getValue()[
+              'filter.eventId'
+            ] = `${SearchFilter.EQ}:${resp.data[0].eventId}`;
+          if (resp.data[0]?.billId)
+            this.paramsList2.getValue()[
+              'filter.billId'
+            ] = `${SearchFilter.EQ}:${resp.data[0].billId}`;
+          if (resp.count > 0) {
+            this.rowInvoice = resp.data[0];
+            this.getComerDetInovice();
+            this.getSum();
+
+            this.comer.emit({
+              val: resp.data[0]?.eventId,
+              count: resp.data.length,
+              data: [],
+              filter: params,
+            });
+          }
+        },
+        error: () => {
+          this.loading = false;
+          this.totalItems = 0;
+          this.dataFilter.load([]);
+          this.dataFilter.refresh();
+          this.formFactura.reset();
+          this.formDetalle.reset();
+          this.totalItems2 = 0;
+          this.dataFilter2.load([]);
+          this.dataFilter2.refresh();
+        },
+      });
+    }
+    return;
+    if (
+      !params['filter.eventId'] &&
+      !params['filter.batchId'] &&
+      !params['filter.customer'] &&
+      !params['filter.delegationNumber'] &&
+      !params['filter.Type'] &&
+      !params['filter.document'] &&
+      !params['filter.series'] &&
+      !params['filter.Invoice'] &&
+      !params['filter.factstatusId'] &&
+      !params['filter.vouchertype'] &&
+      !params['filter.impressionDate']
+    ) {
+      // this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
+      this.paramsList.getValue()['limit'] = 500;
+      this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
+
+      this.isSelect = [];
+      this.rowInvoice = null;
+      this.loading = false;
+      this.totalItems = 0;
+      this.dataFilter.load([]);
+      this.dataFilter.refresh();
+      this.formFactura.reset();
+      this.formDetalle.reset();
+      this.totalItems2 = 0;
+      this.dataFilter2.load([]);
+      this.dataFilter2.refresh();
+
+      this.formFactura.get('importE').patchValue(0);
+      this.formFactura.get('ivaE').patchValue(0);
+      this.formFactura.get('totalE').patchValue(0);
+      this.formFactura.get('importI').patchValue(0);
+      this.formFactura.get('ivaI').patchValue(0);
+      this.formFactura.get('totalI').patchValue(0);
+
+      this.formDetalle.get('count').patchValue(0);
+      this.formDetalle.get('totalI').patchValue(0);
+      this.formDetalle.get('totalIva').patchValue(0);
+      this.formDetalle.get('total').patchValue(0);
+      this.formDetalle.get('countTotal').patchValue(0);
+
+      delete this.paramsList.getValue()['filter.eventId'];
       delete this.paramsList2.getValue()['filter.eventId'];
       delete this.paramsList2.getValue()['filter.billId'];
     } else {
@@ -917,7 +946,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     }
 
     this.alertQuestion(
-      'warning',
+      'question',
       `Se generarán ${valid.contador} factura(s)`,
       '¿Desea continuar?'
     ).then(async ans => {
@@ -939,12 +968,12 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           partiality: null,
           type: null,
         });
-
+        console.log('pk_comer', pk_comer);
         if (!pk_comer) {
           this.alert('warning', 'Ha ocurrido un fallo en la operación', '');
           this.btnLoading = false;
         } else if (pk_comer.p_RESUL == 'Correcto.') {
-          this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
+          // this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
           this.paramsList.getValue()['limit'] = 500;
           this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
           this.paramsList.getValue()[
@@ -958,11 +987,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             await this.billingsService.getEatInconsistences(params);
           this.btnLoading = false;
           if (countInconsistencias.count > 0) {
-            this.numb.emit({ numberTab: 4, event: event });
-            // this.cambiarTab(1);
-            // this.params3.getValue()['filter.eventId'] = `$eq:${event}`;
-            // this.valDefaultWhereInconsistencias = true;
-            // this.getInconsistencies_();
+            this.numb.emit({ numberTab: 2, event: event });
           }
         }
       } else {
@@ -1041,7 +1066,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.alert('warning', 'No se realizo selección de Factura(s)', '');
       return;
     }
-
+    this.btnLoading3 = true;
     for (const act of this.blk_actdat) {
       const sumEat = await this.getSumEat(act.eventId, act.batchId);
       if (sumEat) {
@@ -1129,7 +1154,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         }
       }
     }
-
+    this.btnLoading3 = false;
     let config: ModalOptions = {
       initialState: {
         data: this.blk_actdat,
@@ -1274,10 +1299,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
       await this.newMarkProcess('FL', 'PREF', c_indN);
       console.log({ pEvent: String(event), ptpevento: tp_event });
-      // await this.generateInvoiceCtrl(String(event), tp_event);
+      await this.generateInvoiceCtrl(String(event), tp_event);
 
       if (c_indN == 'F') {
-        this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
+        // this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
         this.paramsList.getValue()[
           'filter.eventId'
         ] = `${SearchFilter.EQ}:${event}`;
@@ -1812,70 +1837,103 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     impressionDate: string
   ) {
     const count = await this.getCount(eventId, factura);
+    console.log(count);
     const data = {
       PEVENTO: eventId,
       PFACTURA: factura,
     };
+    console.log('data ', data);
     if (pTipo == 1) {
       if (count > 0) {
-        this.getReport('RCOMERFACTURAS_VEH_VNR', data);
+        // this.getReportNull();
+        this.getReport('RCOMERFACTURAS_VEH_VNR', data); // FUNCIONA
       } else {
+        // this.getReportNull();
         this.getReport('RCOMERFACTURAS_VEH', data);
       }
     } else if (pTipo == 2) {
       const v_val = await this.etapaNexo(impressionDate);
+      console.log('v_val', v_val);
       if (v_val == 1) {
-        this.getReport('RCOMERFACTURAS_DIVERSOS', data);
+        // this.getReportNull();
+        this.getReport('RCOMERFACTURAS_DIVERSOS', data); // FUNCIONA
       } else if (v_val == 2) {
-        this.getReport('RCOMERFAC_GRALSNANX', data);
+        this.getReport('RCOMERFAC_GRALSNANX', data); // FUNCIONA
+        // this.getReportNull();
       } else {
         this.alert('warning', 'No se puede visualizar el reporte', '');
       }
     } else if (pTipo == 3) {
       if (count > 0) {
+        // this.getReportNull();
         this.getReport('RCOMERFACTURAS_DIV_SA_VNR', data);
       } else {
-        this.getReport('RCOMERFACTURAS_DIVSANEXO', data);
+        // this.getReportNull();
+        this.getReport('RCOMERFACTURAS_DIVSANEXO', data); // FUNCIONA
       }
     } else if (pTipo == 4) {
       if (count > 0) {
-        this.getReport('RCOMERFACTURAS_AERONAVE_VNR', data);
+        this.getReport('RCOMERFACTURAS_AERONAVE_VNR', data); // SI
       } else {
-        this.getReport('RCOMERFACTURAS_AERONAVE', data);
+        this.getReport('RCOMERFACTURAS_AERONAVE', data); // FUNCIONA
       }
     } else if (pTipo == 5) {
       const v_val = await this.etapaNexo(impressionDate);
+      console.log(v_val);
       if (v_val == 1) {
-        this.getReport('RCOMERFACTURAS_CHCONANEXO', data);
+        this.getReport('RCOMERFACTURAS_CHCONANEXO', data); // FUNCIONA
+        // this.getReportNull();
       } else if (v_val == 2) {
-        this.getReport('RCOMERFAC_GRALSNANX', data);
+        this.getReport('RCOMERFAC_GRALSNANX', data); // FUNCIONA
+        // this.getReportNull();
       } else {
         this.alert('warning', 'No se puede visualizar el reporte', '');
       }
     } else if (pTipo == 6) {
-      this.getReport('RCOMERFACTURAS_CHATARRA_SA', data);
+      this.getReport('RCOMERFACTURAS_CHATARRA_SA', data); // FUNCIONA
     } else if (pTipo == 10) {
-      this.getReport('RCOMERFACTURAS_ANEXOS', data);
+      this.getReport('RCOMERFACTURAS_ANEXOS', data); // FUNCIONA
     } else if (pTipo == 11 && psubtipo == 1) {
-      this.getReport('RCOMERCONSENTVEH', data);
+      this.getReport('RCOMERCONSENTVEH', data); // FUNCIONA
     } else if (pTipo == 11 && psubtipo == 2) {
       // PARA IMPRIMIR CARTAS DE RESPONSABILIDAD DE AERONAVES
-      this.getReport('RCOMERCONSENTBDCA', data);
+      this.getReport('RCOMERCONSENTBDCA', data); // FUNCIONA
     } else if (pTipo == 11 && psubtipo == 3) {
-      this.getReport('RCOMERCONSENTSBD', data);
+      this.getReport('RCOMERCONSENTSBD', data); // FUNCIONA
     } else if (pTipo == 11 && psubtipo == 4) {
-      this.getReport('RCOMERCONSENTAERO', data);
+      this.getReport('RCOMERCONSENTAERO', data); // FUNCIONA
     } else if (pTipo == 11 && psubtipo == 5) {
-      this.getReport('RCOMERCONSENTCHCA', data);
+      this.getReport('RCOMERCONSENTCHCA', data); // FUNCIONA
     } else if (pTipo == 11 && psubtipo == 6) {
-      this.getReport('RCOMERCONSENTCHSA', data);
+      this.getReport('RCOMERCONSENTCHSA', data); // FUNCIONA
     } else if (pTipo == 12 && [1, 2, 3, 4, 5, 6].includes(psubtipo)) {
-      this.getReport('RCOMERCARTASLIB', { PEVENTO: eventId });
+      // this.getReport('RCOMERCARTASLIB', { PEVENTO: eventId });
+      this.getReportNull();
     }
   }
 
   getReport(name: string, params: Object) {
     this.siabService.fetchReport(name, params).subscribe({
+      next: resp => {
+        const blob = new Blob([resp], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
+  }
+  getReportNull(name?: string, params?: Object) {
+    this.siabService.fetchReportBlank('blank').subscribe({
       next: resp => {
         const blob = new Blob([resp], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
@@ -2161,12 +2219,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       '¿Desea Continuar?'
     ).then(async question => {
       if (question.isConfirmed) {
-        // PUP_GENERA_RUTA; // CANCELADO
-        await this.pupGeneraRuta();
-        // PUP_GENERA_RUTA2; // CANCELADO
-        await this.pupGeneraRuta2();
-        // PUP_INICIALIZA_BATS; // CANCELADO
-        await this.pupInicializaBats();
         // IMPRIME_PAQUETE;
         await this.impresioPackage();
 
@@ -2174,10 +2226,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       }
     });
   }
-
-  async pupInicializaBats() {}
-  async pupGeneraRuta2() {}
-  async pupGeneraRuta() {}
 
   openURL() {
     if (this.selectInovice() == 1) {
@@ -2241,6 +2289,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   async impresionInvoice() {
     for (let invoice of this.isSelect) {
       // let invoice = this.isSelect[0];
+      if (!invoice.Invoice) {
+        this.alert('warning', 'No ha capturado el folio de la factura', '');
+        break;
+      }
       //revisar con procedimiento pup_rep_facturas_mas
       this.callReport(
         Number(invoice.Type),
@@ -2332,19 +2384,11 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       'question',
       'Se enviará el nuevo CFDI para Atención a Clientes',
       '¿Desea continuar?'
-    ).then(answer => {
+    ).then(async answer => {
       if (answer.isConfirmed) {
-        // let config: ModalOptions = {
-        //   initialState: {
-        //     callback: (data: boolean, val: number) => {},
-        //   },
-        //   class: 'modal-xl modal-dialog-centered',
-        //   ignoreBackdropClick: true,
-        // };
-        // this.modalService.show(GetCfdiComponent, config);
-        // PUP_GENERA_RUTA3;
         // PUP_INICIALIZA_BATS;
-        this.impresioPackage();
+        await this.impresioPackage();
+        this.alert('success', 'El CFDI nuevo fue enviado', '');
       }
     });
   }
@@ -2377,16 +2421,13 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         await this.pupRepBillMore(11, invoice.Type, invoice);
       }
     });
-    // for (const invoice of this.isSelect) {
-
-    // }
 
     Promise.all(result).then(resp => {
       //llama PUP_EJECUTA_BATS
       this.isSelect = [];
       this.dataFilter.refresh();
       this.pupEjecutaBats();
-      this.alert('success', 'El CFDI nuevo fue enviado', '');
+      return true;
     });
   }
   pupEjecutaBats() {}
@@ -2694,11 +2735,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
                 billId: invoice.billId,
               };
               arr.push(obj);
-              // await this.updateProcess(
-              //   invoice.eventId,
-              //   invoice.billId,
-              //   process
-              // );
             } else {
               cont++;
             }
@@ -2713,7 +2749,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             billId: invoice.billId,
           };
           arr.push(obj);
-          // await this.updateProcess(invoice.eventId, invoice.billId, process);
         }
       }
     }
@@ -2809,8 +2844,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.btnLoading14 = false;
       this.alert(
         'warning',
-        'Atención',
-        `No se puede visualizar el anexo, la fecha de impresión es nula o es mayor al ${this.datePipe.transform(
+        'No se puede visualizar el anexo',
+        `La fecha de impresión es nula o es mayor al ${this.datePipe.transform(
           date,
           'dd/MM/yyyy'
         )}`
@@ -2994,25 +3029,17 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     this.getAllComer();
   }
 
-  printerMasivePDF() {
-    this.alert('warning', 'Debe seleccionar una factura', '');
+  async printerMasivePDF() {
+    if (this.isSelect.length == 0)
+      return this.alert('warning', 'Debe seleccionar una factura', '');
     this.path = '';
     let L_PATH = '';
     let L_FILE: any;
     let VC_FILTRO = 'Todos (*.*) |*.*|';
-    // L_FILE = this.GET_FILE_NAME(FILE_FILTER => VC_FILTRO, DIRECTORY_NAME=> L_PATH);
-    // L_PATH = this.GET_PATH_NAME(L_FILE);
-    if (!this.path) {
-      return this.alert(
-        'warning',
-        'Debe especificar el directorio para almacenar los archivos',
-        ''
-      );
-    }
-
+    this.btnLoading1 = true;
     this.path = L_PATH;
     // IMPRIMIR_FACTURA_2
-    this.printerBill2();
+    await this.printerBill2();
   }
 
   GET_PATH_NAME(L_FILE): string {
@@ -3047,6 +3074,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         // break;
       }
     }
+    this.btnLoading1 = false;
+    this.alert('success', 'Proceso terminado', '');
   }
 
   async pupRepBillMore(P_TIPOA: number, psubtipo: number, invoice: any) {
@@ -3069,41 +3098,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     let result = await this.servicePupRepBillMore(data_);
     console.log('result', result);
     return result;
-
-    // let pTipo: number;
-    // pTipo = psubtipo;
-    // if (P_TIPOA == 10) {
-    //   pTipo = P_TIPOA;
-    // } else if (P_TIPOA == 11) {
-    //   pTipo = P_TIPOA;
-    // }
-
-    // const data = {
-    //   PEVENTO: invoice.eventId,
-    //   PFACTURA: invoice.billId,
-    // };
-    // if (pTipo == 10) {
-    //   // -- PARA IMPRIMIR EL ANEXO
-    //   this.getReport('RCOMERFACTURAS_ANEXOS2', data);
-    // } else if (pTipo == 11 && psubtipo == 1) {
-    //   //-- PARA IMPRIMIR CARTAS DE RESPONSABILIDAD DE VEHICULOS
-    //   this.getReport('RCOMERCONSENTVEH', data);
-    // } else if (pTipo == 11 && psubtipo == 2) {
-    //   //-- PARA IMPRIMIR CARTAS DE RESPONSABILIDAD DE AERONAVES
-    //   this.getReport('RCOMERCONSENTBDCA', data);
-    // } else if (pTipo == 11 && psubtipo == 3) {
-    //   //-- PARA IMPRIMIR CARTAS DE RESPONSABILIDAD DE DIVERSOS Y CHATARRA
-    //   this.getReport('RCOMERCONSENTSBD', data);
-    // } else if (pTipo == 11 && psubtipo == 4) {
-    //   //-- PARA IMPRIMIR CARTAS DE ENTREGA DE VEHICULOS Y AERONAVES
-    //   this.getReport('RCOMERCONSENTAERO', data);
-    // } else if (pTipo == 11 && psubtipo == 5) {
-    //   //-- PARA IMPRIMIR CARTAS DE ENTREGA DE VEHICULOS Y AERONAVES
-    //   this.getReport('RCOMERCONSENTCHCA', data);
-    // } else if (pTipo == 11 && psubtipo == 6) {
-    //   //-- PARA IMPRIMIR CARTAS DE ENTREGA DE AERONAVES
-    //   this.getReport('RCOMERCONSENTCHSA', data);
-    // }
   }
   servicePupRepBillMore(data: IPupRepBillMore) {
     return new Promise((resolve, reject) => {
@@ -3154,11 +3148,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           prodservSatKey: this.selectDataDet.prodservSatKey,
         };
         result = await this.billingsService.updateDetBillings(body);
-        // update comer_detfacturas
-        // set CVE_PRODSERV_SAT=:comer_detfacturas.CVE_PRODSERV_SAT
-        // where id_evento=:comer_detfacturas.ID_EVENTO
-        // and id_lote=:comer_detfacturas.ID_LOTE
-        // and id_factura=:comer_detfacturas.ID_FACTURA;
       } else if (option == 'AU') {
         this.btnLoadAU = true;
         let body = {
@@ -3169,12 +3158,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           unitSatKey: this.selectDataDet.unitSatKey,
         };
         result = await this.billingsService.updateDetBillings(body);
-        // AU
-        // update comer_detfacturas
-        // set CVE_UNIDAD_SAT=:comer_detfacturas.CVE_UNIDAD_SAT
-        // where id_evento=:comer_detfacturas.ID_EVENTO
-        // and id_lote=:comer_detfacturas.ID_LOTE
-        // and id_factura=:comer_detfacturas.ID_FACTURA;
       }
 
       if (!result) {
@@ -3210,5 +3193,20 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     }
     this.dataFilter.refresh();
     return true;
+  }
+
+  async forArrayFilters_() {
+    const subheaderFields: any = this.table.grid.source;
+
+    const filterConf = subheaderFields.filterConf;
+    let val = true;
+    if (filterConf.filters.length > 0) {
+      filterConf.filters.forEach((item: any) => {
+        if (item.search != '') {
+          val = false;
+        }
+      });
+    }
+    return val;
   }
 }

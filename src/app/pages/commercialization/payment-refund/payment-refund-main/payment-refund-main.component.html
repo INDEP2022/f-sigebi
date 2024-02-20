@@ -7,12 +7,9 @@
       <div class="row mt-5">
         <div class="col-md-12 d-flex flex-row-reverse mb-3">
           <div>
-            <div
-              class="btn-group mt-0 me-2"
-              placement="bottom right"
-              dropdown
-              [isDisabled]="">
+            <div class="btn-group mt-0 me-2" placement="bottom right" dropdown>
               <button
+                [disabled]="btnLoadingCSV"
                 #actionsBtn
                 dropdownToggle
                 type="button"
@@ -222,6 +219,20 @@
                   </app-pagination>
                 </div>
                 <div class="col-md-12">
+                  <div class="row mt-2">
+                    <form class="form-material" [formGroup]="controlForm2">
+                      <div class="col-sm-9">
+                        <form-field [control]="controlForm2.get('txtMsg')">
+                          <input
+                            readonly
+                            type="text"
+                            maxlenght="100"
+                            class="form-control"
+                            formControlName="txtMsg" />
+                        </form-field>
+                      </div>
+                    </form>
+                  </div>
                   <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                       <strong>DESCRIPCIÓN</strong>
@@ -278,7 +289,7 @@
                       id="paymentTable"
                       [settings]="paymentSettings"
                       [source]="dataTableBankAccount"
-                      (userRowSelect)="selectPayment($event.selected)">
+                      (userRowSelect)="selectPayment($event.data)">
                     </ng2-smart-table>
                   </ng-scrollbar>
                   <app-pagination
@@ -313,33 +324,43 @@
               class="row row-cols-sm-1 row row-cols-1 row-cols-md-2 row row-cols-lg-3 row-cols-xl-4 g-3">
               <div class="col">
                 <button
+                  [ngClass]="{ loading: btnLoading }"
+                  [disabled]="btnLoading"
                   class="btn btn-sm btn-info btn-block active me-2 font-size-13"
                   (click)="getComerCreationData()">
                   Crear Control
-                  <i class="bx bx-plus bx-sm float-icon"></i>
+                  <i
+                    *ngIf="!btnLoading"
+                    class="bx bx-plus bx-sm float-icon"></i>
                 </button>
               </div>
               <div class="col">
                 <button
+                  [ngClass]="{ loading: btnLoading2 }"
+                  [disabled]="btnLoading2"
                   class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
                   (click)="requestSpentGenerator()"
                   [disabled]="!disabledBtn">
                   Generar Solicitudes Gastos
-                  <i class="bi bi-cash"></i>
+                  <i *ngIf="!btnLoading2" class="bi bi-cash"></i>
                 </button>
                 <!-- (click)="changeLayout('EXPENSE REQUEST')" -->
               </div>
               <div class="col">
                 <button
+                  [ngClass]="{ loading: btnLoading3 }"
+                  [disabled]="btnLoading3"
                   class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
                   (click)="sendRequests()"
                   [disabled]="!disabledBtn">
                   Enviar Solicitudes a SIRSAE
-                  <i class="bx bx-send"></i>
+                  <i *ngIf="!btnLoading3" class="bx bx-send"></i>
                 </button>
               </div>
               <div class="col">
                 <button
+                  [ngClass]="{ loading: btnLoading4 }"
+                  [disabled]="btnLoading4"
                   class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
                   (click)="verifyPaysSirsae()"
                   [disabled]="!disabledBtn">
@@ -348,6 +369,7 @@
               </div>
               <div class="col">
                 <button
+                  [disabled]="!valBtns"
                   class="btn btn-sm btn-danger btn-block active me-2 font-size-13"
                   (click)="changeLayout()">
                   Mantenimiento de Layouts
@@ -356,6 +378,7 @@
               </div>
               <div class="col">
                 <button
+                  [disabled]="!valBtns"
                   class="btn btn-sm btn-danger btn-block active me-2 font-size-13"
                   (click)="openCreationModal()">
                   Permisos de Creaci&oacute;n

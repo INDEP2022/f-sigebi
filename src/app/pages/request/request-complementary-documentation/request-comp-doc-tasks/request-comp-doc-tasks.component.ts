@@ -12,10 +12,12 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 //Components
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -31,16 +33,15 @@ import Swal from 'sweetalert2';
 import { DELEGATION_COLUMNS_REPORT } from '../../../../../app/pages/siab-web/commercialization/report-unsold-goods/report-unsold-goods/columns';
 import { SendRequestEmailComponent } from '../../destination-information-request/send-request-email/send-request-email.component';
 import { ChangeLegalStatusComponent } from '../../economic-compensation/change-legal-status/change-legal-status.component';
+import { AnnexJAssetsClassificationComponent } from '../../generate-sampling-supervision/assets-classification/annex-j-assets-classification/annex-j-assets-classification.component';
+import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
+import { UploadReportReceiptComponent } from '../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { CreateReportComponent } from '../../shared-request/create-report/create-report.component';
 import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/mail-field-modal.component';
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { UploadReportReceiptComponent } from '../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
-import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
-import { AnnexJAssetsClassificationComponent } from '../../generate-sampling-supervision/assets-classification/annex-j-assets-classification/annex-j-assets-classification.component';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -352,7 +353,7 @@ export class RequestCompDocTasksComponent
 
     modalRef.content.sign.subscribe(response => {
       if (response) {
-        this.openSignature();
+        this.openSignature(response);
       }
     });
 
@@ -610,7 +611,7 @@ export class RequestCompDocTasksComponent
   async turnNotificationTask(email: string) {
     const params = new ListParams();
     params['filter.applicationId'] = `$eq:56817`; //`$eq:${this.requestId}`;
-    debugger;
+    //
     const goodResDevResult: any = await this.getGoodResDev(params);
     if (goodResDevResult.count == 0) {
       this.onLoadToast('error', 'No se han seleccionado bienes del Inventario');
@@ -737,7 +738,7 @@ export class RequestCompDocTasksComponent
         this.requestId,
         this.affair,
         this.process,
-        this.requestInfo
+        this.requestInfo.detail
       );
 
     const user: any = this.authService.decodeToken();
@@ -909,6 +910,7 @@ export class RequestCompDocTasksComponent
       const taskForm: ITask = {
         State: state,
         taskDefinitionId: null,
+        endDate: new Date(),
       };
       this.taskService.update(id, taskForm).subscribe({
         next: response => {
@@ -1585,6 +1587,10 @@ export class RequestCompDocTasksComponent
 
   onChangeRegDoc(event) {
     this.validate.regdoc = event.isValid;
+    if (event.update) {
+      this.requestInfo.detail = event.object;
+    }
+
     //Agreagar validaciones en especifico
   }
 
@@ -1723,9 +1729,8 @@ export class RequestCompDocTasksComponent
   }
 
   openModalLegal(context?: Partial<ChangeLegalStatusComponent>) {
-
     if (this.requestInfo.detail.reportSheet == 'OCSJ') {
-      this.openSignature();
+      this.openSignature(0);
       return;
     }
 
@@ -1750,10 +1755,11 @@ export class RequestCompDocTasksComponent
 
   createDictumReturn() {}
 
-  showReport(data) {
-    console.log(data);
+  async showReport(data) {
+    let report = await this.getStatusReport();
+    report = report.isValid ? report.data[0] : report;
 
-    if (false) {
+    if (isNullOrEmpty(report.ucmDocumentName)) {
       this.wContentService
         .downloadDinamycReport(
           'sae.rptdesign',
@@ -1763,14 +1769,17 @@ export class RequestCompDocTasksComponent
         )
         .subscribe({
           next: response => {
-            console.log(response);
+            //let blob = this.dataURItoBlob(response);
+            let file = new Blob([response], { type: 'application/pdf' });
+            const fileURL = URL.createObjectURL(file);
+            this.openPrevPdf(fileURL);
           },
           error: error => {
             this.showError('Vista previa no dipoonible');
           },
         });
     } else {
-      this.wContentService.obtainFile('SAE568245').subscribe({
+      this.wContentService.obtainFile(report.ucmDocumentName).subscribe({
         next: response => {
           let blob = this.dataURItoBlob(response);
           let file = new Blob([blob], { type: 'application/pdf' });
@@ -1844,10 +1853,20 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  openSignature() {
+  //Validar firmantes de reportes
+  //En parametro validationocsp
+  getStatusFirmantes() {
+    console.log('getStatusFirmantes');
+
+    //Servicio http://sigebimsqa.indep.gob.mx/electronicfirm/api/v1/signatories
+
+    //validationocsp ? firmarReporte : na
+  }
+
+  openSignature(object) {
     this.openModal(
       AnnexJAssetsClassificationComponent,
-      "328",
+      object.reportFolio,
       'sign-annexJ-assets-classification'
     );
   }
@@ -1856,12 +1875,20 @@ export class RequestCompDocTasksComponent
     if (!this.signReport) {
       let config: ModalOptions = {
         initialState: {
+          requestId: this.requestId,
+          reportId: this.reportId,
+          reportTable: this.reportTable,
           idSample: idSample,
           typeAnnex: typeAnnex,
           callback: async (typeDocument: number, typeSign: string) => {
             if (typeAnnex == 'sign-annexJ-assets-classification') {
               if (typeDocument && typeSign) {
-                this.showReportInfo(typeDocument, typeSign, typeAnnex);
+                this.showReportInfo(
+                  idSample,
+                  typeDocument,
+                  typeSign,
+                  typeAnnex
+                );
               }
             }
           },
@@ -1871,37 +1898,46 @@ export class RequestCompDocTasksComponent
       };
       this.modalService.show(component, config);
     } else {
-      this.showReportInfo(0, '', '');
+      this.showReportInfo(0, 0, '', '');
     }
   }
 
-  showReportInfo(typeDocument: number, typeSign: string, typeAnnex: string) {
+  showReportInfo(
+    id: number,
+    typeDocument: number,
+    typeSign: string,
+    typeAnnex: string
+  ) {
     const idTypeDoc = typeDocument;
-    const idSample = this.requestId;
+    const idSample = id;
+    const orderSampleId = id;
+    const requestId = this.requestId;
     const typeFirm = typeSign;
-    const tableName = "";//this.tableName;
-    const reportName = ""//this.tableName;
+    const tableName = this.reportTable; //this.tableName;
+    const reportName = 'sae.rptdesign'; //this.tableName;
     const dynamic = true;
-    const signed = !this.signReport;//!this.isSigned;
+    const signed = !this.signReport; //!this.isSigned;
 
     //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
         idTypeDoc,
         idSample,
+        orderSampleId,
         typeFirm,
         typeAnnex,
         dynamic,
         tableName,
         reportName,
         signed,
+        requestId,
         callback: data => {
-          if (data) {
-            if (typeFirm != 'electronica') {
-              this.uploadDocument(this.requestId, typeDocument);
-            } else {
-              //this.getInfoSample();
+          if (typeFirm != 'electronica') {
+            if (data) {
+              this.uploadDocument(idSample, typeDocument);
             }
+          } else if (typeFirm == 'electronica') {
+            this.firmarReporte();
           }
         },
       },
@@ -1916,9 +1952,11 @@ export class RequestCompDocTasksComponent
     config.initialState = {
       typeDoc: typeDocument,
       idSample: id,
-      callback: data => {
+      callback: async data => {
         if (data) {
           //this.getInfoSample();
+          //reporte dinamico marcar como firmado
+          this.firmarReporte();
         }
       },
     };
@@ -1928,6 +1966,19 @@ export class RequestCompDocTasksComponent
 
   //Reportes dinamicos
   //Firma de reportes
+
+  async firmarReporte() {
+    const user: any = this.authService.decodeToken();
+    let report = await this.getStatusReport();
+    report = report.data[0];
+    report.signedReport = 'Y';
+    report.modificationUser = user.username;
+    report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
+    this.reportgoodService.saveReportDynamic(report).subscribe({
+      next: resp => {},
+      error: err => {},
+    });
+  }
 }
 
 export function isNullOrEmpty(value: any): boolean {

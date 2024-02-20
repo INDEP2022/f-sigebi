@@ -627,7 +627,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   private async checkPartialize() {
     let vb_parcial = false;
-    // debugger;
+    // //
     const delegaciones = await this.getDelegacionJoinSubdelDepartamentos();
     if (delegaciones) {
       if (delegaciones.length > 1) {
@@ -674,7 +674,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   // private async
 
   async postQuery() {
-    // debugger;
+    // //
     this.errorMessage = null;
     await this.postRecord(true);
     // this.loading = false;
@@ -721,7 +721,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       lbln_encontro: boolean,
       lbln_conciliado: string;
     vn_simb = (this.nval(5) + '').indexOf('/');
-    debugger;
+    //
     console.log(this.nval(5));
     if (vn_simb > 0) {
       const array = this.nval(5).split('/');
@@ -783,7 +783,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   private fillValInNumerario(column: number = 2, type: number = 0) {
-    // debugger;
+    // //
     let index = this.data.findIndex(row => row.column === 'val' + column);
     if (index > -1) {
       this.data;
@@ -832,7 +832,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     return true;
   }
   private async excepNumerario() {
-    debugger;
+    //
     const filterParams = new FilterParams();
     // filterParams.limit = 1000;
     filterParams.addFilter(
@@ -912,7 +912,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     );
   }
   async preUpdate() {
-    // debugger;
+    // //
     if (this.descripcion && this.descripcion.value) {
       const tamanio = this.descripcion.value.length;
       if (tamanio <= 1) {
@@ -953,7 +953,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   private fillParams(byPage = false) {
-    // debugger;
+    // //
     // this.bodyGoodCharacteristics = {};
     if (byPage) {
       this.filterParams.page = this.params.getValue().page;
@@ -1007,7 +1007,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   private pufQuitaCero(pcValor: string) {
-    // debugger;
+    // //
     let vcVal = pcValor;
     let vnPunto = pcValor.indexOf('.');
     let vnIni, vnFin;
@@ -1021,7 +1021,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   private async fillSelectedBad() {
-    // debugger;
+    // //
     this.selectedBad = await firstValueFrom(
       this.attribGoodBadService.getById(this.good.id).pipe(
         takeUntil(this.$unSubscribe),
@@ -1052,7 +1052,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   private setQuantity(item: any) {
-    // debugger;
+    // //
     this.resetValidatorsQuantity();
 
     this.medFilters =
@@ -1167,7 +1167,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     // this.getTDicta();
   }
   async searchGood(byPage = false) {
-    // debugger;
+    // //
     // this.reloadSubdelegation = false;
     // if (byPage) {
     //   this.loader.load = true;
@@ -1237,7 +1237,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       .pipe(map(x => (x.data ? x.data : [])));
   }
 
-  // debugger;
+  // //
   private async postRecord(isPostQuery = false) {
     const filterParams = new FilterParams();
     filterParams.addFilter('typeNumber', 'CARBIEN');
@@ -1334,7 +1334,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   private async getValidations() {
-    // debugger;
+    // //
     const response = await firstValueFrom(
       this.getStatusXPantalla().pipe(catchError(x => of(null)))
     );
