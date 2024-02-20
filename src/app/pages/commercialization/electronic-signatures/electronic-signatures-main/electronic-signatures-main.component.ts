@@ -179,14 +179,6 @@ export class ElectronicSignaturesMainComponent
           this.getRelationHistorical();
         }
       });
-
-    // this.dataTableParamsHistorical.pipe(
-    //     skip(1),
-    //     tap(() => {
-    //       this.getRelationHistorical()
-    //     }),
-    //     takeUntil(this.$unSubscribe)
-    //   )
     this.dataTableParamsHistorical
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => {
@@ -255,25 +247,10 @@ export class ElectronicSignaturesMainComponent
                   filter.search,
                   'yyyy-MM-dd'
                 );
-
-                // let params = `${filter.search}T00:00:00.000Z,${filter.search}T23:59:59.999Z`;
-                // filter.search = params;
               }
-
               this.columnFiltersPending[
                 field
               ] = `${searchFilter}:${filter.search}`;
-              // if (this.filterByUserP == true) {
-              //   this.columnFiltersPending[
-              //     'user'
-              //   ] = `${SearchFilter.EQ}:${this.dataUserLogged.user}`; //ADABDOUBG
-              // }
-              // // PENDIENTE CON RAFA
-              // // this.columnFiltersPending[
-              // //   'firmdate'
-              // // ] = `${SearchFilter.EQ}:NULL`;
-              // this.columnFiltersHistorical['dateSignature'] = `$is:$null`;
-              // this.columnFiltersPending['filter.creationdate'] = `$order:desc`;
             } else {
               delete this.columnFiltersPending[field];
             }
@@ -285,19 +262,6 @@ export class ElectronicSignaturesMainComponent
           this.getRelationPersons();
         }
       });
-
-    // if (this.filterByUserP == true) {
-    //   this.columnFiltersPending[
-    //     'user'
-    //   ] = `${SearchFilter.EQ}:${this.dataUserLogged.user}`; //ADABDOUBG
-    // }
-    // PENDIENTE CON RAFA
-    // this.columnFiltersPending[
-    //   'firmdate'
-    // ] = `${SearchFilter.EQ}:NULL`;
-    // this.columnFiltersHistorical['dateSignature'] = `$is:$null`;
-    // this.columnFiltersPending['filter.creationdate'] = `$order:desc`;
-    //observador para el paginado
     this.dataTableParamsPending
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getRelationPersons());
@@ -356,15 +320,6 @@ export class ElectronicSignaturesMainComponent
               this.columnFiltersHistorical[
                 field
               ] = `${searchFilter}:${filter.search}`;
-              // if (this.filterByUserH == true) {
-              //   this.columnFiltersHistorical[
-              //     'user'
-              //   ] = `${SearchFilter.EQ}:${this.dataUserLogged.user}`; //ADABDOUBG
-              // }
-              // this.columnFiltersHistorical['firmdate'] = `$not:$null`;
-              // this.columnFiltersHistorical[
-              //   'filter.creationdate'
-              // ] = `$order:desc`;
             } else {
               delete this.columnFiltersHistorical[field];
             }
@@ -376,15 +331,6 @@ export class ElectronicSignaturesMainComponent
           this.getRelationHistorical();
         }
       });
-
-    // if (this.filterByUserH == true) {
-    //   this.columnFiltersHistorical[
-    //     'user'
-    //   ] = `${SearchFilter.EQ}:${this.dataUserLogged.user}`; //ADABDOUBG
-    // }
-    // this.columnFiltersHistorical['firmdate'] = `$not:$null`;
-    // this.columnFiltersHistorical['filter.creationdate'] = `$order:desc`;
-    //observador para el paginado
     this.dataTableParamsHistorical
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getRelationHistorical());
@@ -463,6 +409,7 @@ export class ElectronicSignaturesMainComponent
   }
 
   initRelDocs() {
+    if (!this.dataUserLogged) return;
     const params = new FilterParams();
     params.removeAllFilters();
     params.addFilter('user', this.dataUserLogged.user);
@@ -471,17 +418,16 @@ export class ElectronicSignaturesMainComponent
       .getAllDocumentsComerceService(params.getParams())
       .subscribe({
         next: res => {
-          // console.log('DATA DOCUMENTS COMERCE', res);
+          console.log('DATA DOCUMENTS COMERCE', res);
           this.messageText =
-            'Tiene ' + res.count + ' Documentos pendientes de firma';
-          this.alertMsg1 = true;
+            'Tiene ' + res.count + ' documento(s) pendiente(s) de firma';
           this.alertMsg2 = false;
+          this.alertMsg1 = true;
         },
         error: error => {
-          // console.log(error);
-          this.messageText = 'No tiene Documentos pendientes de firma';
-          this.alertMsg2 = true;
           this.alertMsg1 = false;
+          this.alertMsg2 = true;
+          this.messageText = 'No tiene documentos pendientes de firma';
         },
       });
     // this.getRelationPersons();
@@ -489,17 +435,10 @@ export class ElectronicSignaturesMainComponent
 
   getRelationPersons() {
     this.loadingPending = true;
-    // var params = new FilterParams();
-    // params.removeAllFilters();
-    // params.addFilter('user', 'ADABDOUBG', SearchFilter.ILIKE); //this.dataUserLogged.user, SearchFilter.ILIKE);
     let params = {
       ...this.dataTableParamsPending.getValue(),
       ...this.columnFiltersPending,
     };
-    // params.addFilter('signatureDate', SearchFilter.NULL, SearchFilter.NULL);
-    // params.limit = this.dataTableParamsPending.value.limit;
-    // params.page = this.dataTableParamsPending.value.page;
-    // params = { ...this.columnFiltersPending, params };
 
     params['filter.user'] = `$eq:${
       this.authService.decodeToken().preferred_username
@@ -511,19 +450,7 @@ export class ElectronicSignaturesMainComponent
     this.svElectronicSignatures.getAllComerDocumentsXml_(params).subscribe({
       next: res => {
         console.log('DATA RELATION PERSONS', res);
-        let result = res.data.map((i: any) => {
-          // i['reference'] =
-          //   ['FCOMEREPINGXMAND_I', 'FCOMEREPINGXMAND'].includes(i.screenkey) ==
-          //   true
-          //     ? 'Evento ' + i.referenceid
-          //     : '';
-          // i['document'] =
-          //   ['FCOMEREPINGXMAND_I', 'FCOMEREPINGXMAND'].includes(i.screenkey) ==
-          //   true
-          //     ? 'Reporte ' + i.documentid
-          //     : '';
-          // return i;
-        });
+        let result = res.data.map((i: any) => {});
         Promise.all(result).then(resp => {
           this.dataTablePending.load(res.data);
           this.dataTablePending.refresh();
@@ -548,31 +475,11 @@ export class ElectronicSignaturesMainComponent
       ...this.dataTableParamsHistorical.getValue(),
       ...this.columnFiltersHistorical,
     };
-    // const params = new FilterParams();
-    // params.removeAllFilters();
-    // if (userFilter == true) {
-    //   params.addFilter('user', 'ADABDOUBG', SearchFilter.ILIKE); //this.dataUserLogged.user, SearchFilter.ILIKE);
-    // }
-    // // params.addFilter('signatureDate', SearchFilter.NULL, SearchFilter.NULL);
-    // params.limit = this.dataTableParamsHistorical.value.limit;
-    // params.page = this.dataTableParamsHistorical.value.page;
     console.log('PARAMS HISTORICAL', params);
     this.svElectronicSignatures.getAllComerDocumentsXml_(params).subscribe({
       next: res => {
         console.log('DATA HISTORICAL PERSONS', res);
-        let result = res.data.map((i: any) => {
-          // i['reference'] =
-          //   ['FCOMEREPINGXMAND_I', 'FCOMEREPINGXMAND'].includes(i.screenkey) ==
-          //   true
-          //     ? 'Evento ' + i.referenceid
-          //     : '';
-          // i['document'] =
-          //   ['FCOMEREPINGXMAND_I', 'FCOMEREPINGXMAND'].includes(i.screenkey) ==
-          //   true
-          //     ? 'Reporte ' + i.documentid
-          //     : '';
-          // return i;
-        });
+        let result = res.data.map((i: any) => {});
         Promise.all(result).then(resp => {
           this.historicalTestData = res.data;
           this.dataTableHistorical.load(res.data);
@@ -594,17 +501,10 @@ export class ElectronicSignaturesMainComponent
 
   getPending() {
     console.log('PENDIENTES');
-    // this.pendingColumns = this.pendingTestData;
-    // this.pendingTotalItems = this.pendingColumns.length;
   }
 
   getHistory() {
     console.log('HISTORICO');
-    // this.historyColumns = this.historyTestData;
-    // this.historyTotalItems = this.historyColumns.length;
-    // this.dataTableParamsHistorical
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(() => this.getRelationHistorical());
   }
 
   selectPending(event: any) {
@@ -693,7 +593,7 @@ export class ElectronicSignaturesMainComponent
           } else {
             this.alert('warning', 'Reporte no disponible por el momento', '');
           }
-          this.selectedRow = null;
+          // this.selectedRow = null;
           this.updatePaysRef(data);
         } else {
         }
@@ -712,6 +612,8 @@ export class ElectronicSignaturesMainComponent
         if (onlyReport == true) {
           this.alert('success', 'Proceso Terminado', '');
           this.initRelDocs();
+          this.getRelationPersons();
+          this.getRelationHistorical();
         }
       },
       error: error => {
@@ -721,10 +623,10 @@ export class ElectronicSignaturesMainComponent
   }
 
   refresh() {
-    // this.getPending();
-    // this.getHistory();
-    this.initVariables();
+    // this.initVariables();
     this.initRelDocs();
+    this.getRelationPersons();
+    this.getRelationHistorical();
   }
 
   viewDocument() {

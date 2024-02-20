@@ -31,8 +31,8 @@
             </div>
             <div class="col-md-4 mt-3">
               <form-field
-                [control]="comerLibsForm.get('evento_descripcion')"
-                label="Descripción del Evento">
+                label="Descripción del Evento"
+                [control]="comerLibsForm.get('evento_descripcion')">
                 <textarea
                   cols="2"
                   rows="2"
@@ -253,7 +253,8 @@
                   maxlength="500"
                   class="form-control text-justify"
                   formControlName="paragraph1"
-                  rows="5"></textarea>
+                  cols="3"
+                  rows="3"></textarea>
               </form-field>
             </div>
             <div class="col-md-12">
@@ -289,7 +290,8 @@
                   maxlength="500"
                   class="form-control text-justify"
                   formControlName="paragraph2"
-                  rows="5"></textarea>
+                  cols="3"
+                  rows="3"></textarea>
               </form-field>
 
               <form-field
@@ -300,7 +302,8 @@
                   maxlength="500"
                   class="form-control text-justify"
                   formControlName="paragraph3"
-                  rows="5"></textarea>
+                  cols="3"
+                  rows="3"></textarea>
               </form-field>
             </div>
           </div>
