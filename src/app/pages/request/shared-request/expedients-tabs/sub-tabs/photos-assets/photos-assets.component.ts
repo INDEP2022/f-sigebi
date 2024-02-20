@@ -106,7 +106,7 @@ export class PhotosAssetsComponent
     };
     this.getInfoRequest();
     this.initFilterForm();
-    //this.getTypeRelevant(new ListParams());
+    this.getTypeRelevant(new ListParams());
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -128,8 +128,8 @@ export class PhotosAssetsComponent
       this.goodFinderService.goodFinder(this.params.getValue()).subscribe({
         next: async (data: any) => {
           const filterGoodType = data.data.map(async (item: any) => {
-            //const goodType = await this.getGoodType(item.goodTypeId);
-            //item['goodTypeId'] = goodType;
+            const goodType = await this.getGoodType(item.goodTypeId);
+            item['goodTypeId'] = goodType;
             item['requestId'] = this.idRequest;
 
             /*if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
@@ -187,6 +187,7 @@ export class PhotosAssetsComponent
     params['sortBy'] = 'description:ASC';
     this.typeRelevantService.getAll(params).subscribe({
       next: data => {
+        console.log(data);
         this.typeGoods = new DefaultSelect(data.data, data.count);
       },
     });
