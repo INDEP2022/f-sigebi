@@ -44,8 +44,8 @@
             [control]="form.get('executionDate')">
             <input
               (ngModelChange)="dateMovementFin($event)"
-              [ngClass]="{ 'bg-gray': disabledSend }"
-              [readonly]="disabledSend"
+              [ngClass]="{ 'bg-gray not-press': !disabledSend }"
+              [readonly]="!disabledSend"
               type="text"
               class="form-control"
               formControlName="executionDate"

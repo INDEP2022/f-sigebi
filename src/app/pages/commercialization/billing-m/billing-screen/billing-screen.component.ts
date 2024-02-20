@@ -3176,6 +3176,9 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           item.search = value;
         }
       });
+    } else if (filterConf.filters.length == 0 && value) {
+      console.log('SI');
+      filterConf.filters.push({ field: field, search: value });
     }
     this.data.refresh();
     return true;
