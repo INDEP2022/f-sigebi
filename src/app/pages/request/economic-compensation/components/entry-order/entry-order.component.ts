@@ -161,10 +161,10 @@ export class EntryOrderComponent extends BasePage implements OnInit {
         this.selectChanges();
         this.getRequestInfo();
         this.getAllOrderEntry();
-        this.onLoadToast('success', 'Orden de bien creada con éxito');
+        this.onLoadToast('success', 'Orden de ingreso creada con éxito');
       },
       error: error => {
-        this.onLoadToast('error', 'No se pudo actualizar la order ingreso');
+        this.onLoadToast('error', 'No se pudo actualizar la orden ingreso');
       },
     });
   }
@@ -175,10 +175,10 @@ export class EntryOrderComponent extends BasePage implements OnInit {
         this.respDoc = resp;
         this.getAllOrderEntry();
         this.selectChanges();
-        this.onLoadToast('success', 'Orden de bien actualizada con éxito');
+        this.onLoadToast('success', 'Orden de ingreso actualizada con éxito');
       },
       error: error => {
-        this.onLoadToast('error', 'No se pudo actualizar la order ingreso');
+        this.onLoadToast('error', 'No se pudo actualizar la orden ingreso');
       },
     });
   }
