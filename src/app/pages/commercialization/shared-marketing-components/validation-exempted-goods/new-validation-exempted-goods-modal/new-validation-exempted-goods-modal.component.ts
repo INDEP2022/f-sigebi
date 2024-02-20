@@ -11,7 +11,7 @@ import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.ser
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-
+import { v4 as uuidv4 } from 'uuid';
 @Component({
   selector: 'app-new-validation-exempted-goods-modal',
   templateUrl: './new-validation-exempted-goods-modal.components.html',
@@ -116,7 +116,7 @@ export class NewValidationExemptedGoodModalComponent
     const body: IGoodsTransAva = {
       goodNumber: this.newForm.get('goodNumber').value.id,
       process: this.newForm.get('process').value.value,
-      registryNumber: 0,
+      registryNumber: uuidv4(),
     };
 
     this.goodService.postTransAva(body).subscribe(
