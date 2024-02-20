@@ -35,12 +35,15 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
   selectedOI: any = null;
   OIData = new DefaultSelect();
   dataComerDetails: LocalDataSource = new LocalDataSource();
+  identifiers = new DefaultSelect();
 
   identifier: string;
   idEventParams: string;
   referenceOriDat: string = null;
 
   refe_ori: string = null;
+
+  searched = false;
 
   //Gets
   get idOI() {
@@ -103,6 +106,10 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
     return this.form.get('idPayment');
   }
 
+  get idIdentifier() {
+    return this.form.get('idIdentifier');
+  }
+
   constructor(
     private fb: FormBuilder,
     private invoiceService: MsInvoiceService,
@@ -135,6 +142,7 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
       ur: [null, []],
       clientRFC: [null, []],
       descriptionRFC: [null, []],
+      idIdentifier: [null, []],
       anexo: [null, []],
       typepe: [null, []],
       idEvent: [null, []],
@@ -148,6 +156,7 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
       chain: [null],
     });
   }
+
   searchOI() {
     if (this.idOI.value != null) {
       const paramsF = new FilterParams();
@@ -157,9 +166,13 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
           console.log(res['data'][0]);
           this.refe_ori = 'NADA';
           this.fillIncomeDataOI(res['data'][0]);
+          this.identifiers = new DefaultSelect(res['data'], res['count']);
+          this.searched = true;
         },
         err => {
           console.log(err);
+          this.identifiers = new DefaultSelect();
+          this.searched = false;
         }
       );
     } else {
@@ -182,6 +195,7 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
     this.reference.setValue(data.reference);
     this.idPayment.setValue(data.paymentId);
     this.idEvent.setValue(data.idEvent);
+    this.idIdentifier.setValue(data.idIdentifier);
     this.identifier = data.idIdentifier;
     this.idEventParams = data.idEvent;
     this.referenceOriDat = data.reference;
@@ -193,8 +207,8 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
   getDetails() {
     this.loading = true;
     const paramsF = new FilterParams();
-    paramsF.addFilter('idIdentifier', this.identifier);
-    paramsF.addFilter('idEvent', this.idEventParams);
+    paramsF.addFilter('id', this.identifier);
+    paramsF.addFilter('eventId', this.idEventParams);
     paramsF.page = this.params.value.page;
     paramsF.limit = this.params.value.limit;
     this.comerDetailService.getComerDetails(paramsF.getParams()).subscribe(
@@ -205,6 +219,8 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       err => {
+        this.totalItems = 0;
+        this.dataComerDetails.load([]);
         console.log(err);
       }
     );
@@ -220,6 +236,7 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
     this.form.reset();
     this.dataComerDetails.load([]);
     this.totalItems = 0;
+    this.searched = false;
   }
 
   //Enviar SIRSAE
@@ -254,6 +271,31 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
         );
       }
     );
+  }
+
+  onIdentifierChange(event: any) {
+    this.fillIncomeDataOI(event);
+    this.getDetails();
+  }
+
+  getIdentifiers(event: any) {
+    if (this.idOI.value != null) {
+      const paramsF = new FilterParams();
+      paramsF.page = event.page || 1;
+      paramsF.limit = event.limit || 10;
+      paramsF.addFilter('recordedOrderId', this.idOI.value);
+      this.invoiceService.getComerHeadboard(paramsF.getParams()).subscribe(
+        res => {
+          this.identifiers = new DefaultSelect(res['data'], res['count']);
+        },
+        err => {
+          console.log(err);
+          this.identifiers = new DefaultSelect();
+        }
+      );
+    } else {
+      this.alert('warning', 'No ingresó ningún OI', '');
+    }
   }
 
   //Llenar los datos traidos
