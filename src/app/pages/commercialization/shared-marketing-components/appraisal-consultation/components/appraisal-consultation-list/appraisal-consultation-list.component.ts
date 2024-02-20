@@ -151,11 +151,11 @@ export class AppraisalConsultationListComponent
     );
   }
   getExcel(path: string) {
+    this.loader.load = false;
     this.alert('success', 'Archivo Descargado Correctamente', '');
     const url = `${environment.API_URL}appraise/${environment.URL_PREFIX}/${path}`;
     console.log(url);
     window.open(url, '_blank');
-    this.loader.load = false;
 
     // this.downloadExcel(resp.file);
   }

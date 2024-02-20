@@ -17,6 +17,20 @@
             <form-field [control]="form.get('idOI')" class="col" label="OI">
               <input type="text" formControlName="idOI" class="form-control" />
             </form-field>
+            <form-field
+              *ngIf="searched"
+              [control]="form.get('idIdentifier')"
+              class="col">
+              <ngx-select
+                (fetchItems)="getIdentifiers($event)"
+                [data]="identifiers"
+                [form]="form"
+                bindLabel="idIdentifier"
+                label="Identificador"
+                control="idIdentifier"
+                (change)="onIdentifierChange($event)">
+              </ngx-select>
+            </form-field>
             <form-field [control]="form.get('idArea')" label="Área" class="col">
               <input
                 type="text"

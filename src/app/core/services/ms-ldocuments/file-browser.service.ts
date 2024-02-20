@@ -87,6 +87,10 @@ export class FileBrowserService extends HttpService {
     return this.get<IPgrFile>('file-browser/getOneRecoverFile', params);
   }
 
+  getExcelFile(channel: string) {
+    return this.get(`file-excel/${channel}.csv`);
+  }
+
   moveFile(invoiceNumber: string | number, jobNumber: string | number) {
     return this.post('file-browser/moveFile', { invoiceNumber, jobNumber });
   }

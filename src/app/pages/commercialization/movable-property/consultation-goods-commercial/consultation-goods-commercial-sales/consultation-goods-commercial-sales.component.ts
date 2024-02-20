@@ -26,7 +26,9 @@ import { ComerSaleService } from 'src/app/core/services/ms-comersale/comer-sale.
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
+import { environment } from 'src/environments/environment';
 import { CommercialSalesForm } from '../../consultation-goods-commercial-process-tabs/utils/commercial-sales-form';
 
 @Component({
@@ -74,7 +76,8 @@ export class ConsultationGoodsCommercialSalesComponent
     private delegationService: DelegationService,
     private stationService: StationService,
     private ComerEvent: ComerEventService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private fileBrowserService: FileBrowserService
   ) {
     super();
     this.settings = {
@@ -363,9 +366,17 @@ export class ConsultationGoodsCommercialSalesComponent
       tap(res => {
         console.warn('RESPUESTA DEL SOCKET');
         console.log(res);
-        this.downloadDocument('TODO_VENTAS', 'excel', res.file);
+        this.getExcel(res.path);
       })
     );
+  }
+
+  getExcel(path: string) {
+    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    const url = `${environment.API_URL}ldocument/api/v1/${path}`;
+    console.log(url);
+    window.open(url, '_blank');
+    this.loading = false;
   }
 
   //Exportar Excel todo
@@ -375,8 +386,9 @@ export class ConsultationGoodsCommercialSalesComponent
       this.goodService.chargeGoodsExcel(this.modelSave).subscribe(
         res => {
           console.log(res);
-          this.downloadDocument('TODO_VENTAS', 'excel', res.file);
-          // this.subscribeExcel(res).subscribe();
+          // this.downloadDocument('TODO_VENTAS', 'excel', res.file);
+          this.subscribeExcel(res).subscribe();
+          // this.getExcel(res.channel);
         },
         err => {
           this.loading = false;
