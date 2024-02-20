@@ -8,6 +8,7 @@ import {
   Output,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as moment from 'moment';
 import { map } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { CompensationService } from 'src/app/core/services/compensation-option/compensation.option';
@@ -40,6 +41,9 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
   respDoc: Object = null;
   respDate: Object = null;
+  appoiment: boolean = false;
+
+  currentDate = new Date();
 
   private requestService = inject(RequestService);
   private compenstionService = inject(CompensationService);
@@ -55,6 +59,17 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
     this.getRequestInfo();
     this.getAllOrderEntry();
     this.getAllCompensation();
+    this.validateTime();
+  }
+
+  validateTime() {
+    this.dictumForm.get('appoitmentDate').valueChanges.subscribe(value => {
+      let selectedDate = moment(value, 'DD/MM/YYYY, h:mm:ss a');
+      if (selectedDate.isBefore(moment())) {
+        // La fecha y hora seleccionada es anterior a la actual, muestra un mensaje de error
+        this.dictumForm.get('appoitmentDate').setErrors({ invalid: true });
+      }
+    });
   }
 
   prepareForm() {
@@ -165,6 +180,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
           this.selectChanges();
           if (!isNullOrEmpty(resp)) {
+            console.log('resp', resp);
             this.dictumForm.patchValue({
               appoitmentDate: this.datePipe.transform(
                 resp.appoitmentDate,
@@ -234,13 +250,15 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
         this.selectChanges();
         this.getRequestInfo();
-
       },
       error: error => {
         if (this.steap3) {
           this.onLoadToast('error', 'No se pudo guardar los datos de la cita');
         } else {
-          this.onLoadToast('error', 'No se pudo guardar los datos del dictamen');
+          this.onLoadToast(
+            'error',
+            'No se pudo guardar los datos del dictamen'
+          );
         }
       },
     });
@@ -253,22 +271,27 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
           this.respDate = resp;
           this.onLoadToast('success', 'Datos de cita actualizados con éxito');
         } else {
-          this.onLoadToast('success', 'Datos de dictamen actualizados con éxito');
+          this.onLoadToast(
+            'success',
+            'Datos de dictamen actualizados con éxito'
+          );
         }
         this.respDoc = resp;
 
         this.selectChanges();
         this.getRequestInfo();
-
       },
       error: error => {
         if (this.steap3) {
-          this.onLoadToast('error', 'No se pudo actualizar los datos de la cita');
+          this.onLoadToast(
+            'error',
+            'No se pudo actualizar los datos de la cita'
+          );
         } else {
-        this.onLoadToast(
-          'error',
-          'No se pudo actualizar los datos del dictamen'
-        );
+          this.onLoadToast(
+            'error',
+            'No se pudo actualizar los datos del dictamen'
+          );
         }
       },
     });
@@ -294,6 +317,13 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       this.createCompensation(object);
       this.getAllCompensation();
     } else {
+      if (object['appoitmentDate']) {
+        let date = moment(object['appoitmentDate'], 'DD/MM/YYYY, h:mm:ss a');
+        if (date.isValid()) {
+          object['appoitmentDate'] = date.toISOString();
+        }
+      }
+
       this.updatedCompensation(object);
       this.getAllOrderEntry();
     }
