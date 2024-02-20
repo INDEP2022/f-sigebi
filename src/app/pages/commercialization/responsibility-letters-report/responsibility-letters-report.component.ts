@@ -935,7 +935,7 @@ export class ResponsibilityLettersReportComponent
   getAllComerLetterResp(oficio: string | number) {
     this.comerLetterService.getByIdResponsability(oficio).subscribe({
       next: data => {
-        this.alertInfo('success', 'Carta de Responsabilidad Cargada', '').then(
+        this.alertInfo('success', 'Carta de Responsabilidad cargada', '').then(
           quesition => {
             if (quesition.isConfirmed) {
               setTimeout(() => {
@@ -1047,7 +1047,7 @@ export class ResponsibilityLettersReportComponent
             this.dataVal = data;
             this.alert(
               'success',
-              'Carta de Responsabilidad Guardada Correctamente',
+              'Carta de Responsabilidad guardada correctamente',
               ''
             );
           },
@@ -1066,7 +1066,7 @@ export class ResponsibilityLettersReportComponent
           next: data => {
             this.alert(
               'success',
-              'Carta de Responsabilidad Actualizada Correctamente',
+              'Carta de Responsabilidad actualizada correctamente',
               ''
             );
           },
