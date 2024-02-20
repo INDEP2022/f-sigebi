@@ -221,7 +221,9 @@ export class GeneralDocumentsFormComponent
 
   resetForm() {
     this.searchForm.reset();
+    //this.documentsGenData = [];
     this.documentsGenData = [];
+    this.totalItems = 0;
     this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     //this.search();
   }
@@ -268,6 +270,7 @@ export class GeneralDocumentsFormComponent
       },
       error: error => {
         this.documentsGenData = [];
+        this.totalItems = 0;
         this.loading = false;
       },
     });

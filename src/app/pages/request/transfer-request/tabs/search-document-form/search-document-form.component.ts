@@ -249,7 +249,9 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
 
   clean() {
     this.searchForm.reset();
+    this.totalItems = 0;
     this.documentsSeaData = [];
+    this.loading = false;
   }
   documentSelect(event: any) {
     this.rowSelected = event.data;
