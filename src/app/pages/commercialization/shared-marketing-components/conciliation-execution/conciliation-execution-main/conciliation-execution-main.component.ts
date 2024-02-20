@@ -691,7 +691,7 @@ export class ConciliationExecutionMainComponent
         if (L_VALMAN > 0) {
           this.alert(
             'warning',
-            `El  lote ${L_VALMAN} no tiene mandato válido, verifique`,
+            `El lote ${L_VALMAN} no tiene mandato válido, verifique`,
             'Ejecute el botón Act. Mand. en preparación de Eventos'
           );
           this.loadingBtn = false;
