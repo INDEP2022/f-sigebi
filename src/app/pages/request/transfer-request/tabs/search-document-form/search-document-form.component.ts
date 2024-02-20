@@ -272,7 +272,7 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'info',
         '',
-        'El registro no cuenta con una delegación regional'
+        'El registro no cuenta con una Delegación Regional'
       );
       return;
     }
