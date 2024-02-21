@@ -460,7 +460,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
           .deletelayoutSH(event.data.id, event.data)
           .subscribe({
             next: data => {
-              this.alert('success', 'Diseño Eliminado Correctamente', ``);
+              this.alert('success', 'Diseño eliminado correctamente', ``);
               this.getLayoutsData();
             },
             error: async error => {
@@ -659,7 +659,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
             next: data => {
               this.alert(
                 'success',
-                'Estructura de Diseño Eliminada Correctamente',
+                'Estructura de Diseño eliminada correctamente',
                 ``
               );
               this.getLayoutsStructureData();
