@@ -225,16 +225,23 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       next: resp => {
         if (this.steap3) {
           this.respDate = resp;
+          this.onLoadToast('success', 'Datos de cita guardados con éxito');
+        } else {
+          this.onLoadToast('success', 'Datos de dictamen guardados con éxito');
         }
 
         this.respDoc = resp;
 
         this.selectChanges();
         this.getRequestInfo();
-        this.onLoadToast('success', 'Datos de dictamen guardados con éxito');
+
       },
       error: error => {
-        this.onLoadToast('error', 'No se pudo guardar los datos del dictamen');
+        if (this.steap3) {
+          this.onLoadToast('error', 'No se pudo guardar los datos de la cita');
+        } else {
+          this.onLoadToast('error', 'No se pudo guardar los datos del dictamen');
+        }
       },
     });
   }
@@ -244,18 +251,25 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       next: resp => {
         if (this.steap3) {
           this.respDate = resp;
+          this.onLoadToast('success', 'Datos de cita actualizados con éxito');
+        } else {
+          this.onLoadToast('success', 'Datos de dictamen actualizados con éxito');
         }
         this.respDoc = resp;
 
         this.selectChanges();
         this.getRequestInfo();
-        this.onLoadToast('success', 'Datos de dictamen actualizados con éxito');
+
       },
       error: error => {
+        if (this.steap3) {
+          this.onLoadToast('error', 'No se pudo actualizar los datos de la cita');
+        } else {
         this.onLoadToast(
           'error',
           'No se pudo actualizar los datos del dictamen'
         );
+        }
       },
     });
   }

@@ -900,6 +900,7 @@ export interface IGoodCharge {
   serieNumber?: number;
   startDate?: string;
   endDate?: string;
+  total?: string;
 }
 
 export interface IValidationExempte {
