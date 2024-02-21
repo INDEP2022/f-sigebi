@@ -447,21 +447,37 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   registerSign() {
-    const learnedType = 221;
+
+    let learnedType = 221;
+    let column = "TIPO_FIRMA";
+    let boardSig = "PROGRAMACIONES";
+
     const learndedId = this.idProg;
+
+    if (this.requestId > 0) {
+      learnedType = this.idTypeDoc;
+      console.log(learnedType);
+    }
+
     this.signatoriesService
       .getSignatoriesFilter(learnedType, learndedId)
       .subscribe({
         next: response => {
+
+          console.log("LOG SIGN", response);
+
           this.signatoriesService
             .deleteFirmante(Number(response.data[0].signatoryId))
             .subscribe({
               next: async () => {
+
+                console.log("LOG DELETE", response.data[0].signatoryId);
+
                 const createSignatore = await this.createSign(
                   this.idProg,
-                  221,
-                  'PROGRAMACIONES',
-                  'TIPO_FIRMA',
+                  learnedType,
+                  boardSig,
+                  column,
                   this.signatore.nameSignatore,
                   this.signatore.chargeSignatore
                 );
@@ -471,11 +487,15 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             });
         },
         error: async error => {
+
+          console.log("LOG ERROR", error);
+
+
           const createSignatore = await this.createSign(
             this.idProg,
-            221,
-            'PROGRAMACIONES',
-            'TIPO_FIRMA',
+            learnedType,
+            boardSig,
+            column,
             this.signatore.nameSignatore,
             this.signatore.chargeSignatore
           );
