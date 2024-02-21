@@ -226,12 +226,22 @@ export class EventLotsListComponent extends BasePage implements OnInit {
     if (dataSource.action == 'filter') {
       const filters = dataSource.filter.filters;
       filters.forEach((filter: any) => {
+        console.log(filter);
         const columns = this.settings.columns as any;
         const operator = columns[filter.field]?.operator;
         if (!filter.search) {
+          params.removeAllFilters();
           return;
         }
-        console.log(filter);
+
+        if (filter.field == 'razonSocial') {
+          filter.field = 'client.reasonName';
+        }
+
+        if (filter.field == 'clientId') {
+          filter.field = 'client.id';
+        }
+
         params.addFilter(
           filter.field,
           filter.search,
