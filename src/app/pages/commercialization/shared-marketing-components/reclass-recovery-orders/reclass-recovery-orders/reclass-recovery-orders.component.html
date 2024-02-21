@@ -208,7 +208,6 @@
           <div [class]="loading ? 'table-loading' : 'row pt-2'">
             <ng2-smart-table
               class="col-md-12"
-              [attr.class]="'table-responsive table-bordered '"
               [settings]="settings"
               (userRowSelect)="selectRow()"
               [source]="dataComerDetails"></ng2-smart-table>
@@ -217,7 +216,6 @@
             [params]="params"
             [limit]="limit"
             [totalItems]="totalItems"></app-pagination>
-          <hr class="row mt-5 mb-5" />
         </div>
       </app-card>
     </form>
