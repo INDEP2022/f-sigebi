@@ -355,6 +355,30 @@ export class ConsultationGoodsCommercialSalesComponent
     };
   }
 
+  //Exportar Excel todo
+  exportAll() {
+    this.loading = true;
+    if (this.modelSave != null) {
+      this.goodService
+        .chargeGoodsExcel({ ...this.modelSave, total: this.totalItems })
+        .subscribe(
+          res => {
+            console.log(res);
+            // this.downloadDocument('TODO_VENTAS', 'excel', res.file);
+            this.subscribeExcel(res).subscribe();
+            // this.getExcel(res.channel);
+          },
+          err => {
+            this.loading = false;
+            console.log(err);
+          }
+        );
+    } else {
+      this.loading = false;
+      this.alert('warning', 'Debe completar al menos un campo de búsqueda', '');
+    }
+  }
+
   //Esperar excel socket
   subscribeExcel(token: any) {
     return this.socketService.goodsTrackerExcel(token.channel).pipe(
@@ -366,7 +390,9 @@ export class ConsultationGoodsCommercialSalesComponent
       tap(res => {
         console.warn('RESPUESTA DEL SOCKET');
         console.log(res);
-        this.getExcel(res.path);
+        if (res.path != null) {
+          this.getExcel(res.path);
+        }
       })
     );
   }
@@ -375,30 +401,9 @@ export class ConsultationGoodsCommercialSalesComponent
     this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
     const url = `${environment.API_URL}ldocument/api/v1/${path}`;
     console.log(url);
-    window.open(url, '_blank');
-    this.loading = false;
-  }
+    window.open(url);
 
-  //Exportar Excel todo
-  exportAll() {
-    this.loading = true;
-    if (this.modelSave != null) {
-      this.goodService.chargeGoodsExcel(this.modelSave).subscribe(
-        res => {
-          console.log(res);
-          // this.downloadDocument('TODO_VENTAS', 'excel', res.file);
-          this.subscribeExcel(res).subscribe();
-          // this.getExcel(res.channel);
-        },
-        err => {
-          this.loading = false;
-          console.log(err);
-        }
-      );
-    } else {
-      this.loading = false;
-      this.alert('warning', 'Debe completar al menos un campo de búsqueda', '');
-    }
+    this.loading = false;
   }
 
   //Ejecutar Consulta

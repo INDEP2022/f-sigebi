@@ -33,6 +33,9 @@ export const EVENT_LOT_LIST_COLUMNS = {
     sort: false,
     valuePrepareFunction: (value: any, row: any) =>
       row?.client?.reasonName ?? null,
+    filterFunction: (cell?: any, search?: string) => {
+      return true;
+    },
   },
   warrantyPrice: {
     title: 'Precio Garantía',
