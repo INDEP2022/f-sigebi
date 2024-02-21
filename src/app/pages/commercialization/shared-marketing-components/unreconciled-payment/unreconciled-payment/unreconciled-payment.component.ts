@@ -402,7 +402,7 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Proceso Terminado',
-          'Pago conciliado correctamente'
+          'Pago enviado correctamente'
         );
       } else {
         this.loadingBtn = false;
@@ -410,9 +410,8 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Proceso Terminado',
-          'Pago conciliado correctamente'
+          'Pago enviado correctamente'
         );
-        // this.alert('warning', 'Proceso Terminado', 'No se pudo enviar el pago');
       }
     }
     // else if (a && b) {
