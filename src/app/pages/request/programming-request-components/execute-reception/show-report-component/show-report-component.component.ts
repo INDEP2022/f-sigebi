@@ -110,6 +110,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     private orderService: OrderServiceService,
     private samplingGoodService: SamplingGoodService
   ) {
+
     super();
     this.settings = {
       ...this.settings,
@@ -355,9 +356,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       222, 223, 224, 225, 245, 246, 249,
     ];
 
-    console.log(this.idTypeDoc);
-    console.log(this.typeFirm);
-
     if (
       signs.includes(parseInt('' + this.idTypeDoc)) &&
       this.typeFirm == 'autografa'
@@ -447,21 +445,31 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   registerSign() {
-    const learnedType = 221;
+
+    let learnedType = 221;
+    let column = "TIPO_FIRMA";
+    let boardSig = "PROGRAMACIONES";
+
     const learndedId = this.idProg;
+
+    if (this.requestId > 0) {
+      learnedType = this.idTypeDoc;
+    }
+
     this.signatoriesService
       .getSignatoriesFilter(learnedType, learndedId)
       .subscribe({
         next: response => {
+
           this.signatoriesService
             .deleteFirmante(Number(response.data[0].signatoryId))
             .subscribe({
               next: async () => {
                 const createSignatore = await this.createSign(
                   this.idProg,
-                  221,
-                  'PROGRAMACIONES',
-                  'TIPO_FIRMA',
+                  learnedType,
+                  boardSig,
+                  column,
                   this.signatore.nameSignatore,
                   this.signatore.chargeSignatore
                 );
@@ -473,9 +481,9 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         error: async error => {
           const createSignatore = await this.createSign(
             this.idProg,
-            221,
-            'PROGRAMACIONES',
-            'TIPO_FIRMA',
+            learnedType,
+            boardSig,
+            column,
             this.signatore.nameSignatore,
             this.signatore.chargeSignatore
           );
@@ -1407,9 +1415,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             )
             .subscribe({
               next: async response => {
-                console.log(response);
                 const updateSample = await this.updateSample(response.dDocName);
-                console.log(updateSample);
                 if (updateSample) {
                   this.alertInfo(
                     'success',
