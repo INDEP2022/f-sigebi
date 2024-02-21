@@ -19,11 +19,11 @@
           type="text"
           formControlName="appoitmentDate"
           class="form-control"
-          [minDate]="maxDate"
+          [minDate]="minDate"
           [bsConfig]="{
             withTimepicker: true,
             dateInputFormat: 'DD/MM/YYYY, h:mm:ss a',
-            minDate: currentDate,
+            minDate: minDate,
             maxDate: null
           }"
           bsDatepicker />

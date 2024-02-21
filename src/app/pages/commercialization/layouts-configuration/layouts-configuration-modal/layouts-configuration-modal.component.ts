@@ -168,8 +168,8 @@ export class LayoutsConfigurationModalComponent
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', `Diseño ${message} Correctamente`, '');
+    const message: string = this.edit ? 'actualizado' : 'guardado';
+    this.alert('success', `Diseño ${message} correctamente`, '');
     this.loading = false;
     this.onConfirm.emit(true);
     this.close();

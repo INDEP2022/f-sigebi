@@ -25,6 +25,9 @@ import { isNullOrEmpty } from '../../request-complementary-documentation/request
 })
 export class RegisterDictumValComponent extends BasePage implements OnInit {
   maxDate: Date = new Date();
+  currentDate = new Date();
+  minDate: Date = new Date();
+
 
   dictumForm: FormGroup = new FormGroup({});
   @Output() onSave = new EventEmitter<any>();
@@ -43,7 +46,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   respDate: Object = null;
   appoiment: boolean = false;
 
-  currentDate = new Date();
+
 
   private requestService = inject(RequestService);
   private compenstionService = inject(CompensationService);
@@ -55,7 +58,6 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-
     this.getRequestInfo();
     this.getAllOrderEntry();
     this.getAllCompensation();
@@ -74,6 +76,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
   prepareForm() {
     if (this.steap3) {
+      this.minDate.setDate(this.currentDate.getDate() + 1);
       this.dictumForm = this.fb.group({
         appoitmentDate: [null, [Validators.required]],
         appoitmentPlace: [
