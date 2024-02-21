@@ -351,31 +351,50 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           type: 'string',
           sort: false,
           width: '10%',
+          filterFunction: () => {
+            return true;
+          },
         },
         payId: {
           title: 'Id. Pago',
           type: 'string',
           sort: false,
+          filterFunction: () => {
+            return true;
+          },
         },
         relationshipSatType: {
           title: 'Tipo Rel.',
           type: 'string',
           sort: false,
+          filterFunction: () => {
+            return true;
+          },
         },
         usecompSat: {
           title: 'Uso comp.',
           type: 'string',
           sort: false,
+          filter: false,
+          filterFunction: () => {
+            return true;
+          },
         },
         paymentformBsat: {
           title: 'F. Pago',
           type: 'string',
           sort: false,
+          filterFunction: () => {
+            return true;
+          },
         },
         numBiasSat: {
           title: 'Parc.',
           type: 'string',
           sort: false,
+          filterFunction: () => {
+            return true;
+          },
         },
       },
     };
