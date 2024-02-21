@@ -203,6 +203,10 @@ export class ConciliationExecutionMainComponent
         },
       },
       columns: { ...CONCILIATION_EXECUTION_COLUMNS },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-4"></i>',
+      },
     };
     this.conciliationSettings.columns = CONCILIATION_EXECUTION_COLUMNS;
   }
@@ -270,8 +274,11 @@ export class ConciliationExecutionMainComponent
     this.conciliationForm = this.fb.group({
       event: [null, [Validators.required]],
       description: [null],
-      // date: [this.datePipe.transform(new Date(), 'dd-MM-yyyy')],
-      date: [null],
+      date: [
+        this.datePipe.transform(new Date(), 'dd/MM/yyyy'),
+        Validators.required,
+      ],
+      // date: [null],
       phase: [null],
       batch: [null],
       price: [null],
@@ -688,7 +695,7 @@ export class ConciliationExecutionMainComponent
         if (L_VALMAN > 0) {
           this.alert(
             'warning',
-            `El  lote ${L_VALMAN} no tiene mandato válido, verifique`,
+            `El lote ${L_VALMAN} no tiene mandato válido, verifique`,
             'Ejecute el botón Act. Mand. en preparación de Eventos'
           );
           this.loadingBtn = false;
@@ -2586,6 +2593,9 @@ export class ConciliationExecutionMainComponent
     this.mostrarLotes = false;
     this.getComerEvents(new ListParams());
     this.clearSubheaderFields();
+    this.conciliationForm
+      .get('date')
+      .setValue(this.datePipe.transform(new Date(), 'dd/MM/yyyy'));
     if (this.layout == 'I') {
       this.faseAnt = false;
       this.faseAct = false;
@@ -2598,6 +2608,7 @@ export class ConciliationExecutionMainComponent
     const filterConf = subheaderFields.filterConf;
     filterConf.filters = [];
     this.columnFilters = [];
+    this.data.refresh();
   }
   allNo() {
     if (!this.selectedEvent) {

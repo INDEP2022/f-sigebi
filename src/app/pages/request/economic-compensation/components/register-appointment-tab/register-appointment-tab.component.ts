@@ -36,6 +36,6 @@ export class RegisterAppointmentTabComponent
     //Llamar servicio para registrar cita
     console.log(this.appointmentForm.value);
     this.onRegister.emit(true);
-    this.onLoadToast('success', 'Cita regisrada con éxito', '');
+    this.onLoadToast('success', 'Cita registrada con éxito', '');
   }
 }

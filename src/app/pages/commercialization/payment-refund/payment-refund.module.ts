@@ -18,6 +18,7 @@ import { CreationPermissionsModalComponent } from './payment-refund-main/creatio
 import { ExpensesRequestModalComponent } from './payment-refund-main/expenses-request-modal/expenses-request-modal.component';
 import { ExpensesRequestComponent } from './payment-refund-main/expenses-request/expenses-request.component';
 import { FilterCheckboxComponent } from './payment-refund-main/filterCheckbox-elements';
+import { FComer084Component } from './payment-refund-main/goToFcomer084';
 import { KeyChangeModalComponent } from './payment-refund-main/key-change-modal/key-change-modal.component';
 import { LayoutMaintenanceModalComponent } from './payment-refund-main/layout-maintenance-modal/layout-maintenance-modal.component';
 import { LayoutMaintenanceStructureModalComponent } from './payment-refund-main/layout-maintenance-structure-modal/layout-maintenance-structure-modal.component';
@@ -27,6 +28,7 @@ import { TableCheckComponent } from './payment-refund-main/table-check/table-che
 import { TablePermissionsModalComponent } from './payment-refund-main/table-permissions-modal/table-permissions-modal.component';
 import { TransferDateModalComponent } from './payment-refund-main/transfer-date-modal/transfer-date-modal.component';
 import { TransferDateTableComponent } from './payment-refund-main/transfer-date-table/transfer-date-table.component';
+import { ValidClabeComponent } from './payment-refund-main/validClabe';
 import { PaymentRefundRoutingModule } from './payment-refund-routing.module';
 
 @NgModule({
@@ -50,6 +52,8 @@ import { PaymentRefundRoutingModule } from './payment-refund-routing.module';
     TransferDateTableComponent,
     CheckboxElementComponent2,
     FilterCheckboxComponent,
+    ValidClabeComponent,
+    FComer084Component,
   ],
   imports: [
     CommonModule,
