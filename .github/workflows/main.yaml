@@ -1,0 +1,70 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "docker-qa" ]
+
+
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: "--max-old-space-size=12288"
+    steps:
+    - name: Install cURL
+      run: sudo apt-get install -y curl
+    - name: Obtener nombre del repositorio
+      id: obtener-nombre-repo
+      run: |
+        echo "::set-output name=repo_name::$(echo sigebi-appqa)"
+    - uses: actions/checkout@v3
+    - name: Call API
+      run: |
+          # Aquí puedes realizar la llamada a la API utilizando cURL o cualquier otra herramienta de tu elección
+          body='{"ms":"${{ steps.obtener-nombre-repo.outputs.repo_name }}","hash":"${{ github.sha }}","status":"NPM INSTALL"}'
+          
+          # Realizar la llamada a la API con el cuerpo de la solicitud
+          curl -X POST -H "Content-Type: application/json" -d "$body" "${{ secrets.SERVER }}"
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+        node-args: --max-old-space-size=12288
+    - name: Enable verbose logging
+      run: npm config set loglevel verbose
+    - name: Enable verbose logging
+      run: npm config set loglevel verbose
+    - name: Install dependencies
+      run: npm install --legacy-peer-deps
+    - name: Call API
+      run: |
+          # Aquí puedes realizar la llamada a la API utilizando cURL o cualquier otra herramienta de tu elección
+          body='{"ms":"${{ steps.obtener-nombre-repo.outputs.repo_name }}","hash":"${{ github.sha }}","status":"BUILD APP"}'
+          
+          # Realizar la llamada a la API con el cuerpo de la solicitud
+          curl -X POST -H "Content-Type: application/json" -d "$body" "${{ secrets.SERVER }}"
+    - name: Build application
+      run: npm run build --max-old-space-size=12288
+    - name: Call API
+      run: |
+          # Aquí puedes realizar la llamada a la API utilizando cURL o cualquier otra herramienta de tu elección
+          body='{"ms":"${{ steps.obtener-nombre-repo.outputs.repo_name }}","hash":"${{ github.sha }}","status":"GENERATE DOCKER"}'
+          
+          # Realizar la llamada a la API con el cuerpo de la solicitud
+          curl -X POST -H "Content-Type: application/json" -d "$body" "${{ secrets.SERVER }}"
+    - name: Build the Docker image
+      run: |
+        docker login acrindep.azurecr.io --username ${{ secrets.USER }} -p ${{ secrets.PASSWORD }}
+        docker build -t acrindep.azurecr.io/ns-sb-0001-sigebi/${{ steps.obtener-nombre-repo.outputs.repo_name }}:${{ github.sha }} -f nginx.dockerfile .
+        docker push acrindep.azurecr.io/ns-sb-0001-sigebi/${{ steps.obtener-nombre-repo.outputs.repo_name }}:${{ github.sha }}
+
+    - name: Call API
+      run: |
+          # Aquí puedes realizar la llamada a la API utilizando cURL o cualquier otra herramienta de tu elección
+          body='{"ms":"${{ steps.obtener-nombre-repo.outputs.repo_name }}","hash":"${{ github.sha }}","status":"OK"}'
+          
+          # Realizar la llamada a la API con el cuerpo de la solicitud
+          curl -X POST -H "Content-Type: application/json" -d "$body" "${{ secrets.SERVER }}"
