@@ -1919,7 +1919,6 @@ export class RequestCompDocTasksComponent
     const reportName = 'sae.rptdesign'; //this.tableName;
     const dynamic = true;
     const signed = !this.signReport; //!this.isSigned;
-    const signatore = true; //debe ser un objeto
     const idProg = id;
     //Modal que genera el reporte
     let config: ModalOptions = {
@@ -1933,7 +1932,6 @@ export class RequestCompDocTasksComponent
         tableName,
         reportName,
         signed,
-        signatore,
         requestId,
         idProg,
         callback: data => {

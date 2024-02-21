@@ -110,6 +110,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     private orderService: OrderServiceService,
     private samplingGoodService: SamplingGoodService
   ) {
+
     super();
     this.settings = {
       ...this.settings,
@@ -355,9 +356,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       222, 223, 224, 225, 245, 246, 249,
     ];
 
-    console.log(this.idTypeDoc);
-    console.log(this.typeFirm);
-
     if (
       signs.includes(parseInt('' + this.idTypeDoc)) &&
       this.typeFirm == 'autografa'
@@ -456,7 +454,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
     if (this.requestId > 0) {
       learnedType = this.idTypeDoc;
-      console.log(learnedType);
     }
 
     this.signatoriesService
@@ -464,15 +461,10 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
 
-          console.log("LOG SIGN", response);
-
           this.signatoriesService
             .deleteFirmante(Number(response.data[0].signatoryId))
             .subscribe({
               next: async () => {
-
-                console.log("LOG DELETE", response.data[0].signatoryId);
-
                 const createSignatore = await this.createSign(
                   this.idProg,
                   learnedType,
@@ -487,10 +479,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             });
         },
         error: async error => {
-
-          console.log("LOG ERROR", error);
-
-
           const createSignatore = await this.createSign(
             this.idProg,
             learnedType,
@@ -1427,9 +1415,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             )
             .subscribe({
               next: async response => {
-                console.log(response);
                 const updateSample = await this.updateSample(response.dDocName);
-                console.log(updateSample);
                 if (updateSample) {
                   this.alertInfo(
                     'success',
