@@ -1079,18 +1079,17 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         this.btnLoading2 = false;
         return;
       }
-      console.log('AQUIII');
       this.procedureInvoice();
     }
   }
 
   async procedureInvoice() {
     let validaFol: number = 0;
-
+    const { event } = this.form.value;
     const data = await this.dataFilter.getAll();
-    const event = data[0].eventId;
+    const eventId = event ?? data[0].eventId;
 
-    validaFol = await this.validateInvoice(data[0].tpevent, event);
+    validaFol = await this.validateInvoice(data[0].tpevent, eventId);
 
     if (validaFol == 1) {
       //service de actualizar
@@ -1099,18 +1098,23 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       let res = await this.processMark('FL', 'PREF');
       console.log('res', res);
       // COMER_CTRLFACTURA.GENERA_FOLIOS(:COMER_FACTURAS.ID_EVENTO, :COMER_FACTURAS.TPEVENTO);
-      await this.generateInvoiceCtrl(event, data[0].tpevent);
+      await this.generateInvoiceCtrl(eventId, 11 ?? data[0].tpevent);
 
       // VERIFICA_PROV_CANCE;
       await this.verifyProv();
 
       // MODIFICA_WHERE_DETALLE(PEVENTO);
       this.alert('success', 'Se generaron los folios correctamente', '');
-      this.paramsList['filter.eventId'] = `$eq:${event}`;
-      await this.forArrayFilters('eventId', event);
+      this.paramsList['filter.eventId'] = `$eq:${eventId}`;
+      await this.forArrayFilters('eventId', eventId);
       this.getAllComer();
       this.btnLoading2 = false;
     } else {
+      this.alert(
+        'warning',
+        'No existen folios disponibles para el tipo de documento Venta de Bases',
+        ' verifique sus series '
+      );
       this.btnLoading2 = false;
     }
   }
