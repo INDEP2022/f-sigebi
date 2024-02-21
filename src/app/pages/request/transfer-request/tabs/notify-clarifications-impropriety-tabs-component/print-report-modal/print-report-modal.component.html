@@ -89,11 +89,15 @@
             </button> -->
           </div>
           <div class="p-2">
-            <button class="btn btn-primary btn-sm active" (click)="backStep()">
+            <button
+              class="btn btn-primary btn-sm active"
+              (click)="backStep()"
+              [ngClass]="{ loading: loadingButton }"
+              [disabled]="loadingButton">
               <i class="bx bx-left-arrow-alt"></i> Paso Anterior
             </button>
           </div>
-          <div class="p-2" *ngIf="msjCheck == true">
+          <div class="p-2">
             <button class="btn btn-primary btn-sm active" (click)="nextStep()">
               Paso Siguiente <i class="bx bx-right-arrow-alt"></i>
             </button>
@@ -132,6 +136,8 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
+          [ngClass]="{ loading: loadingButton }"
+          [disabled]="loadingButton"
           type="button"
           class="btn btn-danger btn-sm active"
           (click)="close()">

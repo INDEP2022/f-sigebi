@@ -109,6 +109,7 @@ export class RegistrationOfRequestsComponent
   statusTask: any = '';
   pgr: boolean = false;
   openAddressTab: boolean = false;
+  loadingBtn: boolean = false;
 
   constructor(
     public fb: FormBuilder,
@@ -1114,11 +1115,13 @@ export class RegistrationOfRequestsComponent
   }
 
   async signDictum() {
+    this.loadingBtn = true;
     const idSolicitud = this.route.snapshot.paramMap.get('id');
     const idTypeDoc = this.idTypeDoc;
     const typeAnnex = 'approval-request';
     const sign: any = await this.ableToSignDictamen();
     if (sign == false) {
+      this.loadingBtn = false;
       this.onLoadToast(
         'error',
         'Bienes no aclarados',
@@ -1129,6 +1132,7 @@ export class RegistrationOfRequestsComponent
 
     const existDictamen = await this.getDictamen(this.requestData.id);
     if (existDictamen === true) {
+      this.loadingBtn = false;
       this.onLoadToast('warning', 'Atención', 'Ya se firmó un dictamen');
       return;
     }
@@ -1143,17 +1147,27 @@ export class RegistrationOfRequestsComponent
             idTypeDoc,
             typeAnnex,
             requestData,
-            callback: (next: boolean) => {},
+            callback: (next: boolean, confirmDocument: string) => {
+              if (next) {
+                this.loadingBtn = false;
+              }
+              if (confirmDocument == 'ok') {
+                setTimeout(() => {
+                  this.loadingBtn = false;
+                }, 5000);
+              }
+            },
           },
           class: 'modal-lg modal-dialog-centered',
           ignoreBackdropClick: true,
+          keyboard: false,
         };
         this.bsModalRef = this.modalService.show(
           GenerateDictumComponent,
           config
         );
       },
-      error: error => (this.loading = false),
+      error: error => ((this.loading = false), (this.loadingBtn = false)),
     });
   }
 
@@ -1230,6 +1244,12 @@ export class RegistrationOfRequestsComponent
 
   /* Inicio de rechazar aprovacion */
   async refuseRequest() {
+    const existDictamen = await this.getDictamen(this.requestData.id);
+    if (existDictamen === true) {
+      this.onLoadToast('warning', 'Atención', 'Ya se firmó un dictamen');
+      return;
+    }
+
     if (this.requestApproved == true) {
       this.onLoadToast(
         'error',
@@ -1244,7 +1264,7 @@ export class RegistrationOfRequestsComponent
       this.onLoadToast(
         'error',
         'Bienes no aclarados',
-        'Algunos bienes aun no se aclarar'
+        'Algunos bienes aun no se aclaran'
       );
       return;
     }
@@ -1931,6 +1951,7 @@ export class RegistrationOfRequestsComponent
             resolve(result);
           },
           error: error => {
+            this.loadingBtn = false;
             reject('Error');
           },
         });

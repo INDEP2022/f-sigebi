@@ -79,6 +79,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   notificationValidate: any; //Parámetro que identifica si es notificación Y= si lo es
 
   noBien: any;
+
+  loadingButton: boolean = false;
   constructor(
     public modalService: BsModalService,
     public modalRef: BsModalRef,
@@ -447,14 +449,14 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   nextStep() {
-    if (this.msjCheck == true) {
-      this.listSigns = false;
-      this.printReport = true;
-      this.isAttachDoc = true;
-      this.title = 'Imprimir Reporte';
-      this.btnTitle = 'Adjuntar Documento';
-      this.btnSubTitle = 'Imprimir Reporte';
-    }
+    //if (this.msjCheck == true) {
+    this.listSigns = false;
+    this.printReport = true;
+    this.isAttachDoc = true;
+    this.title = 'Imprimir Reporte';
+    this.btnTitle = 'Adjuntar Documento';
+    this.btnSubTitle = 'Imprimir Reporte';
+    //}
   }
 
   pdfTempo: string = 'PDF';
@@ -582,15 +584,14 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         .subscribe({
           next: resp => {
             this.alert('success', 'El Documento ha sido Guardado', '');
-            this.modalRef.content.callback(true);
+            const confirmDocument = 'ok';
+            this.modalRef.content.callback(true, confirmDocument);
             this.close();
           },
           error: error => {},
         });
     });
   }
-
-  loadingButton: boolean = false;
 
   openMessage(message: string): void {
     this.alertQuestion('warning', 'Confirmación', message, 'Aceptar').then(

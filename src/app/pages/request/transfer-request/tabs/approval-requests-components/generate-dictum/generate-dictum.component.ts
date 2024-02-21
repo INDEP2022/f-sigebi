@@ -155,7 +155,12 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
               requestInfo,
               nameTypeDoc,
               nomenglatura,
-              callback: (next: boolean) => {},
+              callback: (next: boolean, confirmDocument: string) => {
+                if (confirmDocument === 'ok') {
+                  this.modalRef.content.callback(confirmDocument);
+                  this.modalRef.hide();
+                }
+              },
             },
             class: 'modal-lg modal-dialog-centered',
             keyboard: false,
@@ -175,6 +180,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   }
 
   close(): void {
+    this.modalRef.content.callback(true);
     this.bsModelRef.hide();
   }
 
@@ -234,7 +240,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
     const message: string = this.edit ? 'Generado' : 'Generado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.modalRef.content.callback(true);
-    this.modalRef.hide();
+    //this.modalRef.content.callback(true);
+    //this.modalRef.hide();
   }
 }
