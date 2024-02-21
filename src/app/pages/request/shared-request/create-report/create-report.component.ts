@@ -110,6 +110,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
     this.form.get('template').valueChanges.subscribe(value => {
       if (!isNullOrEmpty(this.formats)) {
         this.format = this.formats.data.find(x => x.id == value);
+        this.format.documentTypeId = this.format.doctoTypeId.id;
       }
     });
   }
@@ -128,6 +129,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
         if (list.length > 0) {
           this.format = list[0];
           this.form.get('template').setValue(list[0].id);
+          this.format.documentTypeId = list[0].doctoTypeId.id;
           this.formats = new DefaultSelect(list, list.length);
           this.getVersionsDoc();
         } else {
@@ -141,6 +143,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   async getVersionsDoc() {
+
     let params = new ListParams();
     params['filter.documentTypeId'] = `$eq:${this.format.doctoTypeId.id}`;
     params['filter.tableName'] = `$eq:${this.tableName}`;
@@ -305,12 +308,16 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   generateReport() {
+
+    let documentTypeId = !isNullOrEmpty(this.version.documentTypeId) ?
+      this.version.documentTypeId : this.format.documentTypeId;
+
     this.wContentService
       .downloadDinamycReport(
         'sae.rptdesign',
         'SOLICITUDES',
         this.requestId,
-        this.version.documentTypeId
+        documentTypeId
       )
       .subscribe({
         next: response => {
@@ -393,7 +400,14 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
   showFile() {
     this.version.isSigned = this.isSigned;
-    this.show.emit(this.version);
+    let version = !isNullOrEmpty(this.version.documentTypeId) ?
+      this.version : this.format;
+
+    console.log('showFile', version);
+    console.log('showFile', this.version);
+    console.log('showFile', this.format);
+
+    this.show.emit(version);
   }
 
   openSignature() {

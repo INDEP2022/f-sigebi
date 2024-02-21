@@ -20,8 +20,7 @@ import { ModelForm } from '../../../../../core/interfaces/model-form';
 })
 export class AnnexJAssetsClassificationComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   signForm: ModelForm<any>;
   form: FormGroup = new FormGroup({});
   typeAnnex: string = '';
@@ -191,6 +190,9 @@ export class AnnexJAssetsClassificationComponent
           charge,
           typeSign
         );
+
+        console.log("registerInfoSample: " + registerInfoSample);
+
         if (registerInfoSample) {
           const checkSignature = await this.checkSignatureInfo(
             name,
@@ -279,6 +281,10 @@ export class AnnexJAssetsClassificationComponent
         .subscribe({
           next: response => {
             const deleteSignatures = this.deleteSignatores(response.data);
+
+            console.log("deleteSignatures: " + deleteSignatures);
+
+
             if (deleteSignatures) {
               const formData: Object = {
                 learnedId: learnedId,
@@ -325,7 +331,7 @@ export class AnnexJAssetsClassificationComponent
             next: () => {
               resolve(true);
             },
-            error: error => {},
+            error: error => { },
           });
       });
     });

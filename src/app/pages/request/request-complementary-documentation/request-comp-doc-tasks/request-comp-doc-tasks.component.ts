@@ -1919,7 +1919,7 @@ export class RequestCompDocTasksComponent
     const reportName = 'sae.rptdesign'; //this.tableName;
     const dynamic = true;
     const signed = !this.signReport; //!this.isSigned;
-
+    const idProg = id;
     //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
@@ -1933,6 +1933,7 @@ export class RequestCompDocTasksComponent
         reportName,
         signed,
         requestId,
+        idProg,
         callback: data => {
           if (typeFirm != 'electronica') {
             if (data) {
