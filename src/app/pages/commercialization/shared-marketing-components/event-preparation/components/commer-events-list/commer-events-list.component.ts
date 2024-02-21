@@ -83,15 +83,25 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
         console.log(filter.field, filter.search, filter);
         const columns = this.settings.columns as any;
         const operator = columns[filter.field]?.operator;
-        if (filter.field == 'comerStatusvta') {
-          filter.field = 'comerStatusvta.description';
-        }
-        if (filter.field == 'comerTpevents') {
-          filter.field = 'comerTpevents.description';
-        }
+
         if (!filter.search) {
+          params.removeAllFilters();
           return;
         }
+
+        if (
+          filter.field == 'comerStatusvta' &&
+          ![null, ''].includes(filter.search)
+        ) {
+          filter.field = 'comerStatusvta.description';
+        }
+        if (
+          filter.field == 'comerTpevents' &&
+          ![null, ''].includes(filter.search)
+        ) {
+          filter.field = 'comerTpevents.description';
+        }
+
         params.addFilter(
           filter.field,
           filter.search,

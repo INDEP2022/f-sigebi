@@ -203,6 +203,10 @@ export class ConciliationExecutionMainComponent
         },
       },
       columns: { ...CONCILIATION_EXECUTION_COLUMNS },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-4"></i>',
+      },
     };
     this.conciliationSettings.columns = CONCILIATION_EXECUTION_COLUMNS;
   }

@@ -637,11 +637,11 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
             OPCION: 0,
             PEVENTO: event,
             PLOTE: null,
-            PIDFACTURA: null,
+            // PIDFACTURA: null,
             delegationNumber: this.delegation,
             GEN_IVA: iva,
-            LOTE: null,
-            toolbarUser: this.userService.decodeToken().preferred_username,
+            // LOTE: null,
+            // toolbarUser: this.userService.decodeToken().preferred_username,
           };
           // GENERA_PREFACTURAS(0,:BLK_CTRL.EVENTO, NULL, NULL);
           resul = await this.getApplicationGeneratePreInvoices(obj);
@@ -653,11 +653,11 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
               OPCION: 1,
               PEVENTO: event_,
               PLOTE: idAllotment || data[0].batchId,
-              PIDFACTURA: null,
+              // PIDFACTURA: null,
               delegationNumber: this.delegation,
               GEN_IVA: iva,
-              LOTE: idAllotment || data[0].batchId,
-              toolbarUser: this.userService.decodeToken().preferred_username,
+              // LOTE: idAllotment || data[0].batchId,
+              // toolbarUser: this.userService.decodeToken().preferred_username,
             };
             // GENERA_PREFACTURAS(1, NVL(:BLK_CTRL.EVENTO,:COMER_FACTURAS.ID_EVENTO), NVL(:BLK_CTRL.LOTE,:COMER_FACTURAS.ID_LOTE),NULL);
             resul = await this.getApplicationGeneratePreInvoices(obj);
@@ -667,11 +667,11 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
               OPCION: 1,
               PEVENTO: event_,
               PLOTE: idAllotment || data[0].batchId,
-              PIDFACTURA: null,
+              // PIDFACTURA: null,
               delegationNumber: this.delegation,
               GEN_IVA: iva,
-              LOTE: idAllotment || data[0].batchId,
-              toolbarUser: this.userService.decodeToken().preferred_username,
+              // LOTE: idAllotment || data[0].batchId,
+              // toolbarUser: this.userService.decodeToken().preferred_username,
             };
             // GENERA_PREFACTURAS(1, NVL(:BLK_CTRL.EVENTO,:COMER_FACTURAS.ID_EVENTO), NVL(:BLK_CTRL.LOTE,:COMER_FACTURAS.ID_LOTE),NULL);
             resul = await this.getApplicationGeneratePreInvoices(obj);
@@ -720,17 +720,11 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
               )
             );
 
-        console.log('HOLA');
         this.btnLoading = false;
-        this.alert('success', 'Prefacturas Generadas', '');
-        // this.resetParams();
-        this.paramsList['filter.eventId'] = `$eq:${event ?? data[0].eventId}`;
+        this.alert('success', 'Proceso terminado correctamente', '');
+        this.paramsList['filter.eventId'] = `$eq:${event}`;
         await this.forArrayFilters('eventId', event);
-        this.getAllComer();
-      } else {
-        this.paramsList['filter.eventId'] = `$eq:${event ?? data[0].eventId}`;
-        await this.forArrayFilters('eventId', event ?? data[0].eventId);
-        this.getAllComer();
+        await this.getAllComer();
       }
     } else {
       this.btnLoading = false;
@@ -791,10 +785,9 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
 
     this.btnLoading = false;
     this.alert('success', 'Prefacturas Generadas', '');
-    // this.resetParams();
     this.paramsList['filter.eventId'] = `$eq:${event}`;
     await this.forArrayFilters('eventId', event);
-    this.getAllComer();
+    await this.getAllComer();
   }
 
   async generateInvoiceSoi(data: any) {
@@ -841,7 +834,6 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
           'Atención',
           `Ya se han asignado folio al Lote: ${idAllotment}`
         );
-        this.resetParams();
         this.paramsList['filter.eventId'] = `$eq:${event}`;
         await this.forArrayFilters('eventId', event);
         this.getAllComer();
@@ -866,7 +858,6 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         'Atención',
         `Ya se han asignado folio al Lote: ${idAllotment}`
       );
-      this.resetParams();
       this.paramsList['filter.eventId'] = `$eq:${event}`;
       await this.forArrayFilters('eventId', event);
       this.getAllComer();
@@ -1088,18 +1079,17 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         this.btnLoading2 = false;
         return;
       }
-      console.log('AQUIII');
       this.procedureInvoice();
     }
   }
 
   async procedureInvoice() {
     let validaFol: number = 0;
-
+    const { event } = this.form.value;
     const data = await this.dataFilter.getAll();
-    const event = data[0].eventId;
+    const eventId = event ?? data[0].eventId;
 
-    validaFol = await this.validateInvoice(data[0].tpevent, event);
+    validaFol = await this.validateInvoice(data[0].tpevent, eventId);
 
     if (validaFol == 1) {
       //service de actualizar
@@ -1108,19 +1098,23 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       let res = await this.processMark('FL', 'PREF');
       console.log('res', res);
       // COMER_CTRLFACTURA.GENERA_FOLIOS(:COMER_FACTURAS.ID_EVENTO, :COMER_FACTURAS.TPEVENTO);
-      await this.generateInvoiceCtrl(event, data[0].tpevent);
+      await this.generateInvoiceCtrl(eventId, 11 ?? data[0].tpevent);
 
       // VERIFICA_PROV_CANCE;
       await this.verifyProv();
 
       // MODIFICA_WHERE_DETALLE(PEVENTO);
       this.alert('success', 'Se generaron los folios correctamente', '');
-      this.resetParams();
-      this.paramsList['filter.eventId'] = `$eq:${event}`;
-      await this.forArrayFilters('eventId', event);
+      this.paramsList['filter.eventId'] = `$eq:${eventId}`;
+      await this.forArrayFilters('eventId', eventId);
       this.getAllComer();
       this.btnLoading2 = false;
     } else {
+      this.alert(
+        'warning',
+        'No existen folios disponibles para el tipo de documento Venta de Bases',
+        ' verifique sus series '
+      );
       this.btnLoading2 = false;
     }
   }
@@ -1801,7 +1795,6 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         }
       });
     } else if (filterConf.filters.length == 0 && value) {
-      console.log('SI');
       filterConf.filters.push({ field: field, search: value });
     }
     this.dataFilter.refresh();
