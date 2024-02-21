@@ -9,7 +9,12 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { Subscription } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -35,7 +40,8 @@ import { isNullOrEmpty } from '../../request-complementary-documentation/request
 })
 export class RegisterDocumentationFormComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   fileTypes: any[] = [];
   infoOrigins: any[] = [];
   maxDate: Date = new Date();
@@ -148,14 +154,16 @@ export class RegisterDocumentationFormComponent
   }
 
   formChanges(update = false) {
-
     let requiredFields = this.getRequiredFields(this.registerForm);
-    let isValid = this.validateParameters(this.requestIfo, requiredFields["keys"]);
+    let isValid = this.validateParameters(
+      this.requestIfo,
+      requiredFields['keys']
+    );
 
     this.onChange.emit({
       isValid: this.registerForm.valid && isValid && this.loadInfo,
       object: this.requestIfo,
-      update: update
+      update: update,
     });
   }
 
@@ -484,16 +492,19 @@ export class RegisterDocumentationFormComponent
     let requiredFields: { [key: string]: any } = {};
 
     Object.keys(formGroup.controls).forEach(key => {
-
-      let control: any = formGroup.get(key)
-      if (control.validator && control.validator({} as AbstractControl) && control.validator({} as AbstractControl).required) {
+      let control: any = formGroup.get(key);
+      if (
+        control.validator &&
+        control.validator({} as AbstractControl) &&
+        control.validator({} as AbstractControl).required
+      ) {
         requiredFields[key] = control.value;
       }
     });
 
     return {
       data: requiredFields,
-      keys: Object.keys(requiredFields)
+      keys: Object.keys(requiredFields),
     };
   }
 
@@ -506,5 +517,4 @@ export class RegisterDocumentationFormComponent
 
     return true;
   }
-
 }
