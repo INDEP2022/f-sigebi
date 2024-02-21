@@ -10,6 +10,7 @@ import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.mo
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -28,13 +29,15 @@ export class AuthorizationSOIModalComponent extends BasePage implements OnInit {
     private comerInvoiceService: ComerInvoiceService,
     private authService: AuthService,
     private comerEventService: ComerEventService,
-    private userService: UsersService
+    private userService: UsersService,
+    private securityService: SecurityService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.user = this.authService.decodeToken();
+    this.form.get('userV').setValue(this.user.preferred_username.toUpperCase());
   }
 
   async validate() {
@@ -71,16 +74,21 @@ export class AuthorizationSOIModalComponent extends BasePage implements OnInit {
   }
 
   async validateUser(userv: string, password: string, aux: number) {
-    const { user, domain } = await this.getUserXCancel(userv);
+    const data = await this.checkUser(userv.toUpperCase());
 
-    if (!user && !domain) {
+    if (!data.aux_dominio && !data.aux_user) {
+      this.alert('warning', 'Usuario no autorizado', '');
       return 0;
     }
 
-    if (domain == 'C') {
+    if (data.aux_dominio == 'C') {
       null;
-    } else if (domain == 'R') {
-      const aux_auto = await this.viewDelegationUser(user, aux);
+    } else if (data.aux_dominio == 'R') {
+      // const aux_auto = await this.viewDelegationUser(userv, aux);
+      const aux_auto = await this.validateRegUser(
+        userv.toUpperCase(),
+        this.user.department
+      );
       if (aux_auto == 0) {
         this.alert(
           'warning',
@@ -107,13 +115,29 @@ export class AuthorizationSOIModalComponent extends BasePage implements OnInit {
     );
   }
 
-  async getUserXCancel(user: string) {
+  // async getUserXCancel(user: string) {
+  //   const filter = new FilterParams();
+  //   filter.addFilter('user', user.toUpperCase(), SearchFilter.EQ);
+  //   return firstValueFrom(
+  //     this.userService.getUseXEvent(filter.getParams()).pipe(
+  //       map(resp => resp[0] ?? [{}]),
+  //       catchError(() => of([{}]))
+  //     )
+  //   );
+  // }
+
+  async checkUser(user: string) {
     const filter = new FilterParams();
     filter.addFilter('user', user, SearchFilter.EQ);
     return firstValueFrom(
-      this.userService.getUseXEvent(filter.getParams()).pipe(
-        map(resp => resp[0] ?? [{}]),
-        catchError(() => of([{}]))
+      this.userService.getComerUserXCan(filter.getParams()).pipe(
+        map(resp => {
+          return {
+            aux_user: resp.data[0].user,
+            aux_dominio: resp.data[0].domain,
+          };
+        }),
+        catchError(() => of({ aux_user: null, aux_dominio: null }))
       )
     );
   }
@@ -121,5 +145,16 @@ export class AuthorizationSOIModalComponent extends BasePage implements OnInit {
   close() {
     this.modalRef.content.callback(null);
     this.modalRef.hide();
+  }
+
+  async validateRegUser(user: string, delegation: string) {
+    const filter = new FilterParams();
+    filter.addFilter('user', user, SearchFilter.EQ);
+    return firstValueFrom(
+      this.securityService.getViewDelegationUser_(user, delegation).pipe(
+        map(resp => resp.aux_dele),
+        catchError(() => of(0))
+      )
+    );
   }
 }
