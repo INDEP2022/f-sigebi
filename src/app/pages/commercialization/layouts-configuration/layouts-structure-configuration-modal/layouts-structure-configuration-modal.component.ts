@@ -171,8 +171,8 @@ export class LayoutsStructureConfigurationModalComponent
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.alert('success', `Estructura de Diseño ${message} Correctamente`, '');
+    const message: string = this.edit ? 'actualizada' : 'guardada';
+    this.alert('success', `Estructura de Diseño ${message} correctamente`, '');
     this.loading = false;
     this.onConfirm.emit(true);
     this.close();
