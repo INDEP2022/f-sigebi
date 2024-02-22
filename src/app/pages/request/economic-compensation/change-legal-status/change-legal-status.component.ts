@@ -191,7 +191,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
 
         //this.onLoadToast('error', 'Error', error);
       },
-      () => {}
+      () => { }
     );
   }
 
@@ -312,10 +312,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
           object['jobLegalId'] = splitId;
           this.createLegalDoc(object);
         } else {
-          object['providedDate'] = new DatePipe('en-EN').transform(
-            object['providedDate'],
-            'dd/MM/yyyy'
-          );
+          object['providedDate'] = moment(object['providedDate']);
           object['jobLegalId'] = this.recDoc['jobLegalId'];
           this.updatedLegalDoc(object);
         }
