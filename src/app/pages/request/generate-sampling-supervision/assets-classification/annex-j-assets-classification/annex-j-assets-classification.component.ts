@@ -191,6 +191,9 @@ export class AnnexJAssetsClassificationComponent
           charge,
           typeSign
         );
+
+        console.log('registerInfoSample: ' + registerInfoSample);
+
         if (registerInfoSample) {
           const checkSignature = await this.checkSignatureInfo(
             name,
@@ -279,6 +282,9 @@ export class AnnexJAssetsClassificationComponent
         .subscribe({
           next: response => {
             const deleteSignatures = this.deleteSignatores(response.data);
+
+            console.log('deleteSignatures: ' + deleteSignatures);
+
             if (deleteSignatures) {
               const formData: Object = {
                 learnedId: learnedId,

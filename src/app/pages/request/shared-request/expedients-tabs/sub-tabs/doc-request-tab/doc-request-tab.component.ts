@@ -959,10 +959,12 @@ export class DocRequestTabComponent
       ignoreBackdropClick: true,
     };
     const idRequest = this.idRequest;
-    let typeDoc = 'doc-request';
+    const typeDoc = this.typeDoc;
+    const idExpedient = this.requestInfo.recordId;
     config.initialState = {
       idRequest,
       typeDoc,
+      idExpedient,
       callback: (data: boolean) => {
         if (data) {
           this.formLoading = true;

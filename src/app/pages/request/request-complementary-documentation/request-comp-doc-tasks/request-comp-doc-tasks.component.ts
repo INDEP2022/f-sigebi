@@ -1871,8 +1871,11 @@ export class RequestCompDocTasksComponent
     );
   }
 
-  async openModal(component: any, idSample?: any, typeAnnex?: string): Promise<void> {
-
+  async openModal(
+    component: any,
+    idSample?: any,
+    typeAnnex?: string
+  ): Promise<void> {
     let report = await this.getStatusReport();
     report = report.isValid ? report.data[0] : report;
 
@@ -1927,7 +1930,7 @@ export class RequestCompDocTasksComponent
     const reportName = 'sae.rptdesign'; //this.tableName;
     const dynamic = true;
     const signed = !this.signReport; //!this.isSigned;
-
+    const idProg = id;
     //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
@@ -1941,6 +1944,7 @@ export class RequestCompDocTasksComponent
         reportName,
         signed,
         requestId,
+        idProg,
         callback: data => {
           if (typeFirm != 'electronica') {
             if (data) {

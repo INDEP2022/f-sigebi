@@ -480,7 +480,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       ivaT: [null],
       total: [null],
       userV: [null, Validators.required],
-      passwordV: [null, Validators.required],
+      passwordV: [null],
       order: [null],
       numberInvoices: [null],
     });
@@ -686,6 +686,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
             callback: async (event: any) => {
               if (event) {
                 // GENERA_PREFACTURAS_SOI(:BLK_CTRL.EVENTO);
+                console.log(event);
                 await this.generateInvoiceIso(event);
               } else {
                 this.btnLoading = false;
@@ -772,6 +773,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       toolbarNoDelegation: this.delegation,
       toolbarUser: this.userService.decodeToken().preferred_username,
     };
+    console.log(data);
     let result = await this.generateInvoiceSoi(data);
     if (!result)
       return (
@@ -1089,7 +1091,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     const data = await this.dataFilter.getAll();
     const eventId = event ?? data[0].eventId;
 
-    validaFol = await this.validateInvoice(data[0].tpevent, eventId);
+    validaFol = await this.validateInvoice(11 ?? data[0].tpevent, eventId);
 
     if (validaFol == 1) {
       //service de actualizar
@@ -1797,7 +1799,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     } else if (filterConf.filters.length == 0 && value) {
       filterConf.filters.push({ field: field, search: value });
     }
-    this.dataFilter.refresh();
+    // this.dataFilter.refresh();
     return true;
   }
 
