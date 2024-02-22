@@ -119,6 +119,8 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.onLoadToast('error', 'No se pudo actualizar el bien');
+          this.processing = true;
+
           console.log(error);
         },
       });
@@ -172,6 +174,8 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.onLoadToast('error', 'No se pudo crear el bien');
+        this.processing = true;
+
         console.log(error);
       },
     });
