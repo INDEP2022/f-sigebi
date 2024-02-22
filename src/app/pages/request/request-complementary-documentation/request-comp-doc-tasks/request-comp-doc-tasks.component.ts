@@ -293,9 +293,11 @@ export class RequestCompDocTasksComponent
 
   expedientSelected(event: any) {
     if (event == true) {
+      this.displayExpedient = false;
       this.displayExpedient = true;
       this.requestSelected(1);
     }
+
   }
   requestSelected(type: number) {
     this.typeDocumentMethod(type);

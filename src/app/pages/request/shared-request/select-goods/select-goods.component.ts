@@ -270,6 +270,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   getInfoGoods(filters: any) {
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
+
     this.jsonBody = {};
     if (
       this.processDet == 'DEVOLUCION' ||

@@ -118,7 +118,6 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
       ? this.idRequest
       : (this.activatedRoute.snapshot.paramMap.get('id') as unknown as number);
 
-    console.log('this.idRequest', this.idRequest);
     if (this.idRequest) {
       this.loading = true;
       this.params.getValue()['search'] = this.params.getValue().text;
