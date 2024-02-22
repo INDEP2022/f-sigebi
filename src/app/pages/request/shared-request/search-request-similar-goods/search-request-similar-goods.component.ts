@@ -112,20 +112,17 @@ export class SearchRequestSimilarGoodsComponent
   }
 
   getFormSeach(formSearch: any) {
-    // Crear un nuevo FilterParams
     let newParams = new FilterParams();
 
     // Agregar el filtro 'recordId'
     newParams.addFilter('recordId', '$null', SearchFilter.NOT);
 
-    // Agregar los valores de formSearch a newParams
     for (const key in formSearch) {
       if (formSearch[key] != null) {
         newParams.addFilter(key, formSearch[key]);
       }
     }
 
-    // Emitir newParams como el nuevo valor de params
     this.params.next(newParams);
 
     // Suscribirse a params y llamar a getFiles cuando cambie
@@ -133,6 +130,7 @@ export class SearchRequestSimilarGoodsComponent
       this.getFiles();
     });
   }
+  private alertShown = false;
 
   getFiles() {
     this.loadGoods = false;
@@ -163,7 +161,10 @@ export class SearchRequestSimilarGoodsComponent
       },
       error: error => {
         this.loading = false;
-        this.alert('warning', 'No se encontraron registros', '');
+        if (!this.alertShown) {
+          this.alert('warning', 'No se encontraron registros', '');
+          this.alertShown = true;
+        }
       },
     });
     // Llamar servicio para buscar expedientes
