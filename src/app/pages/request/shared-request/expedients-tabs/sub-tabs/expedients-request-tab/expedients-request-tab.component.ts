@@ -108,6 +108,7 @@ export class ExpedientsRequestTabComponent
   }
 
   requestSelected(event: any) {
+    console.log('event', event);
     this.typeDocumentMethod(event);
   }
 
