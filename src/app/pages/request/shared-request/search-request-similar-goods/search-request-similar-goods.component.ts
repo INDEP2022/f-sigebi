@@ -112,6 +112,7 @@ export class SearchRequestSimilarGoodsComponent
   }
 
   getFormSeach(formSearch: any) {
+    this.alertShown = false;
     let newParams = new FilterParams();
 
     // Agregar el filtro 'recordId'
