@@ -324,11 +324,23 @@ export class RequestCompDocTasksComponent
   requestRegistered(request: any) { }
 
   async openReport(): Promise<void> {
+
     if (!this.nextTurn) {
       let report = await this.getStatusReport();
       this.showReport(report);
       return;
     }
+
+    if (this.reportId == '223') {
+      //this.showReportInfo(0, 0, '', '');
+      let report = await this.getStatusReport();
+      console.log('report', report);
+      this.openSignature({
+        reportFolio: '0123'
+      });
+      return;
+    }
+
 
     const initialState: Partial<CreateReportComponent> = {
       signReport: this.signedReport && this.nextTurn,
