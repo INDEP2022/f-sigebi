@@ -544,9 +544,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
             this.selectedGoodTotalItems = this.selectedGoodColumns.length;
             this.selectedGoods = [];
             this.onLoadToast('success', 'Los Bienes se eliminaron');
-          } else {
-            this.onLoadToast('error', 'Ocurrió un error al eliminar los Bienes');
           }
+
         });
 
         /*this.selectedGoodColumns.forEach((g: any, i: number) => {
