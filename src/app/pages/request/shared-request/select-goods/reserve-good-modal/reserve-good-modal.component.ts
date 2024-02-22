@@ -21,6 +21,8 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
   reserveForm: FormGroup = new FormGroup({});
   @Output() onReserve = new EventEmitter<any>();
 
+  processing: boolean = true;
+
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -35,7 +37,6 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
     if (!isNullOrEmpty(this.exitGood)) {
       this.reserveForm.controls['reserve'].setValue(this.exitGood.amount);
     }
-
   }
 
   private prepareForm(): void {
@@ -61,8 +62,9 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     this.loading = true;
+    this.processing = false;
     // Llamar servicio para agregar caratula
-    this.loading = false;
+    //this.loading = false;
     //const ableQuantity = this.good.quantity
     //const reservedQuantity = this.reserveForm.controls['reserve'].value;
 
@@ -113,6 +115,7 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
           this.onLoadToast('success', 'Se actualizo el bien');
           this.onReserve.emit(false);
           this.modalRef.hide();
+          this.processing = true;
         },
         error: error => {
           this.onLoadToast('error', 'No se pudo actualizar el bien');
@@ -122,7 +125,6 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
 
       return;
     }
-
 
     let goodResDev: IGoodsResDev = {};
     goodResDev.applicationId = this.requestId; //this.good.solicitudId;
@@ -166,6 +168,7 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
         this.onLoadToast('success', 'Se agregó el bien');
         this.onReserve.emit(resp);
         this.modalRef.hide();
+        this.processing = true;
       },
       error: error => {
         this.onLoadToast('error', 'No se pudo crear el bien');

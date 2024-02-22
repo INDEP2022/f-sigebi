@@ -48,7 +48,7 @@
         <button
           type="button"
           class="btn btn-primary btn-sm active"
-          [disabled]="reserveForm.invalid"
+          [disabled]="reserveForm.invalid || !processing"
           (click)="confirm()">
           Aceptar
         </button>
