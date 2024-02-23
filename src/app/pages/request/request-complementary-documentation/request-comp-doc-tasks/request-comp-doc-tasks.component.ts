@@ -329,13 +329,13 @@ export class RequestCompDocTasksComponent
 
     let doc = this.reportId;
 
-    if (first) {
-      doc = doc.split(',')[0];
-    } else {
-      doc = doc.split(',')[1];
+    if (this.process == 'generate-compensation-act') {
+      if (first) {
+        doc = doc.split(',')[0];
+      } else {
+        doc = doc.split(',')[1];
+      }
     }
-
-    console.log('reportId', first, this.reportId);
 
     if (!this.nextTurn) {
       let report = await this.getStatusReport(first ? 0 : 1);
