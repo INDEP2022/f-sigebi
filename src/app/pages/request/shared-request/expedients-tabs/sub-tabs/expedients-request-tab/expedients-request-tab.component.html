@@ -46,11 +46,13 @@
         id="tab1"
         (selectTab)="requestSelected(3)">
         <app-doc-request-tab
+          [updateInfo]="updateInfo"
           [typeDoc]="typeDoc"
           [typeModule]="typeModule"></app-doc-request-tab>
       </tab>
       <tab heading="Bienes de la Solicitud" (selectTab)="requestSelected(4)">
         <app-good-doc-tab
+          [updateInfo]="updateInfo"
           [typeDoc]="typeDoc"
           [screen]="screen"
           [typeModule]="typeModule"></app-good-doc-tab>
