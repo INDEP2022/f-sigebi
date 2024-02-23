@@ -180,10 +180,13 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
     sort: false,
   },
 
-  affair: {
+  cat_asunto: {
     title: 'Asunto',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.description;
+    },
   },
 
   typeRecord: {
