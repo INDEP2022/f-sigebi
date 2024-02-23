@@ -1057,12 +1057,12 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(NUMBERS_PATTERN), Validators.required],
       ],
-      idLotPublic: [null, Validators.required],
-      date: [null, Validators.required],
+      idLotPublic: [null],
+      date: [null],
       cause: [null],
       descause: [null],
-      fec: [null, Validators.required],
-      fec2: [null, Validators.required],
+      fec: [null],
+      fec2: [null],
     });
     this.form2 = this.fb.group({
       counter: [null],
