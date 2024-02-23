@@ -97,7 +97,7 @@
               <i class="bx bx-left-arrow-alt"></i> Paso Anterior
             </button>
           </div>
-          <div class="p-2">
+          <div class="p-2" *ngIf="msjCheck">
             <button class="btn btn-primary btn-sm active" (click)="nextStep()">
               Paso Siguiente <i class="bx bx-right-arrow-alt"></i>
             </button>

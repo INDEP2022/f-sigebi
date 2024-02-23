@@ -428,12 +428,8 @@ export class RegistrationOfRequestsComponent
       this.registRequestForm.controls['paperDate'].setValidators([
         Validators.required,
       ]);
-      this.registRequestForm.controls['previousInquiry'].setValidators([
-        Validators.required,
-      ]);
-      this.registRequestForm.controls['circumstantialRecord'].setValidators([
-        Validators.required,
-      ]);
+      this.registRequestForm.controls['previousInquiry'].setValidators([]);
+      this.registRequestForm.controls['circumstantialRecord'].setValidators([]);
       this.pgr = true;
     } else {
       this.registRequestForm.controls['paperDate'].setValidators([

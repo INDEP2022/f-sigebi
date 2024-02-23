@@ -688,12 +688,13 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   xml: string = '';
   //Método para plasmar firma en reporte generado
   firmReport(requestInfo?: number, nameTypeReport?: string, formData?: Object) {
+    this.loading = true;
     this.gelectronicFirmService
       .firmDocument(requestInfo, nameTypeReport, formData)
       .subscribe({
         next: data => {
           this.loadingButton = false;
-
+          this.loading = false;
           this.xml = data;
           this.msjCheck = true;
           this.handleSuccess();
@@ -710,6 +711,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loadingButton = false;
+          this.loading = false;
           this.alertInfo(
             'error',
             'Acción Inválida',

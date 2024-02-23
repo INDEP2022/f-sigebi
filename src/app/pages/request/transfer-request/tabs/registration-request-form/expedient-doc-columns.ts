@@ -306,11 +306,11 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
 
-  transferenceFile: {
+  /*transferenceFile: {
     title: 'Expediente Transferente/PAMA',
     type: 'string',
     sort: false,
-  },
+  },*/
 
   transferEntNotes: {
     title: 'Notas Entidad Transferente',
