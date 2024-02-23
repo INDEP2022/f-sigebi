@@ -115,7 +115,7 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
           this.onLoadToast('success', 'Se actualizo el bien');
           this.onReserve.emit(false);
           this.modalRef.hide();
-          this.processing = true;
+          //this.processing = true;
         },
         error: error => {
           this.onLoadToast('error', 'No se pudo actualizar el bien');
@@ -170,7 +170,7 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
         this.onLoadToast('success', 'Se agregó el bien');
         this.onReserve.emit(resp);
         this.modalRef.hide();
-        this.processing = true;
+        //this.processing = true;
       },
       error: error => {
         this.onLoadToast('error', 'No se pudo crear el bien');
