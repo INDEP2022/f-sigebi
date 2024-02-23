@@ -14,7 +14,7 @@
         <strong>Contribuyente y/o Indicado: </strong>{{ taxPayer }}
       </div>
       <div class="col-md-6 mt-5">
-        <strong>Proceso Detona: </strong>{{ detona }}
+        <strong>Proceso Detona: </strong>  {{ detona }}
       </div>
     </div>
     <form class="form-material mt-5" [formGroup]="form">
@@ -80,7 +80,7 @@
       </div>
       <div class="row mt-3">
         <div class="col-md-12">
-          <strong>No. Amparo:</strong>
+          <strong>No. Amparo:</strong>  {{ numAparo }}
         </div>
       </div>
       <div class="row mt-5">
@@ -109,7 +109,7 @@
         <div class="col-md-6">
           <form-field
             [control]="form.get('inchargeProvided')"
-            label="Encargo Proveido">
+            label="Encargado Proveido">
             <input
               type="text"
               class="form-control"
@@ -119,7 +119,7 @@
       </div>
       <div class="row mt-3">
         <div class="col-md-12">
-          <strong>Resolución:</strong>
+          <strong>Resolución:</strong>  {{ 'CONCEDE' }}
         </div>
       </div>
       <div class="row mt-5">

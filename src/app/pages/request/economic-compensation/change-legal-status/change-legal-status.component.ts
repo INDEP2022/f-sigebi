@@ -43,6 +43,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   detona: string = 'a';
 
   recDoc: any = null;
+  numAparo = '1234';
 
   private legalService = inject(LegalAffairService);
   private affairService = inject(AffairService);
@@ -191,7 +192,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
 
         //this.onLoadToast('error', 'Error', error);
       },
-      () => {}
+      () => { }
     );
   }
 
@@ -214,6 +215,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
           this.taxPayer = resp.indicatedTaxpayer;
           this.trans = resp.transferent.name;
           this.getDetona(resp.affair);
+          this.numAparo = resp.protectNumber;
         },
       });
   }
@@ -265,10 +267,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           this.recDoc = resp;
-          resp['providedDate'] = new DatePipe('en-EN').transform(
-            resp['providedDate'],
-            'dd/MM/yyyy'
-          );
+          resp['providedDate'] = moment(resp['providedDate']).format('DD/MM/YYYY')
 
           this.recDoc['affair'] = resp['affair']['affairId'].toString();
 
@@ -293,8 +292,6 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
           ? '1'
           : '0';
 
-        console.log('object: ', object);
-
         object['applicationId'] = this.requestId;
 
         let splitId = this.getTime();
@@ -312,10 +309,10 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
           object['jobLegalId'] = splitId;
           this.createLegalDoc(object);
         } else {
-          object['providedDate'] = new DatePipe('en-EN').transform(
-            object['providedDate'],
-            'dd/MM/yyyy'
-          );
+          if (typeof object['providedDate'] === 'string') {
+            let date = object['providedDate'].split('/');
+            object['providedDate'] = date[2] + '-' + date[1] + '-' + date[0];
+          }
           object['jobLegalId'] = this.recDoc['jobLegalId'];
           this.updatedLegalDoc(object);
         }
