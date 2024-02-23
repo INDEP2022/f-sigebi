@@ -208,6 +208,7 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
   search() {
     let emptyCount: number = 0;
     let controlCount: number = 0;
+
     for (const c in this.searchForm.controls) {
       if (
         this.searchForm.controls[c].value === null ||
@@ -225,6 +226,7 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
       );
       return;
     }
+
     this.onSearch.emit(this.searchForm.value);
     this.toggleSearch = false;
   }

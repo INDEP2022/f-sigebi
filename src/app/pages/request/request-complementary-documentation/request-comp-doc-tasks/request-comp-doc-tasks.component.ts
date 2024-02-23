@@ -42,6 +42,7 @@ import { RejectRequestModalComponent } from '../../shared-request/reject-request
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
 import * as moment from 'moment';
+import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -51,6 +52,7 @@ import * as moment from 'moment';
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
   implements OnInit {
+  protected override signOffice: boolean;
   protected override btnGrouper: boolean;
   protected override formatReport: boolean;
   protected override signReport: boolean;
@@ -195,6 +197,7 @@ export class RequestCompDocTasksComponent
   private taskService = inject(TaskService);
   private wContentService = inject(WContentService);
   private sanitizer = inject(DomSanitizer);
+  private samplingGoodService = inject(SamplingGoodService);
 
   //private rejectedService = inject(RejectedGoodService)
 
@@ -323,11 +326,26 @@ export class RequestCompDocTasksComponent
   requestRegistered(request: any) { }
 
   async openReport(): Promise<void> {
+
     if (!this.nextTurn) {
       let report = await this.getStatusReport();
       this.showReport(report);
       return;
     }
+
+    if (this.reportId == '223') {
+      //this.showReportInfo(0, 0, '', '');
+
+      let sample = await this.getSample();
+
+      console.log('sample', sample);
+
+      this.openSignature({
+        reportFolio: '0123'
+      });
+      return;
+    }
+
 
     const initialState: Partial<CreateReportComponent> = {
       signReport: this.signedReport && this.nextTurn,
@@ -1730,10 +1748,6 @@ export class RequestCompDocTasksComponent
   }
 
   openModalLegal(context?: Partial<ChangeLegalStatusComponent>) {
-    if (this.requestInfo.detail.reportSheet == 'OCSJ') {
-      this.openSignature(0);
-      return;
-    }
 
     const modalRef = this.modalService.show(ChangeLegalStatusComponent, {
       initialState: {
@@ -1919,7 +1933,7 @@ export class RequestCompDocTasksComponent
     const reportName = 'sae.rptdesign'; //this.tableName;
     const dynamic = true;
     const signed = !this.signReport; //!this.isSigned;
-    const idProg = id;
+
     //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
@@ -1933,7 +1947,6 @@ export class RequestCompDocTasksComponent
         reportName,
         signed,
         requestId,
-        idProg,
         callback: data => {
           if (typeFirm != 'electronica') {
             if (data) {
@@ -1981,6 +1994,36 @@ export class RequestCompDocTasksComponent
     this.reportgoodService.saveReportDynamic(report).subscribe({
       next: resp => { },
       error: err => { },
+    });
+
+  }
+
+  getSample() {
+
+    const sample: any = {
+      regionalDelegationId: 0,
+      startDate: moment(new Date()).format('YYYY-MM-DD'),
+      endDate: moment(new Date()).format('YYYY-MM-DD'),
+      speciesInstance: 'DOC_COMPLEMENTARIA',
+      numeraryInstance: 'DOC_COMPLEMENTARIA',
+      warehouseId: this.requestId,
+      version: 1,
+      transfereeId: this.reportId,
+      contentId: "1234567890",
+    };
+
+    return new Promise<any>(resolve => {
+      return this.samplingGoodService.createSample(sample).subscribe({
+        next: async resp => {
+          console.log('sampling', resp);
+          //this.version.reportFolio = response.sampleId;
+          //this.saveVersionsDoc(false, this.version);
+          resolve(resp);
+        },
+        error: err => {
+          resolve(err);
+        },
+      });
     });
 
   }
