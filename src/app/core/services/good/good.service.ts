@@ -457,7 +457,12 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
         good.subBrand = good?.val10 ?? good.subBrand;
 
         //APTO PARA CIRCULAR
-        good.fitCircular = good?.val25 === 'APTO PARA CIRCULAR' ? 'Y' : 'N';
+        if (good.val8 != null || good.val8 != '') {
+          good.fitCircular = 'N';
+          good.val25 = 'NO APTO PARA CIRCULAR';
+        } else {
+          good.fitCircular = good?.val25 === 'APTO PARA CIRCULAR' ? 'Y' : 'N';
+        }
 
         //REPORTE DE ROBO
         good.theftReport = good?.val26 === 'CON REPORTE DE ROBO' ? 'Y' : 'N';

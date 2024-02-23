@@ -1716,6 +1716,7 @@ export class DetailAssetsTabComponentComponent
 
           //Recorre tabla con atributos y los setea a body
           if (this.dataAtribute) {
+            console.log('this.dataAtribute', this.dataAtribute);
             this.dataAtribute.forEach((row: any) => {
               body[row.column] = row.value;
             });
@@ -1723,28 +1724,26 @@ export class DetailAssetsTabComponentComponent
             console.error('this.dataAtribute es undefined o null.');
           }
 
-          console.log('Información del objeto dataGood ->', dataGood);
+          if (this.detailAssets.value.goodTypeId == '2') {
+            if (body.val8 == null || body.val8 == '') {
+              this.alertQuestion(
+                'warning',
+                'Vehículo sin No. Serie',
+                'El Vehículo cambiará a "No Apto para circular"'
+              ).then(question => {
+                if (question.isConfirmed) {
+                  //Si el vehículo no tiene No. De serie, se agrega por defecto que NO ES APTOP PARA CIRCULAR
+                  body.fitCircular = 'N';
 
-          this.goodService.updateGoodTable(body).subscribe({
-            next: resp => {
-              this.childSaveAction = true;
-              this.refreshTable(true);
-              this.viewAct = !this.viewAct;
-              this.disableUpdate = !this.disableUpdate;
-              this.good = resp;
-              //Si el bien es de tipo inmueble, se actualiza el registro en bien_inmueble
-              if (resp.goodTypeId == 1) {
-                this.updateGoodProperty(resp);
-              }
-              this.alert('success', 'El Bien se ha actualizado', '');
-              setTimeout(() => {
-                this.goodChange++;
-              }, 100);
-            },
-            error: err => {
-              this.alert('error', 'Error al actualizar el Bien', '');
-            },
-          });
+                  this.updateGoodTable(body);
+                }
+              });
+            } else {
+              this.updateGoodTable(body);
+            }
+          } else {
+            this.updateGoodTable(body);
+          }
         }
       } else {
         this.alert(
@@ -1754,6 +1753,29 @@ export class DetailAssetsTabComponentComponent
         );
       }
     }
+  }
+
+  updateGoodTable(body: any) {
+    this.goodService.updateGoodTable(body).subscribe({
+      next: resp => {
+        this.childSaveAction = true;
+        this.refreshTable(true);
+        this.viewAct = !this.viewAct;
+        this.disableUpdate = !this.disableUpdate;
+        this.good = resp;
+        //Si el bien es de tipo inmueble, se actualiza el registro en bien_inmueble
+        if (resp.goodTypeId == 1) {
+          this.updateGoodProperty(resp);
+        }
+        this.alert('success', 'El Bien se ha actualizado', '');
+        setTimeout(() => {
+          this.goodChange++;
+        }, 100);
+      },
+      error: err => {
+        this.alert('error', 'Error al actualizar el Bien', '');
+      },
+    });
   }
 
   createGoodProperty(idGood: number) {
