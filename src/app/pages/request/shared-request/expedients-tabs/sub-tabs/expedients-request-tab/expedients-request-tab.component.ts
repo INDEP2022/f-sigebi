@@ -107,6 +107,7 @@ export class ExpedientsRequestTabComponent
     }
     let onChangeCurrentValue = changes['typeDoc'].currentValue;
     this.typeDoc = onChangeCurrentValue;
+    this.getIdExpediente();
   }
 
   requestSelected(event: any) {
