@@ -593,7 +593,25 @@ export class DocRequestTabComponent
   }
 
   search(): void {
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
+
     let object = this.docRequestForm.getRawValue();
+    let filter = [];
+
+    for (const key in object) {
+      if (object[key] != null) {
+        this.params.getValue()['filter.' + key] = `$eq:${object[key]}`;
+        filter = this.allDataDocReq.filter(x => x[key] == object[key]);
+      }
+    }
+
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => this.getData(params));
+
+    if (true) return;
+
+    console.log('object', object);
     if (
       object.noRequest &&
       !object.docType &&

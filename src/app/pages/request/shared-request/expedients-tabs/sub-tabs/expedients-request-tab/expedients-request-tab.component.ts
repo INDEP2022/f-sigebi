@@ -25,6 +25,8 @@ export class ExpedientsRequestTabComponent
 {
   @Input() typeDoc: string = '';
   @Input() typeModule?: string = '';
+  @Input() updateInfo: boolean;
+
   title: string = 'Solicitudes del Expediente';
 
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -110,6 +112,7 @@ export class ExpedientsRequestTabComponent
 
   requestSelected(event: any) {
     this.typeDocumentMethod(event);
+    console.log('event', event, this.typeDoc);
   }
 
   typeDocumentMethod(type: number) {
