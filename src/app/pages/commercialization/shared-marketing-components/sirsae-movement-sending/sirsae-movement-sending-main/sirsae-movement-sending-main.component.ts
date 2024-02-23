@@ -515,6 +515,9 @@ export class SirsaeMovementSendingMainComponent
   }
   edit(event: any) {
     console.log('aaa', event);
+    if (event.sendedSirsae == 'S') {
+      return this.alert('warning', 'El cliente ya fue enviado a SIRSAE', '');
+    }
     this.openForm(event, true);
   }
   add() {
