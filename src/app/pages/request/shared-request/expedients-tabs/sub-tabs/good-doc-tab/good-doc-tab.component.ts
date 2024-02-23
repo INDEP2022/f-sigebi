@@ -40,6 +40,8 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
   @Input() typeDoc = '';
   @Input() screen = 'doc-goods';
   @Input() requestId: number = null;
+  @Input() updateInfo: boolean;
+
   goodSelect: IGood[] = [];
   allGooods: IGood[] = [];
   showSearchForm: boolean = false;

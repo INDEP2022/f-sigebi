@@ -467,6 +467,7 @@
                   id="tab1"
                   (selectTab)="requestSelected(2)">
                   <app-doc-request-tab
+                    [updateInfo]="updateInfo"
                     [typeDoc]="typeDoc"
                     [typeModule]="typeModule"
                     (onChange)="onSelectFiles($event)"></app-doc-request-tab>
@@ -475,6 +476,7 @@
                   heading="Solicitudes del Expediente"
                   (selectTab)="requestSelected(3)">
                   <app-expedients-request-tab
+                    [updateInfo]="updateInfo"
                     [typeDoc]="typeDoc"
                     [typeModule]="typeModule"></app-expedients-request-tab>
                 </tab>
