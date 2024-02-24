@@ -13,6 +13,7 @@ import { BasePage } from 'src/app/core/shared';
 export class ModifyDatesModalComponent extends BasePage implements OnInit {
   title: string = 'Modificar Fechas';
   dateForm: FormGroup = new FormGroup({});
+  minDate: Date = new Date();
   requestId: number;
   goods: any[];
 
@@ -45,7 +46,7 @@ export class ModifyDatesModalComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'warning',
         'Advertencia',
-        'Fechas de inicio y fin son requeridas'
+        'Fechas de inicio y fin son requeridas \n La fecha fin no puede ser menor a la de inicio'
       );
 
       this.dateForm.controls['startDate'].setValue(null);
@@ -74,7 +75,9 @@ export class ModifyDatesModalComponent extends BasePage implements OnInit {
   }
 
   isValidDate(startDate: string, endDate: string): boolean {
-    return !isNaN(Date.parse(startDate)) && !isNaN(Date.parse(endDate));
+    let start = moment(startDate);
+    let end = moment(endDate);
+    return start.isValid() && end.isValid() && end.isAfter(start);
   }
 
   updateGoodResDev(body: any) {

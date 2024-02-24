@@ -251,14 +251,14 @@ export class DocRequestTabComponent
   }
   private data: any[][] = [];
 
-  getData(params: ListParams) {
+  getData(params: ListParams, filter: any = {}) {
     this.loading = true;
     this.docRequestForm.get('noRequest').setValue(this.requestInfo.id);
-    const idSolicitud: Object = {
-      xidSolicitud: this.requestInfo.id,
-    };
+
+    filter.xidSolicitud = this.requestInfo.id;
+
     this.wContentService
-      .getDocumentos(idSolicitud, params)
+      .getDocumentos(filter, params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: async res => {
@@ -607,7 +607,7 @@ export class DocRequestTabComponent
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(params => this.getData(params));
+      .subscribe(params => this.getData(params, object));
 
     if (true) return;
 

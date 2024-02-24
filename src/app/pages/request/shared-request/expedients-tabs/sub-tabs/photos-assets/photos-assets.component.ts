@@ -16,6 +16,7 @@ import { IGood } from 'src/app/core/models/good/good.model';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
+import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { TABLE_SETTINGS } from '../../../../../../common/constants/table-settings';
@@ -61,7 +62,8 @@ export class PhotosAssetsComponent
     private typeRelevantService: TypeRelevantService,
     private requestservice: RequestService,
     private showHideErrorInterceptorService: showHideErrorInterceptorService,
-    private readonly goodFinderService: GoodFinderService
+    private readonly goodFinderService: GoodFinderService,
+    private rejectedGoodService: RejectedGoodService
   ) {
     super();
     this.idRequest = this.activatedRoute.snapshot.paramMap.get(
@@ -71,6 +73,7 @@ export class PhotosAssetsComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     this.idRequest = this.idRequest ? this.idRequest : this.requestId;
+    console.log(this.idRequest);
     if (this.requestId) {
       this.getGoodsRequest();
     }
@@ -125,34 +128,40 @@ export class PhotosAssetsComponent
     this.loading = true;
     if (this.idRequest) {
       this.params.getValue()['filter.requestId'] = this.idRequest;
+      this.params.getValue()['filter.applicationId'] = null;
       this.goodFinderService.goodFinder(this.params.getValue()).subscribe({
         next: async (data: any) => {
-          const filterGoodType = data.data.map(async (item: any) => {
-            const goodType = await this.getGoodType(item.goodTypeId);
-            item['goodTypeId'] = goodType;
-            item['requestId'] = this.idRequest;
+          if (data.data.length == 0) {
+            const filterGoodType = data.data.map(async (item: any) => {
+              const goodType = await this.getGoodType(item.goodTypeId);
+              item['goodTypeId'] = goodType;
+              item['requestId'] = this.idRequest;
 
-            /*if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
-            if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
-            if (item['stateConservation'] == 1)
-              item['stateConservation'] = 'BUENO';
-            if (item['stateConservation'] == 2)
-              item['stateConservation'] = 'MALO';
-            if (item['destiny'] == 1) item['destiny'] = 'VENTA';
+              /*if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
+              if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
+              if (item['stateConservation'] == 1)
+                item['stateConservation'] = 'BUENO';
+              if (item['stateConservation'] == 2)
+                item['stateConservation'] = 'MALO';
+              if (item['destiny'] == 1) item['destiny'] = 'VENTA';
+  
+              const fraction = item['fractionId'];
+              item['fractionId'] = fraction?.description;*/
+            });
 
-            const fraction = item['fractionId'];
-            item['fractionId'] = fraction?.description;*/
-          });
-
-          Promise.all(filterGoodType).then(x => {
-            this.paragraphs = data.data;
-            this.allDataGood = this.paragraphs;
-            this.totalItems = data.count;
-            this.loading = false;
-          });
+            Promise.all(filterGoodType).then(x => {
+              this.paragraphs = data.data;
+              this.allDataGood = this.paragraphs;
+              this.totalItems = data.count;
+              this.loading = false;
+            });
+          } else {
+            this.getGoodRes();
+          }
         },
         error: error => {
           this.loading = false;
+          this.getGoodRes();
         },
       });
     } else {
@@ -176,10 +185,10 @@ export class PhotosAssetsComponent
   initFilterForm() {
     this.filterForm = this.fb.group({
       management: [
-        '',
+        null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      typeGood: ['', [Validators.pattern(STRING_PATTERN)]],
+      typeGood: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -210,7 +219,7 @@ export class PhotosAssetsComponent
         this.totalItems = filter.length;
       } else {
         this.paragraphs = filter;
-        this.onLoadToast('warning', 'No se encontró ningún bien', '');
+        //this.onLoadToast('warning', 'No se encontró ningún bien', '');
         return;
       }
     }
@@ -299,5 +308,40 @@ export class PhotosAssetsComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(component, config);
+  }
+
+  getGoodRes() {
+    this.params.getValue()['filter.applicationId'] = this.idRequest;
+    this.rejectedGoodService.getAll(this.params.getValue()).subscribe({
+      next: async (data: any) => {
+        data.data = data.data.map(x => x.good);
+
+        const filterGoodType = data.data.map(async (item: any) => {
+          const goodType = await this.getGoodType(item.goodTypeId);
+          item['goodTypeName'] = goodType;
+          item['requestId'] = this.idRequest;
+
+          if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
+          if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
+          if (item['stateConservation'] == 1)
+            item['stateConservation'] = 'BUENO';
+          if (item['stateConservation'] == 2)
+            item['stateConservation'] = 'MALO';
+          if (item['destiny'] == 1) item['destiny'] = 'VENTA';
+          const fraction = item['fraccion'];
+          item['fractionId'] = fraction?.code + ' ' + fraction?.description;
+        });
+
+        Promise.all(filterGoodType).then(x => {
+          this.paragraphs = data.data;
+          this.allDataGood = this.paragraphs;
+          this.totalItems = data.count;
+          this.loading = false;
+        });
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
   }
 }

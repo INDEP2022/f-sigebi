@@ -327,14 +327,24 @@ export class RequestCompDocTasksComponent
 
   requestRegistered(request: any) {}
 
-  async openReport(): Promise<void> {
+  async openReport(first = true): Promise<void> {
+    let doc = this.reportId;
+
+    if (this.process == 'generate-compensation-act') {
+      if (first) {
+        doc = doc.split(',')[0];
+      } else {
+        doc = doc.split(',')[1];
+      }
+    }
+
     if (!this.nextTurn) {
-      let report = await this.getStatusReport();
+      let report = await this.getStatusReport(first ? 0 : 1);
       this.showReport(report);
       return;
     }
 
-    if (this.reportId == '223') {
+    if (doc == '223') {
       //this.showReportInfo(0, 0, '', '');
 
       let sample = await this.getSample();
@@ -351,7 +361,7 @@ export class RequestCompDocTasksComponent
       signReport: this.signedReport && this.nextTurn,
       editReport: this.editReport && this.nextTurn,
       tableName: this.reportTable,
-      documentTypeId: this.reportId,
+      documentTypeId: doc,
       process: this.process,
       requestId: this.requestId.toString(),
     };
