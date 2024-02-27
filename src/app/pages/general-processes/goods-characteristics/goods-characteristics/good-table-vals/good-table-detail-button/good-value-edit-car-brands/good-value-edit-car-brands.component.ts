@@ -4,8 +4,8 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
-  FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { BasePage } from 'src/app/core/shared';
@@ -35,6 +35,9 @@ export class GoodValueEditCarBrandsComponent
   params2 = new BehaviorSubject<ListParams>(new ListParams());
 
   loading2 = this.loading;
+  disabled: boolean = true;
+
+  columnFilter: any = [];
 
   settings2 = {
     ...this.settings,
@@ -46,6 +49,7 @@ export class GoodValueEditCarBrandsComponent
       add: false,
       position: 'left',
     },
+    hideSubHeader: false,
     columns: { ...COLUMNS_SUB_BRANDS },
   };
 
@@ -64,14 +68,53 @@ export class GoodValueEditCarBrandsComponent
         add: false,
         position: 'left',
       },
+      hideSubHeader: false,
       columns: { ...COLUMNS_BRANDS },
     };
   }
 
   ngOnInit(): void {
-    this.params
+    /*this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getBrands());
+      .subscribe(() => this.getBrands());*/
+
+    this.subBrands
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'carBrand':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'flexValueDependent':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilter[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilter[field];
+            }
+          });
+
+          this.params2 = this.pageFilter(this.params2);
+          this.getSubBrands();
+        }
+      });
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getSubBrands());
   }
 
   getBrands() {
@@ -101,21 +144,21 @@ export class GoodValueEditCarBrandsComponent
     this.getSubBrands(this.brand);
   }
 
-  getSubBrands(brand1: string) {
+  getSubBrands(brand1?: string) {
     this.loading2 = true;
+    this.params2.getValue()['sortBy'] = 'carBrand:ASC';
 
-    const filter = new FilterParams();
-    const params2 = this.params2.getValue();
-    params2.limit = 100;
-    this.params2.getValue()['sortBy'] = 'flexValueDependent:ASC';
-    this.params2.getValue()['filter.carBrand'] = `${brand1}`;
+    let params2 = {
+      ...this.params2.getValue(),
+      ...this.columnFilter,
+    };
 
     this.goodsInvService.getAllSubBrandWithFilter(params2).subscribe({
       next: resp => {
         this.loading2 = false;
-        this.subBrands = resp.data;
-        console.log('Submarcas:', resp.data);
-        //this.totalItems2 = resp.count;
+        this.subBrands.load(resp.data);
+        this.subBrands.refresh();
+        this.totalItems2 = resp.count;
       },
       error: error => {
         this.loading2 = false;
@@ -126,7 +169,9 @@ export class GoodValueEditCarBrandsComponent
 
   rowSelectSubBrand(event: any) {
     console.log('SubMarca Seleccionada:', event.data.flexValueDependent);
+    this.disabled = false;
     this.subBrand = event.data.flexValueDependent;
+    this.brand = event.data.carBrand;
   }
 
   confirm() {
@@ -142,8 +187,6 @@ export class GoodValueEditCarBrandsComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.modalRef.content.callback(brand, subBrand);
-        this.modalRef.hide();
-      } else {
         this.modalRef.hide();
       }
     });

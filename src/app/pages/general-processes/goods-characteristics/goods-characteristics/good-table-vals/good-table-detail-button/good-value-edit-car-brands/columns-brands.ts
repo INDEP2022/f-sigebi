@@ -10,16 +10,16 @@ export const COLUMNS_BRANDS = {
 };
 
 export const COLUMNS_SUB_BRANDS = {
-  flexValueDependent: {
-    title: 'Sub Marca',
-    sort: false,
-  },
-  flexValueMeaningDependent: {
-    title: 'Descripción',
-    sort: false,
-  },
   carBrand: {
     title: 'Marca',
     sort: false,
   },
+  flexValueDependent: {
+    title: 'Sub Marca',
+    sort: false,
+  },
+  // flexValueMeaningDependent: {
+  //   title: 'Descripción',
+  //   sort: false,
+  // },
 };
