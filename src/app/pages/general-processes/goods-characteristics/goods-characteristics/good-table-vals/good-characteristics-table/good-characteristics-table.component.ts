@@ -19,6 +19,8 @@ import { BasePage } from 'src/app/core/shared';
 import { formatForIsoDate, secondFormatDate } from 'src/app/shared/utils/date';
 import { ICharacteristicsWidthData } from '../../../services/goods-characteristics.service';
 import { GoodTableDetailButtonComponent } from '../good-table-detail-button/good-table-detail-button.component';
+import { GoodValueEditCarArmorComponent } from '../good-table-detail-button/good-value-edit-car-armor/good-value-edit-car-armor.component';
+import { GoodValueEditCarBrandsComponent } from '../good-table-detail-button/good-value-edit-car-brands/good-value-edit-car-brands.component';
 
 @Component({
   selector: 'app-good-characteristics-table',
@@ -357,9 +359,6 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
       noClasif: this.clasification,
       service: this.service,
       callback: (cadena: string) => {
-        //if (next)
-        // //
-        // console.log(cadena, this.selectedAttribute, this.dataTemp);
         this.data.forEach(x => {
           if (x.attribute === this.selectedAttribute) {
             x.value = cadena;
@@ -382,6 +381,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     // const params = this.params.getValue();
     this.selectedAttribute = row.attribute;
     // const row = item.data;
+    console.log('row.atribute', row.attribute);
     if (row.attribute === 'RESERVADO') {
       this.showAddCaracteristicsModal(row);
       // this.showAddCaracteristicsWebModal(row);
@@ -391,6 +391,10 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
       this.showAddCaracteristicsWebModal(row);
     } else if (row.attribute === 'OPCIONALES CATÁLOGO COMERCIAL') {
       this.showAddCaracteristicsWebModal(row);
+    } else if (row.attribute === 'BLINDAJE') {
+      this.showAddArmorModal(row);
+    } else if (row.attribute === 'MARCA' || row.attribute === 'SUBMARCA') {
+      this.showAddABrandModal(row);
     } else {
       this.showAddCaracteristicsModal(row);
     }
@@ -495,5 +499,77 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
       ),
     ]);
     this.dataPaginated.refresh();
+  }
+
+  private showAddArmorModal(row: ICharacteristicValue) {
+    const modalConfig = MODAL_CONFIG;
+    // console.log(row);
+
+    modalConfig.initialState = {
+      class: 'modal-sm modal-dialog-centered',
+      ignoreBackdropClick: true,
+      callback: (cadena: string) => {
+        console.log('Blindaje, cerrando modal: ', cadena);
+        console.log('this.selectedAttribute', this.selectedAttribute);
+        console.log('this.data', this.data);
+
+        this.data.forEach(x => {
+          if (x.attribute === this.selectedAttribute) {
+            console.log('Entrando a condición 1');
+            console.log('x.attribute', x.attribute);
+            x.value = cadena;
+            console.log(' x.value', x.value);
+            console.log(' cadena', cadena);
+          }
+        });
+        this.dataTemp.forEach(x => {
+          if (x.attribute === this.selectedAttribute) {
+            console.log('Entrando a condición 2');
+            x.value = cadena;
+          }
+        });
+        this.getPaginated(this.params.value);
+      },
+    };
+
+    this.modalService.show(GoodValueEditCarArmorComponent, modalConfig);
+  }
+
+  private showAddABrandModal(row: ICharacteristicValue) {
+    const modalConfig = MODAL_CONFIG;
+    // console.log(row);
+
+    modalConfig.initialState = {
+      class: 'modal-sm modal-dialog-centered',
+      ignoreBackdropClick: true,
+      callback: (brand: string, subBrand: string) => {
+        //console.log('Marca, cerrando modal: ', cadena);
+        console.log('this.selectedAttribute', this.selectedAttribute);
+        //console.log('this.data', this.data);
+
+        this.data.forEach(x => {
+          if (x.attribute === this.selectedAttribute) {
+            x.value = brand;
+          }
+          if (x.attribute === 'SUBMARCA') {
+            x.value = subBrand;
+          }
+        });
+        this.dataTemp.forEach(x => {
+          if (x.attribute === this.selectedAttribute) {
+            console.log('Entrando a condición 2');
+            x.value = brand;
+          }
+
+          if (x.attribute === 'SUBMARCA') {
+            console.log('Entrando a condición 2');
+            x.value = subBrand;
+          }
+        });
+        this.getPaginated(this.params.value);
+      },
+    };
+
+    this.modalService.show(GoodValueEditCarBrandsComponent, modalConfig);
   }
 }
