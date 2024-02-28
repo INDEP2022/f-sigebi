@@ -640,6 +640,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
             // PIDFACTURA: null,
             delegationNumber: this.delegation,
             GEN_IVA: iva,
+            regional: (await this.validateUser()) == 1 ? null : this.delegation,
             // LOTE: null,
             // toolbarUser: this.userService.decodeToken().preferred_username,
           };
@@ -656,6 +657,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
               // PIDFACTURA: null,
               delegationNumber: this.delegation,
               GEN_IVA: iva,
+              regional:
+                (await this.validateUser()) == 1 ? null : this.delegation,
               // LOTE: idAllotment || data[0].batchId,
               // toolbarUser: this.userService.decodeToken().preferred_username,
             };
@@ -670,6 +673,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
               // PIDFACTURA: null,
               delegationNumber: this.delegation,
               GEN_IVA: iva,
+              regional:
+                (await this.validateUser()) == 1 ? null : this.delegation,
               // LOTE: idAllotment || data[0].batchId,
               // toolbarUser: this.userService.decodeToken().preferred_username,
             };
