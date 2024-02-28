@@ -91,7 +91,7 @@
             </form-field>
           </div>
         </div>
-        <div class="row pt-4">
+        <div *ngIf="typeDoc === 'good'" class="row pt-4">
           <div class="col-md-6">
             <form-field
               [control]="newDocForm.get('noSiab')"
@@ -178,7 +178,7 @@
           </div>
         </div>
         <div class="row pt-4">
-          <div class="col-md-6">
+          <div *ngIf="typeDoc != 'good'" class="col-md-6">
             <p for="">
               Delegaci&oacute;n Regional&#58;
               <span *ngIf="regDelName">{{ regDelName }}</span>
@@ -197,7 +197,9 @@
             </p>
           </div>
         </div>
-        <div class="row pt-4" *ngIf="process != 'sampling-assets'">
+        <div
+          class="row pt-4"
+          *ngIf="process != 'sampling-assets' && typeDoc != 'good'">
           <div class="col-md-6">
             <p for="">
               Estado&#58; <span>{{ stateName }}</span>

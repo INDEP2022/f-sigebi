@@ -62,7 +62,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
     this.idRequest = this.idRequest
       ? this.idRequest
       : (this.activatedRoute.snapshot.paramMap.get('id') as unknown as number);
-    this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
+    this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = GOOD_DOCUMENTES_COLUMNS;
   }
 
