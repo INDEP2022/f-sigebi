@@ -17,14 +17,8 @@
       <form-loader *ngIf="formLoading"></form-loader>
     </div>
     <form [formGroup]="requestForm" class="form-material" *ngIf="!formLoading">
-      <div
-        *ngIf="
-          requestForm.hasError('atLeastTwoFieldsRequired') && requestForm.dirty
-        ">
-        Se requieren al menos dos campos completados.
-      </div>
       <div class="row pt-4">
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-check label="Prioridad" for="urgentPriority">
             <input
               id="urgentPriority"
@@ -34,7 +28,7 @@
               (change)="changePriority($event)" />
           </form-check>
         </div>
-        <div class="col-md-3" *ngIf="priorityString === 'Y'">
+        <div class="col-md-4" *ngIf="priorityString === 'Y'">
           <form-field
             [control]="requestForm.get('priorityDate')"
             label="Fecha de Prioridad">

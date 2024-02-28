@@ -443,10 +443,15 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     }
 
     if (this.typeDoc == 'doc-request' && this.process != 'sampling-assets') {
+      console.log('doc-request y diferente a sampling-assets');
       this.loading = true;
       const formData = {
         dDocAuthor: this.userLogName,
-        dInDate: moment(new Date()).format('DD-MMM-YYYY'),
+        xidSIAB: this.newDocForm.get('noSiab').value,
+        //dActionDate: '2024-02-27 17:11:00',
+        //dInDate: '2024-02-27 17:11:00',
+        //dDocLastModifiedDate: '2024-02-27 17:11:00',
+        //dCreateDate: '2024-02-27 17:11:00',
         dSecurityGroup: 'Public',
         ddocCreator: this.userLogName,
         xidcProfile: 'NSBDB_Gral',
@@ -526,6 +531,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     }
 
     if (this.typeDoc == 'doc-expedient' && this.process != 'sampling-assets') {
+      console.log('doc-expedient y sampling-assets');
       const formData = {
         dInDate: moment(new Date()).format('DD-MMM-YYYY'),
         dSecurityGroup: 'Public',
@@ -608,6 +614,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     }
 
     if (this.process == 'sampling-assets') {
+      console.log('sampling-assets');
       const formData = {
         dInDate: new Date(),
         dDocAuthor: this.userLogName,

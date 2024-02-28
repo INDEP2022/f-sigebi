@@ -1168,6 +1168,10 @@ export class DetailAssetsTabComponentComponent
         });
       },
       error: error => {
+        console.log('getTransferentUnit ERROR');
+
+        this.detailAssets.controls['unitMeasure'].setValue('METRO2');
+
         console.log('getTransferentUnit no validado');
       },
     });
@@ -1175,9 +1179,11 @@ export class DetailAssetsTabComponentComponent
 
   async unitChange(event: any) {
     if (event == undefined) {
+      console.log('event == undefined', event == undefined);
       this.selectTansferUnitMeasure = new DefaultSelect();
       this.getTransferentUnit(new ListParams(), this.unit);
     } else {
+      console.log('else async unitChange ELSE');
       this.selectTansferUnitMeasure = new DefaultSelect();
       this.getTransferentUnit(new ListParams(), event.idUnitDestine);
       const medUnid: any = await this.getAsyncMedUnid(event.idUnitDestine);
