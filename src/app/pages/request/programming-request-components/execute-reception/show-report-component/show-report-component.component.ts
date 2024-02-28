@@ -92,6 +92,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   dynamic: boolean = false;
   signed: boolean = true;
   requestId: number = 0;
+  contentId: string = "";
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -260,7 +261,9 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       this.formLoading = false;
     }
 
-    if (this.dynamic) {
+    if (isNullOrEmpty(this.contentId)) {
+
+    } else if (this.dynamic) {
       let linkDoc: string = `${this.urlBaseReport}${this.reportName}&ID_TABLA=NOMBRE_TABLA,ID_REGISTRO,ID_TIPO_DOCTO&NOM_TABLA=REPORTES_DINAMICOS&NOM_CAMPO=CONTENIDO&ID_REGISTRO=${this.tableName},${this.requestId},${this.idTypeDoc}`;
       this.src = linkDoc;
       this.formLoading = false;
