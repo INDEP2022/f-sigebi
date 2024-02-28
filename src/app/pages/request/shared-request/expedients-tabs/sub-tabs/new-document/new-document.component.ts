@@ -347,7 +347,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
     }
 
@@ -438,7 +438,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
     }
 
@@ -521,7 +521,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
     }
 
@@ -603,7 +603,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
     }
 
@@ -688,7 +688,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
     }
   }
@@ -697,7 +697,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  handleSuccess() { }
+  handleSuccess() {}
 
   getStateSelect(params?: ListParams) {
     params['filter.sortBy'] = 'descCondition:ASC';
