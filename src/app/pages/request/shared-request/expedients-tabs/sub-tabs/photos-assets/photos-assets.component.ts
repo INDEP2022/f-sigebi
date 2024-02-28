@@ -132,7 +132,7 @@ export class PhotosAssetsComponent
       this.goodFinderService.goodFinder(this.params.getValue()).subscribe({
         next: async (data: any) => {
 
-          if (data.data.length == 0) {
+          if (data.data.length > 0) {
             const filterGoodType = data.data.map(async (item: any) => {
               const goodType = await this.getGoodType(item.goodTypeId);
               item['goodTypeId'] = goodType;
@@ -325,15 +325,15 @@ export class PhotosAssetsComponent
           item['goodTypeName'] = goodType;
           item['requestId'] = this.idRequest;
 
-          if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
-          if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
-          if (item['stateConservation'] == 1)
-            item['stateConservation'] = 'BUENO';
-          if (item['stateConservation'] == 2)
-            item['stateConservation'] = 'MALO';
-          if (item['destiny'] == 1) item['destiny'] = 'VENTA';
-          const fraction = item['fraccion'];
-          item['fractionId'] = fraction?.code + ' ' + fraction?.description;
+          // if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
+          // if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
+          // if (item['stateConservation'] == 1)
+          //   item['stateConservation'] = 'BUENO';
+          // if (item['stateConservation'] == 2)
+          //   item['stateConservation'] = 'MALO';
+          // if (item['destiny'] == 1) item['destiny'] = 'VENTA';
+          // const fraction = item['fraccion'];
+          // item['fractionId'] = fraction?.code + ' ' + fraction?.description;
         });
 
         Promise.all(filterGoodType).then(x => {
