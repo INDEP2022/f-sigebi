@@ -12,6 +12,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
@@ -177,7 +178,8 @@ export class SirsaeMovementSendingMainComponent
     private comerDetailsService: ComerDetailsService,
     private lotService: LotService,
     private interfacesirsaeService: InterfacesirsaeService,
-    private comerEventosService: ComerEventosService
+    private comerEventosService: ComerEventosService,
+    private authService: AuthService
   ) {
     super();
     this.settings = {
@@ -201,6 +203,7 @@ export class SirsaeMovementSendingMainComponent
   ngOnInit(): void {
     // this.mapValToClass(this.layout)
     console.log('AQUI');
+
     this.route.paramMap.subscribe(params => {
       if (params.get('goodType')) {
         console.log(params.get('goodType'));
@@ -371,6 +374,10 @@ export class SirsaeMovementSendingMainComponent
       params.addFilter3('pDirection', this.layout);
       // params.addFilter('eventTpId', `1,2,3,4,5`, SearchFilter.IN);
       // params.addFilter('statusVtaId', `CNE`, SearchFilter.NOT);
+      params.addFilter3(
+        'user',
+        this.authService.decodeToken().preferred_username
+      );
       params.sortBy = `id_evento:DESC`;
       this.comerEventosService.getLovEventos1(params.getParams()).subscribe({
         next: data => {
@@ -1074,6 +1081,10 @@ export class SirsaeMovementSendingMainComponent
     // params.addFilter('eventTpId', `1,2,3,4,5`, SearchFilter.NOTIN);
     // params.addFilter('statusVtaId', `CNE`, SearchFilter.NOT);
     params.addFilter3('pDirection', this.layout);
+    params.addFilter3(
+      'user',
+      this.authService.decodeToken().preferred_username
+    );
     params.sortBy = `id_evento:DESC`;
     this.comerEventosService.getLovEventos1(params.getParams()).subscribe({
       next: data => {
