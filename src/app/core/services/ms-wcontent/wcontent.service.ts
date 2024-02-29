@@ -127,4 +127,9 @@ export class WContentService extends HttpWContentService {
 
     return this.http.get(url, { responseType: 'blob' });
   }
+
+  downloadFile(url) {
+    console.log('URL reporte : ' + url);
+    return this.http.get(url, { responseType: 'blob' });
+  }
 }

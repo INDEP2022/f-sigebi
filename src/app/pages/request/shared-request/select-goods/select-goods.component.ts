@@ -503,12 +503,13 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     delete good.addGood;
     good = Object.assign({ viewFile: '' }, good);
     this.selectedGoodColumns = [...this.selectedGoodColumns, good];
+    console.log('aqui agregar');
+
     //this.selectedGoodTotalItems = this.selectedGoodColumns.length;
     this.selectChanges();
   }
 
   selectGoods(rows: any) {
-    console.log(rows);
     if (rows.isSelected == false) {
       this.table.isAllSelected = false;
     }
@@ -739,6 +740,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     goodResDev.descriptionGood = good.goodDescription;
     goodResDev.unitExtent = good.unitMeasurement;
     goodResDev.amountToReserve = good.quantity;
+    goodResDev.applicationResDevId = good.applicationResDevId;
     (goodResDev.amount = 0), (goodResDev.statePhysical = good.physicalStatus);
     goodResDev.stateConservation = good.conservationStatus;
     goodResDev.fractionId = good.fractionId;

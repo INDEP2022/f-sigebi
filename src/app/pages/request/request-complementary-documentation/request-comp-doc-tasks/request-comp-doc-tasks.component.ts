@@ -44,6 +44,7 @@ import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
 //import * as moment from 'moment';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -344,16 +345,16 @@ export class RequestCompDocTasksComponent
       return;
     }
 
-    if (doc == '223') {
+    if (this.process == 'review-result-protection') {
       //this.showReportInfo(0, 0, '', '');
-
-      let sample = await this.getSample();
-
-      console.log('sample', sample);
-
-      this.openSignature({
-        reportFolio: '0123',
+      await this.getSampleCSJ(sample => {
+        console.log('callback', sample);
+        this.openSignature({
+          reportFolio: sample.sampleId,
+          contentId: sample.contentId,
+        });
       });
+
       return;
     }
 
@@ -1889,31 +1890,29 @@ export class RequestCompDocTasksComponent
     this.openModal(
       AnnexJAssetsClassificationComponent,
       object.reportFolio,
-      'sign-annexJ-assets-classification'
+      'sign-annexJ-assets-classification',
+      object.contentId
     );
   }
 
   async openModal(
     component: any,
     idSample?: any,
-    typeAnnex?: string
+    typeAnnex?: string,
+    contentId = ''
   ): Promise<void> {
     let report = await this.getStatusReport();
     report = report.isValid ? report.data[0] : report;
-
-    /*console.log('openModal');
-    console.log(this.requestId);
-    console.log(report.documentTypeId);
-    console.log(this.reportTable);
-    console.log(idSample);*/
+    let docId = report.isValid ? report.documentTypeId : this.reportId;
 
     if (!this.signReport) {
       let config: ModalOptions = {
         initialState: {
           requestId: this.requestId,
-          reportId: report.documentTypeId,
+          reportId: docId,
           reportTable: this.reportTable,
           idSample: idSample,
+          contentId: contentId,
           typeAnnex: typeAnnex,
           callback: async (typeDocument: number, typeSign: string) => {
             if (typeAnnex == 'sign-annexJ-assets-classification') {
@@ -1922,7 +1921,8 @@ export class RequestCompDocTasksComponent
                   idSample,
                   typeDocument,
                   typeSign,
-                  typeAnnex
+                  typeAnnex,
+                  contentId
                 );
               }
             }
@@ -1933,7 +1933,7 @@ export class RequestCompDocTasksComponent
       };
       this.modalService.show(component, config);
     } else {
-      this.showReportInfo(0, 0, '', '');
+      this.showReportInfo(idSample, 0, '', '', contentId);
     }
   }
 
@@ -1941,7 +1941,8 @@ export class RequestCompDocTasksComponent
     id: number,
     typeDocument: number,
     typeSign: string,
-    typeAnnex: string
+    typeAnnex: string,
+    contentId = ''
   ) {
     const idTypeDoc = typeDocument;
     const idSample = id;
@@ -1966,6 +1967,7 @@ export class RequestCompDocTasksComponent
         reportName,
         signed,
         requestId,
+        contentId,
         callback: data => {
           if (typeFirm != 'electronica') {
             if (data) {
@@ -2015,7 +2017,8 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  getSample() {
+  createSample(contentId) {
+    console.log('createSample', contentId);
     const sample: any = {
       regionalDelegationId: 0,
       startDate: moment(new Date()).format('YYYY-MM-DD'),
@@ -2025,7 +2028,7 @@ export class RequestCompDocTasksComponent
       warehouseId: this.requestId,
       version: 1,
       transfereeId: this.reportId,
-      contentId: '1234567890',
+      contentId: contentId,
     };
 
     return new Promise<any>(resolve => {
@@ -2040,6 +2043,87 @@ export class RequestCompDocTasksComponent
           resolve(err);
         },
       });
+    });
+  }
+
+  async getSampleCSJ(execute = sample => {}) {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.warehouseId'] = `$eq:${this.requestId}`;
+
+    this.samplingGoodService.getSample(params.getValue()).subscribe({
+      next: async response => {
+        if (response.data.length > 0) {
+          execute(response.data[0]);
+        } else {
+          this.uploadOficioCSJ(async contentId => {
+            let row = await this.createSample(contentId);
+            execute(row);
+          });
+        }
+      },
+      error: error => {
+        this.showError(
+          'Error al consultar el documento de cambio de situación jurídica'
+        );
+      },
+    });
+  }
+
+  uploadOficioCSJ(execute) {
+    let urlBaseReport = `${environment.API_URL}processgoodreport/report/showReport?nombreReporte=`;
+    urlBaseReport += `situacion_juridica_amparo.jasper&ID_SOLICITUD=${this.requestId}&ID_TIPO_DOCTO=${this.reportId}`;
+
+    console.log('urlBaseReport', urlBaseReport);
+
+    let token = this.authService.decodeToken();
+    const docName = 'situacion_juridica_amparo';
+    const extension = '.pdf';
+    const nombreDoc = `Oficio de Cambio de Situación Jurídica${extension}`;
+    const contentType: string = '.pdf';
+    const formData = {
+      keyDoc: docName,
+      xDelegacionRegional: 'Delegación Regional',
+      dDocTitle: nombreDoc,
+      xNombreProceso: 'Aceptar Solicitud Programación',
+      xTipoDocumento: 221,
+      xNivelRegistroNSBDB: 'Bien',
+      dDocType: contentType,
+      dDocAuthor: token.name,
+      dInDate: new Date(),
+      xidProgramacion: this.requestId,
+    };
+
+    this.wContentService.downloadFile(urlBaseReport).subscribe({
+      next: response => {
+        //let blob = this.dataURItoBlob(response);
+        let file = new Blob([response], { type: 'application/pdf' });
+        //const fileURL = URL.createObjectURL(file);
+        //this.openPrevPdf(fileURL);
+
+        this.wContentService
+          .addDocumentToContent(
+            docName,
+            contentType,
+            JSON.stringify(formData),
+            file,
+            extension
+          )
+          .subscribe({
+            next: async document => {
+              execute(document.dDocName);
+            },
+            error: error => {
+              this.showError(
+                'Error al subir el documento de cambio de situación jurídica'
+              );
+            },
+          });
+      },
+      error: error => {
+        this.showError(
+          'Error al consultar el documento de cambio de situación jurídica'
+        );
+      },
     });
   }
 }

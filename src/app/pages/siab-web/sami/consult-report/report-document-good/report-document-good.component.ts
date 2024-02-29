@@ -83,11 +83,6 @@ export class ReportDocumentGoodComponent extends BasePage implements OnInit {
 
   showDocuments(): void {
     if (this.goodSelect.length == 0 || this.goodSelect.length >= 2) {
-      this.onLoadToast(
-        'warning',
-        'Advertencia',
-        'Debes de tener mínimo un bien seleccionado'
-      );
     } else {
       const idGood = this.goodSelect[0].id;
       const idRequest = 0;

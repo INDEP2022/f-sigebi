@@ -92,6 +92,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   dynamic: boolean = false;
   signed: boolean = true;
   requestId: number = 0;
+  contentId: string = '';
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -259,11 +260,35 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       this.formLoading = false;
     }
 
-    if (this.dynamic) {
+    if (!isNullOrEmpty(this.contentId)) {
+      console.log('contentId', this.contentId);
+
+      this.wContentService.obtainFile(this.contentId).subscribe({
+        next: response => {
+          let blob = this.dataURItoBlob(response);
+          let file = new Blob([blob], { type: 'application/pdf' });
+          const fileURL = URL.createObjectURL(file);
+          this.src = fileURL;
+          this.formLoading = false;
+        },
+        error: error => {},
+      });
+    } else if (this.dynamic) {
       let linkDoc: string = `${this.urlBaseReport}${this.reportName}&ID_TABLA=NOMBRE_TABLA,ID_REGISTRO,ID_TIPO_DOCTO&NOM_TABLA=REPORTES_DINAMICOS&NOM_CAMPO=CONTENIDO&ID_REGISTRO=${this.tableName},${this.requestId},${this.idTypeDoc}`;
       this.src = linkDoc;
       this.formLoading = false;
     }
+  }
+
+  dataURItoBlob(dataURI: any) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'application/pdf' });
+    return blob;
   }
 
   getReceipt() {
@@ -525,7 +550,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   openMessage(message: string): void {
     let electronic = [
       2, 174, 185, 186, 187, 192, 108, 183, 221, 26, 27, 50, 68, 217, 94, 40,
-      101, 105, 104, 72, 222, 223, 224, 225, 245, 246, 249,
+      101, 105, 104, 72, 222, 223, 224, 225, 245, 246, 249, 223,
     ];
 
     this.alertQuestion('question', 'Confirmación', `${message}`).then(
@@ -536,15 +561,30 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             this.gelectronicFirmService
               .firmDocument(210, 'ProgramacionRecibo', {})
               .subscribe({
-                next: () => {
-                  this.loadingButton = false;
-                  this.msjCheck = true;
+                next: response => {
+                  if (this.isXML(response)) {
+                    let node = this.getXMLNode(response, 'boolProcesoFirma');
+                    if (node?.textContent == 'false') {
+                      let text = this.getXMLNode(response, 'strError');
+                      this.alert(
+                        'error',
+                        'Error al firmar el documento',
+                        `${text?.textContent}`
+                      );
+                      this.loadingButton = false;
+                      this.msjCheck = false;
+                      return;
+                    }
+                  }
 
                   this.alert(
                     'success',
                     'Correcto',
                     'Documento firmado correctamente'
                   );
+
+                  this.loadingButton = false;
+                  this.msjCheck = true;
                 },
                 error: () => {
                   this.alert(
@@ -580,6 +620,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   this.loadingButton = false;
                 },
               });
+            return;
           }
 
           if (this.idTypeDoc == 103) {
@@ -611,6 +652,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   this.loadingButton = false;
                 },
               });
+            return;
           }
 
           if (this.idTypeDoc == 210) {
@@ -639,6 +681,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   this.loadingButton = false;
                 },
               });
+            return;
           }
 
           if (this.idTypeDoc == 106) {
@@ -666,6 +709,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   ).then();
                 },
               });
+            return;
           }
 
           if (this.idTypeDoc == 107) {
@@ -693,6 +737,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   ).then();
                 },
               });
+            return;
           }
 
           if (this.idTypeDoc == 218) {
@@ -720,6 +765,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   ).then();
                 },
               });
+            return;
           }
 
           if (this.idTypeDoc == 219) {
@@ -747,6 +793,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   ).then();
                 },
               });
+            return;
           }
 
           if (this.idTypeDoc == 197) {
@@ -774,6 +821,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   ).then();
                 },
               });
+            return;
 
             /* const idKeyDoc = this.orderSampleId + '-K';
             this.saveElectronicSign(idKeyDoc, 'AnexoKMuestreoOrdenServicio'); */
@@ -1652,5 +1700,21 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         });
       }
     });
+  }
+
+  isXML(xmlStr: string): boolean {
+    let parser = new DOMParser();
+    let doc = parser.parseFromString(xmlStr, 'application/xml');
+    return !doc.getElementsByTagName('parsererror').length;
+  }
+
+  getXMLNode(xmlStr: string, tagName: string): Node | null {
+    let parser = new DOMParser();
+    let doc = parser.parseFromString(xmlStr, 'application/xml');
+
+    let nodes = doc.getElementsByTagName(tagName);
+
+    // Devuelve el primer nodo con el nombre de etiqueta especificado, o null si no se encontró ninguno
+    return nodes.length > 0 ? nodes[0] : null;
   }
 }
