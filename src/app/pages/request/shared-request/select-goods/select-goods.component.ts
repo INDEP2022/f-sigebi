@@ -194,18 +194,19 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.requestInfo = response;
         this.getProcessDetonate();
       },
-      error: error => { },
+      error: error => {},
     });
 
     this.getRejectedGoodService();
 
-    this.selectedGoodParams.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      this.getRejectedGoodService(data);
-    });
+    this.selectedGoodParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(data => {
+        this.getRejectedGoodService(data);
+      });
   }
 
   getRejectedGoodService(filter: any = new FilterParams()) {
-
     filter['filter.applicationId'] = `$eq:${this.idRequest}`;
 
     this.rejectedGoodService.getAll(filter).subscribe({
@@ -223,7 +224,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.displayColumns();
       },
     });
-
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -240,7 +240,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       next: response => {
         this.processDet = response.data[0].processDetonate;
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -250,7 +250,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         response.recordId;
         this.openModalDocument(idRequest, response.recordId);
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -263,7 +263,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     config.initialState = {
       idRequest,
       recordId,
-      callback: (next: boolean) => { },
+      callback: (next: boolean) => {},
     };
 
     this.modalService.show(ShowDocumentsGoodComponent, config);
@@ -438,12 +438,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         next: response => {
           resolve(response.data[0].description);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
 
-  viewFile(file: any) { }
+  viewFile(file: any) {}
 
   /*checkInfoProcess(goodsResDev: IGoodsResDev) {
     return new Promise((resolve, reject) => {
@@ -460,15 +460,16 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   } */
 
   openReserveModal(good: any) {
-
-    let exitGood: any = this.selectedGoodColumns.find(x => x.goodId == good.goodId);
+    let exitGood: any = this.selectedGoodColumns.find(
+      x => x.goodId == good.goodId
+    );
 
     if (this.processDet == 'DEVOLUCION' || this.processDet == 'RES_NUMERARIO') {
       const modalRef = this.modalService.show(ReserveGoodModalComponent, {
         initialState: {
           good: good,
           requestId: this.requestInfo.id,
-          exitGood: exitGood
+          exitGood: exitGood,
         },
         class: 'modal-md modal-dialog-centered',
         ignoreBackdropClick: true,
@@ -479,7 +480,9 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     } else if (this.processDet != 'INFORMACION') {
       const modalRef = this.modalService.show(ReserveGoodModalComponent, {
         initialState: {
-          good: good, requestId: this.requestInfo.id, exitGood: exitGood
+          good: good,
+          requestId: this.requestInfo.id,
+          exitGood: exitGood,
         },
         class: 'modal-md modal-dialog-centered',
         ignoreBackdropClick: true,
@@ -488,13 +491,11 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         if (data) this.getInfoRequest();
       });
     } else {
-
       if (isNullOrEmpty(exitGood)) {
         this.addGoodForInformation(good);
       } else {
         this.onLoadToast('warning', 'El bien ya ha sido agregado');
       }
-
     }
   }
 
@@ -502,12 +503,13 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     delete good.addGood;
     good = Object.assign({ viewFile: '' }, good);
     this.selectedGoodColumns = [...this.selectedGoodColumns, good];
+    console.log('aqui agregar');
+
     //this.selectedGoodTotalItems = this.selectedGoodColumns.length;
     this.selectChanges();
   }
 
   selectGoods(rows: any) {
-    console.log(rows);
     if (rows.isSelected == false) {
       this.table.isAllSelected = false;
     }
@@ -547,7 +549,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
             this.selectedGoods = [];
             this.onLoadToast('success', 'Los Bienes se eliminaron');
           }
-
         });
 
         /*this.selectedGoodColumns.forEach((g: any, i: number) => {
@@ -574,7 +575,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       initialState: {
         data,
         typeInfo,
-        callback: (next: boolean) => { },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -739,6 +740,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     goodResDev.descriptionGood = good.goodDescription;
     goodResDev.unitExtent = good.unitMeasurement;
     goodResDev.amountToReserve = good.quantity;
+    goodResDev.applicationResDevId = good.applicationResDevId;
     (goodResDev.amount = 0), (goodResDev.statePhysical = good.physicalStatus);
     goodResDev.stateConservation = good.conservationStatus;
     goodResDev.fractionId = good.fractionId;
