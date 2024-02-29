@@ -72,7 +72,7 @@ export class SaleStatusFormComponent extends BasePage implements OnInit {
         next: response => {
           this.responseBoolean = response;
           if (this.responseBoolean === true) {
-            this.alert('warning', 'El Estatus Ingresado ya Existe', '');
+            this.alert('warning', 'El estatus ingresado ya existe', '');
             this.modalRef.hide();
           } else {
             this.saleStatusService.create(this.form.getRawValue()).subscribe({
@@ -82,7 +82,7 @@ export class SaleStatusFormComponent extends BasePage implements OnInit {
               },
               error: () => {
                 this.loading = false;
-                this.alert('error', 'Error al Conectar con el Servidor', '');
+                this.alert('error', 'Error al conectar con el servidor', '');
               },
             });
           }

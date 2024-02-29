@@ -42,6 +42,7 @@ export class EventProcessListComponent extends BasePage implements OnInit {
 
   eventId: string;
   button: boolean = false;
+  yearEvent: number;
 
   settings2 = { ...this.settings };
 
@@ -217,6 +218,7 @@ export class EventProcessListComponent extends BasePage implements OnInit {
       console.log(event.data);
       this.eventId = event.data.id;
       this.getEventProcess(event.data.id);
+      this.yearEvent = event.data.year;
       this.rowTypeProcess = true;
     }
   }
@@ -271,10 +273,12 @@ export class EventProcessListComponent extends BasePage implements OnInit {
     const comerEvent = event != null ? event.data : null;
     const modalConfig = MODAL_CONFIG;
     const eventId = this.eventId;
+    const yearEvent = this.yearEvent;
     //const comerEvent: any = event.data;
     modalConfig.initialState = {
       comerEvent,
       eventId,
+      yearEvent,
       callback: (next: boolean) => {
         if (next) this.getEventProcess(eventId);
       },

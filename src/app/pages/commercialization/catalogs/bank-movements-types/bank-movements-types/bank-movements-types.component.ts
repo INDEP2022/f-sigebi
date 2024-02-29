@@ -10,6 +10,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { IBankMovementsTypes } from 'src/app/core/models/catalogs/bank-movements-types.models';
 import { RecordAccountStatementsService } from 'src/app/core/services/catalogs/record-account-statements.service';
+import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { BankMovementType } from 'src/app/core/services/ms-bank-movement/bank-movement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -23,6 +24,7 @@ import { COLUMNS } from './columns';
 })
 export class BankMovementsTypesComponent extends BasePage implements OnInit {
   form: FormGroup;
+  form1: FormGroup;
   bankMovementsTypes: IBankMovementsTypes[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -36,12 +38,14 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
     new ListParams()
   );
   bankCode: string;
+  result: any;
 
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private bankMovementType: BankMovementType,
-    private recordAccountStatementsService: RecordAccountStatementsService
+    private recordAccountStatementsService: RecordAccountStatementsService,
+    private accountMovementService: AccountMovementService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -107,7 +111,11 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      bankSelect: [null, Validators.required],
+      bankSelect: [null, [Validators.required]],
+    });
+    this.form1 = this.fb.group({
+      account: [null],
+      branch: [null],
     });
   }
 
@@ -116,10 +124,46 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
   }
 
   // Trae la lista de bancos por defecto
-  searchBanks(params: ListParams) {
+  async searchBanks(params: ListParams) {
     this.banks = new DefaultSelect();
-    this.getDeductives();
-    this.loading = true;
+    //this.getDeductives();
+    let text;
+    if (params.text) {
+      params['filter.bankCode'] = `$ilike:${params.text}`;
+      params['search'] = ``;
+      text = params.text;
+    }
+
+    let user = await this.getBanc(params);
+    let dataBanc: any = user;
+    if (user == null) {
+      if (text) {
+        let params1 = new ListParams();
+        params1['filter.name'] = `$ilike:${text}`;
+        params1['search'] = ``;
+        let user1 = await this.getBanc(params1);
+        let dataBanc1: any = user1;
+        this.loading = false;
+        console.log(dataBanc1);
+        this.result = dataBanc1.data.map(async (item: any) => {
+          item['codeName'] = item.bankCode + ' - ' + item.name;
+        });
+        this.banks = new DefaultSelect(dataBanc1.data, dataBanc1.count);
+      } else {
+        this.banks = new DefaultSelect();
+      }
+    } else if (user) {
+      console.log(dataBanc);
+      this.loading = false;
+      this.result = dataBanc.data.map(async (item: any) => {
+        item['codeName'] = item.bankCode + ' - ' + item.name;
+      });
+      this.banks = new DefaultSelect(dataBanc.data, dataBanc.count);
+    } else {
+      this.banks = new DefaultSelect();
+    }
+
+    /*this.loading = true;
     this.bankAccountSelect = new DefaultSelect();
     if (params.text) {
       params['filter.name'] = `$ilike:${params.text}`;
@@ -127,6 +171,7 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
     this.recordAccountStatementsService.getAll(params).subscribe({
       next: response => {
         this.loading = true;
+
         this.banks = new DefaultSelect(response.data, response.count);
         this.loading = false;
       },
@@ -134,7 +179,24 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
         this.loading = false;
         this.alert('warning', 'No existen bancos', ``);
       },
+    });*/
+  }
+
+  async getBanc(params: ListParams) {
+    return new Promise((resolve, reject) => {
+      this.recordAccountStatementsService.getAll(params).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
     });
+  }
+
+  changeBanc(event: any) {
+    console.log(event);
   }
 
   // Permite buscar los bancos por nombre
@@ -145,6 +207,9 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
         .getAllDinamicName(name, this.params.getValue())
         .subscribe({
           next: response => {
+            this.result = response.data.map(async (item: any) => {
+              item['codeName'] = item.bankCode + ' - ' + item.name;
+            });
             this.banks = new DefaultSelect(response.data, response.count);
             this.loading = false;
           },
@@ -204,13 +269,13 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.bankMovementType.getAll(params).subscribe({
+    this.accountMovementService.getPaymentControl(params).subscribe({
       next: response => {
-        this.bankMovementsTypes = response.data.map(item => ({
+        /*this.bankMovementsTypes = response.data.map(item => ({
           ...item,
           coinKey: item.coinKey.replace(/'/g, ''),
-        }));
-        this.data.load(this.bankMovementsTypes);
+        }));*/
+        this.data.load(response.data);
         this.data.refresh();
         console.log(this.data);
         this.totalItems = response.count;
@@ -218,11 +283,11 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.loading = false;
-        this.alert(
+        /*this.alert(
           'warning',
           'No se encontraron registros con el parámetro de búsqueda',
           ''
-        );
+        );*/
       },
     });
   }

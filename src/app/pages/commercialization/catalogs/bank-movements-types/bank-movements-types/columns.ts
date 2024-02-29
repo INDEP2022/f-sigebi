@@ -1,5 +1,5 @@
 export const COLUMNS = {
-  id: {
+  /*id: {
     title: 'Id',
     sort: false,
   },
@@ -25,6 +25,38 @@ export const COLUMNS = {
   },
   registryNumber: {
     title: 'No. de Registro',
+    sort: false,
+  },*/
+  idCode: {
+    title: 'Codigo',
+    sort: false,
+  },
+  cveBank: {
+    title: 'Cve. Banco',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    sort: false,
+  },
+  type: {
+    title: 'Tipo',
+    sort: false,
+  },
+  reject: {
+    title: 'Rechazar',
+    sort: false,
+  },
+  relate: {
+    title: 'Afecta A',
+    sort: false,
+  },
+  codeB: {
+    title: 'Codigo Banco',
+    sort: false,
+  },
+  idTypeSat: {
+    title: 'Tipo SAT',
     sort: false,
   },
 };

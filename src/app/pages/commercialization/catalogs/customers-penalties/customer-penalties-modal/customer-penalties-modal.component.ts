@@ -730,7 +730,7 @@ export class CustomerPenaltiesModalComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'actualizado' : 'guardado';
-    this.alert('success', `La penalización ha sido ${message}`, ``);
+    this.alert('success', `La penalización se ha ${message}`, ``);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

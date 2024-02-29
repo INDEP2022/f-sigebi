@@ -11,6 +11,24 @@
           </form-field>
         </div>
         <div class="col-md-4">
+          <form-field label="Fase" [control]="comerEventRlForm.get('phase')">
+            <ng-select
+              formControlName="phase"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false"
+              (change)="changePhase($event)">
+              <ng-option value="1">PROCESO ANTERIOR</ng-option>
+              <ng-option value="2">PROCESO NUEVO</ng-option>
+            </ng-select>
+          </form-field>
+
+          <!--<form-field label="Año" [control]="comerEventRlForm.get('year')">
+            <input type="text" class="form-control" formControlName="year" />
+          </form-field>-->
+        </div>
+
+        <div class="col-md-4">
           <form-field [control]="comerEventRlForm.get('year')" label="Año">
             <input
               type="text"
@@ -23,25 +41,6 @@
               class="form-control"
               formControlName="tiieYear" />-->
           </form-field>
-          <!--<form-field label="Año" [control]="comerEventRlForm.get('year')">
-            <input type="text" class="form-control" formControlName="year" />
-          </form-field>-->
-        </div>
-
-        <div class="col-md-4">
-          <form-field
-            label="Publicar"
-            [control]="comerEventRlForm.get('phase')">
-            <ng-select
-              formControlName="phase"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option value="1">PROCESO ANTERIOR</ng-option>
-              <ng-option value="2">PROCESO NUEVO</ng-option>
-            </ng-select>
-          </form-field>
-
           <!--<form-field label="Fase" [control]="comerEventRlForm.get('phase')">
             <input type="text" class="form-control" formControlName="phase" />
           </form-field>-->

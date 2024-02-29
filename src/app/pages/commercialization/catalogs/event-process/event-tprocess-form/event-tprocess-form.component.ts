@@ -37,6 +37,7 @@ export class EventTProcessFormComponent extends BasePage implements OnInit {
 
   today: Date;
   eventId: string;
+  yearEvent: number;
 
   constructor(
     private fb: FormBuilder,
@@ -120,6 +121,7 @@ export class EventTProcessFormComponent extends BasePage implements OnInit {
     }
     this.comerEventRlForm.controls['id'].setValue(this.eventId);
     this.comerEventRlForm.controls['id'].disable();
+    this.comerEventRlForm.get('year').disable();
     console.log(this.eventId);
   }
 
@@ -227,6 +229,14 @@ export class EventTProcessFormComponent extends BasePage implements OnInit {
       next: data =>
         (this.delegations = new DefaultSelect(data.data, data.count)),
     });
+  }
+
+  changePhase(event: any) {
+    if (event == 1) {
+      this.comerEventRlForm.get('year').setValue(2013);
+    } else if (event == 2) {
+      this.comerEventRlForm.get('year').setValue(this.yearEvent);
+    }
   }
 
   /* getTypeEvent(params: ListParams) {

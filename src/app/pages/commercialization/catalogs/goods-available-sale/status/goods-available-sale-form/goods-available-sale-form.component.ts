@@ -49,7 +49,7 @@ export class GoodsAvailableSaleFormComponent
   //private goodsAvailableSaleService: GoodsAvailableSaleService
   private prepareForm() {
     this.goodsAvailableSaleForm = this.fb.group({
-      idStatus: [null, [Validators.required]],
+      idStatus: [null, [Validators.required, Validators.maxLength(6)]],
       idDirection: [null, [Validators.required]],
       description: [
         null,
@@ -116,7 +116,7 @@ export class GoodsAvailableSaleFormComponent
   }
   handleSuccess() {
     const message: string = this.edit
-      ? 'El registro ha sido actualizada'
+      ? 'El registro ha sido actualizado'
       : 'El registro ha sido guardado';
     this.onLoadToast('success', `${message}`);
     this.loading = false;
