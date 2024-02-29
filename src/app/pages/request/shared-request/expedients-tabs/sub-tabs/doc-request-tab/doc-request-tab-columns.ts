@@ -285,11 +285,11 @@ export const DOC_GOODS_COLUMNS = {
     sort: false,
   },
 
-  /*xidSIAB: {
+  xidSIAB: {
     title: 'No. SIAB',
     type: 'string',
     sort: false,
-  },*/
+  },
 
   /*delegationName: {
     title: 'Delegación regional',
