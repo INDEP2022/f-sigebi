@@ -21,6 +21,7 @@ import { ICharacteristicsWidthData } from '../../../services/goods-characteristi
 import { GoodTableDetailButtonComponent } from '../good-table-detail-button/good-table-detail-button.component';
 import { GoodValueEditCarArmorComponent } from '../good-table-detail-button/good-value-edit-car-armor/good-value-edit-car-armor.component';
 import { GoodValueEditCarBrandsComponent } from '../good-table-detail-button/good-value-edit-car-brands/good-value-edit-car-brands.component';
+import { GoodValueEditPropertyLocationComponent } from '../good-table-detail-button/good-value-edit-property-location/good-value-edit-property-location.component';
 
 @Component({
   selector: 'app-good-characteristics-table',
@@ -395,6 +396,12 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
       this.showAddArmorModal(row);
     } else if (row.attribute === 'MARCA' || row.attribute === 'SUBMARCA') {
       this.showAddABrandModal(row);
+    } else if (
+      row.attribute === 'COLONIA' ||
+      row.attribute === 'DELEGACION O MUNICIPIO' ||
+      row.attribute === 'ENTIDAD FEDERATIVA'
+    ) {
+      this.showAddLocationModal(row);
     } else {
       this.showAddCaracteristicsModal(row);
     }
@@ -571,5 +578,63 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     };
 
     this.modalService.show(GoodValueEditCarBrandsComponent, modalConfig);
+  }
+
+  private showAddLocationModal(row: ICharacteristicValue) {
+    const modalConfig = MODAL_CONFIG;
+    // console.log(row);
+
+    modalConfig.initialState = {
+      class: 'modal-sm modal-dialog-centered',
+      ignoreBackdropClick: true,
+      callback: (
+        stateName: string,
+        municipality: string,
+        township: string,
+        postalCode: string
+      ) => {
+        console.log(
+          'Marca, cerrando modal: ',
+          stateName,
+          municipality,
+          township,
+          postalCode
+        );
+        //console.log('this.selectedAttribute', this.selectedAttribute);
+        //console.log('this.data', this.data);
+
+        this.data.forEach(x => {
+          if (x.attribute === 'ENTIDAD FEDERATIVA') {
+            x.value = stateName;
+          }
+          if (x.attribute === 'DELEGACION O MUNICIPIO') {
+            x.value = municipality;
+          }
+          if (x.attribute === 'COLONIA') {
+            x.value = township;
+          }
+          if (x.attribute === 'CODIGO POSTAL') {
+            x.value = postalCode;
+          }
+        });
+        this.dataTemp.forEach(x => {
+          if (x.attribute === 'ENTIDAD FEDERATIVA') {
+            x.value = stateName;
+          }
+          if (x.attribute === 'DELEGACION O MUNICIPIO') {
+            x.value = municipality;
+          }
+          if (x.attribute === 'COLONIA') {
+            x.value = township;
+          }
+          if (x.attribute === 'CODIGO POSTAL') {
+            x.value = postalCode;
+          }
+        });
+        this.getPaginated(this.params.value);
+      },
+    };
+
+    this.modalService.show(GoodValueEditPropertyLocationComponent, modalConfig);
   }
 }
