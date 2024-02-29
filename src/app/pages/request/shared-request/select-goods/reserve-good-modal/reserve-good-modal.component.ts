@@ -139,6 +139,7 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
     goodResDev.descriptionGood = this.good.goodDescription;
     goodResDev.unitExtent = this.good.unitMeasurement;
     goodResDev.amountToReserve = this.good.quantity;
+    goodResDev.applicationResDevId = goodResDev.applicationId;
     goodResDev.amount = this.reserveForm.controls['reserve'].value;
     goodResDev.statePhysical = this.good.physicalStatus;
     goodResDev.stateConservation = this.good.conservationStatus;
