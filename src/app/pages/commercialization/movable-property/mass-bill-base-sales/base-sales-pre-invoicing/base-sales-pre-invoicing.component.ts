@@ -17,7 +17,8 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
 import { BasePage } from 'src/app/core/shared/base-page';
 //XLSX
 import { DatePipe } from '@angular/common';
-import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
+import { LocalDataSource } from 'ng2-smart-table';
+import { TheadFitlersRowComponent } from 'ng2-smart-table/lib/components/thead/rows/thead-filters-row.component';
 import {
   BehaviorSubject,
   catchError,
@@ -96,8 +97,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   @Output() comer: EventEmitter<any> = new EventEmitter(null);
   limit: FormControl = new FormControl(500);
 
-  @ViewChild('table', { static: true }) table: Ng2SmartTableComponent;
-
+  @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   get idAllotment() {
     return this.form.get('idAllotment');
   }
@@ -188,18 +188,18 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         eventId: {
           title: 'Evento',
           sort: false,
-          filter: {
-            type: 'custom',
-            component: CustomFilterComponent,
-          },
+          // filter: {
+          //   type: 'custom',
+          //   component: CustomFilterComponent,
+          // },
         },
         batchId: {
           title: 'Lote',
           sort: false,
-          filter: {
-            type: 'custom',
-            component: CustomFilterComponent,
-          },
+          // filter: {
+          //   type: 'custom',
+          //   component: CustomFilterComponent,
+          // },
         },
         customer: {
           title: 'Cliente',
@@ -208,14 +208,21 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         delegationNumber: {
           title: 'Regional',
           sort: false,
-          filter: {
-            type: 'custom',
-            component: CustomFilterComponent,
-          },
+          // filter: {
+          //   type: 'custom',
+          //   component: CustomFilterComponent,
+          // },
         },
         Type: {
           title: 'Tipo',
           sort: false,
+          filter: {
+            type: 'list',
+            config: {
+              selectText: 'Todos',
+              list: [{ value: 7, title: 'Venta de Bases' }],
+            },
+          },
           valuePrepareFunction: (val: number) => {
             return val == 7 ? 'Venta de Bases' : '';
           },
@@ -227,10 +234,10 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         Invoice: {
           title: 'Folio',
           sort: false,
-          filter: {
-            type: 'custom',
-            component: CustomFilterComponent,
-          },
+          // filter: {
+          //   type: 'custom',
+          //   component: CustomFilterComponent,
+          // },
         },
         factstatusId: {
           title: 'Estatus',
@@ -367,51 +374,65 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     });
   }
 
-  getAllComer() {
+  async getAllComer() {
     const params = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
+    let res = await this.forArrayFilters_();
+    console.log(res);
+    if (res) {
+      this.paramsList.getValue().limit = 500;
+      this.paramsList.getValue()['filter.tpevent'] = `${SearchFilter.EQ}:${11}`;
+      this.paramsList.getValue()['sortBy'] = 'batchId,eventId:ASC';
 
-    if (!params['filter.eventId']) return;
+      this.totalItems = 0;
+      this.dataFilter.load([]);
+      this.dataFilter.refresh();
+      this.form.get('price').patchValue(null);
+      this.form.get('ivaT').patchValue(null);
+      this.form.get('total').patchValue(null);
 
-    this.loading = true;
-    if (!this.valSortBy) params['sortBy'] = `batchId,eventId:ASC`;
-    this.comerInvoice.getAllSumInvoice(params).subscribe({
-      next: resp => {
-        this.loading = false;
+      delete this.paramsList.getValue()['filter.eventId'];
+    } else {
+      this.loading = true;
+      if (!this.valSortBy) params['sortBy'] = `batchId,eventId:ASC`;
+      this.comerInvoice.getAllSumInvoice(params).subscribe({
+        next: resp => {
+          this.loading = false;
 
-        if (resp.count == 0) {
+          if (resp.count == 0) {
+            this.totalItems = 0;
+            this.dataFilter.load([]);
+            this.dataFilter.refresh();
+            this.form.get('price').patchValue(null);
+            this.form.get('ivaT').patchValue(null);
+            this.form.get('total').patchValue(null);
+            return;
+          }
+
+          this.totalItems = resp.count;
+          this.dataFilter.load(resp.data);
+          this.dataFilter.refresh();
+          this.getSum();
+          this.comer.emit({
+            val: resp.data[0].eventId,
+            count: resp.data.length,
+            data: [],
+            filter: params,
+          });
+        },
+        error: () => {
+          this.loading = false;
           this.totalItems = 0;
           this.dataFilter.load([]);
           this.dataFilter.refresh();
           this.form.get('price').patchValue(null);
           this.form.get('ivaT').patchValue(null);
           this.form.get('total').patchValue(null);
-          return;
-        }
-
-        this.totalItems = resp.count;
-        this.dataFilter.load(resp.data);
-        this.dataFilter.refresh();
-        this.getSum();
-        this.comer.emit({
-          val: resp.data[0].eventId,
-          count: resp.data.length,
-          data: [],
-          filter: params,
-        });
-      },
-      error: () => {
-        this.loading = false;
-        this.totalItems = 0;
-        this.dataFilter.load([]);
-        this.dataFilter.refresh();
-        this.form.get('price').patchValue(null);
-        this.form.get('ivaT').patchValue(null);
-        this.form.get('total').patchValue(null);
-      },
-    });
+        },
+      });
+    }
   }
 
   getSum() {
@@ -459,7 +480,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       ivaT: [null],
       total: [null],
       userV: [null, Validators.required],
-      passwordV: [null, Validators.required],
+      passwordV: [null],
       order: [null],
       numberInvoices: [null],
     });
@@ -616,11 +637,12 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
             OPCION: 0,
             PEVENTO: event,
             PLOTE: null,
-            PIDFACTURA: null,
+            // PIDFACTURA: null,
             delegationNumber: this.delegation,
             GEN_IVA: iva,
-            LOTE: null,
-            toolbarUser: this.userService.decodeToken().preferred_username,
+            regional: (await this.validateUser()) == 1 ? null : this.delegation,
+            // LOTE: null,
+            // toolbarUser: this.userService.decodeToken().preferred_username,
           };
           // GENERA_PREFACTURAS(0,:BLK_CTRL.EVENTO, NULL, NULL);
           resul = await this.getApplicationGeneratePreInvoices(obj);
@@ -632,11 +654,13 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
               OPCION: 1,
               PEVENTO: event_,
               PLOTE: idAllotment || data[0].batchId,
-              PIDFACTURA: null,
+              // PIDFACTURA: null,
               delegationNumber: this.delegation,
               GEN_IVA: iva,
-              LOTE: idAllotment || data[0].batchId,
-              toolbarUser: this.userService.decodeToken().preferred_username,
+              regional:
+                (await this.validateUser()) == 1 ? null : this.delegation,
+              // LOTE: idAllotment || data[0].batchId,
+              // toolbarUser: this.userService.decodeToken().preferred_username,
             };
             // GENERA_PREFACTURAS(1, NVL(:BLK_CTRL.EVENTO,:COMER_FACTURAS.ID_EVENTO), NVL(:BLK_CTRL.LOTE,:COMER_FACTURAS.ID_LOTE),NULL);
             resul = await this.getApplicationGeneratePreInvoices(obj);
@@ -646,11 +670,13 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
               OPCION: 1,
               PEVENTO: event_,
               PLOTE: idAllotment || data[0].batchId,
-              PIDFACTURA: null,
+              // PIDFACTURA: null,
               delegationNumber: this.delegation,
               GEN_IVA: iva,
-              LOTE: idAllotment || data[0].batchId,
-              toolbarUser: this.userService.decodeToken().preferred_username,
+              regional:
+                (await this.validateUser()) == 1 ? null : this.delegation,
+              // LOTE: idAllotment || data[0].batchId,
+              // toolbarUser: this.userService.decodeToken().preferred_username,
             };
             // GENERA_PREFACTURAS(1, NVL(:BLK_CTRL.EVENTO,:COMER_FACTURAS.ID_EVENTO), NVL(:BLK_CTRL.LOTE,:COMER_FACTURAS.ID_LOTE),NULL);
             resul = await this.getApplicationGeneratePreInvoices(obj);
@@ -665,6 +691,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
             callback: async (event: any) => {
               if (event) {
                 // GENERA_PREFACTURAS_SOI(:BLK_CTRL.EVENTO);
+                console.log(event);
                 await this.generateInvoiceIso(event);
               } else {
                 this.btnLoading = false;
@@ -700,12 +727,10 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
             );
 
         this.btnLoading = false;
-        this.alert('success', 'Prefacturas Generadas', '');
-        this.resetParams();
-        this.columnFilters['filter.eventId'] = `$eq:${
-          event ?? data[0].eventId
-        }`;
-        this.getAllComer();
+        this.alert('success', 'Proceso terminado correctamente', '');
+        this.paramsList['filter.eventId'] = `$eq:${event}`;
+        await this.forArrayFilters('eventId', event);
+        await this.getAllComer();
       }
     } else {
       this.btnLoading = false;
@@ -753,6 +778,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       toolbarNoDelegation: this.delegation,
       toolbarUser: this.userService.decodeToken().preferred_username,
     };
+    console.log(data);
     let result = await this.generateInvoiceSoi(data);
     if (!result)
       return (
@@ -766,9 +792,9 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
 
     this.btnLoading = false;
     this.alert('success', 'Prefacturas Generadas', '');
-    this.resetParams();
-    this.columnFilters['filter.eventId'] = `$eq:${event}`;
-    this.getAllComer();
+    this.paramsList['filter.eventId'] = `$eq:${event}`;
+    await this.forArrayFilters('eventId', event);
+    await this.getAllComer();
   }
 
   async generateInvoiceSoi(data: any) {
@@ -815,8 +841,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
           'Atención',
           `Ya se han asignado folio al Lote: ${idAllotment}`
         );
-        this.resetParams();
-        this.columnFilters['filter.eventId'] = `$eq:${event}`;
+        this.paramsList['filter.eventId'] = `$eq:${event}`;
+        await this.forArrayFilters('eventId', event);
         this.getAllComer();
 
         return 0;
@@ -839,8 +865,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         'Atención',
         `Ya se han asignado folio al Lote: ${idAllotment}`
       );
-      this.resetParams();
-      this.columnFilters['filter.eventId'] = `$eq:${event}`;
+      this.paramsList['filter.eventId'] = `$eq:${event}`;
+      await this.forArrayFilters('eventId', event);
       this.getAllComer();
 
       return 0;
@@ -856,7 +882,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   resetParams() {
     this.columnFilters = [];
     this.isSelect = [];
-    this.paramsList = new BehaviorSubject(new ListParams());
+    // this.paramsList = new BehaviorSubject(new ListParams());
     this.paramsList.getValue().limit = 500;
     this.paramsList.getValue()['filter.tpevent'] = `${SearchFilter.EQ}:${11}`;
     this.paramsList.getValue()['sortBy'] = 'batchId,eventId:ASC';
@@ -1060,18 +1086,17 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         this.btnLoading2 = false;
         return;
       }
-      console.log('AQUIII');
       this.procedureInvoice();
     }
   }
 
   async procedureInvoice() {
     let validaFol: number = 0;
-
+    const { event } = this.form.value;
     const data = await this.dataFilter.getAll();
-    const event = data[0].eventId;
+    const eventId = event ?? data[0].eventId;
 
-    validaFol = await this.validateInvoice(data[0].tpevent, event);
+    validaFol = await this.validateInvoice(11 ?? data[0].tpevent, eventId);
 
     if (validaFol == 1) {
       //service de actualizar
@@ -1080,18 +1105,23 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       let res = await this.processMark('FL', 'PREF');
       console.log('res', res);
       // COMER_CTRLFACTURA.GENERA_FOLIOS(:COMER_FACTURAS.ID_EVENTO, :COMER_FACTURAS.TPEVENTO);
-      await this.generateInvoiceCtrl(event, data[0].tpevent);
+      await this.generateInvoiceCtrl(eventId, 11 ?? data[0].tpevent);
 
       // VERIFICA_PROV_CANCE;
       await this.verifyProv();
 
       // MODIFICA_WHERE_DETALLE(PEVENTO);
       this.alert('success', 'Se generaron los folios correctamente', '');
-      this.resetParams();
-      this.columnFilters['filter.eventId'] = `$eq:${event}`;
+      this.paramsList['filter.eventId'] = `$eq:${eventId}`;
+      await this.forArrayFilters('eventId', eventId);
       this.getAllComer();
       this.btnLoading2 = false;
     } else {
+      this.alert(
+        'warning',
+        'No existen folios disponibles para el tipo de documento Venta de Bases',
+        ' verifique sus series '
+      );
       this.btnLoading2 = false;
     }
   }
@@ -1760,5 +1790,36 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
 
   async sendPackage() {
     console.log('Consultar con Carlos');
+  }
+
+  async forArrayFilters(field: any, value: any) {
+    const subheaderFields: any = this.table.grid.source;
+    const filterConf = subheaderFields.filterConf;
+    if (filterConf.filters.length > 0) {
+      filterConf.filters.forEach((item: any) => {
+        if (item.field == field) {
+          item.search = value;
+        }
+      });
+    } else if (filterConf.filters.length == 0 && value) {
+      filterConf.filters.push({ field: field, search: value });
+    }
+    // this.dataFilter.refresh();
+    return true;
+  }
+
+  async forArrayFilters_() {
+    const subheaderFields: any = this.table.grid.source;
+
+    const filterConf = subheaderFields.filterConf;
+    let val = true;
+    if (filterConf.filters.length > 0) {
+      filterConf.filters.forEach((item: any) => {
+        if (item.search != '') {
+          val = false;
+        }
+      });
+    }
+    return val;
   }
 }

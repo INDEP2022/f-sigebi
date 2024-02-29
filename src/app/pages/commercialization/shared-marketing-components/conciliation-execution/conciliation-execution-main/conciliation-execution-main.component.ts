@@ -203,6 +203,10 @@ export class ConciliationExecutionMainComponent
         },
       },
       columns: { ...CONCILIATION_EXECUTION_COLUMNS },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-4"></i>',
+      },
     };
     this.conciliationSettings.columns = CONCILIATION_EXECUTION_COLUMNS;
   }
@@ -691,7 +695,7 @@ export class ConciliationExecutionMainComponent
         if (L_VALMAN > 0) {
           this.alert(
             'warning',
-            `El  lote ${L_VALMAN} no tiene mandato válido, verifique`,
+            `El lote ${L_VALMAN} no tiene mandato válido, verifique`,
             'Ejecute el botón Act. Mand. en preparación de Eventos'
           );
           this.loadingBtn = false;

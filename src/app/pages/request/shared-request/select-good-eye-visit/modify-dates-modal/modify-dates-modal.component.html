@@ -16,6 +16,7 @@
             class="form-control"
             formControlName="startDate"
             bsDatepicker
+            [minDate]="minDate"
             [bsConfig]="{ isAnimated: true }"
             [bsConfig]="{
               withTimepicker: true,
@@ -30,6 +31,7 @@
             placeholder=""
             class="form-control"
             formControlName="endDate"
+            [minDate]="minDate"
             bsDatepicker
             [bsConfig]="{ isAnimated: true }"
             [bsConfig]="{

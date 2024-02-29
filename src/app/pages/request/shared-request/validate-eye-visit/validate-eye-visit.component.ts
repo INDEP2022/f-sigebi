@@ -339,7 +339,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
 
     console.log('resultadoFinal', resultadoFinal);
 
-    if (resultadoFinal == 'P') {
+    if (isNullOrEmpty(resultadoFinal) || resultadoFinal == 'P') {
       this.alertQuestion(
         'question',
         'Aceptar Bien Ajeno',

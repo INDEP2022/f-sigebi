@@ -197,13 +197,21 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       error: error => { },
     });
 
-    const param = new FilterParams();
-    param.addFilter('applicationId', this.idRequest);
-    const filter = param.getParams();
+    this.getRejectedGoodService();
+
+    this.selectedGoodParams.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      this.getRejectedGoodService(data);
+    });
+  }
+
+  getRejectedGoodService(filter: any = new FilterParams()) {
+
+    filter['filter.applicationId'] = `$eq:${this.idRequest}`;
+
     this.rejectedGoodService.getAll(filter).subscribe({
       next: response => {
         this.selectedGoodColumns = [];
-        this.selectedGoodTotalItems = this.selectedGoodColumns.length;
+        this.selectedGoodTotalItems = response.count;
 
         response.data.forEach((item: any) => {
           this.addGood(item);
@@ -215,6 +223,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.displayColumns();
       },
     });
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -261,6 +270,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   getInfoGoods(filters: any) {
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
+
     this.jsonBody = {};
     if (
       this.processDet == 'DEVOLUCION' ||
@@ -491,7 +502,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     delete good.addGood;
     good = Object.assign({ viewFile: '' }, good);
     this.selectedGoodColumns = [...this.selectedGoodColumns, good];
-    this.selectedGoodTotalItems = this.selectedGoodColumns.length;
+    //this.selectedGoodTotalItems = this.selectedGoodColumns.length;
     this.selectChanges();
   }
 
@@ -535,9 +546,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
             this.selectedGoodTotalItems = this.selectedGoodColumns.length;
             this.selectedGoods = [];
             this.onLoadToast('success', 'Los Bienes se eliminaron');
-          } else {
-            this.onLoadToast('error', 'Ocurrió un error al eliminar los Bienes');
           }
+
         });
 
         /*this.selectedGoodColumns.forEach((g: any, i: number) => {

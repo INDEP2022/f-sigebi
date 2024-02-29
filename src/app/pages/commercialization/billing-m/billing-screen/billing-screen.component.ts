@@ -351,31 +351,50 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           type: 'string',
           sort: false,
           width: '10%',
+          filterFunction: () => {
+            return true;
+          },
         },
         payId: {
           title: 'Id. Pago',
           type: 'string',
           sort: false,
+          filterFunction: () => {
+            return true;
+          },
         },
         relationshipSatType: {
           title: 'Tipo Rel.',
           type: 'string',
           sort: false,
+          filterFunction: () => {
+            return true;
+          },
         },
         usecompSat: {
           title: 'Uso comp.',
           type: 'string',
           sort: false,
+          filter: false,
+          filterFunction: () => {
+            return true;
+          },
         },
         paymentformBsat: {
           title: 'F. Pago',
           type: 'string',
           sort: false,
+          filterFunction: () => {
+            return true;
+          },
         },
         numBiasSat: {
           title: 'Parc.',
           type: 'string',
           sort: false,
+          filterFunction: () => {
+            return true;
+          },
         },
       },
     };
@@ -1038,12 +1057,12 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(NUMBERS_PATTERN), Validators.required],
       ],
-      idLotPublic: [null, Validators.required],
-      date: [null, Validators.required],
+      idLotPublic: [null],
+      date: [null],
       cause: [null],
       descause: [null],
-      fec: [null, Validators.required],
-      fec2: [null, Validators.required],
+      fec: [null],
+      fec2: [null],
     });
     this.form2 = this.fb.group({
       counter: [null],
@@ -3176,6 +3195,9 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           item.search = value;
         }
       });
+    } else if (filterConf.filters.length == 0 && value) {
+      console.log('SI');
+      filterConf.filters.push({ field: field, search: value });
     }
     this.data.refresh();
     return true;

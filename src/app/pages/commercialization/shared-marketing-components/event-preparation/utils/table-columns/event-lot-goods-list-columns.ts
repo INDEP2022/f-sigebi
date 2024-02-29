@@ -5,6 +5,9 @@ export const EVENT_LOT_GOODS_LIST_COLUMNS = {
     title: 'No. Bien',
     sort: false,
     valuePrepareFunction: (good: any) => good?.id ?? '',
+    filterFunction: (cell: any, search?: string) => {
+      return true;
+    },
   },
   description: {
     title: 'Descripción',

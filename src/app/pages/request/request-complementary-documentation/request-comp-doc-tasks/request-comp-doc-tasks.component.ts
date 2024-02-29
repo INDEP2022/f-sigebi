@@ -42,6 +42,7 @@ import { RejectRequestModalComponent } from '../../shared-request/reject-request
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
 import * as moment from 'moment';
+import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -51,6 +52,7 @@ import * as moment from 'moment';
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
   implements OnInit {
+  protected override signOffice: boolean;
   protected override btnGrouper: boolean;
   protected override formatReport: boolean;
   protected override signReport: boolean;
@@ -195,6 +197,7 @@ export class RequestCompDocTasksComponent
   private taskService = inject(TaskService);
   private wContentService = inject(WContentService);
   private sanitizer = inject(DomSanitizer);
+  private samplingGoodService = inject(SamplingGoodService);
 
   //private rejectedService = inject(RejectedGoodService)
 
@@ -322,18 +325,43 @@ export class RequestCompDocTasksComponent
 
   requestRegistered(request: any) { }
 
-  async openReport(): Promise<void> {
+  async openReport(first = true): Promise<void> {
+
+    let doc = this.reportId;
+
+    if (this.process == 'generate-compensation-act') {
+      if (first) {
+        doc = doc.split(',')[0];
+      } else {
+        doc = doc.split(',')[1];
+      }
+    }
+
     if (!this.nextTurn) {
-      let report = await this.getStatusReport();
+      let report = await this.getStatusReport(first ? 0 : 1);
       this.showReport(report);
       return;
     }
+
+    if (doc == '223') {
+      //this.showReportInfo(0, 0, '', '');
+
+      let sample = await this.getSample();
+
+      console.log('sample', sample);
+
+      this.openSignature({
+        reportFolio: '0123'
+      });
+      return;
+    }
+
 
     const initialState: Partial<CreateReportComponent> = {
       signReport: this.signedReport && this.nextTurn,
       editReport: this.editReport && this.nextTurn,
       tableName: this.reportTable,
-      documentTypeId: this.reportId,
+      documentTypeId: doc,
       process: this.process,
       requestId: this.requestId.toString(),
     };
@@ -1730,10 +1758,6 @@ export class RequestCompDocTasksComponent
   }
 
   openModalLegal(context?: Partial<ChangeLegalStatusComponent>) {
-    if (this.requestInfo.detail.reportSheet == 'OCSJ') {
-      this.openSignature(0);
-      return;
-    }
 
     const modalRef = this.modalService.show(ChangeLegalStatusComponent, {
       initialState: {
@@ -1873,12 +1897,22 @@ export class RequestCompDocTasksComponent
     );
   }
 
-  openModal(component: any, idSample?: any, typeAnnex?: string): void {
+  async openModal(component: any, idSample?: any, typeAnnex?: string): Promise<void> {
+
+    let report = await this.getStatusReport();
+    report = report.isValid ? report.data[0] : report;
+
+    /*console.log('openModal');
+    console.log(this.requestId);
+    console.log(report.documentTypeId);
+    console.log(this.reportTable);
+    console.log(idSample);*/
+
     if (!this.signReport) {
       let config: ModalOptions = {
         initialState: {
           requestId: this.requestId,
-          reportId: this.reportId,
+          reportId: report.documentTypeId,
           reportTable: this.reportTable,
           idSample: idSample,
           typeAnnex: typeAnnex,
@@ -1970,6 +2004,36 @@ export class RequestCompDocTasksComponent
     this.reportgoodService.saveReportDynamic(report).subscribe({
       next: resp => { },
       error: err => { },
+    });
+
+  }
+
+  getSample() {
+
+    const sample: any = {
+      regionalDelegationId: 0,
+      startDate: moment(new Date()).format('YYYY-MM-DD'),
+      endDate: moment(new Date()).format('YYYY-MM-DD'),
+      speciesInstance: 'DOC_COMPLEMENTARIA',
+      numeraryInstance: 'DOC_COMPLEMENTARIA',
+      warehouseId: this.requestId,
+      version: 1,
+      transfereeId: this.reportId,
+      contentId: "1234567890",
+    };
+
+    return new Promise<any>(resolve => {
+      return this.samplingGoodService.createSample(sample).subscribe({
+        next: async resp => {
+          console.log('sampling', resp);
+          //this.version.reportFolio = response.sampleId;
+          //this.saveVersionsDoc(false, this.version);
+          resolve(resp);
+        },
+        error: err => {
+          resolve(err);
+        },
+      });
     });
 
   }

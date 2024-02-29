@@ -52,8 +52,7 @@ interface searchTable {
 })
 export class DocRequestTabComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   @ViewChild('myTemplate', { static: true }) template: TemplateRef<any>;
   @ViewChild('myTemplate', { static: true, read: ViewContainerRef })
   container: ViewContainerRef;
@@ -166,7 +165,7 @@ export class DocRequestTabComponent
           this.getData(data);
         });
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -251,14 +250,14 @@ export class DocRequestTabComponent
   }
   private data: any[][] = [];
 
-  getData(params: ListParams) {
+  getData(params: ListParams, filter: any = {}) {
     this.loading = true;
     this.docRequestForm.get('noRequest').setValue(this.requestInfo.id);
-    const idSolicitud: Object = {
-      xidSolicitud: this.requestInfo.id,
-    };
+
+    filter.xidSolicitud = this.requestInfo.id;
+
     this.wContentService
-      .getDocumentos(idSolicitud, params)
+      .getDocumentos(filter, params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: async res => {
@@ -545,7 +544,7 @@ export class DocRequestTabComponent
           next: data => {
             resolve(data?.description);
           },
-          error: error => {},
+          error: error => { },
         });
     });
   }
@@ -593,7 +592,18 @@ export class DocRequestTabComponent
   }
 
   search(): void {
-    let object = this.docRequestForm.getRawValue();
+
+    //this.params = new BehaviorSubject<ListParams>(new ListParams());
+
+    let object: any = this.getFilterDocuments(this.docRequestForm.getRawValue());
+
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => this.getData(params, object));
+
+    if (true) return;
+
+    console.log('object', object);
     if (
       object.noRequest &&
       !object.docType &&
@@ -939,7 +949,7 @@ export class DocRequestTabComponent
           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl),
           type: 'pdf',
         },
-        callback: (data: any) => {},
+        callback: (data: any) => { },
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -959,10 +969,12 @@ export class DocRequestTabComponent
       ignoreBackdropClick: true,
     };
     const idRequest = this.idRequest;
-    let typeDoc = 'doc-request';
+    const typeDoc = this.typeDoc;
+    const idExpedient = this.requestInfo.recordId;
     config.initialState = {
       idRequest,
       typeDoc,
+      idExpedient,
       callback: (data: boolean) => {
         if (data) {
           this.formLoading = true;
@@ -1002,7 +1014,7 @@ export class DocRequestTabComponent
         next: data => {
           this.selectRegDelegation = new DefaultSelect(data.data, data.count);
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -1050,4 +1062,77 @@ export class DocRequestTabComponent
       type: this.typeDoc,
     });
   }
+
+  getFilterDocuments(filter) {
+
+    let request = {
+      "dDocTitle": filter.docTitle,
+      "dDocAuthor": filter.author,
+      "dDocCreator": null,
+      "dDocName": filter.dDocName,
+      "dSecurityGroup": null,
+      "dRevLabel": null,
+      "xidTransferente": null,
+      "xidBien": null,
+      "xnoOficio": filter.noOfice,
+      "xremitente": filter.sender,
+      "xidExpediente": null,
+      "xtipoTransferencia": filter.typeTrasf,
+      "xidSolicitud": this.idRequest,
+      "xresponsable": filter.responsible,
+      "xcargoRemitente": filter.senderCharge,
+      "xComments": filter.comment,
+      "xcontribuyente": filter.contributor,
+      "xciudad": null,
+      "xestado": null,
+      "xfecha": null,
+      "xbanco": null,
+      "xclaveValidacion": null,
+      "xcuenta": null,
+      "xdependenciaEmiteDoc": null,
+      "xfechaDeposito": null,
+      "xfolioActa": null,
+      "xfolioActaDestruccion": null,
+      "xfolioActaDevolucion": null,
+      "xfolioContrato": null,
+      "xfolioDenuncia": null,
+      "xfolioDictamenDestruccion": null,
+      "xfolioDictamenDevolucion": null,
+      "xfolioDictamenResarcimiento": null,
+      "xfolioFactura": null,
+      "xfolioNombramiento": null,
+      "xfolioSISE": null,
+      "xmonto": null,
+      "xnoAcuerdo": null,
+      "xnoAutorizacionDestruccion": null,
+      "xnoConvenioColaboracion": null,
+      "xnoFolioRegistro": null,
+      "xnoOficioAutorizacion": null,
+      "xnoOficioAvaluo": null,
+      "xnoOficioCancelacion": null,
+      "xnoOficioProgramacion": null,
+      "xnoOficioSolAvaluo": null,
+      "xnoOficoNotificacion": null,
+      "xnoRegistro": null,
+      "xNivelRegistroNSBDB": null,
+      "xTipoDocumento": filter.docType,
+      "texto": filter.text,
+      "xDelegacionRegional": null,
+      "xNoProgramacion": null,
+      "xFolioProgramacion": null,
+      "xNoActa": null,
+      "xNoRecibo": null,
+      "xFolioRecibo": null,
+      "xIdConstanciaEntrega": null,
+      "xNombreProceso": null,
+      "xIdSIAB": null
+    }
+    for (const key in request) {
+      if (request[key] == null) {
+        delete request[key]
+      }
+    }
+    return request;
+  }
+
 }

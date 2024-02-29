@@ -8,6 +8,7 @@ import {
   Output,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as moment from 'moment';
 import { map } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { CompensationService } from 'src/app/core/services/compensation-option/compensation.option';
@@ -24,6 +25,9 @@ import { isNullOrEmpty } from '../../request-complementary-documentation/request
 })
 export class RegisterDictumValComponent extends BasePage implements OnInit {
   maxDate: Date = new Date();
+  currentDate = new Date();
+  minDate: Date = new Date();
+
 
   dictumForm: FormGroup = new FormGroup({});
   @Output() onSave = new EventEmitter<any>();
@@ -40,6 +44,9 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
   respDoc: Object = null;
   respDate: Object = null;
+  appoiment: boolean = false;
+
+
 
   private requestService = inject(RequestService);
   private compenstionService = inject(CompensationService);
@@ -51,14 +58,25 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-
     this.getRequestInfo();
     this.getAllOrderEntry();
     this.getAllCompensation();
+    this.validateTime();
+  }
+
+  validateTime() {
+    this.dictumForm.get('appoitmentDate').valueChanges.subscribe(value => {
+      let selectedDate = moment(value, 'DD/MM/YYYY, h:mm:ss a');
+      if (selectedDate.isBefore(moment())) {
+        // La fecha y hora seleccionada es anterior a la actual, muestra un mensaje de error
+        this.dictumForm.get('appoitmentDate').setErrors({ invalid: true });
+      }
+    });
   }
 
   prepareForm() {
     if (this.steap3) {
+      this.minDate.setDate(this.currentDate.getDate() + 1);
       this.dictumForm = this.fb.group({
         appoitmentDate: [null, [Validators.required]],
         appoitmentPlace: [
@@ -165,6 +183,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
           this.selectChanges();
           if (!isNullOrEmpty(resp)) {
+            console.log('resp', resp);
             this.dictumForm.patchValue({
               appoitmentDate: this.datePipe.transform(
                 resp.appoitmentDate,
@@ -225,16 +244,25 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       next: resp => {
         if (this.steap3) {
           this.respDate = resp;
+          this.onLoadToast('success', 'Datos de cita guardados con éxito');
+        } else {
+          this.onLoadToast('success', 'Datos de dictamen guardados con éxito');
         }
 
         this.respDoc = resp;
 
         this.selectChanges();
         this.getRequestInfo();
-        this.onLoadToast('success', 'Datos de dictamen guardados con éxito');
       },
       error: error => {
-        this.onLoadToast('error', 'No se pudo guardar los datos del dictamen');
+        if (this.steap3) {
+          this.onLoadToast('error', 'No se pudo guardar los datos de la cita');
+        } else {
+          this.onLoadToast(
+            'error',
+            'No se pudo guardar los datos del dictamen'
+          );
+        }
       },
     });
   }
@@ -244,18 +272,30 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       next: resp => {
         if (this.steap3) {
           this.respDate = resp;
+          this.onLoadToast('success', 'Datos de cita actualizados con éxito');
+        } else {
+          this.onLoadToast(
+            'success',
+            'Datos de dictamen actualizados con éxito'
+          );
         }
         this.respDoc = resp;
 
         this.selectChanges();
         this.getRequestInfo();
-        this.onLoadToast('success', 'Datos de dictamen actualizados con éxito');
       },
       error: error => {
-        this.onLoadToast(
-          'error',
-          'No se pudo actualizar los datos del dictamen'
-        );
+        if (this.steap3) {
+          this.onLoadToast(
+            'error',
+            'No se pudo actualizar los datos de la cita'
+          );
+        } else {
+          this.onLoadToast(
+            'error',
+            'No se pudo actualizar los datos del dictamen'
+          );
+        }
       },
     });
   }
@@ -280,6 +320,13 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       this.createCompensation(object);
       this.getAllCompensation();
     } else {
+      if (object['appoitmentDate']) {
+        let date = moment(object['appoitmentDate'], 'DD/MM/YYYY, h:mm:ss a');
+        if (date.isValid()) {
+          object['appoitmentDate'] = date.toISOString();
+        }
+      }
+
       this.updatedCompensation(object);
       this.getAllOrderEntry();
     }

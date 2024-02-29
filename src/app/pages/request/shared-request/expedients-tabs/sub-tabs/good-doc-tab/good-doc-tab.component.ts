@@ -23,6 +23,7 @@ import {
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GOOD_DOCUMENTES_COLUMNS } from './good-doc-columns';
 import { ShowDocumentsGoodComponent } from './show-documents-good/show-documents-good.component';
+import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 
 @Component({
   selector: 'app-good-doc-tab',
@@ -39,6 +40,8 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
   @Input() typeDoc = '';
   @Input() screen = 'doc-goods';
   @Input() requestId: number = null;
+  @Input() updateInfo: boolean;
+
   goodSelect: IGood[] = [];
   allGooods: IGood[] = [];
   showSearchForm: boolean = false;
@@ -50,6 +53,8 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
     private goodService: GoodService,
+    private rejectedGoodService: RejectedGoodService,
+
     private typeRelevantService: TypeRelevantService,
     private fb: FormBuilder
   ) {
@@ -57,12 +62,13 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
     this.idRequest = this.idRequest
       ? this.idRequest
       : (this.activatedRoute.snapshot.paramMap.get('id') as unknown as number);
-    this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
+    this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = GOOD_DOCUMENTES_COLUMNS;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.idRequest = this.idRequest || this.requestId;
+
     if (
       this.typeModule != '' &&
       this.typeModule == 'doc-complementary' &&
@@ -76,6 +82,8 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getGoodsRequest());
     }
+
+    this.getGoodsRequest()
   }
 
   ngOnInit(): void {
@@ -107,38 +115,56 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
     });
   }
   getGoodsRequest() {
+
+    this.idRequest = this.idRequest
+      ? this.idRequest
+      : (this.activatedRoute.snapshot.paramMap.get('id') as unknown as number);
+
     if (this.idRequest) {
       this.loading = true;
       this.params.getValue()['search'] = this.params.getValue().text;
       this.params.getValue()['filter.requestId'] = this.idRequest;
+      this.params.getValue()['filter.applicationId'] = this.idRequest;
+
+
       //this.searchForm.get('requestId').setValue(this.idRequest);
       this.goodService.getAll(this.params.getValue()).subscribe({
         next: async (data: any) => {
-          const filterGoodType = data.data.map(async (item: any) => {
-            const goodType = await this.getGoodType(item.goodTypeId);
-            item['goodTypeName'] = goodType;
-            item['requestId'] = this.idRequest;
 
-            if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
-            if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
-            if (item['stateConservation'] == 1)
-              item['stateConservation'] = 'BUENO';
-            if (item['stateConservation'] == 2)
-              item['stateConservation'] = 'MALO';
-            if (item['destiny'] == 1) item['destiny'] = 'VENTA';
-            const fraction = item['fraccion'];
-            item['fractionId'] = fraction?.code + ' ' + fraction?.description;
-          });
+          if (data.data.length > 0) {
 
-          Promise.all(filterGoodType).then(x => {
-            this.allGooods = data.data;
-            this.paragraphs.load(data.data);
-            this.totalItems = data.count;
-            this.loading = false;
-          });
+            const filterGoodType = data.data.map(async (item: any) => {
+              const goodType = await this.getGoodType(item.goodTypeId);
+              item['goodTypeName'] = goodType;
+              item['requestId'] = this.idRequest;
+
+              if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
+              if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
+              if (item['stateConservation'] == 1)
+                item['stateConservation'] = 'BUENO';
+              if (item['stateConservation'] == 2)
+                item['stateConservation'] = 'MALO';
+              if (item['destiny'] == 1) item['destiny'] = 'VENTA';
+              const fraction = item['fraccion'];
+              item['fractionId'] = fraction?.code + ' ' + fraction?.description;
+            });
+
+            Promise.all(filterGoodType).then(x => {
+              this.allGooods = data.data;
+              this.paragraphs.load(data.data);
+              this.totalItems = data.count;
+              this.loading = false;
+            });
+
+          } else {
+            this.getGoodRes()
+          }
+
+
         },
         error: error => {
           this.loading = false;
+          this.getGoodRes()
         },
       });
     }
@@ -280,4 +306,41 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
       this.modalService.show(ShowDocumentsGoodComponent, config);
     }
   }
+
+  getGoodRes() {
+    this.rejectedGoodService.getAll(this.params.getValue()).subscribe({
+      next: async (data: any) => {
+
+        data.data = data.data.map(x => x.good);
+
+        const filterGoodType = data.data.map(async (item: any) => {
+          const goodType = await this.getGoodType(item.goodTypeId);
+          item['goodTypeName'] = goodType;
+          item['requestId'] = this.idRequest;
+
+          if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
+          if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
+          if (item['stateConservation'] == 1)
+            item['stateConservation'] = 'BUENO';
+          if (item['stateConservation'] == 2)
+            item['stateConservation'] = 'MALO';
+          if (item['destiny'] == 1) item['destiny'] = 'VENTA';
+          const fraction = item['fraccion'];
+          item['fractionId'] = fraction?.code + ' ' + fraction?.description;
+        });
+
+        Promise.all(filterGoodType).then(x => {
+          this.allGooods = data.data;
+          this.paragraphs.load(data.data);
+          this.totalItems = data.count;
+          this.loading = false;
+        });
+
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
+  }
+
 }

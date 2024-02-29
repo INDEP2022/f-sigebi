@@ -110,6 +110,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     private orderService: OrderServiceService,
     private samplingGoodService: SamplingGoodService
   ) {
+
     super();
     this.settings = {
       ...this.settings,
@@ -273,7 +274,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       next: response => {
         //this.createPersonsSing(response.data[0]);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -339,7 +340,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
             type: 'pdf',
           },
-          callback: (response: any) => {},
+          callback: (response: any) => { },
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
         keyboard: false,
@@ -354,9 +355,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       2, 174, 7, 192, 108, 183, 26, 27, 50, 68, 217, 94, 40, 101, 105, 104, 72,
       222, 223, 224, 225, 245, 246, 249,
     ];
-
-    console.log(this.idTypeDoc);
-    console.log(this.typeFirm);
 
     if (
       signs.includes(parseInt('' + this.idTypeDoc)) &&
@@ -447,35 +445,45 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   registerSign() {
-    const learnedType = 221;
+
+    let learnedType = 221;
+    let column = "TIPO_FIRMA";
+    let boardSig = "PROGRAMACIONES";
+
     const learndedId = this.idProg;
+
+    if (this.requestId > 0) {
+      learnedType = this.idTypeDoc;
+    }
+
     this.signatoriesService
       .getSignatoriesFilter(learnedType, learndedId)
       .subscribe({
         next: response => {
+
           this.signatoriesService
             .deleteFirmante(Number(response.data[0].signatoryId))
             .subscribe({
               next: async () => {
                 const createSignatore = await this.createSign(
                   this.idProg,
-                  221,
-                  'PROGRAMACIONES',
-                  'TIPO_FIRMA',
+                  learnedType,
+                  boardSig,
+                  column,
                   this.signatore.nameSignatore,
                   this.signatore.chargeSignatore
                 );
                 if (createSignatore) this.getSignatories();
               },
-              error: error => {},
+              error: error => { },
             });
         },
         error: async error => {
           const createSignatore = await this.createSign(
             this.idProg,
-            221,
-            'PROGRAMACIONES',
-            'TIPO_FIRMA',
+            learnedType,
+            boardSig,
+            column,
             this.signatore.nameSignatore,
             this.signatore.chargeSignatore
           );
@@ -506,7 +514,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -550,6 +558,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   this.loadingButton = false;
                 },
               });
+            return;
           }
           if (this.idTypeDoc == 218) {
             this.gelectronicFirmService
@@ -931,7 +940,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 this.close();
               }
             },
-            error: error => {},
+            error: error => { },
           });
       });
     } else {
@@ -1004,7 +1013,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   }
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 107 && this.typeFirm == 'electronica') {
@@ -1060,7 +1069,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 210 && this.typeFirm == 'electronica') {
@@ -1116,7 +1125,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 106 && this.typeFirm == 'electronica') {
@@ -1172,7 +1181,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 197 && this.typeFirm == 'electronica') {
@@ -1222,7 +1231,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idOrderService && this.typeFirm == 'electronica') {
@@ -1276,7 +1285,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 218 && this.typeFirm == 'electronica') {
@@ -1324,7 +1333,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 219 && this.typeFirm == 'electronica') {
@@ -1373,7 +1382,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (electronic.includes(parseInt('' + this.idTypeDoc))) {
@@ -1406,9 +1415,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             )
             .subscribe({
               next: async response => {
-                console.log(response);
                 const updateSample = await this.updateSample(response.dDocName);
-                console.log(updateSample);
                 if (updateSample) {
                   this.alertInfo(
                     'success',
@@ -1422,7 +1429,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       }
@@ -1442,7 +1449,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1460,7 +1467,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {},
+          error: error => { },
         });
       });
     });
@@ -1497,7 +1504,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {},
+          error: error => { },
         });
       });
     });
