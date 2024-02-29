@@ -274,11 +274,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
 
   showDocuments(): void {
     if (this.goodSelect.length == 0 || this.goodSelect.length >= 2) {
-      this.onLoadToast(
-        'warning',
-        'No se puede seleccionar más de un bien para visualizar.',
-        ''
-      );
+
     } else {
       const idGood = this.goodSelect[0].id;
       const idRequest = this.idRequest;
