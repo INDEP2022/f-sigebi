@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { _Params } from 'src/app/common/services/http-wcontet.service';
 import { NumDetGood } from 'src/app/pages/administrative-processes/numerary/numerary-request/models/goods-det';
+import { environment } from 'src/environments/environment';
 import { MassiveGoodEndpoints } from '../../../common/constants/endpoints/ms-massivegood-endpoints';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { HttpService } from '../../../common/services/http.service';
@@ -26,7 +27,8 @@ import { IMassiveGood } from '../../models/ms-massivegood/massivegood.model';
 })
 export class MassiveGoodService extends HttpService {
   private readonly route = MassiveGoodEndpoints;
-
+  private readonly _url = environment.API_URL;
+  private readonly _prefix = environment.URL_PREFIX;
   constructor() {
     super();
     this.microservice = this.route.MassiveGood;
@@ -68,8 +70,16 @@ export class MassiveGoodService extends HttpService {
     const route = `${this.route.MassiveChargeGoods}/${id}`;
     return this.get(route);
   }
+  getLosersReport(id: string | number) {
+    const route = `${this.route.losersReport}/${id}`;
+    return this.get(route);
+  }
+  getWinnersReport(id: string | number) {
+    const route = `${this.route.winnersReport}/${id}`;
+    return this.get(route);
+  }
 
-  getObtnGoodExcel(id: string | number) {
+  getObtnGoodExcel(id: any) {
     const route = `${this.route.ObtnGoodPag}?filter.clasif=$in:${id}`;
     return this.get(route);
   }
@@ -281,5 +291,28 @@ export class MassiveGoodService extends HttpService {
 
   pupGoodTrackerRga(body: IPupGoodTrackerRga) {
     return this.post('application/pup-good-tracker-rga', body);
+  }
+
+  pupLoadCsvPaymentSearchList(file: File, cveBank: string) {
+    const filename = file.name;
+    const ext = filename.substring(filename.lastIndexOf('.') + 1) ?? '';
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('keyBank', cveBank);
+    return this.httpClient.post<any>(
+      `${this._url}${this.microservice}/${this._prefix}${MassiveGoodEndpoints.pupProcesaCsvPaymentSearch}`,
+      formData
+    );
+  }
+
+  applicationPupExpCsvReldevgar(data: any) {
+    return this.post(
+      `${MassiveGoodEndpoints.ApplicationPupExpCsvReldevGar}`,
+      data
+    );
+  }
+
+  applicationPupGenLayouts(data: any) {
+    return this.post(`${MassiveGoodEndpoints.ApplicationPupGenLayouts}`, data);
   }
 }

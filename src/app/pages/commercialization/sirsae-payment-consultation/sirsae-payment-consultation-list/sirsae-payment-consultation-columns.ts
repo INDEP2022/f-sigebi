@@ -6,7 +6,7 @@ export const CONSULT_SIRSAE_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (_cell: any, row: any) => {
-      return row.accountbank?.name_bank;
+      return row.accountbank?.id;
     },
   },
   ifdsc: {

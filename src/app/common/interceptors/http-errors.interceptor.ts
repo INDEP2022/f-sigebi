@@ -91,7 +91,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
   }
 
   handleError(error: HttpErrorResponse) {
-    // debugger;
+    // //
     const status = error.status;
     let message = '';
     if (Array.isArray(error?.error?.message) === true) {
@@ -116,7 +116,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
       //this.onLoadToast('warning', 'Advertencia', message);
       return;
     }
-    if (status === 401 && error.url.indexOf('firebase') < 0) {
+    if (status === 401 && error.url.indexOf('firebase') < 0 && this.showError) {
       localStorage.clear();
       sessionStorage.clear();
       message = 'La sesión expiró';
@@ -140,7 +140,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
   }
 
   private handleSuccess(response: HttpEvent<any>) {
-    // debugger;
+    // //
     if (response instanceof HttpResponse) {
       this.validateResponse(response);
       if (!response.body) {

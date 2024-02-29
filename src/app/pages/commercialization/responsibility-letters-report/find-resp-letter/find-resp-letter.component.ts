@@ -28,7 +28,7 @@ export class FindRespLetterComponent extends BasePage implements OnInit {
   selectedRow: any | null = null;
   @Output() onSave = new EventEmitter<any>();
   loteId: number = null;
-
+  oficio: number;
   constructor(
     private modalRef: BsModalRef,
     private comerLetterService: ComerLetterService
@@ -88,20 +88,19 @@ export class FindRespLetterComponent extends BasePage implements OnInit {
   }
 
   getAllComerLetter() {
-    if (this.loteId) {
-      this.columnFilters['filter.lotsId'] = `$eq:${this.loteId}`;
-    }
+    // if (this.loteId) {
+    //   this.columnFilters['filter.lotsId'] = `$eq:${this.loteId}`;
+    // }
     this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.comerLetterService.getAll(params).subscribe({
+    this.comerLetterService.getAllResp(params).subscribe({
       next: (data: any) => {
         this.loading = false;
-        this.letters = data.data;
         this.totalItems = data.count;
-        this.dataFactLetter.load(this.letters);
+        this.dataFactLetter.load(data.data);
         this.dataFactLetter.refresh();
       },
       error: () => {

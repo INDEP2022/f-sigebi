@@ -9,7 +9,7 @@
     <div>
       <form [formGroup]="documentForm" class="form-material">
         <div class="row pt-4">
-          <div class="col-md-6">
+          <div class="col-md-12">
             <div
               [formGroup]="documentForm"
               class="form-group form-secondary form-static-label">
@@ -36,7 +36,7 @@
           </div>
         </div>
         <div class="row pt-4">
-          <div class="col-md-8">
+          <div class="col-md-12">
             <form-field [control]="documentForm.get('noDoc')">
               <input
                 type="file"
@@ -52,7 +52,7 @@
           </div>
         </div>
         <div class="row pt-4">
-          <div class="col-md-6">
+          <div class="col-md-12">
             <form-field
               [control]="documentForm.get('dDocTitle')"
               label="T&iacute;tulo del Documento">
@@ -89,7 +89,7 @@
               [control]="documentForm.get('xIdSIAB')"
               label="No&#46; Siab">
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 formControlName="xIdSIAB" />
             </form-field>
@@ -115,7 +115,18 @@
                 formControlName="xcontribuyente" />
             </form-field>
           </div>
+
           <div class="col-md-4 pt-4">
+            <form-field
+              [control]="documentForm.get('xFolioProgramacion')"
+              label="Folio Programaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="xFolioProgramacion" />
+            </form-field>
+          </div>
+          <!--<div class="col-md-4 pt-4">
             <form-field [control]="documentForm.get('xDelegacionRegional')">
               <ngx-select
                 [form]="documentForm"
@@ -128,7 +139,7 @@
                 (change)="changeRegDele($event)">
               </ngx-select>
             </form-field>
-          </div>
+          </div> -->
           <!-- </div>
 
         <div class="row pt-4"> -->
@@ -168,7 +179,7 @@
           </div>
           <!-- </div>
         <div class="row pt-4"> -->
-          <div class="col-md-4 pt-4">
+          <div class="col-md-6 pt-4">
             <form-field [control]="documentForm.get('xidTransferente')">
               <ngx-select
                 [form]="documentForm"
@@ -181,17 +192,8 @@
               </ngx-select>
             </form-field>
           </div>
-          <div class="col-md-4 pt-4">
-            <form-field
-              [control]="documentForm.get('xFolioProgramacion')"
-              label="Folio Programaci&oacute;n">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="xFolioProgramacion" />
-            </form-field>
-          </div>
-          <div class="col-md-4 pt-4">
+
+          <div class="col-md-6 pt-4">
             <form-field
               [control]="documentForm.get('xremitente')"
               label="Remitente">

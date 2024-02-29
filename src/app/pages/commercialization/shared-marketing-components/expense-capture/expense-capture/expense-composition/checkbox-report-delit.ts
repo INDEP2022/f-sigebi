@@ -50,7 +50,7 @@ export class CheckboxReportDelitComponent implements OnInit {
   constructor(private expenseCaptureDataService: ExpenseCaptureDataService) {}
 
   ngOnInit(): void {
-    // debugger;
+    // //
     this.checked = this.value;
     const row = this.rowData;
     if (this.expenseCaptureDataService.SELECT_CAMBIA_CLASIF_ENABLED === false) {
@@ -64,6 +64,9 @@ export class CheckboxReportDelitComponent implements OnInit {
           row.SELECT_CAMBIA_CLASIF_ENABLED === null ||
           row.SELECT_CAMBIA_CLASIF_ENABLED === undefined
         ) {
+          if (row.labelNumber && row.labelNumber + '' === '6') {
+            this.disabled = true;
+          }
           if (row.vehiculoCount + '' === '0') {
             const firsValidation =
               !row.reportDelit && row.clasifGoodNumber + '' !== '1606';

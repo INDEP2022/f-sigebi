@@ -10,4 +10,6 @@ export enum OfficeManagementEndpoint {
   MJobManagementExtSSF3 = 'm-job-management-ext-ssf3',
   updateStatusProcess = 'application/updateStatus', // actualiza el estatus del tramite
   ComerJobs = 'comer-jobs',
+  paTriggerOAppraise = 'paTriggerOAppraise',
+  LegalTrades = 'legal-trades',
 }

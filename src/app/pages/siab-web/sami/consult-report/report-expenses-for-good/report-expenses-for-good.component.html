@@ -11,9 +11,9 @@
       </div>
     </div>
     <h5 class="title pt-3">Buscar</h5>
-    <form [formGroup]="form" class="form-material">
+    <form [formGroup]="form" class="form-material pt-4">
       <div class="row pt-3">
-        <div class="col-md-6">
+        <div class="col-md-3">
           <form-field [control]="form.get('idGood')" label="No. Bien">
             <input
               type="text"
@@ -22,8 +22,7 @@
               formControlName="idGood" />
           </form-field>
         </div>
-
-        <div class="col-md-6">
+        <div class="col-md-3">
           <form-field
             [control]="form.get('idTypeRelevant')"
             label="Tipo Relevante">
@@ -34,10 +33,9 @@
               formControlName="idTypeRelevant" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-3">
-        <div class="col-md-6">
-          <form-field [control]="form.get('uniqueKey')" label="Clave Unica">
+
+        <div class="col-md-3">
+          <form-field [control]="form.get('uniqueKey')" label="Clave Única">
             <input
               type="text"
               class="form-control"
@@ -45,7 +43,8 @@
               formControlName="uniqueKey" />
           </form-field>
         </div>
-        <div class="col-md-6">
+
+        <div class="col-md-3">
           <form-field
             [control]="form.get('descriptionGood')"
             label="Descripción Bien">
@@ -57,7 +56,8 @@
           </form-field>
         </div>
       </div>
-      <div class="d-flex justify-content-end">
+
+      <div class="d-flex justify-content-end pt-3">
         <div class="mt-3 btn-toolbar">
           <button
             (click)="showListGoods()"
@@ -72,8 +72,10 @@
     </form>
     <h5 class="title pt-3">Listado de Bienes</h5>
     <div class="row pt-4">
-      <div class="btn-toolbar pt-3">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
+      <div class="btn-toolbar pt-3 justify-content-end">
+        <app-columns-select
+          [leftList]="true"
+          [(settings)]="settings"></app-columns-select>
       </div>
       <div [class]="loading ? 'table-loading' : ''">
         <ng2-smart-table
@@ -84,6 +86,7 @@
         </ng2-smart-table>
         <app-pagination
           [params]="params"
+          [pageSizeOptions]="pageSizeOptions"
           [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
@@ -161,6 +164,7 @@
                 </ng2-smart-table>
                 <app-pagination
                   [params]="paramsValReq"
+                  [pageSizeOptions]="pageSizeOptions"
                   [totalItems]="totalItemsValReq"></app-pagination>
               </div>
             </div>
@@ -175,14 +179,16 @@
                 </ng2-smart-table>
                 <app-pagination
                   [params]="paramsRecDoc"
+                  [pageSizeOptions]="pageSizeOptions"
                   [totalItems]="totalItemsRecDoc"></app-pagination>
               </div>
             </div>
           </tab>
           <tab heading="Programación">
             <div class="row">
-              <div class="btn-toolbar pt-3">
+              <div class="btn-toolbar pt-3 justify-content-end">
                 <app-columns-select
+                  [leftList]="true"
                   [(settings)]="settingsProg"></app-columns-select>
               </div>
               <div [class]="loadingProg ? 'table-loading' : ''">
@@ -193,14 +199,16 @@
                 </ng2-smart-table>
                 <app-pagination
                   [params]="paramsProg"
+                  [pageSizeOptions]="pageSizeOptions"
                   [totalItems]="totalItemsProg"></app-pagination>
               </div>
             </div>
           </tab>
           <tab heading="Programación Entrega">
             <div class="row">
-              <div class="btn-toolbar pt-3">
+              <div class="btn-toolbar pt-3 justify-content-end">
                 <app-columns-select
+                  [leftList]="true"
                   [(settings)]="settingsProgEnt"></app-columns-select>
               </div>
               <div [class]="loadingProgEnt ? 'table-loading' : ''">
@@ -211,14 +219,16 @@
                 </ng2-smart-table>
                 <app-pagination
                   [params]="paramsProgEnt"
+                  [pageSizeOptions]="pageSizeOptions"
                   [totalItems]="totalItemsProgEnt"></app-pagination>
               </div>
             </div>
           </tab>
           <tab heading="Almacenaje">
             <div class="row">
-              <div class="btn-toolbar pt-3">
+              <div class="btn-toolbar pt-3 justify-content-end">
                 <app-columns-select
+                  [leftList]="true"
                   [(settings)]="settingsWarehouse"></app-columns-select>
               </div>
               <div [class]="loadingWarehouse ? 'table-loading' : ''">
@@ -229,14 +239,16 @@
                 </ng2-smart-table>
                 <app-pagination
                   [params]="paramsWarehouse"
+                  [pageSizeOptions]="pageSizeOptions"
                   [totalItems]="totalItemsWarehouse"></app-pagination>
               </div>
             </div>
           </tab>
           <tab heading="Manual">
             <div class="row">
-              <div class="btn-toolbar pt-3">
+              <div class="btn-toolbar pt-3 justify-content-end">
                 <app-columns-select
+                  [leftList]="true"
                   [(settings)]="settingsManual"></app-columns-select>
               </div>
               <div [class]="loadingMan ? 'table-loading' : ''">
@@ -247,14 +259,16 @@
                 </ng2-smart-table>
                 <app-pagination
                   [params]="paramsMan"
+                  [pageSizeOptions]="pageSizeOptions"
                   [totalItems]="totalItemsMan"></app-pagination>
               </div>
             </div>
           </tab>
           <tab heading="Reubicación de Bienes">
             <div class="row">
-              <div class="btn-toolbar pt-3">
+              <div class="btn-toolbar pt-3 justify-content-end">
                 <app-columns-select
+                  [leftList]="true"
                   [(settings)]="settingsReubGood"></app-columns-select>
               </div>
               <div [class]="loadingReubGood ? 'table-loading' : ''">
@@ -265,6 +279,7 @@
                 </ng2-smart-table>
                 <app-pagination
                   [params]="paramsReubGood"
+                  [pageSizeOptions]="pageSizeOptions"
                   [totalItems]="totalItemsReubGood"></app-pagination>
               </div>
             </div>

@@ -353,7 +353,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea Eliminar este Registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

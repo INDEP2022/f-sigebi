@@ -705,7 +705,7 @@ export class ScheduledMaintenanceDetailComponent
   }
 
   private fillColumnsGoods() {
-    // debugger;
+    // //
     let columnGoodId = {
       title: 'Localidad Ent. Transferente.',
       type: 'string',
@@ -723,7 +723,7 @@ export class ScheduledMaintenanceDetailComponent
       )
       .subscribe({
         next: response => {
-          // debugger;
+          // //
           let newColumns;
           this.proceedingIndicators = response.filter(indicator => {
             return (
@@ -960,7 +960,7 @@ export class ScheduledMaintenanceDetailComponent
     this.alertQuestion(
       'question',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         if (item.agregado === 'AE') {

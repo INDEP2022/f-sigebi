@@ -55,8 +55,8 @@
           type="text"
           class="form-control"
           #dp="bsDatepicker"
+          [minDate]="maxDate"
           bsDatepicker
-          [maxDate]="maxDate"
           [bsValue]="bsPriorityDate"
           (bsValueChange)="changePriorityDateEvent($event)" />
       </form-field>
@@ -65,19 +65,18 @@
   <div class="row mt-5">
     <div class="col-md-4">
       <div class="row">
-        <div class="col-6 d-flex align-items-end">
-          <label class="label" for="">Prioridad&#58;</label>
-        </div>
-        <div class="col-6">
-          <form-check label="" for="priority">
+        <div class="col">
+          <p class="font-size-13 mb-2">
+            <label class="font-size-12">Prioridad&#58;</label>
             <input
+              style="margin-left: 10px !important"
               id="priority"
               type="checkbox"
               class="gcheckbox"
               [ngModelOptions]="{ standalone: true }"
               [(ngModel)]="priorityCheck"
               (change)="changePriority($event)" />
-          </form-check>
+          </p>
         </div>
       </div>
     </div>
@@ -163,11 +162,9 @@
         <input
           type="text"
           class="form-control"
-          [maxDate]="maxDate"
-          #dp="bsDatepicker"
-          bsDatepicker
           [bsValue]="bsPaperValue"
-          (bsValueChange)="changeDateEvent($event)" />
+          formControlName="paperDate"
+          bsDatepicker />
       </form-field>
     </div>
     <div class="col-md-4">
@@ -196,7 +193,8 @@
         <input
           type="text"
           formControlName="phoneOfOwner"
-          class="form-control" />
+          class="form-control"
+          (keypress)="numericOnly($event)" />
       </form-field>
     </div>
     <div class="col-md-4">
@@ -300,7 +298,7 @@
   <!-- Fin -->
   <!-- Se aumento datos del codigo oracle transferente-->
   <div class="row">
-    <div class="col-md-4 pt-5" *ngIf="showInput('authorityOrdering')">
+    <div class="col-md-4" *ngIf="showInput('authorityOrdering')">
       <form-field
         [control]="registerForm.get('authorityOrdering')"
         label="Autoridad Ordenante">
@@ -311,9 +309,7 @@
           class="form-control" />
       </form-field>
     </div>
-    <div
-      class="col-md-4 pt-5"
-      *ngIf="transference == 120 || showInput('trialType')">
+    <div class="col-md-4" *ngIf="transference == 120 || showInput('trialType')">
       <form-field [control]="registerForm.get('trialType')" label="Tipo Juicio">
         <input
           type="text"
@@ -323,7 +319,7 @@
       </form-field>
     </div>
     <div
-      class="col-md-4 pt-5"
+      class="col-md-4"
       *ngIf="
         processDetonate == 'AMPARO' ||
         transference == 3 ||
@@ -341,7 +337,7 @@
       </form-field>
     </div>
     <div
-      class="col-md-4 pt-5"
+      class="col-md-4"
       *ngIf="
         transference == 1 ||
         transference == 3 ||
@@ -358,7 +354,7 @@
       </form-field>
     </div>
     <div
-      class="col-md-4 pt-5"
+      class="col-md-4"
       *ngIf="
         transference == 1 || transference == 3 || showInput('previousInquiry')
       ">
@@ -373,7 +369,7 @@
       </form-field>
     </div>
     <div
-      class="col-md-4 pt-5"
+      class="col-md-4"
       *ngIf="transference == 1 || transference == 3 || showInput('lawsuit')">
       <form-field [control]="registerForm.get('lawsuit')" label="Causa Penal">
         <input
@@ -386,7 +382,7 @@
     <!-- </div>
   <div class="row pt-5"> -->
     <div
-      class="col-md-4 pt-5"
+      class="col-md-4"
       *ngIf="transference == 1 || transference == 3 || showInput('tocaPenal')">
       <form-field [control]="registerForm.get('tocaPenal')" label="Toca Penal">
         <input
@@ -397,7 +393,7 @@
       </form-field>
     </div>
     <div
-      class="col-md-4 pt-5"
+      class="col-md-4"
       *ngIf="transference == 1 || transference == 3 || showInput('crime')">
       <form-field [control]="registerForm.get('crime')" label="Delito">
         <input
@@ -410,7 +406,7 @@
     <!-- </div>
   <div class="row pt-5" > -->
     <div
-      class="col-md-4 pt-5"
+      class="col-md-4"
       *ngIf="
         transference == 1 || transference == 3 || showInput('domainExtinction')
       ">

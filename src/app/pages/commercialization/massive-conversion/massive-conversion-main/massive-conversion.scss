@@ -1,0 +1,31 @@
+.custom-btn {
+  padding-right: 3px;
+  padding-left: 10px;
+  margin-right: -2px;
+}
+
+:host
+  ::ng-deep
+  tr.ng2-smart-filters
+  th.ng2-smart-th
+  ng2-smart-table-filter
+  div.ng2-smart-filter
+  default-table-filter
+  input-filter
+  input::placeholder {
+  color: transparent !important;
+}
+
+.title {
+  text-align: center;
+  /* Centrado horizontal */
+  margin-top: 0;
+  /* Elimina el espacio superior predeterminado del encabezado */
+  display: flex;
+  justify-content: center;
+  /* Centrado vertical */
+  align-items: center;
+  /* Centrado vertical */
+  height: 100%;
+  /* Si deseas centrado vertical en el 100% del contenedor */
+}

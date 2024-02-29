@@ -219,7 +219,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
   }
 
   override ngOnInit(): void {
-    // debugger;
+    // //
     this.dinamicFilterUpdate();
     this.prepareForm();
     // this.searchParams();
@@ -267,7 +267,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
-        // debugger;
+        // //
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
@@ -301,7 +301,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
   }
 
   setForm() {
-    // debugger;
+    // //
     const filtersActa = window.localStorage.getItem(this.formStorage);
     if (filtersActa) {
       const newData = JSON.parse(filtersActa);
@@ -351,7 +351,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
   }
 
   private fillParams(byPage = false) {
-    // debugger;
+    // //
     const tipoEvento = this.form.get('tipoEvento').value;
     // const fechaInicio: Date | string = this.form.get('fechaInicio').value;
     // const fechaFin: Date = this.form.get('fechaFin').value;

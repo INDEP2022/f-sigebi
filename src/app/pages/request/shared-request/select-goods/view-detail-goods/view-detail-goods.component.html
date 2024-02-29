@@ -1,0 +1,89 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body class="body" style="margin-top: -30px">
+    <div class="see-detail">
+      <form [formGroup]="infoForm" class="form-material">
+        <div class="row">
+          <div class="col-md-6 mt-2" *ngIf="data.id">
+            <label for="">
+              <strong>No&#46; Solicitud&#58; </strong>
+              <span style="font-weight: normal">{{ data?.id }}</span>
+            </label>
+          </div>
+          <div class="col-md-6 mt-3" *ngIf="data.requestStatus">
+            <label for="">
+              <strong>Estatus&#58; </strong>
+              <span style="font-weight: normal">{{ data?.requestStatus }}</span>
+            </label>
+          </div>
+          <div class="col-md-6 mt-3" *ngIf="nameRegDelegation">
+            <label for="">
+              <strong>Delegaci&oacute;n Regional&#58; </strong>
+              <span style="font-weight: normal">{{ nameRegDelegation }}</span>
+            </label>
+          </div>
+          <div class="col-md-6 mt-3" *ngIf="data.applicationDate">
+            <label for="">
+              <strong>Fecha Creaci&oacute;n&#58; </strong>
+              <span style="font-weight: normal">
+                {{ data?.applicationDate | date : 'dd/MM/yyyy' }}</span
+              >
+            </label>
+          </div>
+          <div class="col-md-6 mt-3" *ngIf="nameTrans">
+            <label for="">
+              <strong>Transferente&#58; </strong>
+              <span style="font-weight: normal">{{ nameTrans }}</span>
+            </label>
+          </div>
+          <div class="col-md-6 mt-3" *ngIf="data.typeOfTransfer">
+            <label for="">
+              <strong>Tipo Transferente&#58; </strong>
+              <span style="font-weight: normal">{{
+                data?.typeOfTransfer
+              }}</span>
+            </label>
+          </div>
+          <div class="col-md-6 mt-3" *ngIf="data.nameOfOwner">
+            <label for="">
+              <strong>Responsable&#58; </strong>
+              <span style="font-weight: normal">{{ data?.nameOfOwner }}</span>
+            </label>
+          </div>
+          <div class="col-md-6 mt-3" *ngIf="data.holderCharge">
+            <label for="">
+              <strong>Cargo&#58; </strong>
+              <span style="font-weight: normal">{{ data?.holderCharge }}</span>
+            </label>
+          </div>
+          <div class="col-md-6 mt-3" *ngIf="data.typeRecord">
+            <label for="">
+              <strong>Tipo de expediente&#58; </strong>
+              <span style="font-weight: normal">{{ data?.typeRecord }}</span>
+            </label>
+          </div>
+          <div class="col-md-6 mt-3" *ngIf="data.observations">
+            <label for="">
+              <strong>Observaciones&#58;</strong>
+              <span style="font-weight: normal"> {{ data?.observations }}</span>
+            </label>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

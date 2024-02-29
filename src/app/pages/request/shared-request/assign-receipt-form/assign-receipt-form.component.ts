@@ -249,7 +249,6 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
             error: error => {},
           });
         } else if (this.receipts) {
-          console.log('Crea recibo pero ya se tiene un acta');
           const receiptForm: Object = {
             id: 1,
             actId: filterProceedingOpen[0].id,
@@ -306,12 +305,12 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
       });
     }
     /*this.loadingCreateReceipt = true;
-    console.log('this.receipts', this.receipts);
+   
     const receiptOpen = this.receipts.filter(receipt => {
       return receipt.statusReceipt == 'ABIERTO';
     });
 
-    console.log('receiptOpen', receiptOpen);
+   
 
     if (receiptOpen.length == 0) {
       const form: Object = {
@@ -466,7 +465,7 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
                   programmingId: this.programming.id,
                   statusReceipt: 'ABIERTO',
                 };
-                console.log('receiptForm', receiptForm);
+               
                 this.receptionGoodService.createReceipt(receiptForm).subscribe({
                   next: async response => {
                     const folioReceipt = await this.createKeyReceipt(response);

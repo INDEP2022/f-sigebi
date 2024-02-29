@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import * as moment from 'moment';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -9,6 +10,8 @@ import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
+import { ITypeDocument } from 'src/app/core/models/ms-wcontent/type-document';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
@@ -41,6 +44,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   stateName: string = '';
   nameTransferent: string = '';
   idTransferent: number = 0;
+  typeTransfer: string = '';
   regionalDelId: number = 0;
   stateId: number = 0;
   userLogName: string = '';
@@ -63,7 +67,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     private programmingService: ProgrammingRequestService,
     private datePipe: DatePipe,
     private modalService: BsModalService,
-    private stateService: DelegationStateService
+    private stateService: DelegationStateService,
+    private authService: AuthService
   ) {
     super();
   }
@@ -186,9 +191,11 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   typedocuments(params: ListParams) {
+    params['filter.ddescription'] = params['text'];
+    console.log(params);
     this.wContentService.getDocumentTypes(params).subscribe({
       next: (resp: any) => {
-        this.typesDocuments = new DefaultSelect(resp.data, resp.length);
+        this.typesDocuments = resp.data;
       },
     });
   }
@@ -214,8 +221,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     });
   }
 
-  typeDocumentSelect(item) {
-    console.log(item);
+  typeDocumentSelect(item: ITypeDocument) {
     this.typeDocument = item.ddocType;
   }
 
@@ -262,13 +268,14 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     if (this.typeDoc == 'good' && this.process == 'programming') {
       this.loading = true;
       const formData = {
-        dInDate: new Date(),
+        dInDate: moment(new Date()).format('DD-MMM-YYYY'),
         dDocAuthor: this.userLogName,
         dSecurityGroup: 'Public',
         ddocCreator: this.userLogName,
         xidcProfile: 'NSBDB_Gral',
         xidSolicitud: this.idRequest,
         xidTransferente: this.programming.tranferId,
+        xtipoTransferencia: this.programming.typeTransfer,
         xdelegacionRegional: this.programming.regionalDelegationNumber,
         xnivelRegistroNSBDB: 'bien',
         xidBien: this.idGood,
@@ -342,6 +349,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           },
           error: error => {},
         });
+      return;
     }
 
     if (
@@ -350,8 +358,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       this.process != 'sampling-assets'
     ) {
       this.loading = true;
+      const user: any = this.authService.decodeToken();
       const formData = {
-        dInDate: new Date(),
+        dInDate: moment(new Date()).format('DD-MMM-YYYY'),
         dDocAuthor: this.userLogName,
         dSecurityGroup: 'Public',
         xidExpediente: this.idExpedient,
@@ -359,10 +368,11 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xidcProfile: 'NSBDB_Gral',
         xidSolicitud: this.idRequest,
         xidTransferente: this.idTransferent,
-        xdelegacionRegional: this.regionalDelId,
+        xdelegacionRegional: user.department,
         xnivelRegistroNSBDB: 'bien',
         xidBien: this.idGood,
         xestado: this.stateId,
+        xidSIAB: this.newDocForm.get('noSiab').value,
         xtipoDocumento: this.newDocForm.get('docType').value,
         dDocTitle: this.newDocForm.get('docTit').value,
         xremitente: this.newDocForm.get('sender').value,
@@ -432,13 +442,14 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           },
           error: error => {},
         });
+      return;
     }
 
     if (this.typeDoc == 'doc-request' && this.process != 'sampling-assets') {
       this.loading = true;
       const formData = {
         dDocAuthor: this.userLogName,
-        dInDate: new Date(),
+        dInDate: moment(new Date()).format('DD-MMM-YYYY'),
         dSecurityGroup: 'Public',
         ddocCreator: this.userLogName,
         xidcProfile: 'NSBDB_Gral',
@@ -515,16 +526,18 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           },
           error: error => {},
         });
+      return;
     }
 
     if (this.typeDoc == 'doc-expedient' && this.process != 'sampling-assets') {
       const formData = {
-        dInDate: new Date(),
+        dInDate: moment(new Date()).format('DD-MMM-YYYY'),
         dSecurityGroup: 'Public',
         xidcProfile: 'NSBDB_Gral',
         xNombreProceso: 'Clasificar Bien',
         xnivelRegistroNSBDB: 'expediente',
         xestado: this.stateId,
+        xidSIAB: this.newDocForm.get('noSiab').value,
         dDocAuthor: this.userLogName,
         xidExpediente: this.idExpedient,
         ddocCreator: this.userLogName,
@@ -597,6 +610,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           },
           error: error => {},
         });
+      return;
     }
 
     if (this.process == 'sampling-assets') {
@@ -682,6 +696,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           },
           error: error => {},
         });
+      return;
     }
   }
 
@@ -718,6 +733,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.transferentService.getAll(params).subscribe({
       next: data => {
         data.data.map(data => {
+          this.typeTransfer = data.typeTransferent;
           data.nameAndId = `${data.id} - ${data.nameTransferent}`;
           return data;
         });
@@ -729,3 +745,5 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     });
   }
 }
+
+//NUEVO DOCUMENTO VALIDAR

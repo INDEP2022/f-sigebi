@@ -59,7 +59,7 @@ export class GoodsListComponent
   ngGlobal: any;
   @Input() changeDescription: string;
   @Input() set files(files: any[]) {
-    // debugger;
+    // //
     if (files.length === 0) return;
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);
@@ -156,7 +156,7 @@ export class GoodsListComponent
 
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
-      // debugger;
+      // //
       this.data.load([]);
       this.totalItems = 0;
       this.availableToUpdate = [];
@@ -183,7 +183,7 @@ export class GoodsListComponent
 
   private fillSelectedRows() {
     setTimeout(() => {
-      // debugger;
+      // //
       console.log(this.selectedGooods, this.table);
       const currentPage = this.params.getValue().page;
       const selectedPage = this.pageSelecteds.find(

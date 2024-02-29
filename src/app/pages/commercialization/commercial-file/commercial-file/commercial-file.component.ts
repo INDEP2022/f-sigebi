@@ -56,13 +56,14 @@ export class CommercialFileComponent extends BasePage implements OnInit {
   }
 
   fcom() {
-    this.loading = true;
+    this.alert('warning', 'Reporte no disponible', '');
+    /*this.loading = true;
     let params = {
       P_NO_BIEN: this.form.controls['noGood'].value,
     };
     this.goodNumber = this.form.controls['noGood'].value;
     this.viewPhoto = true;
-    this.downloadReport('blank', params); //Cuando el reporte este disponible en jasper, sustituir el nombre a -> 'FICHACOMERCIAL'
+    this.downloadReport('FICHACOMERCIAL', params); //Cuando el reporte este disponible en jasper, sustituir el nombre a -> 'FICHACOMERCIAL'*/
   }
 
   ftec() {
@@ -77,11 +78,14 @@ export class CommercialFileComponent extends BasePage implements OnInit {
   }
 
   fie() {
+    console.log('Bien:', this.goodSelect);
     this.loading3 = true;
     let params = {
       P_NO_BIEN: this.form.controls['noGood'].value,
+      P_NO_EXPEDIENTE: this.goodSelect?.associatedFileNumber,
+      P_TRANSFERENTE: '',
     };
-    this.downloadReport('blank', params); //Cuando el reporte este disponible en jasper, sustituir el nombre a -> 'RINGRESOSEGRESOS'
+    this.downloadReport('REINGRESOSEGRESOS', params); //Cuando el reporte este disponible en jasper, sustituir el nombre a -> 'RINGRESOSEGRESOS'
   }
 
   downloadReport(reportName: string, params: any) {
@@ -191,7 +195,7 @@ export class CommercialFileComponent extends BasePage implements OnInit {
 /* 
 private async getData() {
     this.files = [];
-    // debugger;
+    // //
     // this.lastConsecutive = 1;
     this.filePhotoService
       .getAll(this.goodNumber + '')
@@ -200,7 +204,7 @@ private async getData() {
         next: async response => {
           if (response) {
             console.log(response);
-            // debugger;
+            // //
             if (response) {
               this.files = [...response];
               // const index = last.indexOf('F');

@@ -245,6 +245,8 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       localStorage.getItem('portfolio') != null
         ? localStorage.getItem('portfolio')
         : null;
+
+    console.log(this.bieStatus);
   }
 
   ngOnInit(): void {
@@ -266,6 +268,8 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       )
       .subscribe();
 
+    this.form.get('recordCommerType').patchValue('por');
+
     if (this.bieStatus == 1) {
       this.form.get('goodId').setValue(this.goodId);
       localStorage.removeItem('goodId');
@@ -273,7 +277,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       localStorage.removeItem('folio');
       localStorage.removeItem('bie');
       this.goodNumChange();
-    } else if (this.bieStatus == 0) {
+    } else if ([0].includes(this.bieStatus)) {
       this.form.get('recordCommerType').patchValue('por');
       this.form.get('event').setValue(this.eventId);
       localStorage.removeItem('event');
@@ -845,7 +849,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este documento?'
+      '¿Desea eliminar este documento?'
     ).then(question => {
       if (question.isConfirmed) {
       }
@@ -860,7 +864,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     // this.alertQuestion(
     //   'warning',
     //   'Borrar',
-    //   'Desea borrar los datos ingresados?'
+    //   '¿Desea borrar los datos ingresados?'
     // ).then(question => {
     //   if (question.isConfirmed) {
     //   }
@@ -2961,5 +2965,26 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
         console.log('error', error);
       },
     });
+  }
+
+  //Agregado por Grigork
+  searchByBatch() {
+    this.mJobManagement.getJobs().subscribe(
+      res => {
+        console.log(res);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  search() {
+    const rbValue = this.form.get('recordCommerType').value;
+    if (rbValue == 'por') {
+      this.searchByBatch();
+    } else if (rbValue == 'bie') {
+      this.goodNumChange();
+    }
   }
 }

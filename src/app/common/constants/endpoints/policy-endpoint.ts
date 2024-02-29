@@ -1,6 +1,6 @@
 export enum PolicyEndpoint {
   BasePath = 'policy',
-  getPolicies = 'policicies',
+  getPolicies = 'policies',
   getRequestNumber = 'policies-x-request',
   getPoliciesXSubtype = 'policies-x-subtype',
   getPolicesXRight = 'policies-x-right',

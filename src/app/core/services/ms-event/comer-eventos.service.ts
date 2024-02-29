@@ -169,6 +169,10 @@ export class ComerEventosService extends HttpService {
     );
   }
 
+  getLoteExportExcel(data?: any) {
+    return this.post('application/paLookLotsChangeStatusDataExcel', data);
+  }
+
   getspObtnPhaseEvent(body: any) {
     const route = `${EventEndpoints.SpObtnPhaseEvent}`;
     return this.post(route, body);
@@ -200,5 +204,9 @@ export class ComerEventosService extends HttpService {
       catchError(x => of({ data: [] })),
       map(x => (x.data.length > 0 ? +x.data[0].suma_monto : 0))
     );
+  }
+
+  pupGenLcsMasiv(body: any) {
+    return this.post(EventEndpoints.PupGenLcsMasiv, body);
   }
 }

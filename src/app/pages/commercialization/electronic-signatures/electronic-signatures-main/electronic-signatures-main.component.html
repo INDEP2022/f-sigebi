@@ -7,29 +7,28 @@
       <div class="md-tabs mt-n3">
         <tabset #signatureTabs>
           <tab heading="Pendientes" id="pendingTab">
-            <div class="row rounded-3 bk-danger py-2" *ngIf="alertMsg" @OnInOut>
+            <div
+              class="row rounded-3 bk-danger py-2"
+              *ngIf="alertMsg1"
+              @OnInOut>
               <div class="col-11">
                 <div class="d-flex justify-content-center text-light ms-3">
-                  <i class="bx bx-error text-light float-icon me-2"></i>
                   {{ messageText }}
-                  <!-- Tiene
-                  {{ pendingColumns.length }} documentos pendientes de firmar. -->
+                  <i class="bx bx-error text-light float-icon me-2 ml-2"></i>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="alertMsg2" class="row rounded-3 bg-success py-2">
+              <div class="col-11">
+                <div class="d-flex justify-content-center text-light ms-3">
+                  {{ messageText }}
+                  <i
+                    class="fa fa-check text-light float-icon me-2 ml-2"
+                    aria-hidden="true"></i>
                 </div>
               </div>
             </div>
             <div class="row mt-5">
-              <div
-                class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
-                *ngIf="loadingPending">
-                <div class="d-flex justify-content-center">
-                  <div class="d-flex justify-content-center">
-                    <div class="loader"></div>
-                    <h6 class="loader-msg pt-3">
-                      Cargando... por favor espere...
-                    </h6>
-                  </div>
-                </div>
-              </div>
               <div class="col-md-8"></div>
               <div class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
                 <div>
@@ -37,32 +36,52 @@
                     [(settings)]="pendingSettings"
                     [leftList]="true"></app-columns-select>
                 </div>
-                <!-- <div>
-                  <button
-                    class="btn btn-sm btn-info active me-2 font-size-14"
-                    (click)="refresh()">
-                    <i class="bx bx-revision text-light float-icon"></i>
-                  </button>
-                </div> -->
                 <div>
                   <button
-                    class="btn btn-sm btn-primary active me-2 font-size-14"
+                    class="btn btn-sm btn-primary active me-2"
                     (click)="openSignWindow()">
-                    <i class="bx bx-pen text-light float-icon"></i>
                     Firmar Documento
+                    <i class="bx bx-pen text-light float-icon"></i>
                   </button>
                 </div>
                 <div>
                   <button
-                    class="btn btn-sm btn-success active me-2 font-size-14"
+                    class="btn btn-sm btn-primary active me-2"
                     (click)="viewDocument()">
-                    <i class="bx bx-show-alt text-light float-icon"></i>
                     Ver Documento
+                    <i class="bx bx-show-alt text-light float-icon"></i>
+                  </button>
+                </div>
+                <div>
+                  <button
+                    class="btn btn-sm btn-primary active me-2"
+                    (click)="refresh()">
+                    Refrescar
+                    <i class="fas fa-sync-alt"> </i>
                   </button>
                 </div>
               </div>
             </div>
-            <div class="table-responsive">
+            <div class="row">
+              <div class="col-12">
+                <form-loader *ngIf="loadingPending"></form-loader>
+                <ng-scrollbar
+                  [track]="'all'"
+                  [ngStyle]="{ height: loadingPending ? '0px' : '400px' }">
+                  <ng2-smart-table
+                    id="rfcTable"
+                    [settings]="pendingSettings"
+                    [source]="dataTablePending"
+                    (userRowSelect)="selectPending($event)">
+                  </ng2-smart-table>
+                </ng-scrollbar>
+                <app-pagination
+                  [params]="dataTableParamsPending"
+                  [totalItems]="totalPending">
+                </app-pagination>
+              </div>
+            </div>
+            <!-- <div class="table-responsive">
               <div [class]="loadingPending ? 'table-loading' : ''">
                 <ng2-smart-table
                   id="rfcTable"
@@ -71,11 +90,11 @@
                   (userRowSelect)="selectPending($event)">
                 </ng2-smart-table>
               </div>
-            </div>
-            <app-pagination
+            </div> -->
+            <!-- <app-pagination
               [params]="dataTableParamsPending"
               [totalItems]="totalPending">
-            </app-pagination>
+            </app-pagination> -->
           </tab>
           <!-- <tab heading="Histórico" id="historyTab">
             <div class="row">
@@ -100,7 +119,7 @@
                 </div>
                 <div>
                   <button
-                    class="btn btn-sm btn-primary active me-2 font-size-14"
+                    class="btn btn-sm btn-primary active me-2 "
                     (click)="openSignWindow()">
                     <i class="bx bx-pen text-light float-icon"></i>
                     Firmar Documento
@@ -108,7 +127,7 @@
                 </div>
                 <div>
                   <button
-                    class="btn btn-sm btn-success active me-2 font-size-14"
+                    class="btn btn-sm btn-success active me-2 "
                     (click)="viewDocument()">
                     <i class="bx bx-show-alt text-light float-icon"></i>
                     Ver Documento
@@ -133,7 +152,7 @@
           </tab> -->
           <tab heading="Histórico" id="historyTab">
             <div class="row">
-              <div
+              <!-- <div
                 class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
                 *ngIf="loadingHistorical">
                 <div class="d-flex justify-content-center">
@@ -144,7 +163,7 @@
                     </h6>
                   </div>
                 </div>
-              </div>
+              </div> -->
               <div class="col-md-8"></div>
               <div class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
                 <div>
@@ -154,15 +173,35 @@
                 </div>
                 <div>
                   <button
-                    class="btn btn-sm btn-success active me-2 font-size-14"
+                    class="btn btn-sm btn-primary active me-2"
                     (click)="viewDocument()">
-                    <i class="bx bx-show-alt text-light float-icon"></i>
                     Ver Documento
+                    <i class="bx bx-show-alt text-light float-icon"></i>
                   </button>
                 </div>
               </div>
             </div>
-            <ng-scrollbar
+            <div class="row">
+              <div class="col-12">
+                <form-loader *ngIf="loadingHistorical"></form-loader>
+                <ng-scrollbar
+                  [track]="'all'"
+                  [ngStyle]="{ height: loadingHistorical ? '0px' : '400px' }">
+                  <ng2-smart-table
+                    id="rfcTable"
+                    [settings]="historySettings"
+                    [source]="dataTableHistorical"
+                    (userRowSelect)="selectHistory($event)">
+                  </ng2-smart-table>
+                </ng-scrollbar>
+                <app-pagination
+                  [params]="dataTableParamsHistorical"
+                  [totalItems]="totalHistorical">
+                </app-pagination>
+              </div>
+            </div>
+
+            <!-- <ng-scrollbar
               [track]="'horizontal'"
               [autoHeightDisabled]="false"
               class="table-scrollbar">
@@ -175,11 +214,7 @@
                 </ng2-smart-table>
               </div>
               <div class="table-padding"></div>
-            </ng-scrollbar>
-            <app-pagination
-              [params]="dataTableParamsHistorical"
-              [totalItems]="totalHistorical">
-            </app-pagination>
+            </ng-scrollbar> -->
           </tab>
         </tabset>
       </div>

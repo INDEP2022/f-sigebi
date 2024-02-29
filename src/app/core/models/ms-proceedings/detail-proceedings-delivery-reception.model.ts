@@ -45,3 +45,20 @@ export interface IDetailWithIndEdo {
   page?: number;
   perPage?: number;
 }
+
+export interface IPupGenerateUniversalFolio {
+  delegationNumber: string;
+  subdelegationNumber: string;
+  departamentNumber: string;
+  actKey: string;
+  universalFolio: number;
+  user: string;
+  tmpMConstMasivo?: any[];
+}
+
+export interface IPaGenConstMassive {
+  user: string;
+  proceeding: number;
+  expedient: number;
+  screen: string;
+}

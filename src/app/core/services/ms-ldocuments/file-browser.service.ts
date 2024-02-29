@@ -87,6 +87,10 @@ export class FileBrowserService extends HttpService {
     return this.get<IPgrFile>('file-browser/getOneRecoverFile', params);
   }
 
+  getExcelFile(channel: string) {
+    return this.get(`file-excel/${channel}.csv`);
+  }
+
   moveFile(invoiceNumber: string | number, jobNumber: string | number) {
     return this.post('file-browser/moveFile', { invoiceNumber, jobNumber });
   }
@@ -102,5 +106,15 @@ export class FileBrowserService extends HttpService {
   getRouteBillingBillingSiab(data: any) {
     // OBTENCIÓN DE BASE64
     return this.post('route-billing/billingSiab', data);
+  }
+
+  pupRepBillFurtherFurniture(data: any) {
+    // PUP_REP_FACTURA_MAS - MUEBLES //
+    return this.post('route-billing/pup-rep-bill-further-furniture', data);
+  }
+
+  pupRepBillFurtherFurnitureImmovables(data: any) {
+    // PUP_REP_FACTURA_MAS
+    return this.post('route-billing/pup-rep-bill-further-immovables', data);
   }
 }

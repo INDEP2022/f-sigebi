@@ -5,6 +5,27 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
+        <!--Events Component-->
+        <div class="col-md-5 col-sm-10 col-xs-10 mt-3">
+          <form-field [control]="form.get('event')">
+            <ngx-select
+              (fetchItems)="getEvent($event)"
+              [data]="eventSelect"
+              [form]="form"
+              value="id"
+              bindLabel="keyObservation"
+              label="Evento"
+              control="event"
+              (change)="changeEvent($event)">
+            </ngx-select>
+          </form-field>
+          <!--<app-events-shared [form]="form"></app-events-shared>-->
+        </div>
+        <div class="col-xs-12 col-12 col-md-2 mb-3 mb-3 mt-3">
+          <form-field label="Lote" [control]="form.get('batch')">
+            <input class="form-control" formControlName="batch" type="text" />
+          </form-field>
+        </div>
         <div class="col-xs-12 col-12 col-md-2 mb-3 mb-3 mt-3">
           <form-field label="Fecha 1" [control]="form.get('startDate')">
             <input
@@ -20,27 +41,6 @@
               formControlName="endDate"
               bsDatepicker />
           </form-field>
-        </div>
-        <div class="col-xs-12 col-12 col-md-2 mb-3 mb-3 mt-3">
-          <form-field label="Lote" [control]="form.get('batch')">
-            <input class="form-control" formControlName="batch" type="text" />
-          </form-field>
-        </div>
-        <!--Events Component-->
-        <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
-          <form-field [control]="form.get('event')">
-            <ngx-select
-              (fetchItems)="getEvent($event)"
-              [data]="eventSelect"
-              [form]="form"
-              value="id"
-              bindLabel="keyObservation"
-              label="Evento"
-              control="event"
-              (change)="changeEvent($event)">
-            </ngx-select>
-          </form-field>
-          <!--<app-events-shared [form]="form"></app-events-shared>-->
         </div>
       </div>
       <div class="row mb-3 mt-3">
@@ -168,7 +168,7 @@
       <div class="row mb-3 mt-3">
         <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 col-12">
           <label for=""
-            >Si desea una orden de ingreso en especial índiquela</label
+            >Si desea una orden de ingreso en especial indíquela</label
           >
           <div class="row mb-3 mt-3">
             <div class="col-6 mb-3 mb-3 mt-3">

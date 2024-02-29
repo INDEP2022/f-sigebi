@@ -7,10 +7,12 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { BasePage } from 'src/app/core/shared';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   GOODS_COLUMNS,
   GOODS_MANUAL_COLUMNS,
@@ -44,6 +46,8 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
   paramsWarehouse = new BehaviorSubject<ListParams>(new ListParams());
   paramsMan = new BehaviorSubject<ListParams>(new ListParams());
   paramsReubGood = new BehaviorSubject<ListParams>(new ListParams());
+  typeRelevant = new DefaultSelect();
+  formLoading: boolean = false;
   totalItems: number = 0;
   totalItemsValReq: number = 0;
   totalItemsRecDoc: number = 0;
@@ -61,7 +65,7 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
   costManual: number = 0;
   costReub: number = 0;
   total: number = 0;
-
+  pageSizeOptions: number[] = [10, 25, 50, 100];
   form: FormGroup = new FormGroup({});
   settingsValReq = {
     ...this.settings,
@@ -134,7 +138,8 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
     private authService: AuthService,
     private regionalDelegationService: RegionalDelegationService,
     private orderServiceService: OrderServiceService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private typeRelevantService: TypeRelevantService
   ) {
     super();
 
@@ -149,6 +154,10 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getTypeRelevantSelect(new ListParams());
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getInfoGoods());
   }
 
   prepareForm() {
@@ -166,12 +175,14 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
     const descriptionGood = this.form.get('descriptionGood').value;
     const uniqueKey = this.form.get('uniqueKey').value;
 
-    if (idGood) this.params.getValue()['filter.goodId'] = idGood;
+    if (idGood) this.params.getValue()['filter.goodId'] = `$eq:${idGood}`;
     if (idTypeRelevant)
       this.params.getValue()['filter.relevantTypeId'] = idTypeRelevant;
     if (descriptionGood)
       this.params.getValue()['filter.description'] = descriptionGood;
-    if (uniqueKey) this.params.getValue()['filter.uniqueKey'] = uniqueKey;
+    if (uniqueKey) {
+      this.params.getValue()['filter.uniqueKey'] = uniqueKey;
+    }
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -182,15 +193,51 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
     this.loading = true;
     const user: any = this.authService.decodeToken();
     this.params.getValue()['filter.delegationNumber'] = user.department;
+
+    this.params.getValue()['filter.fractionId'] = '$not:$null';
+    this.params.getValue()['filter.fraction'] = '$not:$null';
+
     this.goodService.getAll(this.params.getValue()).subscribe({
       next: response => {
-        this.infoGoods.load(response.data);
-        this.totalItems = response.count;
-        this.loading = false;
+        const info = response.data.map(item => {
+          if (item.fraccion) item.relevantTypeId = item.fraccion.relevantTypeId;
+          return item;
+        });
+
+        const data = info.map(async item => {
+          const typeRelName: any = await this.getTypeRelevantName(
+            item.relevantTypeId
+          );
+
+          item.relevantTypeName = typeRelName;
+          return item;
+        });
+
+        Promise.all(data).then(goods => {
+          this.infoGoods.load(goods);
+          this.totalItems = response.count;
+          this.loading = false;
+        });
       },
-      error: error => {
+      error: () => {
         this.loading = false;
+        this.infoGoods = new LocalDataSource();
+        this.totalItems = 0;
+        this.alert('warning', 'Acción Invalida', 'No se encontraron registros');
       },
+    });
+  }
+
+  getTypeRelevantName(id: string) {
+    return new Promise((resolve, reject) => {
+      this.typeRelevantService.getById(id).subscribe({
+        next: response => {
+          resolve(response.description);
+        },
+        error: () => {
+          resolve('SIN TIPO RELEVANTE');
+        },
+      });
     });
   }
 
@@ -275,6 +322,19 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
     });
   }
 
+  getTypeRelevantSelect(params: ListParams) {
+    params['sortBy'] = 'description:ASC';
+    this.typeRelevantService.getAll(params).subscribe({
+      next: data => {
+        this.typeRelevant = new DefaultSelect(data.data, data.count);
+        this.formLoading = false;
+      },
+      error: error => {
+        this.typeRelevant = new DefaultSelect();
+      },
+    });
+  }
+
   showDelegation(delegationId: number) {
     return new Promise((resolve, reject) => {
       this.regionalDelegationService.getById(delegationId).subscribe({
@@ -330,9 +390,11 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
       if (data.length > 1) {
         data.map(item => {
           this.costRecDoc += item.prorrateo;
+          this.getSumTotal();
         });
       } else if (data.length == 1) {
         this.costRecDoc = data[0].prorrateo;
+        this.getSumTotal();
       }
     });
   }
@@ -371,6 +433,7 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loadingProg = false;
+          this.getSumTotal();
         },
       });
   }
@@ -564,8 +627,6 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
             this.totalItemsReubGood = response.count;
             this.loadingReubGood = false;
             this.sumAllReub();
-
-            this.getSumTotal();
           });
         },
         error: () => {
@@ -599,10 +660,35 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
 
   cleanSearch() {
     this.form.reset();
+    this.pageSizeOptions = [10];
     this.params = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsRecDoc = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsValReq = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsProg = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsProgEnt = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsWarehouse = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsMan = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsReubGood = new BehaviorSubject<ListParams>(new ListParams());
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getInfoGoods());
+
+    this.infoValReq = new LocalDataSource();
+    this.infoRecDoc = new LocalDataSource();
+    this.infoProg = new LocalDataSource();
+    this.infoProgEnt = new LocalDataSource();
+    this.infoWarehouse = new LocalDataSource();
+    this.infoManual = new LocalDataSource();
+    this.infoReubGood = new LocalDataSource();
+    this.infoGoods = new LocalDataSource();
+
+    this.totalItemsValReq = 0;
+    this.totalItemsRecDoc = 0;
+    this.totalItemsProg = 0;
+    this.totalItemsProgEnt = 0;
+    this.totalItemsMan = 0;
+    this.totalItemsWarehouse = 0;
+    this.totalItemsReubGood = 0;
   }
 
   close() {

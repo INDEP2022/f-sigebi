@@ -1,18 +1,22 @@
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+import { CustomHourFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-hour-filter';
 
 export const REDICET_FACTURAS = {
   invoicefield: {
     title: 'En',
+    width: '30%',
     type: 'string',
     sort: false,
   },
   worthCurrent: {
     title: 'Dice',
+    width: '35%',
     type: 'string',
     sort: false,
   },
   worthNew: {
     title: 'Debe Decir',
+    width: '35%',
     type: 'string',
     sort: false,
   },
@@ -52,12 +56,12 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  year: {
-    title: 'Año',
-    type: 'string',
-    sort: false,
-    width: '10%',
-  },
+  // year: {
+  //   title: 'Año',
+  //   type: 'string',
+  //   sort: false,
+  //   width: '10%',
+  // },
   lastnamePat: {
     title: 'Apellido Paterno',
     type: 'string',
@@ -72,6 +76,9 @@ export const COLUMNS = {
     title: 'Representante',
     type: 'string',
     sort: false,
+    filterFunction: () => {
+      return true;
+    },
   },
   attentionDate: {
     title: 'Fecha',
@@ -124,7 +131,7 @@ export const COLUMNS = {
     },
     filter: {
       type: 'custom',
-      component: CustomDateFilterComponent,
+      component: CustomHourFilterComponent,
     },
     filterFunction: () => {
       return true;

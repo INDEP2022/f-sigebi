@@ -550,7 +550,7 @@ export class MassRulingComponent
     const responseQuestion = await this.alertQuestion(
       'info',
       '',
-      'Desea Eliminar el Dictamen: ' + this.form.get('passOfficeArmy').value,
+      '¿Desea Eliminar el Dictamen: ' + this.form.get('passOfficeArmy').value,
       'Continuar',
       'Cancelar'
     );
@@ -1037,7 +1037,7 @@ export class MassRulingComponent
       p_tipo_dictaminacion: this.form.get('typeDict').getRawValue(),
     };
     console.log(body);
-    // debugger;
+    // //
     ////////////////////////////////////Hay que revisar por que si se le envia todo no realiza la insercion correctamente.
     // console.log(body);
     this.dictationService.postCargaMasDesahogob(body).subscribe({

@@ -1,0 +1,58 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Validación de Usuario</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="authForm">
+      <div class="row">
+        <div class="col-sm-12">
+          <form-field [control]="authForm.get('username')" label="Usuario">
+            <input
+              type="text"
+              maxlength="30"
+              formControlName="username"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12">
+          <form-field [control]="authForm.get('password')" label="Contraseña">
+            <input
+              [type]="hide ? 'password' : 'text'"
+              maxlength="30"
+              formControlName="password"
+              class="form-control" />
+            <span
+              style="position: absolute; top: 19px; right: 0px"
+              (click)="hide = !hide"
+              [class]="hide ? 'fa fa-eye' : 'fa fa-eye-slash'"></span>
+            <!-- <button
+              class="btn btn-secondary btn-sm active"
+              (click)="hide = !hide"
+              style="margin-top: 7px">
+              <span [class]="hide? 'fa fa-eye':'fa fa-eye-slash'"></span>
+            </button> -->
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Aceptar"
+          [disabled]="authForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

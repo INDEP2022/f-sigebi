@@ -75,9 +75,9 @@ export class NumeraireConversionAllotmentsComponent
           map(x => x.bandera)
         )
     );
-    if (!hizoConversiones) {
-      this.alert('warning', 'No tiene gastos válidos a convertir', '');
-    }
+    // if (!hizoConversiones) {
+    //   this.alert('warning', 'No tiene gastos válidos a convertir', '');
+    // }
     this.eventDataService
       .update2(this.selectedEvent.id, {
         statusVtaId: 'CNE',
@@ -89,7 +89,15 @@ export class NumeraireConversionAllotmentsComponent
           this.updateEventoConv(hizoConversiones, this.selectedEvent);
         },
         error: err => {
-          this.showErrorEstatus(!hizoConversiones);
+          if (!hizoConversiones) {
+            this.alert('error', 'No se pudo realizar la conversión', '');
+          } else {
+            this.alert(
+              'warning',
+              'Conversión realizada',
+              'Pero gastos no convertidos'
+            );
+          }
         },
       });
   }

@@ -311,7 +311,7 @@ export class ParamsConcepsListComponent
   }
 
   override getParams() {
-    // debugger;
+    // //
     let newColumnFilters = this.columnFilters;
     if (this.conceptId) {
       newColumnFilters['filter.conceptId'] = '$eq:' + this.conceptId;

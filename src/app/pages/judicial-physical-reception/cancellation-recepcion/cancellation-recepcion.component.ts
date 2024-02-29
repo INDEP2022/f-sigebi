@@ -2403,7 +2403,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               this.proceedingData.push(res);
               this.navigateProceedings = true;
               this.idProceeding = JSON.parse(JSON.stringify(res)).id;
-              this.alert('success', 'Se guardo el acta', '');
+              this.alert('success', 'Se guardó el acta', '');
             },
             err => {
               this.alert(

@@ -73,8 +73,9 @@ export class OrderServiceService extends HttpService {
     return this.put(route, formVehicle);
   }
 
-  getSamplingOrderView(body: Object, page: number, limit: number) {
-    const route = `${OrderServiceEndpoint.SamplingOrderView}?limit=${limit}&page=${page}`;
+  getSamplingOrderView(body: Object, _params: ListParams) {
+    const params = this.makeParams(_params);
+    const route = `${OrderServiceEndpoint.SamplingOrderView}?${params}`;
     return this.post(route, body);
   }
 
@@ -206,6 +207,13 @@ export class OrderServiceService extends HttpService {
     const params = this.makeParams(_params);
     return this.get<IListResponse<IOrderIncoming>>(
       `${OrderServiceEndpoint.OrderIncomingService}?${params}`
+    );
+  }
+
+  generateReportOrder(_params: ListParams) {
+    const params = this.makeParams(_params);
+    return this.get(
+      `${OrderServiceEndpoint.OrderServiceSampleReport}?${params}`
     );
   }
 

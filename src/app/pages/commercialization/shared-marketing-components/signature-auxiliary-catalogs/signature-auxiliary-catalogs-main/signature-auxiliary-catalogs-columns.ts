@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const ELECTRONIC_SIGNATURE_REPORT_COLUMNS = {
   screenKey: {
@@ -28,11 +28,13 @@ export const ELECTRONIC_SIGNATURE_ADDRESSEE_COLUMNS = {
     title: 'Dirección de Correo',
     type: 'string',
     sort: false,
+    width: '50%',
   },
   name: {
     title: 'Nombre del Destinatario',
     type: 'string',
     sort: false,
+    width: '50%',
   },
 };
 
@@ -41,11 +43,13 @@ export const ELECTRONIC_SIGNATURE_TYPE_COLUMNS = {
     title: 'Denominación',
     type: 'string',
     sort: false,
+    width: '50%',
   },
   orderId: {
     title: 'Orden de Presentación',
     type: 'number',
     sort: false,
+    width: '50%',
   },
 };
 
@@ -54,37 +58,45 @@ export const ELECTRONIC_SIGNATURE_EVENT_COLUMNS = {
     title: 'Evento',
     type: 'number',
     sort: false,
+    width: '10%',
   },
   documentsXMLId: {
     title: 'No. Reporte',
     type: 'number',
     sort: false,
+    width: '10%',
   },
   origin: {
     title: 'Id Origen',
     type: 'number',
     sort: false,
+    width: '10%',
   },
   documentId: {
     title: 'Id Documento',
     type: 'number',
     sort: false,
+    width: '15%',
   },
   qualification: {
     title: 'Título',
     type: 'string',
     sort: false,
+    width: '20%',
   },
   creationDate: {
     title: 'Fecha de Creación',
-    type: 'string',
+    width: '15%',
     sort: false,
-    filter: false,
-    valuePrepareFunction: (value: string) => {
-      if (!value) {
-        return '';
-      }
-      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction(): boolean {
+      return true;
     },
   },
   description: {
@@ -92,7 +104,15 @@ export const ELECTRONIC_SIGNATURE_EVENT_COLUMNS = {
     type: 'string',
     sort: false,
     filter: false,
+    width: '20%',
   },
+  // description: {
+  //   title: 'Descripción',
+  //   type: 'string',
+  //   sort: false,
+  //   filter: false,
+  //   width: "15%"
+  // },
 };
 
 export const ELECTRONIC_SIGNATURE_SIGNATURE_COLUMNS = {
@@ -100,13 +120,13 @@ export const ELECTRONIC_SIGNATURE_SIGNATURE_COLUMNS = {
     title: 'No',
     type: 'number',
     sort: false,
-    filter: false,
+    filter: true,
   },
   id_docums_xml: {
     title: 'No Reporte',
     type: 'number',
     sort: false,
-    filter: false,
+    filter: true,
   },
   usuario: {
     title: 'Usuario',
@@ -138,12 +158,15 @@ export const ELECTRONIC_SIGNATURE_SIGNATURE_COLUMNS = {
     title: 'Fecha Firma',
     type: 'string',
     sort: false,
-    filter: false,
-    valuePrepareFunction: (value: string) => {
-      if (!value) {
-        return '';
-      }
-      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction(): boolean {
+      return true;
     },
   },
 };

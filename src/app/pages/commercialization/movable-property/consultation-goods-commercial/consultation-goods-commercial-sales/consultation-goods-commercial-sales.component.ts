@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -16,6 +16,7 @@ import {
 import { addDays, format, subDays } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { SocketService } from 'src/app/common/socket/socket.service';
 import { maxDate, minDate } from 'src/app/common/validations/date.validators';
 import { IGoodCharge } from 'src/app/core/models/ms-good/good';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
@@ -25,7 +26,9 @@ import { ComerSaleService } from 'src/app/core/services/ms-comersale/comer-sale.
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
+import { environment } from 'src/environments/environment';
 import { CommercialSalesForm } from '../../consultation-goods-commercial-process-tabs/utils/commercial-sales-form';
 
 @Component({
@@ -72,7 +75,9 @@ export class ConsultationGoodsCommercialSalesComponent
     private transferentService: TransferenteService,
     private delegationService: DelegationService,
     private stationService: StationService,
-    private ComerEvent: ComerEventService
+    private ComerEvent: ComerEventService,
+    private socketService: SocketService,
+    private fileBrowserService: FileBrowserService
   ) {
     super();
     this.settings = {
@@ -354,19 +359,51 @@ export class ConsultationGoodsCommercialSalesComponent
   exportAll() {
     this.loading = true;
     if (this.modelSave != null) {
-      this.goodService.chargeGoodsExcel(this.modelSave).subscribe(
-        res => {
-          this.downloadDocument('TODO_VENTAS', 'excel', res.base64File);
-        },
-        err => {
-          this.loading = false;
-          console.log(err);
-        }
-      );
+      this.goodService
+        .chargeGoodsExcel({ ...this.modelSave, total: this.totalItems })
+        .subscribe(
+          res => {
+            console.log(res);
+            // this.downloadDocument('TODO_VENTAS', 'excel', res.file);
+            this.subscribeExcel(res).subscribe();
+            // this.getExcel(res.channel);
+          },
+          err => {
+            this.loading = false;
+            console.log(err);
+          }
+        );
     } else {
       this.loading = false;
       this.alert('warning', 'Debe completar al menos un campo de búsqueda', '');
     }
+  }
+
+  //Esperar excel socket
+  subscribeExcel(token: any) {
+    return this.socketService.goodsTrackerExcel(token.channel).pipe(
+      catchError(error => {
+        this.loader.load = false;
+        console.log(error);
+        return throwError(() => error);
+      }),
+      tap(res => {
+        console.warn('RESPUESTA DEL SOCKET');
+        console.log(res);
+        if (res.path != null) {
+          this.getExcel(res.path);
+        }
+      })
+    );
+  }
+
+  getExcel(path: string) {
+    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    const url = `${environment.API_URL}ldocument/api/v1/${path}`;
+    console.log(url);
+    window.open(url);
+
+    this.loading = false;
   }
 
   //Ejecutar Consulta
@@ -426,6 +463,20 @@ export class ConsultationGoodsCommercialSalesComponent
           this.loading = false;
         },
         err => {
+          if (err.status === 400) {
+            this.alert(
+              'warning',
+              'No se encontraron resultados con los filtros seleccionados',
+              ''
+            );
+          } else {
+            this.alert(
+              'error',
+              'Se presentó un error inesperado al obtener los Bienes',
+              ''
+            );
+          }
+
           this.dataGoods.load([]);
           this.totalItems = 0;
           this.modelSave = null;
@@ -467,7 +518,11 @@ export class ConsultationGoodsCommercialSalesComponent
     document.body.removeChild(a);
     this._toastrService.clear();
     this.loading = false;
-    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    this.alert(
+      'success',
+      'Reporte Excel',
+      'Descarga Finalizada. \nSi el archivo descargado no se abre, por favor cambiar la extensión a csv.'
+    );
     URL.revokeObjectURL(objURL);
   }
 

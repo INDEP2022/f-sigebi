@@ -352,7 +352,7 @@ export class RegistrationOfInterestModalComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea Eliminar este Registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.parameterTiieService.remove(tiie.id).subscribe({

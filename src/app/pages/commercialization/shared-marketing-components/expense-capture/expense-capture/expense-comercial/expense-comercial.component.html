@@ -31,6 +31,7 @@
                 formField="expenseNumber"
                 [service]="spentService"
                 [columnsType]="columns"
+                [hideFilterPlaceholder]="true"
                 id="expenseNumber"
                 title="Gastos del Área Comercial"
                 (selectRow)="fillForm($event)"></app-select-modal-table-shared>
@@ -53,7 +54,7 @@
               <button
                 type="button"
                 class="btn btn-sm btn-primary mt-2 active"
-                [disabled]="form.invalid"
+                [disabled]="form.invalid || paymentRequestExpense"
                 (click)="save()">
                 Guardar <i aria-hidden="true" class="fa fa-save"></i>
               </button>
@@ -98,6 +99,7 @@
               <ng-custom-select-loading
                 [form]="form"
                 [updateValues]="true"
+                [readonly]="true"
                 formControlName="paymentRequestNumber"
                 label="Solicitud Pago"
                 path="payment/api/v1/comer-payment-ref/getAllV2"
@@ -201,7 +203,8 @@
                   class="form-control"
                   ngModel
                   bsDatepicker
-                  formControlName="dateOfResolution" />
+                  formControlName="dateOfResolution"
+                  onkeydown="return false" />
               </form-field>
             </div>
           </div>
@@ -258,7 +261,8 @@
                 <textarea
                   class="form-control"
                   formControlName="comment"
-                  rows="2"></textarea>
+                  rows="2"
+                  maxlength="255"></textarea>
               </form-field>
             </div>
           </div>

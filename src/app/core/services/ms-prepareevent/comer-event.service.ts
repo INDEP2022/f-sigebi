@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { catchError, map, of } from 'rxjs';
 import { PrepareEventEndpoints } from 'src/app/common/constants/endpoints/ms-prepareevent-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
@@ -146,5 +147,24 @@ export class ComerEventService extends HttpService {
 
   faMaxdayValid(body: { date: string; day: number }) {
     return this.post(`/api/v1/util-comer-v1/faComerMaxdayValid`, body);
+  }
+
+  getCountEventMassiveConversionLc(event: number) {
+    return this.get<{ count: number }>('application/count-event/' + event).pipe(
+      catchError(x => of({ count: 0 })),
+      map(x => x.count)
+    );
+  }
+  getAllFilterLetter_(id: number, params: ListParams) {
+    return this.get<IListResponse<any>>(
+      `comer-good-xlot?filter.lotId=$eq:${id}`,
+      params
+    );
+  }
+  getNotification_(idEvent: number, idLote: number, params?: _Params) {
+    return this.get<IListResponse<any>>(
+      `${PrepareEventEndpoints.ShowNotification}?pEvent=${idEvent}&pBatch=${idLote}`,
+      params
+    );
   }
 }

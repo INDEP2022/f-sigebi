@@ -130,11 +130,13 @@
             [haveColumnFilters]="true"
             [ilikeFilters]="ilikeFilters"
             [dateFilters]="dateFilters"
+            [hideFilterPlaceholder]="true"
             label="Evento"
             formField="idEvent"
             [service]="eventService"
             [columnsType]="eventColumns"
             [functionFilterName]="functionFilterName"
+            idScss="eventFormNumeraryConversion"
             id="id"
             title="Evento"
             (selectRow)="selectEvent($event)"></app-select-modal-table-shared>

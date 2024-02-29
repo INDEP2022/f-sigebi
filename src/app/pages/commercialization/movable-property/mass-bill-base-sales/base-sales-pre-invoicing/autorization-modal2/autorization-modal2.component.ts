@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import {
   FilterParams,
@@ -30,21 +30,25 @@ export class AutorizationModal2Component extends BasePage implements OnInit {
     private authService: AuthService,
     private comerEventService: ComerEventService,
     private userService: UsersService,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private fb: FormBuilder
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.user = this.authService.decodeToken();
+    this.prepareForm();
   }
-
+  prepareForm() {
+    this.form = this.fb.group({
+      userV: [this.user.preferred_username, Validators.required],
+      passwordV: [null],
+    });
+  }
   async validate() {
     const { userV, passwordV, event } = this.form.value;
-    // const aux = await this.comerEvent(event);
-
     const aux_auto = await this.validateUser(userV, passwordV, this.bills);
-    console.log('aux_auto', aux_auto);
     // if (aux_auto == 1) {
     this.modalRef.content.callback(aux_auto);
     this.modalRef.hide();
@@ -53,8 +57,8 @@ export class AutorizationModal2Component extends BasePage implements OnInit {
 
   async validateUser(userv: string, password: string, bills: any) {
     const data: any = await this.getUserXCancel(userv);
-    console.log('DATA', data);
     if (!data.user && !data.domain) {
+      this.alert('warning', 'Usuario no autorizado', '');
       return 0;
     }
 

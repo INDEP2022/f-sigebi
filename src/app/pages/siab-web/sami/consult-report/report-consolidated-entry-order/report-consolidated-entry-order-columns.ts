@@ -77,7 +77,7 @@ export const ORDER_SERVICE_COLUMNS = {
     sort: false,
   },
 
-  delegationRegionalId: {
+  delegationName: {
     title: 'Delegación Regional',
     type: 'string',
     sort: false,
@@ -102,13 +102,13 @@ export const ORDER_SERVICE_COLUMNS = {
   },
 
   limePayDate: {
-    title: 'Fecha Limite de Pago',
+    title: 'Fecha Límite de Pago',
     type: 'string',
     sort: false,
   },
 
   checkNumber: {
-    title: 'No. cheque',
+    title: 'No. Cheque',
     type: 'string',
     sort: false,
   },
@@ -184,7 +184,7 @@ export const ORDER_SERVICE_PAYMENT_COLUMN = {
 
 export const CREDIT_NOTS_COLUMNS = {
   id: {
-    title: 'No. Nota de credito',
+    title: 'No. Nota de crédito',
     type: 'number',
     sort: false,
   },
@@ -432,13 +432,13 @@ export const ORDER_PAY_COLUMNS = {
   },
 
   areaApplicant: {
-    title: 'Area Solicitante',
+    title: 'Área Solicitante',
     type: 'string',
     sort: false,
   },
 
   addressAreaApplication: {
-    title: 'Dirección Area Solicitante',
+    title: 'Dirección Área Solicitante',
     type: 'string',
     sort: false,
   },

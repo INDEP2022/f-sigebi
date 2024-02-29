@@ -23,6 +23,23 @@
           }
         }
       }
+      form-loader {
+        .loader {
+          top: -200px;
+        }
+      }
     }
   }
+}
+
+:host
+  ::ng-deep
+  tr.ng2-smart-filters
+  th.ng2-smart-th
+  ng2-smart-table-filter
+  div.ng2-smart-filter
+  default-table-filter
+  input-filter
+  input::placeholder {
+  color: transparent !important;
 }

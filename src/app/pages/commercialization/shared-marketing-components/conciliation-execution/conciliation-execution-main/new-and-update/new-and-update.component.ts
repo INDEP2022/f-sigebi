@@ -17,7 +17,7 @@ import { secondFormatDateTofirstFormatDate } from 'src/app/shared/utils/date';
   styles: [
     `
       .bg-gray {
-        background-color: white !important;
+        background-color: #eee !important;
       }
     `,
   ],
@@ -30,7 +30,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   clients = new DefaultSelect();
   data: any;
   event: any;
-  disabledSend: boolean = true;
+  disabledSend: boolean = false;
   dateMovemInicio: string = '';
   constructor(
     private modalRef: BsModalRef,

@@ -1623,7 +1623,7 @@ carga la  información de la parte media de la página
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.deleteExterno(legend.id);

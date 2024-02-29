@@ -92,7 +92,7 @@ export class PublicationPhotographsModalComponent
   //   this.alertQuestion(
   //     'warning',
   //     'Actualizar',
-  //     'Desea actualizar este layout?'
+  //     '¿Desea actualizar este layout?'
   //   ).then(question => {
   //     if (question.isConfirmed) {
   //       this.publicationPhotographsService

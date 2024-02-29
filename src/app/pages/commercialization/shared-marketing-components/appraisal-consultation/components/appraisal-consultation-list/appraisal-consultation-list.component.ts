@@ -6,7 +6,6 @@ import {
   catchError,
   debounceTime,
   distinctUntilChanged,
-  finalize,
   Subject,
   takeUntil,
   tap,
@@ -16,10 +15,12 @@ import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { SocketService } from 'src/app/common/socket/socket.service';
 import { AppraiseService } from 'src/app/core/services/ms-appraise/appraise.service';
 import { BasePage } from 'src/app/core/shared';
 import { FullService } from 'src/app/layouts/full/full.service';
 import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
+import { environment } from 'src/environments/environment';
 import { APPRAISAL_COLUMNS } from '../../appraisal-consultation/appraisal-columns';
 import {
   ApppraisalConsultationSumForm,
@@ -43,13 +44,15 @@ export class AppraisalConsultationListComponent
   @Input() sumForm: FormGroup<ApppraisalConsultationSumForm>;
   appraisals = new LocalDataSource();
   canSearch = false;
+  excelLoading: boolean = false;
 
   get sumControls() {
     return this.sumForm.controls;
   }
   constructor(
     private appraiseService: AppraiseService,
-    private fullService: FullService
+    private fullService: FullService,
+    private socketService: SocketService
   ) {
     super();
     this.settings = {
@@ -80,37 +83,82 @@ export class AppraisalConsultationListComponent
       this.alert('warning', 'No se encontraron datos para exportar', '');
       return;
     }
-    this.exportToExcel().subscribe();
+    this.exportToExcel();
   }
 
   exportToExcel() {
-    this.fullService.generatingFileFlag.next({
-      progress: 99,
-      showText: true,
-    });
+    this.loader.load = true;
     const params = this.params.getValue();
+    params.limit = 10000;
     params.sortBy = 'idAppraisal:ASC,idDetAppraisal:ASC';
-    return this.appraiseService.exportAppraiseExcel(params.getParams()).pipe(
+    return this.appraiseService
+      .exportAppraiseExcel(params.getParams())
+      .subscribe({
+        next: resp => {
+          console.log(resp);
+          this.excelLoading = false;
+          this.alert(
+            'warning',
+            'El archivo excel está en proceso de generación, favor de esperar la descarga',
+            ''
+          );
+          this.subscribeExcel(resp).subscribe();
+        },
+        error: () => {
+          this.excelLoading = false;
+          this.loader.load = false;
+          this.alert('error', 'Error', 'No se Generó Correctamente el Archivo');
+        },
+      });
+
+    // .pipe(
+    //   catchError(error => {
+    //     this.alert('error', UNEXPECTED_ERROR, '');
+    //     return throwError(() => error);
+    //   }),
+    //   tap(response => {
+    //     if (!response.base64) {
+    //       this.alert('warning', 'No se encontraron datos para exportar', '');
+    //       return;
+    //     }
+    //     this._downloadExcelFromBase64(response.base64, 'avaluos');
+    //   }),
+    //   finalize(() => {
+    //     this.fullService.generatingFileFlag.next({
+    //       progress: 100,
+    //       showText: true,
+    //     });
+    //   })
+    // );
+  }
+  subscribeExcel(token: any) {
+    console.log(token);
+
+    return this.socketService.goodsTrackerExcel(token.channel).pipe(
       catchError(error => {
-        this.alert('error', UNEXPECTED_ERROR, '');
+        this.loader.load = false;
         return throwError(() => error);
       }),
-      tap(response => {
-        if (!response.base64) {
-          this.alert('warning', 'No se encontraron datos para exportar', '');
-          return;
+      tap(res => {
+        console.warn('RESPUESTA DEL SOCKET');
+        console.log(res);
+        if (res.path != null) {
+          this.loader.load = false;
+          this.getExcel(res.path);
         }
-        this._downloadExcelFromBase64(response.base64, 'avaluos');
-      }),
-      finalize(() => {
-        this.fullService.generatingFileFlag.next({
-          progress: 100,
-          showText: true,
-        });
       })
+      // switchMap(() => )
     );
   }
+  getExcel(path: string) {
+    this.loader.load = false;
+    this.alert('success', 'Archivo Descargado Correctamente', '');
+    const url = `${environment.API_URL}appraise/${environment.URL_PREFIX}/${path}`;
+    console.log(url);
+    window.open(url, '_blank');
 
+    // this.downloadExcel(resp.file);
+  }
   buildFilers() {
     this.canSearch = false;
     const params = new FilterParams();
@@ -193,6 +241,7 @@ export class AppraisalConsultationListComponent
   }
 
   getGoods(params: FilterParams) {
+    this.totalItems = 0;
     this.loading = true;
     return this.appraiseService.getAppraiseByFilters(params.getParams()).pipe(
       catchError(error => {
@@ -205,7 +254,7 @@ export class AppraisalConsultationListComponent
       }),
       tap(response => {
         this.loading = false;
-        console.log(response.data);
+        console.log(response);
         this.appraisals.load(response.data);
         this.appraisals.refresh();
         this.totalItems = response.count;

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as moment from 'moment';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared';
@@ -12,6 +13,7 @@ import { BasePage } from 'src/app/core/shared';
 export class ModifyDatesModalComponent extends BasePage implements OnInit {
   title: string = 'Modificar Fechas';
   dateForm: FormGroup = new FormGroup({});
+  minDate: Date = new Date();
   requestId: number;
   goods: any[];
 
@@ -26,8 +28,8 @@ export class ModifyDatesModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.dateForm = this.fb.group({
-      startDate: [null],
-      endDate: [null],
+      startDate: [null, [Validators.required]],
+      endDate: [null, [Validators.required]],
     });
   }
 
@@ -36,23 +38,46 @@ export class ModifyDatesModalComponent extends BasePage implements OnInit {
   }
 
   confirm() {
+    // Primero, verificar si las fechas están presentes
+    const startDate = this.dateForm.controls['startDate'].value;
+    const endDate = this.dateForm.controls['endDate'].value;
+
+    if (!this.isValidDate(startDate, endDate)) {
+      this.onLoadToast(
+        'warning',
+        'Advertencia',
+        'Fechas de inicio y fin son requeridas \n La fecha fin no puede ser menor a la de inicio'
+      );
+
+      this.dateForm.controls['startDate'].setValue(null);
+      this.dateForm.controls['endDate'].setValue(null);
+
+      return;
+    }
+
     this.goods.map(async (item, _i) => {
       let index = _i + 1;
-      const body: any = {
+      const body = {
         goodresdevId: item.goodresdevId,
-        startVisitDate: this.dateForm.controls['startDate'].value,
-        endVisitDate: this.dateForm.controls['endDate'].value,
+        startVisitDate: moment(startDate).format('YYYY-MM-DD h:mm:ss'),
+        endVisitDate: moment(endDate).format('YYYY-MM-DD h:mm:ss'),
       };
 
       const result = await this.updateGoodResDev(body);
 
       if (index == this.goods.length) {
-        this.onLoadToast('success', 'Visita Ocupar registrada', '');
+        this.onLoadToast('success', 'Visita Ocular registrada', '');
         this.event.emit(this.dateForm.value);
         this.close();
       }
     });
-    //guardar las fechas y enviar al formulario padre para actualizar
+    // Guardar las fechas y enviar al formulario padre para actualizar
+  }
+
+  isValidDate(startDate: string, endDate: string): boolean {
+    let start = moment(startDate);
+    let end = moment(endDate);
+    return start.isValid() && end.isValid() && end.isAfter(start);
   }
 
   updateGoodResDev(body: any) {

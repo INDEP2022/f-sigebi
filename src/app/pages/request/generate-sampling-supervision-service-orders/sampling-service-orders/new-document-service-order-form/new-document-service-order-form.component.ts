@@ -19,7 +19,6 @@ import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
-import Swal from 'sweetalert2';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
 import { DefaultSelect } from '../../../../../shared/components/select/default-select';
@@ -43,12 +42,13 @@ export class NewDocumentServiceOrderFormComponent
   stateSelected = new DefaultSelect();
   typeTranferSelected = new DefaultSelect();
   regionalDelegationSelected = new DefaultSelect();
-  requestId: number = null;
+  requestId: string = '';
 
   //datos pasados por el modal
   data: any = null;
   typeComponent: string = '';
   isDisable: boolean = false;
+  idRequest: string = '';
 
   private wcontentService = inject(WContentService);
   //private delegationService = inject(DelegationService);
@@ -62,22 +62,17 @@ export class NewDocumentServiceOrderFormComponent
   }
 
   ngOnInit(): void {
-    console.log(this.typeComponent);
-    /*if (this.typeComponent === 'verify-noncompliance') {
-      this.isDisable = false;
-    }*/
-    this.delegId = +this.authService.decodeToken().department;
-    this.requestId = this.data.requestId;
+    this.delegId = Number(this.authService.decodeToken().department);
+    this.requestId = this.idRequest;
     this.initForm();
 
     this.getTypeDocSelect(new ListParams());
     this.getRegionalDelegationSelect(new ListParams());
     this.getStateSelect(new ListParams(), this.delegId);
+    this.getTypeTranferSelect(new ListParams());
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
-  }
+  ngOnChanges(changes: SimpleChanges): void {}
 
   initForm(): void {
     this.documentForm = this.fb.group({
@@ -88,11 +83,14 @@ export class NewDocumentServiceOrderFormComponent
       xresponsable: [null],
 
       xcontribuyente: [null, [Validators.pattern(STRING_PATTERN)]],
-      xDelegacionRegional: [{ value: '', disabled: this.isDisable }],
+      xDelegacionRegional: [
+        { value: '', disabled: this.isDisable },
+        [Validators.required],
+      ],
       xnoOficio: [null],
       xestado: [null],
       xNoProgramacion: [null],
-      xidTransferente: [null],
+      xidTransferente: [null, [Validators.required]],
       xFolioProgramacion: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       xremitente: [null, [Validators.pattern(STRING_PATTERN)]],
       xComments: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -105,7 +103,7 @@ export class NewDocumentServiceOrderFormComponent
     });
 
     this.documentForm.controls['xidSolicitud'].setValue(this.requestId);
-    this.documentForm.controls['xDelegacionRegional'].setValue(this.delegId);
+    this.documentForm.get('xDelegacionRegional').setValue(this.delegId);
   }
 
   selectFile(event: any): void {
@@ -115,8 +113,6 @@ export class NewDocumentServiceOrderFormComponent
     if (this.sizeMessage) {
       this.inputFile.nativeElement.value = '';
       return;
-    } else {
-      console.log(this.fileToUpload);
     }
   }
 
@@ -156,19 +152,18 @@ export class NewDocumentServiceOrderFormComponent
   getTypeTranferSelect(params: ListParams, stateId?: number) {
     params['filter.transferent.nameTransferent'] = `$ilike:${params.text}`;
     params['sortBy'] = 'nameTransferent:ASC';
-    this.transferenteSevice
-      .getStateByTransferentKey(stateId, params)
-      .subscribe({
-        next: resp => {
-          console.log(resp.data);
-          const result = resp.data
-            .map((item: any) => {
-              return item.transferent;
-            })
-            .filter(x => x != undefined);
-          this.typeTranferSelected = new DefaultSelect(result, resp.count);
-        },
-      });
+
+    this.transferenteSevice.getAll(params).subscribe({
+      next: response => {
+        this.typeTranferSelected = new DefaultSelect(
+          response.data,
+          response.count
+        );
+      },
+      error: () => {
+        this.typeTranferSelected = new DefaultSelect();
+      },
+    });
   }
 
   getRegionalDelegationSelect(params: ListParams) {
@@ -178,6 +173,9 @@ export class NewDocumentServiceOrderFormComponent
           resp.data,
           resp.count
         );
+      },
+      error: () => {
+        this.regionalDelegationSelected = new DefaultSelect();
       },
     });
   }
@@ -206,7 +204,12 @@ export class NewDocumentServiceOrderFormComponent
     form.dSecurityGroup = 'Public';
     form.xidcProfile = 'NSBDB_Gral';
     form.ddocAuthor = this.authService.decodeToken().username;
-    delete form.noDoc;
+    (form.xidSolicitud = this.idRequest),
+      (form.xdelegacionRegional = this.delegId),
+      (form.xnivelRegistroNSBDB = 'bien'),
+      (form.xidTransferente = this.documentForm.get('xidTransferente').value),
+      (form.xestado = this.documentForm.get('xestado').value),
+      delete form.noDoc;
     const extension = '.pdf';
     const docName = form.dDocTitle;
     const file = this.fileToUpload;
@@ -215,28 +218,18 @@ export class NewDocumentServiceOrderFormComponent
     this.wcontentService
       .addDocumentToContent(docName, extension, jsonStrinfy, file, extension)
       .subscribe({
-        next: resp => {
-          this.messageSuccess();
+        next: () => {
+          this.alert('success', 'Correcto', 'Documento guardado correctamente');
+          this.modalRef.content.callback(true);
           this.close();
         },
-        error: error => {
-          console.log(error);
-          this.onLoadToast('error', '');
+        error: () => {
+          this.onLoadToast(
+            'warning',
+            'Acción Invalida',
+            'No fue posible guardar el documento'
+          );
         },
       });
-    console.log(form);
-  }
-
-  messageSuccess() {
-    const message = 'Documento agregado exitosamente';
-    Swal.fire({
-      icon: undefined,
-      title: 'Información',
-      text: message,
-      confirmButtonColor: '#9D2449',
-      confirmButtonText: 'Aceptar',
-      footer: '',
-      allowOutsideClick: false,
-    });
   }
 }

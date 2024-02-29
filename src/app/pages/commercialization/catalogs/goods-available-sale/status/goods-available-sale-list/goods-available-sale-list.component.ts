@@ -69,7 +69,7 @@ export class GoodsAvailableSaleListComponent2
     this['alertQuestion'](
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then((question: { isConfirmed: any }) => {
       if (question.isConfirmed) {
         event.confirm.resolve();
@@ -264,7 +264,7 @@ export class GoodsAvailableSaleListComponent2
 //     this.alertQuestion(
 //       'warning',
 //       'Eliminar',
-//       'Desea eliminar este registro?'
+//       '¿Desea eliminar este registro?'
 //     ).then(question => {
 //       if (question.isConfirmed) {
 //         this.delete(goodsAvailable.id);
@@ -397,7 +397,7 @@ export class GoodsAvailableSaleListComponent2
 //     this.alertQuestion(
 //       'warning',
 //       'Eliminar',
-//       'Desea eliminar este registro?'
+//       '¿Desea eliminar este registro?'
 //     ).then(question => {
 //       if (question.isConfirmed) {
 //         this.delete(goodsAvailable.id);
@@ -520,7 +520,7 @@ export class GoodsAvailableSaleListComponent2
 //     this.alertQuestion(
 //       'warning',
 //       'Eliminar',
-//       'Desea eliminar este registro?'
+//       '¿Desea eliminar este registro?'
 //     ).then(question => {
 //       if (question.isConfirmed) {
 //         this.delete(goodsAvailable.id);

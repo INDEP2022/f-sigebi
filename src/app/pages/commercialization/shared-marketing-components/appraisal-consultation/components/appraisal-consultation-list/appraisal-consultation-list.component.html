@@ -19,14 +19,18 @@
   <div [class]="loading ? 'table-loading' : ''">
     <div class="table-responsive">
       <ng2-smart-table
-        [attr.class]="'table-bordered'"
+        [attr.class]="'table-bordered table-responsive'"
         [settings]="settings"
         [source]="appraisals">
       </ng2-smart-table>
     </div>
+    <div>
+      <app-pagination [filterParams]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
   </div>
   <div class="row">
-    <div class="col-md-12 d-flex justify-content-between">
+    <div class="col-md-12 d-flex justify-content-end">
       <div class="mt-5">
         <table class="table table-bordered">
           <thead>
@@ -79,10 +83,6 @@
             </tr>
           </tbody>
         </table>
-      </div>
-      <div>
-        <app-pagination [filterParams]="params" [totalItems]="totalItems">
-        </app-pagination>
       </div>
     </div>
   </div>

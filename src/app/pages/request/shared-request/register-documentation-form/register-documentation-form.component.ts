@@ -7,8 +7,15 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { Subscription } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
@@ -21,8 +28,10 @@ import {
   NUM_POSITIVE,
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
+  STRING_PATTERN_LETTER,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-register-documentation-form',
@@ -43,6 +52,8 @@ export class RegisterDocumentationFormComponent
   @Output() onRegister = new EventEmitter<any>();
   @Output() onChange = new EventEmitter<any>();
 
+  @ViewChild('dp') datePicker: BsDatepickerDirective;
+
   priorityCheck: boolean = false;
   bsPriorityDate: any;
   bsReceptionValue: any;
@@ -60,6 +71,7 @@ export class RegisterDocumentationFormComponent
 
   private subscription: Subscription;
   private loadInfo: boolean = false;
+  private requestIfo: any = {};
 
   /* injections */
   private readonly requestService = inject(RequestService);
@@ -91,7 +103,7 @@ export class RegisterDocumentationFormComponent
       priorityDate: [null],
       indicatedTaxpayer: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.pattern(STRING_PATTERN_LETTER)],
       ],
       typeRecord: [null],
       originInfo: [null],
@@ -106,11 +118,15 @@ export class RegisterDocumentationFormComponent
       affair: [null],
       receiptRoute: [null],
       typeOfTransfer: [null],
-      nameOfOwner: [null, [Validators.pattern(STRING_PATTERN)]],
+      nameOfOwner: [null, [Validators.pattern(STRING_PATTERN_LETTER)]],
       holderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
       phoneOfOwner: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(13)],
+        [
+          Validators.maxLength(13),
+          Validators.minLength(10),
+          Validators.pattern(NUM_POSITIVE),
+        ],
       ],
       emailOfOwner: [null, [Validators.pattern(EMAIL_PATTERN)]],
       trialType: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -137,10 +153,17 @@ export class RegisterDocumentationFormComponent
     });
   }
 
-  formChanges() {
+  formChanges(update = false) {
+    let requiredFields = this.getRequiredFields(this.registerForm);
+    let isValid = this.validateParameters(
+      this.requestIfo,
+      requiredFields['keys']
+    );
+
     this.onChange.emit({
-      isValid: this.registerForm.valid && this.loadInfo,
-      object: this.registerForm.getRawValue(),
+      isValid: this.registerForm.valid && isValid && this.loadInfo,
+      object: this.requestIfo,
+      update: update,
     });
   }
 
@@ -179,7 +202,7 @@ export class RegisterDocumentationFormComponent
 
   /* METODO QUE LLAMA AL SERVICIO DE SOLICITUDES
   ============================================== */
-  getRequestInfo() {
+  getRequestInfo(update = false) {
     if (this.requestId) {
       this.requestService.getById(this.requestId).subscribe({
         next: resp => {
@@ -206,10 +229,13 @@ export class RegisterDocumentationFormComponent
           this.transference = +resp.transferenceId;
           this.typeTransference = resp.typeOfTransfer;
           this.registerForm.patchValue(resp);
+          this.requestIfo = resp;
           this.getAffair(resp.affair);
           this.getPublicMinister(new ListParams());
           this.setFieldsRequired();
           this.loadInfo = this.registerForm.valid;
+
+          this.formChanges(update);
         },
         error: error => {
           console.log('No se cargaron datos de la solicitud. ', error);
@@ -222,87 +248,64 @@ export class RegisterDocumentationFormComponent
   ================================================ */
   setFieldsRequired() {
     if (this.transference == 1) {
-      this.registerForm.controls['previousInquiry'].setValidators([
-        Validators.required,
-      ]);
-      this.registerForm.controls['circumstantialRecord'].setValidators([
-        Validators.required,
-      ]);
+      this.setValidatorAndUpdate('previousInquiry', [Validators.required]);
+      this.setValidatorAndUpdate('circumstantialRecord', [Validators.required]);
     } else if (this.transference == 3) {
-      this.registerForm.controls['lawsuit'].setValidators([
+      this.setValidatorAndUpdate('lawsuit', [
         Validators.required,
         Validators.pattern(STRING_PATTERN),
       ]);
-      this.registerForm.controls['tocaPenal'].setValidators([
+      this.setValidatorAndUpdate('tocaPenal', [
         Validators.required,
         Validators.pattern(STRING_PATTERN),
       ]);
-      this.registerForm.controls['protectNumber'].setValidators([
+      this.setValidatorAndUpdate('protectNumber', [
         Validators.required,
         Validators.pattern(POSITVE_NUMBERS_PATTERN),
       ]);
     } else if (this.transference == 120) {
-      this.registerForm.controls['trialType'].setValidators([
+      this.setValidatorAndUpdate('trialType', [
         Validators.required,
         Validators.pattern(STRING_PATTERN),
       ]);
     }
 
     if (this.processDetonate == 'AMPARO') {
-      this.registerForm.controls['protectNumber'].setValidators([
+      this.setValidatorAndUpdate('protectNumber', [
         Validators.required,
         Validators.pattern(POSITVE_NUMBERS_PATTERN),
       ]);
     }
 
-    switch (this.process) {
-      case 'register-request-return':
-        this.registerForm.controls['trialType'].setValidators([
+    const processCases = {
+      'register-request-return': ['trialType', 'authorityOrdering'],
+      'register-request-similar-goods': ['trialType'],
+      'register-request-compensation': ['trialType'],
+      'register-request-economic': ['trialType'],
+      'register-request-information-goods': ['trialType'],
+      'register-request-protection': ['trialType', 'protectNumber'],
+      'register-seizures': ['trialType'],
+      'register-abandonment-goods': ['trialType'],
+      'register-domain-extinction': ['trialType'],
+      'register-compensation-documentation': ['trialType'],
+    };
+
+    if (processCases[this.process]) {
+      processCases[this.process].forEach(control => {
+        this.setValidatorAndUpdate(control, [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
         ]);
-        this.registerForm.controls['authorityOrdering'].setValidators([
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-        ]);
-        break;
-      case 'register-request-similar-goods':
-        this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-        ]);
-        break;
-      case 'register-request-compensation':
-        this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-        ]);
-        break;
-      case 'register-request-economic-compensation':
-        this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-        ]);
-        break;
-      case 'register-request-information-goods':
-        this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-        ]);
-        break;
-      case 'register-request-protection':
-        this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-        ]);
-        this.registerForm.controls['protectNumber'].setValidators([
-          Validators.required,
-          Validators.pattern(POSITVE_NUMBERS_PATTERN),
-        ]);
-        break;
+      });
     }
 
     this.registerForm.updateValueAndValidity();
+  }
+
+  setValidatorAndUpdate(controlName, validators) {
+    this.registerForm.controls[controlName].setValidators(validators);
+    //this.registerForm.controls[controlName].markAsTouched();
+    this.registerForm.controls[controlName].updateValueAndValidity();
   }
 
   cancelRequest() {
@@ -314,7 +317,8 @@ export class RegisterDocumentationFormComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.registerForm.reset();
-        this.getRequestInfo();
+        //this.datePicker.bsValue = null; // Restablecer el valor del bsDatepicker
+        this.getRequestInfo(true);
         this.registerForm.markAsUntouched();
       }
     });
@@ -339,13 +343,18 @@ export class RegisterDocumentationFormComponent
         request.receptionDate = this.bsReceptionValue.toISOString();
         request.transferEntNotes =
           request.transferEntNotes == '' ? null : request.transferEntNotes;
-        console.log(request);
+
+        for (const key in request) {
+          if (request.hasOwnProperty(key) && request[key] === '') {
+            request[key] = null;
+          }
+        }
         this.requestService.update(request.id, request).subscribe({
           next: resp => {
             console.log(resp);
             if (resp.statusCode == 200) {
               this.loadInfo = true;
-              this.formChanges();
+              this.getRequestInfo(true);
               this.alert('success', 'Correcto', 'Registro Actualizado');
             }
           },
@@ -359,9 +368,16 @@ export class RegisterDocumentationFormComponent
     let checked = event.currentTarget.checked;
     checked = checked === true ? 'Y' : 'N';
     this.registerForm.controls['urgentPriority'].setValue(checked);
-    if (checked === false) {
+    if (checked === 'N') {
       this.registerForm.controls['priorityDate'].setValue(null);
       this.bsPriorityDate = null;
+      this.registerForm.controls['priorityDate'].clearValidators();
+      this.registerForm.controls['priorityDate'].updateValueAndValidity();
+    } else {
+      this.registerForm.controls['priorityDate'].setValidators(
+        Validators.required
+      );
+      this.registerForm.controls['priorityDate'].updateValueAndValidity();
     }
   }
 
@@ -377,10 +393,12 @@ export class RegisterDocumentationFormComponent
   }
 
   changeDateEvent(event: any) {
-    this.bsPaperValue = event;
+    console.log('error' + this.bsPaperValue);
+    //this.bsPaperValue = event;
     if (this.bsPaperValue) {
-      const date = this.bsPaperValue.toISOString();
-      this.registerForm.controls['paperDate'].setValue(date);
+      //const date = this.bsPaperValue.toISOString();
+      console.log('error' + this.bsPaperValue);
+      this.registerForm.controls['paperDate'].patchValue(this.bsPaperValue);
     } else {
       this.registerForm.controls['paperDate'].setValue(null);
     }
@@ -403,6 +421,15 @@ export class RegisterDocumentationFormComponent
     );
   }
 
+  convertDateFormat(dateString: string): string {
+    const date = new Date(dateString);
+    const day = ('0' + date.getDate()).slice(-2);
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  }
+
   getAffair(id: string | number) {
     this.affairService.getByIdAndOrigin(id, 'SAMI').subscribe({
       next: data => {
@@ -421,6 +448,14 @@ export class RegisterDocumentationFormComponent
     this.displayNotifyMails = this.process == 'register-request-similar-goods';
   }
 
+  numericOnly(event): boolean {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
+  }
+
   showInput(comp) {
     let input = [];
 
@@ -434,7 +469,7 @@ export class RegisterDocumentationFormComponent
       case 'register-request-compensation':
         input = ['trialType'];
         break;
-      case 'register-request-economic-compensation':
+      case 'register-request-economic':
         input = ['trialType'];
         break;
       case 'register-request-information-goods':
@@ -443,8 +478,50 @@ export class RegisterDocumentationFormComponent
       case 'register-request-protection':
         input = ['trialType'];
         break;
+      case 'register-seizures':
+        input = ['trialType'];
+        break;
+      case 'register-abandonment-goods':
+        input = ['trialType'];
+        break;
+      case 'register-domain-extinction':
+        input = ['trialType'];
+        break;
+      case 'register-compensation-documentation':
+        input = ['trialType'];
+        break;
     }
 
     return input.includes(comp);
+  }
+
+  getRequiredFields(formGroup: FormGroup): { [key: string]: any } {
+    let requiredFields: { [key: string]: any } = {};
+
+    Object.keys(formGroup.controls).forEach(key => {
+      let control: any = formGroup.get(key);
+      if (
+        control.validator &&
+        control.validator({} as AbstractControl) &&
+        control.validator({} as AbstractControl).required
+      ) {
+        requiredFields[key] = control.value;
+      }
+    });
+
+    return {
+      data: requiredFields,
+      keys: Object.keys(requiredFields),
+    };
+  }
+
+  validateParameters(obj: { [key: string]: any }, params: string[]): boolean {
+    for (let param of params) {
+      if (!obj[param] || isNullOrEmpty(obj[param])) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }

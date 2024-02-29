@@ -75,7 +75,7 @@ export class ServiceOrderRequestCaptureFormComponent
     const task = JSON.parse(localStorage.getItem('Task'));
     this.task = task['op'];
     this.op = this.task;
-    console.log(this.task);
+
     this.programmingId = +this.activeRouter.snapshot.params['id'];
     this.prepareProgForm();
     this.prepareOrderServiceForm();
@@ -191,7 +191,6 @@ export class ServiceOrderRequestCaptureFormComponent
       };
       //actualizar
     } else if (status == 'Rechazado') {
-      console.log('Es rechazado');
       this.lsProgramming = 'AprobarContrapropuesta';
       const body = {
         //tiOrdServicio: this.orderServiceId,
@@ -199,7 +198,6 @@ export class ServiceOrderRequestCaptureFormComponent
       };
       //actualizar orden servicio
     } else if (status == 'ReporteImplementacion') {
-      console.log('Es enviado por primera vez');
       this.lsProgramming = 'AprobacionReporte';
       lsUsuariosTLP = user.username;
     } else if (status == 'RechazoReporte') {
@@ -226,7 +224,6 @@ export class ServiceOrderRequestCaptureFormComponent
       if (question.isConfirmed) {
         //Ejecutar el servicio
 
-        console.log(this.ordServform.getRawValue());
         let ordServiceForm = this.ordServform.getRawValue();
         this.isUpdate = true;
         this.updateOrderService(ordServiceForm);
@@ -276,7 +273,7 @@ export class ServiceOrderRequestCaptureFormComponent
   getOrderServiceProvided() {
     return new Promise((resolve, reject) => {
       const params = new ListParams();
-      debugger;
+      //
       params['filter.orderServiceId'] = `$eq:${this.orderServiceId}`;
       this.orderEntryService
         .getAllOrderServicesProvided(params)
@@ -303,8 +300,7 @@ export class ServiceOrderRequestCaptureFormComponent
           ''
         );
       },
-      error: error => {
-        console.log(error);
+      error: () => {
         this.onLoadToast('error', 'No se pudo actualizar la orden de servicio');
       },
     });
@@ -492,7 +488,6 @@ export class ServiceOrderRequestCaptureFormComponent
         error: error => {
           reject(error);
           this.onLoadToast('error', 'No se pudo guardar a los firmantes');
-          console.log('error: ', error);
         },
       });
     });

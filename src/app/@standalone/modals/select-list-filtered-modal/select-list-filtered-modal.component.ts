@@ -37,6 +37,7 @@ import { FormLoaderComponent } from '../../form-loader/form-loader.component';
   standalone: true,
   imports: [CommonModule, SharedModule, NgScrollbarModule, FormLoaderComponent],
   templateUrl: './select-list-filtered-modal.component.html',
+  styleUrls: ['./select-list-filtered-modal.component.scss'],
 })
 export class SelectListFilteredModalComponent
   extends BasePage
@@ -49,6 +50,7 @@ export class SelectListFilteredModalComponent
   selectedRow: any = null;
   columns: any[] = [];
   totalItems: number = 0;
+  idScss: string = '';
   selecteds: { column: string; data: any[] }; // Input para marcar seleccionados en el modal
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -69,6 +71,7 @@ export class SelectListFilteredModalComponent
   showError: boolean = false;
   widthButton = false;
   multi = '';
+  hideFilterPlaceholder = false;
   permitSelect = true;
   searchFilter: SearchBarFilter; // Input requerido al llamar el modal
   filters: DynamicFilterLike[] = []; // Input opcional para agregar varios filtros dinamicos
@@ -344,7 +347,7 @@ export class SelectListFilteredModalComponent
     data: any;
   }) {
     console.log(event);
-    // debugger;
+    // //
     const selecteds = event.selected;
 
     if (selecteds.length === 0) {

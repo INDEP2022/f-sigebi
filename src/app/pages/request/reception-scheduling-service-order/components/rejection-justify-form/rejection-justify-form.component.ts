@@ -58,8 +58,7 @@ export class RejectionJustifyFormComponent extends BasePage implements OnInit {
         this.orderServiceService
           .updateOrderService(orderServiceInfo)
           .subscribe({
-            next: response => {
-              console.log('response', response);
+            next: () => {
               this.alert(
                 'success',
                 'Correcto',

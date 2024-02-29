@@ -23,6 +23,7 @@ import {
   IGood,
   IGoodCharge,
   IGoodSami,
+  IGoodsTransAva,
   IValidaCambioEstatus,
   IVban,
 } from '../../models/ms-good/good';
@@ -540,5 +541,15 @@ export class GoodService extends HttpService {
   getByGoodAllQuery(params: _Params) {
     const route = `${GoodEndpoints.GetAllGoodQuery}`;
     return this.get(route, params);
+  }
+
+  getTransAva(params?: string) {
+    const route = `${GoodEndpoints.GoodsTransAva}?${params}`;
+    return this.get(route);
+  }
+
+  postTransAva(body: IGoodsTransAva) {
+    const route = `${GoodEndpoints.GoodsTransAva}`;
+    return this.post(route, body);
   }
 }

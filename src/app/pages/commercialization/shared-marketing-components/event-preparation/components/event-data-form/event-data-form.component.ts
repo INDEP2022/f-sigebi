@@ -68,6 +68,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
   setInmovableValidators() {
     const { eventDate } = this.controls;
     eventDate.addValidators(Validators.required);
+    console.log('Se agregó el validador');
   }
 
   ngOnInit(): void {
@@ -85,6 +86,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
   }
 
   getInmovableSelect() {
+    console.log('Se está llamando? ' + this.parameters.pDirection);
     this.setInmovableValidators();
     this.getEventTypesI().subscribe();
     this.getParametersMod().subscribe();
@@ -101,9 +103,11 @@ export class EventDataFormComponent extends BasePage implements OnInit {
       .pipe(
         catchError(error => {
           this.eventTypes = new DefaultSelect([], 0);
+          console.log(error);
           return throwError(() => error);
         }),
         tap(response => {
+          console.log(response);
           this.eventTypes = new DefaultSelect(response.data, response.count);
         })
       );
@@ -131,10 +135,12 @@ export class EventDataFormComponent extends BasePage implements OnInit {
     params.addFilter('value', 2);
     return this.parametersModService.getAllFilter(params.getParams()).pipe(
       catchError(error => {
+        console.log(error);
         this.modParameters = new DefaultSelect();
         return throwError(() => error);
       }),
       tap(response => {
+        console.log(response);
         this.modParameters = new DefaultSelect(response.data, response.count);
       })
     );
@@ -161,6 +167,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
       takeUntil(this.$unSubscribe),
       tap(async eventType => {
         if (!eventType) {
+          console.log('Initial value ' + eventType);
           return;
         }
         if (this.parameters.pDirection == 'M') {
@@ -381,7 +388,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
     return this.comerEventsService.createEvent(this.eventForm.value).pipe(
       tap(event => {
         this.loading = false;
-        this.alert('success', 'El Evento ha sido Guardado', '');
+        this.alert('success', 'El evento ha sido guardado', '');
         this.eventForm.patchValue({
           ...event,
           thirdId: event.thirdId ? `${event.thirdId}` : null,
@@ -393,6 +400,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
             : null,
           failureDate: event?.failureDate ? new Date(event?.failureDate) : null,
         });
+        this.eventForm.reset();
         console.log(this.eventForm.value);
       }),
       catchError(error => {
@@ -419,7 +427,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
           return throwError(() => error);
         }),
         tap(event => {
-          this.alert('success', 'El Evento ha sido Guardado', '');
+          this.alert('success', 'El evento ha sido actualizado', '');
           this.loading = false;
         })
       );
@@ -470,7 +478,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Verificar fecha',
-        'La fecha de fallo no puede menor o igual a la fecha del evento XD'
+        'La fecha de fallo no puede menor o igual a la fecha del evento'
       );
       return;
     }
@@ -551,16 +559,19 @@ export class EventDataFormComponent extends BasePage implements OnInit {
 
   // * ---------------- FCOMEREVENTOS_I
   getEventTypesI() {
+    console.log('Entró a llenar los tipos de eventos');
     const params = new FilterParams();
     params.limit = 100;
     return this.eventAppService
       .rgEventsI(this.loggedUser.preferred_username)
       .pipe(
         catchError(error => {
+          console.log(error);
           this.eventTypes = new DefaultSelect([], 0);
           return throwError(() => error);
         }),
         map(response => {
+          console.log(response);
           const data = response.data.map(eventTp => {
             return {
               id: eventTp.id_tpevento,
@@ -570,6 +581,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
           return { ...response, data };
         }),
         tap(response => {
+          console.log(response);
           this.eventTypes = new DefaultSelect(response.data, response.count);
         })
       );

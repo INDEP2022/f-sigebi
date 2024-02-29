@@ -47,7 +47,7 @@ export class ScheduledMaintenanceComponent
       'paramsActaProgramaciones'
     );
 
-    // debugger;
+    // //
 
     this.settings1 = {
       ...this.settings1,
@@ -109,7 +109,7 @@ export class ScheduledMaintenanceComponent
     this.alertQuestion(
       'question',
       'Eliminar',
-      'Desea eliminar estos registros?'
+      '¿Desea eliminar estos registros?'
     ).then(question => {
       if (question.isConfirmed) {
         this.deliveryService.deleteMasive(this.selecteds).subscribe({

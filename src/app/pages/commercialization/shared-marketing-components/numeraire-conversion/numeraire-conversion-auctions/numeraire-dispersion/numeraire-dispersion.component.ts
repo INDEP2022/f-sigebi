@@ -2,12 +2,14 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { take } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { INumeraryxGoods } from 'src/app/core/models/ms-numerary/numerary.model';
 import { IFillExpenseDataCombined } from 'src/app/core/models/ms-spent/comer-expense';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { NumeraryXGoodsService } from 'src/app/core/services/ms-numerary/numerary-x-goods.service';
 import { TABLE_SETTINGS } from 'src/app/core/shared/base-page';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
+import { NumerarieService } from '../../services/numerarie.service';
 import { COLUMNS } from './columns';
 import { NumeraireDispersionModalComponent } from './numeraire-dispersion-modal/numeraire-dispersion-modal.component';
 
@@ -26,12 +28,15 @@ export class NumeraireDispersionComponent
   toggleInformation = true;
   total = 0;
   fillData = true;
+
   constructor(
     private modalService: BsModalService,
     private dataService: NumeraryXGoodsService,
-    private eventService: ComerEventosService
+    private eventService: ComerEventosService,
+    private numerarieService: NumerarieService
   ) {
     super();
+    this.dateFilters = ['date'];
     this.haveInitialCharge = false;
     this.settings = {
       ...this.settings,
@@ -65,9 +70,41 @@ export class NumeraireDispersionComponent
     }
     if (changes['selectedExpenseData'] && this.fillData) {
       this.total = 0;
+      this.columnFilters = [];
+      this.data.setFilter([], true, false);
+      this.data.load([]);
+      // console.log(filter);
+      this.data.refresh();
+      this.totalItems = 0;
       this.getData();
-      this.getTotals();
     }
+  }
+
+  override extraOperationsGetData() {
+    this.total = 0;
+    this.getTotals();
+  }
+
+  override dataNotFound() {
+    this.totalItems = 0;
+    this.total = 0;
+    this.data.load([]);
+    this.data.refresh();
+    this.loading = false;
+  }
+
+  override getSearchFilter(filter: any): SearchFilter {
+    let searchFilter = SearchFilter.ILIKE;
+    if (this.ilikeFilters.includes(filter.field)) {
+      searchFilter = SearchFilter.ILIKE;
+    } else {
+      if (filter.field === 'date') {
+        searchFilter = SearchFilter.LIKE2;
+      } else {
+        searchFilter = SearchFilter.EQ;
+      }
+    }
+    return searchFilter;
   }
 
   private getTotals() {
@@ -108,17 +145,21 @@ export class NumeraireDispersionComponent
   }
 
   edit(row: INumeraryxGoods) {
+    console.log(row);
+
     const config = {
       ...MODAL_CONFIG,
       initialState: {
         row,
         eventId: this.idEvento,
+        spentId: +(this.selectedExpenseData.id_gasto + ''),
         callback: (next: boolean) => {
           if (next) {
             this.alert('success', 'Se realizó la edición del bien', '');
           } else {
             this.alert('success', 'Se realizó el registro del bien', '');
           }
+          this.numerarieService.reloadExpenses++;
           this.getData();
         },
       },

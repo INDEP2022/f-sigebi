@@ -8,7 +8,7 @@
   </div>
   <div body>
     <div class="">
-      <div class="d-flex flex-row-reverse" *ngIf="screenWidth >= 1200">
+      <div class="d-flex flex-row-reverse" *ngIf="true">
         <ng-template #turnar>
           <div class="mx-1" *ngIf="turnReq && !complementaryDoc">
             <button
@@ -20,7 +20,6 @@
             </button>
           </div>
         </ng-template>
-
         <div
           *ngIf="
             finish ||
@@ -35,7 +34,7 @@
               type="button"
               class="btn btn-primary btn-sm active"
               (click)="endRequest()"
-              [disabled]="">
+              [disabled]="!nextTurn">
               Finalizar <i aria-hidden="true" class="fa fa-check"></i>
             </button>
           </div>
@@ -44,7 +43,7 @@
           <button
             type="button"
             class="btn btn-sm btn-success active"
-            [disabled]=""
+            [disabled]="!nextTurn"
             (click)="btnAprobar()">
             Aprobar
             <i class="fa fa-check" aria-hidden="true"></i>
@@ -54,7 +53,7 @@
           <button
             type="button"
             class="btn btn-sm btn-success active"
-            [disabled]=""
+            [disabled]="!nextTurn"
             (click)="btnRequestAprobar()">
             Solicitar Aprobación
             <i class="fa fa-envelope"></i>
@@ -64,7 +63,7 @@
           <button
             type="button"
             class="btn btn-info active btn-sm"
-            [disabled]=""
+            [disabled]="!nextTurn"
             (click)="btnRequestReview()">
             Solicitar revisión
             <i class="bx bx-check mr-1 float-icon"></i>
@@ -74,18 +73,9 @@
           <button
             type="button"
             class="btn btn-primary btn-sm active"
-            [disabled]=""
+            [disabled]="!nextTurn"
             (click)="updateRequest()">
             Guardar <i class="fa fa-save mr-1 float-icon"></i>
-          </button>
-        </div>
-        <div class="mx-1" *ngIf="rejectReq">
-          <button
-            type="button"
-            class="btn btn-danger btn-sm active"
-            [disabled]=""
-            (click)="rejectRequest()">
-            <i class="bx bx-x-circle mr-1 float-icon"></i> Rechazar
           </button>
         </div>
         <div class="mx-1" *ngIf="resultEyeVisitReport || makeResultPaperReport">
@@ -122,7 +112,7 @@
             type="button"
             class="btn btn-info active btn-sm"
             [disabled]=""
-            (click)="openReport()">
+            (click)="openReport(false)">
             Notificación
             <i class="bx bx-notepad mr-1 float-icon"></i>
           </button>
@@ -152,8 +142,18 @@
             type="button"
             class="btn btn-info active btn-sm"
             [disabled]=""
-            (click)="openModal()">
+            (click)="openModalLegal()">
             Oficio de Cambio de Situación Jurídica
+            <i class="bx bx-notepad mr-1 float-icon"></i>
+          </button>
+        </div>
+        <div class="mx-1" *ngIf="signOffice">
+          <button
+            type="button"
+            class="btn btn-info active btn-sm"
+            [disabled]=""
+            (click)="openReport()">
+            Firmar Oficio
             <i class="bx bx-notepad mr-1 float-icon"></i>
           </button>
         </div>
@@ -176,11 +176,11 @@
             Dictamen Devolución <i class="bx bx-file bx-m float-icon"></i>
           </button>
         </div>
-        <div class="mx-1" *ngIf="btnDecline">
+        <div class="mx-1" *ngIf="btnDecline || rejectReq">
           <button
             type="button"
             class="btn btn-danger btn-sm active mr-3"
-            [disabled]=""
+            [disabled]="!nextTurn"
             (click)="rejectRequest()">
             Rechazar
             <i class="bx bx-x bx-m float-icon"></i>
@@ -205,7 +205,7 @@
         </div>
       </div>
 
-      <div class="" *ngIf="screenWidth < 1200">
+      <div class="" *ngIf="false">
         <div
           class="btn-group"
           placement="bottom right"
@@ -313,7 +313,7 @@
 
         <tab
           *ngIf="regDocView"
-          heading="Información de la solicitud"
+          heading="Información de la Solicitud"
           id="documentationTab">
           <app-register-documentation-view
             [requestId]="requestId"
@@ -330,15 +330,19 @@
           *ngIf="registAppointment"
           heading="Registro de Cita"
           id="appointmentTab">
-          <app-register-appointment-tab></app-register-appointment-tab>
+          <app-register-dictum-val
+            [steap3]="steap3"
+            [requestId]="requestId"
+            (onAppoiment)="onAppoiment($event)"></app-register-dictum-val>
         </tab>
         <tab *ngIf="orderEntry" heading="Orden Ingreso" id="entryOrderTab">
-          <app-entry-order></app-entry-order>
+          <app-entry-order
+            (onSave)="onOrder($event)"
+            [requestId]="requestId"></app-entry-order>
         </tab>
         <tab *ngIf="orderView" heading="Orden Ingreso" id="entryOrderTab">
-          <app-entry-order-view></app-entry-order-view>
+          <app-entry-order-view [requestId]="requestId"></app-entry-order-view>
         </tab>
-
         <tab
           *ngIf="searchAssociateFile"
           heading="Buscar y Asociar al Expediente"
@@ -351,17 +355,32 @@
           heading="Seleccionar Bienes"
           id="selectGoodsTab">
           <app-select-goods
+            [btnGrouper]="btnGrouper"
+            [updateInfo]="updateInfo"
             (onChange)="onSelectGoods($event)"
             [idRequest]="requestId"></app-select-goods>
+
+          <div *ngIf="selectGoodsNot">
+            <app-goods-not-transferred
+              [requestId]="requestId"></app-goods-not-transferred>
+          </div>
         </tab>
         <tab
           *ngIf="selectGoodForEyeVisit"
-          heading="Bienes seleccionados"
+          heading="Bienes Seleccionados"
           id="selectGoodsEyeVisitTab">
           <app-select-good-eye-visit
             [idRequest]="requestId"
-            [typeVisit]="typeVisit"></app-select-good-eye-visit>
+            [viewGrouper]="btnGrouper"
+            [typeVisit]="typeVisit"
+            (onChange)="onProgramVisit($event)"></app-select-good-eye-visit>
+          <div *ngIf="selectGoodNotForEyeVisit">
+            <app-goods-not-transferred
+              [requestId]="requestId"
+              [readonly]="readonly"></app-goods-not-transferred>
+          </div>
         </tab>
+
         <tab
           heading="Verificar Cumplimiento de Bienes"
           *ngIf="verifyCompliance">
@@ -372,7 +391,9 @@
           *ngIf="validateGoodForEyeVisit"
           heading="Validar Resultado Visitas"
           id="validateGoodsEyeVisitTab">
-          <app-validate-eye-visit></app-validate-eye-visit>
+          <app-validate-eye-visit
+            [idRequest]="requestId"
+            (onChange)="onProgramVisit($event)"></app-validate-eye-visit>
         </tab>
         <tab
           *ngIf="resultVisits"
@@ -389,19 +410,40 @@
           <app-goods-list
             [requestId]="requestId"
             [processDetonate]="processDetonate"></app-goods-list>
+          <div *ngIf="selectGoodNotForEyeVisit">
+            <app-goods-not-transferred
+              [requestId]="requestId"
+              [readonly]="readonly"></app-goods-not-transferred>
+          </div>
         </tab>
         <tab *ngIf="guidelines" heading="Lineamientos" id="guidelinesTab">
-          <app-guidelines (onSave)="onSaveGuidelines($event)"></app-guidelines>
+          <app-guidelines
+            [requestId]="requestId"
+            (onChange)="onGuidelines($event)"></app-guidelines>
         </tab>
         <tab *ngIf="viewGuidelines" heading="Lineamientos" id="guidelinesTab">
-          <app-guidelines-view></app-guidelines-view>
+          <app-guidelines-view [requestId]="requestId"></app-guidelines-view>
         </tab>
 
         <tab *ngIf="dictumValidate" heading="Datos del Dictamen" id="dictumTab">
-          <app-register-dictum-val></app-register-dictum-val>
+          <app-register-dictum-val
+            [steap1]="steap1"
+            [requestId]="requestId"
+            [isEdit]="isEdit"
+            (onSave)="onDictumData($event)"></app-register-dictum-val>
         </tab>
+
         <tab *ngIf="dictumRegister" heading="Datos del Dictamen" id="dictumTab">
-          <app-register-dictum-inf></app-register-dictum-inf>
+          <app-register-dictum-val
+            [steap1]="steap1"
+            [steap2]="steap2"
+            [visible]="visible"
+            [requestId]="requestId"
+            [isEdit]="isEdit"></app-register-dictum-val>
+        </tab>
+        <tab *ngIf="dictumInfo" heading="Datos del Dictamen" id="dictumTab">
+          <app-dictum-information [requestId]="requestId">
+          </app-dictum-information>
         </tab>
 
         <tab
@@ -429,6 +471,7 @@
                   id="tab1"
                   (selectTab)="requestSelected(2)">
                   <app-doc-request-tab
+                    [updateInfo]="updateInfo"
                     [typeDoc]="typeDoc"
                     [typeModule]="typeModule"
                     (onChange)="onSelectFiles($event)"></app-doc-request-tab>
@@ -437,6 +480,7 @@
                   heading="Solicitudes del Expediente"
                   (selectTab)="requestSelected(3)">
                   <app-expedients-request-tab
+                    [updateInfo]="updateInfo"
                     [typeDoc]="typeDoc"
                     [typeModule]="typeModule"></app-expedients-request-tab>
                 </tab>

@@ -490,7 +490,7 @@ export class ChangeOfGoodClassificationComponent
     this.numberFile.setValue(good.fileNumber);
     this.fileNumberNew.setValue(good.fileNumber);
     this.unit.setValue(good.unit);
-    debugger;
+    //
     this.medFilters =
       good.unit && this.meds
         ? this.meds.filter(x => x.unit === good.unit)

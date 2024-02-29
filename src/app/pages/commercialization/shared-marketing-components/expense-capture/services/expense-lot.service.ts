@@ -40,7 +40,7 @@ export class ExpenseLotService extends HttpService {
   }
 
   VALIDA_SUBTOTAL_PRECIO(body: IValidSubPriceDTO) {
-    return this.post('validSubTotPrice', body);
+    return this.post('eat-lots/validSubTotPrice', body);
   }
 
   DIVIDE_MANDATOS(body: IDivideCommandsDTO) {
@@ -112,8 +112,8 @@ export class ExpenseLotService extends HttpService {
   }
 
   update(body: any) {
-    const id = body.idLot;
-    delete body.idLot;
+    const id = body.idLote;
+    delete body.idLote;
     return this.put(this.endpoint + '/' + id, body);
   }
 

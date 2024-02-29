@@ -8,17 +8,16 @@
       <form class="form-material" [formGroup]="newDocForm">
         <div class="row">
           <div class="col-md-12">
-            <ngx-select
-              [form]="newDocForm"
-              control="docType"
-              (fetchItems)="typedocuments($event)"
-              [data]="typesDocuments"
-              label="Tipo de Documento"
-              value="ddocType"
-              bindLabel="ddescription">
-            </ngx-select>
-
-            <!--  <div
+            <!--<ngx-select
+            [form]="newDocForm"
+            (change)="typeDocumentSelect($event)"
+            control="docType"
+            (fetchItems)="typedocuments($event)"
+            [data]="selectTypeDoc"
+            label="Tipo de Documento"
+            value="ddocType"
+            bindLabel="ddescription"></ngx-select> -->
+            <div
               [formGroup]="newDocForm"
               class="form-group form-secondary form-static-label">
               <ng-select
@@ -37,11 +36,11 @@
                 </ng-template>
               </ng-select>
               <span class="form-bar"></span>
-              <label class="float-label"
+              <label class="float-label label-form-exp"
                 >Tipo de Documento <span style="color: #ad4766">*</span></label
               >
             </div>
-          --></div>
+          </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-12">
@@ -92,13 +91,13 @@
             </form-field>
           </div>
         </div>
-        <div class="row pt-4">
+        <div *ngIf="typeDoc === 'good'" class="row pt-4">
           <div class="col-md-6">
             <form-field
               [control]="newDocForm.get('noSiab')"
               label="No&#46; SIAB&#58;">
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 formControlName="noSiab" />
             </form-field>
@@ -179,7 +178,7 @@
           </div>
         </div>
         <div class="row pt-4">
-          <div class="col-md-6">
+          <div *ngIf="typeDoc != 'good'" class="col-md-6">
             <p for="">
               Delegaci&oacute;n Regional&#58;
               <span *ngIf="regDelName">{{ regDelName }}</span>
@@ -198,7 +197,9 @@
             </p>
           </div>
         </div>
-        <div class="row pt-4" *ngIf="process != 'sampling-assets'">
+        <div
+          class="row pt-4"
+          *ngIf="process != 'sampling-assets' && typeDoc != 'good'">
           <div class="col-md-6">
             <p for="">
               Estado&#58; <span>{{ stateName }}</span>

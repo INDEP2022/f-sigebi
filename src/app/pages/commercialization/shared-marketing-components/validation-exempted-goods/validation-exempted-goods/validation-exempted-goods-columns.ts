@@ -3,14 +3,28 @@ export const GOODS_COLUMS = {
     title: 'No. Bien',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.goodNumber != null) return row.goodNumber.id;
+    },
   },
   description: {
     title: 'Descripción',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.goodNumber != null) return row.goodNumber.description;
+    },
   },
-  quantity: {
-    title: 'Cantidad',
+  unit: {
+    title: 'Unidad',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.goodNumber != null) return row.goodNumber.unit;
+    },
+  },
+  process: {
+    title: 'Proceso',
     type: 'string',
     sort: false,
   },

@@ -198,9 +198,8 @@ export class DetailAssetsTabComponentComponent
     private relevantTypeService: TypeRelevantService,
     private goodDomicilieService: GoodDomiciliesService,
     private goodProcessService: GoodProcessService,
-    private strategyService: StrategyServiceService
-  ) //private goodService2: GoodService2,
-  {
+    private strategyService: StrategyServiceService //private goodService2: GoodService2,
+  ) {
     super();
     this.atributActSettings = {
       ...this.settings,
@@ -221,7 +220,7 @@ export class DetailAssetsTabComponentComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     const address: IAddress = this.detailAssets.controls['addressId'].value;
-    // console.log(this.detailAssets.value);
+
     for (const campo in this.detailAssets.controls) {
       if (this.detailAssets.controls.hasOwnProperty(campo)) {
         const control = this.detailAssets.get(campo);
@@ -755,7 +754,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   setDomiciliesFieldRequired() {
-    console.log('TIPO DE TRANSFERENCIA ', this.typeOfRequest);
     const transferent = this.requestObject.transferenceId;
 
     /*if (this.typeOfRequest === 'MANUAL') {
@@ -838,8 +836,6 @@ export class DetailAssetsTabComponentComponent
 
           switch (transferente) {
             case 'SAT_SAE':
-              console.log('SAT_SAE');
-
               if (
                 this.detailAssets.controls['transferentDestiny'].value === null
               ) {
@@ -854,8 +850,6 @@ export class DetailAssetsTabComponentComponent
 
               break;
             case 'PGR_SAE':
-              console.log('PGR_SAE');
-
               if (
                 this.detailAssets.controls['transferentDestiny'].value === null
               ) {
@@ -1743,7 +1737,7 @@ export class DetailAssetsTabComponentComponent
           this.message(
             'error',
             'Error',
-            `El registro del inmueble no se guardo\n. ${error.error.message}`
+            `El registro del inmueble no se guardó\n. ${error.error.message}`
           );
         },
       });

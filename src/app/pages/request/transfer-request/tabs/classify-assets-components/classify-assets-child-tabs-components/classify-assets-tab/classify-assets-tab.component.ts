@@ -1211,9 +1211,11 @@ export class ClassifyAssetsTabComponent
     if (this.process === 'classify-assets') {
       this.classifyChildSaveFraction.emit(goodResult.result);
     } else {
-      setTimeout(() => {
-        this.refreshTable(true);
-      }, 5000);
+      this.refreshTable(true);
+
+      // setTimeout(() => {
+      //   this.refreshTable(true);
+      // }, 5000);
     }
   }
 

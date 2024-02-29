@@ -45,4 +45,72 @@ export class PaymentDevolutionService extends HttpService {
       body
     );
   }
+
+  getEatCtlCreate_(params: _Params) {
+    return this.get(`${PaymentDevolutionEndPoints.EatCtlCreate}`, params);
+  }
+  createEatCtlCreate_(data: any) {
+    return this.post(`${PaymentDevolutionEndPoints.EatCtlCreate}`, data);
+  }
+  putEatCtlCreate_(data: any, user: string) {
+    return this.put(`${PaymentDevolutionEndPoints.EatCtlCreate}/${user}`, data);
+  }
+  deleteEatCtlCreate_(data: any, user: string) {
+    return this.delete(
+      `${PaymentDevolutionEndPoints.EatCtlCreate}/${user}`,
+      data
+    );
+  }
+  applicationPupExpCsvReldevGar(data: any) {
+    return this.post(
+      `${PaymentDevolutionEndPoints.ApplicationPupExpCsvReldevGar2}`,
+      data
+    );
+  }
+
+  getCtlDevPagP_(params: any) {
+    return this.get(`${PaymentDevolutionEndPoints.ComerCtldevpagP}`, params);
+  }
+
+  getApplicationVwComerCtldevPagp(params: _Params) {
+    return this.get(
+      `${PaymentDevolutionEndPoints.ApplicationVwComerCtldevPagp}`,
+      params
+    );
+  }
+
+  getvwComerPaymenttobeReturned(params: any) {
+    return this.post(
+      `${PaymentDevolutionEndPoints.ApplicationGetvwComerPaymenttobeReturned}`,
+      params
+    );
+  }
+
+  getApplicationGetComerCtldevpagb(id: number | string) {
+    return this.get(
+      `${PaymentDevolutionEndPoints.ApplicationGetComerCtldevpagb}/${id}`
+    );
+  }
+
+  updateCtlDevPagH(data: any, id: number | string) {
+    return this.put(`${PaymentDevolutionEndPoints.EatCtldevpagH}/${id}`, data);
+  }
+
+  applicationPupSendSirsae(data: any) {
+    return this.post(
+      `${PaymentDevolutionEndPoints.ApplicationPupSendSirsae}`,
+      data
+    );
+  }
+
+  applicationPupVerifPagoSirsae(data: any) {
+    return this.post(
+      `${PaymentDevolutionEndPoints.ApplicationPupVerifPagoSirsae}`,
+      data
+    );
+  }
+
+  updateCtlDevPagP(data: any) {
+    return this.put(`${PaymentDevolutionEndPoints.ComerCtldevpagP}`, data);
+  }
 }

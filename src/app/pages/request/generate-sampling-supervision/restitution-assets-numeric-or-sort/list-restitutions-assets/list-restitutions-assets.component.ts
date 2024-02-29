@@ -14,7 +14,6 @@ import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { JSON_TO_CSV } from '../../../../admin/home/constants/json-to-csv';
 import { ShowDocumentsGoodComponent } from '../../../shared-request/expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
 import { PhotographyFormComponent } from '../../../shared-request/photography-form/photography-form.component';
-import { DataCaptureForEntryOrderFormComponent } from '../data-capture-for-entry-order-form/data-capture-for-entry-order-form.component';
 import { LIST_RESTITUTION_COLUMNS } from './list-restitution-columns';
 
 @Component({
@@ -36,6 +35,7 @@ export class ListRestitutionsAssetsComponent
   @Input() idSample: number = 0;
   @Input() filterObject: any;
   @Input() disabledButton: boolean;
+  @Input() checkAgainGoods: boolean;
   totalItems: number = 0;
   columns = LIST_RESTITUTION_COLUMNS;
   goodsModified: any = [];
@@ -58,18 +58,14 @@ export class ListRestitutionsAssetsComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoodsSampling());
     this.settings.columns = LIST_RESTITUTION_COLUMNS;
-    this.columns.repositionDate = {
-      ...this.columns.repositionDate,
-      onComponentInitFunction: (instance?: any) => {
-        instance.input.subscribe((data: any) => {
-          this.setRepositionDate(data);
-        });
-      },
-    };
   }
 
   ngOnChanges() {
-    if (this.filterObject != false && this.filterObject) {
+    if (
+      this.filterObject != false &&
+      this.filterObject &&
+      !this.checkAgainGoods
+    ) {
       if (this.filterObject.noManagement)
         this.params.getValue()['filter.goodId'] =
           this.filterObject.noManagement;
@@ -85,12 +81,17 @@ export class ListRestitutionsAssetsComponent
       this.params
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getGoodsSampling());
-    } else if (this.filterObject == false) {
+    } else if (this.filterObject == false && !this.checkAgainGoods) {
       this.params = new BehaviorSubject<ListParams>(new ListParams());
       this.params
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getGoodsSampling());
     }
+
+    if (this.checkAgainGoods)
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getGoodsSampling());
   }
 
   setRepositionDate(descriptionInput: any) {
@@ -116,22 +117,48 @@ export class ListRestitutionsAssetsComponent
   }
 
   getGoodsSampling() {
-    this.params.getValue()['filter.sampleId'] = this.idSample;
-    this.params.getValue()['filter.evaluationResult'] = 'NO CUMPLE';
-    this.samplingService.getSamplingGoods(this.params.getValue()).subscribe({
-      next: response => {
-        const info = response.data.map(item => {
-          if (item.repositionDate)
-            item.repositionDate = moment(item.repositionDate).format(
-              'DD/MM/YYYY'
-            );
-          return item;
-        });
-        this.paragraphs.load(info);
-        this.totalItems = response.count;
-      },
-      error: error => {},
-    });
+    if (this.checkAgainGoods == false) {
+      this.params.getValue()['filter.sampleId'] = this.idSample;
+      this.params.getValue()['filter.evaluationResult'] = 'NO CUMPLE';
+      this.params.getValue()['filter.indVerification'] = 'Y';
+
+      this.samplingService.getSamplingGoods(this.params.getValue()).subscribe({
+        next: response => {
+          const info = response.data.map(item => {
+            if (item.repositionDate)
+              item.repositionDate = moment(item.repositionDate).format(
+                'DD/MM/YYYY'
+              );
+            return item;
+          });
+          this.paragraphs.load(info);
+          this.totalItems = response.count;
+        },
+        error: error => {},
+      });
+    }
+    if (this.checkAgainGoods == true) {
+      this.params.getValue()['filter.sampleId'] = this.idSample;
+      this.params.getValue()['filter.evaluationResult'] = 'NO CUMPLE';
+      this.params.getValue()['filter.indVerification'] = 'Y';
+      this.params.getValue()['filter.restitutionStatus'] = 'RECHAZAR';
+
+      this.samplingService.getSamplingGoods(this.params.getValue()).subscribe({
+        next: response => {
+          console.log('sd', response);
+          const info = response.data.map(item => {
+            if (item.repositionDate)
+              item.repositionDate = moment(item.repositionDate).format(
+                'DD/MM/YYYY'
+              );
+            return item;
+          });
+          this.paragraphs.load(info);
+          this.totalItems = response.count;
+        },
+        error: error => {},
+      });
+    }
   }
 
   updateMyDate(event: any) {}
@@ -198,33 +225,23 @@ export class ListRestitutionsAssetsComponent
 
   numerari(): void {
     if (this.assetsSelected.length > 0) {
-      let config: ModalOptions = {
-        initialState: {
-          data: '',
-          typeComponent: '',
-          goodsSelect: this.assetsSelected,
-          callback: async (next: boolean) => {
-            if (next) {
-              const updateGood = await this.updateGoodSample(
-                this.assetsSelected,
-                'NUMERARIO',
-                'PENDIENTE_NUMERARIO'
-              );
-              if (updateGood) {
-                this.alert(
-                  'success',
-                  'Correcto',
-                  'Bien actualizado correctamente'
-                );
-                this.getGoodsSampling();
-              }
-            }
-          },
-        },
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      };
-      this.modalService.show(DataCaptureForEntryOrderFormComponent, config);
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea actualizar el bien?'
+      ).then(async question => {
+        if (question.isConfirmed) {
+          const updateGood = await this.updateGoodSample(
+            this.assetsSelected,
+            'NUMERARIO',
+            'PENDIENTE_NUMERARIO'
+          );
+          if (updateGood) {
+            this.alert('success', 'Correcto', 'Bien actualizado correctamente');
+            this.getGoodsSampling();
+          }
+        }
+      });
     } else {
       this.alert(
         'warning',
@@ -240,15 +257,23 @@ export class ListRestitutionsAssetsComponent
 
   async inSort(): Promise<void> {
     if (this.assetsSelected.length > 0) {
-      const updateGood = await this.updateGoodSample(
-        this.assetsSelected,
-        'EN ESPECIE',
-        'PENDIENTE_ESPECIE'
-      );
-      if (updateGood) {
-        this.alert('success', 'Correcto', 'Bien actualizado correctamente');
-        this.getGoodsSampling();
-      }
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea actualizar el bien?'
+      ).then(async question => {
+        if (question.isConfirmed) {
+          const updateGood = await this.updateGoodSample(
+            this.assetsSelected,
+            'EN ESPECIE',
+            'PENDIENTE_ESPECIE'
+          );
+          if (updateGood) {
+            this.alert('success', 'Correcto', 'Bien actualizado correctamente');
+            this.getGoodsSampling();
+          }
+        }
+      });
     } else {
       this.alert(
         'warning',
@@ -264,7 +289,8 @@ export class ListRestitutionsAssetsComponent
     goodStatus: string
   ) {
     return new Promise((resolve, reject) => {
-      assetsSelected.map(good => {
+      assetsSelected.map((good: any, i: number) => {
+        let index = i + 1;
         const sampleGood: ISampleGood = {
           sampleGoodId: good.sampleGoodId,
           typeRestitution: typeRestitution,
@@ -272,7 +298,9 @@ export class ListRestitutionsAssetsComponent
         };
         this.samplingService.editSamplingGood(sampleGood).subscribe({
           next: () => {
-            resolve(true);
+            if (assetsSelected.length == index) {
+              resolve(true);
+            }
           },
         });
       });

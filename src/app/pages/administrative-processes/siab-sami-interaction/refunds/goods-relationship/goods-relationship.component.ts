@@ -77,15 +77,17 @@ export class GoodsRelationshipComponent extends BasePage implements OnInit {
   }
 
   delete(event: any) {
-    this.alertQuestion('warning', 'Eliminar', 'Desea eliminar este bien?').then(
-      question => {
-        if (question.isConfirmed) {
-          //Ejecutar el servicio
-          this.data.remove(event.data);
-          this.data.refresh();
-        }
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este bien?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.data.remove(event.data);
+        this.data.refresh();
       }
-    );
+    });
   }
 
   settingsChange($event: any): void {

@@ -17,6 +17,7 @@ import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-e
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ButtonColumnComponent } from 'src/app/shared/components/button-column/button-column.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+
 import {
   DETAIL_REPORT_COLUMNS,
   REPORT_INVOICE_COLUMNS,
@@ -223,10 +224,14 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filter.field) {
-              case 'id_delegacion':
+              case 'id_factura':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'cuenta_fac':
+              case 'id_lote':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fecha':
+                filter.search = this.returnParseDateFormat(filter.search);
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -234,9 +239,9 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
                 break;
             }
             if (filter.search !== '') {
-              this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
+              this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
             } else {
-              delete this.columnFilters1[field];
+              delete this.columnFilters2[field];
             }
           });
           this.params2 = this.pageFilter(this.params2);
@@ -254,8 +259,8 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
       statusInvoice: [null, []],
       goods: [null, []],
       event: [null, []],
-      year: [null, []],
-      valid: ['A', []],
+      year: [null, [Validators.required]],
+      valid: ['A', [Validators.required]],
     });
     setTimeout(() => {
       this.getEvent(new ListParams());
@@ -287,8 +292,14 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
       this.dataFormat = [];
       this.data1.load([]);
       this.data1.refresh();
+      this.totalItems = 0;
       this.data2.load([]);
       this.data2.refresh();
+      this.totalItems2 = 0;
+      this.form.get('rangeDate').enable();
+      this.form.get('year').enable();
+
+      // this.show = false;
       console.log(this.data);
     }
     console.warn('Your order has been submitted');
@@ -347,6 +358,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
     let getGrafica = await this.getInvoices();
     console.log(getGrafica);
     this.array = getGrafica;
+    this.totalItems = this.array.count;
     this.arrayData = this.array.data;
     console.log(this.arrayData);
     for (let i = 0; i < this.arrayData.length; i++) {
@@ -398,7 +410,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
     if (this.dataFormatPercentage) {
       this.data1.load(this.dataFormatPercentage);
       this.data1.refresh();
-      this.totalItems = this.array.count;
+
       this.loading = false;
     }
     /*this.data = this.dataFormatPercentage;
@@ -411,6 +423,9 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
     let data3 = event.data;
     console.log(data3.id_delegacion);
     this.dataDetail = data3.id_delegacion;
+    this.params2 = new BehaviorSubject<ListParams>(new ListParams());
+    this.columnFilters2 = [];
+
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getDetailInvoices(this.dataDetail));
@@ -520,7 +535,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
         ...this.params2.getValue(),
         ...this.columnFilters2,
       };
-      console.log(body);
+      console.log(param);
       this.msInvoiceService.getDetailGetGegrafica(body, param).subscribe({
         next: resp => {
           this.validateExcel = false;

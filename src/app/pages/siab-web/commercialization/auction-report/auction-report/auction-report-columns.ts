@@ -3,7 +3,7 @@ import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filt
 
 export const AUCTION_REPORT_COLUMNS = {
   lote_publico: {
-    title: 'Lote Publico',
+    title: 'Lote Público',
     sort: false,
   },
   desc_lote: {
@@ -38,7 +38,7 @@ export const AUCTION_REPORT_COLUMNS = {
     },
   },
   linea_captura: {
-    title: 'Linea Captura',
+    title: 'Línea Captura',
     sort: false,
   },
   estatus: {
@@ -64,7 +64,7 @@ export const AUCTION_REPORT_COLUMNS = {
     filter: {
       type: 'list',
       config: {
-        selectText: 'Vista',
+        selectText: 'Seleccionar',
         list: [
           { value: 'VISTA', title: 'VISTA' },
           { value: 'NO VISTA', title: 'NO VISTA' },
@@ -76,7 +76,7 @@ export const AUCTION_REPORT_COLUMNS = {
 
 export const AUCTION_REPORT_COLUMNS1 = {
   lote_publico: {
-    title: 'Lote Publico',
+    title: 'Lote Público',
     sort: false,
   },
   desc_lote: {
@@ -111,7 +111,7 @@ export const AUCTION_REPORT_COLUMNS1 = {
     },
   },
   linea_captura: {
-    title: 'Linea Captura',
+    title: 'Línea Captura',
     sort: false,
   },
   estatus: {

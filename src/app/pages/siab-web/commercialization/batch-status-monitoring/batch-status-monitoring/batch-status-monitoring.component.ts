@@ -146,7 +146,7 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       typeGood: [null, [Validators.required]],
-      event: [null],
+      event: [null, [Validators.required]],
       DescEvent: [null],
       transferee: [null],
       allotment: [null],
@@ -161,6 +161,7 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
   }
 
   exportChangeLot() {
+    this.loader.load = true;
     const filename: string = 'Cambios de Estatus';
 
     if (!this.form.get('typeGood').value) {
@@ -170,27 +171,6 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
 
     if (!this.form.get('event').value) {
       this.alert('warning', 'Es necesario ingresar un Evento', '');
-      return;
-    }
-    if (!this.form.get('transferee').value) {
-      this.alert(
-        'warning',
-        'Es necesario ingresar una No. de Transferente',
-        ''
-      );
-      return;
-    }
-    if (!this.form.get('allotment').value) {
-      this.alert('warning', 'Es necesario ingresar el No. de Lote', '');
-      return;
-    }
-
-    if (!this.form.get('DescEvent').value) {
-      this.alert(
-        'warning',
-        'Es necesario ingresar la Descripción del Evento',
-        ''
-      );
       return;
     }
 
@@ -203,24 +183,21 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
       pEvent: 0,
     };
 
-    let params = {
-      ...this.params.getValue(),
-    };
-
-    this.comerEventosService.getLoteExport(body, params).subscribe({
+    this.comerEventosService.getLoteExportExcel(body).subscribe({
       next: resp => {
-        const allData = resp.data;
-        console.log(allData);
-        // Combinar todos los registros en this.line
-        this.excelService.export(allData, { filename });
+        this._downloadExcelFromBase64(resp.base64File, filename);
+        this.loader.load = false;
       },
       error: err => {
         console.log(err);
         this.alert('warning', 'No hay datos disponibles para exportar', '');
+        this.loader.load = false;
       },
     });
   }
-
+  lnkView(event: any) {
+    this.source();
+  }
   source() {
     this.loading1 = true;
     if (!this.form.get('typeGood').value) {
@@ -228,34 +205,8 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
       return;
     }
 
-    // if (!this.form.get('event').value) {
-    //   this.alert('warning', 'Es necesario ingresar un Evento', '');
-    //   return;
-    // }
-    // if (!this.form.get('transferee').value) {
-    //   this.alert(
-    //     'warning',
-    //     'Es necesario ingresar una No. de Transferente',
-    //     ''
-    //   );
-    //   return;
-    // }
-    // if (!this.form.get('allotment').value) {
-    //   this.alert('warning', 'Es necesario ingresar el No. de Lote', '');
-    //   return;
-    // }
-
-    // if (!this.form.get('DescEvent').value) {
-    //   this.alert(
-    //     'warning',
-    //     'Es necesario ingresar la Descripción del Evento',
-    //     ''
-    //   );
-    //   return;
-    // }
-
     let body = {
-      pOption: 1, //Cambio de status - 3, historial
+      pOption: 2, //Cambio de status - 3, historial
       pTypeGood: this.form.get('typeGood').value,
       pEventKey: this.form.get('event').value,
       pLot: this.form.get('allotment').value,
@@ -269,10 +220,12 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
 
     this.comerEventosService.getLoteExport(body, params).subscribe({
       next: resp => {
+        console.log(resp);
         this.data.load(resp.data);
+        this.data.refresh();
         this.totalItems = resp.count;
         this.loading1 = false;
-        this.consult();
+        // this.consult();
         this.show2 = true;
       },
       error: err => {
@@ -293,18 +246,18 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
         this.alert('warning', 'Es necesario ingresar un Evento', '');
         return;
       }
-      if (!this.form.get('transferee').value) {
-        this.alert(
-          'warning',
-          'Es necesario ingresar una No. de Transferente',
-          ''
-        );
-        return;
-      }
-      if (!this.form.get('allotment').value) {
-        this.alert('warning', 'Es necesario ingresar el No. de Lote', '');
-        return;
-      }
+      // if (!this.form.get('transferee').value) {
+      //   this.alert(
+      //     'warning',
+      //     'Es necesario ingresar una No. de Transferente',
+      //     ''
+      //   );
+      //   return;
+      // }
+      // if (!this.form.get('allotment').value) {
+      //   this.alert('warning', 'Es necesario ingresar el No. de Lote', '');
+      //   return;
+      // }
 
       if (!this.form.get('DescEvent').value) {
         this.alert(
@@ -366,18 +319,18 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
       this.alert('warning', 'Es necesario ingresar un Evento', '');
       return;
     }
-    if (!this.form.get('transferee').value) {
-      this.alert(
-        'warning',
-        'Es necesario ingresar una No. de Transferente',
-        ''
-      );
-      return;
-    }
-    if (!this.form.get('allotment').value) {
-      this.alert('warning', 'Es necesario ingresar el No. de Lote', '');
-      return;
-    }
+    // if (!this.form.get('transferee').value) {
+    //   this.alert(
+    //     'warning',
+    //     'Es necesario ingresar una No. de Transferente',
+    //     ''
+    //   );
+    //   return;
+    // }
+    // if (!this.form.get('allotment').value) {
+    //   this.alert('warning', 'Es necesario ingresar el No. de Lote', '');
+    //   return;
+    // }
 
     if (!this.form.get('DescEvent').value) {
       this.alert(
@@ -415,11 +368,15 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
   }
 
   consult() {
+    this.show = true;
+    this.loading2 = true;
     this.array = [];
     this.dataFormatPercentage = [];
     this.dataFormat = [];
     this.data1.load([]);
+    this.arrayData = [];
     this.data1.refresh();
+    this.totInvoices = 0;
     this.consultLot();
   }
 
@@ -468,13 +425,11 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
   }
 
   getDataAll() {
-    this.loading2 = true;
     if (this.dataFormatPercentage) {
       this.data1.load(this.dataFormatPercentage);
       this.data1.refresh();
       this.totalItems1 = this.dataFormatPercentage.length;
       this.loading2 = false;
-      this.show = true;
     }
     /*this.data = this.dataFormatPercentage;
     console.log(this.data);
@@ -616,7 +571,7 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
     console.log(event.id_evento);
 
     let body = {
-      pOption: 8, //Cambio de status - 3, historial
+      pOption: 4, //Cambio de status - 3, historial
       pEvent: event.id_evento,
     };
 
@@ -639,9 +594,20 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
   cerrarModal() {
     this.modal.hide();
   }
-
+  eventDesc(desc: any) {
+    this.form.get('DescEvent').setValue(desc.cve_proceso);
+    this.getTransferee(new ListParams());
+  }
+  selecctAllotment(event: any) {
+    this.getAllotment(new ListParams());
+  }
+  seleccEvent(event: any) {
+    this.getEvent(new ListParams());
+  }
   getEvent(params: ListParams) {
     console.log(params.text);
+    this.form.get('event').setValue(params.text);
+
     let body = {
       pOption: 5, //Cambio de status - 3, historial
       pTypeGood: this.form.get('typeGood').value,
@@ -661,6 +627,7 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
   }
   getTransferee(params: ListParams) {
     console.log(params.text);
+    // this.form.get('transferee').setValue(params.text);
     let body = {
       pOption: 6, //Cambio de status - 3, historial
       pTypeGood: this.form.get('typeGood').value,
@@ -680,6 +647,7 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
   }
   getAllotment(params: ListParams) {
     console.log(params.text);
+    // this.form.get('allotment').setValue(params.text);
     let body = {
       pOption: 7, //Cambio de status - 3, historial
       pTypeGood: this.form.get('typeGood').value,

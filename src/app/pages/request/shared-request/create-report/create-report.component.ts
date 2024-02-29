@@ -19,6 +19,8 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ReportService } from 'src/app/core/services/catalogs/reports.service';
 import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
+import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { SignatureTypeComponent } from '../signature-type/signature-type.component';
@@ -54,12 +56,13 @@ export class CreateReportComponent extends BasePage implements OnInit {
   formats: any = [];
   version: any = new Document();
   format: any = new Document();
-  loadDoc: any = null;
 
   // we use this property to store the quill instance
   quillInstance: any;
 
   status: string = 'Nuevo';
+  content: string = '';
+  template: boolean = false;
 
   form: FormGroup = new FormGroup({});
   model: any;
@@ -71,7 +74,13 @@ export class CreateReportComponent extends BasePage implements OnInit {
   @Input() tableName: string = null; // default value
   @Input() documentTypeId: string = null; // default value
 
-  @Output() refresh = new EventEmitter<true>();
+  signReportTab: boolean = false;
+
+  @Output() refresh = new EventEmitter<any>();
+  @Output() show = new EventEmitter<any>();
+  @Output() sign = new EventEmitter<any>();
+
+  isSigned: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -80,17 +89,15 @@ export class CreateReportComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private readonly authService: AuthService,
     private reportgoodService: ReportgoodService,
-    private reportService: ReportService
+    private reportService: ReportService,
+    private wContentService: WContentService,
+    private samplingGoodService: SamplingGoodService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    //this.tableName = 'SOLICITUDES';
-    //this.documentTypeId = '26';
-
     this.getCatFormats(new ListParams());
-    this.getVersionsDoc();
     this.prepareForm();
   }
 
@@ -101,23 +108,33 @@ export class CreateReportComponent extends BasePage implements OnInit {
     });
 
     this.form.get('template').valueChanges.subscribe(value => {
-      this.format = this.formats.data.find(x => x.id == value);
+      if (!isNullOrEmpty(this.formats)) {
+        this.format = this.formats.data.find(x => x.id == value);
+        this.format.documentTypeId = this.format.doctoTypeId.id;
+      }
     });
   }
 
   async getCatFormats(params: ListParams) {
+    console.log('getCatFormats', this.documentTypeId);
+
     params['shortBy'] = 'reportName';
     params['limit'] = 100;
 
     this.reportService.getAll(params).subscribe({
       next: resp => {
-        this.formats = new DefaultSelect(resp.data, resp.count);
-        let select = this.formats.data.find(
-          x => x.doctoTypeId.id == this.documentTypeId
-        );
-        this.format = select;
-        this.form.get('template').setValue(select.id);
-        this.form.get('template').disable();
+        let ids = this.documentTypeId.split(',');
+        let list = resp.data.filter(x => ids.includes(x.doctoTypeId.id));
+
+        if (list.length > 0) {
+          this.format = list[0];
+          this.form.get('template').setValue(list[0].id);
+          this.format.documentTypeId = list[0].doctoTypeId.id;
+          this.formats = new DefaultSelect(list, list.length);
+          this.getVersionsDoc();
+        } else {
+          this.formats = new DefaultSelect(resp.data, resp.count);
+        }
       },
       error: err => {
         this.formats = new DefaultSelect();
@@ -127,25 +144,24 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
   async getVersionsDoc() {
     let params = new ListParams();
-    params['filter.documentTypeId'] = `$eq:${this.documentTypeId}`;
+    params['filter.documentTypeId'] = `$eq:${this.format.doctoTypeId.id}`;
     params['filter.tableName'] = `$eq:${this.tableName}`;
     params['filter.registryId'] = `$eq:${this.requestId}`;
 
     this.reportgoodService.getReportDynamic(params).subscribe({
-      next: resp => {
-        if (resp.data.length > 0) {
-          this.loadDoc = resp.data[0];
-          this.version = this.loadDoc;
+      next: async resp => {
+        this.template = resp.data.length > 0;
+        if (this.template) {
+          this.version = resp.data[0];
+          this.isSigned = this.version.signedReport == 'Y';
         }
-
-        this.loadData();
       },
       error: err => {},
     });
   }
 
-  async saveVersionsDoc() {
-    if (isNullOrEmpty(this.format)) return;
+  async saveVersionsDoc(close = true, data = null) {
+    if (isNullOrEmpty(this.version.content)) return;
 
     const user: any = this.authService.decodeToken();
     let format = this.formats.data.find(
@@ -155,8 +171,8 @@ export class CreateReportComponent extends BasePage implements OnInit {
     let doc: any = {
       tableName: this.tableName,
       registryId: this.requestId,
-      documentTypeId: this.documentTypeId,
-      content: this.format.content,
+      documentTypeId: this.format.doctoTypeId.id,
+      content: this.version.content,
       signedReport: 'N',
       version: '1',
       ucmDocumentName: null,
@@ -169,69 +185,37 @@ export class CreateReportComponent extends BasePage implements OnInit {
       modificationDate: moment(new Date()).format('YYYY-MM-DD'),
     };
 
-    this.reportgoodService
-      .saveReportDynamic(doc, !isNullOrEmpty(this.loadDoc))
-      .subscribe({
-        next: resp => {
+    if (!isNullOrEmpty(data)) {
+      doc = { ...data };
+      doc.modificationUser = user.username;
+      doc.modificationDate = moment(new Date()).format('YYYY-MM-DD');
+    }
+
+    this.reportgoodService.saveReportDynamic(doc, !this.template).subscribe({
+      next: resp => {
+        this.template = true;
+        if (close) {
           this.onLoadToast('success', 'Documento guardado correctamente', '');
-          this.close();
-        },
-        error: err => {},
-      });
+        }
+      },
+      error: err => {},
+    });
   }
 
   onContentChanged = (event: any) => {
-    this.format.content = event.html;
+    this.version.content = event.html;
     this.form.get('content').setValue(event.html);
   };
 
   applyFormat() {
-    this.version = this.format;
-    this.loadData();
-  }
-
-  loadData() {
-    if (isNullOrEmpty(this.format)) return;
-
-    switch (this.process) {
-      case 'verify-compliance-return':
-        //Genera una tabla html en una cadena de texto
-        let table = `<table style="width:100%">
-  <tr>
-    <th>Company</th>
-    <th>Contact</th>
-    <th>Country</th>
-  </tr>
-  <tr>
-    <td>Alfreds Futterkiste</td>
-    <td>Maria Anders</td>
-    <td>Germany</td>
-  </tr>
-  <tr>
-    <td>Centro comercial Moctezuma</td>
-    <td>Francisco Chang</td>
-    <td>Mexico</td>
-  </tr>
-</table><br />`;
-
-        /*datos.forEach(dato => {
-          tabla += `
-        <tr>
-          <td>${dato.nombre}</td>
-          <td>${dato.edad}</td>
-        </tr>`;
-        });*/
-
-        let content = this.version.content;
-        //content = content.replace('{TABLA_BIENES}', table);
-        //content = content.replace('{FOLIO}', '');
-        //content = content.replace('{FECHA}', '');
-
-        this.version.content = content;
-        this.format.content = content;
-
-        break;
+    let form = { ...this.format };
+    if (!isNullOrEmpty(this.version.registryId)) {
+      this.version.content = form.content;
+    } else {
+      this.version = form;
     }
+
+    this.saveVersionsDoc(false);
   }
 
   isView() {
@@ -243,12 +227,11 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    console.log(this.form.value);
-    console.log(this.document);
     //this.editable ? this.update() : this.create(); //VALIDAR
   }
 
   close() {
+    this.onChange();
     this.modalRef.hide();
   }
 
@@ -264,8 +247,15 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     this.loading = false;
-    this.refresh.emit(true);
+    this.onChange();
     this.modalRef.hide();
+  }
+
+  onChange() {
+    this.refresh.emit({
+      upload: !isNullOrEmpty(this.version.content),
+      sign: false,
+    });
   }
 
   update() {
@@ -287,17 +277,18 @@ export class CreateReportComponent extends BasePage implements OnInit {
     //quillDelta = this.quillInstance.getContents();
   }
 
-  sign(context?: Partial<SignatureTypeComponent>): void {
+  sign00(context?: Partial<SignatureTypeComponent>): void {
     const modalRef = this.modalService.show(SignatureTypeComponent, {
       initialState: context,
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
     modalRef.content.signatureType.subscribe(next => {
-      /*if (next) {
-        this.isSigned = true;
-        this.tabsReport.tabs[0].active = true;
-      } else {
+      if (next) {
+        this.signReportTab = true;
+
+        this.tabsReport.tabs[1].active = true;
+      } /*else {
         this.isSignedReady = false;
         this.isSigned = false;
         this.tabsReport.tabs[0].disabled = false;
@@ -315,49 +306,116 @@ export class CreateReportComponent extends BasePage implements OnInit {
     }*/
   }
 
-  attachDocument() {
-    this.alertQuestion(
-      'warning',
-      'Confirmación',
-      '¿Está seguro que desea adjuntar el documento?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        //Ejecutar el servicio
-        this.onLoadToast('success', 'Documento adjuntado correctamente', '');
-        this.close();
-      }
-    });
+  generateReport() {
+    let documentTypeId = !isNullOrEmpty(this.version.documentTypeId)
+      ? this.version.documentTypeId
+      : this.format.documentTypeId;
+
+    this.wContentService
+      .downloadDinamycReport(
+        'sae.rptdesign',
+        'SOLICITUDES',
+        this.requestId,
+        documentTypeId
+      )
+      .subscribe({
+        next: response => {
+          //let blob = this.dataURItoBlob(response);
+          //let file = new Blob([response], { type: 'application/pdf' });
+          //const fileURL = URL.createObjectURL(file);
+          //this.openPrevPdf(fileURL);
+
+          /*
+           nombreDoc: string,
+    contentType: string,
+    docData: any,
+    file: any,
+    extension: string
+          */
+          let token = this.authService.decodeToken();
+
+          const formData = {
+            keyDoc: 'SOLICITUDES',
+            xDelegacionRegional: 0, //this.programming?.regionalDelegationNumber,
+            dDocTitle: 'Reporte',
+            xNombreProceso: 'SOLICITUDES',
+            xTipoDocumento: this.version.documentTypeId,
+            xNivelRegistroNSBDB: 'NA',
+            dDocType: '.pdf',
+            dDocAuthor: token.name,
+            dInDate: new Date(),
+            xidProgramacion: '',
+          };
+
+          this.wContentService
+            .addDocumentToContent(
+              'Reporte',
+              '.pdf',
+              JSON.stringify(formData),
+              response,
+              '.pdf'
+            )
+            .subscribe({
+              next: async resp => {
+                this.version.ucmDocumentName = resp.dDocName;
+
+                const sample: any = {
+                  regionalDelegationId: 0,
+                  startDate: moment(new Date()).format('YYYY-MM-DD'),
+                  endDate: moment(new Date()).format('YYYY-MM-DD'),
+                  speciesInstance: 'DOC_COMPLEMENTARIA',
+                  numeraryInstance: 'DOC_COMPLEMENTARIA',
+                  warehouseId: this.requestId,
+                  version: 1,
+                  transfereeId: this.version.documentTypeId,
+                  contentId: resp.dDocName,
+                };
+
+                this.samplingGoodService.createSample(sample).subscribe({
+                  next: response => {
+                    this.version.reportFolio = response.sampleId;
+                    this.saveVersionsDoc(false, this.version);
+
+                    this.sign.emit(this.version);
+                    this.close();
+                  },
+                  error: error => {
+                    this.alert('error', 'Error', 'Error al crear');
+                  },
+                });
+              },
+              error: error => {},
+            });
+        },
+        error: error => {
+          this.alert(
+            'error',
+            'Error en el reporte',
+            'No se pudo generar el reporte'
+          );
+        },
+      });
   }
 
-  /*pdfCreate(): void {
-    const quillDelta = this.quillInstance
-    console.log(quillDelta)
-    pdfExporter.generatePdf(quillDelta,).then((blob:any)=>{
-          console.log(blob)
-          let pdfurl = window.URL.createObjectURL(blob);
-          this.openPrevPdf(pdfurl)
-          // open the window
-          //let newWin = window.open(downloadURL,"newpdf.pdf");
-    }).catch(err=>{
-      console.log(err)
-    });
-  }*/
+  showFile() {
+    this.version.isSigned = this.isSigned;
+    let version = !isNullOrEmpty(this.version.documentTypeId)
+      ? this.version
+      : this.format;
 
-  /*openPrevPdf(pdfurl:string) {
-    console.log(pdfurl)
-    let config: ModalOptions = {
-      initialState: {
-        documento: {
-          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
-          type: 'pdf',
-        },
-        callback: (data: any) => {
-          console.log(data);
-        },
-      }, //pasar datos por aca
-      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-      ignoreBackdropClick: true, //ignora el click fuera del modal
-    };
-    this.modalService.show(PreviewDocumentsComponent, config);
-  }*/
+    console.log('showFile', version);
+    console.log('showFile', this.version);
+    console.log('showFile', this.format);
+
+    this.show.emit(version);
+  }
+
+  openSignature() {
+    if (isNullOrEmpty(this.version.ucmDocumentName)) {
+      this.generateReport();
+    } else {
+      this.sign.emit(this.version);
+      this.close();
+    }
+  }
 }

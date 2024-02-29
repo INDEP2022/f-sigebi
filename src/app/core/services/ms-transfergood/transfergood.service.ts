@@ -52,4 +52,8 @@ export class TranfergoodService extends HttpService {
   getEmailCentral(data: Object) {
     return this.post(TransfergoodEndpoint.SendEmailCheque, data);
   }
+
+  queryTransfer(expedient: string) {
+    return this.get(`application/query-transferor-no/${expedient}`);
+  }
 }

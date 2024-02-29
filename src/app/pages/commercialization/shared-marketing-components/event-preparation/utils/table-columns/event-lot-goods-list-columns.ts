@@ -5,6 +5,9 @@ export const EVENT_LOT_GOODS_LIST_COLUMNS = {
     title: 'No. Bien',
     sort: false,
     valuePrepareFunction: (good: any) => good?.id ?? '',
+    filterFunction: (cell: any, search?: string) => {
+      return true;
+    },
   },
   description: {
     title: 'Descripción',
@@ -42,6 +45,9 @@ export const EVENT_LOT_GOODS_LIST_COLUMNS = {
   lotepubremesa: {
     title: 'Lote Participa',
     sort: false,
+    valuePrepareFunction: (empty: any, row: any) => {
+      return row.lotepubremesa?.description ?? null;
+    },
   },
   remittanceEventId: {
     title: 'Evento Rem / Pre',
@@ -50,6 +56,9 @@ export const EVENT_LOT_GOODS_LIST_COLUMNS = {
   lotrepuborig: {
     title: 'Lote Rem / Pre',
     sort: false,
+    valuePrepareFunction: (empty: any, row: any) => {
+      return row.lotrepuborig?.description ?? null;
+    },
   },
   baseValue: {
     title: 'Valor Base',

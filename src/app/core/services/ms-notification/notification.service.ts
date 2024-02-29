@@ -35,7 +35,6 @@ export class NotificationService extends HttpService {
     this.microservice = this.route.Notification;
   }
 
-  //Trae los objetos de ciudad,delegación,departamento,instituciòn,subdelegacion y transferente
   getAllNotifications(
     params?: ListParams
   ): Observable<IListResponse<INotification>> {

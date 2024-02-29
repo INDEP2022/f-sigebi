@@ -39,7 +39,7 @@
               </ng-template>
             </ng-select>
             <span class="form-bar"></span>
-            <label class="float-label pb-4"
+            <label class="float-label pb-4 label-form-exp"
               >Usuario <span style="color: #ad4766">*</span></label
             >
           </div>
@@ -76,7 +76,7 @@
               </ng-template>
             </ng-select>
             <span class="form-bar"></span>
-            <label class="float-label"
+            <label class="float-label label-form-exp"
               >Unidad <span style="color: #ad4766">*</span></label
             >
           </div>
@@ -122,7 +122,7 @@
               </ng-template>
             </ng-select>
             <span class="form-bar"></span>
-            <label class="float-label"
+            <label class="float-label label-form-exp"
               >Archivo <span style="color: #ad4766">*</span></label
             >
           </div>
@@ -168,7 +168,7 @@
               </ng-template>
             </ng-select>
             <span class="form-bar"></span>
-            <label class="float-label"
+            <label class="float-label label-form-exp"
               >Disposici&oacute;n <span style="color: #ad4766">*</span></label
             >
           </div>
@@ -216,7 +216,7 @@
               </ng-template>
             </ng-select>
             <span class="form-bar"></span>
-            <label class="float-label"
+            <label class="float-label label-form-exp"
               >Funcionario <span style="color: #ad4766">*</span></label
             >
           </div>
@@ -233,12 +233,21 @@
       </div>
 
       <div class="row pt-4">
+        <div class="col-md-6" *ngIf="false">
+          <form-field label="">
+            <input
+              class="form-control fixed-datepicker"
+              bsDatepicker
+              ngModel
+              [maxDate]="maxDate" />
+          </form-field>
+        </div>
         <div class="col-md-6">
           <form-field
             [control]="associateFileForm.get('expedientDate')"
             label="Fecha Expediente">
             <input
-              class="form-control"
+              class="form-control fixed-datepicker"
               formControlName="expedientDate"
               bsDatepicker
               ngModel
@@ -264,9 +273,10 @@
             [control]="associateFileForm.get('reserveDateInai')"
             label="Fecha de Reserva">
             <input
-              class="form-control"
+              class="form-control fixed-datepicker"
               formControlName="reserveDateInai"
-              bsDatepicker />
+              bsDatepicker
+              ngModel />
           </form-field>
         </div>
 
@@ -333,9 +343,7 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <div class="form-group">
-            <label class="col-lg-6 text-right"
-              >DELEGACI&Oacute;N REGIONAL&#58;</label
-            >
+            <label class="col-lg-6 text-right">Delegación Regional:</label>
             <span> {{ regionalDelegacionName }} </span>
           </div>
         </div>

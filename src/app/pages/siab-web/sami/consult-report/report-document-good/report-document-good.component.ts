@@ -5,6 +5,7 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { BasePage, TABLE_SETTINGS } from 'src/app/core/shared';
@@ -24,7 +25,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class ReportDocumentGoodComponent extends BasePage implements OnInit {
   goodTypes = new DefaultSelect();
   searchForm: FormGroup = new FormGroup({});
-  showSearchForm: boolean = false;
+  showSearchForm: boolean = true;
   goodSelect: IGood[] = [];
   task: any;
   statusTask: any = '';
@@ -38,10 +39,11 @@ export class ReportDocumentGoodComponent extends BasePage implements OnInit {
     private typeRelevantService: TypeRelevantService,
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private authService: AuthService
   ) {
     super();
-    this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
+    this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = GOOD_DOCUMENTES_COLUMNS;
   }
 
@@ -81,11 +83,6 @@ export class ReportDocumentGoodComponent extends BasePage implements OnInit {
 
   showDocuments(): void {
     if (this.goodSelect.length == 0 || this.goodSelect.length >= 2) {
-      this.onLoadToast(
-        'warning',
-        'Debes de tener mínimo un bien seleccionado',
-        ''
-      );
     } else {
       const idGood = this.goodSelect[0].id;
       const idRequest = 0;
@@ -114,7 +111,9 @@ export class ReportDocumentGoodComponent extends BasePage implements OnInit {
   getGoodsRequest() {
     this.loading = true;
     this.params.getValue()['search'] = this.params.getValue().text;
-    this.params.getValue()['filter.delegationNumber'] = 11;
+    const user: any = this.authService.decodeToken();
+    this.params.getValue()['filter.delegationNumber'] = user.department;
+    this.params.getValue()['filter.requestId'] = '$not:$null';
     //this.searchForm.get('requestId').setValue(61590);
     this.goodService.getAll(this.params.getValue()).subscribe({
       next: (data: any) => {

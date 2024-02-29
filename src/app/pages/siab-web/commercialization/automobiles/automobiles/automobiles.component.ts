@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -53,6 +56,45 @@ export class automobilesComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          console.log(this.form.get('NoBien').value);
+          console.log(this.form.get('DescBien').value);
+          if (this.form.get('NoBien').value) {
+            this.getDataAll();
+          } else if (this.form.get('DescBien').value) {
+            this.getDataByDesc;
+          }
+        }
+      });
+    // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+    //   if (this.form.get('NoBien').value) {
+    //     this.getDataAll();
+    //   }else if (this.form.get('DescBien').value){
+    //     this.getDataByDesc
+    //   }
+    // });
     this.prepareForm();
   }
 
@@ -90,7 +132,12 @@ export class automobilesComponent extends BasePage implements OnInit {
   }
 
   chargeFile(event: any) {}
-
+  getData() {}
+  getDesc() {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDataByDesc());
+  }
   getDataAll() {
     if (!this.form.get('NoBien').value) {
       this.alert(
@@ -118,7 +165,6 @@ export class automobilesComponent extends BasePage implements OnInit {
         this.data.load([]);
         this.data.refresh();
         this.totalItems = 0;
-        this.alert('warning', 'No se Encontraron Registros', '');
       },
     });
   }
@@ -130,8 +176,10 @@ export class automobilesComponent extends BasePage implements OnInit {
         'Es Necesario contar con la Descripción del Bien',
         ''
       );
+      console.log('sdess');
       return;
     }
+    console.log('sdess');
     let param = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -150,7 +198,6 @@ export class automobilesComponent extends BasePage implements OnInit {
         this.data.load([]);
         this.data.refresh();
         this.totalItems = 0;
-        this.alert('warning', 'No se Encontraron Registros', '');
       },
     });
   }

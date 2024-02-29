@@ -116,10 +116,15 @@ export class NumeraireConversionAuctionsComponent
         error: err => {
           console.log(err);
           this.loader.load = false;
+          let errorMessage = err.error.message.includes(
+            'duplicate key value violates unique constraint'
+          )
+            ? 'Calculo ya realizado'
+            : err.error.message;
           this.alert(
             'error',
             'No se ha podido realizar el cálculo',
-            err.error.message
+            errorMessage
           );
         },
       });
@@ -151,27 +156,33 @@ export class NumeraireConversionAuctionsComponent
 
   private async calculaParcBody() {
     this.loader.load = true;
-    let resultBorra = await firstValueFrom(
-      this.convNumeraryService
-        .SPBorraNumera(+(this.selectedEvent.id + ''))
-        .pipe(catchError(x => of(x.error)))
-    );
-    if (resultBorra.statusCode !== 200) {
-      this.alert(
-        'error',
-        'No se ha podido calcular parcialmente',
-        resultBorra.message
-      );
-      this.loader.load = false;
-      return;
-    }
-    console.log(resultBorra);
+    // //
+    // let resultBorra = await firstValueFrom(
+    //   this.convNumeraryService
+    //     .SPBorraNumera(+(this.selectedEvent.id + ''))
+    //     .pipe(catchError(x => of(x.error)))
+    // );
+    // if (
+    //   resultBorra &&
+    //   resultBorra.statusCode &&
+    //   resultBorra.statusCode !== 200
+    // ) {
+    //   this.alert(
+    //     'error',
+    //     'No se ha podido calcular parcialmente',
+    //     resultBorra.message
+    //   );
+    //   this.loader.load = false;
+    //   return;
+    // }
+    // console.log(resultBorra);
     let resultParcial = await firstValueFrom(
       this.convNumeraryService
         .getSPGastosEventoParcial(+(this.selectedEvent.id + ''))
         .pipe(catchError(x => of(x.error)))
     );
-    if (resultParcial.statusCode !== 200) {
+    console.log(resultParcial);
+    if (resultParcial.statusCode && resultParcial.statusCode !== 200) {
       this.alert(
         'error',
         'No se ha podido calcular parcialmente',
@@ -187,6 +198,15 @@ export class NumeraireConversionAuctionsComponent
   }
 
   async calculaParc() {
+    // this.alertQuestion(
+    //   'question',
+    //   '¿Desea calcular parcialmente este evento?',
+    //   ''
+    // ).then(x => {
+    //   if (x.isConfirmed) {
+    //     this.calculaParcBody();
+    //   }
+    // });
     if (this.validParcialButton) {
       this.alertQuestion(
         'question',

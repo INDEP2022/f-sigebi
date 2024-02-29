@@ -5,7 +5,7 @@
 
   <div body>
     <form class="form-material" [formGroup]="formExp" (ngSubmit)="onSubmit()">
-      <div class="row">
+      <div class="row mb-5">
         <div class="col-md-4">
           <form-field
             [control]="formExp.get('expedient')"
@@ -26,14 +26,17 @@
             Buscar
             <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
-          <button [disabled]="!share" class="btn btn-danger btn-sm active mr-3">
-            Limpiar <i class="fas fa-eraser"> </i>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="openListProceeding()">
+            <i class="bx bx-list-plus bx-sm float-icon"></i>
           </button>
           <button
-            class="btn btn-primary active btn-sm mr-3"
-            (click)="loadModal()"
-            [disabled]="!share">
-            Seleccionar Acta <i class="fas fa-edit bx-sm float-icon"></i>
+            [disabled]="!share"
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="clearAll()">
+            Limpiar <i class="fas fa-eraser"> </i>
           </button>
           <button
             *ngIf="newA"
@@ -92,7 +95,7 @@
           [formGroup]="formExp"
           (ngSubmit)="onSubmit()">
           <div class="row mt-5 align-items-center">
-            <div class="col-md-6 text-center align-items-center">
+            <div class="col-md-4 text-center align-items-center">
               <div class="text-left pl-2">
                 <label class="label text-secondary">Captura</label>
               </div>
@@ -115,7 +118,19 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-6 text-center align-items-center">
+            <div class="col-md-2">
+              <div
+                *ngIf="statusProceeding != null"
+                [style.color]="statusProceeding == 'ABIERTA' ? 'green' : 'red'">
+                {{ statusProceeding }}
+              </div>
+            </div>
+            <div
+              [class]="
+                newA
+                  ? 'col-md-6 text-center align-items-center'
+                  : 'col-md-6 text-center align-items-center disabled'
+              ">
               <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="formExp.get('programmingType')"
@@ -123,7 +138,7 @@
                   <select
                     class="form-control"
                     formControlName="programmingType"
-                    [disabled]="!campos">
+                    [disabled]="true">
                     <option [value]="null">Seleccione un valor</option>
                     <option value="EVENCOMER">EVENCOMER</option>
                     <option value="EVENDON">EVENDON</option>
@@ -134,488 +149,412 @@
               </div>
             </div>
           </div>
+        </form>
 
-          <div *ngIf="select">
-            <div class="row pt-5 pb-5 text-center">
-              <!-- <div class="col-md-2"></div> -->
-              <div class="col">
-                <button
-                  class="btn btn-primary btn-sm active mr-3"
-                  (click)="loadExpedienGen()"
-                  [disabled]="!boton || !genConstancia">
-                  Gen. Constancia
-                </button>
-                <button
-                  class="btn btn-primary btn-sm active mr-3"
-                  [disabled]="!ActiveEdon"
-                  [disabled]="!boton"
-                  (click)="goodDonations()">
-                  Bienes Donaci&oacute;n
-                </button>
-                <button
-                  containerClass="tooltip-style"
-                  class="btn btn-info btn-sm active mr-3"
-                  [disabled]="!boton"
-                  (click)="RastreadorGood()">
-                  Agregar Bienes <i class="bx bx-plus bx-sm float-icon"></i>
-                </button>
-                <button
-                  class="btn btn-primary btn-sm active mr-3"
-                  [disabled]="ActiveEdon || !boton"
-                  (click)="Rastreador()">
-                  Rastreador
-                </button>
-                <button type="button" class="btn btn-primary btn-sm active">
-                  {{ labelSaveProceeding }}
-                  <i aria-hidden="true" class="fa fa-save"></i>
-                </button>
+        <form
+          class="form-material"
+          [formGroup]="formAct"
+          (ngSubmit)="onSubmit()">
+          <div *ngIf="newA">
+            <div class="row mt-4">
+              <form-field
+                [control]="formAct.get('actSelect')"
+                class="col"
+                label="Tipo Acta">
+                <select class="form-control" formControlName="actSelect">
+                  <option value="null">Seleccione un valor</option>
+                  <option value="E/VEN">E/VEN</option>
+                  <option value="E/DON">E/DON</option>
+                  <option value="E/DES">E/DES</option>
+                  <option value="E/DEV">E/DEV</option>
+                  <option value="E/RES">E/RES</option>
+                </select>
+              </form-field>
+              <form-field
+                [control]="formAct.get('trans')"
+                label="Trans"
+                class="col">
+                <input
+                  #inputValue
+                  type="text"
+                  [maxLength]="5"
+                  class="form-control"
+                  formControlName="trans"
+                  [readOnly]="!campos" />
+              </form-field>
+              <form-field [control]="formAct.get('authority')" class="col">
+                <ngx-select
+                  control="authority"
+                  label="Autoridad"
+                  bindLabel="transferKey"
+                  [data]="dataAutority"
+                  [form]="formAct"></ngx-select>
+              </form-field>
+              <form-field [control]="formAct.get('del')" class="col">
+                <ngx-select
+                  (fetchItems)="getDelegation($event)"
+                  control="del"
+                  label="Delegación"
+                  bindLabel="delegation"
+                  [data]="dataDelegation"
+                  [form]="formAct"></ngx-select>
+              </form-field>
+              <form-field
+                [control]="formAct.get('folio')"
+                label="Folio"
+                class="col">
+                <input
+                  #inputValue
+                  type="number"
+                  [min]="1"
+                  [maxLength]="5"
+                  class="form-control"
+                  formControlName="folio"
+                  [readOnly]="
+                    ['CERRADO', 'CERRADA'].includes(statusProceeding)
+                  " />
+              </form-field>
+              <form-field
+                [control]="formAct.get('year')"
+                label="Año"
+                class="col-md-1">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="year"
+                  readOnly />
+              </form-field>
+              <div class="col-md-1">
+                <form-field [control]="formAct.get('month')" label="Mes">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="month"
+                    readOnly />
+                </form-field>
               </div>
+            </div>
+          </div>
+          <div class="row mt-4">
+            <form-field
+              [control]="formAct.get('act')"
+              label="Cve. Acta"
+              class="col-md-6">
+              <input
+                #inputValue
+                type="text"
+                class="form-control"
+                formControlName="act"
+                readOnly />
+            </form-field>
+            <form-field
+              [control]="formAct.get('elabDate')"
+              label="Fecha Elaboración"
+              class="col-md-2">
+              <input
+                type="text"
+                class="form-control"
+                bsDatepicker
+                disable
+                formControlName="elabDate"
+                readOnly />
+            </form-field>
+            <form-field
+              [control]="formAct.get('actDate')"
+              class="col-md-2"
+              label="Fecha Acta">
+              <input
+                #inputValue
+                type="text"
+                class="form-control"
+                bsDatepicker
+                formControlName="actDate"
+                [readOnly]="
+                  ['CERRADO', 'CERRADA'].includes(statusProceeding)
+                " />
+            </form-field>
+            <form-field
+              [control]="formAct.get('captureDate')"
+              class="col-md-2"
+              label="Fecha Captura">
+              <input
+                #inputValue
+                type="text"
+                class="form-control"
+                bsDatepicker
+                formControlName="captureDate"
+                [readOnly]="
+                  ['CERRADO', 'CERRADA'].includes(statusProceeding)
+                " />
+            </form-field>
+          </div>
+          <div class="row">
+            <form-field
+              [control]="formAct.get('address')"
+              class="col-md-6"
+              label="Direcci&oacute;n">
+              <input
+                #inputValue
+                type="text"
+                class="form-control"
+                formControlName="address"
+                [readOnly]="
+                  ['CERRADO', 'CERRADA'].includes(statusProceeding)
+                " />
+            </form-field>
+            <form-field
+              [control]="formAct.get('observations')"
+              class="col-md-6"
+              label="Observaciones">
+              <textarea
+                class="form-control"
+                formControlName="observations"
+                [readOnly]="
+                  ['CERRADO', 'CERRADA'].includes(statusProceeding)
+                "></textarea>
+            </form-field>
+          </div>
+          <div class="row">
+            <form-field
+              [control]="formAct.get('receive')"
+              label="Recibe"
+              class="col-md-4">
+              <input
+                #inputValue
+                type="text"
+                class="form-control"
+                formControlName="receive"
+                [readOnly]="
+                  ['CERRADO', 'CERRADA'].includes(statusProceeding)
+                " />
+            </form-field>
+            <form-field
+              [control]="formAct.get('delivery')"
+              label="Entrega"
+              class="col-md-4">
+              <input
+                #inputValue
+                type="text"
+                class="form-control"
+                formControlName="delivery"
+                [readOnly]="
+                  ['CERRADO', 'CERRADA'].includes(statusProceeding)
+                " />
+            </form-field>
+            <form-field
+              [control]="formAct.get('witnessContr')"
+              class="col-md-4"
+              label="Testigo de la Contr.">
+              <input
+                #inputValue
+                type="text"
+                class="form-control"
+                formControlName="witnessContr"
+                [readOnly]="
+                  ['CERRADO', 'CERRADA'].includes(statusProceeding)
+                " />
+            </form-field>
+          </div>
+          <div *ngIf="select" class="row text-center mb-5 mt-5">
+            <div class="col">
+              <button
+                class="btn btn-primary btn-sm active mr-3"
+                [disabled]="!buttonActive.tracker"
+                (click)="goTrackerGood()">
+                Rastreador
+              </button>
+              <button
+                class="btn btn-primary btn-sm active mr-3"
+                [disabled]="!buttonActive.generateConst"
+                (click)="openGenerateConstans()">
+                Generar Constancia
+              </button>
+              <button
+                class="btn btn-primary btn-sm active mr-3"
+                [disabled]="!buttonActive.goodDon"
+                (click)="donationGoods()">
+                Bienes Donaci&oacute;n
+              </button>
+              <button
+                containerClass="tooltip-style"
+                class="btn btn-info btn-sm active mr-3"
+                [disabled]="
+                  ['CERRADO', 'CERRADA', null].includes(statusProceeding)
+                "
+                (click)="RastreadorGood()">
+                Agregar Bienes <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="select" class="row text-center mb-5">
+            <div class="col">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active mr-3"
+                [disabled]="['CERRADO', 'CERRADA'].includes(statusProceeding)"
+                (click)="saveProceeding()">
+                {{ labelSaveProceeding }}
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+              <button
+                containerClass="tooltip-style"
+                class="btn btn-info btn-sm active mr-3"
+                [disabled]="!buttonActive.closeProceeding"
+                (click)="closeProceeding()">
+                {{
+                  ['CERRADO', 'CERRADA'].includes(statusProceeding)
+                    ? 'Abrir acta'
+                    : 'Cerrar acta'
+                }}
+              </button>
+              <button
+                class="btn btn-red btn-sm active"
+                [disabled]="
+                  ['CERRADO', 'CERRADA'].includes(statusProceeding) ||
+                  idProceeding == null
+                "
+                (click)="deleteProceeding()">
+                Eliminar Acta <i class="fa fa-trash" aria-hidden="true"></i>
+              </button>
             </div>
           </div>
         </form>
 
-        <div *ngIf="select">
-          <form
-            class="form-material"
-            [formGroup]="formAct"
-            (ngSubmit)="onSubmit()">
-            <div *ngIf="newA">
-              <div class="row mt-4">
-                <form-field
-                  [control]="formAct.get('actSelect')"
-                  class="col"
-                  label="Tipo Acta">
-                  <select class="form-control" formControlName="actSelect">
-                    <option value="null">Seleccione un valor</option>
-                    <option value="E/VEN">E/VEN</option>
-                    <option value="E/DON">E/DON</option>
-                    <option value="E/DES">E/DES</option>
-                    <option value="E/DEV">E/DEV</option>
-                    <option value="E/DEV">E/RES</option>
-                  </select>
-                </form-field>
-                <form-field
-                  [control]="formAct.get('trans')"
-                  label="Trans"
-                  class="col">
-                  <input
-                    #inputValue
-                    type="text"
-                    class="form-control"
-                    formControlName="trans"
-                    [readOnly]="!campos" />
-                </form-field>
-                <form-field
-                  [control]="formAct.get('authority')"
-                  label="Autoridad"
-                  class="col">
-                  <input
-                    #inputValue
-                    type="text"
-                    class="form-control"
-                    formControlName="authority"
-                    [readOnly]="!campos" />
-                </form-field>
-                <form-field
-                  [control]="formAct.get('del')"
-                  label="Delegación"
-                  class="col">
-                  <input
-                    #inputValue
-                    type="text"
-                    class="form-control"
-                    formControlName="del"
-                    [readOnly]="!campos" />
-                </form-field>
-                <form-field
-                  [control]="formAct.get('folio')"
-                  label="Folio"
-                  class="col">
-                  <input
-                    #inputValue
-                    type="text"
-                    class="form-control"
-                    formControlName="folio"
-                    [readOnly]="!campos" />
-                </form-field>
-                <form-field
-                  [control]="formAct.get('year')"
-                  label="Año"
-                  class="col-md-1">
-                  <input
-                    #inputValue
-                    type="text"
-                    class="form-control"
-                    [bsConfig]="bsConfigFromYear"
-                    #dp="bsDatepicker"
-                    bsDatepicker
-                    [bsValue]="bsValueFromYear"
-                    formControlName="year"
-                    readOnly />
-                </form-field>
-                <div class="col-md-1">
-                  <form-field [control]="formAct.get('month')" label="Mes">
-                    <input
-                      #inputValue
-                      type="text"
-                      class="form-control"
-                      [bsConfig]="bsConfigFromMonth"
-                      #dp="bsDatepicker"
-                      bsDatepicker
-                      [bsValue]="bsValueFromMonth"
-                      formControlName="month"
-                      readOnly />
-                  </form-field>
-                </div>
-              </div>
+        <form class="form-material" [formGroup]="form">
+          <div class="row mb-5 mt-5 text-center">
+            <div class="col-md-2"></div>
+            <div class="col">
+              <button
+                type="button"
+                data-toggle="tooltip"
+                class="btn btn-secondary btn-sm active mr-1"
+                (click)="generateFolio()"
+                title="Generar Folio de Escaneo y Solicitud">
+                <i class="bx bxs-file-find"></i>
+              </button>
+              <button
+                type="button"
+                data-toggle="tooltip"
+                class="btn btn-secondary btn-sm active"
+                (click)="scan()"
+                title="Escanear">
+                <i class="bx bxs-file"></i>
+              </button>
             </div>
-
-            <div class="row mt-4">
-              <div class="col-md-4">
-                <div class="mb-3 pl-4 pr-4">
-                  <form-field [control]="formAct.get('act')" label="Cve. Acta">
-                    <input
-                      #inputValue
-                      type="text"
-                      class="form-control"
-                      formControlName="act"
-                      [readOnly]="!campos || !camposNew" />
-                  </form-field>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="mb-3 pl-4 pr-4">
-                  <form-field
-                    [control]="formAct.get('address')"
-                    label="Direcci&oacute;n">
-                    <input
-                      #inputValue
-                      type="text"
-                      class="form-control"
-                      formControlName="address"
-                      [readOnly]="!campos" />
-                  </form-field>
-                </div>
-              </div>
-              <div class="col-12 col-md-4">
-                <div class="mb-1 pl-4 pr-4">
-                  <form-field [control]="formAct.get('receive')" label="Recibe">
-                    <input
-                      #inputValue
-                      type="text"
-                      class="form-control"
-                      formControlName="receive"
-                      [readOnly]="!campos" />
-                  </form-field>
-                </div>
-              </div>
+            <form-field
+              class="col-md-3"
+              [control]="form.get('scanningFoli')"
+              label="Folio de Escaneo">
+              <input
+                [disabled]="['CERRADO', 'CERRADA'].includes(statusProceeding)"
+                type="number"
+                class="form-control"
+                min="1"
+                formControlName="scanningFoli"
+                maxlength="15" />
+            </form-field>
+            <!-- <div class="col">
+              <button
+                class="btn btn-primary btn-sm active"
+                type="button"
+                size="small"
+                min="1"
+                (click)="replicateFolio()">
+                Replicar Folio
+              </button>
+            </div> -->
+            <div class="col">
+              <button
+                type="button"
+                data-toggle="tooltip"
+                class="btn btn-secondary btn-sm active mr-1"
+                (click)="printScanFile()"
+                title="imprimir Solicitud de Escaneo">
+                <i class="bx bxs-printer"></i>
+              </button>
+              <button
+                type="button"
+                data-toggle="tooltip"
+                class="btn btn-secondary btn-sm active"
+                (click)="seeImages()"
+                title="Consulta de imágenes escaneadas">
+                <i class="bx bxs-file-find"></i>
+              </button>
             </div>
-          </form>
-          <form
-            class="form-material"
-            [formGroup]="formAct"
-            (ngSubmit)="onSubmit()">
-            <div class="row mt-4">
-              <div class="col-12 col-md-4">
-                <div class="mb-3 pl-4 pr-4">
-                  <form-field
-                    [control]="formAct.get('elabDate')"
-                    label="Fecha Elab.">
-                    <input
-                      #inputValue
-                      type="text"
-                      class="form-control"
-                      formControlName="elabDate"
-                      readOnly />
-                  </form-field>
-                </div>
-              </div>
-              <div class="col-12 col-md-4">
-                <div class="mb-3 pl-4 pr-4">
-                  <form-field
-                    [control]="formAct.get('actDate')"
-                    label="Fecha Acta">
-                    <input
-                      #inputValue
-                      type="text"
-                      class="form-control"
-                      bsDatepicker
-                      formControlName="actDate"
-                      [readOnly]="!campos" />
-                  </form-field>
-                </div>
-              </div>
-              <div class="col-12 col-md-4">
-                <div class="mb-3 pl-4 pr-4">
-                  <form-field
-                    [control]="formAct.get('captureDate')"
-                    label="Fecha Captura">
-                    <input
-                      #inputValue
-                      type="text"
-                      class="form-control"
-                      bsDatepicker
-                      formControlName="captureDate"
-                      [readOnly]="!campos" />
-                  </form-field>
-                </div>
-              </div>
-            </div>
-            <div class="row mt-4 align-items-center">
-              <div class="col-12 col-md-4">
-                <div class="mb-3 pl-4 pr-4">
-                  <form-field
-                    [control]="formAct.get('observations')"
-                    label="Observaciones">
-                    <textarea
-                      class="form-control"
-                      formControlName="observations"
-                      [readOnly]="!campos"></textarea>
-                  </form-field>
-                </div>
-              </div>
-              <div class="col-12 col-md-4">
-                <div class="mb-3 pl-4 pr-4">
-                  <form-field
-                    [control]="formAct.get('delivery')"
-                    label="Entrega">
-                    <input
-                      #inputValue
-                      type="text"
-                      class="form-control"
-                      formControlName="delivery"
-                      [readOnly]="!campos" />
-                  </form-field>
-                </div>
-              </div>
-              <div class="col-12 col-md-4">
-                <div class="mb-3 pl-4 pr-4">
-                  <form-field
-                    [control]="formAct.get('witnessContr')"
-                    label="Testigo de la Contr.">
-                    <input
-                      #inputValue
-                      type="text"
-                      class="form-control"
-                      formControlName="witnessContr"
-                      [readOnly]="!campos" />
-                  </form-field>
-                </div>
-              </div>
-            </div>
-          </form>
-          <form
-            class="form-material"
-            [formGroup]="formStatus"
-            (ngSubmit)="onSubmit()">
-            <div class="row mt-4 justify-content-center">
-              <div class="col-md-2">
-                <!-- <button class="btn btn-sm btn-secondary active" [disabled]="!boton">
-                Copiar Acta
-              </button> -->
-              </div>
-              <div class="col-md-2 text-center justify-content-sm-end">
-                <button
-                  class="btn btn-red btn-sm active"
-                  [disabled]="!boton || idProceeding == null"
-                  (click)="deleteProceeding()">
-                  Eliminar Acta <i class="fa fa-trash" aria-hidden="true"></i>
-                </button>
-              </div>
-              <div class="col-md-4">
-                <div class="mb-1 pl-4 pr-4">
-                  <form-field
-                    [control]="formStatus.get('status')"
-                    label="Estado">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="status"
-                      [readOnly]="!campos || !camposNew" />
-                  </form-field>
-                </div>
-              </div>
-              <div
-                class="col-md-2 text-center mt-3 mt-md-0 justify-content-start">
-                <button
-                  class="btn btn-primary btn-sm active mr-3"
-                  [disabled]="!boton"
-                  (click)="closeOpenProceeding()">
-                  {{ statusActa }}
-                </button>
-              </div>
-              <div class="col-md-2">
-                <!-- <button class="btn btn-sm btn-secondary active" [disabled]="!boton">
-                Pegar Acta
-              </button> -->
-              </div>
-            </div>
-          </form>
-        </div>
-        <div *ngIf="foliobool">
-          <form class="form-material" [formGroup]="form">
-            <div class="row">
-              <div class="col-sm-12 col-12 col-md-3 text-center">
-                <button
-                  tooltip="Generar Folio de Escaneo y Solicitud"
-                  containerClass="tooltip-style"
-                  class="btn btn-secondary btn-sm active m-1"
-                  (click)="btnSolicutud()"
-                  [disabled]="!boton">
-                  <i class="bx bxs-file-find"></i>
-                </button>
-                <button
-                  tooltip="Escanear"
-                  containerClass="tooltip-style"
-                  class="btn btn-secondary btn-sm active m-1"
-                  (click)="openScannerPage()"
-                  [disabled]="!boton || !folioScanbool">
-                  <i class="bx bxs-file"></i>
-                </button>
-              </div>
-              <div class="col-sm-12 col-12 col-md-4 w-100 p-0">
-                <div class="col-md-12 col-sm-12 col-12 p-0">
-                  <div class="col-md-12 col-sm-12 col-xs-12 p-1">
-                    <form-field
-                      label="Folio De Escaneo"
-                      [control]="form.get('scanningFoli')">
-                      <input
-                        type="text"
-                        class="form-control"
-                        formControlName="scanningFoli"
-                        readonly />
-                    </form-field>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="col-12 col-md-2 mt-3 mt-md-0 text-center text-md-right">
-                <button
-                  class="btn btn-sm btn-secondary active"
-                  [disabled]="!boton || !folioScanbool"
-                  (click)="replicate()">
-                  Replicar Folio
-                </button>
-              </div>
-              <div class="col-sm-12 col-12 col-md-3 text-center">
-                <button
-                  tooltip="Imprimir Solicitud de Escaneo"
-                  containerClass="tooltip-style"
-                  class="btn btn-secondary btn-sm active m-1"
-                  (click)="PupLanzaReporte()"
-                  [disabled]="!boton || !folioScanbool">
-                  <i class="bx bxs-printer"></i>
-                </button>
-                <button
-                  tooltip="Consulta de Imágenes Escaneadas"
-                  containerClass="tooltip-style"
-                  class="btn btn-secondary btn-sm active m-1"
-                  (click)="insertListImg()"
-                  [disabled]="!boton || !folioScanbool">
-                  <i class="bx bxs-file-find"></i>
-                </button>
-              </div>
-              <!-- (click)="getReportViewActa()" -->
-            </div>
-          </form>
-        </div>
+            <div class="col-md-2"></div>
+          </div>
+        </form>
         <hr />
-        <div class="row mt-5 justify-content-end mt-3">
-          <div class="col-md-5 buttons pt-3 text-right">
-            <app-columns-select
-              (settingsChange)="settingsChange($event, 1)"
-              [settings]="settings">
-            </app-columns-select>
+        <div class="row text-center">
+          <div class="col">
+            <span class="text-success mr-5"
+              ><i class="fa fa-square"></i> Disponibles</span
+            >
+            <span class="text-black"
+              ><i class="fa fa-square"></i> No disponibles</span
+            >
           </div>
         </div>
-        <div class="row mt-5 scroll-table">
+        <div [class]="loadingTable ? 'table-loading' : 'row pt-5'">
           <ng2-smart-table
             class="col-md-12"
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-responsive'"
             [settings]="settings1"
             [source]="data1"
-            (userRowSelect)="onRowSelect($event)">
+            (userRowSelect)="selectRowGood($event)">
           </ng2-smart-table>
+          <span class="mt-3">
+            <strong>{{ descriptionStatusGood }}</strong>
+          </span>
         </div>
         <app-pagination [params]="params" [totalItems]="totalItems">
         </app-pagination>
-        <div class="row">
-          <div class="d-flex align-items-center">
-            <div class="col-6 align-items-center">
-              <div class="mt-5">
-                <form
-                  class="form-material form-horizontal"
-                  [formGroup]="formTable1"
-                  (ngSubmit)="onSubmit()">
-                  <div
-                    class="row mt-5 justify-content-start justify-content-sm-end">
-                    <div class="mb-3 pl-4 pr-4">
-                      <form-field [control]="formTable1.get('detail')">
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="detail"
-                          readonly />
-                      </form-field>
-                    </div>
-                  </div>
-                </form>
+
+        <div class="row pt-2 pb-4">
+          <div class="col-md-12 d-flex justify-content-center">
+            <div class="d-flex justify-content-center align-items-sm-center">
+              <div class="col-md-3">
+                <label for="">Agregar</label>
+                <button
+                  tooltip="Agregar Bien"
+                  containerClass="tooltip-style"
+                  [disabled]="statusProceeding != 'ABIERTA'"
+                  class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                  type="button"
+                  (click)="insertGood()">
+                  <i class="bx bx-chevron-down bx-md"></i>
+                </button>
               </div>
-            </div>
-            <div class="col-6 align-items-center">
-              <div class="row">
-                <div class="col-6">
-                  <span class="text-success mr-5"
-                    ><i class="fa fa-square"></i> Disponibles</span
-                  >
-                </div>
-                <div class="col-6">
-                  <span class="text-danger"
-                    ><i class="fa fa-square"></i> No disponibles</span
-                  >
-                </div>
+              <div class="col-md-3">
+                <label for="">Eliminar</label>
+                <button
+                  tooltip="Quitar Bien"
+                  containerClass="tooltip-style"
+                  class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                  [disabled]="statusProceeding != 'ABIERTA'"
+                  type="button"
+                  (click)="deleteGood()">
+                  <i class="bx bx-chevron-up bx-md"></i>
+                </button>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="row mt-5">
-          <div class="col-md-12 text-center">
-            <button
-              type="button"
-              class="mx-2 btn btn-secondary btn-sm active"
-              (click)="addSelectedRow()"
-              [disabled]="selectedRow == null">
-              <i class="fa fa-angle-down"></i>
-            </button>
-            <button
-              type="button"
-              class="mx-2 btn btn-secondary btn-sm active"
-              [disabled]="deleteSelectedRow == null"
-              (click)="deleteSelect()">
-              <i class="fa fa-angle-up"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="row mt-5 justify-content-end mt-3">
-          <div class="col-md-5 buttons pt-3 text-right">
-            <app-columns-select
-              (settingsChange)="settingsChange($event, 1)"
-              [settings]="settings2">
-            </app-columns-select>
-          </div>
-        </div>
-        <div class="row mt-5 scroll-table">
+        <div [class]="loadingTable ? 'table-loading' : 'row pt-2'">
           <ng2-smart-table
             class="col-md-12"
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-responsive'"
             [settings]="settings2"
             [source]="data2"
-            (userRowSelect)="deleteRowSelect($event)">
+            (userRowSelect)="selectRowGoodActa($event)">
           </ng2-smart-table>
+          <span class="mt-3">
+            <strong>{{ diStatusGood }}</strong>
+          </span>
         </div>
-        <app-pagination [params]="params" [totalItems]="totalItems2">
+        <app-pagination [params]="params2" [totalItems]="totalItems2">
         </app-pagination>
         <div class="row">
           <form
@@ -623,22 +562,12 @@
             [formGroup]="formTable2"
             (ngSubmit)="onSubmit()">
             <div class="row mt-5">
-              <div class="col-6">
-                <div class="mb-3 pl-4 pr-4">
-                  <form-field [control]="formTable2.get('detail')">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="detail"
-                      readonly />
-                  </form-field>
-                </div>
-              </div>
-              <div class="col-md-6">
+              <div class="col-md-3">
                 <div class="mb-3 pl-4 pr-4">
                   <form-field [control]="formTable2.get('status')">
                     <select class="form-control" formControlName="status">
-                      <option [value]="null">En tiempo</option>
+                      <option value="En tiempo">En tiempo</option>
+                      <option value="Destiempo">Destiempo</option>
                     </select>
                   </form-field>
                 </div>
@@ -647,11 +576,11 @@
           </form>
         </div>
       </div>
-      <div class="row mt-5">
+      <!-- <div class="row mt-5">
         <div class="col-12 text-right">
           <button class="btn btn-success btn-sm active">Exportar Datos</button>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </app-card>

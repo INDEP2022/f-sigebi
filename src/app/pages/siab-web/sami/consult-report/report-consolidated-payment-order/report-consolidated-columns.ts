@@ -54,7 +54,7 @@ export const PAYMENT_ORDER_COLUMNS = {
   },
 
   applicationpreorderPayId: {
-    title: 'No. solicitud pre Orden Pago',
+    title: 'No. Solicitud pre Orden Pago',
     type: 'number',
     sort: false,
   },

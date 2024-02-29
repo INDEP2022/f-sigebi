@@ -3,95 +3,56 @@
     <h5 class="title">TIPOS MOVIMIENTO BANCO</h5>
   </div>
   <div body>
-    <div class="row margin-input">
-      <form action="" class="form-material" [formGroup]="form">
-        <div class="ch-content">
-          <div class="d-flex justify-content-between align-items-center">
-            <div style="width: 1000px" class="d-flex justify-content-between">
-              <div class="col-md-6">
-                <form-field [control]="form.get('bankSelect')">
-                  <!--(input)="onSearchName($event.target)"-->
-                  <ngx-select
-                    label="Seleccione un Banco"
-                    [data]="banks"
-                    [form]="form"
-                    [searchOnInit]="true"
-                    bindLabel="codeName"
-                    [control]="'bankSelect'"
-                    (fetchItems)="searchBanks($event)"
-                    (change)="changeBanc($event)"></ngx-select>
-                </form-field>
-              </div>
-              <div class="col-md-6">
-                <button
-                  type="button"
-                  class="btn btn-sm btn-info active mr-4"
-                  style="width: 110px; background-color: #9d2449"
-                  [disabled]="!form.valid"
-                  (click)="
-                    consultarBanco(form.get('bankSelect').value.bankCode)
-                  ">
-                  Consultar <i class="bx bx-search float-icon"></i>
-                  <!-- (click)="consultarBanco()" -->
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-sm btn-info active"
-                  style="width: 90px; background-color: #b38e5d"
-                  [disabled]="!form.valid"
-                  (click)="cleandInfoDate()">
-                  Limpiar <i class="fa fa-eraser"></i>
-                </button>
-              </div>
-            </div>
-
-            <!--<div class="mt-0 mb-5">
-            <button class="btn btn-info btn-sm active" (click)="openForm()">
-              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
-            </button>
-          </div>-->
-          </div>
-        </div>
-      </form>
-    </div>
-
-    <!--MODELS TABLE-->
-    <div class="row margin-input">
-      <!--<form class="form-material" [formGroup]="form1">
-        <div class="col-md-3">
-          <form-field [control]="form1.get('account')" label="No. Cuenta">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="account" />
+    <form action="" class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('bankSelect')">
+            <ngx-select
+              label="Seleccione un Banco"
+              [data]="banks"
+              [form]="form"
+              bindLabel="name"
+              [control]="'bankSelect'"
+              (fetchItems)="searchBanks($event)"
+              (input)="onSearchName($event.target)"></ngx-select>
           </form-field>
         </div>
-        <div class="col-md-3">
-          <form-field [control]="form1.get('branch')" label="Sucursal">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="branch" />
-          </form-field>
+        <div class="col-md-3 pt-2">
+          <button
+            type="button"
+            class="btn btn-sm btn-info active mr-4"
+            style="width: 110px; background-color: #9d2449"
+            [disabled]="!form.valid"
+            (click)="consultarBanco(form.get('bankSelect').value.bankCode)">
+            Consultar <i class="bx bx-search float-icon"></i>
+            <!-- (click)="consultarBanco()" -->
+          </button>
         </div>
-        <div class="col-md-6"></div>
-      </form>-->
-      <div class="col-md-8 mb-3"></div>
-      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
-        <div>
+        <div class="col-md-3 pt-2">
+          <button
+            type="button"
+            class="btn btn-sm btn-info active"
+            style="width: 90px; background-color: #b38e5d"
+            [disabled]="!form.valid"
+            (click)="cleandInfoDate()">
+            Limpiar <i class="fa fa-eraser"></i>
+          </button>
+        </div>
+        <div class="col-md-2 pt-2">
           <button
             type="button"
             tooltip="Nuevo"
-            containerclass="tooltip-style"
+            containerClass="tooltip-style"
             class="btn btn-info btn-sm active ml-2 mr-2"
             (click)="openForm()">
             Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
-        <app-columns-select
-          [(settings)]="settings"
-          [leftList]="true"></app-columns-select>
       </div>
+    </form>
+
+    <!--MODELS TABLE-->
+    <div class="row pt-2">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table

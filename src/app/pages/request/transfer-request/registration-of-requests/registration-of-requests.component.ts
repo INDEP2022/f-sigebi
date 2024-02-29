@@ -162,6 +162,7 @@ export class RegistrationOfRequestsComponent
   processView() {
     this.route.data.forEach((item: any) => {
       this.process = item.process;
+      console.log('Tipo de proceso:', this.process);
     });
   }
 
@@ -614,7 +615,7 @@ export class RegistrationOfRequestsComponent
   returnar() {
     const typeCommit = 'returnar';
     this.msgSaveModal(
-      'Returnar la Solicitud',
+      'Returnar',
       '¿Está seguro de returnar la solicitud actual?',
       'Confirmación',
       'question',
@@ -1128,7 +1129,7 @@ export class RegistrationOfRequestsComponent
 
     const existDictamen = await this.getDictamen(this.requestData.id);
     if (existDictamen === true) {
-      this.onLoadToast('warning', '', 'Ya se generó un dictamen');
+      this.onLoadToast('warning', 'Atención', 'Ya se firmó un dictamen');
       return;
     }
 

@@ -4,10 +4,11 @@ import {
   Input,
   OnInit,
   Output,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, map, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -37,6 +38,7 @@ import {
   GOODS_RES_DEV_INV_COLUMNS,
   SELECT_GOODS_COLUMNS,
 } from './select-goods-columns';
+import { ViewDetailGoodsComponent } from './view-detail-goods/view-detail-goods.component';
 import { ViewFileButtonComponent } from './view-file-button/view-file-button.component';
 
 @Component({
@@ -56,10 +58,16 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   goodColumns = new LocalDataSource();
   selectedGoodColumns: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
+  params2 = new BehaviorSubject<FilterParams>(new FilterParams());
+
   @Input() nombrePantalla: string = 'sinNombre';
   @Input() idRequest: number = 0;
+  @Input() updateInfo: boolean = true;
+  @Input() btnGrouper: boolean = false;
+
   goodSelected: boolean = false;
   jsonBody: any = {};
+
   goodSettings = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -92,13 +100,13 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getInfoRequest();
     const self = this;
     this.goodSettings.columns = {
       addGood: {
         title: 'Agregar Bien',
         type: 'custom',
         sort: false,
+        showAlways: true,
         renderComponent: AddGoodsButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe(async (row: any) => {
@@ -109,14 +117,18 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
           });
         },
       },
+
       viewFile: {
         title: 'Expediente',
         type: 'custom',
         sort: false,
+        showAlways: true,
         renderComponent: ViewFileButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
             //component.requesInfo(row.requestId);
+            component.getFormSeach(row.solicitudId);
+            console.log(row);
             //component.viewFile(row);
           });
         },
@@ -129,13 +141,17 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         title: 'Expediente',
         type: 'custom',
         sort: false,
+        showAlways: true,
         renderComponent: ViewFileButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
-            //component.requesInfo(row.requestId);
+            component.viewFile(row);
+            console.log(row);
+            component.getFormSeach(row.applicationId);
           });
         },
       },
+
       /*goodGrouper: {
         title: 'Nombre del Bien Agrupador',
         type: 'custom',
@@ -150,9 +166,29 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       ...this.selectedGoodSettings.columns,
     };
     //this.selectedGoodColumns = datagood;
+
+    this.getInfoRequest();
+  }
+
+  getFormSeach(recordId: any) {
+    this.loading = true;
+    this.requestService.getById(recordId).subscribe({
+      next: resp => {
+        console.log('Respuesta del servidor:', resp); // Imprime la respuesta completa
+        this.openDetail(resp);
+      },
+      error: error => {
+        this.loading = false;
+        this.alert('warning', 'No se encontraron registros', '');
+      },
+    });
+    this.loading = false;
   }
 
   getInfoRequest() {
+    this.selectedGoodColumns = [];
+    this.selectedGoodTotalItems = this.selectedGoodColumns.length;
+
     this.requestService.getById(this.idRequest).subscribe({
       next: response => {
         this.requestInfo = response;
@@ -161,17 +197,39 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       error: error => {},
     });
 
-    const param = new FilterParams();
-    param.addFilter('applicationId', this.idRequest);
-    const filter = param.getParams();
+    this.getRejectedGoodService();
+
+    this.selectedGoodParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(data => {
+        this.getRejectedGoodService(data);
+      });
+  }
+
+  getRejectedGoodService(filter: any = new FilterParams()) {
+    filter['filter.applicationId'] = `$eq:${this.idRequest}`;
+
     this.rejectedGoodService.getAll(filter).subscribe({
       next: response => {
+        this.selectedGoodColumns = [];
+        this.selectedGoodTotalItems = response.count;
+
         response.data.forEach((item: any) => {
           this.addGood(item);
         });
+
+        this.displayColumns();
       },
-      error: error => {},
+      error: error => {
+        this.displayColumns();
+      },
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!isNullOrEmpty(changes['updateInfo'])) {
+      this.getInfoRequest();
+    }
   }
 
   getProcessDetonate() {
@@ -212,6 +270,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   getInfoGoods(filters: any) {
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
+
     this.jsonBody = {};
     if (
       this.processDet == 'DEVOLUCION' ||
@@ -400,40 +460,56 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   } */
 
   openReserveModal(good: any) {
+    let exitGood: any = this.selectedGoodColumns.find(
+      x => x.goodId == good.goodId
+    );
+
     if (this.processDet == 'DEVOLUCION' || this.processDet == 'RES_NUMERARIO') {
       const modalRef = this.modalService.show(ReserveGoodModalComponent, {
-        initialState: { good: good, requestId: this.requestInfo.id },
+        initialState: {
+          good: good,
+          requestId: this.requestInfo.id,
+          exitGood: exitGood,
+        },
         class: 'modal-md modal-dialog-centered',
         ignoreBackdropClick: true,
       });
       modalRef.content.onReserve.subscribe((data: boolean) => {
-        if (data) this.addGood(data);
+        if (data) this.getInfoRequest();
       });
     } else if (this.processDet != 'INFORMACION') {
       const modalRef = this.modalService.show(ReserveGoodModalComponent, {
-        initialState: { good: good, requestId: this.requestInfo.id },
+        initialState: {
+          good: good,
+          requestId: this.requestInfo.id,
+          exitGood: exitGood,
+        },
         class: 'modal-md modal-dialog-centered',
         ignoreBackdropClick: true,
       });
       modalRef.content.onReserve.subscribe((data: boolean) => {
-        if (data) this.addGood(data);
+        if (data) this.getInfoRequest();
       });
     } else {
-      this.addGoodForInformation(good);
+      if (isNullOrEmpty(exitGood)) {
+        this.addGoodForInformation(good);
+      } else {
+        this.onLoadToast('warning', 'El bien ya ha sido agregado');
+      }
     }
   }
 
   addGood(good: any) {
     delete good.addGood;
-    // good = Object.assign({ viewFile: '' }, good);
+    good = Object.assign({ viewFile: '' }, good);
     this.selectedGoodColumns = [...this.selectedGoodColumns, good];
-    this.selectedGoodTotalItems = this.selectedGoodColumns.length;
-    this.displayColumns();
+    console.log('aqui agregar');
+
+    //this.selectedGoodTotalItems = this.selectedGoodColumns.length;
     this.selectChanges();
   }
 
   selectGoods(rows: any) {
-    console.log(rows);
     if (rows.isSelected == false) {
       this.table.isAllSelected = false;
     }
@@ -464,7 +540,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
             //elimina inventario
             this.deleteGoodDated(item);
           } else {
-            // this.deleteGoodResDev(item);
+            this.deleteGoodResDev(item);
           }
 
           if (goodSelected == i) {
@@ -488,6 +564,23 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         console.log(this.selectedGoods, this.selectedGoodColumns);*/
       }
     });
+  }
+
+  openDetail(data: any): void {
+    this.openModalInformation(data, 'detail');
+  }
+
+  private openModalInformation(data: any, typeInfo: string) {
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        typeInfo,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ViewDetailGoodsComponent, config);
   }
 
   openSiabSearch() {
@@ -514,23 +607,21 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   displayColumns() {
     const columnas = this.table.grid.getColumns();
 
+    const goodGrouper = columnas.find(
+      (columna: any) => columna.id === 'goodGrouper'
+    );
+
+    if (!isNullOrEmpty(goodGrouper)) {
+      goodGrouper.hide = isNullOrEmpty(this.btnGrouper)
+        ? true
+        : !this.btnGrouper;
+    }
+
     if (this.processDet != 'RES_PAGO_ESPECIE') {
       const columnaSelectRigth = columnas.find(
         (columna: any) => columna.id === 'resultTaxpayer'
       );
       columnaSelectRigth.hide = true;
-
-      const goodGrouper = columnas.find(
-        (columna: any) => columna.id === 'goodGrouper'
-      );
-      goodGrouper.hide = true;
-    }
-
-    if (this.processDet != 'RES_ESPECIE') {
-      const goodGrouper = columnas.find(
-        (columna: any) => columna.id === 'goodGrouper'
-      );
-      goodGrouper.hide = true;
     }
 
     if (this.processDet != 'RES_NUMERARIA') {
@@ -559,12 +650,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     });
     modalRef.content.event.subscribe(next => {
       if (next != undefined) {
-        next.map((item: any) => {
-          const index = this.selectedGoodColumns.indexOf(item);
-          this.selectedGoodColumns[index].goodGrouper = item.goodGrouper;
-        });
+        this.getInfoRequest();
       }
-      this.selectedGoodColumns = [...this.selectedGoodColumns];
     });
   }
 
@@ -576,7 +663,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         },
         error: error => {
           reject(error);
-          this.onLoadToast('error', 'No se pudieron eliminar los Bienes');
+          //this.onLoadToast('error', 'No se pudieron eliminar los Bienes');
         },
       });
     });
@@ -653,6 +740,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     goodResDev.descriptionGood = good.goodDescription;
     goodResDev.unitExtent = good.unitMeasurement;
     goodResDev.amountToReserve = good.quantity;
+    goodResDev.applicationResDevId = good.applicationResDevId;
     (goodResDev.amount = 0), (goodResDev.statePhysical = good.physicalStatus);
     goodResDev.stateConservation = good.conservationStatus;
     goodResDev.fractionId = good.fractionId;
@@ -677,7 +765,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     console.log(goodResDev);
     this.rejectedGoodService.createGoodsResDev(goodResDev).subscribe({
       next: resp => {
-        this.onLoadToast('success', 'Se agrego el bien');
+        this.addGood(goodResDev);
+        this.onLoadToast('success', 'Se agregó el bien');
       },
       error: error => {
         this.onLoadToast('error', 'No se pudo crear el bien');

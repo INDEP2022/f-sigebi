@@ -325,7 +325,7 @@ export class ReturnsConficationsListComponent
     this.alertQuestion(
       'warning',
       'Actualización Masiva',
-      'Desea Actualizar Todos los Bienes?'
+      '¿Desea Actualizar Todos los Bienes?'
     ).then(question => {
       if (question.isConfirmed) {
         this.putGoodUpMasive();

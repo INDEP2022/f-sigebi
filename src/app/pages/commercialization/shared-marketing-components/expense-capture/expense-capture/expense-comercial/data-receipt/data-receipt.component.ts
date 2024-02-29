@@ -12,7 +12,7 @@ import { ContractsModalComponent } from './contracts-modal/contracts-modal.compo
 @Component({
   selector: 'app-data-receipt',
   templateUrl: './data-receipt.component.html',
-  styleUrls: ['./data-receipt.component.css'],
+  styleUrls: ['./data-receipt.component.scss'],
 })
 export class DataReceiptComponent implements OnInit {
   @Input() set expense(value: IComerExpense) {
@@ -29,18 +29,18 @@ export class DataReceiptComponent implements OnInit {
         secondFormatDateToDateAny(value.fecha_contrarecibo)
       );
       this.attachedDocumentation.setValue(value.attachedDocumentation);
-      this.monthExpense.setValue(value.monthExpense);
-      this.monthExpense2.setValue(value.monthExpense2);
-      this.monthExpense3.setValue(value.monthExpense3);
-      this.monthExpense4.setValue(value.monthExpense4);
-      this.monthExpense5.setValue(value.monthExpense5);
-      this.monthExpense6.setValue(value.monthExpense6);
-      this.monthExpense7.setValue(value.monthExpense7);
-      this.monthExpense8.setValue(value.monthExpense8);
-      this.monthExpense9.setValue(value.monthExpense9);
-      this.monthExpense10.setValue(value.monthExpense10);
-      this.monthExpense11.setValue(value.monthExpense11);
-      this.monthExpense12.setValue(value.monthExpense12);
+      this.monthExpense.setValue(value.monthExpense ? true : false);
+      this.monthExpense2.setValue(value.monthExpense2 ? true : false);
+      this.monthExpense3.setValue(value.monthExpense3 ? true : false);
+      this.monthExpense4.setValue(value.monthExpense4 ? true : false);
+      this.monthExpense5.setValue(value.monthExpense5 ? true : false);
+      this.monthExpense6.setValue(value.monthExpense6 ? true : false);
+      this.monthExpense7.setValue(value.monthExpense7 ? true : false);
+      this.monthExpense8.setValue(value.monthExpense8 ? true : false);
+      this.monthExpense9.setValue(value.monthExpense9 ? true : false);
+      this.monthExpense10.setValue(value.monthExpense10 ? true : false);
+      this.monthExpense11.setValue(value.monthExpense11 ? true : false);
+      this.monthExpense12.setValue(value.monthExpense12 ? true : false);
       this.exchangeRate.setValue(+value.exchangeRate);
       this.formPayment.setValue(value.formPayment);
       this.comproafmandsae.setValue(value.comproafmandsae);
@@ -68,7 +68,9 @@ export class DataReceiptComponent implements OnInit {
                 this.form
                   .get('descontract')
                   .setValue(response.data[0].desContract);
-                this.form.get('clkpv').setValue(response.data[0].clkpv);
+                if (this.form.get('clkpv').value) {
+                  this.form.get('clkpv').setValue(response.data[0].clkpv);
+                }
                 this.form.get('padj').setValue(response.data[0].padj);
                 this.form.get('psadj').setValue(response.data[0].psadj);
                 this.form.get('pssadj').setValue(response.data[0].pssadj);

@@ -172,7 +172,7 @@ export class EntryOrdersComponent
           this.loader.load = false;
           this.alert(
             'success',
-            'Se replico el folio y se guardo correctamente',
+            'Se replico el folio y se guardó correctamente',
             ''
           );
         },
@@ -216,7 +216,12 @@ export class EntryOrdersComponent
   }
 
   override getData() {
-    if (!this.dataService || !this.eventNumber || !this.lotNumber) {
+    if (
+      !this.dataService ||
+      !this.eventNumber ||
+      !this.lotNumber ||
+      !this.clkpv.value
+    ) {
       return;
     }
     this.loading = true;
@@ -241,10 +246,24 @@ export class EntryOrdersComponent
             this.loading = false;
           } else {
             this.notGetData();
+            if (this.expenseCaptureDataService.PDEVCLIENTE) {
+              this.alert(
+                'warning',
+                'Ordenes de Ingreso',
+                'Este lote no tiene reportado, pagos en exceso, verifique'
+              );
+            }
           }
         },
         error: err => {
           this.notGetData();
+          if (this.expenseCaptureDataService.PDEVCLIENTE) {
+            this.alert(
+              'warning',
+              'Ordenes de Ingreso',
+              'Este lote no tiene reportado, pagos en exceso, verifique'
+            );
+          }
         },
       });
   }

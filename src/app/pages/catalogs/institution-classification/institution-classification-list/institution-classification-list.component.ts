@@ -105,7 +105,7 @@ export class InstitutionClassificationListComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este Registro?'
+      '¿Desea eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(institution.id);

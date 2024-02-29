@@ -364,7 +364,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     params['filter.reviewers'] = `$ilike:${user.username}`;
     params['filter.idDelegationRegional'] = `$eq:${idDeleReg}`;
     params['sortBy'] = 'id:DESC';
-    debugger;
+    //
     const result: any = await this.getTaskRepostBase64(params);
     const base64String = result.base64File;
     const filename: string = result.nameFile;
@@ -670,6 +670,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
                 item.requestId != null ? item.requestId : item.programmingId;
 
             if (item.idSampling) item.requestId = item.idSampling;
+            if (item.idSamplingOrder) item.requestId = item.idSamplingOrder;
           });
 
           resolve(response);

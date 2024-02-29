@@ -131,7 +131,7 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       'Confirmación',
-      'Desea generar el reporte J?'
+      '¿Desea generar el reporte J?'
     ).then(async question => {
       if (question.isConfirmed) {
         const getAllGoodNoCum: any = await this.getSampleGoods();

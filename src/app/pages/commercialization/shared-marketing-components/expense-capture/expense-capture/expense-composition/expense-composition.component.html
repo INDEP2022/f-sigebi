@@ -21,7 +21,10 @@
               <button
                 *ngIf="data && data.length > 0 && address === 'M'"
                 class="btn btn-secondary btn-sm active"
-                [disabled]="!SELECT_CAMBIA_ESTATUS_ENABLED"
+                [disabled]="
+                  !SELECT_CAMBIA_ESTATUS_ENABLED ||
+                  (paymentRequestNumber && paymentRequestNumber.value)
+                "
                 style="
                   width: 100px;
                   display: flex;
@@ -36,7 +39,10 @@
               <button
                 *ngIf="data && data.length > 0 && address === 'M'"
                 class="btn btn-secondary btn-sm active ml-3"
-                [disabled]="!SELECT_CAMBIA_CLASIF_ENABLED"
+                [disabled]="
+                  !SELECT_CAMBIA_CLASIF_ENABLED ||
+                  (paymentRequestNumber && paymentRequestNumber.value)
+                "
                 style="
                   width: 100px;
                   display: flex;
@@ -50,8 +56,24 @@
           </div>
           <div class="col-md-6 mb-3 d-flex justify-content-end">
             <button
+              *ngIf="chargeGoodsByLote && expense"
+              type="button"
+              class="btn btn-sm btn-primary ml-2 active"
+              style="min-width: 100px"
+              [disabled]="
+                form.invalid ||
+                (paymentRequestNumber && paymentRequestNumber.value) ||
+                this.data.length === 0 ||
+                this.selectedRows.length === 0
+              "
+              (click)="save()">
+              Guardar <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
+            <button
               (click)="add()"
-              [disabled]="!showAdd"
+              [disabled]="
+                !showAdd || (paymentRequestNumber && paymentRequestNumber.value)
+              "
               type="button"
               tooltip="Nuevo"
               containerClass="tooltip-style"
@@ -66,17 +88,18 @@
           </div>
         </div>
 
-        <div class="pt-4">
+        <div class="pt-4 pb-4">
           <form-loader *ngIf="loading"></form-loader>
           <ng-scrollbar
             [track]="'all'"
             [ngStyle]="{ height: loading ? '0px' : '300px' }">
             <ng2-smart-table
+              *ngIf="showTable"
               #table
               [attr.class]="'table-responsive table-bordered'"
               [settings]="settings"
               [source]="dataPaginated"
-              (userRowSelect)="selectRow($event.data)"
+              (userRowSelect)="selectRow($event)"
               (delete)="delete($event.data)"
               (edit)="edit($event.data)">
             </ng2-smart-table>
@@ -130,7 +153,7 @@
               [path]="pathPolicy"
               value="policyKeyId"
               bindLabel="description"
-              [readonly]="!havePolicie"
+              [readonly]="havePolicie"
               [labelTemplate]="policieLabel"
               [optionTemplate]="policieOption">
             </ng-custom-select-loading>
@@ -152,7 +175,8 @@
               class="btn btn-sm btn-primary mr-2 mt-2 active"
               [disabled]="
                 !conceptNumberValue ||
-                (address === 'M' && changeStatusFilter.length === 0)
+                (address === 'M' && changeStatusFilter.length === 0) ||
+                (paymentRequestNumber && paymentRequestNumber.value)
               "
               (click)="sendToSIRSAE()">
               Envíar Solicitud de pago a SIRSAE
@@ -160,14 +184,18 @@
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showAdd || !selectedRow"
+              [disabled]="
+                !showAdd || !selectedRow || !selectedRow.detPaymentsId
+              "
               (click)="disperGasto()">
               Dispersa Gasto/Mandato {{ selectedRow?.detPaymentsId }}
             </button>
             <button
               type="button"
               class="btn btn-success btn-sm active mr-2 mt-2"
-              [disabled]="!showAdd"
+              [disabled]="
+                !showAdd || (paymentRequestNumber && paymentRequestNumber.value)
+              "
               (click)="file.click()">
               Cargar Excel/CSV
               <i aria-hidden="true" class="fa fa-upload"></i>
@@ -188,9 +216,13 @@
               Cargar Bienes Excel
             </button> -->
             <button
+              *ngIf="showLote"
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!validateModifyEstatus"
+              [disabled]="
+                !validateModifyEstatus ||
+                (paymentRequestNumber && paymentRequestNumber.value)
+              "
               (click)="modifyEstatus()">
               Modificar Estatus
             </button>
@@ -198,7 +230,9 @@
               *ngIf="address === 'M'"
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showAdd"
+              [disabled]="
+                !showAdd || (paymentRequestNumber && paymentRequestNumber.value)
+              "
               (click)="applyTC()">
               Aplicar TC
             </button>
@@ -213,7 +247,9 @@
               *ngIf="address === 'M'"
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showAdd"
+              [disabled]="
+                !showAdd || (paymentRequestNumber && paymentRequestNumber.value)
+              "
               (click)="reload()">
               Recargar
             </button>
@@ -229,7 +265,7 @@
               *ngIf="address !== 'M'"
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!validChargeGoods"
+              [disabled]="paymentRequestNumber && paymentRequestNumber.value"
               (click)="loadGoodsI()">
               Carga de Bienes
             </button>
@@ -246,7 +282,8 @@
               class="btn btn-sm btn-primary mr-2 mt-2 active"
               [disabled]="
                 !conceptNumberValue ||
-                dataCompositionExpensesToUpdateClasif.length === 0
+                dataCompositionExpensesToUpdateClasif.length === 0 ||
+                (paymentRequestNumber && paymentRequestNumber.value)
               "
               (click)="updateClasif()">
               Actualizar Clasificación

@@ -8,8 +8,10 @@ import {
   IL,
 } from 'src/app/core/models/ms-parametercomer/parameter';
 import { LayoutsConfigService } from 'src/app/core/services/ms-parametercomer/layouts-config.service';
+import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-layouts-structure-configuration-modal',
@@ -20,7 +22,7 @@ export class LayoutsStructureConfigurationModalComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'Estructura del Diseño';
+  title: string = 'Estructura del Diseño No:';
   provider: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -34,11 +36,13 @@ export class LayoutsStructureConfigurationModalComponent
   @Output() onConfirm = new EventEmitter<any>();
   @Input()
   structureLayout: IComerLayouts;
-
+  dataItems = new DefaultSelect();
+  dataLayout: any;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private layoutsConfigService: LayoutsConfigService
+    private layoutsConfigService: LayoutsConfigService,
+    private parameterModService: ParameterModService
   ) {
     super();
   }
@@ -63,20 +67,11 @@ export class LayoutsStructureConfigurationModalComponent
       ],
       column: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(35),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(35)],
       ],
-      // mes: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       type: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(15),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(15)],
       ],
       length: [
         null,
@@ -88,11 +83,7 @@ export class LayoutsStructureConfigurationModalComponent
       ],
       constant: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(500),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
       ],
       carFilling: [
         null,
@@ -112,19 +103,11 @@ export class LayoutsStructureConfigurationModalComponent
       ],
       decimal: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.maxLength(2),
-        ],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(2)],
       ],
       dateFormat: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(20),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(20)],
       ],
       // registryNumber: [null, [Validators.required]],
     });
@@ -144,68 +127,170 @@ export class LayoutsStructureConfigurationModalComponent
   }
 
   confirm() {
-    console.log(this.providerForm.value);
     this.edit ? this.update() : this.create();
   }
 
-  create() {
-    try {
-      this.loading = false;
-      let data = {
-        ...this.providerForm.value,
-        idLayout: this.id,
-        indActive: this.providerForm.value.indActive == true ? 1 : 0,
-      };
-      delete data.id;
-      this.layoutsConfigService.create(data).subscribe({
+  async create() {
+    let valid = await this.valFields();
+    if (!valid) return;
+    this.loading = false;
+    let data = {
+      ...this.providerForm.value,
+      idLayout: this.id,
+      indActive: this.providerForm.value.indActive == true ? 1 : 0,
+    };
+    delete data.id;
+    this.layoutsConfigService.create(data).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => {
+        this.loading = false;
+        this.alert(
+          'error',
+          'Error al Crear',
+          'Ocurrió un error al crear la estructura del diseño'
+        );
+      },
+    });
+  }
+  async update() {
+    let valid = await this.valFields();
+    if (!valid) return;
+    this.layoutsConfigService
+      .update(this.providerForm.value.idLayout, this.providerForm.value)
+      .subscribe({
         next: data => this.handleSuccess(),
         error: error => {
-          this.loading = false;
           this.alert(
             'error',
-            'Error al Crear',
-            'Ocurrió un error al crear la estructura del diseño'
+            'Error al Actualizar',
+            'Ocurrió un error al actualizar la estructura del diseño'
           );
-          return;
+          this.loading = false;
         },
       });
-    } catch {
-      console.error('Diseño no existe');
-    }
-  }
-  update() {
-    this.alertQuestion(
-      'warning',
-      'Actualizar Estructura del Diseño',
-      '¿Desea actualizar la estructura del diseño?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.layoutsConfigService
-          .update(this.providerForm.value.idLayout, this.providerForm.value)
-          .subscribe({
-            next: data => this.handleSuccess(),
-            error: error => {
-              this.alert(
-                'error',
-                'Error al Actualizar',
-                'Ocurrió un error al actualizar la estructura del diseño'
-              );
-              this.loading = false;
-            },
-          });
-      }
-    });
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    // setTimeout(() => {
-    //   this.alert('success', this.title, `${message} Correctamente`);
-    // }, 2000);
-    this.alert('success', `${message} Correctamente`, '');
+    const message: string = this.edit ? 'actualizada' : 'guardada';
+    this.alert('success', `Estructura de Diseño ${message} correctamente`, '');
     this.loading = false;
     this.onConfirm.emit(true);
-    // this.modalRef.content.callback(true);
     this.close();
+  }
+
+  async valFields() {
+    const {
+      position,
+      column,
+      type,
+      length,
+      constant,
+      carFilling,
+      justification,
+      decimal,
+      dateFormat,
+    } = this.providerForm.value;
+
+    if (!position || position <= 0) {
+      this.alert('warning', 'Posición errónea.', '');
+      return false;
+    }
+
+    if (!length && length <= 0) {
+      this.alert('warning', 'Longitud errónea.', '');
+      return false;
+    }
+
+    if (!column && !constant) {
+      this.alert(
+        'warning',
+        'Debe ingresar el Nombre de Columna o una Constante.',
+        ''
+      );
+      return false;
+    }
+    if (!carFilling) {
+      this.alert('warning', 'Debe ingresar el Caracter de Relleno', '');
+      return false;
+    }
+    if (!justification) {
+      this.alert('warning', 'Debe especificar la Tipo de Justificación.', '');
+      return false;
+    }
+    if (type == 'NUMBER') {
+      if (!decimal) {
+        this.alert('warning', 'Debe especificar el Número de Decimales.', '');
+        return false;
+      } else if (decimal < 0) {
+        this.alert('warning', 'Número de Decimales inválido.', '');
+        return false;
+      }
+    }
+
+    if (type == 'DATE') {
+      if (!dateFormat) {
+        this.alert('warning', 'Debe especificar el Formato de Fecha.', '');
+        return false;
+      } else {
+        if (!this.validarFecha(dateFormat)) {
+          this.alert(
+            'warning',
+            'Formato de Fecha inválido.',
+            'Formato correcto dd/mm/yyyy'
+          );
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  validarFecha(fecha: any) {
+    var partes = fecha.split('/');
+    var dia = parseInt(partes[0], 10);
+    var mes = parseInt(partes[1], 10) - 1;
+    var anio = parseInt(partes[2], 10);
+
+    var fechaObj = new Date(anio, mes, dia);
+
+    if (
+      fechaObj.getFullYear() === anio &&
+      fechaObj.getMonth() === mes &&
+      fechaObj.getDate() === dia
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  async getColumns(params: ListParams) {
+    params['filter.table'] = `$eq:${this.dataLayout.table.toLowerCase()}`;
+    if (params.text) params['filter.column'] = `$ilike:${params.text}`;
+
+    this.parameterModService.aplicationVwColumnsBd(params).subscribe({
+      next: response => {
+        console.log(response);
+        this.dataItems = new DefaultSelect(response.data, response.count);
+      },
+      error: error => {
+        this.dataItems = new DefaultSelect([], 0);
+      },
+    });
+  }
+
+  changeOpt(event: any) {
+    if (event) {
+      if (event.type == 'numeric')
+        this.providerForm.get('type').setValue('NUMBER');
+      else if (event.type == 'date')
+        this.providerForm.get('type').setValue('DATE');
+      else this.providerForm.get('type').setValue(event.type);
+
+      this.providerForm.get('length').setValue(event.length);
+    } else {
+      this.providerForm.get('type').setValue(null);
+      this.providerForm.get('length').setValue(null);
+    }
   }
 }

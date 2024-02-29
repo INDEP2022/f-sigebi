@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -14,7 +18,8 @@ import { PROOF_DELIVERY_COLUMNS } from './proof-delivery-columns';
 })
 export class proofDeliveryComponent extends BasePage implements OnInit {
   //
-
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  columnFilters: any = [];
   form: FormGroup = new FormGroup({});
 
   show: boolean = false;
@@ -39,7 +44,7 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
 
   //Number
   totalItems: number = 0;
-
+  event: number;
   //
 
   constructor(
@@ -52,6 +57,7 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
       actions: false,
       columns: { ...PROOF_DELIVERY_COLUMNS },
       selectMode: 'multi',
+      hideSubHeader: false,
     };
   }
 
@@ -60,6 +66,44 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
     let date = new Date();
     let yearActual: number = date.getFullYear() - 2;
     this.year = String(yearActual);
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'voucherId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'eventId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'publicLot':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'publicLot':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.loadDataEventSelected();
+        }
+      });
     setTimeout(() => {
       this.getEvents(new ListParams());
     }, 1000);
@@ -74,21 +118,35 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
     });
   }
 
-  loadDataEventSelected(event: any) {
-    console.log('Esto trae la seleccion: ', event);
-    const params = new ListParams();
-    params['filter.eventId'] = `$eq:${event.eventId}`;
+  loadDataEventSelected(event?: any) {
+    this.loading = true;
+    console.log('Esto trae la seleccion: ', this.form.controls['event'].value);
+    this.params.getValue()[
+      'filter.eventId'
+    ] = `$eq:${this.form.controls['event'].value}`;
+
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
     this.serviceInvoice.getInvoiceByEvent(params).subscribe({
       next: response => {
-        this.getRrcs(this.array('rfc', response.data));
-        this.getPublic(this.array('publicLot', response.data));
-        this.getDelegations(this.array('delegationNumber', response.data));
-        this.fillGridInvoces(response.data);
+        // this.getRrcs(this.array('rfc', response.data));
+        // this.getPublic(this.array('publicLot', response.data));
+        // this.getDelegations(this.array('delegationNumber', response.data));
+        // this.fillGridInvoces(response.data);
         this.dataFilter = response.data;
-        this.filterInvoices();
+        this.data.load(this.dataFilter);
+        this.totalItems = response.count;
+        this.data.refresh();
+        this.loading = false;
+        // this.filterInvoices();
       },
       error: () => {
-        this.events = new DefaultSelect();
+        this.data.load([]);
+        this.totalItems = 0;
+        this.data.refresh();
+        this.loading = false;
         this.alert('warning', 'Advertencia', `No se encontraron registros`);
       },
     });
@@ -110,8 +168,9 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
         console.log('El arreglo filtrado: ', this.dataFilter);
       }
       if (this.form.controls['delegation'].value != null) {
+        console.log(this.form.controls['delegation'].value);
         this.dataFilter = this.dataFilter.filter(
-          f => f.no_delegacion === this.form.controls['delegation'].value
+          f => f.descDescription === this.form.controls['delegation'].value
         );
         console.log('El arreglo filtrado: ', this.dataFilter);
       }
@@ -205,6 +264,14 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
       this.form.reset();
     }
     console.warn('Your order has been submitted');
+  }
+  clear() {
+    this.form.reset();
+    this.data.load([]);
+    this.totalItems = 0;
+    this.data.refresh();
+    this.columnFilters = [];
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
   }
 
   //

@@ -77,33 +77,25 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       batch: [
         null,
-        [
-          Validators.required,
-          Validators.maxLength(15),
-          Validators.pattern(NUMBERS_PATTERN),
-        ],
+        [Validators.maxLength(15), Validators.pattern(NUMBERS_PATTERN)],
       ],
       event: [null, [Validators.required]],
-      startDate: [null, [Validators.required]],
-      endDate: [null, [Validators.required]],
-      capturingUser: [null, [Validators.required]],
-      capturingUserName: [null, [Validators.required]],
-      capturingUserPost: [null, [Validators.required]],
-      authorizingUser: [null, [Validators.required]],
-      authorizingUserName: [null, [Validators.required]],
-      authorizingUserPost: [null, [Validators.required]],
-      requestingUser: [null, [Validators.required]],
-      requestingUserName: [null, [Validators.required]],
-      requestingUserPost: [null, [Validators.required]],
+      startDate: [null, []],
+      endDate: [null, []],
+      capturingUser: [null, []],
+      capturingUserName: [null, []],
+      capturingUserPost: [null, []],
+      authorizingUser: [null, []],
+      authorizingUserName: [null, []],
+      authorizingUserPost: [null, []],
+      requestingUser: [null, []],
+      requestingUserName: [null, []],
+      requestingUserPost: [null, []],
       incomeOrder: [
         null,
-        [
-          Validators.required,
-          Validators.maxLength(15),
-          Validators.pattern(NUMBERS_PATTERN),
-        ],
+        [, Validators.maxLength(15), Validators.pattern(NUMBERS_PATTERN)],
       ],
-      reportNumber: [null, [Validators.required]],
+      reportNumber: [null, []],
     });
     setTimeout(() => {
       this.getEvent(new ListParams());
@@ -134,13 +126,14 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
 
   getEvent(params: ListParams) {
     if (params.text) {
-      params['search'] = `${params.text}`;
+      params['filter.id'] = `$eq:${params.text}`;
       //params['filter.status'] = `$ilike:${params.text}`;
     }
     this.comerEventService.getAllEvent(params).subscribe({
       next: resp => {
         this.result1 = resp.data.map(async (item: any) => {
-          item['keyObservation'] = item.processKey + ' - ' + item.observations;
+          item['keyObservation'] =
+            item.id + ' - ' + item.processKey + ' - ' + item.observations;
         });
         this.eventSelect = new DefaultSelect(resp.data, resp.count);
       },
@@ -156,15 +149,15 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
   report() {
     let params = {
       //PN_DEVOLUCION: this.data,
-      P_ORIGIN: 14,
-      P_CONSEC: 1545,
+      P_ORIGIN: null,
+      P_CONSEC: null,
       IDEVENTO: this.form.get('event').value,
     };
     console.log(this.data);
     console.log(params);
 
     this.siabService
-      .fetchReport('FCOMEREPINGXMAND', params)
+      .fetchReport('RCOMERINGXMAND', params)
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });

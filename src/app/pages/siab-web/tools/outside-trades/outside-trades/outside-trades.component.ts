@@ -121,6 +121,7 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
           this.tipos_oficio = this.tip;
 
           if (this.tipos_oficio == 'EXTERNO') {
+            this.noOFGestion = this.val_no_ges;
             this.principal = await this.getBasicBody(this.noOFGestion);
 
             this.form.controls['cve_of_gestion'].setValue(
@@ -206,6 +207,7 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.outsideTradesService.getTipoOficio(id).subscribe({
         next: data => {
+          console.log(data);
           resolve(data.data[0].jobType);
         },
       });
@@ -215,6 +217,7 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.outsideTradesService.getBasicBody(id).subscribe({
         next: data => {
+          console.log(data);
           resolve(data.data[0]);
         },
         error: err => {
@@ -227,7 +230,7 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.outsideTradesService.getPreliminaryInvestigation(id).subscribe({
         next: data => {
-          console.log(data.data[0].averiguacion_previa);
+          console.log(data);
           resolve(data.data[0].averiguacion_previa);
         },
         error: err => {
@@ -238,9 +241,9 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
   }
   async getNameOTValue(id: number) {
     return new Promise((resolve, reject) => {
-      this.outsideTradesService.getNameOTValue(1538).subscribe({
+      this.outsideTradesService.getNameOTValue(id).subscribe({
         next: data => {
-          console.log(data.data[0]);
+          console.log(data);
           resolve(data.data[0]);
         },
         error: err => {

@@ -96,6 +96,9 @@
   </div>
 
   <div class="row">
+    <div class="d-flex justify-content-end">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
     <ng2-smart-table
       [attr.class]="'table-responsive pt-3'"
       [settings]="settings"

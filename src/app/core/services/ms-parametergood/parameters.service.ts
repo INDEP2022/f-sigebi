@@ -81,4 +81,15 @@ export class ParametersService extends HttpService {
       `${ParameterGoodEndpoints.ApplicationGetFaUrlwebFac}?eventId=${event}`
     );
   }
+
+  queryDelegation(
+    body: { gstAll: string; gnuDelegation: string },
+    params?: _Params
+  ) {
+    return this.post('application/query-delegation', body, params);
+  }
+
+  massiveConstany(user: string) {
+    return this.get(`application/massive-constancy/${user}`);
+  }
 }

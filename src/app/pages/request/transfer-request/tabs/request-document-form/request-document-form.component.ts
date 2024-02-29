@@ -99,7 +99,7 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
     if (!this.rowSelected) {
       this.message(
         'warning',
-        'Error',
+        'Atención',
         'Seleccione un registro para poder ver sus documentos'
       );
       return;

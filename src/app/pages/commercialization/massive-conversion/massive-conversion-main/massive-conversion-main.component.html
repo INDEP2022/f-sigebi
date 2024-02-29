@@ -10,23 +10,29 @@
             <div class="col-sm-12 col-md-6 d-flex align-content-center">
               <div
                 class="d-flex flex-row justify-content-center align-items-center">
-                <div class="px-3">
+                <div class="px-3 text-center">
                   <h6 class="d-lg-inline font-size-15">N° Operación</h6>
-                  <p class="text-muted d-xl-inline mx-5 font-size-18">
-                    {{ operationId }}
-                  </p>
+                  <div class="row">
+                    <p class="text-muted d-xl-inline font-size-18">
+                      {{ operationIdValue }}
+                    </p>
+                  </div>
                 </div>
-                <div class="px-3">
+                <div class="px-3 text-center">
                   <h6 class="d-lg-inline font-size-15">Registros</h6>
-                  <p class="text-muted d-xl-inline mx-5 font-size-18">
-                    {{ totalEntries }}
-                  </p>
+                  <div class="row">
+                    <p class="text-muted d-xl-inline font-size-18">
+                      {{ totalEntries }}
+                    </p>
+                  </div>
                 </div>
-                <div class="px-3">
+                <div class="px-3 text-center">
                   <h6 class="d-lg-inline font-size-15">LCs Generadas</h6>
-                  <p class="text-muted d-xl-inline mx-5 font-size-18">
-                    {{ generatedLcs }}
-                  </p>
+                  <div class="row">
+                    <p class="text-muted d-xl-inline font-size-18">
+                      {{ generatedLcs }}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -35,261 +41,167 @@
                 class="row row-cols-sm-2 row-cols-md-2 row-cols-lg-auto g-2 align-items-center">
                 <div class="col-12">
                   <button
+                    [ngClass]="{ loading: loadingBtn }"
+                    [disabled]="loading || loadingBtn"
                     type="submit"
                     class="btn btn-sm btn-success btn-block active me-2 font-size-14"
                     (click)="consultInServer()">
                     Consultar Datos
-                    <i class="bx bx-search text-light float-icon"></i>
+                    <!-- <i class="bx bx-search text-light float-icon"></i> -->
                   </button>
                 </div>
                 <div class="col-12">
-                  <div class="btn-group d-block" dropdown>
-                    <button
-                      dropdownToggle
-                      id="loadBtn"
-                      type="button"
-                      [disabled]="isLoadingLoadFile"
-                      class="btn btn-sm btn-info btn-block active me-2 font-size-14 dropdown-toggle"
-                      aria-controls="dropdown-animated">
-                      <i class="bx bx-file text-light float-icon"></i>
-                      Cargar Archivo <span class="caret"></span>
-                    </button>
-                    <ul
-                      id="dropdown-animated"
-                      *dropdownMenu
-                      class="dropdown-menu"
-                      role="menu"
-                      aria-labelledby="loadBtn">
-                      <li role="menuitem">
-                        <a
-                          class="dropdown-item bg-info text-light"
-                          (click)="rfc.click()"
-                          >RFC<input
-                            #rfc
-                            hidden
-                            type="file"
-                            accept=".csv, .xlsx, .xls"
-                            (change)="onClickLoadFile($event, 'rfc')"
-                        /></a>
-                      </li>
-                      <li role="menuitem">
-                        <a
-                          class="dropdown-item bg-info text-light"
-                          (click)="clientId.click()"
-                          >Id Cliente<input
-                            #clientId
-                            hidden
-                            type="file"
-                            accept=".csv, .xlsx, .xls"
-                            (change)="onClickLoadFile($event, 'client_id')"
-                        /></a>
-                      </li>
-                    </ul>
-                  </div>
+                  <button
+                    [ngClass]="{ loading: loadingBtn2 }"
+                    [disabled]="loadingBtn2"
+                    class="btn btn-sm btn-success btn-block active me-2 font-size-14"
+                    type="button"
+                    (click)="file.click()">
+                    Insertar Archivo
+                  </button>
+                  <input
+                    type="file"
+                    name="file"
+                    #file
+                    class="d-none"
+                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                    (change)="onFileChange($event)" />
                 </div>
                 <div class="col-12">
                   <button
-                    class="btn btn-sm btn-secondary btn-block active me-2 font-size-14 dropdown-toggle"
-                    data-toggle="dropdown"
+                    [ngClass]="{ loading: loadingBtn3 }"
+                    [disabled]="
+                      !validGenerateLCs || !eventId.value || loadingBtn3
+                    "
+                    class="btn btn-sm btn-secondary btn-block active me-2 font-size-14"
                     (click)="loadChecks()">
-                    <i class="bx bx-upload text-light float-icon"></i>
+                    <!-- <i class="bx bx-upload text-light float-icon"></i> -->
                     Cargar Cheques
                   </button>
                 </div>
                 <div class="col-12">
+                  <div class="btn-group d-block">
+                    <button
+                      [ngClass]="{ loading: loadingBtn4 }"
+                      (click)="generateLcs()"
+                      [disabled]="
+                        !validGenerateLCs || !eventId.value || loadingBtn4
+                      "
+                      type="button"
+                      class="btn btn-sm btn-primary btn-block active me-2 font-size-14">
+                      <!-- <i class="bx bx-send text-light float-icon"></i> -->
+                      Generar LCs
+                    </button>
+                  </div>
+                </div>
+
+                <div class="col-12">
                   <button
                     class="btn btn-sm btn-primary btn-block active me-2 font-size-14"
-                    (click)="generateLcs()"
-                    [disabled]="dataColumns.count() === 0">
-                    <i class="bx bx-send text-light float-icon"></i>
-                    Generar LCs
+                    (click)="reprocess()"
+                    [disabled]="!validGenerateLCs || !eventId.value">
+                    <!-- <i class="bx bx-send text-light float-icon"></i> -->
+                    Mantto y Reprocesos
                   </button>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row mt-5 mb-0 d-block">
-          <div class="row d-flex justify-content-center align-content-center">
-            <div class="col-sm-6 col-md-6 mh-80">
-              <div class="row">
-                <div class="col-md-6">
-                  <i
-                    class="bx bx-list-ul text-success me-2 d-inline float-icon"></i>
-                  <h5 class="font-size-14 mb-2 d-inline">Evento</h5>
-                  <form-field
-                    [control]="form.get('eventId')"
-                    class="form-group position-relative d-flex">
-                    <input
-                      type="number"
-                      class="form-control px-3"
-                      formControlName="eventId"
-                      (keyup.enter)="searchEvent()" />
-                    <!-- <button
-                      class="mt-2"
-                      type="button"
-                      (click)="selectedEvent ? enableInputEvent() : searchEvent()">
-                      <i
-                        [ngClass]="selectedEvent ? 'bx-x text-danger' : 'bx-search'"
-                        class="bx"></i>
-                    </button> -->
-                  </form-field>
-                </div>
-                <div class="col-md-6">
+                <div class="col-12">
                   <button
-                    type="button"
-                    [ngClass]="selectedEvent ? 'btn-danger' : 'btn-primary'"
-                    class="btn active btn-sm mt-5"
-                    (click)="
-                      selectedEvent ? enableInputEvent() : searchEvent()
-                    ">
-                    {{ selectedEvent ? 'Limpiar' : 'Buscar' }}
-                    <i
-                      *ngIf="!selectedEvent"
-                      class="bx bx-search-alt bx-sm float-icon"></i>
-                    <i *ngIf="selectedEvent" class="fas fa-eraser"></i>
+                    class="btn btn-sm btn-danger btn-block active me-2 font-size-14"
+                    (click)="resetFilter()">
+                    Limpiar <i class="fas fa-eraser"></i>
                   </button>
                 </div>
               </div>
-            </div>
-            <div
-              class="col-sm-6 col-md-3"
-              *ngIf="selectedEvent != null"
-              @OnEventSelected>
-              <i
-                class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
-              <h5 class="font-size-14 mb-2 d-inline">Cve. Proceso</h5>
-              <p class="text-muted">{{ selectedEvent.processKey }}</p>
-            </div>
-            <div
-              class="col-sm-6 col-md-3"
-              *ngIf="selectedEvent != null"
-              @OnEventSelected>
-              <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
-              <h5 class="font-size-14 mb-2 d-inline">Fecha Evento</h5>
-              <p class="text-muted">
-                {{ selectedEvent.eventDate | date : 'medium' }}
-              </p>
-            </div>
-            <div
-              class="col-sm-12 col-md-6"
-              *ngIf="selectedEvent != null"
-              @OnEventSelected>
-              <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
-              <h5 class="font-size-14 mb-2 d-inline">Lugar</h5>
-              <p class="text-muted">
-                {{ selectedEvent.place }}
-              </p>
-            </div>
-            <div
-              class="col-sm-6 col-md-3"
-              *ngIf="selectedEvent != null"
-              @OnEventSelected>
-              <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
-              <h5 class="font-size-14 mb-2 d-inline">Fecha Fallo</h5>
-              <p class="text-muted">
-                {{ selectedEvent.failedDate | date : 'medium' }}
-              </p>
-            </div>
-            <div
-              class="col-sm-6 col-md-3"
-              *ngIf="selectedEvent != null"
-              @OnEventSelected>
-              <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
-              <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
-              <p class="text-muted">
-                {{ selectedEvent.statusvtaId }}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="row mt-5">
-          <div
-            class="ms-n2 mb-2 pointer"
-            (click)="toggleFilter = !toggleFilter"
-            [attr.aria-expanded]="!toggleFilter"
-            aria-controls="collapseFilter">
-            <i
-              class="bx bx-chevron-down bx-md float-icon-md"
-              [ngClass]="{
-                'rotate-down': toggleFilter,
-                'rotate-up': !toggleFilter
-              }"></i>
-            <h6 class="d-inline">Filtros</h6>
-          </div>
-          <hr class="mw-98" />
-          <div
-            class="row mt-5"
-            id="collapseFilter"
-            [isAnimated]="true"
-            [collapse]="!toggleFilter">
-            <div class="col-sm-4 col-md-2">
-              <form-field
-                label="Lote"
-                class="form-group"
-                [control]="form.get('batchId')">
-                <ng-custom-select
-                  class="form-control"
-                  formControlName="batchId"
-                  paramSearch="search"
-                  value="id"
-                  [path]="pathGetBath"
-                  control="batchId">
-                  <ng-template let-item>
-                    {{ item.id }}/ {{ item.description }}
-                  </ng-template>
-                </ng-custom-select>
-              </form-field>
-            </div>
-            <div class="col-sm-4 col-md-2">
-              <form-field [control]="form.get('status')" label="Estatus">
-                <ng-select
-                  formControlName="status"
-                  [searchable]="false"
-                  class="form-control"
-                  [clearable]="false">
-                  <ng-option value="0">LC SOLICITADA</ng-option>
-                  <ng-option value="1">LC GENERADA</ng-option>
-                </ng-select>
-              </form-field>
-            </div>
-
-            <div class="col-sm-4 col-md-2">
-              <form-field
-                [control]="form.get('insertDate')"
-                label="Fecha Insert">
-                <input
-                  type="text"
-                  formControlName="insertDate"
-                  class="form-control"
-                  bsDatepicker />
-              </form-field>
-            </div>
-            <div class="col-sm-4 col-md-2">
-              <form-field
-                [control]="form.get('validityDate')"
-                label="Fecha Vigencia">
-                <input
-                  type="text"
-                  formControlName="validityDate"
-                  class="form-control"
-                  bsDatepicker />
-              </form-field>
-            </div>
-            <div class="col-sm-4 col-md-2">
-              <button
-                class="btn btn-danger btn-sm active mr-3"
-                (click)="resetFilter()">
-                Limpiar <i class="fas fa-eraser"> </i>
-              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="row mt-5">
-      <div class="md-tabs mt-n3">
-        <tabset #lcsTabs>
+    <div class="row pt-5">
+      <div class="col-sm-12 col-md-12 mh-80">
+        <h5 class="title">Filtros de búsqueda</h5>
+        <div class="row pt-2">
+          <form class="form-material" [formGroup]="form">
+            <div class="col-md-2">
+              <form-field
+                [control]="form.get('eventId')"
+                class="form-group"
+                label="ID Evento">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="eventId" />
+              </form-field>
+            </div>
+
+            <div class="col-md-2">
+              <form-field
+                [control]="form.get('batchId')"
+                class="form-group"
+                label="ID Lote">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="batchId" />
+              </form-field>
+            </div>
+
+            <div class="col-md-2">
+              <form-field
+                [control]="form.get('insertDate')"
+                class="form-group"
+                label="Fecha Inserta">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="insertDate"
+                  bsDatepicker />
+              </form-field>
+            </div>
+
+            <div class="col-md-2">
+              <form-field
+                [control]="form.get('status')"
+                class="form-group"
+                label="Estatus">
+                <ng-select formControlName="status" class="form-control">
+                  <ng-option value="1">LC_GENERADA</ng-option>
+                  <ng-option value="0">SOLICITADA</ng-option>
+                </ng-select>
+              </form-field>
+            </div>
+
+            <div class="col-md-2">
+              <form-field
+                [control]="form.get('operationId')"
+                class="form-group"
+                label="ID Operación">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="operationId" />
+              </form-field>
+            </div>
+
+            <div class="col-md-2">
+              <form-field
+                [control]="form.get('validityDate')"
+                class="form-group"
+                label="Fecha Vigencia">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="validityDate"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-5 mt-5">
+      <div class="md-tabs pt-5 mt-5">
+        <tabset #tabset [(ngModel)]="activeTab">
           <tab heading="Datos" id="dataTab">
             <div class="row">
               <div class="d-flex justify-content-end my-3">
@@ -299,220 +211,156 @@
                 </div>
               </div>
             </div>
-            <div class="table-responsive">
-              <div [class]="loading ? 'table-loading' : ''">
-                <ng2-smart-table
-                  id="data-table"
-                  [attr.class]="'table-bordered'"
-                  [settings]="dataSettings"
-                  [source]="dataSource">
-                </ng2-smart-table>
-              </div>
+
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                id="data-table"
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="dataSettings"
+                [source]="dataSource">
+              </ng2-smart-table>
             </div>
-            <app-pagination [params]="dataParams" [totalItems]="dataTotalItems">
-            </app-pagination>
+
+            <app-pagination
+              [params]="paramsD"
+              [totalItems]="totalItemsD"></app-pagination>
           </tab>
           <tab heading="Líneas de Captura" id="lcsTab">
-            <div class="row mt-3">
-              <div class="md-tabs mt-n3">
-                <tabset>
-                  <tab heading="Visualización" id="displayTab">
-                    <div class="row">
-                      <div class="d-flex justify-content-end my-3">
-                        <div class="mr-3">
-                          <app-columns-select
-                            [(settings)]="lcsSettings"></app-columns-select>
-                        </div>
-                        <div>
-                          <button
-                            [disabled]="isLoadingExportFile"
-                            class="btn btn-sm btn-success active me-2 font-size-14"
-                            (click)="exportFile()">
-                            Exportar <i class="bx bx-download float-icon"></i>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="table-responsive">
-                      <div [class]="isLoadingLcs ? 'table-loading' : ''">
-                        <ng2-smart-table
-                          id="lcsTable"
-                          [attr.class]="'table-bordered'"
-                          [settings]="lcsSettings"
-                          [source]="lcsSource">
-                        </ng2-smart-table>
-                      </div>
-                    </div>
-                    <app-pagination
-                      [params]="lcsParams"
-                      [totalItems]="lcsTotalItems">
-                    </app-pagination>
-                  </tab>
-                  <tab
-                    heading="Mantenimiento"
-                    id="maintenanceTab"
-                    [disabled]="!maintenance">
-                    <div class="row">
-                      <div class="col-sm-12 col-md-12 col-lg-6">
-                        <div class="form-material">
-                          <search-bar
-                            [params]="
-                              layout == 'RFC'
-                                ? rfcParams
-                                : layout == 'clientId'
-                                ? clientIdParams
-                                : null
-                            "></search-bar>
-                        </div>
-                      </div>
-                      <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
-                        <div class="d-flex flex-row-reverse my-3">
-                          <div class="mt-1" *ngIf="layout == 'RFC'">
-                            <app-columns-select
-                              [(settings)]="rfcSettings"></app-columns-select>
-                          </div>
-                          <div class="mt-1" *ngIf="layout == 'clientId'">
-                            <app-columns-select
-                              [(settings)]="
-                                clientIdSettings
-                              "></app-columns-select>
-                          </div>
-                          <div>
-                            <button
-                              class="btn btn-sm btn-primary active me-2 font-size-14"
-                              (click)="saveRows()"
-                              [disabled]="addRows.length == 0">
-                              <i class="bx bx-save text-light float-icon"></i>
-                              Guardar
-                            </button>
-                          </div>
-                          <div>
-                            <button
-                              class="btn btn-sm btn-success active me-2 font-size-14"
-                              (click)="openForm()">
-                              <i class="bx bx-plus text-light float-icon"></i>
-                              Agregar Registro
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="table-responsive" *ngIf="layout == 'RFC'">
-                      <div [class]="loading ? 'table-loading' : ''">
-                        <ng2-smart-table
-                          id="rfcTable"
-                          [attr.class]="'table-bordered'"
-                          [settings]="rfcSettings"
-                          [source]="rfcSource"
-                          (edit)="openForm($event.data)"
-                          (delete)="delete($event.data)">
-                        </ng2-smart-table>
-                      </div>
-                    </div>
-                    <div class="table-responsive" *ngIf="layout == 'clientId'">
-                      <div [class]="loading ? 'table-loading' : ''">
-                        <ng2-smart-table
-                          id="clientIdTable"
-                          [attr.class]="'table-bordered'"
-                          [settings]="clientIdSettings"
-                          [source]="clientSource"
-                          (edit)="openForm($event.data)"
-                          (delete)="delete($event.data)">
-                        </ng2-smart-table>
-                      </div>
-                    </div>
-                    <app-pagination
-                      [params]="
-                        layout == 'RFC'
-                          ? rfcParams
-                          : layout == 'clientId'
-                          ? clientIdParams
-                          : null
-                      "
-                      [totalItems]="
-                        layout == 'RFC'
-                          ? rfcTotalItems
-                          : layout == 'clientId'
-                          ? clientIdTotalItems
-                          : 0
-                      ">
-                    </app-pagination>
-                  </tab>
-                  <tab
-                    heading="Reproceso"
-                    id="reworkTab"
-                    [disabled]="!maintenance">
-                    <div class="row">
-                      <div class="col-sm-12 col-md-12 col-lg-6">
-                        <div class="form-material">
-                          <search-bar
-                            [params]="
-                              reworkType == 'BATCH'
-                                ? batchReworkParams
-                                : reworkType == 'CLIENT'
-                                ? rfcReworkParams
-                                : null
-                            "></search-bar>
-                        </div>
-                      </div>
-                      <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
-                        <div class="d-flex flex-row-reverse my-3">
-                          <div>
-                            <button
-                              class="btn btn-sm btn-primary active me-2 font-size-14"
-                              (click)="rework()">
-                              <i
-                                class="bx bx-history text-light float-icon"></i>
-                              Ejecutar Reproceso
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="table-responsive" *ngIf="reworkType == 'BATCH'">
-                      <div [class]="loading ? 'table-loading' : ''">
-                        <ng2-smart-table
-                          id="batchReworkTable"
-                          [attr.class]="'table-bordered'"
-                          [settings]="batchReworkSettings"
-                          [source]="batchReworkColumns"
-                          (userRowSelect)="reworkSelect($event.selected)">
-                        </ng2-smart-table>
-                      </div>
-                    </div>
-                    <div
-                      class="table-responsive"
-                      *ngIf="reworkType == 'CLIENT'">
-                      <div [class]="loading ? 'table-loading' : ''">
-                        <ng2-smart-table
-                          id="clientReworkTable"
-                          [attr.class]="'table-bordered'"
-                          [settings]="rfcReworkSettings"
-                          [source]="rfcReworkColumns"
-                          (userRowSelect)="reworkSelect($event.selected)">
-                        </ng2-smart-table>
-                      </div>
-                    </div>
-                    <app-pagination
-                      [params]="
-                        reworkType == 'BATCH'
-                          ? batchReworkParams
-                          : reworkType == 'CLIENT'
-                          ? rfcReworkParams
-                          : null
-                      "
-                      [totalItems]="
-                        reworkType == 'RFC'
-                          ? batchReworkTotalItems
-                          : reworkType == 'CLIENT'
-                          ? rfcReworkTotalItems
-                          : 0
-                      ">
-                    </app-pagination>
-                  </tab>
-                </tabset>
+            <div class="row">
+              <div class="d-flex justify-content-end my-3">
+                <div class="mr-3">
+                  <app-columns-select
+                    [(settings)]="lcsSettings"></app-columns-select>
+                </div>
+                <div>
+                  <button
+                    [disabled]="isLoadingExportFile"
+                    class="btn btn-sm btn-success active me-2 font-size-14"
+                    (click)="exportFile()">
+                    Exportar todo <i class="bx bx-download float-icon"></i>
+                  </button>
+                </div>
               </div>
             </div>
+
+            <div [class]="isLoadingLcs ? 'table-loading' : ''">
+              <ng2-smart-table
+                id="lcsTable"
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="lcsSettings"
+                [source]="lcsSource">
+              </ng2-smart-table>
+            </div>
+
+            <app-pagination
+              [params]="paramsLc"
+              [totalItems]="totalItemsLc"></app-pagination>
+          </tab>
+          <tab
+            (selectTab)="onTabSelected($event)"
+            heading="Reproceso"
+            id="reProTab"
+            [disabled]="reProTabActive"
+            [active]="tab3Active">
+            <div class="row">
+              <!-- <div
+                class="col-md-2 d-flex"
+                *ngIf="!selectedEvent"
+                @OnEventSelected>
+                <div class="mr-auto">
+                  <button
+                    type="button"
+                    [ngClass]="'btn-primary'"
+                    class="btn active btn-sm mt-5"
+                    (click)="searchEvent()">
+                    Buscar
+                    <i class="bx bx-search-alt bx-sm float-icon"></i>
+                  </button>
+                </div>
+              </div> -->
+              <div
+                class="col-sm-2 col-md-2"
+                *ngIf="selectedEvent != null"
+                @OnEventSelected>
+                <i
+                  class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
+                <h5 class="font-size-14 mb-2 d-inline">Cve. Proceso</h5>
+                <p class="text-muted">{{ selectedEvent.processKey }}</p>
+              </div>
+              <div
+                class="col-sm-2 col-md-2"
+                *ngIf="selectedEvent != null"
+                @OnEventSelected>
+                <i
+                  class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                <h5 class="font-size-14 mb-2 d-inline">Fecha Evento</h5>
+                <p class="text-muted">
+                  {{ selectedEvent.eventDate | date : 'medium' }}
+                </p>
+              </div>
+              <div
+                class="col-sm-2 col-md-2"
+                *ngIf="selectedEvent != null"
+                @OnEventSelected>
+                <i
+                  class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                <h5 class="font-size-14 mb-2 d-inline">Lugar</h5>
+                <p class="text-muted">
+                  {{ selectedEvent.place }}
+                </p>
+              </div>
+              <div
+                class="col-sm-2 col-md-2"
+                *ngIf="selectedEvent != null"
+                @OnEventSelected>
+                <i
+                  class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                <h5 class="font-size-14 mb-2 d-inline">Fecha Fallo</h5>
+                <p class="text-muted">
+                  {{ selectedEvent.failedDate | date : 'medium' }}
+                </p>
+              </div>
+              <div
+                class="col-sm-2 col-md-2"
+                *ngIf="selectedEvent != null"
+                @OnEventSelected>
+                <i
+                  class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
+                <p class="text-muted">
+                  {{ selectedEvent.statusvtaId }}
+                </p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="d-flex justify-content-end my-3">
+                <div class="mr-3">
+                  <app-columns-select
+                    [(settings)]="reprocesSettings"></app-columns-select>
+                </div>
+                <div>
+                  <button
+                    [disabled]="isLoadingExportFile"
+                    class="btn btn-sm btn-primary active me-2 font-size-14"
+                    (click)="rework()">
+                    Ingresar a reproceso
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div [class]="isLoadingLcs ? 'table-loading' : ''">
+              <ng2-smart-table
+                id="lcsTable"
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="reprocesSettings"
+                [source]="reprocesSource">
+              </ng2-smart-table>
+            </div>
+
+            <app-pagination [params]="lcsParams" [totalItems]="lcsTotalItems">
+            </app-pagination>
           </tab>
         </tabset>
       </div>
