@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -192,7 +191,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
 
         //this.onLoadToast('error', 'Error', error);
       },
-      () => { }
+      () => {}
     );
   }
 
@@ -267,7 +266,9 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           this.recDoc = resp;
-          resp['providedDate'] = moment(resp['providedDate']).format('DD/MM/YYYY')
+          resp['providedDate'] = moment(resp['providedDate']).format(
+            'DD/MM/YYYY'
+          );
 
           this.recDoc['affair'] = resp['affair']['affairId'].toString();
 

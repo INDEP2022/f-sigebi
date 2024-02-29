@@ -14,7 +14,7 @@
         <strong>Contribuyente y/o Indicado: </strong>{{ taxPayer }}
       </div>
       <div class="col-md-6 mt-5">
-        <strong>Proceso Detona: </strong>  {{ detona }}
+        <strong>Proceso Detona: </strong> {{ detona }}
       </div>
     </div>
     <form class="form-material mt-5" [formGroup]="form">
@@ -79,9 +79,7 @@
         </div>
       </div>
       <div class="row mt-3">
-        <div class="col-md-12">
-          <strong>No. Amparo:</strong>  {{ numAparo }}
-        </div>
+        <div class="col-md-12"><strong>No. Amparo:</strong> {{ numAparo }}</div>
       </div>
       <div class="row mt-5">
         <div class="col-md-12">
@@ -119,7 +117,7 @@
       </div>
       <div class="row mt-3">
         <div class="col-md-12">
-          <strong>Resolución:</strong>  {{ 'CONCEDE' }}
+          <strong>Resolución:</strong> {{ 'CONCEDE' }}
         </div>
       </div>
       <div class="row mt-5">
@@ -129,7 +127,9 @@
             label="Estatus Suspensión">
             <select class="form-control" formControlName="statusSuspension">
               <option [value]="null">Seleccione un valor</option>
-              <option [value]="1">NA</option>
+              <option [value]="1">SUSPENSIÓN DEFINITIVA</option>
+              <option [value]="2">SUSPENDSIÓN PROVICIONAL</option>
+              <option [value]="3">EL AMPARO</option>
             </select>
           </form-field>
         </div>

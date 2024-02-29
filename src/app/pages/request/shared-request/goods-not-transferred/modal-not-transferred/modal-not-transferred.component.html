@@ -9,12 +9,20 @@
           <form-field
             [control]="form.get('relevantType')"
             label="Tipos Relevante">
-            <select class="form-control" formControlName="relevantType">
-              <option [value]="null">Seleccione un valor</option>
-              <option [value]="1">TIPO 1</option>
-              <option [value]="2">TIPO 2</option>
-              <option [value]="3">GASTO 3</option>
-            </select>
+            <ng-select
+              class="form-control"
+              formControlName="relevantType"
+              [clearable]="false"
+              [items]="typeGoods.data"
+              [virtualScroll]="true"
+              bindLabel="description"
+              bindValue="id">
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                <div [title]="item.description">
+                  {{ item.description }}
+                </div>
+              </ng-template>
+            </ng-select>
           </form-field>
         </div>
         <div class="col-md-6">
@@ -33,12 +41,22 @@
           <form-field
             [control]="form.get('unitExtent')"
             label="Unidad de medida">
-            <select class="form-control" formControlName="unitExtent">
-              <option [value]="null">Seleccione un valor</option>
-              <option [value]="'PIEZA'">PIEZA</option>
-              <option [value]="'GASTO 2'">GASTO 2</option>
-              <option [value]="'GASTO 3'">GASTO 3</option>
-            </select>
+            <ng-select
+              class="form-control"
+              formControlName="unitExtent"
+              [clearable]="false"
+              [items]="dataUnit.data"
+              [virtualScroll]="true"
+              [loading]="loading"
+              bindLabel="description"
+              bindValue="unit"
+              (scrollToEnd)="getCatalogUnit()">
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                <div [title]="item.description">
+                  {{ item.description }}
+                </div>
+              </ng-template>
+            </ng-select>
           </form-field>
         </div>
         <div class="col-md-6">
