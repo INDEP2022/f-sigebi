@@ -15,6 +15,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   POSITVE_NUMBERS_PATTERN,
@@ -23,7 +24,6 @@ import {
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GOOD_DOCUMENTES_COLUMNS } from './good-doc-columns';
 import { ShowDocumentsGoodComponent } from './show-documents-good/show-documents-good.component';
-import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 
 @Component({
   selector: 'app-good-doc-tab',
@@ -62,7 +62,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
     this.idRequest = this.idRequest
       ? this.idRequest
       : (this.activatedRoute.snapshot.paramMap.get('id') as unknown as number);
-    this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
+    this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = GOOD_DOCUMENTES_COLUMNS;
   }
 
@@ -83,7 +83,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
         .subscribe(() => this.getGoodsRequest());
     }
 
-    this.getGoodsRequest()
+    this.getGoodsRequest();
   }
 
   ngOnInit(): void {
@@ -115,7 +115,6 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
     });
   }
   getGoodsRequest() {
-
     this.idRequest = this.idRequest
       ? this.idRequest
       : (this.activatedRoute.snapshot.paramMap.get('id') as unknown as number);
@@ -126,13 +125,10 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
       this.params.getValue()['filter.requestId'] = this.idRequest;
       this.params.getValue()['filter.applicationId'] = this.idRequest;
 
-
       //this.searchForm.get('requestId').setValue(this.idRequest);
       this.goodService.getAll(this.params.getValue()).subscribe({
         next: async (data: any) => {
-
           if (data.data.length > 0) {
-
             const filterGoodType = data.data.map(async (item: any) => {
               const goodType = await this.getGoodType(item.goodTypeId);
               item['goodTypeName'] = goodType;
@@ -155,16 +151,13 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
               this.totalItems = data.count;
               this.loading = false;
             });
-
           } else {
-            this.getGoodRes()
+            this.getGoodRes();
           }
-
-
         },
         error: error => {
           this.loading = false;
-          this.getGoodRes()
+          this.getGoodRes();
         },
       });
     }
@@ -281,11 +274,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
 
   showDocuments(): void {
     if (this.goodSelect.length == 0 || this.goodSelect.length >= 2) {
-      this.onLoadToast(
-        'warning',
-        'Debes de tener mínimo un Bien seleccionado',
-        ''
-      );
+
     } else {
       const idGood = this.goodSelect[0].id;
       const idRequest = this.idRequest;
@@ -310,7 +299,6 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
   getGoodRes() {
     this.rejectedGoodService.getAll(this.params.getValue()).subscribe({
       next: async (data: any) => {
-
         data.data = data.data.map(x => x.good);
 
         const filterGoodType = data.data.map(async (item: any) => {
@@ -335,12 +323,10 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
           this.totalItems = data.count;
           this.loading = false;
         });
-
       },
       error: error => {
         this.loading = false;
       },
     });
   }
-
 }

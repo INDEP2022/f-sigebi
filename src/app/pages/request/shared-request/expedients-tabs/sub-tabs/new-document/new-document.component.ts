@@ -347,8 +347,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
+      return;
     }
 
     if (
@@ -371,6 +372,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xnivelRegistroNSBDB: 'bien',
         xidBien: this.idGood,
         xestado: this.stateId,
+        xidSIAB: this.newDocForm.get('noSiab').value,
         xtipoDocumento: this.newDocForm.get('docType').value,
         dDocTitle: this.newDocForm.get('docTit').value,
         xremitente: this.newDocForm.get('sender').value,
@@ -438,8 +440,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
+      return;
     }
 
     if (this.typeDoc == 'doc-request' && this.process != 'sampling-assets') {
@@ -521,8 +524,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
+      return;
     }
 
     if (this.typeDoc == 'doc-expedient' && this.process != 'sampling-assets') {
@@ -533,6 +537,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xNombreProceso: 'Clasificar Bien',
         xnivelRegistroNSBDB: 'expediente',
         xestado: this.stateId,
+        xidSIAB: this.newDocForm.get('noSiab').value,
         dDocAuthor: this.userLogName,
         xidExpediente: this.idExpedient,
         ddocCreator: this.userLogName,
@@ -603,8 +608,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
+      return;
     }
 
     if (this.process == 'sampling-assets') {
@@ -688,8 +694,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
+      return;
     }
   }
 
@@ -697,7 +704,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  handleSuccess() { }
+  handleSuccess() {}
 
   getStateSelect(params?: ListParams) {
     params['filter.sortBy'] = 'descCondition:ASC';
