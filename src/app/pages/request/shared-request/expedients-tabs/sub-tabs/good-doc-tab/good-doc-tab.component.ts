@@ -247,6 +247,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
 
   clean() {
     this.searchForm.reset();
+    this.searchForm.get('requestId').setValue(this.idRequest)
     this.paramsSearch = new BehaviorSubject<ListParams>(new ListParams());
     this.params
       .pipe(takeUntil(this.$unSubscribe))
