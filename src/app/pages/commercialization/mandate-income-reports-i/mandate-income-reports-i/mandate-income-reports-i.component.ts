@@ -4,7 +4,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -128,7 +127,9 @@ export class MandateIncomeReportsIComponent extends BasePage implements OnInit {
   }
 
   report() {
-    let params = {
+    this.alertInfo('warning', 'Atención', 'Reporte no disponible');
+
+    /*let params = {
       //PN_DEVOLUCION: this.data,
       IDEVENTO: this.form.get('event').value,
       P_CONSEC: 0,
@@ -171,7 +172,7 @@ export class MandateIncomeReportsIComponent extends BasePage implements OnInit {
           };
           this.modalService.show(PreviewDocumentsComponent, config);
         }
-      });
+      });*/
   }
 
   getAllSegUser1(params: ListParams) {
