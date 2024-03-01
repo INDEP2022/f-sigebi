@@ -72,6 +72,8 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract formatReport: boolean;
   protected abstract signReport: boolean;
 
+  protected abstract showExpedient: boolean;
+
   docTemplate: IRequestDocument[];
 
   private rejectedService = inject(RejectedGoodService);
