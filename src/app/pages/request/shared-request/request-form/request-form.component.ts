@@ -333,7 +333,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   getTransferent(params?: ListParams) {
     params['sortBy'] = 'nameTransferent:ASC';
     params['filter.status'] = `$eq:${1}`;
-    params['filter.typeTransferent'] = `$eq:NO`;
+    //params['filter.typeTransferent'] = `$eq:NO`;
     const isNumber = !isNaN(Number(params.text));
     if (params.text != '' && isNumber != true) {
       params['filter.nameTransferent'] = `$ilike:${params.text}`;
