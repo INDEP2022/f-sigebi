@@ -109,6 +109,7 @@ export class RequestCompDocTasksComponent
   steap3: boolean = false;
   isEdit: boolean = false;
   dictumInfo: boolean = false;
+  showExpedient: boolean = false;
 
   readonly: boolean = true;
 
@@ -1893,8 +1894,12 @@ export class RequestCompDocTasksComponent
     );
   }
 
-  async openModal(component: any, idSample?: any, typeAnnex?: string, contentId = ''): Promise<void> {
-
+  async openModal(
+    component: any,
+    idSample?: any,
+    typeAnnex?: string,
+    contentId = ''
+  ): Promise<void> {
     let report = await this.getStatusReport();
     report = report.isValid ? report.data[0] : report;
     let docId = report.isValid ? report.documentTypeId : this.reportId;
@@ -1911,7 +1916,13 @@ export class RequestCompDocTasksComponent
           callback: async (typeDocument: number, typeSign: string) => {
             if (typeAnnex == 'sign-annexJ-assets-classification') {
               if (typeDocument && typeSign) {
-                this.showReportInfo(idSample, typeDocument, typeSign, typeAnnex, contentId);
+                this.showReportInfo(
+                  idSample,
+                  typeDocument,
+                  typeSign,
+                  typeAnnex,
+                  contentId
+                );
               }
             }
           },
@@ -1925,7 +1936,13 @@ export class RequestCompDocTasksComponent
     }
   }
 
-  showReportInfo(id: number, typeDocument: number, typeSign: string, typeAnnex: string, contentId = '') {
+  showReportInfo(
+    id: number,
+    typeDocument: number,
+    typeSign: string,
+    typeAnnex: string,
+    contentId = ''
+  ) {
     const idTypeDoc = typeDocument;
     const idSample = id;
     const orderSampleId = id;
