@@ -763,7 +763,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     this.billingCommunicationService.ejecutarFuncion$.subscribe(
       async (next: any) => {
         this.params = next;
-        console.log('SI WILM', next);
         this.valSelects = true;
         await this.getBillings('no');
       }
@@ -1100,7 +1099,13 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     };
     let res = await this.forArrayFilters_();
     console.log('res', res);
-    if (res) {
+    if (
+      res &&
+      !this.params.getValue()['filter.impressionDate'] &&
+      !this.fecBlkCtrl.value &&
+      !this.fec2BlkCtrl.value &&
+      !this.dateBlkCtrl.value
+    ) {
       // this.params = new BehaviorSubject<ListParams>(new ListParams());
       // this.params2 = new BehaviorSubject<ListParams>(new ListParams());
       this.data.load([]);
@@ -1119,7 +1124,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
       if (params['filter.impressionDate_']) {
         const fechas = params['filter.impressionDate_'].split(',');
-        console.log('fechas', fechas);
         var fecha1 = new Date(fechas[0]);
         var fecha2 = new Date(fechas[1]);
 

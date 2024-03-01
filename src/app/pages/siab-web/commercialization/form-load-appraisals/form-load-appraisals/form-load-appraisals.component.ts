@@ -29,22 +29,46 @@ interface IExcelToJson {
 export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
   form: FormGroup;
   maxDate = new Date();
-  totalItems: number = 0;
-  requested: boolean;
+
+  requested: boolean = false;
   apraisalLength: number;
   estatusLotes: any;
   propertyValues: string[] = [];
   dataExcel: any = [];
-  bottonDesible: boolean;
+  bottonDesible: boolean = false;
   commaSeparatedString: string = '';
 
   ///
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  params1 = new BehaviorSubject<ListParams>(new ListParams());
   params2 = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
+  totalItems1: number = 0;
+  totalItems2: number = 0;
   fileReader = new FileReader();
   selectedTipo = new DefaultSelect();
   dataApraisals: LocalDataSource = new LocalDataSource();
   dataGood: LocalDataSource = new LocalDataSource();
   dataDetailApraisal: LocalDataSource = new LocalDataSource();
+
+  btnContinuarOficio: boolean = false;
+  btnValidaArchivo: boolean = false;
+  btnInsertaArchivo: boolean = false;
+  btnValidarArc: boolean = false;
+  btnUpdArchivo: boolean = false;
+  btnAgrArchivo: boolean = false;
+
+  lnkDesFormato: boolean = false;
+  lnkValArchivo: boolean = false;
+  lnkAvaRechazados: boolean = false;
+  lnkInsAvaluos: boolean = false;
+  lnkAddAvaluo: boolean = false;
+  lnkUpdAvaluo: boolean = false;
+
+  Divreg: boolean = false;
+
+  gvAvaluosRechazados: boolean = false;
+  gvBienesRecahazados: boolean = false;
 
   apraisalsSettings = {
     ...TABLE_SETTINGS,
@@ -76,6 +100,21 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
       delete: false,
     },
   };
+  jsonToCsv: any[] = [
+    {
+      CVE_AVALUO: '',
+      FECHA_AVALUO: '',
+      VIGENCIA_AVALUO: '',
+      NO_BIEN: '',
+      VRI_IVA: '',
+      VRI_IVA_REDONDEADO: '',
+      VC: '',
+      VC_IVA: '',
+      NOMBRE_VALUADOR: '',
+      NOMENCLATURA_OFICIO: '',
+      APTO_NO_APTO: '',
+    },
+  ];
   constructor(
     private formLoadAppraisalsService: FormLoadAppraisalsService,
     private router: Router,
@@ -98,7 +137,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
       this.controlBotnoes('', '');
     } else {
       this.cargarEvento(
-        await this.obtenerEvento(1, this.form.value.numeroEvento, 'A', '', 'E')
+        await this.obtenerEvento(1, this.form.value.numeroEvento, 'A', '')
       );
     }
   }
@@ -113,6 +152,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
       Estatus: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
       Referencia: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
     });
+    this.inicialize();
   }
   async cargaDDLEvento() {
     this.estatusLotes = await this.CargaDDLDrop();
@@ -152,67 +192,88 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
   }
 
   async CargaGrids() {
+    this.ocultaDivNoti();
     this.cargarEvento(
-      await this.obtenerEvento(1, this.form.value.numeroEvento, 'I', '', 'E')
+      await this.obtenerEvento(1, this.form.value.numeroEvento, 'I', '')
     );
     this.cargarBienes(
-      await this.obtenerEvento(2, this.form.value.numeroEvento, 'A', '', 'B')
+      await this.obtenerEvento(2, this.form.value.numeroEvento, 'I', '')
     );
-    this.cargarAvaluos(await this.obtenerEvento(3, 0, ' ', '', 'A'));
-    console.log('apraisalLength', this.apraisalLength);
-    if (this.apraisalLength > 0) {
-      console.log('llegamos manito');
-      this.cargarDetAvaluos(await this.obtenerEvento(6, 0, ' ', 2097, 'DA'));
-    }
+    this.cargarAvaluos(
+      await this.obtenerEvento(3, this.form.value.numeroEvento, 'I', '')
+    );
   }
   lnkBuscar_Click() {
     if (this.form.value.numeroEvento != '') {
       this.CargaGrids();
     } else {
-      this.onLoadToast('warning', 'Advertencia', 'Dijite el No. Evento');
+      this.onLoadToast('warning', 'Advertencia', 'Debe capturar el No. Evento');
     }
   }
 
   cargarEvento(evento: any) {
-    console.log(evento);
-    this.form.controls['numeroEvento'].setValue(evento.id_evento);
-    this.form.controls['claveProceso'].setValue(evento.cve_proceso);
-    this.form.controls['fechaEvento'].setValue(evento.fec_evento);
-    this.form.controls['Observaciones'].setValue(evento.observaciones);
-    this.form.controls['FecSolicitud'].setValue(evento.fecha_notificacion);
-    this.form.controls['Tipo'].setValue(evento.id_tpevento);
-    this.form.controls['Estatus'].setValue(evento.estatus);
-    this.form.controls['Referencia'].setValue(evento.descripcion);
+    console.log(evento.data);
+    // this.form.controls['numeroEvento'].setValue(evento.id_evento);
+    this.form.controls['claveProceso'].setValue(evento.data[0].cve_proceso);
+    this.form.controls['fechaEvento'].setValue(evento.data[0].fec_evento);
+    this.form.controls['Observaciones'].setValue(evento.data[0].observaciones);
+    this.form.controls['FecSolicitud'].setValue(
+      evento.data[0].fecha_notificacion
+    );
+    this.form.controls['Tipo'].setValue(evento.data[0].id_tpevento);
+    this.form.controls['Estatus'].setValue(evento.data[0].estatus);
+    this.form.controls['Referencia'].setValue(evento.data[0].descripcion);
 
     if (
-      evento.item_tipo_proceso == 'SOLICITUD' ||
-      evento.item_tipo_proceso == 'DESCUENTO'
+      evento.data[0].item_tipo_proceso == 'SOLICITUD' ||
+      evento.data[0].item_tipo_proceso == 'DESCUENTO'
     ) {
-      this.controlBotnoes(evento.item_tipo_proceso, 'V');
+      this.controlBotnoes(evento.data[0].item_tipo_proceso, 'V');
     } else {
       this.controlBotnoes('1', 'I');
     }
   }
 
   cargarBienes(evento: any) {
-    console.log('bienes', evento);
-    /* if (evento.length > 0) {
-      //mostrar data en la tabla
+    console.log('bienes<>>>>>>>>', evento);
+    if (evento.count > 0) {
+      this.dataGood.load(evento.data);
+      this.dataGood.refresh();
+      this.totalItems = evento.count;
     } else {
-    }*/
+      this.dataGood.load([]);
+      this.dataGood.refresh();
+      this.totalItems = 0;
+    }
   }
-  cargarAvaluos(evento: any) {
+  async cargarAvaluos(evento: any) {
     console.log('Avaluos', evento);
-
-    if (evento.length > 0) {
-      //mostrar data en la tabla
+    if (evento.count > 0) {
+      this.dataApraisals.load(evento.data);
+      this.dataApraisals.refresh();
+      this.totalItems1 = evento.count;
+      if (evento.count > 0) {
+        console.log('llegamos manito' + evento);
+        this.cargarDetAvaluos(await this.obtenerEvento(6, 0, '', evento[0]));
+      }
     } else {
+      this.dataApraisals.load([]);
+      this.dataApraisals.refresh();
+      this.totalItems1 = 0;
     }
   }
   cargarDetAvaluos(evento: any) {
-    if (evento.length > 0) {
-      //mostrar data en la tabla
+    console.log('DetAvaluos', evento);
+    if (evento.count > 0) {
+      this.dataDetailApraisal.load(evento.data);
+      this.dataDetailApraisal.refresh();
+      this.totalItems2 = evento.count;
+      this.Divreg = true;
     } else {
+      this.dataDetailApraisal.load([]);
+      this.dataDetailApraisal.refresh();
+      this.totalItems2 = 0;
+      this.Divreg = true;
     }
   }
 
@@ -492,8 +553,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     pOption: number,
     pEvent: number | string,
     pAddress: number | string,
-    pIdAppraisal: number | string,
-    type: string
+    pIdAppraisal: number | string
   ) {
     return new Promise((resolve, reject) => {
       let body: any = {};
@@ -504,40 +564,41 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
       console.log(body);
       this.formLoadAppraisalsService.obtenerEvento(body).subscribe({
         next: data => {
-          const info = data.data;
-          this.totalItems = 1;
-          if (type == 'E') {
-            console.log('evento', data.data);
-            //
-            //
-            //Llenar el form
-            resolve(data.data[0]);
-            console.log(this.form);
-            //
-            //
-          }
-          if (type == 'DA') {
-            console.log('aguanile', data);
-            this.dataDetailApraisal.load(data.data);
-            this.dataDetailApraisal.refresh();
-            resolve(data.data);
-          }
-          if (type == 'B') {
-            this.dataGood.load(data.data);
-            this.dataGood.refresh();
-            resolve(data.data);
-          }
-          if (type == 'A') {
-            let datos = [];
-            datos.push(data.data[0]);
-            datos.push(data.data[0]);
-            this.dataApraisals.load(datos);
-            this.apraisalLength = datos.length;
-            console.log(datos, datos.length, this.dataApraisals);
-            this.dataApraisals.refresh();
-            resolve(datos);
-          }
-          console.log(info, pOption);
+          resolve(data);
+          // const info = data.data;
+          // this.totalItems = 1;
+          // if (type == 'E') {
+          //   console.log('evento', data.data);
+          //   //
+          //   //
+          //   //Llenar el form
+          //   resolve(data.data[0]);
+          //   console.log(this.form);
+          //   //
+          //   //
+          // }
+          // if (type == 'DA') {
+          //   console.log('aguanile', data);
+          //   this.dataDetailApraisal.load(data.data);
+          //   this.dataDetailApraisal.refresh();
+          //   resolve(data.data);
+          // }
+          // if (type == 'B') {
+          //   this.dataGood.load(data.data);
+          //   this.dataGood.refresh();
+          //   resolve(data.data);
+          // }
+          // if (type == 'A') {
+          //   let datos = [];
+          //   datos.push(data.data[0]);
+          //   datos.push(data.data[0]);
+          //   this.dataApraisals.load(datos);
+          //   this.apraisalLength = datos.length;
+          //   console.log(datos, datos.length, this.dataApraisals);
+          //   this.dataApraisals.refresh();
+          //   resolve(datos);
+          // }
+          // console.log(info, pOption);
         },
         error: err => {
           console.log(err);
@@ -547,9 +608,14 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
   }
 
   ocultaDivNoti() {
-    //
-    // Invalidar los botones
-    //
+    this.btnContinuarOficio = false;
+    this.btnValidaArchivo = false;
+    this.btnInsertaArchivo = false;
+    this.btnValidarArc = false;
+    this.btnUpdArchivo = false;
+    this.btnAgrArchivo = false;
+    this.gvAvaluosRechazados = false;
+    this.gvBienesRecahazados = false;
   }
 
   search() {
@@ -559,58 +625,69 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
   controlBotnoes(tipoProceso: string, estado: string) {
     if (tipoProceso == '1') {
       if (estado == 'V') {
-      } else {
-        if (estado == 'I') {
-          //
-          //
-          this.bottonDesible = true;
-          //
-          //
-        }
+        /**********************   BOTONES AVALUOS   **********************/
+        //NULL;
+        /**********************   BOTONES DESCUENTO   **********************/
+      } else if (estado == 'I') {
+        this.lnkDesFormato = false;
+        this.lnkValArchivo = false;
+        this.lnkAvaRechazados = false;
+        this.lnkInsAvaluos = false;
+        this.lnkAddAvaluo = false;
+        this.lnkUpdAvaluo = false;
+        this.bottonDesible = false;
       }
     } else {
       if (tipoProceso == 'SOLICITUD') {
         if (estado == 'V') {
-          //
-          //
+          this.lnkDesFormato = true;
+          this.lnkValArchivo = true;
+          this.lnkAvaRechazados = true;
+          this.lnkInsAvaluos = true;
+          this.lnkAddAvaluo = true;
+          this.lnkUpdAvaluo = true;
+          this.bottonDesible = true;
+        } else if (estado == 'I') {
+          this.lnkDesFormato = false;
+          this.lnkValArchivo = false;
+          this.lnkAvaRechazados = false;
+          this.lnkInsAvaluos = false;
+          this.lnkAddAvaluo = false;
+          this.lnkUpdAvaluo = false;
           this.bottonDesible = false;
-          //
-          //
-        } else {
-          if (estado == 'I') {
-            //
-            //
-            this.bottonDesible = true;
-            // y boton generar oficio
-            //
-          }
         }
       } else {
         if (tipoProceso == 'DESCUENTO') {
           if (estado == 'V') {
-            //
-            //
-            this.bottonDesible = true;
-            // y boton generar oficio
-            //
-            //
+            this.lnkDesFormato = false;
+            this.lnkValArchivo = false;
+            this.lnkAvaRechazados = false;
+            this.lnkInsAvaluos = false;
+            this.lnkAddAvaluo = false;
+            this.lnkUpdAvaluo = false;
+            this.bottonDesible = false;
           } else {
             if (estado == 'I') {
-              //
-              //
-              this.bottonDesible = true;
-              // y boton generar oficio
-              //
-              //
+              this.lnkDesFormato = false;
+              this.lnkValArchivo = false;
+              this.lnkAvaRechazados = false;
+              this.lnkInsAvaluos = false;
+              this.lnkAddAvaluo = false;
+              this.lnkUpdAvaluo = false;
+              this.bottonDesible = false;
             }
           }
         } else {
           if (tipoProceso == '' && estado == '') {
-            //
-            //
-            this.bottonDesible = true;
-            // y boton generar oficio
-            this.form.disabled;
+            this.lnkDesFormato = false;
+            this.lnkValArchivo = false;
+            this.lnkAvaRechazados = false;
+            this.lnkInsAvaluos = false;
+            this.lnkAddAvaluo = false;
+            this.lnkUpdAvaluo = false;
+            this.bottonDesible = false;
+            this.form.disable();
+            this.form.controls['numeroEvento'].enable();
             //
           }
         }
@@ -619,10 +696,48 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
   }
   editDetailApraisal(e: any) {}
   deleteDetailApraisal(e: any) {}
-  downloadDocument() {}
-  validateDocument() {}
-  apraisalReyect() {}
-  insertAvaluo() {}
-  addAvaluo() {}
-  updateAvaluo() {}
+  downloadDocument() {
+    if (this.lnkDesFormato) {
+      this.ocultaDivNoti();
+      if (this.dataGood.count() > 0) {
+        const filename: string = `Comer_Avaluos_${new Date().toDateString()}`;
+        this.excelService.export(this.jsonToCsv, { type: 'xlsx', filename });
+      } else {
+        this.onLoadToast(
+          'warning',
+          `El avaluo no contiene bienes para generar el Layout. Verifiquelo por favor.`
+        );
+      }
+    }
+  }
+  validateDocument() {
+    if (this.lnkValArchivo) {
+    }
+    this.alertQuestion(
+      'question',
+      `¿Desea validar el archivo? `,
+      '',
+      'Continuar',
+      'Cancelar'
+    ).then(async question => {
+      if (question.isConfirmed) {
+      }
+    });
+  }
+  apraisalReyect() {
+    if (this.lnkAvaRechazados) {
+    }
+  }
+  insertAvaluo() {
+    if (this.lnkInsAvaluos) {
+    }
+  }
+  addAvaluo() {
+    if (this.lnkAddAvaluo) {
+    }
+  }
+  updateAvaluo() {
+    if (this.lnkUpdAvaluo) {
+    }
+  }
 }

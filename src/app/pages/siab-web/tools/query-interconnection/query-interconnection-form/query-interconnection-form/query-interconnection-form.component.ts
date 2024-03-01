@@ -34,6 +34,8 @@ export class QueryInterconnectionFormComponent
   totalRepeated: number;
   totalExcelRecords: number;
   splitCveUnicas: any;
+  nameFile: string;
+  splitCve: any;
   constructor(private fb: FormBuilder) {
     super();
   }
@@ -50,6 +52,7 @@ export class QueryInterconnectionFormComponent
 
   chargeFile(event: any) {
     console.log(event.target.files[0]);
+    this.nameFile = event.target.files[0].name;
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -73,9 +76,9 @@ export class QueryInterconnectionFormComponent
         this.totalRepeated = this.findDuplicateKeys(this.records);
         this.totalExcelRecords = this.records.length;
         let totCve = this.totalABuscar(this.records);
-        let splitCve = totCve.split(',');
-        this.splitCveUnicas = splitCve.length;
-        console.log(totCve, splitCve);
+        this.splitCve = totCve.split(',');
+        this.splitCveUnicas = this.splitCve.length;
+        console.log(this.splitCve);
         /*let result = 
         console.log(result);*/
       }
@@ -87,9 +90,9 @@ export class QueryInterconnectionFormComponent
   }
 
   download() {
-    if (this.form.get('file').value) {
+    if (this.splitCve) {
     } else {
-      this.alert('warning', 'Debe cargar un archivo de excel', '');
+      this.alert('warning', 'No se puede descargar el archivo', '');
     }
   }
 
