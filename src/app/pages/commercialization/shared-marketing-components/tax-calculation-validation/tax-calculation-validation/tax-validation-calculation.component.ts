@@ -1181,98 +1181,109 @@ export class TaxValidationCalculationComponent
               .getComerDetAvaluoAll(resp.data[0].noGood)
               .subscribe(response => {
                 console.log('Resp getComerDetAvaluoAll-> ', response);
-
-                let params2 = {
-                  idDetAppraisal1: resp.data[0].idDetAppraisal,
-                  idDetAppraisal: resp.data[0].idAppraisal,
-                  goodId: resp.data[0].good.goodId,
-                  description: response.data[0].descripcion,
-                  status: response.data[0].estatus,
-                  goodClassNumber: response.data[0].no_clasif_bien,
-                  descSssubtipo: response.data[0].desc_sssubtipo,
-                  descSsubtipo: response.data[0].desc_ssubtipo,
-                  descSubtipo: response.data[0].desc_subtipo,
-                  desc_tipo: response.data[0].desc_tipo,
-                  appraisalDate: this.formatDate(
-                    new Date(resp.data[0].appraisalDate)
-                  ),
-                  vigAppraisalDate: this.formatDate(
-                    new Date(resp.data[0].good.appraisalVigDate)
-                  ),
-                  nameAppraiser: resp.data[0].nameAppraiser,
-                  refAppraisal: resp.data[0].refAppraisal,
-                  terrainSurface: this.split(resp.data[0].good.val5),
-                  surfaceConstru: this.split(resp.data[0].good.val5),
-                  terrainPorcentage: porcentTerrain,
-                  porcentageHousing: porcentHousing,
-                  porcentageCommercial: porcentCommercial,
-                  porcentageSpecials: porcentSpecial,
-                  porcentageOthers: porcentOthers,
-                  porcentageTotal: porcentTotal,
-                  vri: resp.data[0].vri,
-                  vTerrain: resp.data[0].vTerrain,
-                  vConstruction: resp.data[0].vConstruction,
-                  vConstructionEat: resp.data[0].vConstructionEat,
-                  vInstallationsEsp: resp.data[0].vInstallationsEsp,
-                  vOthers: resp.data[0].vOthers,
-                  product: product,
-                  difference: difference,
-                  terrainRate:
-                    this.terrainRate != null
-                      ? this.terrainRate
-                      : this.deletDecim(terrainRate),
-                  rateHousing:
-                    this.rateHousing != null
-                      ? this.rateHousing
-                      : this.deletDecim(rateHousing),
-                  rateCommercial:
-                    this.rateCommercial != null
-                      ? this.rateCommercial
-                      : this.deletDecim(terrainRate),
-                  rateSpecials:
-                    this.rateSpecials != null
-                      ? this.rateSpecials
-                      : this.deletDecim(rateSpecials),
-                  rateOthers:
-                    this.rateOthers != null
-                      ? this.rateOthers
-                      : this.deletDecim(rateOthers),
-                  terrainIva:
-                    this.IVA_TERRENO != null ? this.IVA_TERRENO : terrainIva,
-                  ivaHousing:
-                    this.IVA_CONS_HABITACIONAL != null
-                      ? this.IVA_CONS_HABITACIONAL
-                      : ivaHousing,
-                  ivaCommercial:
-                    this.IVA_CONSTRUCION != null
-                      ? this.IVA_CONSTRUCION
-                      : ivaCommercial,
-                  ivaSpecial:
-                    this.IVA_INSTALACIONES_ESP != null
-                      ? this.IVA_INSTALACIONES_ESP
-                      : ivaSpecial,
-                  ivaOthers:
-                    this.IVA_OTROS != null ? this.IVA_OTROS : ivaOthers,
-                  valueIvaTotalCalculated: valueIvaTotalCalculated,
-                  totalAccount: totalAccount,
-                  observation: resp.data[0].observations,
-                  validIVA: this.v_valor,
-                  check: resp.data[0].approved,
-                  goodDescription: resp.data[0].good.description,
-                  auxTasaIvaTerren: terrainRate,
-                  auxTerrainIva: terrainIva,
-                  vriIva: resp.data[0].vriIva,
-                  //auxObservations:
-                };
-                this.dataDet = params2;
-                this.dataDetArr.push(params2);
-                this.Detavaluos.push(params2);
-                this.data2.load(this.Detavaluos);
-                this.data2.refresh();
-                this.loading = false;
-                //this.totalItems2 = resp.count;
-                console.log('Avaluos -->', this.Detavaluos);
-                console.log('this.data2 -->', this.data2);
+                if (response.data.length > 0) {
+                  let params2 = {
+                    idDetAppraisal1: resp.data[0].idDetAppraisal,
+                    idDetAppraisal: resp.data[0].idAppraisal,
+                    goodId: resp.data[0].good.goodId,
+                    description:
+                      response.data[0].descripcion != undefined
+                        ? response.data[0].descripcion
+                        : '',
+                    status: response.data[0].estatus,
+                    goodClassNumber: response.data[0].no_clasif_bien,
+                    descSssubtipo: response.data[0].desc_sssubtipo,
+                    descSsubtipo: response.data[0].desc_ssubtipo,
+                    descSubtipo: response.data[0].desc_subtipo,
+                    desc_tipo: response.data[0].desc_tipo,
+                    appraisalDate: this.formatDate(
+                      new Date(resp.data[0].appraisalDate)
+                    ),
+                    vigAppraisalDate: this.formatDate(
+                      new Date(resp.data[0].good.appraisalVigDate)
+                    ),
+                    nameAppraiser: resp.data[0].nameAppraiser,
+                    refAppraisal: resp.data[0].refAppraisal,
+                    terrainSurface: this.split(resp.data[0].good.val5),
+                    surfaceConstru: this.split(resp.data[0].good.val5),
+                    terrainPorcentage: porcentTerrain,
+                    porcentageHousing: porcentHousing,
+                    porcentageCommercial: porcentCommercial,
+                    porcentageSpecials: porcentSpecial,
+                    porcentageOthers: porcentOthers,
+                    porcentageTotal: porcentTotal,
+                    vri: resp.data[0].vri,
+                    vTerrain: resp.data[0].vTerrain,
+                    vConstruction: resp.data[0].vConstruction,
+                    vConstructionEat: resp.data[0].vConstructionEat,
+                    vInstallationsEsp: resp.data[0].vInstallationsEsp,
+                    vOthers: resp.data[0].vOthers,
+                    product: product,
+                    difference: difference,
+                    terrainRate:
+                      this.terrainRate != null
+                        ? this.terrainRate
+                        : this.deletDecim(terrainRate),
+                    rateHousing:
+                      this.rateHousing != null
+                        ? this.rateHousing
+                        : this.deletDecim(rateHousing),
+                    rateCommercial:
+                      this.rateCommercial != null
+                        ? this.rateCommercial
+                        : this.deletDecim(terrainRate),
+                    rateSpecials:
+                      this.rateSpecials != null
+                        ? this.rateSpecials
+                        : this.deletDecim(rateSpecials),
+                    rateOthers:
+                      this.rateOthers != null
+                        ? this.rateOthers
+                        : this.deletDecim(rateOthers),
+                    terrainIva:
+                      this.IVA_TERRENO != null ? this.IVA_TERRENO : terrainIva,
+                    ivaHousing:
+                      this.IVA_CONS_HABITACIONAL != null
+                        ? this.IVA_CONS_HABITACIONAL
+                        : ivaHousing,
+                    ivaCommercial:
+                      this.IVA_CONSTRUCION != null
+                        ? this.IVA_CONSTRUCION
+                        : ivaCommercial,
+                    ivaSpecial:
+                      this.IVA_INSTALACIONES_ESP != null
+                        ? this.IVA_INSTALACIONES_ESP
+                        : ivaSpecial,
+                    ivaOthers:
+                      this.IVA_OTROS != null ? this.IVA_OTROS : ivaOthers,
+                    valueIvaTotalCalculated: valueIvaTotalCalculated,
+                    totalAccount: totalAccount,
+                    observation: resp.data[0].observations,
+                    validIVA: this.v_valor,
+                    check: resp.data[0].approved,
+                    goodDescription: resp.data[0].good.description,
+                    auxTasaIvaTerren: terrainRate,
+                    auxTerrainIva: terrainIva,
+                    vriIva: resp.data[0].vriIva,
+                    //auxObservations:
+                  };
+                  this.dataDet = params2;
+                  this.dataDetArr.push(params2);
+                  this.Detavaluos.push(params2);
+                  this.data2.load(this.Detavaluos);
+                  this.data2.refresh();
+                  this.loading = false;
+                  //this.totalItems2 = resp.count;
+                  console.log('Avaluos -->', this.Detavaluos);
+                  console.log('this.data2 -->', this.data2);
+                } else {
+                  this.alert(
+                    'warning',
+                    'No se encuentra el Detalle del Avalúo',
+                    ''
+                  );
+                  this.loading = false;
+                }
               });
           }
         },
