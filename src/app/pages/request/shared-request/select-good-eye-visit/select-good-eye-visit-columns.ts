@@ -4,12 +4,12 @@ export const SELECT_GOODS_EYE_VISIT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  startVisitDate: {
+  instanceDate: {
     title: 'Fecha Hora Inicio',
     type: 'string',
     sort: false,
   },
-  endVisitDate: {
+  instancebpel: {
     title: 'Fecha Hora Fin',
     type: 'string',
     sort: false,
