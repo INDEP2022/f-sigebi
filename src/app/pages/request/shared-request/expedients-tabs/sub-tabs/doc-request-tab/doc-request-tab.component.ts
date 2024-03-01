@@ -298,6 +298,9 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
+                if (isNullOrEmpty(items.xfecha)) {
+                  items.xfecha = items.dInDate;
+                }
                 items.xtipoDocumentoId = items.xtipoDocumento + '';
                 items.xtipoDocumento = filter[0]?.ddescription;
                 return items;
@@ -349,6 +352,9 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
+                if (isNullOrEmpty(items.xfecha)) {
+                  items.xfecha = items.dInDate;
+                }
                 items.xtipoDocumentoId = items.xtipoDocumento + '';
                 items.xtipoDocumento = filter[0]?.ddescription;
                 return items;
@@ -407,6 +413,9 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
+                if (isNullOrEmpty(items.xfecha)) {
+                  items.xfecha = items.dInDate;
+                }
                 items.xtipoDocumentoId = items.xtipoDocumento + '';
                 items.xtipoDocumento = filter[0]?.ddescription;
                 return items;
@@ -460,6 +469,9 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
+                if (isNullOrEmpty(items.xfecha)) {
+                  items.xfecha = items.dInDate;
+                }
                 items.xtipoDocumentoId = items.xtipoDocumento + '';
                 items.xtipoDocumento = filter[0]?.ddescription;
                 return items;
