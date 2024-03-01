@@ -350,6 +350,7 @@ export class RequestCompDocTasksComponent
         console.log('callback', sample);
         this.openSignature({
           reportFolio: sample.sampleId,
+          contentId: sample.contentId,
         });
       });
 
@@ -1887,41 +1888,30 @@ export class RequestCompDocTasksComponent
     this.openModal(
       AnnexJAssetsClassificationComponent,
       object.reportFolio,
-      'sign-annexJ-assets-classification'
+      'sign-annexJ-assets-classification',
+      object.contentId
     );
   }
 
-  async openModal(
-    component: any,
-    idSample?: any,
-    typeAnnex?: string
-  ): Promise<void> {
+  async openModal(component: any, idSample?: any, typeAnnex?: string, contentId = ''): Promise<void> {
+
     let report = await this.getStatusReport();
     report = report.isValid ? report.data[0] : report;
-
-    /*console.log('openModal');
-    console.log(this.requestId);
-    console.log(report.documentTypeId);
-    console.log(this.reportTable);
-    console.log(idSample);*/
+    let docId = report.isValid ? report.documentTypeId : this.reportId;
 
     if (!this.signReport) {
       let config: ModalOptions = {
         initialState: {
           requestId: this.requestId,
-          reportId: report.documentTypeId,
+          reportId: docId,
           reportTable: this.reportTable,
           idSample: idSample,
+          contentId: contentId,
           typeAnnex: typeAnnex,
           callback: async (typeDocument: number, typeSign: string) => {
             if (typeAnnex == 'sign-annexJ-assets-classification') {
               if (typeDocument && typeSign) {
-                this.showReportInfo(
-                  idSample,
-                  typeDocument,
-                  typeSign,
-                  typeAnnex
-                );
+                this.showReportInfo(idSample, typeDocument, typeSign, typeAnnex, contentId);
               }
             }
           },
@@ -1931,16 +1921,11 @@ export class RequestCompDocTasksComponent
       };
       this.modalService.show(component, config);
     } else {
-      this.showReportInfo(0, 0, '', '');
+      this.showReportInfo(idSample, 0, '', '', contentId);
     }
   }
 
-  showReportInfo(
-    id: number,
-    typeDocument: number,
-    typeSign: string,
-    typeAnnex: string
-  ) {
+  showReportInfo(id: number, typeDocument: number, typeSign: string, typeAnnex: string, contentId = '') {
     const idTypeDoc = typeDocument;
     const idSample = id;
     const orderSampleId = id;
@@ -1964,6 +1949,7 @@ export class RequestCompDocTasksComponent
         reportName,
         signed,
         requestId,
+        contentId,
         callback: data => {
           if (typeFirm != 'electronica') {
             if (data) {
@@ -2067,9 +2053,9 @@ export class RequestCompDocTasksComponent
 
   uploadOficioCSJ(execute) {
     let urlBaseReport = `${environment.API_URL}processgoodreport/report/showReport?nombreReporte=`;
-    urlBaseReport =
-      'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=situacion_juridica_amparo.jasper&ID_SOLICITUD=26164&ID_TIPO_DOCTO=' +
-      this.reportId;
+    urlBaseReport += `situacion_juridica_amparo.jasper&ID_SOLICITUD=${this.requestId}&ID_TIPO_DOCTO=${this.reportId}`;
+
+    console.log('urlBaseReport', urlBaseReport);
 
     let token = this.authService.decodeToken();
     const docName = 'situacion_juridica_amparo';

@@ -1,5 +1,6 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -40,7 +41,8 @@ export class GoodsTendersComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private msDelegationService: DelegationService,
     private msSubdelegationService: SubdelegationService,
-    private msBiddingService: BiddingService
+    private msBiddingService: BiddingService,
+    private datePipe: DatePipe
   ) {
     super();
     this.today = new Date();
@@ -53,12 +55,12 @@ export class GoodsTendersComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      delegation: [null, [Validators.required]],
-      subdelegation: [null, [Validators.required]],
-      noBidding: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      PF_FECINI: [null, [Validators.required]],
-      PF_FECFIN: [null, [Validators.required]],
+      delegation: [null, []],
+      subdelegation: [null, []],
+      noBidding: [null, []],
+      description: [null, []],
+      PF_FECINI: [null, []],
+      PF_FECFIN: [null, []],
     });
   }
 
@@ -79,16 +81,6 @@ export class GoodsTendersComponent extends BasePage implements OnInit {
     this.modalService.show(PreviewDocumentsComponent, config);
   }
   confirm() {
-    let params = {
-      PN_DELEGACION: this.form.controls['delegation'].value,
-      PN_SUBDELEGACION: this.form.controls['subdelegation'].value,
-      NO_LICITACION1: this.form.controls['noBidding'].value,
-      DESC_LICIT: this.form.controls['description'].value,
-      PF_FECINI: this.form.controls['PF_FECINI'].value,
-      PF_FECFIN: this.form.controls['PF_FECFIN'].value,
-    };
-    console.log(params);
-
     const start = new Date(this.form.get('PF_FECINI').value);
     const end = new Date(this.form.get('PF_FECFIN').value);
 
@@ -125,14 +117,38 @@ export class GoodsTendersComponent extends BasePage implements OnInit {
 
   runReport() {
     this.loading = true;
-    let params = {
-      pn_delegacion: this.form.controls['delegation'].value,
-      pn_subdelegacion: this.form.controls['subdelegation'].value,
-      pn_no_licita: this.form.controls['noBidding'].value,
-      pc_desc_licita: this.form.controls['description'].value,
-      pf_fecini: this.form.controls['PF_FECINI'].value,
-      pf_fecfin: this.form.controls['PF_FECFIN'].value,
-    };
+    let params: any = {};
+    if (this.form.controls['delegation'].value)
+      params.pn_delegacion = this.form.controls['delegation'].value;
+
+    if (this.form.controls['subdelegation'].value)
+      params.pn_subdelegacion = this.form.controls['subdelegation'].value;
+
+    if (this.form.controls['noBidding'].value)
+      params.pn_no_licita = this.form.controls['noBidding'].value;
+
+    if (this.form.controls['description'].value)
+      params.pc_desc_licita = this.form.controls['description'].value;
+
+    if (this.form.controls['PF_FECINI'].value)
+      params.pf_fecini = this.datePipe.transform(
+        this.form.controls['PF_FECINI'].value,
+        'dd-MM-yyyy'
+      );
+
+    if (this.form.controls['PF_FECFIN'].value)
+      params.pf_fecfin = this.datePipe.transform(
+        this.form.controls['PF_FECFIN'].value,
+        'dd-MM-yyyy'
+      );
+    // let params = {
+    //   pn_delegacion: this.form.controls['delegation'].value,
+    //   pn_subdelegacion: this.form.controls['subdelegation'].value,
+    //   pn_no_licita: this.form.controls['noBidding'].value,
+    //   pc_desc_licita: this.form.controls['description'].value,
+    //   pf_fecini: this.form.controls['PF_FECINI'].value,
+    //   pf_fecfin: this.form.controls['PF_FECFIN'].value,
+    // };
     this.siabService
       .fetchReport('RGERDESLICITXBIEN', params)
       .subscribe(response => {
@@ -225,7 +241,7 @@ export class GoodsTendersComponent extends BasePage implements OnInit {
   changeBidding(event: any) {
     console.log(event);
     if (event) {
-      this.form.get('description').setValue(event);
+      this.form.get('description').setValue(event.clueTender);
     } else {
       this.form.get('description').setValue(null);
     }
