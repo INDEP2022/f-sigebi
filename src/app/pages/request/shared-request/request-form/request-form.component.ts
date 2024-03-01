@@ -276,7 +276,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
         this.selectEntity = new DefaultSelect(stateCode, stateCode.length);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -333,7 +333,10 @@ export class RequestFormComponent extends BasePage implements OnInit {
   getTransferent(params?: ListParams) {
     params['sortBy'] = 'nameTransferent:ASC';
     params['filter.status'] = `$eq:${1}`;
-    params['filter.typeTransferent'] = `$eq:NO`;
+
+    //Como se valida que es documentación complementaria
+    //params['filter.typeTransferent'] = `$eq:NO`;
+
     const isNumber = !isNaN(Number(params.text));
     if (params.text != '' && isNumber != true) {
       params['filter.nameTransferent'] = `$ilike:${params.text}`;
@@ -389,7 +392,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     }
   }
 
-  getState(event: any): void {}
+  getState(event: any): void { }
 
   /*getIssue(event?: any, id?: string): void {
     let params = new ListParams();
@@ -504,7 +507,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
               cancelButtonColor: '#B38E5D',
               confirmButtonText: 'Aceptar',
               allowOutsideClick: false,
-            }).then(async result => {});
+            }).then(async result => { });
           }
         }
       }

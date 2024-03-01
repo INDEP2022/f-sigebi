@@ -1,6 +1,6 @@
 <ng-container *ngIf="nombrePantalla != 'goods-classification'">
   <h5 class="title">Bienes Inventario</h5>
-  <app-search-inventory-goods
+  <app-search-inventory-goods [recordId]="recordId"
     (onSearch)="getInfoGoods($event)"></app-search-inventory-goods>
   <div class="row pb-3">
     <div class="col-sm-12 col-md-12 col-lg-12" *ngIf="false">
