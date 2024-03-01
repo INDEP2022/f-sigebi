@@ -9,7 +9,6 @@ import { data } from './data';
 //XLSX
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
@@ -147,7 +146,9 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
   }
 
   report() {
-    let params = {
+    this.alertInfo('warning', 'Atención', 'Reporte no disponible');
+
+    /*let params = {
       //PN_DEVOLUCION: this.data,
       P_ORIGIN: null,
       P_CONSEC: null,
@@ -190,7 +191,7 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
           };
           this.modalService.show(PreviewDocumentsComponent, config);
         }
-      });
+      });*/
   }
 
   getAllSegUser1(params: ListParams) {

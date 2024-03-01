@@ -48,6 +48,7 @@ export class SearchRequestSimilarGoodsComponent
   requestId: string | number = null;
 
   @Input() selected: boolean = false;
+  @Input() showExpedient: boolean = false;
 
   /* injections */
   private requestService = inject(RequestService);
@@ -56,6 +57,7 @@ export class SearchRequestSimilarGoodsComponent
   private route = inject(ActivatedRoute);
   private requestHelperService = inject(RequestHelperService);
   private bsParentModalRef = inject(BsModalRef);
+
   /*  */
 
   constructor(private modalService: BsModalService) {
