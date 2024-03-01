@@ -26,9 +26,11 @@ import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
+import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
+import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 import { DELEGATION_COLUMNS_REPORT } from '../../../../../app/pages/siab-web/commercialization/report-unsold-goods/report-unsold-goods/columns';
 import { SendRequestEmailComponent } from '../../destination-information-request/send-request-email/send-request-email.component';
@@ -42,9 +44,6 @@ import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/m
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
-//import * as moment from 'moment';
-import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -110,6 +109,7 @@ export class RequestCompDocTasksComponent
   steap3: boolean = false;
   isEdit: boolean = false;
   dictumInfo: boolean = false;
+  showExpedient: boolean = false;
 
   readonly: boolean = true;
 
@@ -973,10 +973,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         break;
       case 'verify-compliance-return':
@@ -991,10 +991,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        /* if (!this.validate.files) {
+        if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }*/
+        }
 
         break;
       case 'approve-return':
@@ -1005,10 +1005,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         break;
 
@@ -1029,10 +1029,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         break;
 
@@ -1049,10 +1049,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         break;
 
@@ -1067,11 +1067,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
-
+        }
         break;
 
       case 'validate-eye-visit-similar-goods':
@@ -1088,10 +1087,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         //REGISTRO
         //VALIDAR RESULTADOS
@@ -1127,10 +1126,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         break;
 
@@ -1140,10 +1139,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
@@ -1154,10 +1153,10 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'analysis-result-compensation':
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isSigned) {
@@ -1180,10 +1179,10 @@ export class RequestCompDocTasksComponent
       case 'notification-taxpayer-compensation':
         //DATOS DEL DICTAMEN
 
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
@@ -1212,10 +1211,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
 
       case 'response-office-information-goods':
@@ -1229,10 +1228,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Generar el oficio destino');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
 
       case 'review-office-information-goods':
@@ -1241,10 +1240,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Firmar el oficio destino');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
 
       /*NUMERARIO*/
@@ -1262,17 +1261,17 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         break;
       case 'request-economic-resources':
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
@@ -1292,10 +1291,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Generar el dictamen de resarcimiento');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         break;
       case 'generate-results-economic':
@@ -1308,16 +1307,16 @@ export class RequestCompDocTasksComponent
           this.showWarning('Verifique las observaciones de lineamientos');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
       case 'validate-dictum-economic':
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         if (!this.validate.dictudData) {
           this.showWarning('Registre datos del dictamen');
           return false;
@@ -1333,10 +1332,10 @@ export class RequestCompDocTasksComponent
 
         break;
       case 'delivery-notify-request':
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
@@ -1354,26 +1353,26 @@ export class RequestCompDocTasksComponent
           this.showWarning('Registre datos de la cita');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
       case 'register-pay-order':
         if (!this.validate.orderEntry) {
           this.showWarning('Registre datos de orden de ingreso');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
       case 'generate-compensation-act':
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
@@ -1407,10 +1406,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
       case 'register-seizures':
         if (!this.validate.regdoc) {
@@ -1425,10 +1424,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
       case 'register-abandonment-goods':
         if (!this.validate.regdoc) {
@@ -1443,10 +1442,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
       case 'register-protections-goods':
         if (!this.validate.regdoc) {
@@ -1461,10 +1460,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
 
       case 'register-compensation-documentation':
@@ -1476,10 +1475,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Asocie el expediente de la solicitud');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
 
       case 'register-request-protection':
@@ -1495,10 +1494,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
 
       case 'protection-regulation':
@@ -1507,10 +1506,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Genera el reporte de oficio jurídico');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
 
       case 'register-compensation-documentation':
@@ -1522,10 +1521,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Asocie el expediente de la solicitud');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
 
       case 'review-result-protection':
@@ -1533,10 +1532,10 @@ export class RequestCompDocTasksComponent
           //this.showWarning('Firme el reporte de oficio jurídico');
           //return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         break;
       case 'register-seizures':

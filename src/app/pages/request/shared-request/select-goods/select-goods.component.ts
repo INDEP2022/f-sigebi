@@ -32,6 +32,7 @@ import { RequestSiabFormComponent } from '../request-siab-form/request-siab-form
 import { AddGoodsButtonComponent } from './add-goods-button/add-goods-button.component';
 import { GrouperGoodFieldComponent } from './grouper-good-field/grouper-good-field.component';
 
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { ReserveGoodModalComponent } from './reserve-good-modal/reserve-good-modal.component';
 import {
@@ -64,6 +65,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   @Input() idRequest: number = 0;
   @Input() updateInfo: boolean = true;
   @Input() btnGrouper: boolean = false;
+  @Input() recordId: number = 0;
 
   goodSelected: boolean = false;
   jsonBody: any = {};
@@ -92,7 +94,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     private affairService: AffairService,
     //private goodsInvService: GoodsInvService,
     private goodResDevInvService: AppliGoodResDevViewService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private goodFinderService: GoodFinderService
   ) {
     super();
     this.goodSettings.columns = GOODS_RES_DEV_INV_COLUMNS;
@@ -100,6 +103,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.goodParams.getValue()['filter.transferFile'] = `$eq:${this.idRequest}`;
+
     const self = this;
     this.goodSettings.columns = {
       addGood: {
@@ -363,8 +368,13 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       if (info.stationId) {
         this.params.getValue()['filter.stationId'] = `$eq:${info.stationId}`;
       }
+
+      if (this.recordId > 0) {
+        info.fileId = this.recordId;
+      }
+
       if (info.fileId) {
-        this.params.getValue()['filter.fileId'] = `$eq:${info.fileId}`;
+        this.params.getValue()['filter.transferFile'] = `$eq:${info.fileId}`;
       }
       if (info.authorityId) {
         this.params.getValue()[
@@ -386,7 +396,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       }
 
       console.log('this.params.getValue()', this.params.getValue());
-      this.goodProcessService.goodResDevInv(this.params.getValue()).subscribe({
+      this.goodResDevInvService.getAll(this.params.getValue()).subscribe({
         next: response => {
           console.log('goods-res-dev', response);
           this.goodColumns.load(response.data);

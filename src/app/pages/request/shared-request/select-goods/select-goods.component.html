@@ -1,6 +1,7 @@
 <ng-container *ngIf="nombrePantalla != 'goods-classification'">
   <h5 class="title">Bienes Inventario</h5>
   <app-search-inventory-goods
+    [recordId]="recordId"
     (onSearch)="getInfoGoods($event)"></app-search-inventory-goods>
   <div class="row pb-3">
     <div class="col-sm-12 col-md-12 col-lg-12" *ngIf="false">
@@ -17,20 +18,20 @@
         </div>
       </div>
     </div>
-  </div>
-  <ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
-    <div [class]="loading ? 'table-loading' : ''">
-      <ng2-smart-table
-        id="eventTable"
-        [attr.class]="'table-bordered table-responsive'"
-        [settings]="goodSettings"
-        [source]="goodColumns">
-      </ng2-smart-table>
-      <div class="table-padding"></div>
+    <div class="col-lg-12">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          id="eventTable"
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="goodSettings"
+          [source]="goodColumns">
+        </ng2-smart-table>
+        <app-pagination [params]="params" [totalItems]="goodTotalItems">
+        </app-pagination>
+      </div>
     </div>
-  </ng-scrollbar>
-  <app-pagination [params]="params" [totalItems]="goodTotalItems">
-  </app-pagination>
+  </div>
+
   <br />
 </ng-container>
 
@@ -74,21 +75,20 @@
       </div>
     </div>
   </div>
-</div>
-<ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
-  <div [class]="goodSelected ? 'table-loading' : ''">
-    <ng2-smart-table
-      #table
-      id="eventSelectedTable"
-      [attr.class]="'table-bordered table-responsive'"
-      [settings]="selectedGoodSettings"
-      [source]="selectedGoodColumns"
-      (userRowSelect)="selectGoods($event)">
-    </ng2-smart-table>
-    <div class="table-padding"></div>
+  <div class="col-lg-12">
+    <div [class]="goodSelected ? 'table-loading' : ''">
+      <ng2-smart-table
+        #table
+        id="eventSelectedTable"
+        [attr.class]="'table-bordered table-responsive'"
+        [settings]="selectedGoodSettings"
+        [source]="selectedGoodColumns"
+        (userRowSelect)="selectGoods($event)">
+      </ng2-smart-table>
+      <app-pagination
+        [params]="selectedGoodParams"
+        [totalItems]="selectedGoodTotalItems">
+      </app-pagination>
+    </div>
   </div>
-</ng-scrollbar>
-<app-pagination
-  [params]="selectedGoodParams"
-  [totalItems]="selectedGoodTotalItems">
-</app-pagination>
+</div>

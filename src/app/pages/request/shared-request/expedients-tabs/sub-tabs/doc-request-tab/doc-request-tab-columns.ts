@@ -1,5 +1,3 @@
-import { DatePipe } from '@angular/common';
-
 export const DOC_REQUEST_TAB_COLUMNS = {
   //Documentos Solicitud arreglar paginado
   dDocName: {
@@ -30,14 +28,19 @@ export const DOC_REQUEST_TAB_COLUMNS = {
     sort: false,
   },
 
-  dInDate: {
+  xfecha: {
     title: 'Fecha Creación',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (date: Date) => {
-      var raw = new Date(date);
-      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
-      return formatted;
+    valuePrepareFunction: (date: string) => {
+      let raw = date;
+      if (date) {
+        let formatted = raw.split(' ')[0]; // Para obtener solo la fecha sin la hora
+        let parts = formatted.split('-');
+        formatted = `${parts[2]}/${parts[1]}/${parts[0]}`; // Cambiar el formato a dd/MM/yyyy
+        return formatted;
+      }
+      return '';
     },
   },
 
@@ -136,14 +139,19 @@ export const DOC_SCHEDULE_TAB_COLUMNS = {
     sort: false,
   },
 
-  dInDate: {
+  xfecha: {
     title: 'Fecha Creación',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (date: Date) => {
-      var raw = new Date(date);
-      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
-      return formatted;
+    valuePrepareFunction: (date: string) => {
+      let raw = date;
+      if (date) {
+        let formatted = raw.split(' ')[0]; // Para obtener solo la fecha sin la hora
+        let parts = formatted.split('-');
+        formatted = `${parts[2]}/${parts[1]}/${parts[0]}`; // Cambiar el formato a dd/MM/yyyy
+        return formatted;
+      }
+      return '';
     },
   },
 
@@ -237,14 +245,19 @@ export const DOC_GOODS_COLUMNS = {
     sort: false,
   },
 
-  dInDate: {
+  xfecha: {
     title: 'Fecha Creación',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (date: Date) => {
-      var raw = new Date(date);
-      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
-      return formatted;
+    valuePrepareFunction: (date: string) => {
+      let raw = date;
+      if (date) {
+        let formatted = raw.split(' ')[0]; // Para obtener solo la fecha sin la hora
+        let parts = formatted.split('-');
+        formatted = `${parts[2]}/${parts[1]}/${parts[0]}`; // Cambiar el formato a dd/MM/yyyy
+        return formatted;
+      }
+      return '';
     },
   },
 
@@ -344,14 +357,19 @@ export const DOC_EXPEDIENT_COLUMNS = {
     sort: false,
   },
 
-  dInDate: {
+  xfecha: {
     title: 'Fecha Creación',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (date: Date) => {
-      var raw = new Date(date);
-      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
-      return formatted;
+    valuePrepareFunction: (date: string) => {
+      let raw = date;
+      if (date) {
+        let formatted = raw.split(' ')[0]; // Para obtener solo la fecha sin la hora
+        let parts = formatted.split('-');
+        formatted = `${parts[2]}/${parts[1]}/${parts[0]}`; // Cambiar el formato a dd/MM/yyyy
+        return formatted;
+      }
+      return '';
     },
   },
 

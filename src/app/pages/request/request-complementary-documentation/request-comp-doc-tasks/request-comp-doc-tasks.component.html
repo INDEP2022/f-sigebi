@@ -347,7 +347,8 @@
           *ngIf="searchAssociateFile"
           heading="Buscar y Asociar al Expediente"
           id="associateTab">
-          <app-search-request-similar-goods></app-search-request-similar-goods>
+          <app-search-request-similar-goods
+            [showExpedient]="showExpedient"></app-search-request-similar-goods>
         </tab>
 
         <tab
@@ -358,7 +359,8 @@
             [btnGrouper]="btnGrouper"
             [updateInfo]="updateInfo"
             (onChange)="onSelectGoods($event)"
-            [idRequest]="requestId"></app-select-goods>
+            [idRequest]="requestId"
+            [recordId]="requestInfo.recordId"></app-select-goods>
 
           <div *ngIf="selectGoodsNot">
             <app-goods-not-transferred

@@ -298,6 +298,7 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
+                items.xtipoDocumentoId = items.xtipoDocumento + '';
                 items.xtipoDocumento = filter[0]?.ddescription;
                 return items;
               });
@@ -348,6 +349,7 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
+                items.xtipoDocumentoId = items.xtipoDocumento + '';
                 items.xtipoDocumento = filter[0]?.ddescription;
                 return items;
               });
@@ -405,6 +407,7 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
+                items.xtipoDocumentoId = items.xtipoDocumento + '';
                 items.xtipoDocumento = filter[0]?.ddescription;
                 return items;
               });
@@ -457,6 +460,7 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
+                items.xtipoDocumentoId = items.xtipoDocumento + '';
                 items.xtipoDocumento = filter[0]?.ddescription;
                 return items;
               });
@@ -1057,6 +1061,9 @@ export class DocRequestTabComponent
   onChanges() {
     let list =
       this.docExpedient.length > 0 ? this.docExpedient : this.docRequest;
+
+    let toks = [136, 138, 131, 125, 30, 148, 166, 31, 182, 32, 158, 78];
+    list = list.filter(x => toks.includes(parseInt(x.xtipoDocumentoId)));
 
     this.onChange.emit({
       isValid: list.length > 0,

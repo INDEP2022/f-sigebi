@@ -16,8 +16,11 @@
         Seleccionar <i class="fa fa-file"></i>
       </button>
     </div>
-    <div class="mr-auto p-2" *ngIf="!selected">
-      <button class="btn btn-primary btn-sm active" (click)="newExpedient()">
+    <div class="mr-auto p-2">
+      <button
+        *ngIf="showExpedient"
+        class="btn btn-primary btn-sm active"
+        (click)="newExpedient()">
         Nuevo Expediente <i class="fa fa-file"></i>
       </button>
     </div>
