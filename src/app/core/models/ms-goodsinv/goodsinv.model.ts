@@ -19,6 +19,8 @@ export interface IGoodResDevInvView {
   goodDescription?: string;
   unitMeasurement?: string;
   physicalStatus?: string;
+  unitMeasure?: string;
+
   conservationStatus?: string;
   quantity?: number;
   fractionId?: string;

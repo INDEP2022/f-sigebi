@@ -359,7 +359,8 @@
             [btnGrouper]="btnGrouper"
             [updateInfo]="updateInfo"
             (onChange)="onSelectGoods($event)"
-            [idRequest]="requestId"></app-select-goods>
+            [idRequest]="requestId"
+            [recordId]="requestInfo.recordId"></app-select-goods>
 
           <div *ngIf="selectGoodsNot">
             <app-goods-not-transferred
