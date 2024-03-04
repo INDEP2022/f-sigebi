@@ -78,6 +78,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
     this.getThirds().subscribe();
 
     this.eventTypeChange().subscribe();
+    console.log(this.eventForm.value);
   }
 
   getMovableSelect() {

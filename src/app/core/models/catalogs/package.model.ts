@@ -93,3 +93,8 @@ export interface IPupGoodTrackerRga {
   identifier: string;
   user: string;
 }
+
+export interface IPupGoodTrackerFComerGood {
+  process: string;
+  relGood: number;
+}
