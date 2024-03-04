@@ -32,6 +32,7 @@ import { RequestSiabFormComponent } from '../request-siab-form/request-siab-form
 import { AddGoodsButtonComponent } from './add-goods-button/add-goods-button.component';
 import { GrouperGoodFieldComponent } from './grouper-good-field/grouper-good-field.component';
 
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { ReserveGoodModalComponent } from './reserve-good-modal/reserve-good-modal.component';
 import {
@@ -40,7 +41,6 @@ import {
 } from './select-goods-columns';
 import { ViewDetailGoodsComponent } from './view-detail-goods/view-detail-goods.component';
 import { ViewFileButtonComponent } from './view-file-button/view-file-button.component';
-import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 
 @Component({
   selector: 'app-select-goods',
@@ -66,7 +66,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   @Input() updateInfo: boolean = true;
   @Input() btnGrouper: boolean = false;
   @Input() recordId: number = 0;
-  @Input() statusGood: string = "";
+  @Input() statusGood: string = '';
 
   goodSelected: boolean = false;
   jsonBody: any = {};
@@ -104,7 +104,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.goodParams.getValue()['filter.transferFile'] = `$eq:${this.idRequest}`;
 
     const self = this;
@@ -133,10 +132,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         renderComponent: ViewFileButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
-            //component.requesInfo(row.requestId);
-            component.getFormSeach(row.solicitudId);
-            console.log(row);
-            //component.viewFile(row);
+            component.showDocuments(row.goodId);
           });
         },
       },
@@ -152,9 +148,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         renderComponent: ViewFileButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
-            component.viewFile(row);
-            console.log(row);
-            component.getFormSeach(row.applicationId);
+            component.showDocuments(row.goodId);
           });
         },
       },
@@ -175,6 +169,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     //this.selectedGoodColumns = datagood;
     this.getInfoRequest();
   }
+  getData() {}
 
   getFormSeach(recordId: any) {
     this.loading = true;
@@ -200,7 +195,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.requestInfo = response;
         this.getProcessDetonate();
       },
-      error: error => { },
+      error: error => {},
     });
 
     this.getRejectedGoodService();
@@ -246,7 +241,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       next: response => {
         this.processDet = response.data[0].processDetonate;
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -255,8 +250,9 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       next: response => {
         response.recordId;
         this.openModalDocument(idRequest, response.recordId);
+        console.log(idRequest + response.recordId);
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -265,13 +261,31 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       ...MODAL_CONFIG,
       class: 'modal-lg modal-dialog-centered',
     };
-
     config.initialState = {
       idRequest,
       recordId,
-      callback: (next: boolean) => { },
+      callback: (next: boolean) => {},
     };
 
+    this.modalService.show(ShowDocumentsGoodComponent, config);
+  }
+
+  showDocuments(goodId: any): void {
+    const idGood = goodId;
+    const idRequest = this.idRequest;
+    let config: ModalOptions = {
+      initialState: {
+        idGood,
+        idRequest,
+        parameter: '',
+        typeDoc: 'request-assets',
+        callback: (next: boolean) => {
+          //if(next) this.getExample();
+        },
+      },
+      class: `modalSizeXL modal-dialog-centered`,
+      ignoreBackdropClick: true,
+    };
     this.modalService.show(ShowDocumentsGoodComponent, config);
   }
 
@@ -370,7 +384,9 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.params.getValue()['filter.stationId'] = `$eq:${info.stationId}`;
       }
 
-      if (this.recordId > 0) { info.fileId = this.recordId; }
+      if (this.recordId > 0) {
+        info.fileId = this.recordId;
+      }
 
       if (info.fileId) {
         this.params.getValue()['filter.fileId'] = `$eq:${info.fileId}`;
@@ -452,12 +468,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         next: response => {
           resolve(response.data[0].description);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
 
-  viewFile(file: any) { }
+  viewFile(file: any) {}
 
   /*checkInfoProcess(goodsResDev: IGoodsResDev) {
     return new Promise((resolve, reject) => {
@@ -585,7 +601,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       initialState: {
         data,
         typeInfo,
-        callback: (next: boolean) => { },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
