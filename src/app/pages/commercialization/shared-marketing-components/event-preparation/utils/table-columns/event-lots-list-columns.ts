@@ -11,7 +11,7 @@ export const EVENT_LOT_LIST_COLUMNS = {
     title: 'Valor Base',
     sort: false,
   },
-  clientId: {
+  'client.id': {
     title: 'ID Cliente',
     sort: false,
     valuePrepareFunction: (value: any, row: any) => row?.client?.id ?? null,
@@ -23,12 +23,15 @@ export const EVENT_LOT_LIST_COLUMNS = {
     title: 'No. Clasificación Alterna',
     sort: false,
   },
-  rfc: {
+  'client.rfc': {
     title: 'RFC.',
     sort: false,
     valuePrepareFunction: (value: any, row: any) => row?.client?.rfc ?? null,
+    filterFunction: (cell?: any, search?: string) => {
+      return true;
+    },
   },
-  razonSocial: {
+  'client.reasonName': {
     title: 'Razón Social',
     sort: false,
     valuePrepareFunction: (value: any, row: any) =>

@@ -126,6 +126,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
         tap(params => this.getLots(params).subscribe())
       )
       .subscribe();
+
     // this.returnTracker(); //!Se está realizando en otro lado y se cicla
   }
 
@@ -228,18 +229,14 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       filters.forEach((filter: any) => {
         console.log(filter);
         const columns = this.settings.columns as any;
-        const operator = columns[filter.field]?.operator;
+        let operator = columns[filter.field]?.operator;
         if (!filter.search) {
           params.removeAllFilters();
           return;
         }
 
-        if (filter.field == 'razonSocial') {
-          filter.field = 'client.reasonName';
-        }
-
-        if (filter.field == 'clientId') {
-          filter.field = 'client.id';
+        if (filter.field == 'client.reasonName') {
+          operator = SearchFilter.LIKE;
         }
 
         params.addFilter(

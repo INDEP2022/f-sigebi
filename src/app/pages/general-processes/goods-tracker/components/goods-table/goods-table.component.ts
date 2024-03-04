@@ -492,6 +492,14 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       ]);
       return;
     }
+
+    if (this.origin == GOOD_TRACKER_ORIGINS.OutstandingAssetsValidation) {
+      this.saveState = true;
+      this.router.navigate([
+        '/pages/commercialization/validation-exempted-goods',
+      ]);
+      return;
+    }
     this.location.back();
   }
 
