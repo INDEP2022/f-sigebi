@@ -415,6 +415,10 @@ export class EventDataFormComponent extends BasePage implements OnInit {
   updateEvent() {
     this.loading = true;
     const { id } = this.controls;
+    this.eventForm.patchValue({
+      failureDate: addDays(this.eventForm.value.eventDate, 3),
+    });
+
     return this.comerEventsService
       .updateComerEvent(id.value, this.eventForm.value)
       .pipe(

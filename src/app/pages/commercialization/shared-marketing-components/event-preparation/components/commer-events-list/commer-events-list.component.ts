@@ -61,7 +61,10 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
-        tap(params => this.getEvents(params).subscribe())
+        tap(params => {
+          console.log(params);
+          this.getEvents(params).subscribe();
+        })
       )
       .subscribe();
   }
