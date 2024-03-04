@@ -377,7 +377,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       }
       if (info.descriptionGood) {
         this.params.getValue()[
-          'filter.goodDescription'
+          'filter.descriptionGood'
         ] = `$eq:${info.descriptionGood}`;
       }
       if (info.stationId) {
@@ -397,7 +397,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         ] = `$eq:${info.authorityId}`;
       }
       if (info.actFolio) {
-        this.params.getValue()['filter.folioAct'] = `$eq:${info.actFolio}`;
+        this.params.getValue()['filter.actFolio'] = `$eq:${info.actFolio}`;
       }
       if (info.transferFile) {
         this.params.getValue()[
@@ -406,7 +406,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       }
       if (info.relevantTypeId) {
         this.params.getValue()[
-          'filter.typeRelevantId'
+          'filter.relevantTypeId'
         ] = `$eq:${info.relevantTypeId}`;
       }
 
