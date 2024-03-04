@@ -4,7 +4,7 @@ export const GOODS_RES_DEV_INV_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  goodDescription: {
+  descriptionGood: {
     title: 'Descripción',
     type: 'string',
     sort: false,

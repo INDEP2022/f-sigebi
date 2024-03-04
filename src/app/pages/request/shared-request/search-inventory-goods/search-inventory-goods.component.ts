@@ -22,6 +22,7 @@ import {
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ORIGIN_INFO } from './origin-data.model';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-search-inventory-goods',
@@ -49,7 +50,7 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
   goodTypes: any[] = [];
   origins = new DefaultSelect(ORIGIN_INFO);
   @Output() onSearch = new EventEmitter<any>();
-  @Input() recordId: number = 0;
+  @Input() recordId: number = null;
 
   constructor(
     private fb: FormBuilder,
@@ -142,19 +143,18 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
       descriptionGood: [null, [Validators.pattern(STRING_PATTERN)]],
       stationId: [null],
       origin: [null],
-      fileId: [],
+      fileId: [null],
       authorityId: [null],
       actFolio: [null],
       transferFile: [null, [Validators.pattern(STRING_PATTERN)]],
       relevantTypeId: [null],
     });
 
-    if (this.recordId > 0) {
+    if (!isNullOrEmpty(this.recordId)) {
       this.searchForm.get('fileId').setValue(this.recordId);
       this.searchForm.get('fileId').disable();
     }
 
-    const info = JSON.parse(localStorage.getItem('Task'));
   }
 
   getDelegations(params: ListParams) {

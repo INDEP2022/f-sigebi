@@ -66,6 +66,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   @Input() updateInfo: boolean = true;
   @Input() btnGrouper: boolean = false;
   @Input() recordId: number = 0;
+  @Input() statusGood: string = "";
 
   goodSelected: boolean = false;
   jsonBody: any = {};
@@ -172,7 +173,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       ...this.selectedGoodSettings.columns,
     };
     //this.selectedGoodColumns = datagood;
-
     this.getInfoRequest();
   }
 
@@ -373,7 +373,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       if (this.recordId > 0) { info.fileId = this.recordId; }
 
       if (info.fileId) {
-        this.params.getValue()['filter.transferFile'] = `$eq:${info.fileId}`;
+        this.params.getValue()['filter.fileId'] = `$eq:${info.fileId}`;
       }
       if (info.authorityId) {
         this.params.getValue()[
@@ -394,7 +394,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         ] = `$eq:${info.relevantTypeId}`;
       }
 
-      console.log('this.params.getValue()', this.params.getValue());
+      //Aplicar filtro de estatus de bienes por cada proceso
+      //DEVOLUCION DXV
+      if (!isNullOrEmpty(this.statusGood)) {
+        this.params.getValue()['filter.statusGood'] = `$eq:DXV`;
+      }
+
       this.goodResDevInvService.getAll(this.params.getValue()).subscribe({
         next: response => {
           console.log('goods-res-dev', response);
@@ -512,8 +517,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     delete good.addGood;
     good = Object.assign({ viewFile: '' }, good);
     this.selectedGoodColumns = [...this.selectedGoodColumns, good];
-    console.log('aqui agregar');
-
     //this.selectedGoodTotalItems = this.selectedGoodColumns.length;
     this.selectChanges();
   }
@@ -539,23 +542,21 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         const goodSelected = this.selectedGoods.length;
         this.selectedGoods.map(async (item: any, _i: number) => {
-          const index = this.selectedGoodColumns.indexOf(item);
+          //const index = this.selectedGoodColumns.indexOf(item);
           const i = _i + 1;
-          this.selectedGoodColumns.splice(index, 1);
+          //this.selectedGoodColumns.splice(index, 1);
           if (
             this.processDet == 'RES_ESPECIE' ||
             this.processDet == 'DEVOLUCION'
           ) {
             //elimina inventario
-            this.deleteGoodDated(item);
+            await this.deleteGoodDated(item);
           } else {
-            this.deleteGoodResDev(item);
+            await this.deleteGoodResDev(item);
           }
 
           if (goodSelected == i) {
-            this.selectedGoodColumns = [...this.selectedGoodColumns];
-            this.selectedGoodTotalItems = this.selectedGoodColumns.length;
-            this.selectedGoods = [];
+            this.getRejectedGoodService(this.selectedGoodParams.getValue());
             this.onLoadToast('success', 'Los Bienes se eliminaron');
           }
         });

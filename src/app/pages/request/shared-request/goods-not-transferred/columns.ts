@@ -4,7 +4,7 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  relevantType: {
+  strRelevant: {
     title: 'Tipo Relevante',
     type: 'string',
     sort: false,
@@ -16,7 +16,7 @@ export const COLUMNS = {
     sort: false,
   },
 
-  unitExtent: {
+  strUnit: {
     title: 'Unidad de Medida',
     type: 'string',
     sort: false,
