@@ -360,9 +360,14 @@ export class RegisterDocumentationFormComponent
     let checked = event.currentTarget.checked;
     checked = checked === true ? 'Y' : 'N';
     this.registerForm.controls['urgentPriority'].setValue(checked);
-    if (checked === false) {
+    if (checked === 'N') {
       this.registerForm.controls['priorityDate'].setValue(null);
       this.bsPriorityDate = null;
+      this.registerForm.controls['priorityDate'].clearValidators();
+      this.registerForm.controls['priorityDate'].updateValueAndValidity();
+    } else {
+      this.registerForm.controls['priorityDate'].setValidators(Validators.required);
+      this.registerForm.controls['priorityDate'].updateValueAndValidity();
     }
   }
 

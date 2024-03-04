@@ -269,6 +269,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       this.loading = true;
       const formData = {
         dInDate: moment(new Date()).format('DD-MMM-YYYY'),
+        xfecha: this.formatDate(new Date()),
+
         dDocAuthor: this.userLogName,
         dSecurityGroup: 'Public',
         ddocCreator: this.userLogName,
@@ -347,8 +349,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
+      return;
     }
 
     if (
@@ -360,6 +363,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       const user: any = this.authService.decodeToken();
       const formData = {
         dInDate: moment(new Date()).format('DD-MMM-YYYY'),
+        xfecha: this.formatDate(new Date()),
+
         dDocAuthor: this.userLogName,
         dSecurityGroup: 'Public',
         xidExpediente: this.idExpedient,
@@ -371,6 +376,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xnivelRegistroNSBDB: 'bien',
         xidBien: this.idGood,
         xestado: this.stateId,
+        xidSIAB: this.newDocForm.get('noSiab').value,
         xtipoDocumento: this.newDocForm.get('docType').value,
         dDocTitle: this.newDocForm.get('docTit').value,
         xremitente: this.newDocForm.get('sender').value,
@@ -438,8 +444,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
+      return;
     }
 
     if (this.typeDoc == 'doc-request' && this.process != 'sampling-assets') {
@@ -447,6 +454,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       const formData = {
         dDocAuthor: this.userLogName,
         dInDate: moment(new Date()).format('DD-MMM-YYYY'),
+        xfecha: this.formatDate(new Date()),
         dSecurityGroup: 'Public',
         ddocCreator: this.userLogName,
         xidcProfile: 'NSBDB_Gral',
@@ -521,18 +529,22 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
+      return;
     }
 
     if (this.typeDoc == 'doc-expedient' && this.process != 'sampling-assets') {
+      console.log('entro');
       const formData = {
         dInDate: moment(new Date()).format('DD-MMM-YYYY'),
+        xfecha: this.formatDate(new Date()),
         dSecurityGroup: 'Public',
         xidcProfile: 'NSBDB_Gral',
         xNombreProceso: 'Clasificar Bien',
         xnivelRegistroNSBDB: 'expediente',
         xestado: this.stateId,
+        xidSIAB: this.newDocForm.get('noSiab').value,
         dDocAuthor: this.userLogName,
         xidExpediente: this.idExpedient,
         ddocCreator: this.userLogName,
@@ -603,13 +615,15 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
+      return;
     }
 
     if (this.process == 'sampling-assets') {
       const formData = {
         dInDate: new Date(),
+        xfecha: this.formatDate(new Date()),
         dDocAuthor: this.userLogName,
         dSecurityGroup: 'Public',
         xidExpediente: this.idExpedient,
@@ -688,8 +702,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
+      return;
     }
   }
 
@@ -697,7 +712,20 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  handleSuccess() { }
+  handleSuccess() {}
+
+  formatDate(startDate: Date): string {
+    let year = startDate.getFullYear();
+    let month = String(startDate.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript empiezan en 0
+    let day = String(startDate.getDate()).padStart(2, '0');
+    let hours = String(startDate.getHours()).padStart(2, '0');
+    let minutes = String(startDate.getMinutes()).padStart(2, '0');
+    let seconds = String(startDate.getSeconds()).padStart(2, '0');
+
+    let formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`; // Formato YYYY-MM-DD h:mm:ss
+
+    return formattedDate;
+  }
 
   getStateSelect(params?: ListParams) {
     params['filter.sortBy'] = 'descCondition:ASC';

@@ -13,6 +13,7 @@ import { BasePage } from 'src/app/core/shared';
 export class ModifyDatesModalComponent extends BasePage implements OnInit {
   title: string = 'Modificar Fechas';
   dateForm: FormGroup = new FormGroup({});
+  minDate: Date = new Date();
   requestId: number;
   goods: any[];
 
@@ -45,7 +46,7 @@ export class ModifyDatesModalComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'warning',
         'Advertencia',
-        'Fechas de inicio y fin son requeridas'
+        'Fechas de inicio y fin son requeridas \n La fecha fin no puede ser menor a la de inicio'
       );
 
       this.dateForm.controls['startDate'].setValue(null);
@@ -58,6 +59,8 @@ export class ModifyDatesModalComponent extends BasePage implements OnInit {
       let index = _i + 1;
       const body = {
         goodresdevId: item.goodresdevId,
+        instanceDate: this.formatDate(startDate),
+        instancebpel: this.formatDate(endDate),
         startVisitDate: moment(startDate).format('YYYY-MM-DD h:mm:ss'),
         endVisitDate: moment(endDate).format('YYYY-MM-DD h:mm:ss'),
       };
@@ -73,8 +76,23 @@ export class ModifyDatesModalComponent extends BasePage implements OnInit {
     // Guardar las fechas y enviar al formulario padre para actualizar
   }
 
+  formatDate(startDate: Date): string {
+    let year = startDate.getFullYear();
+    let month = String(startDate.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript empiezan en 0
+    let day = String(startDate.getDate()).padStart(2, '0');
+    let hours = String(startDate.getHours()).padStart(2, '0');
+    let minutes = String(startDate.getMinutes()).padStart(2, '0');
+    let seconds = String(startDate.getSeconds()).padStart(2, '0');
+
+    let formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`; // Formato YYYY-MM-DD h:mm:ss
+
+    return formattedDate;
+  }
+
   isValidDate(startDate: string, endDate: string): boolean {
-    return !isNaN(Date.parse(startDate)) && !isNaN(Date.parse(endDate));
+    let start = moment(startDate);
+    let end = moment(endDate);
+    return start.isValid() && end.isValid() && end.isAfter(start);
   }
 
   updateGoodResDev(body: any) {

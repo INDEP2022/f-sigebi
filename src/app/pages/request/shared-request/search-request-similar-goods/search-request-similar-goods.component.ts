@@ -48,6 +48,7 @@ export class SearchRequestSimilarGoodsComponent
   requestId: string | number = null;
 
   @Input() selected: boolean = false;
+  @Input() showExpedient: boolean = false;
 
   /* injections */
   private requestService = inject(RequestService);
@@ -56,6 +57,7 @@ export class SearchRequestSimilarGoodsComponent
   private route = inject(ActivatedRoute);
   private requestHelperService = inject(RequestHelperService);
   private bsParentModalRef = inject(BsModalRef);
+
   /*  */
 
   constructor(private modalService: BsModalService) {
@@ -112,17 +114,26 @@ export class SearchRequestSimilarGoodsComponent
   }
 
   getFormSeach(formSearch: any) {
-    this.params.getValue().addFilter('recordId', '$null', SearchFilter.NOT);
+    this.alertShown = false;
+    let newParams = new FilterParams();
+
+    // Agregar el filtro 'recordId'
+    newParams.addFilter('recordId', '$null', SearchFilter.NOT);
+
     for (const key in formSearch) {
       if (formSearch[key] != null) {
-        this.params.getValue().addFilter(key, formSearch[key]);
+        newParams.addFilter(key, formSearch[key]);
       }
     }
 
+    this.params.next(newParams);
+
+    // Suscribirse a params y llamar a getFiles cuando cambie
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getFiles();
     });
   }
+  private alertShown = false;
 
   getFiles() {
     this.loadGoods = false;
@@ -153,7 +164,10 @@ export class SearchRequestSimilarGoodsComponent
       },
       error: error => {
         this.loading = false;
-        this.alert('warning', 'No se encontraron registros', '');
+        if (!this.alertShown) {
+          this.alert('warning', 'No se encontraron registros', '');
+          this.alertShown = true;
+        }
       },
     });
     // Llamar servicio para buscar expedientes

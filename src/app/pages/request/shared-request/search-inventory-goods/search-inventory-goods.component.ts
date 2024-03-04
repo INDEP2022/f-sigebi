@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -49,6 +49,7 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
   goodTypes: any[] = [];
   origins = new DefaultSelect(ORIGIN_INFO);
   @Output() onSearch = new EventEmitter<any>();
+  @Input() recordId: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -141,12 +142,17 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
       descriptionGood: [null, [Validators.pattern(STRING_PATTERN)]],
       stationId: [null],
       origin: [null],
-      fileId: [null],
+      fileId: [],
       authorityId: [null],
       actFolio: [null],
       transferFile: [null, [Validators.pattern(STRING_PATTERN)]],
       relevantTypeId: [null],
     });
+
+    if (this.recordId > 0) {
+      this.searchForm.get('fileId').setValue(this.recordId);
+      this.searchForm.get('fileId').disable();
+    }
 
     const info = JSON.parse(localStorage.getItem('Task'));
   }
@@ -208,6 +214,7 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
   search() {
     let emptyCount: number = 0;
     let controlCount: number = 0;
+
     for (const c in this.searchForm.controls) {
       if (
         this.searchForm.controls[c].value === null ||
@@ -225,6 +232,7 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
       );
       return;
     }
+
     this.onSearch.emit(this.searchForm.value);
     this.toggleSearch = false;
   }

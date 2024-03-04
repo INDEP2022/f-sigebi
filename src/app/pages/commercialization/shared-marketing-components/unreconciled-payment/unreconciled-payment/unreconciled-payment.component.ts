@@ -324,7 +324,7 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
         if (question.isConfirmed) {
           this.paymentService.remove($event.paymentId).subscribe({
             next: response => {
-              this.alert('success', 'El Registro se Eliminó Correctamente', '');
+              this.alert('success', 'El Registro se eliminó correctamente', '');
               this.getPayments();
             },
             error: error => {
@@ -407,7 +407,11 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
       } else {
         this.loadingBtn = false;
         await this.getPayments();
-        this.alert('warning', 'Proceso Terminado', 'No se pudo enviar el pago');
+        this.alert(
+          'success',
+          'Proceso Terminado',
+          'Pago enviado correctamente'
+        );
       }
     }
     // else if (a && b) {

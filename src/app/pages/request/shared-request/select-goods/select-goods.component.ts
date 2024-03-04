@@ -40,6 +40,7 @@ import {
 } from './select-goods-columns';
 import { ViewDetailGoodsComponent } from './view-detail-goods/view-detail-goods.component';
 import { ViewFileButtonComponent } from './view-file-button/view-file-button.component';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 
 @Component({
   selector: 'app-select-goods',
@@ -64,6 +65,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   @Input() idRequest: number = 0;
   @Input() updateInfo: boolean = true;
   @Input() btnGrouper: boolean = false;
+  @Input() recordId: number = 0;
 
   goodSelected: boolean = false;
   jsonBody: any = {};
@@ -92,7 +94,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     private affairService: AffairService,
     //private goodsInvService: GoodsInvService,
     private goodResDevInvService: AppliGoodResDevViewService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private goodFinderService: GoodFinderService
   ) {
     super();
     this.goodSettings.columns = GOODS_RES_DEV_INV_COLUMNS;
@@ -100,6 +103,9 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+
+    this.goodParams.getValue()['filter.transferFile'] = `$eq:${this.idRequest}`;
+
     const self = this;
     this.goodSettings.columns = {
       addGood: {
@@ -199,13 +205,14 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
     this.getRejectedGoodService();
 
-    this.selectedGoodParams.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      this.getRejectedGoodService(data);
-    });
+    this.selectedGoodParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(data => {
+        this.getRejectedGoodService(data);
+      });
   }
 
   getRejectedGoodService(filter: any = new FilterParams()) {
-
     filter['filter.applicationId'] = `$eq:${this.idRequest}`;
 
     this.rejectedGoodService.getAll(filter).subscribe({
@@ -223,7 +230,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.displayColumns();
       },
     });
-
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -270,6 +276,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   getInfoGoods(filters: any) {
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
+
     this.jsonBody = {};
     if (
       this.processDet == 'DEVOLUCION' ||
@@ -361,8 +369,11 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       if (info.stationId) {
         this.params.getValue()['filter.stationId'] = `$eq:${info.stationId}`;
       }
+
+      if (this.recordId > 0) { info.fileId = this.recordId; }
+
       if (info.fileId) {
-        this.params.getValue()['filter.fileId'] = `$eq:${info.fileId}`;
+        this.params.getValue()['filter.transferFile'] = `$eq:${info.fileId}`;
       }
       if (info.authorityId) {
         this.params.getValue()[
@@ -384,7 +395,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       }
 
       console.log('this.params.getValue()', this.params.getValue());
-      this.goodProcessService.goodResDevInv(this.params.getValue()).subscribe({
+      this.goodResDevInvService.getAll(this.params.getValue()).subscribe({
         next: response => {
           console.log('goods-res-dev', response);
           this.goodColumns.load(response.data);
@@ -458,15 +469,16 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   } */
 
   openReserveModal(good: any) {
-
-    let exitGood: any = this.selectedGoodColumns.find(x => x.goodId == good.goodId);
+    let exitGood: any = this.selectedGoodColumns.find(
+      x => x.goodId == good.goodId
+    );
 
     if (this.processDet == 'DEVOLUCION' || this.processDet == 'RES_NUMERARIO') {
       const modalRef = this.modalService.show(ReserveGoodModalComponent, {
         initialState: {
           good: good,
           requestId: this.requestInfo.id,
-          exitGood: exitGood
+          exitGood: exitGood,
         },
         class: 'modal-md modal-dialog-centered',
         ignoreBackdropClick: true,
@@ -477,7 +489,9 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     } else if (this.processDet != 'INFORMACION') {
       const modalRef = this.modalService.show(ReserveGoodModalComponent, {
         initialState: {
-          good: good, requestId: this.requestInfo.id, exitGood: exitGood
+          good: good,
+          requestId: this.requestInfo.id,
+          exitGood: exitGood,
         },
         class: 'modal-md modal-dialog-centered',
         ignoreBackdropClick: true,
@@ -486,13 +500,11 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         if (data) this.getInfoRequest();
       });
     } else {
-
       if (isNullOrEmpty(exitGood)) {
         this.addGoodForInformation(good);
       } else {
         this.onLoadToast('warning', 'El bien ya ha sido agregado');
       }
-
     }
   }
 
@@ -500,12 +512,13 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     delete good.addGood;
     good = Object.assign({ viewFile: '' }, good);
     this.selectedGoodColumns = [...this.selectedGoodColumns, good];
+    console.log('aqui agregar');
+
     //this.selectedGoodTotalItems = this.selectedGoodColumns.length;
     this.selectChanges();
   }
 
   selectGoods(rows: any) {
-    console.log(rows);
     if (rows.isSelected == false) {
       this.table.isAllSelected = false;
     }
@@ -544,8 +557,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
             this.selectedGoodTotalItems = this.selectedGoodColumns.length;
             this.selectedGoods = [];
             this.onLoadToast('success', 'Los Bienes se eliminaron');
-          } else {
-            this.onLoadToast('error', 'Ocurrió un error al eliminar los Bienes');
           }
         });
 
@@ -738,6 +749,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     goodResDev.descriptionGood = good.goodDescription;
     goodResDev.unitExtent = good.unitMeasurement;
     goodResDev.amountToReserve = good.quantity;
+    goodResDev.applicationResDevId = good.applicationResDevId;
     (goodResDev.amount = 0), (goodResDev.statePhysical = good.physicalStatus);
     goodResDev.stateConservation = good.conservationStatus;
     goodResDev.fractionId = good.fractionId;

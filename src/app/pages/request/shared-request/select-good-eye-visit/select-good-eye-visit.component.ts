@@ -203,11 +203,11 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
               item['maneuverRequired'] =
                 item.requiresManeuver == 'Y' ? true : false;
 
-              item.startVisitDate = item.startVisitDate
-                ? moment(item.startVisitDate).format('DD-MM-YYYY, h:mm:ss a')
+              item.instanceDate = item.instanceDate
+                ? moment(item.instanceDate).format('DD-MM-YYYY, h:mm:ss a')
                 : null;
-              item.endVisitDate = item.endVisitDate
-                ? moment(item.endVisitDate).format('DD-MM-YYYY, h:mm:ss a')
+              item.instancebpel = item.instancebpel
+                ? moment(item.instancebpel).format('DD-MM-YYYY, h:mm:ss a')
                 : null;
               /* item['unitExtentDescrip'] = await this.getDescripUnit(
                 item.unitExtent
@@ -317,7 +317,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
     let value: boolean = false;
     for (let i = 0; i < this.selectedList.length; i++) {
       const item = this.selectedList[i];
-      if (item.startVisitDate != null || item.endVisitDate) {
+      if (item.instanceDate != null || item.instancebpel) {
         value = true;
         break;
       }
@@ -410,7 +410,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
 
   selectChanges() {
     let items = this.selectedGoodColumns['data'].filter(
-      x => !isNullOrEmpty(x.startVisitDate)
+      x => !isNullOrEmpty(x.instanceDate)
     );
 
     this.onChange.emit({

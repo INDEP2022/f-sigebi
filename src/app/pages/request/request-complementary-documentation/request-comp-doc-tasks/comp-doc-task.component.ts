@@ -65,11 +65,14 @@ export abstract class CompDocTasksComponent extends BasePage {
 
   protected abstract legalStatus: boolean; //NUEVO VERIFICAR BOTON NUEVO
   protected abstract requestReview: boolean; //NUEVO VERIFICAR BOTON NUEVO
+  protected abstract signOffice: boolean; //NUEVO VERIFICAR BOTON NUEVO
 
   protected abstract reportTable: string;
   protected abstract reportId: string;
   protected abstract formatReport: boolean;
   protected abstract signReport: boolean;
+
+  protected abstract showExpedient: boolean;
 
   docTemplate: IRequestDocument[];
 
@@ -982,7 +985,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.viewSelectedGoods = true;
         this.selectGoodNotForEyeVisit = true;
         this.expRequest = true;
-        this.legalStatus = true;
+        this.signOffice = true;
 
         this.rejectReq = true;
         this.saveRequest = true;

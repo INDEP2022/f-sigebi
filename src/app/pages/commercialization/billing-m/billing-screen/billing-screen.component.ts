@@ -351,31 +351,50 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           type: 'string',
           sort: false,
           width: '10%',
+          filterFunction: () => {
+            return true;
+          },
         },
         payId: {
           title: 'Id. Pago',
           type: 'string',
           sort: false,
+          filterFunction: () => {
+            return true;
+          },
         },
         relationshipSatType: {
           title: 'Tipo Rel.',
           type: 'string',
           sort: false,
+          filterFunction: () => {
+            return true;
+          },
         },
         usecompSat: {
           title: 'Uso comp.',
           type: 'string',
           sort: false,
+          filter: false,
+          filterFunction: () => {
+            return true;
+          },
         },
         paymentformBsat: {
           title: 'F. Pago',
           type: 'string',
           sort: false,
+          filterFunction: () => {
+            return true;
+          },
         },
         numBiasSat: {
           title: 'Parc.',
           type: 'string',
           sort: false,
+          filterFunction: () => {
+            return true;
+          },
         },
       },
     };
@@ -744,7 +763,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     this.billingCommunicationService.ejecutarFuncion$.subscribe(
       async (next: any) => {
         this.params = next;
-        console.log('SI WILM', next);
         this.valSelects = true;
         await this.getBillings('no');
       }
@@ -1038,12 +1056,12 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(NUMBERS_PATTERN), Validators.required],
       ],
-      idLotPublic: [null, Validators.required],
-      date: [null, Validators.required],
+      idLotPublic: [null],
+      date: [null],
       cause: [null],
       descause: [null],
-      fec: [null, Validators.required],
-      fec2: [null, Validators.required],
+      fec: [null],
+      fec2: [null],
     });
     this.form2 = this.fb.group({
       counter: [null],
@@ -1081,7 +1099,13 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     };
     let res = await this.forArrayFilters_();
     console.log('res', res);
-    if (res) {
+    if (
+      res &&
+      !this.params.getValue()['filter.impressionDate'] &&
+      !this.fecBlkCtrl.value &&
+      !this.fec2BlkCtrl.value &&
+      !this.dateBlkCtrl.value
+    ) {
       // this.params = new BehaviorSubject<ListParams>(new ListParams());
       // this.params2 = new BehaviorSubject<ListParams>(new ListParams());
       this.data.load([]);
@@ -1100,7 +1124,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
       if (params['filter.impressionDate_']) {
         const fechas = params['filter.impressionDate_'].split(',');
-        console.log('fechas', fechas);
         var fecha1 = new Date(fechas[0]);
         var fecha2 = new Date(fechas[1]);
 
