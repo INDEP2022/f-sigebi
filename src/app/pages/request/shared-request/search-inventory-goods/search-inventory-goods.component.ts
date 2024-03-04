@@ -46,6 +46,7 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
   stateId: string = '';
   delegation: string = '';
   regionalDelegationUser: IRegionalDelegation;
+  regionalUser: IRegionalDelegation;
   authorities: any[] = [];
   goodTypes: any[] = [];
   origins = new DefaultSelect(ORIGIN_INFO);
@@ -94,6 +95,9 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
             .setValue(delegation.description);
           this.searchForm.get('regionalDelegationId').setValue(delegation.id);
           this.regionalDelegationUser = delegation;
+          if (isNullOrEmpty(this.regionalUser)) {
+            this.regionalUser = delegation;
+          }
           this.getStates(new ListParams());
         });
     });
@@ -285,6 +289,17 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
   } */
   reset() {
     this.searchForm.reset();
+
+    if (!isNullOrEmpty(this.recordId)) {
+      this.searchForm.get('fileId').setValue(this.recordId);
+      this.searchForm.get('fileId').disable();
+    }
+
+    this.searchForm
+      .get('regionalDelegation')
+      .setValue(this.regionalUser.description);
+    this.searchForm.get('regionalDelegationId').setValue(this.regionalUser.id);
+
     this.onSearch.emit(false);
   }
 }

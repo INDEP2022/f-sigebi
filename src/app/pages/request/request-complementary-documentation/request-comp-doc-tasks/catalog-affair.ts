@@ -61,6 +61,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
             close: true,
           };
         case 33: //GESTIONAR BINES SIMILARES RESARCIMIENTO
+        case 32: //RESARCIMIENTO
           return {
             title: `BIENES SIMILARES: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
             url: 'pages/request/request-comp-doc/tasks/register-request-similar-goods',
