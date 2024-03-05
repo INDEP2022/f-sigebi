@@ -1076,7 +1076,7 @@ export class DocRequestTabComponent
     let list =
       this.docExpedient.length > 0 ? this.docExpedient : this.docRequest;
 
-    let toks = [136, 138, 131, 125, 30, 148, 166, 31, 182, 32, 158, 78];
+    let toks = [136, 138, 131, 125, 30, 148, 166, 31, 182, 32, 158, 178];
     list = list.filter(x => toks.includes(parseInt(x.xtipoDocumentoId)));
 
     this.onChange.emit({
