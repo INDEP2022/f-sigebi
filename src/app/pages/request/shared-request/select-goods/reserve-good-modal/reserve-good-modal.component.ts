@@ -136,7 +136,7 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
     goodResDev.proceedingsId = this.good.fileId;
     goodResDev.proceedingsType = this.good.fileType;
     goodResDev.uniqueKey = this.good.uniqueKey;
-    goodResDev.descriptionGood = this.good.goodDescription;
+    goodResDev.descriptionGood = this.good.descriptionGood;
     goodResDev.unitExtent = this.good.unitMeasurement;
     goodResDev.amountToReserve = this.good.quantity;
     goodResDev.applicationResDevId = goodResDev.applicationId;

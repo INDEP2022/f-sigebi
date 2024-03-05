@@ -29,7 +29,7 @@ import { isNullOrEmpty } from '../../../request-complementary-documentation/requ
   styles: [],
 })
 export class ModalNotTransferredComponent extends BasePage implements OnInit {
-  title: string = 'Bienes no transferidos';
+  title: string = 'Bien no transferido';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   allotment: any;
@@ -62,7 +62,6 @@ export class ModalNotTransferredComponent extends BasePage implements OnInit {
     params['sortBy'] = 'description:ASC';
     this.typeRelevantService.getAll(params).subscribe({
       next: data => {
-        console.log(data);
         this.typeGoods = new DefaultSelect(data.data, data.count);
       },
     });
@@ -87,7 +86,6 @@ export class ModalNotTransferredComponent extends BasePage implements OnInit {
 
     this.unitMessureService.getMedUnits(paramsF.getParams()).subscribe(
       res => {
-        console.log(res);
         const newData = res.data.map((e: any) => {
           return {
             ...e,
@@ -101,7 +99,6 @@ export class ModalNotTransferredComponent extends BasePage implements OnInit {
         );
       },
       err => {
-        console.log(err);
         this.dataUnit = new DefaultSelect();
       }
     );
