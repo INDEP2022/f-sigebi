@@ -435,7 +435,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       this.rejectedGoodService.getAll(this.params.getValue()).subscribe({
         next: response => {
           console.log('goods-res-dev', response);
-          this.goodColumns.load(response.data);
+          let data = []
+          response.data.forEach((item: any) => {
+            let merged = this.mergeWithoutNulls(item, item.good);
+            data.push(merged);
+          });
+          this.goodColumns.load(data);
           this.goodTotalItems = response.count;
           this.loading = false;
         },
@@ -473,6 +478,13 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         console.log(error);
       },
     }); */
+  }
+
+  mergeWithoutNulls(obj1: any, obj2: any): any {
+    let filteredObj2 = Object.fromEntries(
+      Object.entries(obj2).filter(([key, value]) => value !== null)
+    );
+    return { ...obj1, ...filteredObj2 };
   }
 
   destinyInfo(idDestiny: number) {
