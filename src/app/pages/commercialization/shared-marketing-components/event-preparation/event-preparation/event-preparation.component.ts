@@ -247,6 +247,7 @@ export class EventPreparationComponent
       this.parameters.pDirection
     );
     console.log({ pass });
+    console.log('desde controller: ', this.eventForm.getRawValue());
 
     if (['NDIS', 'CONC'].includes(statusVtaId.value)) {
       if (pass == 0) {
