@@ -61,7 +61,10 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
-        tap(params => this.getEvents(params).subscribe())
+        tap(params => {
+          console.log(params);
+          this.getEvents(params).subscribe();
+        })
       )
       .subscribe();
   }
@@ -155,6 +158,8 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
     if (event.isSelected) {
       this.globalEventChange.emit(event.data);
       this.eventSelected = event.data;
+      console.log(event);
+      console.log(event.data);
     } else {
       this.globalEventChange.emit(null);
       this.eventSelected = null;
@@ -162,24 +167,37 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
     }
   }
 
+  correctDate(date: string) {
+    const dateUtc = new Date(date);
+    return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
+  }
+
   openEvent() {
     if (!this.eventSelected) {
       this.alert('error', 'Error', 'Selecciona un Evento');
       return;
     }
-
+    console.log(this.eventSelected);
     this.eventForm.patchValue({
       ...this.eventSelected,
       eventDate: this.eventSelected?.eventDate
-        ? new Date(this.eventSelected?.eventDate)
+        ? this.correctDate(
+            new Date(this.eventSelected?.eventDate).toISOString()
+          )
         : null,
       eventClosingDate: this.eventSelected?.eventClosingDate
-        ? new Date(this.eventSelected?.eventClosingDate)
+        ? this.correctDate(
+            new Date(this.eventSelected?.eventClosingDate).toISOString()
+          )
         : null,
       failureDate: this.eventSelected?.failureDate
-        ? new Date(this.eventSelected?.failureDate)
+        ? this.correctDate(
+            new Date(this.eventSelected?.failureDate).toISOString()
+          )
         : null,
     });
+
+    console.log(this.eventForm.value);
     this.onOpenEvent.emit();
   }
 

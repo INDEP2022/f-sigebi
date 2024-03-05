@@ -17,6 +17,7 @@ export interface IGoodResDevInvView {
   uniqueKey?: string;
   fileNum?: number;
   goodDescription?: string;
+  descriptionGood?: string;
   unitMeasurement?: string;
   physicalStatus?: string;
   unitMeasure?: string;

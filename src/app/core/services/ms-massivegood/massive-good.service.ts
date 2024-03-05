@@ -13,6 +13,7 @@ import {
   IGoodTracker,
   IPackageInfo,
   IPupCompFolioUniv,
+  IPupGoodTrackerFComerGood,
   IPupGoodTrackerRga,
 } from '../../models/catalogs/package.model';
 import {
@@ -314,5 +315,9 @@ export class MassiveGoodService extends HttpService {
 
   applicationPupGenLayouts(data: any) {
     return this.post(`${MassiveGoodEndpoints.ApplicationPupGenLayouts}`, data);
+  }
+
+  pupGoodTrackerFComerGoodEx(body: IPupGoodTrackerFComerGood) {
+    return this.post(`application/pup-good-tracker-fcomergoodex`, body);
   }
 }

@@ -14,6 +14,7 @@ export enum GOOD_TRACKER_ORIGINS {
   DirectDonationInventoryRecord = 'FDONAC_DIRECT',
   DonationGood = 'FMCOMDONAC_1',
   DonationAuthorization = 'FDONSOLAUTORIZA',
+  OutstandingAssetsValidation = 'FCOMERBIENEX',
 }
 
 export enum GOOD_TRACKER_ORIGINS_TITLES {

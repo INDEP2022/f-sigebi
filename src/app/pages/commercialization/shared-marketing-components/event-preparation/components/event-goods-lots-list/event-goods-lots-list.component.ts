@@ -173,7 +173,7 @@ export class EventGoodsLotsListComponent
         console.log(filter);
 
         const columns = this.settings.columns as any;
-        const operator = columns[filter.field]?.operator;
+        let operator = columns[filter.field]?.operator;
         if (!filter.search) {
           params.removeAllFilters();
           return;
@@ -182,6 +182,11 @@ export class EventGoodsLotsListComponent
         if (filter.field == 'bienes') {
           filter.field = 'goodNumber';
         }
+
+        if (filter.field == 'bienes.description') {
+          operator = SearchFilter.ILIKE;
+        }
+
         params.addFilter(
           filter.field,
           filter.search,

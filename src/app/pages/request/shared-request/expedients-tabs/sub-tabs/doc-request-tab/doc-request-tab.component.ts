@@ -13,6 +13,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -298,6 +299,9 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
+                if (isNullOrEmpty(items.xfecha)) {
+                  items.xfecha = moment.utc(items.dInDate);
+                }
                 items.xtipoDocumentoId = items.xtipoDocumento + '';
                 items.xtipoDocumento = filter[0]?.ddescription;
                 return items;
@@ -309,8 +313,8 @@ export class DocRequestTabComponent
                   this.totalItems = data.length;
 
                   this.loading = false;
-                  this.onChanges();
                   this.allDataDocReq = this.docRequest; // Asigna los datos a allDataDocReq
+                  this.onChanges();
                   //this.paragraphs.load(x);
                 });
               } else {
@@ -349,6 +353,9 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
+                if (isNullOrEmpty(items.xfecha)) {
+                  items.xfecha = moment.utc(items.dInDate);
+                }
                 items.xtipoDocumentoId = items.xtipoDocumento + '';
                 items.xtipoDocumento = filter[0]?.ddescription;
                 return items;
@@ -359,8 +366,8 @@ export class DocRequestTabComponent
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
                   this.loading = false;
-                  this.onChanges();
                   this.allDataDocReq = this.docRequest; // Asigna los datos a allDataDocReq
+                  this.onChanges();
                   //this.paragraphs.load(x);
                 });
               } else {
@@ -407,6 +414,9 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
+                if (isNullOrEmpty(items.xfecha)) {
+                  items.xfecha = moment.utc(items.dInDate);
+                }
                 items.xtipoDocumentoId = items.xtipoDocumento + '';
                 items.xtipoDocumento = filter[0]?.ddescription;
                 return items;
@@ -417,8 +427,8 @@ export class DocRequestTabComponent
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
                   this.loading = false;
-                  this.onChanges();
                   this.allDataDocReq = this.docRequest; // Asigna los datos a allDataDocReq
+                  this.onChanges();
                   //this.paragraphs.load(x);
                 });
               } else {
@@ -460,6 +470,9 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
+                if (isNullOrEmpty(items.xfecha)) {
+                  items.xfecha = moment.utc(items.dInDate);
+                }
                 items.xtipoDocumentoId = items.xtipoDocumento + '';
                 items.xtipoDocumento = filter[0]?.ddescription;
                 return items;
@@ -470,8 +483,8 @@ export class DocRequestTabComponent
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
                   this.loading = false;
-                  this.onChanges();
                   this.allDataDocReq = this.docRequest; // Asigna los datos a allDataDocReq
+                  this.onChanges();
                   //this.paragraphs.load(x)
                 });
               } else {
@@ -481,9 +494,11 @@ export class DocRequestTabComponent
             }
           }
 
+          this.onChanges();
           this.loading = false;
         },
         error: error => {
+          this.onChanges();
           this.loading = false;
         },
       });
@@ -987,7 +1002,7 @@ export class DocRequestTabComponent
           setTimeout(() => {
             this.getData(new ListParams());
             this.formLoading = false;
-          }, 7000);
+          }, 10000);
         }
       },
     };
@@ -1062,8 +1077,12 @@ export class DocRequestTabComponent
     let list =
       this.docExpedient.length > 0 ? this.docExpedient : this.docRequest;
 
+    console.log('list 1', list);
+
     let toks = [136, 138, 131, 125, 30, 148, 166, 31, 182, 32, 158, 78];
     list = list.filter(x => toks.includes(parseInt(x.xtipoDocumentoId)));
+
+    console.log('list 2', list);
 
     this.onChange.emit({
       isValid: list.length > 0,
