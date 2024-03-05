@@ -66,10 +66,10 @@
               <span>{{ data?.xresponsable }}</span>
             </label>
           </div>
-          <div class="col-md-6 mt-3" *ngIf="data.dInDate | date : 'dd/MM/yyyy'">
+          <div class="col-md-6 mt-3" *ngIf="data.xfecha">
             <label for="">
               <strong>Fecha Creaci&oacute;n&#58;</strong>
-              <span>{{ data?.dInDate | date : 'dd/MM/yyyy' }}</span>
+              <span>{{ data?.xfecha | date : 'dd/MM/yyyy' }}</span>
             </label>
           </div>
           <div class="col-md-6 mt-3" *ngIf="data.xnoOficio">

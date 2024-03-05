@@ -191,6 +191,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   typedocuments(params: ListParams) {
+    if (this.typesDocuments.length > 0) return;
+
     params['filter.ddescription'] = params['text'];
     console.log(params);
     this.wContentService.getDocumentTypes(params).subscribe({
@@ -265,8 +267,11 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   confirm() {
+    this.loading = true;
+
+    this.loading = true;
+
     if (this.typeDoc == 'good' && this.process == 'programming') {
-      this.loading = true;
       const formData = {
         dInDate: moment(new Date()).format('DD-MMM-YYYY'),
         xfecha: this.formatDate(new Date()),
@@ -349,7 +354,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => {
+            this.loading = false;
+          },
         });
       return;
     }
@@ -431,6 +438,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: resp => {
+            this.loading = false;
             this.alertInfo(
               'success',
               'El Documento ha sido Agregado',
@@ -438,13 +446,14 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             ).then(question => {
               if (question.isConfirmed) {
                 this.modalRef.content.callback(true);
-                this.loading = false;
                 this.loader.load = false;
                 this.modalRef.hide();
               }
             });
           },
-          error: error => {},
+          error: error => {
+            this.loading = false;
+          },
         });
       return;
     }
@@ -530,7 +539,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => {
+            this.loading = false;
+          },
         });
       return;
     }
@@ -616,7 +627,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => {
+            this.loading = false;
+          },
         });
       return;
     }
@@ -691,6 +704,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: resp => {
+            this.loading = false;
             this.alertInfo(
               'success',
               'El Documento ha sido Agregado',
@@ -698,16 +712,19 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             ).then(question => {
               if (question.isConfirmed) {
                 this.modalRef.content.callback(true);
-                this.loading = false;
                 this.loader.load = false;
                 this.modalRef.hide();
               }
             });
           },
-          error: error => {},
+          error: error => {
+            this.loading = false;
+          },
         });
       return;
     }
+
+    this.loading = false;
   }
 
   close() {

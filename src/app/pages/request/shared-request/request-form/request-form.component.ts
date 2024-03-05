@@ -431,6 +431,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   affairChange(e: any) {
+    console.log('asunto ... ', e);
     if (
       e.processDetonate == 'ABANDONO' ||
       e.processDetonate == 'EXT_DOMINIO' ||

@@ -7,6 +7,7 @@ import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevan
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ShowDocumentsGoodComponent } from '../expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
 import { ViewDetailGoodsComponent } from '../select-goods/view-detail-goods/view-detail-goods.component';
 import { ViewFileButtonComponent } from '../select-goods/view-file-button/view-file-button.component';
 import { SELECT_GOODS_LIST_COLUMNS } from './select-good-list-columns';
@@ -67,7 +68,7 @@ export class GoodsListComponent extends BasePage implements OnInit {
         renderComponent: ViewFileButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
-            component.getFormSeach(row.applicationId);
+            component.showDocuments(row.goodId);
           });
         },
       },
@@ -81,6 +82,25 @@ export class GoodsListComponent extends BasePage implements OnInit {
           this.getData(data);
         }
       });
+  }
+
+  showDocuments(goodId: any): void {
+    const idGood = goodId;
+    const idRequest = this.requestId;
+    let config: ModalOptions = {
+      initialState: {
+        idGood,
+        idRequest,
+        parameter: '',
+        typeDoc: 'request-assets',
+        callback: (next: boolean) => {
+          //if(next) this.getExample();
+        },
+      },
+      class: `modalSizeXL modal-dialog-centered`,
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowDocumentsGoodComponent, config);
   }
 
   getData(params: ListParams) {

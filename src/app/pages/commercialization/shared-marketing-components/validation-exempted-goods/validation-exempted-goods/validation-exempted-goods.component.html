@@ -29,9 +29,27 @@
         </div>
       </div>
     </div>
+    <form class="form-material" [formGroup]="processForm">
+      <div class="row">
+        <div class="col"></div>
+        <form-field [control]="processForm.get('process')" class="col-md-3">
+          <ngx-select
+            [searchable]="false"
+            [data]="processes"
+            [form]="processForm"
+            bindLabel="bindValue"
+            label="Proceso"
+            control="process"></ngx-select>
+        </form-field>
+      </div>
+    </form>
+    <!-- BOTONES -->
     <div class="row text-center">
       <div class="col">
-        <button type="button" class="btn btn-primary active btn-sm mr-3">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm mr-3"
+          (click)="goToGoodTracker()">
           Insertar via rastreador
         </button>
         <button type="button" class="btn btn-sm btn-success active mr-3">

@@ -146,3 +146,25 @@ export const DETAIL_APPRAISALS_COLUMNS = {
     sort: false,
   },
 };
+export const DT_RECHAZADOS_COLUMNS = {
+  NO_BIEN: {
+    title: 'No.Bien',
+    type: 'string',
+    sort: false,
+  },
+  DESCRIPCION: {
+    title: 'Descripcion',
+    type: 'string',
+    sort: false,
+  },
+  ESTATUS: {
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
+  },
+  CAUSA: {
+    title: 'Causa',
+    type: 'string',
+    sort: false,
+  },
+};

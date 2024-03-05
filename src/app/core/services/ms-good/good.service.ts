@@ -904,6 +904,11 @@ export class GoodService extends HttpService {
     return this.get(route);
   }
 
+  getTransAvaFilter(params?: string) {
+    const route = `${GoodEndpoints.GoodsTransAva}/filter?${params}`;
+    return this.get(route);
+  }
+
   postTransAva(body: IGoodsTransAva) {
     const route = `${GoodEndpoints.GoodsTransAva}`;
     return this.post(route, body);

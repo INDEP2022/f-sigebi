@@ -348,7 +348,6 @@ export class RequestCompDocTasksComponent
     if (this.process == 'review-result-protection') {
       //this.showReportInfo(0, 0, '', '');
       await this.getSampleCSJ(sample => {
-        console.log('callback', sample);
         this.openSignature({
           reportFolio: sample.sampleId,
           contentId: sample.contentId,
@@ -520,7 +519,7 @@ export class RequestCompDocTasksComponent
         this.processDetonate = data.processDetonate;
       },
       error: error => {
-        console.log('no se encontraron datos en asuntos ', error);
+        //console.log('no se encontraron datos en asuntos ', error);
       },
     });
   }
@@ -572,7 +571,6 @@ export class RequestCompDocTasksComponent
   /* METODO QUE ITERA LOS BIENES PARA TURNAR VISITA PROGRAMACION OCULAR */
   async turnEyeVisitor() {
     return new Promise(async (resolve, reject) => {
-      console.log('verificando vienes oculares');
       let end = true;
       let _page: number = 1;
       let _limit: number = 100;
@@ -890,7 +888,7 @@ export class RequestCompDocTasksComponent
     });
     modalRef.content.onSend.subscribe(next => {
       if (next) {
-        console.log(next);
+        //console.log(next);
       }
     });
   }
@@ -991,22 +989,12 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }
-
         break;
       case 'approve-return':
         reportLoad = await this.getStatusReport();
 
         if (!reportLoad.isSigned) {
           this.showWarning('Firme el dictamen de resarcimiento');
-          return false;
-        }
-
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
           return false;
         }
 
@@ -1049,11 +1037,6 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
-
         break;
 
       case 'eye-visit-similar-goods':
@@ -1067,10 +1050,6 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
         break;
 
       case 'validate-eye-visit-similar-goods':
@@ -1084,11 +1063,6 @@ export class RequestCompDocTasksComponent
           this.showWarning(
             'Generar el reporte de resultado de la visita ocular'
           );
-          return false;
-        }
-
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
           return false;
         }
 
@@ -1139,11 +1113,6 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
-
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
           this.showWarning('Genera el dictamen de resarcimiento');
@@ -1153,11 +1122,6 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'analysis-result-compensation':
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
-
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isSigned) {
           this.showWarning('Firme el dictamen de resarcimiento');
@@ -1178,11 +1142,6 @@ export class RequestCompDocTasksComponent
 
       case 'notification-taxpayer-compensation':
         //DATOS DEL DICTAMEN
-
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
@@ -1228,20 +1187,12 @@ export class RequestCompDocTasksComponent
           this.showWarning('Generar el oficio destino');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
         break;
 
       case 'review-office-information-goods':
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isSigned) {
           this.showWarning('Firmar el oficio destino');
-          return false;
-        }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
           return false;
         }
         break;
@@ -1268,11 +1219,6 @@ export class RequestCompDocTasksComponent
 
         break;
       case 'request-economic-resources':
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
-
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
           this.showWarning('Generar la solicitud de recursos económicos');
@@ -1291,10 +1237,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Generar el dictamen de resarcimiento');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
 
         break;
       case 'generate-results-economic':
@@ -1307,16 +1249,9 @@ export class RequestCompDocTasksComponent
           this.showWarning('Verifique las observaciones de lineamientos');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
+
         break;
       case 'validate-dictum-economic':
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
         if (!this.validate.dictudData) {
           this.showWarning('Registre datos del dictamen');
           return false;
@@ -1332,11 +1267,6 @@ export class RequestCompDocTasksComponent
 
         break;
       case 'delivery-notify-request':
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
-
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
           this.showWarning('Genera el reporte de notificación');
@@ -1353,27 +1283,16 @@ export class RequestCompDocTasksComponent
           this.showWarning('Registre datos de la cita');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
+
         break;
       case 'register-pay-order':
         if (!this.validate.orderEntry) {
           this.showWarning('Registre datos de orden de ingreso');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
+
         break;
       case 'generate-compensation-act':
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
-
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
           this.showWarning('Genera el acta de resarcimiento');
@@ -1460,10 +1379,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
         break;
 
       case 'register-compensation-documentation':
@@ -1473,10 +1388,6 @@ export class RequestCompDocTasksComponent
         }
         if (!this.requestInfo.recordId) {
           this.showWarning('Asocie el expediente de la solicitud');
-          return false;
-        }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
           return false;
         }
         break;
@@ -1506,10 +1417,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Genera el reporte de oficio jurídico');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
         break;
 
       case 'register-compensation-documentation':
@@ -1521,19 +1428,11 @@ export class RequestCompDocTasksComponent
           this.showWarning('Asocie el expediente de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
         break;
 
       case 'review-result-protection':
         if (!reportLoad.isSigned) {
-          //this.showWarning('Firme el reporte de oficio jurídico');
-          //return false;
-        }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
+          this.showWarning('Firme el reporte de oficio jurídico');
           return false;
         }
 
@@ -1551,10 +1450,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }
         break;
       case 'register-abandonment-goods':
         if (!this.validate.regdoc) {
@@ -1567,10 +1462,6 @@ export class RequestCompDocTasksComponent
         }
         if (!this.validate.goods) {
           this.showWarning('Seleccione los bienes de la solicitud');
-          return false;
-        }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
         break;
@@ -1587,10 +1478,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }
         break;
 
       case 'register-compensation-documentation':
@@ -1600,10 +1487,6 @@ export class RequestCompDocTasksComponent
         }
         if (!this.requestInfo.recordId) {
           this.showWarning('Asocie el expediente de la solicitud');
-          return false;
-        }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
         break;
@@ -1831,9 +1714,7 @@ export class RequestCompDocTasksComponent
           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
           type: 'pdf',
         },
-        callback: (data: any) => {
-          console.log(data);
-        },
+        callback: (data: any) => {},
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -1878,10 +1759,7 @@ export class RequestCompDocTasksComponent
   //Validar firmantes de reportes
   //En parametro validationocsp
   getStatusFirmantes() {
-    console.log('getStatusFirmantes');
-
     //Servicio http://sigebimsqa.indep.gob.mx/electronicfirm/api/v1/signatories
-
     //validationocsp ? firmarReporte : na
   }
 
@@ -2017,7 +1895,6 @@ export class RequestCompDocTasksComponent
   }
 
   createSample(contentId) {
-    console.log('createSample', contentId);
     const sample: any = {
       regionalDelegationId: 0,
       startDate: moment(new Date()).format('YYYY-MM-DD'),
@@ -2033,7 +1910,6 @@ export class RequestCompDocTasksComponent
     return new Promise<any>(resolve => {
       return this.samplingGoodService.createSample(sample).subscribe({
         next: async resp => {
-          console.log('sampling', resp);
           //this.version.reportFolio = response.sampleId;
           //this.saveVersionsDoc(false, this.version);
           resolve(resp);
@@ -2061,9 +1937,10 @@ export class RequestCompDocTasksComponent
         }
       },
       error: error => {
-        this.showError(
-          'Error al consultar el documento de cambio de situación jurídica'
-        );
+        this.uploadOficioCSJ(async contentId => {
+          let row = await this.createSample(contentId);
+          execute(row);
+        });
       },
     });
   }
@@ -2071,8 +1948,6 @@ export class RequestCompDocTasksComponent
   uploadOficioCSJ(execute) {
     let urlBaseReport = `${environment.API_URL}processgoodreport/report/showReport?nombreReporte=`;
     urlBaseReport += `situacion_juridica_amparo.jasper&ID_SOLICITUD=${this.requestId}&ID_TIPO_DOCTO=${this.reportId}`;
-
-    console.log('urlBaseReport', urlBaseReport);
 
     let token = this.authService.decodeToken();
     const docName = 'situacion_juridica_amparo';
@@ -2118,11 +1993,7 @@ export class RequestCompDocTasksComponent
             },
           });
       },
-      error: error => {
-        this.showError(
-          'Error al consultar el documento de cambio de situación jurídica'
-        );
-      },
+      error: error => {},
     });
   }
 }
