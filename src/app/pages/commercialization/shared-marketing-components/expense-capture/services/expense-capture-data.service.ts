@@ -41,7 +41,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   address: string;
   LS_EVENTO: number;
   dataCompositionExpenses: IComerDetExpense2[] = [];
-  selectedComposition: IComerDetExpense2;
+  selectedComposition: any;
   selectedCompositions: IComerDetExpense2[] = [];
   addByLotExpenseComposition = new Subject<ILoadLotResponse[]>();
   updateExpenseComposition = new Subject();
