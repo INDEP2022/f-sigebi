@@ -274,7 +274,9 @@ export class AppraisalConsultationListComponent
         return throwError(() => error);
       }),
       tap(response => {
-        this.sumForm.patchValue(response);
+        console.log(response.data[0]);
+        this.sumForm.patchValue(response.data[0]);
+        console.log(this.sumForm);
       })
     );
   }
