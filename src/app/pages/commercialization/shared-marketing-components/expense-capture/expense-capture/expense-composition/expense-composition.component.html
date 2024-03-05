@@ -184,9 +184,7 @@
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="
-                !showAdd || !selectedRow || !selectedRow.detPaymentsId
-              "
+              [disabled]="!showAdd || !selectedRow"
               (click)="disperGasto()">
               Dispersa Gasto/Mandato {{ selectedRow?.detPaymentsId }}
             </button>

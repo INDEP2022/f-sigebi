@@ -14,6 +14,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   APPRAISALS_COLUMNS,
   DETAIL_APPRAISALS_COLUMNS,
+  DT_RECHAZADOS_COLUMNS,
   GOODS_COLUMNS,
 } from './table-form';
 
@@ -35,6 +36,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
   estatusLotes: any;
   propertyValues: string[] = [];
   dataExcel: any = [];
+  dtRejecteds: any = [];
   bottonDesible: boolean = false;
   commaSeparatedString: string = '';
 
@@ -45,11 +47,13 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   totalItems1: number = 0;
   totalItems2: number = 0;
+  totalItems3: number = 0;
   fileReader = new FileReader();
   selectedTipo = new DefaultSelect();
   dataApraisals: LocalDataSource = new LocalDataSource();
   dataGood: LocalDataSource = new LocalDataSource();
   dataDetailApraisal: LocalDataSource = new LocalDataSource();
+  dtRejected: LocalDataSource = new LocalDataSource();
 
   btnContinuarOficio: boolean = false;
   btnValidaArchivo: boolean = false;
@@ -100,6 +104,16 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
       delete: false,
     },
   };
+  dtRejectedSettings = {
+    ...TABLE_SETTINGS,
+    actions: {
+      columnTitle: 'Acciones',
+      position: 'right',
+      add: false,
+      edit: false,
+      delete: false,
+    },
+  };
   jsonToCsv: any[] = [
     {
       CVE_AVALUO: '',
@@ -125,6 +139,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     this.apraisalsSettings.columns = APPRAISALS_COLUMNS;
     this.goodSettings.columns = GOODS_COLUMNS;
     this.detailApraisalsSettings.columns = DETAIL_APPRAISALS_COLUMNS;
+    this.dtRejectedSettings.columns = DT_RECHAZADOS_COLUMNS;
   }
 
   ngOnInit(): void {
@@ -181,6 +196,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
       }
       this.formLoadAppraisalsService.obtenerEstatusLotes(body).subscribe({
         next: data => {
+          console.log(data);
           this.selectedTipo = new DefaultSelect(data.data, data.count);
           resolve(data.data);
         },
@@ -392,12 +408,14 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
   async leerExcel(proceso: string) {
     let error = '';
     try {
-      if (proceso == 'V') {
-      } else {
-        if (proceso == 'I' || proceso == 'U' || proceso == 'A') {
-          error = '';
+      this.dataExcel.forEach(element => {
+        if (proceso == 'V') {
+        } else {
+          if (proceso == 'I' || proceso == 'U' || proceso == 'A') {
+            error = '';
+          }
         }
-      }
+      });
     } catch {}
   }
 
@@ -712,17 +730,17 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
   }
   validateDocument() {
     if (this.lnkValArchivo) {
+      this.alertQuestion(
+        'question',
+        `¿Desea validar el archivo? `,
+        '',
+        'Continuar',
+        'Cancelar'
+      ).then(async question => {
+        if (question.isConfirmed) {
+        }
+      });
     }
-    this.alertQuestion(
-      'question',
-      `¿Desea validar el archivo? `,
-      '',
-      'Continuar',
-      'Cancelar'
-    ).then(async question => {
-      if (question.isConfirmed) {
-      }
-    });
   }
   apraisalReyect() {
     if (this.lnkAvaRechazados) {
