@@ -129,7 +129,7 @@
       </p>
     </div>
   </div>
-  <div *ngIf="requestDoc.destinationManagement || requestDoc.transferEntNotes" class="row mt-5">
+  <div *ngIf="requestDoc?.destinationManagement && requestDoc?.transferEntNotes" class="row mt-5">
     <div class="col-md-4" *ngIf="requestDoc.destinationManagement">
       <p class="font-size-13">
         <strong class="font-size-13">Gesti&oacute;n de Destino&#58; </strong
@@ -211,7 +211,7 @@
     </div>
     <div
       class="col-md-4"
-      *ngIf="transference == 1 || transference == 3 || showInput('crime') && requestDoc.crime">
+      *ngIf="transference == 1 || transference == 3 || showInput('crime') && requestDoc?.crime">
       <p class="font-size-13">
         <strong class="font-size-13">Delito&#58; </strong
         >{{ requestDoc?.crime }}

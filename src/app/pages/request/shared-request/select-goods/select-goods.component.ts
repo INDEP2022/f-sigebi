@@ -42,6 +42,7 @@ import {
 import { ViewDetailGoodsComponent } from './view-detail-goods/view-detail-goods.component';
 import { ViewFileButtonComponent } from './view-file-button/view-file-button.component';
 import { filter } from 'jszip';
+import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 
 @Component({
   selector: 'app-select-goods',
@@ -94,7 +95,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     private requestService: RequestService,
     private rejectedGoodService: RejectedGoodService,
     private affairService: AffairService,
-    //private goodsInvService: GoodsInvService,
+    private goodsInvService: GoodsInvService,
     private goodResDevInvService: AppliGoodResDevViewService,
     private goodService: GoodService,
     private goodFinderService: GoodFinderService
@@ -422,13 +423,16 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         ] = `$eq:${info.relevantTypeId}`;
       }
 
+      this.params.getValue()['filter.status'] = `$eq:ROP`;
+
       //Aplicar filtro de estatus de bienes por cada proceso
       //DEVOLUCION DXV
       if (!isNullOrEmpty(this.statusGood)) {
         this.params.getValue()['filter.statusGood'] = `$eq:DXV`;
       }
 
-      this.goodResDevInvService.getAll(this.params.getValue()).subscribe({
+      //goodFinderService
+      this.rejectedGoodService.getAll(this.params.getValue()).subscribe({
         next: response => {
           console.log('goods-res-dev', response);
           this.goodColumns.load(response.data);

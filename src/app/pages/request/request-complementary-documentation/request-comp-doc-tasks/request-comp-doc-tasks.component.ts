@@ -988,22 +988,12 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }
-
         break;
       case 'approve-return':
         reportLoad = await this.getStatusReport();
 
         if (!reportLoad.isSigned) {
           this.showWarning('Firme el dictamen de resarcimiento');
-          return false;
-        }
-
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
           return false;
         }
 
@@ -1046,11 +1036,6 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
-
         break;
 
       case 'eye-visit-similar-goods':
@@ -1064,10 +1049,6 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
         break;
 
       case 'validate-eye-visit-similar-goods':
@@ -1081,11 +1062,6 @@ export class RequestCompDocTasksComponent
           this.showWarning(
             'Generar el reporte de resultado de la visita ocular'
           );
-          return false;
-        }
-
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
           return false;
         }
 
@@ -1136,11 +1112,6 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
-
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
           this.showWarning('Genera el dictamen de resarcimiento');
@@ -1150,10 +1121,6 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'analysis-result-compensation':
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isSigned) {
@@ -1175,11 +1142,6 @@ export class RequestCompDocTasksComponent
 
       case 'notification-taxpayer-compensation':
         //DATOS DEL DICTAMEN
-
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
@@ -1225,20 +1187,12 @@ export class RequestCompDocTasksComponent
           this.showWarning('Generar el oficio destino');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
         break;
 
       case 'review-office-information-goods':
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isSigned) {
           this.showWarning('Firmar el oficio destino');
-          return false;
-        }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
           return false;
         }
         break;
@@ -1265,10 +1219,6 @@ export class RequestCompDocTasksComponent
 
         break;
       case 'request-economic-resources':
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
@@ -1288,10 +1238,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Generar el dictamen de resarcimiento');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
 
         break;
       case 'generate-results-economic':
@@ -1304,16 +1250,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Verifique las observaciones de lineamientos');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
+
         break;
       case 'validate-dictum-economic':
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
+
         if (!this.validate.dictudData) {
           this.showWarning('Registre datos del dictamen');
           return false;
@@ -1329,10 +1269,6 @@ export class RequestCompDocTasksComponent
 
         break;
       case 'delivery-notify-request':
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
@@ -1350,26 +1286,16 @@ export class RequestCompDocTasksComponent
           this.showWarning('Registre datos de la cita');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
+
         break;
       case 'register-pay-order':
         if (!this.validate.orderEntry) {
           this.showWarning('Registre datos de orden de ingreso');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
+
         break;
       case 'generate-compensation-act':
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
@@ -1457,10 +1383,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
         break;
 
       case 'register-compensation-documentation':
@@ -1470,10 +1392,6 @@ export class RequestCompDocTasksComponent
         }
         if (!this.requestInfo.recordId) {
           this.showWarning('Asocie el expediente de la solicitud');
-          return false;
-        }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
           return false;
         }
         break;
@@ -1503,10 +1421,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Genera el reporte de oficio jurídico');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
         break;
 
       case 'register-compensation-documentation':
@@ -1518,19 +1432,11 @@ export class RequestCompDocTasksComponent
           this.showWarning('Asocie el expediente de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
-          return false;
-        }
         break;
 
       case 'review-result-protection':
         if (!reportLoad.isSigned) {
-          //this.showWarning('Firme el reporte de oficio jurídico');
-          //return false;
-        }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación correspondiente');
+          this.showWarning('Firme el reporte de oficio jurídico');
           return false;
         }
 
@@ -1548,10 +1454,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }
         break;
       case 'register-abandonment-goods':
         if (!this.validate.regdoc) {
@@ -1564,10 +1466,6 @@ export class RequestCompDocTasksComponent
         }
         if (!this.validate.goods) {
           this.showWarning('Seleccione los bienes de la solicitud');
-          return false;
-        }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
         break;
@@ -1584,10 +1482,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }
         break;
 
       case 'register-compensation-documentation':
@@ -1597,10 +1491,6 @@ export class RequestCompDocTasksComponent
         }
         if (!this.requestInfo.recordId) {
           this.showWarning('Asocie el expediente de la solicitud');
-          return false;
-        }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
         break;
@@ -2055,9 +1945,10 @@ export class RequestCompDocTasksComponent
         }
       },
       error: error => {
-        this.showError(
-          'Error al consultar el documento de cambio de situación jurídica'
-        );
+        this.uploadOficioCSJ(async contentId => {
+          let row = await this.createSample(contentId);
+          execute(row);
+        });
       },
     });
   }
@@ -2111,9 +2002,7 @@ export class RequestCompDocTasksComponent
           });
       },
       error: error => {
-        this.showError(
-          'Error al consultar el documento de cambio de situación jurídica'
-        );
+
       },
     });
   }
