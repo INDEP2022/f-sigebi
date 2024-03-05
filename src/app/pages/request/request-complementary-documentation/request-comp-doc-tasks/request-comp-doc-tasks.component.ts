@@ -347,7 +347,6 @@ export class RequestCompDocTasksComponent
     if (this.process == 'review-result-protection') {
       //this.showReportInfo(0, 0, '', '');
       await this.getSampleCSJ(sample => {
-        console.log('callback', sample);
         this.openSignature({
           reportFolio: sample.sampleId,
           contentId: sample.contentId,
@@ -519,7 +518,7 @@ export class RequestCompDocTasksComponent
         this.processDetonate = data.processDetonate;
       },
       error: error => {
-        console.log('no se encontraron datos en asuntos ', error);
+        //console.log('no se encontraron datos en asuntos ', error);
       },
     });
   }
@@ -571,7 +570,6 @@ export class RequestCompDocTasksComponent
   /* METODO QUE ITERA LOS BIENES PARA TURNAR VISITA PROGRAMACION OCULAR */
   async turnEyeVisitor() {
     return new Promise(async (resolve, reject) => {
-      console.log('verificando vienes oculares');
       let end = true;
       let _page: number = 1;
       let _limit: number = 100;
@@ -889,7 +887,7 @@ export class RequestCompDocTasksComponent
     });
     modalRef.content.onSend.subscribe(next => {
       if (next) {
-        console.log(next);
+        //console.log(next);
       }
     });
   }
@@ -1831,7 +1829,7 @@ export class RequestCompDocTasksComponent
           type: 'pdf',
         },
         callback: (data: any) => {
-          console.log(data);
+
         },
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
@@ -1877,7 +1875,6 @@ export class RequestCompDocTasksComponent
   //Validar firmantes de reportes
   //En parametro validationocsp
   getStatusFirmantes() {
-    console.log('getStatusFirmantes');
 
     //Servicio http://sigebimsqa.indep.gob.mx/electronicfirm/api/v1/signatories
 
@@ -2016,7 +2013,6 @@ export class RequestCompDocTasksComponent
   }
 
   createSample(contentId) {
-    console.log('createSample', contentId);
     const sample: any = {
       regionalDelegationId: 0,
       startDate: moment(new Date()).format('YYYY-MM-DD'),
@@ -2032,7 +2028,6 @@ export class RequestCompDocTasksComponent
     return new Promise<any>(resolve => {
       return this.samplingGoodService.createSample(sample).subscribe({
         next: async resp => {
-          console.log('sampling', resp);
           //this.version.reportFolio = response.sampleId;
           //this.saveVersionsDoc(false, this.version);
           resolve(resp);
@@ -2070,8 +2065,6 @@ export class RequestCompDocTasksComponent
   uploadOficioCSJ(execute) {
     let urlBaseReport = `${environment.API_URL}processgoodreport/report/showReport?nombreReporte=`;
     urlBaseReport += `situacion_juridica_amparo.jasper&ID_SOLICITUD=${this.requestId}&ID_TIPO_DOCTO=${this.reportId}`;
-
-    console.log('urlBaseReport', urlBaseReport);
 
     let token = this.authService.decodeToken();
     const docName = 'situacion_juridica_amparo';

@@ -41,6 +41,7 @@ import {
 } from './select-goods-columns';
 import { ViewDetailGoodsComponent } from './view-detail-goods/view-detail-goods.component';
 import { ViewFileButtonComponent } from './view-file-button/view-file-button.component';
+import { filter } from 'jszip';
 
 @Component({
   selector: 'app-select-goods',
@@ -169,7 +170,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     //this.selectedGoodColumns = datagood;
     this.getInfoRequest();
   }
-  getData() {}
+  getData() { }
 
   getFormSeach(recordId: any) {
     this.loading = true;
@@ -195,7 +196,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.requestInfo = response;
         this.getProcessDetonate();
       },
-      error: error => {},
+      error: error => { },
     });
 
     this.getRejectedGoodService();
@@ -241,7 +242,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       next: response => {
         this.processDet = response.data[0].processDetonate;
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -252,7 +253,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.openModalDocument(idRequest, response.recordId);
         console.log(idRequest + response.recordId);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -264,7 +265,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     config.initialState = {
       idRequest,
       recordId,
-      callback: (next: boolean) => {},
+      callback: (next: boolean) => { },
     };
 
     this.modalService.show(ShowDocumentsGoodComponent, config);
@@ -290,6 +291,9 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   getInfoGoods(filters: any) {
+
+    console.log('processDet', this.processDet);
+
     this.params = new BehaviorSubject<ListParams>(new ListParams());
 
     this.jsonBody = {};
@@ -312,7 +316,10 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
     if (this.processDet != 'RES_ESPECIE') {
       //params.getValue()['filter.origin'] = 'INVENTARIOS';
-      //this.jsonBody.origin = 'INVENTARIOS';
+      this.jsonBody.origin = 'INVENTARIOS';
+      this.params.getValue()[
+        'filter.regionalDelegationId'
+      ] = `$eq:${filters.regionalDelegationId}`;
     }
 
     if (this.processDet == 'AMPARO') {
@@ -345,10 +352,15 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       }
     }
 
-    //this.params = params;
+    if (!isNullOrEmpty(this.jsonBody.origin)) {
+      console.log('filters', filters);
+    }
+
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getGoods(filters);
     });
+
+
   }
 
   getGoods(info: any) {
@@ -468,12 +480,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         next: response => {
           resolve(response.data[0].description);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
 
-  viewFile(file: any) {}
+  viewFile(file: any) { }
 
   /*checkInfoProcess(goodsResDev: IGoodsResDev) {
     return new Promise((resolve, reject) => {
@@ -601,7 +613,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       initialState: {
         data,
         typeInfo,
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => { },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
