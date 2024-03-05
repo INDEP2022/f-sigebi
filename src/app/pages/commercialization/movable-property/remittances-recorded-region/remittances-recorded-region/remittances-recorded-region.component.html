@@ -35,10 +35,10 @@
           <form-field [control]="form.get('coordination')">
             <ngx-select
               [form]="form"
-              [data]="itemsDelegation"
+              [data]="delegations"
               label="Delegación"
-              value="delegationNumber"
-              bindLabel="tipoSupbtipoDescription"
+              value="id"
+              bindLabel="description"
               (fetchItems)="getDelegations($event)"
               control="coordination">
             </ngx-select>
@@ -46,13 +46,16 @@
         </div>
         <div class="col-md-4">
           <button
-            type="button"
-            class="btn btn-primary active btn-sm m-2"
-            [disabled]="!form.valid"
+            [ngClass]="{ loading: loadingBtn }"
+            [disabled]="form.invalid || loadingBtn"
+            type="submit"
+            class="btn btn-primary active btn-sm"
             (click)="openPrevPdf()">
             Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
           </button>
-          <button class="btn btn-danger btn-sm active mr-3" (click)="clean()">
+          <button
+            class="btn btn-danger btn-sm active m-3 mr-3"
+            (click)="clean()">
             Limpiar <i class="fas fa-eraser"> </i>
           </button>
         </div>
