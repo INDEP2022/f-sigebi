@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { map } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -38,7 +39,10 @@ export class EntryOrderViewComponent implements OnInit {
           console.log(resp);
           this.entryOrder = {
             unitadministrative: resp.unitadministrative.toString(),
-            orderDate: resp.orderDate,
+            orderDate: new DatePipe('en-US').transform(
+              resp.orderDate,
+              'dd/MM/yyyy'
+            ),
             concept: resp.concept,
             paymentMethod: resp.shapePay,
             amount: resp.amount,

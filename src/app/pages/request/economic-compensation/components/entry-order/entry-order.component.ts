@@ -193,6 +193,8 @@ export class EntryOrderComponent extends BasePage implements OnInit {
 
       this.createOrderEntry(object);
     } else {
+      let orderDate = new Date(object['orderDate']);
+      object['orderDate'] = orderDate;
       object['id'] = this.id;
       this.updateOrderEntry(object);
     }
