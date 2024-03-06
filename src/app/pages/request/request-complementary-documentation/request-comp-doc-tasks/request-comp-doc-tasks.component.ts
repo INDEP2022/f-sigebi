@@ -1514,7 +1514,9 @@ export class RequestCompDocTasksComponent
   }
 
   onSelectFiles(event) {
-    this.validate.files = event.isValid;
+    if (!this.validate.files) {
+      this.validate.files = event.isValid;
+    }
     //Agreagar validaciones en especifico
   }
 
