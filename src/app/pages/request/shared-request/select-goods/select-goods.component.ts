@@ -230,7 +230,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('Refresh', changes);
+    //this.getInfoGoods();
     this.getInfoRequest();
     if (!isNullOrEmpty(changes['updateInfo'])) {
       this.getInfoRequest();
@@ -294,8 +294,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   getInfoGoods(filters: any) {
-    console.log('processDet', this.processDet);
-
     this.params = new BehaviorSubject<ListParams>(new ListParams());
 
     this.jsonBody = {};
