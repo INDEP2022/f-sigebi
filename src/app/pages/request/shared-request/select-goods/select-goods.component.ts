@@ -482,7 +482,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
   mergeWithoutNulls(obj1: any, obj2: any): any {
     let filteredObj2 = Object.fromEntries(
-      Object.entries(obj2).filter(([key, value]) => value !== null)
+      Object.entries(obj2).filter(([key, value]) => !isNullOrEmpty(value))
     );
     return { ...obj1, ...filteredObj2 };
   }
