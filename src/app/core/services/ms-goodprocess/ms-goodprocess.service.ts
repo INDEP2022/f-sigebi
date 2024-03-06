@@ -54,6 +54,12 @@ export class GoodprocessService extends HttpService {
   getScreenGood(model: any): Observable<IListResponse<any>> {
     return this.post(`${GoodprocessEndpoints.consultationScreenGood}`, model);
   }
+  getGoods540XGood(model: any): Observable<IListResponse<any>> {
+    return this.post(`${GoodprocessEndpoints.GetGoods540XGood}`, model);
+  }
+  getGoods540(model: any): Observable<IListResponse<any>> {
+    return this.post(`${GoodprocessEndpoints.GetGoods540}`, model);
+  }
 
   getScreenGood2(model: any): Observable<IListResponse<any>> {
     return this.post(`${GoodprocessEndpoints.consultationScreenGood2}`, model);
