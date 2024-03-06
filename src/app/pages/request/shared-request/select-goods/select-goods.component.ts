@@ -33,6 +33,7 @@ import { AddGoodsButtonComponent } from './add-goods-button/add-goods-button.com
 import { GrouperGoodFieldComponent } from './grouper-good-field/grouper-good-field.component';
 
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
+import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { ReserveGoodModalComponent } from './reserve-good-modal/reserve-good-modal.component';
 import {
@@ -41,8 +42,6 @@ import {
 } from './select-goods-columns';
 import { ViewDetailGoodsComponent } from './view-detail-goods/view-detail-goods.component';
 import { ViewFileButtonComponent } from './view-file-button/view-file-button.component';
-import { filter } from 'jszip';
-import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 
 @Component({
   selector: 'app-select-goods',
@@ -69,6 +68,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   @Input() btnGrouper: boolean = false;
   @Input() recordId: number = 0;
   @Input() statusGood: string = '';
+  @Input() associeRequest: boolean = false;
 
   goodSelected: boolean = false;
   jsonBody: any = {};
@@ -171,7 +171,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     //this.selectedGoodColumns = datagood;
     this.getInfoRequest();
   }
-  getData() { }
+  getData() {}
 
   getFormSeach(recordId: any) {
     this.loading = true;
@@ -197,7 +197,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.requestInfo = response;
         this.getProcessDetonate();
       },
-      error: error => { },
+      error: error => {},
     });
 
     this.getRejectedGoodService();
@@ -230,6 +230,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('Refresh', changes);
+    this.getInfoRequest();
     if (!isNullOrEmpty(changes['updateInfo'])) {
       this.getInfoRequest();
     }
@@ -243,7 +245,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       next: response => {
         this.processDet = response.data[0].processDetonate;
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -254,7 +256,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.openModalDocument(idRequest, response.recordId);
         console.log(idRequest + response.recordId);
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -266,7 +268,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     config.initialState = {
       idRequest,
       recordId,
-      callback: (next: boolean) => { },
+      callback: (next: boolean) => {},
     };
 
     this.modalService.show(ShowDocumentsGoodComponent, config);
@@ -292,7 +294,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   getInfoGoods(filters: any) {
-
     console.log('processDet', this.processDet);
 
     this.params = new BehaviorSubject<ListParams>(new ListParams());
@@ -360,8 +361,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getGoods(filters);
     });
-
-
   }
 
   getGoods(info: any) {
@@ -435,7 +434,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       this.rejectedGoodService.getAll(this.params.getValue()).subscribe({
         next: response => {
           console.log('goods-res-dev', response);
-          this.goodColumns.load(response.data);
+          let data = [];
+          response.data.forEach((item: any) => {
+            let merged = this.mergeWithoutNulls(item, item.good);
+            data.push(merged);
+          });
+          this.goodColumns.load(data);
           this.goodTotalItems = response.count;
           this.loading = false;
         },
@@ -475,6 +479,13 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     }); */
   }
 
+  mergeWithoutNulls(obj1: any, obj2: any): any {
+    let filteredObj2 = Object.fromEntries(
+      Object.entries(obj2).filter(([key, value]) => !isNullOrEmpty(value))
+    );
+    return { ...obj1, ...filteredObj2 };
+  }
+
   destinyInfo(idDestiny: number) {
     return new Promise((resolve, reject) => {
       const params = new BehaviorSubject<ListParams>(new ListParams());
@@ -484,12 +495,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         next: response => {
           resolve(response.data[0].description);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
 
-  viewFile(file: any) { }
+  viewFile(file: any) {}
 
   /*checkInfoProcess(goodsResDev: IGoodsResDev) {
     return new Promise((resolve, reject) => {
@@ -617,7 +628,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       initialState: {
         data,
         typeInfo,
-        callback: (next: boolean) => { },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
