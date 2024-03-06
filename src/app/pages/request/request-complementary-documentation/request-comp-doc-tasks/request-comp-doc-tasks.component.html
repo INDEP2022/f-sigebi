@@ -459,7 +459,7 @@
               id="tab1"
               (selectTab)="requestSelected(1)">
               <app-doc-request-tab
-                [typeDoc]="typeDoc"
+                [typeDoc]="'doc-request'"
                 [updateInfo]="updateInfo"
                 [typeModule]="typeModule"
                 (onChange)="onSelectFiles($event)"></app-doc-request-tab>
@@ -474,7 +474,7 @@
                   (selectTab)="requestSelected(2)">
                   <app-doc-request-tab
                     [updateInfo]="updateInfo"
-                    [typeDoc]="typeDoc"
+                    [typeDoc]="'doc-expedient'"
                     [typeModule]="typeModule"
                     (onChange)="onSelectFiles($event)"></app-doc-request-tab>
                 </tab>

@@ -120,9 +120,8 @@ export class DocRequestTabComponent
     this.getState(new ListParams());
     this.getTransfe(new ListParams());
     this.getDocType(new ListParams());
-    this.getInfoRequest();
     this.typeDoc = this.type ? this.type : this.typeDoc;
-    if (this.typeDoc === 'doc-request') {
+    if (this.typeDoc === 'doc-request' || this.typeDoc === 'doc-expedient') {
       this.container.createEmbeddedView(this.template);
     }
     this.settings = {
@@ -171,6 +170,12 @@ export class DocRequestTabComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+
+    console.log('changes', this.typeDoc);
+    console.log('typeModule', this.typeModule);
+
+
+
     this.idRequest = this.idRequest || this.requestId;
     if (
       this.typeModule != '' &&
@@ -251,6 +256,8 @@ export class DocRequestTabComponent
   }
   private data: any[][] = [];
 
+
+
   getData(params: ListParams, filter: any = {}) {
     this.loading = true;
     this.docRequestForm.get('noRequest').setValue(this.requestInfo.id);
@@ -279,9 +286,9 @@ export class DocRequestTabComponent
                 }
               });
               const info = filterDoc.map(async (items: any) => {
-                const filter: any = await this.filterGoodDoc([
-                  items.xtipoDocumento,
-                ]);
+
+                const typedoc = this.typesDocuments.filter(x => parseInt(x.ddocType) == parseInt(items.xtipoDocumento));
+
                 /*if (items?.xdelegacionRegional) {
                 const regionalDelegation = await this.getRegionalDelegation(
                   items?.xdelegacionRegional
@@ -302,7 +309,7 @@ export class DocRequestTabComponent
                   items.xfecha = moment.utc(items.dInDate);
                 }
                 items.xtipoDocumentoId = items.xtipoDocumento + '';
-                items.xtipoDocumento = filter[0]?.ddescription;
+                items.xtipoDocumento = typedoc[0]?.ddescription;
                 return items;
               });
               if (this.data.length == 0) {
@@ -316,6 +323,7 @@ export class DocRequestTabComponent
                   this.onChanges();
                   //this.paragraphs.load(x);
                 });
+                return;
               } else {
                 this.selectPage();
                 this.loading = false;
@@ -333,9 +341,9 @@ export class DocRequestTabComponent
                 }
               });
               const info = filterDoc.map(async (items: any) => {
-                const filter: any = await this.filterGoodDoc([
-                  items.xtipoDocumento,
-                ]);
+
+                const typedoc = this.typesDocuments.filter(x => parseInt(x.ddocType) == parseInt(items.xtipoDocumento));
+
                 /*if (items?.xdelegacionRegional) {
                 const regionalDelegation = await this.getRegionalDelegation(
                   items?.xdelegacionRegional
@@ -356,7 +364,7 @@ export class DocRequestTabComponent
                   items.xfecha = moment.utc(items.dInDate);
                 }
                 items.xtipoDocumentoId = items.xtipoDocumento + '';
-                items.xtipoDocumento = filter[0]?.ddescription;
+                items.xtipoDocumento = typedoc[0]?.ddescription;
                 return items;
               });
               if (this.data.length == 0) {
@@ -369,6 +377,7 @@ export class DocRequestTabComponent
                   this.onChanges();
                   //this.paragraphs.load(x);
                 });
+                return;
               } else {
                 this.selectPage();
                 this.loading = false;
@@ -394,9 +403,9 @@ export class DocRequestTabComponent
                 }
               });
               const info = filterDoc.map(async (items: any) => {
-                const filter: any = await this.filterGoodDoc([
-                  items.xtipoDocumento,
-                ]);
+
+                const typedoc = this.typesDocuments.filter(x => parseInt(x.ddocType) == parseInt(items.xtipoDocumento));
+
                 /*if (items?.xdelegacionRegional) {
                 const regionalDelegation = await this.getRegionalDelegation(
                   items?.xdelegacionRegional
@@ -416,8 +425,8 @@ export class DocRequestTabComponent
                 if (isNullOrEmpty(items.xfecha)) {
                   items.xfecha = moment.utc(items.dInDate);
                 }
-                items.xtipoDocumentoId = items.xtipoDocumento + '';
-                items.xtipoDocumento = filter[0]?.ddescription;
+                items.xtipoDocumentoId = parseInt(items.xtipoDocumento);
+                items.xtipoDocumento = typedoc[0]?.ddescription;
                 return items;
               });
               if (this.data.length == 0) {
@@ -430,6 +439,7 @@ export class DocRequestTabComponent
                   this.onChanges();
                   //this.paragraphs.load(x);
                 });
+                return;
               } else {
                 this.selectPageEx();
                 this.loading = false;
@@ -486,6 +496,7 @@ export class DocRequestTabComponent
                   this.onChanges();
                   //this.paragraphs.load(x)
                 });
+                return;
               } else {
                 this.selectPageEx();
                 this.loading = false;
@@ -606,6 +617,7 @@ export class DocRequestTabComponent
       .subscribe({
         next: (resp: any) => {
           this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
+          this.getInfoRequest();
         },
       });
   }
@@ -1078,6 +1090,8 @@ export class DocRequestTabComponent
 
     let toks = [136, 138, 131, 125, 30, 148, 166, 31, 182, 32, 158, 178];
     list = list.filter(x => toks.includes(parseInt(x.xtipoDocumentoId)));
+
+    console.log('list', list, this.typeDoc);
 
     this.onChange.emit({
       isValid: list.length > 0,
