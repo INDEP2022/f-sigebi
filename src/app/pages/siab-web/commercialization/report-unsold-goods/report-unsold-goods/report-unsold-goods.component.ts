@@ -129,6 +129,8 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
+  noBien: string;
+
   //#endregion
 
   //#region Constructor & NgOnInit
@@ -159,6 +161,7 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
           onComponentInitFunction: (instance: any) => {
             instance.onClick.subscribe((row: any) => {
               console.log(row.no_bien);
+              this.noBien = row.no_bien;
               this.lnkView(row.no_bien);
             });
           },
@@ -233,7 +236,9 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
     this.paramsSubtype.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       this.querySubtypeGoods();
     });
-
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.lnkView();
+    });
     this.queryDateMainReform();
   }
 
@@ -341,7 +346,7 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
   querySubtypeGoods(type?: number) {
     if (this.form.controls['typeGood'].value !== null) {
       let paramsPaginated = {
-        ...this.paramsStatusGood.getValue(),
+        ...this.paramsSubtype.getValue(),
       };
       let params = new HttpParams();
       params = params.append('onlyType', 2);
@@ -532,7 +537,7 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
   }
   searchBienExcel() {
     let data = {
-      goodNumbers: this.commaSeparatedString,
+      goodNumbers: [this.commaSeparatedString],
       date: this.form.controls['startDate'].value,
     };
     this.serviceGoods.getGoods540XGood(data).subscribe({
@@ -550,17 +555,22 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
       },
     });
   }
-  lnkView(noBien: string) {
-    this.openModalHistory('S');
+  lnkView(noBien?: string) {
+    if (noBien) {
+      this.openModalHistory('S');
+    }
     let data = {
       pOption: 8,
-      pEvent: noBien,
+      pEvent: this.noBien,
       pLot: 0,
       pTypeGood: '',
       pEventKey: 0,
       pTrans: 0,
     };
-    this.comerEventosService.getLoteExport(data).subscribe({
+    let params = {
+      ...this.params.getValue(),
+    };
+    this.comerEventosService.getLoteExport(data, params).subscribe({
       next: resp => {
         console.log(resp);
         this.dataFive.load(resp.data);
