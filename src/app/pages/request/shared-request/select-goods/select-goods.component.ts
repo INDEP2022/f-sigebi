@@ -33,6 +33,7 @@ import { AddGoodsButtonComponent } from './add-goods-button/add-goods-button.com
 import { GrouperGoodFieldComponent } from './grouper-good-field/grouper-good-field.component';
 
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
+import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { ReserveGoodModalComponent } from './reserve-good-modal/reserve-good-modal.component';
 import {
@@ -67,6 +68,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   @Input() btnGrouper: boolean = false;
   @Input() recordId: number = 0;
   @Input() statusGood: string = '';
+  @Input() associeRequest: boolean = false;
 
   goodSelected: boolean = false;
   jsonBody: any = {};
@@ -93,7 +95,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     private requestService: RequestService,
     private rejectedGoodService: RejectedGoodService,
     private affairService: AffairService,
-    //private goodsInvService: GoodsInvService,
+    private goodsInvService: GoodsInvService,
     private goodResDevInvService: AppliGoodResDevViewService,
     private goodService: GoodService,
     private goodFinderService: GoodFinderService
@@ -228,6 +230,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('Refresh', changes);
+    this.getInfoRequest();
     if (!isNullOrEmpty(changes['updateInfo'])) {
       this.getInfoRequest();
     }
@@ -290,6 +294,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   getInfoGoods(filters: any) {
+    console.log('processDet', this.processDet);
+
     this.params = new BehaviorSubject<ListParams>(new ListParams());
 
     this.jsonBody = {};
@@ -312,7 +318,10 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
     if (this.processDet != 'RES_ESPECIE') {
       //params.getValue()['filter.origin'] = 'INVENTARIOS';
-      //this.jsonBody.origin = 'INVENTARIOS';
+      this.jsonBody.origin = 'INVENTARIOS';
+      this.params.getValue()[
+        'filter.regionalDelegationId'
+      ] = `$eq:${filters.regionalDelegationId}`;
     }
 
     if (this.processDet == 'AMPARO') {
@@ -345,7 +354,10 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       }
     }
 
-    //this.params = params;
+    if (!isNullOrEmpty(this.jsonBody.origin)) {
+      console.log('filters', filters);
+    }
+
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getGoods(filters);
     });
@@ -410,16 +422,24 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         ] = `$eq:${info.relevantTypeId}`;
       }
 
+      this.params.getValue()['filter.status'] = `$eq:ROP`;
+
       //Aplicar filtro de estatus de bienes por cada proceso
       //DEVOLUCION DXV
       if (!isNullOrEmpty(this.statusGood)) {
         this.params.getValue()['filter.statusGood'] = `$eq:DXV`;
       }
 
-      this.goodResDevInvService.getAll(this.params.getValue()).subscribe({
+      //goodFinderService
+      this.rejectedGoodService.getAll(this.params.getValue()).subscribe({
         next: response => {
           console.log('goods-res-dev', response);
-          this.goodColumns.load(response.data);
+          let data = [];
+          response.data.forEach((item: any) => {
+            let merged = this.mergeWithoutNulls(item, item.good);
+            data.push(merged);
+          });
+          this.goodColumns.load(data);
           this.goodTotalItems = response.count;
           this.loading = false;
         },
@@ -457,6 +477,13 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         console.log(error);
       },
     }); */
+  }
+
+  mergeWithoutNulls(obj1: any, obj2: any): any {
+    let filteredObj2 = Object.fromEntries(
+      Object.entries(obj2).filter(([key, value]) => !isNullOrEmpty(value))
+    );
+    return { ...obj1, ...filteredObj2 };
   }
 
   destinyInfo(idDestiny: number) {
