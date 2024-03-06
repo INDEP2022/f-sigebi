@@ -53,7 +53,8 @@ interface searchTable {
 })
 export class DocRequestTabComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   @ViewChild('myTemplate', { static: true }) template: TemplateRef<any>;
   @ViewChild('myTemplate', { static: true, read: ViewContainerRef })
   container: ViewContainerRef;
@@ -165,17 +166,11 @@ export class DocRequestTabComponent
           this.getData(data);
         });
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-
-    console.log('changes', this.typeDoc);
-    console.log('typeModule', this.typeModule);
-
-
-
     this.idRequest = this.idRequest || this.requestId;
     if (
       this.typeModule != '' &&
@@ -256,8 +251,6 @@ export class DocRequestTabComponent
   }
   private data: any[][] = [];
 
-
-
   getData(params: ListParams, filter: any = {}) {
     this.loading = true;
     this.docRequestForm.get('noRequest').setValue(this.requestInfo.id);
@@ -286,8 +279,9 @@ export class DocRequestTabComponent
                 }
               });
               const info = filterDoc.map(async (items: any) => {
-
-                const typedoc = this.typesDocuments.filter(x => parseInt(x.ddocType) == parseInt(items.xtipoDocumento));
+                const typedoc = this.typesDocuments.filter(
+                  x => parseInt(x.ddocType) == parseInt(items.xtipoDocumento)
+                );
 
                 /*if (items?.xdelegacionRegional) {
                 const regionalDelegation = await this.getRegionalDelegation(
@@ -341,8 +335,9 @@ export class DocRequestTabComponent
                 }
               });
               const info = filterDoc.map(async (items: any) => {
-
-                const typedoc = this.typesDocuments.filter(x => parseInt(x.ddocType) == parseInt(items.xtipoDocumento));
+                const typedoc = this.typesDocuments.filter(
+                  x => parseInt(x.ddocType) == parseInt(items.xtipoDocumento)
+                );
 
                 /*if (items?.xdelegacionRegional) {
                 const regionalDelegation = await this.getRegionalDelegation(
@@ -403,8 +398,9 @@ export class DocRequestTabComponent
                 }
               });
               const info = filterDoc.map(async (items: any) => {
-
-                const typedoc = this.typesDocuments.filter(x => parseInt(x.ddocType) == parseInt(items.xtipoDocumento));
+                const typedoc = this.typesDocuments.filter(
+                  x => parseInt(x.ddocType) == parseInt(items.xtipoDocumento)
+                );
 
                 /*if (items?.xdelegacionRegional) {
                 const regionalDelegation = await this.getRegionalDelegation(
@@ -574,7 +570,7 @@ export class DocRequestTabComponent
           next: data => {
             resolve(data?.description);
           },
-          error: error => { },
+          error: error => {},
         });
     });
   }
@@ -981,7 +977,7 @@ export class DocRequestTabComponent
           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl),
           type: 'pdf',
         },
-        callback: (data: any) => { },
+        callback: (data: any) => {},
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -1046,7 +1042,7 @@ export class DocRequestTabComponent
         next: data => {
           this.selectRegDelegation = new DefaultSelect(data.data, data.count);
         },
-        error: error => { },
+        error: error => {},
       });
   }
 

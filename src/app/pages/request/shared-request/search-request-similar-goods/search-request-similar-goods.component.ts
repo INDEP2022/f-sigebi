@@ -1,6 +1,13 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, map, takeUntil } from 'rxjs';
 
 import { LocalDataSource } from 'ng2-smart-table';
 import {
@@ -13,9 +20,11 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS, COLUMNS2 } from './columns';
 //Provisional Data
 import { ActivatedRoute } from '@angular/router';
+import { IGoodsResDev } from 'src/app/core/models/ms-rejectedgood/goods-res-dev-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
+import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import Swal from 'sweetalert2/src/sweetalert2.js';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
@@ -30,7 +39,8 @@ import { NewFileModalComponent } from '../associate-file/new-file-modal/new-file
 })
 export class SearchRequestSimilarGoodsComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
   data: LocalDataSource = new LocalDataSource();
@@ -43,11 +53,16 @@ export class SearchRequestSimilarGoodsComponent
   settings2;
   loadGoods = false;
 
+  paramsg = new BehaviorSubject<ListParams>(new ListParams());
+  goodTotalItemsg: number = 0;
+
   showDetails: boolean = false;
   requestId: string | number = null;
 
   @Input() selected: boolean = false;
   @Input() showExpedient: boolean = false;
+  @Input() idRequest: number = 0;
+  @Output() onAssocie = new EventEmitter();
 
   /* injections */
   private requestService = inject(RequestService);
@@ -56,6 +71,7 @@ export class SearchRequestSimilarGoodsComponent
   private route = inject(ActivatedRoute);
   private requestHelperService = inject(RequestHelperService);
   private bsParentModalRef = inject(BsModalRef);
+  private rejectedGoodService = inject(RejectedGoodService);
 
   /*  */
 
@@ -69,19 +85,19 @@ export class SearchRequestSimilarGoodsComponent
       actions: this.selected
         ? null
         : {
-          ...this.settings.actions,
-          add: false,
-          edit: false,
-          delete: false,
-          columnTitle: 'Asociar',
-          custom: [
-            {
-              name: 'associate',
-              title:
-                '<i class="bx bx-link float-icon text-success mx-2 fa-lg"></i>',
-            },
-          ],
-        },
+            ...this.settings.actions,
+            add: false,
+            edit: false,
+            delete: false,
+            columnTitle: 'Asociar',
+            custom: [
+              {
+                name: 'associate',
+                title:
+                  '<i class="bx bx-link float-icon text-success mx-2 fa-lg"></i>',
+              },
+            ],
+          },
       columns: { ...COLUMNS },
     };
     this.settings2 = {
@@ -108,7 +124,7 @@ export class SearchRequestSimilarGoodsComponent
       next: response => {
         this.requestInfo = response;
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -233,6 +249,7 @@ export class SearchRequestSimilarGoodsComponent
   }
 
   requestGoods = [];
+  goods: any = [];
 
   getGoods(id: number) {
     if (!this.selected) return;
@@ -285,8 +302,8 @@ export class SearchRequestSimilarGoodsComponent
         'question',
         'Asociar',
         '¿Desea seleccionar la Solicitud de Bienes Similares No. ' +
-        request.id +
-        '?'
+          request.id +
+          '?'
       ).then(async question => {
         if (question.isConfirmed) {
           /*this.data2['data'].forEach(async element => {
@@ -297,7 +314,7 @@ export class SearchRequestSimilarGoodsComponent
             });
           });*/
 
-          await this.associateGoods(this.requestId);
+          await this.associateGoods();
 
           let requestAssociated: any = {};
           requestAssociated.id = this.requestInfo.id;
@@ -307,15 +324,16 @@ export class SearchRequestSimilarGoodsComponent
             .update(this.requestId, requestAssociated)
             .subscribe({
               next: resp => {
+                this.onAssocie.emit(true);
                 this.getFiles();
                 this.loading = false;
                 this.alert(
                   'success',
                   '',
                   'Se ha seleccionado la Solicitud de Bienes Similares No. ' +
-                  request.id +
-                  ' y el Expediente No. ' +
-                  request.recordId
+                    request.id +
+                    ' y el Expediente No. ' +
+                    request.recordId
                 );
 
                 this.updateStateRequestTab();
@@ -382,28 +400,111 @@ export class SearchRequestSimilarGoodsComponent
     });
   }
 
-  confirm(result: boolean) { }
+  confirm(result: boolean) {}
 
+  getAllGoods() {
+    const params = new ListParams();
+    params['filter.requestId'] = `$eq:${this.requestId}`;
+    params['filter.applicationId'] = `$eq:${this.requestId}`;
 
-  async associateGoods(requestId) {
-
-    //Ejecutar servicio para obtener los bienes asociados a la solicitud en turno
-    //http://sigebimsqa.indep.gob.mx/rejectedgood/api/v1/goods-res-dev?page=1&limit=10&text=&pageSize=10&take=10&inicio=1&filter.applicationId=$eq:65950
-    let goods = [];
-    //Metodo para eliminar los bienes asociados a la solicitud en turno
-    goods.forEach(element => {
-      //Ejecutar servicio para eliminar el bien
-      //http://sigebimsqa.indep.gob.mx/rejectedgood/api/v1/goods-res-dev/6113 DELETE
+    return new Promise((resolve, reject) => {
+      this.rejectedGoodService
+        .getAll(params)
+        .pipe(
+          map(x => {
+            if (!x.data) {
+              return [];
+            }
+            return x.data;
+          })
+        )
+        .subscribe({
+          next: resp => {
+            this.goods = resp;
+            resolve(resp);
+          },
+          error: error => {
+            resolve([]);
+          },
+        });
     });
-
-    this.requestGoods.forEach(element => {
-      //Crear objeto de bien
-      //Ejecutar servicio para asociar el bien a la solicitud
-      //http://sigebimsqa.indep.gob.mx/rejectedgood/api/v1/goods-res-dev POST
-
-    });
-
   }
 
+  async associateGoods() {
+    console.log('Entro1');
+    await this.getAllGoods();
 
+    console.log('Entro2');
+
+    if (!isNullOrEmpty(this.goods)) {
+      this.goods.forEach(good => {
+        this.deleteGoodResDev(good);
+      });
+    }
+
+    console.log('Agregando');
+    console.log(this.requestGoods);
+    this.requestGoods.forEach(good => {
+      this.addGoodForInformation(good);
+    });
+  }
+
+  deleteGoodResDev(good: any) {
+    if (isNullOrEmpty(good)) {
+      return Promise.resolve();
+    }
+
+    return new Promise((resolve, reject) => {
+      this.rejectedGoodService.deleteGoodsResDev(good.goodresdevId).subscribe({
+        next: res => {
+          resolve(res);
+        },
+        error: error => {
+          reject(error);
+        },
+      });
+    });
+  }
+
+  addGoodForInformation(good: any) {
+    console.log(good);
+    let goodResDev: IGoodsResDev = {};
+    goodResDev.applicationId = this.idRequest; //this.good.solicitudId;
+    goodResDev.goodId = good.goodId;
+    goodResDev.inventoryNumber = good.inventoryNum;
+    goodResDev.jobNumber = good.officeNum;
+    goodResDev.proceedingsId = good.fileId;
+    goodResDev.proceedingsType = good.fileType;
+    goodResDev.uniqueKey = good.uniqueKey;
+    goodResDev.descriptionGood = good.description;
+    goodResDev.unitExtent = good.unitMeasurement;
+    goodResDev.amountToReserve = good.quantity;
+    goodResDev.applicationResDevId = good.applicationResDevId;
+    (goodResDev.amount = 0), (goodResDev.statePhysical = good.physicalStatus);
+    goodResDev.stateConservation = good.conservationStatus;
+    goodResDev.fractionId = good.fractionId;
+    goodResDev.relevantTypeId = good.typeRelevantId;
+    goodResDev.destination = good.destination;
+    goodResDev.delegationRegionalId = good.regionalDelegationId;
+    goodResDev.cveState = good.stateKey;
+    goodResDev.transfereeId = good.transferId;
+    goodResDev.stationId = good.stationId;
+    goodResDev.authorityId = good.authorityId;
+    goodResDev.codeStore = good.warehouseCode;
+    goodResDev.proceedingsType = good.fileType;
+    goodResDev.locatorId = good.locatorId;
+    goodResDev.inventoryItemId = good.inventoryItemId;
+    goodResDev.organizationId = good.organizationId;
+    goodResDev.invoiceRecord = good.folioAct;
+    goodResDev.subinventory = good.destination;
+    //goodResDev.origin = good.origin;
+    goodResDev.naturalness =
+      good.inventoryNum != null ? 'INVENTARIOS' : 'GESTION';
+
+    console.log(goodResDev);
+    this.rejectedGoodService.createGoodsResDev(goodResDev).subscribe({
+      next: resp => {},
+      error: error => {},
+    });
+  }
 }

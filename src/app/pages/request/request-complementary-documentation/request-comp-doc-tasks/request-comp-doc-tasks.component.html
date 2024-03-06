@@ -324,7 +324,9 @@
           heading="Buscar Solicitudes de Bienes Similares"
           id="requestSimilarGoodsTab">
           <app-search-request-similar-goods
-            [selected]="true"></app-search-request-similar-goods>
+            [selected]="true"
+            [idRequest]="requestId"
+            (onAssocie)="onAssocie($event)"></app-search-request-similar-goods>
         </tab>
         <tab
           *ngIf="registAppointment"
@@ -360,7 +362,8 @@
             [updateInfo]="updateInfo"
             (onChange)="onSelectGoods($event)"
             [idRequest]="requestId"
-            [recordId]="requestInfo.recordId"></app-select-goods>
+            [recordId]="requestInfo.recordId"
+            [associeRequest]="associeRequest"></app-select-goods>
 
           <div *ngIf="selectGoodsNot">
             <app-goods-not-transferred
