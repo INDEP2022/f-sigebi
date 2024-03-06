@@ -115,6 +115,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     }
   }
 
+  ident: string = '';
+
   ngOnInit(): void {
     this.fractionProperties = {
       goodClassNumber: null,
@@ -132,11 +134,83 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       columns: ASSETS_COLUMNS,
       selectMode: 'multi',
     };
+
+    if (this.process == 'registration-request') {
+      console.log(
+        'tipo de proceso: ',
+        this.process,
+        'Realizar asignación de Identificador'
+      );
+
+      if (this.typeRequest == 'PGR_SAE') {
+        this.ident = 'ASEG';
+        this.updateIdentToGood(this.ident);
+        console.log('this.typeRequest: ', this.typeRequest);
+      } else if (this.typeRequest != 'PGR_SAE') {
+        this.ident = 'TRANS';
+        this.updateIdentToGood(this.ident);
+        console.log('this.typeRequest: ', this.typeRequest);
+      }
+    } else {
+      console.log(
+        'tipo de proceso: ',
+        this.process,
+        'No Realizar asignación de Identificador'
+      );
+    }
+
     //this.settings.actions.delete = true;
     // this.settings.actions.position = 'left';
     //oye los camibios de detail-assets-tab para refrescar la tabla
     this.refreshTable();
     this.paginatedData();
+  }
+
+  updateIdentToGood(ident: string) {
+    console.log('Ejecutando: updateIdentToGood');
+    console.log('this.requestObject.id', this.requestObject.id);
+
+    const filterParams = new FilterParams();
+    filterParams.addFilter('requestId', this.requestObject.id);
+
+    this.goodService.getAllFilter(filterParams.getFilterParams()).subscribe({
+      next: resp => {
+        console.log('Total de Bienes: ', resp.count);
+
+        const count = resp.count;
+
+        for (let i = 0; i <= count; i++) {
+          const identificador = resp.data[i].identifier;
+
+          if (identificador == null) {
+            console.log('Identificador del bien', identificador);
+            console.log('Bien SIN identificador SETEADO');
+            console.log('Bien a modificar', resp.data[i]);
+
+            let item = {
+              id: resp.data[i].id,
+              goodId: resp.data[i].goodId,
+              identifier: ident,
+              status: 'ROP',
+            };
+
+            this.goodService.updateGood(item).subscribe({
+              next: resp => {
+                console.log('Se actualizó identificador al bien: ', item.id);
+              },
+              error: error => {
+                console.log('No se actualizó identificador al bien: ', error);
+              },
+            });
+          } else {
+            console.log('Identificador del bien', identificador);
+            console.log('Bien CON identificador SETEADO');
+            console.log('Bien a modificar', resp.data[i]);
+          }
+        }
+      },
+      error: error => {},
+    });
   }
 
   paginatedData() {
