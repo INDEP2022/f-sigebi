@@ -1,5 +1,6 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { catchError, firstValueFrom, map, of } from 'rxjs';
 import {
@@ -12,39 +13,45 @@ import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-i
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { BasePage } from 'src/app/core/shared';
+import { BillingsService } from '../../services/services';
 
 @Component({
-  selector: 'authorization-modal',
-  templateUrl: './authorization-modal.component.html',
+  selector: 'app-autorizacion',
+  templateUrl: './autorizacion.component.html',
   styles: [],
 })
-export class AuthorizationSOIModalComponent extends BasePage implements OnInit {
+export class AutorizacionComponent extends BasePage implements OnInit {
   title: string = 'Verificación';
   user: TokenInfoModel;
   form: FormGroup;
   showPassword: boolean = false;
   constructor(
     private modalRef: BsModalRef,
+    private comerEventService: ComerEventService,
     private comerInvoiceService: ComerInvoiceService,
     private authService: AuthService,
-    private comerEventService: ComerEventService,
     private userService: UsersService,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private datePipe: DatePipe,
+    private fb: FormBuilder,
+    private billingsService: BillingsService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.user = this.authService.decodeToken();
+    this.form = this.fb.group({
+      userV: [null, Validators.required],
+    });
     this.form.get('userV').setValue(this.user.preferred_username.toUpperCase());
   }
 
   async validate() {
     const { userV, passwordV, event } = this.form.value;
-    const aux = await this.comerEvent(event);
 
-    const aux_auto = await this.validateUser(userV, passwordV, aux);
+    const aux_auto = await this.validateUser(userV, passwordV);
     console.log('aux_auto', aux_auto);
     if (aux_auto == 1) {
       this.modalRef.content.callback(event);
@@ -55,54 +62,14 @@ export class AuthorizationSOIModalComponent extends BasePage implements OnInit {
     }
   }
 
-  async comerEvent(event: string) {
-    return firstValueFrom(
-      this.comerEventService.geEventId(event).pipe(
-        map(resp => resp.delegationNumber ?? 0),
-        catchError(() => of(0))
-      )
-    );
-  }
-
-  async generateInvoiceSoi(data: any) {
-    return firstValueFrom(
-      this.comerInvoiceService.procedureGenerate(data).pipe(
-        map(() => true),
-        catchError(() => of(false))
-      )
-    );
-  }
-
-  async validateUser(userv: string, password: string, aux: number) {
+  async validateUser(userv: string, password: string) {
     const data = await this.checkUser(userv.toUpperCase());
 
     if (!data.aux_dominio && !data.aux_user) {
-      this.alert('warning', 'Usuario no autorizado', '');
+      this.alert('warning', 'El Usuario no puede autorizar cancelación', '');
       return 0;
     }
 
-    if (data.aux_dominio == 'C') {
-      null;
-    } else if (data.aux_dominio == 'R') {
-      // const aux_auto = await this.viewDelegationUser(userv, aux);
-      const aux_auto = await this.validateRegUser(
-        userv.toUpperCase(),
-        this.user.department
-      );
-      if (aux_auto == 0) {
-        this.alert(
-          'warning',
-          'El usuario no tiene atributos sobre la regional de la factura',
-          ''
-        );
-        return 0;
-      }
-    }
-
-    // se revisara esto
-    // AUX_CONN := VAL_CONNECT(PUSER, PPASS)
-    //const aux_con = await this.valConection()
-    //return aux_con
     return 1 || 0;
   }
 

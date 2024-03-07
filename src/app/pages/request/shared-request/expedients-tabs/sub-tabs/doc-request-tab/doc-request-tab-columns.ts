@@ -1,4 +1,4 @@
-import * as moment from "moment";
+import * as moment from 'moment';
 
 export const DOC_REQUEST_TAB_COLUMNS = {
   //Documentos Solicitud arreglar paginado
@@ -349,13 +349,12 @@ export const DOC_EXPEDIENT_COLUMNS = {
     title: 'Fecha Creación',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (date) => {
+    valuePrepareFunction: date => {
       let raw = date;
       if (date) {
         return moment.utc(date).format('DD/MM/YYYY');
       }
       return '';
-
     },
   },
 

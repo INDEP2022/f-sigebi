@@ -13,12 +13,12 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { INoTransfer } from 'src/app/core/models/no-transfer/no-transfer';
+import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 import { NoTransferService } from 'src/app/core/services/no-transfer/no-transfer.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 import { ModalNotTransferredComponent } from './modal-not-transferred/modal-not-transferred.component';
-import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
-import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 
 @Component({
   selector: 'app-goods-not-transferred',
@@ -43,15 +43,16 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
   typeRelevant: any[] = [];
   unitMessure: any[] = [];
 
-  constructor(private modalService: BsModalService,
+  constructor(
+    private modalService: BsModalService,
     private typeRelevantService: TypeRelevantService,
-    private unitMessureService: StrategyServiceService) {
+    private unitMessureService: StrategyServiceService
+  ) {
     super();
     this.settings.columns = COLUMNS;
   }
 
   ngOnInit(): void {
-
     this.getTypeRelevant(new ListParams());
 
     if (this.readonly) {
@@ -100,12 +101,16 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
       next: response => {
         this.data = response.data;
         this.data.forEach((e: any) => {
-          e.strRelevant = this.typeRelevant.find(x => x.id === e.relevantType)?.description;
-          e.strUnit = this.unitMessure.find(x => x.nbCode === e.unitExtent)?.description;
+          e.strRelevant = this.typeRelevant.find(
+            x => x.id === e.relevantType
+          )?.description;
+          e.strUnit = this.unitMessure.find(
+            x => x.nbCode === e.unitExtent
+          )?.description;
         });
         this.getData();
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -157,9 +162,7 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
         this.unitMessure = data.data;
         this.getAllNotTransferred();
         this.getPagination();
-
       },
-    })
+    });
   }
-
 }

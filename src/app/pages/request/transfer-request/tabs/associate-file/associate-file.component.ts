@@ -372,8 +372,8 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   saveExpedientSami() {
     return new Promise((resolve, reject) => {
       let expedient = this.associateFileForm.getRawValue();
-      if (expedient.reserveDateInai == "") {
-        delete expedient.reserveDateInai
+      if (expedient.reserveDateInai == '') {
+        delete expedient.reserveDateInai;
       }
       expedient.adminUnit = this.DscUnidad;
       this.expedientSamiService.create(expedient).subscribe({

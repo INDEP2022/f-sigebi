@@ -21,11 +21,10 @@ import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { isNullOrEmpty } from 'src/app/pages/request/request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GOOD_DOCUMENTES_COLUMNS } from './good-doc-columns';
 import { ShowDocumentsGoodComponent } from './show-documents-good/show-documents-good.component';
-import { da } from 'date-fns/locale';
-import { isNullOrEmpty } from 'src/app/pages/request/request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-good-doc-tab',
@@ -187,7 +186,6 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
   }
 
   getData() {
-
     const good = this.searchForm.get('goodId').value;
     const goodTypeId = this.searchForm.get('goodTypeId').value;
     const requestId = this.searchForm.get('requestId').value;
@@ -203,7 +201,6 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
 
     this.goodService.getAll(this.paramsSearch.getValue()).subscribe({
       next: async (data: any) => {
-
         if (data.data.length > 0) {
           const filterGoodType = data.data.map(async (item: any) => {
             const goodType = await this.getGoodType(item.goodTypeId);
@@ -230,7 +227,6 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
         } else {
           this.getGoodRes();
         }
-
       },
       error: error => {
         this.loading = false;
@@ -268,7 +264,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
 
   clean() {
     this.searchForm.reset();
-    this.searchForm.get('requestId').setValue(this.idRequest)
+    this.searchForm.get('requestId').setValue(this.idRequest);
     this.paramsSearch = new BehaviorSubject<ListParams>(new ListParams());
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -294,7 +290,9 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
     }
 
     if (!isNullOrEmpty(goodTypeId)) {
-      filter = filter.filter(x => parseInt(x.goodTypeId) == parseInt(goodTypeId));
+      filter = filter.filter(
+        x => parseInt(x.goodTypeId) == parseInt(goodTypeId)
+      );
     }
 
     if (!isNullOrEmpty(goodDescription)) {
@@ -307,18 +305,15 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getGoodsRequest());
     } else {
-
       this.allGooods = filter;
       this.paragraphs.load(filter);
       this.totalItems = filter.length;
       this.loading = false;
-
     }
   }
 
   showDocuments(): void {
     if (this.goodSelect.length == 0 || this.goodSelect.length >= 2) {
-
     } else {
       const idGood = this.goodSelect[0].id;
       const idRequest = this.idRequest;
@@ -341,7 +336,6 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
   }
 
   getGoodRes() {
-
     this.params.getValue()['take'] = 25;
     this.params.getValue()['limit'] = 25;
 

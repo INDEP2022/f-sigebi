@@ -20,6 +20,8 @@ import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/scre
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
+import { SearchActsComponent } from './search-acts/search-acts.component';
+import { ActasConvertionCommunicationService } from './services/services';
 
 @Component({
   selector: 'app-acts-goods-delivered',
@@ -64,6 +66,8 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
   statusScan: boolean = false;
   documentsService = inject(DocumentsService);
 
+  actaCerrada: boolean = false;
+  btnSave: boolean = false;
   constructor(
     private fb: FormBuilder,
     private detailProceeDelRecService: DetailProceeDelRecService,
@@ -78,7 +82,8 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
     private router: Router,
     private expedientService: ExpedientService,
     private screenStatusService: ScreenStatusService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private actasConvertionCommunicationService: ActasConvertionCommunicationService
   ) {
     super();
     this.initForm();
@@ -114,11 +119,17 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.actasConvertionCommunicationService.ejecutarFuncion$.subscribe(
+      (next: any) => {
+        // console.log('SI WILM', next);
+        this.ejecutarFuncion();
+      }
+    );
     this.getuser();
   }
 
   initForm() {
-    (this.formAct = this.fb.group({
+    this.formAct = this.fb.group({
       cveRecord: [null],
       noTransfer: [null],
       noExpedient: [null],
@@ -126,10 +137,10 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
       closingDate: [null],
       dateCapture: [null],
       textarea: [null],
-    })),
-      (this.form = this.fb.group({
-        scanningFoli: [null, [Validators.pattern(STRING_PATTERN)]],
-      }));
+    });
+    this.form = this.fb.group({
+      scanningFoli: [null, [Validators.pattern(STRING_PATTERN)]],
+    });
   }
 
   settingsChange(event: any) {
@@ -764,5 +775,58 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
     this.totalItems = 0;
     this.close = false;
     this.yData = false;
+  }
+
+  save() {}
+
+  cleanActa() {}
+
+  async searchActa() {
+    // const expedienteNumber = this.dataExpediente.id;
+    // const actaActual = this.actaDefault;
+    const modalConfig = {
+      initialState: {},
+      class: 'modal-xl modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    modalConfig.initialState = {
+      // expedienteNumber,
+      // actaActual,
+    };
+
+    let modalRef = this.modalService.show(SearchActsComponent, modalConfig);
+    modalRef.content.onSave.subscribe(async (next: any) => {
+      if (next) {
+        console.log('next', next);
+        // this.actaDefault = next;
+
+        // if (this.actaDefault.statusProceedings == 'CERRADA')
+        //   this.actaCerrada = false;
+        // else this.actaCerrada = true;
+
+        // this.selectData2 = null;
+        // this.actaRecepttionForm.reset();
+
+        this.formAct.patchValue({
+          // cveActa: this.actaDefault.keysProceedings,
+          // direccion: this.actaDefault.address,
+          // observaciones: this.actaDefault.observations,
+          // testigoOIC: this.actaDefault.comptrollerWitness,
+          // testigoTwo: this.actaDefault.witness1,
+          // testigoTree: this.actaDefault.witness2,
+          // respConv: this.actaDefault.responsible,
+          // datePhysicalReception: await this.correctDate(
+          //   this.actaDefault.datePhysicalReception
+          // ),
+          // elaboradate: await this.correctDate(this.actaDefault.elaborationDate),
+          // statusActa: this.actaDefault.statusProceedings,
+          // folio: this.actaDefault.universalFolio,
+        });
+      }
+    });
+  }
+
+  ejecutarFuncion() {
+    this.cleanActa();
   }
 }
