@@ -112,7 +112,7 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
 
       this.rejectedGoodService.updateGoodsResDev(id, body).subscribe({
         next: resp => {
-          this.onLoadToast('success', 'Se actualizo el bien');
+          this.onLoadToast('success', 'Se actualizó el bien');
           this.onReserve.emit(false);
           this.modalRef.hide();
           //this.processing = true;
