@@ -21,8 +21,8 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { ORIGIN_INFO } from './origin-data.model';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
+import { ORIGIN_INFO } from './origin-data.model';
 
 @Component({
   selector: 'app-search-inventory-goods',
@@ -158,7 +158,18 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
       this.searchForm.get('fileId').setValue(this.recordId);
       this.searchForm.get('fileId').disable();
     }
+  }
 
+  ngOnChanges(changes: RecordIdChange): void {
+    if (changes.recordId && !changes.recordId.isFirstChange()) {
+      this.updateRecordId(changes.recordId.currentValue);
+    }
+  }
+
+  updateRecordId(newRecordId: number): void {
+    this.recordId = newRecordId;
+    this.searchForm.get('fileId').setValue(this.recordId);
+    this.searchForm.get('fileId').disable();
   }
 
   getDelegations(params: ListParams) {
@@ -302,4 +313,10 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
 
     this.onSearch.emit(false);
   }
+}
+interface RecordIdChange {
+  recordId: {
+    currentValue: number;
+    isFirstChange: () => boolean;
+  };
 }
