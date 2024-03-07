@@ -884,7 +884,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         this.loadingTurn = false;
         if (taskResult && taskResult.task != null) {
           this.msgModal(
-            'Se turnó la solicitud con el Folio Nº'
+            'Se turnó la solicitud con el Folio Nº '
               .concat(`<strong>${idRequest}</strong>`)
               .concat(` al usuario <strong>${this.userName}</strong>`),
             'Solicitud Creada',

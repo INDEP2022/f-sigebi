@@ -160,6 +160,18 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
     }
   }
 
+  ngOnChanges(changes: RecordIdChange): void {
+    if (changes.recordId && !changes.recordId.isFirstChange()) {
+      this.updateRecordId(changes.recordId.currentValue);
+    }
+  }
+
+  updateRecordId(newRecordId: number): void {
+    this.recordId = newRecordId;
+    this.searchForm.get('fileId').setValue(this.recordId);
+    this.searchForm.get('fileId').disable();
+  }
+
   getDelegations(params: ListParams) {
     // Funcion para demostrar funcionamiento de select. Reemplazar por uso de apis
     /*if (params.text == '') {
@@ -301,4 +313,10 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
 
     this.onSearch.emit(false);
   }
+}
+interface RecordIdChange {
+  recordId: {
+    currentValue: number;
+    isFirstChange: () => boolean;
+  };
 }

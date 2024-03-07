@@ -1914,7 +1914,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
               let obj: any = {
                 p_id_evento: item.eventId,
                 p_opcion: n_OPCION,
-                p_lote_publico: item.lotId,
+                p_lote_publico: item.batchId,
                 p_cve_pantalla: 'FCOMER086_I',
                 p_id_factura: item.billId,
                 p_id_pago: item.paymentId,
@@ -2235,7 +2235,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           let result_ = this.selectedbillings.map(async (item: any) => {
             let obj_1 = {
               eventId: item.eventId,
-              lotId: item.lotId,
+              lotId: item.batchId,
             };
             await this.billingsService.comerCtrFacRegxBatch(obj_1);
 
@@ -2252,7 +2252,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
               this.alert(
                 'warning',
                 c_RESUL,
-                `Para Evento: ${item.eventId}, Lote: ${item.lotId}, Del.: ${item.delegationNumber}, Mandato.:${item.cvman}`
+                `Para Evento: ${item.eventId}, Lote: ${item.batchId}, Del.: ${item.delegationNumber}, Mandato.:${item.cvman}`
               );
             }
           });

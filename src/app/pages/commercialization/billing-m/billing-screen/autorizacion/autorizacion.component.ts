@@ -54,7 +54,7 @@ export class AutorizacionComponent extends BasePage implements OnInit {
     const aux_auto = await this.validateUser(userV, passwordV);
     console.log('aux_auto', aux_auto);
     if (aux_auto == 1) {
-      this.modalRef.content.callback(event);
+      this.modalRef.content.callback(true);
       this.modalRef.hide();
     } else {
       this.modalRef.content.callback(null);

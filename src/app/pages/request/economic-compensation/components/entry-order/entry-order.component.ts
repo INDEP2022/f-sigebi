@@ -31,6 +31,7 @@ export class EntryOrderComponent extends BasePage implements OnInit {
 
   @Input() requestId: number;
   maxDate: Date = new Date();
+  toggleInformation = true;
 
   respDoc: Object = null;
 
@@ -193,6 +194,8 @@ export class EntryOrderComponent extends BasePage implements OnInit {
 
       this.createOrderEntry(object);
     } else {
+      let orderDate = new Date(object['orderDate']);
+      object['orderDate'] = orderDate;
       object['id'] = this.id;
       this.updateOrderEntry(object);
     }

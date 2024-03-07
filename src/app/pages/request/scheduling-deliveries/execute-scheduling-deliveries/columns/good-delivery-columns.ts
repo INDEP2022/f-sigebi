@@ -214,7 +214,7 @@ export const PROG_DELIVERY_GOOD_TYPE_REST_COLUMNS = {
     sort: false,
   },
   goodId: {
-    title: 'No. Gestion',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
@@ -294,7 +294,7 @@ export const PROG_DELIVERY_GOOD_NO_DELIVERED = {
     sort: false,
   },
   goodId: {
-    title: 'No. Gestion',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
