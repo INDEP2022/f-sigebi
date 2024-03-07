@@ -2238,16 +2238,30 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     });
   }
   pupGeneLayout(data: any) {
-    return new Promise((resolve, reject) => {
-      this.massiveGoodService.applicationPupGenLayouts(data).subscribe({
-        next(value) {
-          resolve(value);
-        },
-        error(err) {
-          resolve(false);
-        },
-      });
+    this.btnLoadingCSV = true;
+    this.massiveGoodService.applicationPupGenLayouts(data).subscribe({
+      next: value => {
+        const base64Data = value;
+        this.downloadFileTXT(base64Data, 'Archivo_de_Pagos_y_Transferencias');
+        this.btnLoadingCSV = false;
+      },
+      error: err => {
+        this.alert('warning', 'No se pudo generar el archivo', '');
+      },
     });
+  }
+
+  downloadFileTXT(base64: any, fileName: any) {
+    const decodedData = atob(base64);
+    const blob = new Blob([decodedData], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const downloadLink = document.createElement('a');
+    downloadLink.href = url;
+    downloadLink.download = fileName;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+    downloadLink.remove();
+    this.alert('success', 'Archivo descargado correctamente', '');
   }
   async cambiarTab(numberTab: any) {
     console.log(numberTab);
