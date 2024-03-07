@@ -191,6 +191,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   typedocuments(params: ListParams) {
+    if (this.typesDocuments.length > 0) return;
+
     params['filter.ddescription'] = params['text'];
     console.log(params);
     this.wContentService.getDocumentTypes(params).subscribe({
@@ -265,10 +267,15 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   confirm() {
+    this.loading = true;
+
+    this.loading = true;
+
     if (this.typeDoc == 'good' && this.process == 'programming') {
-      this.loading = true;
       const formData = {
         dInDate: moment(new Date()).format('DD-MMM-YYYY'),
+        xfecha: this.formatDate(new Date()),
+
         dDocAuthor: this.userLogName,
         dSecurityGroup: 'Public',
         ddocCreator: this.userLogName,
@@ -347,7 +354,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => {
+            this.loading = false;
+          },
         });
       return;
     }
@@ -361,6 +370,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       const user: any = this.authService.decodeToken();
       const formData = {
         dInDate: moment(new Date()).format('DD-MMM-YYYY'),
+        xfecha: this.formatDate(new Date()),
+
         dDocAuthor: this.userLogName,
         dSecurityGroup: 'Public',
         xidExpediente: this.idExpedient,
@@ -427,6 +438,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: resp => {
+            this.loading = false;
             this.alertInfo(
               'success',
               'El Documento ha sido Agregado',
@@ -434,13 +446,14 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             ).then(question => {
               if (question.isConfirmed) {
                 this.modalRef.content.callback(true);
-                this.loading = false;
                 this.loader.load = false;
                 this.modalRef.hide();
               }
             });
           },
-          error: error => {},
+          error: error => {
+            this.loading = false;
+          },
         });
       return;
     }
@@ -450,6 +463,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       const formData = {
         dDocAuthor: this.userLogName,
         dInDate: moment(new Date()).format('DD-MMM-YYYY'),
+        xfecha: this.formatDate(new Date()),
         dSecurityGroup: 'Public',
         ddocCreator: this.userLogName,
         xidcProfile: 'NSBDB_Gral',
@@ -524,14 +538,18 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => {
+            this.loading = false;
+          },
         });
       return;
     }
 
     if (this.typeDoc == 'doc-expedient' && this.process != 'sampling-assets') {
+      console.log('entro');
       const formData = {
         dInDate: moment(new Date()).format('DD-MMM-YYYY'),
+        xfecha: this.formatDate(new Date()),
         dSecurityGroup: 'Public',
         xidcProfile: 'NSBDB_Gral',
         xNombreProceso: 'Clasificar Bien',
@@ -608,7 +626,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => {
+            this.loading = false;
+          },
         });
       return;
     }
@@ -616,6 +636,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     if (this.process == 'sampling-assets') {
       const formData = {
         dInDate: new Date(),
+        xfecha: this.formatDate(new Date()),
         dDocAuthor: this.userLogName,
         dSecurityGroup: 'Public',
         xidExpediente: this.idExpedient,
@@ -681,6 +702,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: resp => {
+            this.loading = false;
             this.alertInfo(
               'success',
               'El Documento ha sido Agregado',
@@ -688,16 +710,19 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             ).then(question => {
               if (question.isConfirmed) {
                 this.modalRef.content.callback(true);
-                this.loading = false;
                 this.loader.load = false;
                 this.modalRef.hide();
               }
             });
           },
-          error: error => {},
+          error: error => {
+            this.loading = false;
+          },
         });
       return;
     }
+
+    this.loading = false;
   }
 
   close() {
@@ -705,6 +730,19 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {}
+
+  formatDate(startDate: Date): string {
+    let year = startDate.getFullYear();
+    let month = String(startDate.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript empiezan en 0
+    let day = String(startDate.getDate()).padStart(2, '0');
+    let hours = String(startDate.getHours()).padStart(2, '0');
+    let minutes = String(startDate.getMinutes()).padStart(2, '0');
+    let seconds = String(startDate.getSeconds()).padStart(2, '0');
+
+    let formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`; // Formato YYYY-MM-DD h:mm:ss
+
+    return formattedDate;
+  }
 
   getStateSelect(params?: ListParams) {
     params['filter.sortBy'] = 'descCondition:ASC';

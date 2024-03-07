@@ -179,12 +179,12 @@
   background-size: 50px 50px;
   z-index: 100;
   content: 'Cargando, por favor espere...';
-  padding-top: 90px !important;
+  padding-top: 70px !important;
   font-size: 14px;
   text-align: center;
   font-weight: bold;
   line-height: 26px;
-  min-height: 180px !important;
+  min-height: 100px !important;
   height: 100% !important;
 }
 
@@ -931,7 +931,6 @@ div:where(.swal2-container).swal2-bottom {
 .modal-dialog-centered-top {
   margin-top: -100px !important;
 }
-
 
 .fixed-datepicker .bs-datepicker-container {
   position: fixed !important;

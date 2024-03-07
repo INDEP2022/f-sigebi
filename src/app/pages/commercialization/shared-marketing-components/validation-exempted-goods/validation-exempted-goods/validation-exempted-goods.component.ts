@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
@@ -12,8 +14,13 @@ import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IPupGoodTrackerFComerGood } from 'src/app/core/models/catalogs/package.model';
+import { BankMovementType } from 'src/app/core/services/ms-bank-movement/bank-movement.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { NewValidationExemptedGoodModalComponent } from '../new-validation-exempted-goods-modal/new-validation-exempted-goods-modal.component';
 import { GOODS_COLUMS } from './validation-exempted-goods-columns';
 
@@ -29,6 +36,10 @@ export class ValidationExemptedGoodsComponent
   goods: LocalDataSource = new LocalDataSource();
   totalItems = 0;
   params = new BehaviorSubject(new FilterParams());
+  processForm: FormGroup;
+
+  processes = new DefaultSelect();
+  cycleTracker = 0;
 
   override settings = {
     ...this.settings,
@@ -36,28 +47,63 @@ export class ValidationExemptedGoodsComponent
     actions: {
       columnTitle: 'Eliminar',
       position: 'right',
-      subHeader: false,
       edit: false,
       delete: true,
+      add: false,
     },
     columns: GOODS_COLUMS,
   };
 
   constructor(
+    private fb: FormBuilder,
+    private globalVarService: GlobalVarsService,
     private goodService: GoodService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private router: Router,
+    private processService: BankMovementType,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.prepareForm();
     this.getData();
+    this.columnsFilter().subscribe();
     this.navigateTable();
+    this.returnTracker();
+    this.getProcesses();
+  }
+
+  prepareForm() {
+    this.processForm = this.fb.group({
+      process: [null, Validators.required],
+    });
+  }
+
+  returnTracker() {
+    this.globalVarService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: global => {
+          const ngGlobal = global;
+          if (ngGlobal.REL_BIENES) {
+            if (this.cycleTracker == 0) {
+              this.cycleTracker++;
+              console.log(ngGlobal.REL_BIENES);
+              console.log(this.cycleTracker);
+              const processSave = localStorage.getItem('processFCOMERBIENEX');
+              this.processForm.get('process').setValue(processSave);
+              this.pupGoodTracker(ngGlobal.REL_BIENES);
+            }
+          }
+        },
+      });
   }
 
   navigateTable() {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(value => {
-      console.log(value);
       this.getData();
     });
   }
@@ -73,15 +119,24 @@ export class ValidationExemptedGoodsComponent
 
   buildColumnFilter(dataSource: any) {
     const params = new FilterParams();
+    params.removeAllFilters();
+
     if (dataSource.action == 'filter') {
       const filters = dataSource.filter.filters;
       filters.forEach((filter: any) => {
+        console.log(filter);
         const columns = this.settings.columns as any;
-        const operator = columns[filter.field]?.operator;
+        let operator = columns[filter.field]?.operator;
+
         if (!filter.search) {
+          params.removeAllFilters();
           return;
         }
-        console.log(filter);
+
+        if (filter.field == 'goodNumber.description') {
+          operator = SearchFilter.LIKE;
+        }
+
         params.addFilter(
           filter.field,
           filter.search,
@@ -98,8 +153,9 @@ export class ValidationExemptedGoodsComponent
     paramsF.addFilter('id', '3987830');
     paramsF.page = this.params.getValue().page;
     paramsF.limit = this.params.getValue().limit;
+    paramsF.filters = this.params.getValue().filters;
 
-    this.goodService.getTransAva(paramsF.getParams()).subscribe(
+    this.goodService.getTransAvaFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
         this.goods.load(res.data);
@@ -125,5 +181,69 @@ export class ValidationExemptedGoodsComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(NewValidationExemptedGoodModalComponent, config);
+  }
+
+  goToGoodTracker() {
+    if (!this.processForm.get('process').value) {
+      this.alert(
+        'warning',
+        'Proceso requerido',
+        'Por favor, seleccione un proceso'
+      );
+      this.processForm.get('process').markAsTouched();
+      return;
+    }
+
+    localStorage.setItem(
+      'processFCOMERBIENEX',
+      this.processForm.get('process').value.value
+    );
+
+    this.router.navigate(['/pages/general-processes/goods-tracker'], {
+      queryParams: {
+        origin: 'FCOMERBIENEX',
+      },
+    });
+  }
+
+  pupGoodTracker(nrelGood: number) {
+    console.log(this.processForm.get('process').value);
+    const body: IPupGoodTrackerFComerGood = {
+      process: this.processForm.get('process').value,
+      relGood: nrelGood,
+    };
+
+    this.massiveGoodService.pupGoodTrackerFComerGoodEx(body).subscribe(
+      res => {
+        console.log(res);
+        this.alert('success', 'Proceso exitoso', res.message);
+      },
+      err => {
+        this.alert('error', 'Error', 'No se pudo realizar el proceso');
+        console.log(err);
+      }
+    );
+  }
+
+  getProcesses() {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('parameter', 'COMERBIENEX');
+    this.processService.getProcess(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        const newResp = res.data.map((item: any) => {
+          return {
+            ...item,
+            bindValue: `${item.value} - ${item.description}`,
+          };
+        });
+
+        this.processes = new DefaultSelect(newResp, res.count);
+      },
+      err => {
+        this.processes = new DefaultSelect();
+        this.alert('error', 'No se pudieron obtener los procesos', '');
+      }
+    );
   }
 }

@@ -1,91 +1,76 @@
-import { DetailEventsComponent } from './component-render/detail-events/detail-events.component';
-import { DetailStatusComponent } from './component-render/detail-status/detail-status.component';
-
 export const GOODS_COLUMNS = {
-  detailStatus: {
-    title: 'Detalle Estatus',
-    sort: false,
-    type: 'custom',
-    renderComponent: DetailStatusComponent,
-  },
-  detailEvents: {
-    title: 'Detalle  Eventos',
-    sort: false,
-    type: 'custom',
-    renderComponent: DetailEventsComponent,
-  },
-  noGood: {
+  no_bien: {
     title: 'No. Bien',
     sort: false,
   },
-  status: {
+  estatus: {
     title: 'Estatus Bien',
     sort: false,
   },
-  description: {
+  descripcion: {
     title: 'Descripción del Bien',
     sort: false,
   },
 
-  totalEventsRef: {
+  total_eventos_ref: {
     title: 'Número de Eventos Reforma',
     sort: false,
   },
-  daysWithoutSellingRef: {
+  dias_sin_vender_ref: {
     title: 'Días Trancurridos Reforma',
     sort: false,
   },
-  datePubInitialRef: {
+  fec_pub_primer_evento_ref: {
     title: 'Publicación Primer Evento Reforma',
     sort: false,
   },
-  dateFailRef: {
+  fec_fallo_primer_evento_ref: {
     title: 'Fallo Primer Evento Reforma',
     sort: false,
   },
-  datePubFinalRef: {
+  fec_pub_ultimo_evento_ref: {
     title: 'Publicación Último Evento Reforma',
     sort: false,
   },
-  dateFailFinalRef: {
+  fec_fallo_ultimo_evento_ref: {
     title: 'Fallo Último Evento Reforma',
     sort: false,
   },
 
-  totalEventsHist: {
+  total_eventos: {
     title: 'Número de Eventos Histórico',
     sort: false,
   },
-  daysWithoutSellingHist: {
+  dias_sin_vender_historico: {
     title: 'Días Trancurridos Histórico',
     sort: false,
   },
-  datePubInitialHist: {
+  fec_pub_primer_evento_hist: {
     title: 'Publicación Primer Evento Histórico',
     sort: false,
   },
-  dateFailHist: {
+  fec_fallo_primer_evento_hist: {
     title: 'Fallo Primer Evento Histórico',
     sort: false,
   },
-  datePubFinalHist: {
+  fec_pub_ultimo_evento_hist: {
     title: 'Publicación Último Evento Histórico',
     sort: false,
   },
-  dateFailFinalHist: {
+  fec_fallo_ultimo_evento_hist: {
     title: 'Fallo Último Evento Histórico',
     sort: false,
   },
 
-  typeGood: {
+  tipo_bien: {
     title: 'Tipo de Bien',
     sort: false,
   },
-  subTypeGood: {
+  sub_tipo_bien: {
     title: 'Sub Tipo Bien',
     sort: false,
   },
-  delegation: {
+  delegacion_admin: {
     title: 'Delegación Administra',
     sort: false,
   },
@@ -131,47 +116,42 @@ export const STATUS_COLUMNS_REPORT = {
 };
 
 export const HISTORY_COLUMNS_REPORT = {
-  situation: {
+  descripcion: {
     title: 'Situación',
     sort: false,
     type: 'string',
   },
-  noGood: {
+  no_bien: {
     title: 'No. Bien',
     sort: false,
     type: 'string',
   },
-  status: {
+  estatus: {
     title: 'Estatus',
     sort: false,
     type: 'string',
   },
-  dateChange: {
+  fec_cambio: {
     title: 'Fecha del Cambio',
     sort: false,
     type: 'string',
   },
-  userhange: {
+  usuario_cambio: {
     title: 'Usuario Cambio',
     sort: false,
     type: 'string',
   },
-  chanelChange: {
+  programa_cambio_estatus: {
     title: 'Programa Cambio Estatus',
     sort: false,
     type: 'string',
   },
-  reasonChange: {
+  motivo_cambio: {
     title: 'Motivo del Cambio',
     sort: false,
     type: 'string',
   },
-  noRegister: {
-    title: 'No. Registro',
-    sort: false,
-    type: 'string',
-  },
-  process: {
+  proceso_ext_dom: {
     title: 'Proceso Ext. Dom.',
     sort: false,
     type: 'string',
@@ -179,27 +159,27 @@ export const HISTORY_COLUMNS_REPORT = {
 };
 
 export const HISTORY_EVENT_COLUMNS_REPORT = {
-  noGood: {
+  no_bien: {
     title: 'No. Bien',
     sort: false,
     type: 'string',
   },
-  typeEvent: {
+  descripcion: {
     title: 'Tipo Evento',
     sort: false,
     type: 'string',
   },
-  keyEvent: {
+  cve_proceso: {
     title: 'Clave Evento',
     sort: false,
     type: 'string',
   },
-  dateEvent: {
+  fecha_evento: {
     title: 'Fecha Evento',
     sort: false,
     type: 'string',
   },
-  dateFail: {
+  fecha_fallo: {
     title: 'Fecha Fallo',
     sort: false,
     type: 'string',

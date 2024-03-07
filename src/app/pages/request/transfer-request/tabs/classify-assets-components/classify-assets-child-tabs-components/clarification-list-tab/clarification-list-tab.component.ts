@@ -83,7 +83,6 @@ export class ClarificationListTabComponent
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getData());
-    console.log(this.request);
   }
 
   getData(): void {

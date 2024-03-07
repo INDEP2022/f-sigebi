@@ -9,55 +9,74 @@ export const EVENT_LOT_GOODS_LIST_COLUMNS = {
       return true;
     },
   },
-  description: {
+  'bienes.description': {
     title: 'Descripción',
     sort: false,
     valuePrepareFunction: (empty: any, row: any) =>
       row.bienes?.description ?? '',
+    filterFunction: (cell: any, search?: string) => {
+      return true;
+    },
   },
-  transferente: {
+  'transferente.cvman': {
     title: 'Transferente',
     sort: false,
+    filter: false,
     valuePrepareFunction: (transfer: any) =>
       transfer
         ? `${transfer?.cvman ?? ''}-${transfer?.nameTransferent ?? ''}`
         : null,
+    filterFunction: (cell: any, search?: string) => {
+      return true;
+    },
   },
-  estatus: {
+  'bienes.status': {
     title: 'Estatus',
     sort: false,
     valuePrepareFunction: (empty: any, row: any) => row.bienes?.status ?? '',
+    filterFunction: (cell: any, search?: string) => {
+      return true;
+    },
   },
   quantity: {
     title: 'Cantidad',
     sort: false,
   },
-  valoravaluo: {
+  'bienes.appraisedValue': {
     title: 'Valor Avalúo',
     sort: false,
     valuePrepareFunction: (empty: any, row: any) =>
       row.bienes?.appraisedValue ?? '',
+    filterFunction: (cell: any, search?: string) => {
+      return true;
+    },
   },
   commercialEventId: {
     title: 'Evento Participa',
     sort: false,
   },
-  lotepubremesa: {
+  'lotepubremesa.description': {
     title: 'Lote Participa',
     sort: false,
     valuePrepareFunction: (empty: any, row: any) => {
       return row.lotepubremesa?.description ?? null;
+    },
+    filterFunction: (cell: any, search?: string) => {
+      return true;
     },
   },
   remittanceEventId: {
     title: 'Evento Rem / Pre',
     sort: false,
   },
-  lotrepuborig: {
+  'lotrepuborig.description': {
     title: 'Lote Rem / Pre',
     sort: false,
     valuePrepareFunction: (empty: any, row: any) => {
       return row.lotrepuborig?.description ?? null;
+    },
+    filterFunction: (cell: any, search?: string) => {
+      return true;
     },
   },
   baseValue: {
@@ -131,6 +150,7 @@ export const EVENT_LOT_GOODS_LIST_COLUMNS = {
   appraisalDate: {
     title: 'Fecha Avalúo',
     sort: false,
+    filter: false,
     valuePrepareFunction: (date: string) =>
       date ? format(new Date(date), 'dd/MM/yyyy') : '',
   },
@@ -149,6 +169,7 @@ export const EVENT_LOT_GOODS_LIST_COLUMNS = {
   invoiceDate: {
     title: 'Fecha Factura',
     sort: false,
+    filter: false,
     valuePrepareFunction: (date: string) =>
       date ? format(new Date(date), 'dd/MM/yyyy') : '',
   },

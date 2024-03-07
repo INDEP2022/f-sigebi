@@ -27,7 +27,7 @@ export class DatePickerDirective {
     if (validDate.getTime()) {
       return;
     }
-    ($event.target as HTMLInputElement).value = '';
+    //($event.target as HTMLInputElement).value = '';
     if (this.model) {
       this.model.control.setErrors(null);
     }

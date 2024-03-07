@@ -45,12 +45,15 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   @Input() showDelegation: boolean = true;
   @Input() delegationChange: boolean = true;
   @Input() init: boolean = false;
+  @Input() numDel: boolean = false;
   @Output() emitSubdelegation = new EventEmitter<ISubdelegation>();
   @Output() emitDelegation = new EventEmitter<IDelegation>();
   params = new BehaviorSubject<ListParams>(new ListParams());
   delegations = new DefaultSelect<IDelegation>();
   subdelegations = new DefaultSelect<ISubdelegation>();
   phaseEdo: number;
+  resul: any;
+  resul1: any;
 
   get delegation() {
     return this.form.get(this.delegationField);
@@ -72,6 +75,9 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
     if (this.init) {
       this.getDelegations(new ListParams());
       this.getSubDelegations(new ListParams());
+      setTimeout(() => {
+        this.getDelegations(new ListParams());
+      }, 1000);
     }
     console.log(this.showDelegation);
     if (this.showSubdelegation) {
@@ -79,9 +85,10 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
         const sfield = document.getElementById('id');
         if (res != null) {
           this.render.removeClass(sfield, 'disabled');
+          this.form.get(this.subdelegationField).setValue('');
         } else {
           this.render.addClass(sfield, 'disabled');
-          this.form.get(this.subdelegationField).setValue(null);
+          this.form.get(this.subdelegationField).setValue('');
         }
       });
     } else {
@@ -93,22 +100,27 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   getDelegations(params: ListParams) {
     params.limit = 100;
     params.take = 100;
-    this.service.getAll(params).subscribe(
-      data => {
+    console.log(params.text);
+    if (params.text) {
+      if (!isNaN(parseInt(params.text))) {
+        params['filter.id'] = `$eq:${params.text}`;
+        params['search'] = '';
+      } else if (typeof params.text === 'string') {
+        params['filter.description'] = `$ilike:${params.text}`;
+      }
+    }
+
+    this.service.getAll(params).subscribe({
+      next: data => {
+        this.resul = data.data.map(async (item: any) => {
+          item['idDesc'] = item.id + ' - ' + item.description;
+        });
         this.delegations = new DefaultSelect(data.data, data.count);
       },
-      err => {
-        /* let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.alert('warning', 'No se encontraron registros', ''); */
+      error: err => {
         this.delegations = new DefaultSelect();
       },
-      () => {}
-    );
+    });
   }
 
   getSubDelegations(params: ListParams) {
@@ -121,17 +133,12 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
 
       this.printFlyersService.getSubdelegations(paramsF.getParams()).subscribe({
         next: data => {
+          this.resul1 = data.data.map(async (item: any) => {
+            item['idDesc1'] = item.id + ' - ' + item.description;
+          });
           this.subdelegations = new DefaultSelect(data.data, data.count);
         },
         error: err => {
-          /* let error = '';
-          if (err.status === 0) {
-            error = 'Revise su conexión de Internet.';
-          } else {
-            error = err.message;
-          }
-          this.subdelegations = new DefaultSelect([], 0);
-          this.alert('warning', 'No se encontraron registros', ''); */
           this.subdelegations = new DefaultSelect();
         },
       });

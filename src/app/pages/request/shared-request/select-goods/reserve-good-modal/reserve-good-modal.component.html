@@ -11,7 +11,7 @@
         <div class="col-md-6">
           <p class="font-size-16 mt-2">
             <strong class="font-size-13"
-              >Cantidad Disponible &#40; m&#178; &#41;&#58;
+              >Cantidad Disponible &#40; {{ good?.unitMeasure }} &#41;&#58;
             </strong>
           </p>
         </div>
@@ -25,14 +25,14 @@
         <div class="col-md-6">
           <p class="font-size-16 mt-2">
             <strong class="font-size-13"
-              >Cantidad a Reservar &#40; m&#178; &#41;&#58;
+              >Cantidad a Reservar &#40; {{ good?.unitMeasure }} &#41;&#58;
             </strong>
           </p>
         </div>
         <div class="col-md-6">
           <form-field
             [control]="reserveForm.get('reserve')"
-            label="Cantidad a Reservar &#40; m&#178; &#41;">
+            label="Cantidad a Reservar &#40; {{ good?.unitMeasure }} &#41;">
             <input
               type="number"
               formControlName="reserve"

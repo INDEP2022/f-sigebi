@@ -13,6 +13,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -52,7 +53,8 @@ interface searchTable {
 })
 export class DocRequestTabComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   @ViewChild('myTemplate', { static: true }) template: TemplateRef<any>;
   @ViewChild('myTemplate', { static: true, read: ViewContainerRef })
   container: ViewContainerRef;
@@ -119,9 +121,8 @@ export class DocRequestTabComponent
     this.getState(new ListParams());
     this.getTransfe(new ListParams());
     this.getDocType(new ListParams());
-    this.getInfoRequest();
     this.typeDoc = this.type ? this.type : this.typeDoc;
-    if (this.typeDoc === 'doc-request') {
+    if (this.typeDoc === 'doc-request' || this.typeDoc === 'doc-expedient') {
       this.container.createEmbeddedView(this.template);
     }
     this.settings = {
@@ -165,7 +166,7 @@ export class DocRequestTabComponent
           this.getData(data);
         });
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -278,9 +279,10 @@ export class DocRequestTabComponent
                 }
               });
               const info = filterDoc.map(async (items: any) => {
-                const filter: any = await this.filterGoodDoc([
-                  items.xtipoDocumento,
-                ]);
+                const typedoc = this.typesDocuments.filter(
+                  x => parseInt(x.ddocType) == parseInt(items.xtipoDocumento)
+                );
+
                 /*if (items?.xdelegacionRegional) {
                 const regionalDelegation = await this.getRegionalDelegation(
                   items?.xdelegacionRegional
@@ -297,7 +299,11 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
-                items.xtipoDocumento = filter[0]?.ddescription;
+                if (isNullOrEmpty(items.xfecha)) {
+                  items.xfecha = moment.utc(items.dInDate);
+                }
+                items.xtipoDocumentoId = items.xtipoDocumento + '';
+                items.xtipoDocumento = typedoc[0]?.ddescription;
                 return items;
               });
               if (this.data.length == 0) {
@@ -307,10 +313,11 @@ export class DocRequestTabComponent
                   this.totalItems = data.length;
 
                   this.loading = false;
-                  this.onChanges();
                   this.allDataDocReq = this.docRequest; // Asigna los datos a allDataDocReq
+                  this.onChanges();
                   //this.paragraphs.load(x);
                 });
+                return;
               } else {
                 this.selectPage();
                 this.loading = false;
@@ -328,9 +335,10 @@ export class DocRequestTabComponent
                 }
               });
               const info = filterDoc.map(async (items: any) => {
-                const filter: any = await this.filterGoodDoc([
-                  items.xtipoDocumento,
-                ]);
+                const typedoc = this.typesDocuments.filter(
+                  x => parseInt(x.ddocType) == parseInt(items.xtipoDocumento)
+                );
+
                 /*if (items?.xdelegacionRegional) {
                 const regionalDelegation = await this.getRegionalDelegation(
                   items?.xdelegacionRegional
@@ -347,7 +355,11 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
-                items.xtipoDocumento = filter[0]?.ddescription;
+                if (isNullOrEmpty(items.xfecha)) {
+                  items.xfecha = moment.utc(items.dInDate);
+                }
+                items.xtipoDocumentoId = items.xtipoDocumento + '';
+                items.xtipoDocumento = typedoc[0]?.ddescription;
                 return items;
               });
               if (this.data.length == 0) {
@@ -356,10 +368,11 @@ export class DocRequestTabComponent
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
                   this.loading = false;
-                  this.onChanges();
                   this.allDataDocReq = this.docRequest; // Asigna los datos a allDataDocReq
+                  this.onChanges();
                   //this.paragraphs.load(x);
                 });
+                return;
               } else {
                 this.selectPage();
                 this.loading = false;
@@ -385,9 +398,10 @@ export class DocRequestTabComponent
                 }
               });
               const info = filterDoc.map(async (items: any) => {
-                const filter: any = await this.filterGoodDoc([
-                  items.xtipoDocumento,
-                ]);
+                const typedoc = this.typesDocuments.filter(
+                  x => parseInt(x.ddocType) == parseInt(items.xtipoDocumento)
+                );
+
                 /*if (items?.xdelegacionRegional) {
                 const regionalDelegation = await this.getRegionalDelegation(
                   items?.xdelegacionRegional
@@ -404,7 +418,11 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
-                items.xtipoDocumento = filter[0]?.ddescription;
+                if (isNullOrEmpty(items.xfecha)) {
+                  items.xfecha = moment.utc(items.dInDate);
+                }
+                items.xtipoDocumentoId = parseInt(items.xtipoDocumento);
+                items.xtipoDocumento = typedoc[0]?.ddescription;
                 return items;
               });
               if (this.data.length == 0) {
@@ -413,10 +431,11 @@ export class DocRequestTabComponent
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
                   this.loading = false;
-                  this.onChanges();
                   this.allDataDocReq = this.docRequest; // Asigna los datos a allDataDocReq
+                  this.onChanges();
                   //this.paragraphs.load(x);
                 });
+                return;
               } else {
                 this.selectPageEx();
                 this.loading = false;
@@ -456,6 +475,10 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
+                if (isNullOrEmpty(items.xfecha)) {
+                  items.xfecha = moment.utc(items.dInDate);
+                }
+                items.xtipoDocumentoId = items.xtipoDocumento + '';
                 items.xtipoDocumento = filter[0]?.ddescription;
                 return items;
               });
@@ -465,10 +488,11 @@ export class DocRequestTabComponent
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
                   this.loading = false;
-                  this.onChanges();
                   this.allDataDocReq = this.docRequest; // Asigna los datos a allDataDocReq
+                  this.onChanges();
                   //this.paragraphs.load(x)
                 });
+                return;
               } else {
                 this.selectPageEx();
                 this.loading = false;
@@ -476,9 +500,11 @@ export class DocRequestTabComponent
             }
           }
 
+          this.onChanges();
           this.loading = false;
         },
         error: error => {
+          this.onChanges();
           this.loading = false;
         },
       });
@@ -544,7 +570,7 @@ export class DocRequestTabComponent
           next: data => {
             resolve(data?.description);
           },
-          error: error => { },
+          error: error => {},
         });
     });
   }
@@ -587,15 +613,17 @@ export class DocRequestTabComponent
       .subscribe({
         next: (resp: any) => {
           this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
+          this.getInfoRequest();
         },
       });
   }
 
   search(): void {
-
     //this.params = new BehaviorSubject<ListParams>(new ListParams());
 
-    let object: any = this.getFilterDocuments(this.docRequestForm.getRawValue());
+    let object: any = this.getFilterDocuments(
+      this.docRequestForm.getRawValue()
+    );
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -949,7 +977,7 @@ export class DocRequestTabComponent
           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl),
           type: 'pdf',
         },
-        callback: (data: any) => { },
+        callback: (data: any) => {},
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -981,7 +1009,7 @@ export class DocRequestTabComponent
           setTimeout(() => {
             this.getData(new ListParams());
             this.formLoading = false;
-          }, 7000);
+          }, 10000);
         }
       },
     };
@@ -1014,7 +1042,7 @@ export class DocRequestTabComponent
         next: data => {
           this.selectRegDelegation = new DefaultSelect(data.data, data.count);
         },
-        error: error => { },
+        error: error => {},
       });
   }
 
@@ -1056,6 +1084,11 @@ export class DocRequestTabComponent
     let list =
       this.docExpedient.length > 0 ? this.docExpedient : this.docRequest;
 
+    let toks = [136, 138, 131, 125, 30, 148, 166, 31, 182, 32, 158, 178];
+    list = list.filter(x => toks.includes(parseInt(x.xtipoDocumentoId)));
+
+    console.log('list', list, this.typeDoc);
+
     this.onChange.emit({
       isValid: list.length > 0,
       object: list,
@@ -1064,75 +1097,73 @@ export class DocRequestTabComponent
   }
 
   getFilterDocuments(filter) {
-
     let request = {
-      "dDocTitle": filter.docTitle,
-      "dDocAuthor": filter.author,
-      "dDocCreator": null,
-      "dDocName": filter.dDocName,
-      "dSecurityGroup": null,
-      "dRevLabel": null,
-      "xidTransferente": null,
-      "xidBien": null,
-      "xnoOficio": filter.noOfice,
-      "xremitente": filter.sender,
-      "xidExpediente": null,
-      "xtipoTransferencia": filter.typeTrasf,
-      "xidSolicitud": this.idRequest,
-      "xresponsable": filter.responsible,
-      "xcargoRemitente": filter.senderCharge,
-      "xComments": filter.comment,
-      "xcontribuyente": filter.contributor,
-      "xciudad": null,
-      "xestado": null,
-      "xfecha": null,
-      "xbanco": null,
-      "xclaveValidacion": null,
-      "xcuenta": null,
-      "xdependenciaEmiteDoc": null,
-      "xfechaDeposito": null,
-      "xfolioActa": null,
-      "xfolioActaDestruccion": null,
-      "xfolioActaDevolucion": null,
-      "xfolioContrato": null,
-      "xfolioDenuncia": null,
-      "xfolioDictamenDestruccion": null,
-      "xfolioDictamenDevolucion": null,
-      "xfolioDictamenResarcimiento": null,
-      "xfolioFactura": null,
-      "xfolioNombramiento": null,
-      "xfolioSISE": null,
-      "xmonto": null,
-      "xnoAcuerdo": null,
-      "xnoAutorizacionDestruccion": null,
-      "xnoConvenioColaboracion": null,
-      "xnoFolioRegistro": null,
-      "xnoOficioAutorizacion": null,
-      "xnoOficioAvaluo": null,
-      "xnoOficioCancelacion": null,
-      "xnoOficioProgramacion": null,
-      "xnoOficioSolAvaluo": null,
-      "xnoOficoNotificacion": null,
-      "xnoRegistro": null,
-      "xNivelRegistroNSBDB": null,
-      "xTipoDocumento": filter.docType,
-      "texto": filter.text,
-      "xDelegacionRegional": null,
-      "xNoProgramacion": null,
-      "xFolioProgramacion": null,
-      "xNoActa": null,
-      "xNoRecibo": null,
-      "xFolioRecibo": null,
-      "xIdConstanciaEntrega": null,
-      "xNombreProceso": null,
-      "xIdSIAB": null
-    }
+      dDocTitle: filter.docTitle,
+      dDocAuthor: filter.author,
+      dDocCreator: null,
+      dDocName: filter.dDocName,
+      dSecurityGroup: null,
+      dRevLabel: null,
+      xidTransferente: null,
+      xidBien: null,
+      xnoOficio: filter.noOfice,
+      xremitente: filter.sender,
+      xidExpediente: null,
+      xtipoTransferencia: filter.typeTrasf,
+      xidSolicitud: this.idRequest,
+      xresponsable: filter.responsible,
+      xcargoRemitente: filter.senderCharge,
+      xComments: filter.comment,
+      xcontribuyente: filter.contributor,
+      xciudad: null,
+      xestado: null,
+      xfecha: null,
+      xbanco: null,
+      xclaveValidacion: null,
+      xcuenta: null,
+      xdependenciaEmiteDoc: null,
+      xfechaDeposito: null,
+      xfolioActa: null,
+      xfolioActaDestruccion: null,
+      xfolioActaDevolucion: null,
+      xfolioContrato: null,
+      xfolioDenuncia: null,
+      xfolioDictamenDestruccion: null,
+      xfolioDictamenDevolucion: null,
+      xfolioDictamenResarcimiento: null,
+      xfolioFactura: null,
+      xfolioNombramiento: null,
+      xfolioSISE: null,
+      xmonto: null,
+      xnoAcuerdo: null,
+      xnoAutorizacionDestruccion: null,
+      xnoConvenioColaboracion: null,
+      xnoFolioRegistro: null,
+      xnoOficioAutorizacion: null,
+      xnoOficioAvaluo: null,
+      xnoOficioCancelacion: null,
+      xnoOficioProgramacion: null,
+      xnoOficioSolAvaluo: null,
+      xnoOficoNotificacion: null,
+      xnoRegistro: null,
+      xNivelRegistroNSBDB: null,
+      xTipoDocumento: filter.docType,
+      texto: filter.text,
+      xDelegacionRegional: null,
+      xNoProgramacion: null,
+      xFolioProgramacion: null,
+      xNoActa: null,
+      xNoRecibo: null,
+      xFolioRecibo: null,
+      xIdConstanciaEntrega: null,
+      xNombreProceso: null,
+      xIdSIAB: null,
+    };
     for (const key in request) {
       if (request[key] == null) {
-        delete request[key]
+        delete request[key];
       }
     }
     return request;
   }
-
 }

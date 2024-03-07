@@ -22,6 +22,7 @@ import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
+import { ShowDocumentsGoodComponent } from '../expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
 import { SELECT_GOODS_COLUMNS } from '../select-goods/select-goods-columns';
 import { ViewDetailGoodsComponent } from '../select-goods/view-detail-goods/view-detail-goods.component';
 import { ViewFileButtonComponent } from '../select-goods/view-file-button/view-file-button.component';
@@ -137,7 +138,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
           renderComponent: ViewFileButtonComponent,
           onComponentInitFunction(instance: any, component: any = self) {
             instance.action.subscribe((row: any) => {
-              component.viewFile(row);
+              component.showDocuments(row.goodId);
             });
           },
         },
@@ -155,7 +156,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
           renderComponent: ViewFileButtonComponent,
           onComponentInitFunction(instance: any, component: any = self) {
             instance.action.subscribe((row: any) => {
-              component.viewFile(row);
+              component.showDocuments(row.goodId);
             });
           },
         },
@@ -172,6 +173,25 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
           this.getData(data);
         }
       });
+  }
+
+  showDocuments(goodId: any): void {
+    const idGood = goodId;
+    const idRequest = this.idRequest;
+    let config: ModalOptions = {
+      initialState: {
+        idGood,
+        idRequest,
+        parameter: '',
+        typeDoc: 'request-assets',
+        callback: (next: boolean) => {
+          //if(next) this.getExample();
+        },
+      },
+      class: `modalSizeXL modal-dialog-centered`,
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowDocumentsGoodComponent, config);
   }
 
   getData(params: ListParams) {
@@ -203,11 +223,11 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
               item['maneuverRequired'] =
                 item.requiresManeuver == 'Y' ? true : false;
 
-              item.startVisitDate = item.startVisitDate
-                ? moment(item.startVisitDate).format('DD-MM-YYYY, h:mm:ss a')
+              item.instanceDate = item.instanceDate
+                ? moment(item.instanceDate).format('DD-MM-YYYY, h:mm:ss a')
                 : null;
-              item.endVisitDate = item.endVisitDate
-                ? moment(item.endVisitDate).format('DD-MM-YYYY, h:mm:ss a')
+              item.instancebpel = item.instancebpel
+                ? moment(item.instancebpel).format('DD-MM-YYYY, h:mm:ss a')
                 : null;
               /* item['unitExtentDescrip'] = await this.getDescripUnit(
                 item.unitExtent
@@ -317,7 +337,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
     let value: boolean = false;
     for (let i = 0; i < this.selectedList.length; i++) {
       const item = this.selectedList[i];
-      if (item.startVisitDate != null || item.endVisitDate) {
+      if (item.instanceDate != null || item.instancebpel) {
         value = true;
         break;
       }
@@ -410,7 +430,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
 
   selectChanges() {
     let items = this.selectedGoodColumns['data'].filter(
-      x => !isNullOrEmpty(x.startVisitDate)
+      x => !isNullOrEmpty(x.instanceDate)
     );
 
     this.onChange.emit({

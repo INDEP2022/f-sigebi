@@ -1,3 +1,4 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -7,14 +8,54 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
-import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-remittances-recorded-region',
   templateUrl: './remittances-recorded-region.component.html',
-  styles: [],
+  styles: [
+    `
+      .btn-event-search {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        padding: 5px;
+        border-radius: 50%;
+        border: none;
+        right: 5px;
+      }
+
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
+  animations: [
+    trigger('OnEventSelected', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('500ms', style({ opacity: 1 })),
+      ]),
+      transition(':leave', [animate('500ms', style({ opacity: 0 }))]),
+    ]),
+  ],
 })
 export class RemittancesRecordedRegionComponent
   extends BasePage
@@ -30,14 +71,16 @@ export class RemittancesRecordedRegionComponent
   minDate: Date;
   itemsDelegation = new DefaultSelect();
 
+  loadingBtn: boolean = false;
+  delegations = new DefaultSelect();
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private delegationService: DelegationService,
     private siabService: SiabService,
     private datePipe: DatePipe,
-    private sanitizer: DomSanitizer,
-    private binnacleService: SurvillanceService
+    private sanitizer: DomSanitizer
   ) {
     super();
     this.today = new Date();
@@ -54,43 +97,23 @@ export class RemittancesRecordedRegionComponent
       f_fin: [null, [Validators.required]],
       coordination: [null, [Validators.required]],
     });
-    setTimeout(() => {
-      this.getDelegations(new ListParams());
-    }, 1000);
-  }
-
-  getCoordinations(params: ListParams) {
-    if (params.text == '') {
-      this.coordinationsItems = new DefaultSelect(
-        this.coordinationsTestData,
-        5
-      );
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.coordinationsTestData.filter((i: any) => i.id == id)];
-      this.coordinationsItems = new DefaultSelect(item[0], 1);
-    }
   }
 
   getDelegations(params: ListParams) {
     this.loading = true;
-    this.binnacleService.getViewVigDelegations_(params).subscribe(
-      (resp: any) => {
-        this.delegation = resp.data.map(async (item: any) => {
-          item['tipoSupbtipoDescription'] =
-            item.delegationNumber + ' - ' + item.description;
-          return item; // Asegurarse de devolver el item modificado.
-        });
-        Promise.all(this.delegation).then((res: any) => {
-          this.itemsDelegation = new DefaultSelect(resp.data, resp.count);
-          console.log(this.itemsDelegation);
-          this.loading = false;
-        });
+    params['filter.description'] = `$ilike:${params.text}`;
+    params['sortBy'] = `description:ASC`;
+    params['filter.etapaEdo'] = '2';
+
+    this.delegationService.getAll2(params).subscribe({
+      next: resp => {
+        console.log('Resp: ', resp);
+        this.delegations = new DefaultSelect(resp.data, resp.count);
       },
-      error => {
-        this.itemsDelegation = new DefaultSelect([], 0);
-      }
-    );
+      error: error => {
+        console.log('Error: ', error);
+      },
+    });
   }
 
   selectCoordination(event: any) {
@@ -99,6 +122,7 @@ export class RemittancesRecordedRegionComponent
 
   openPrevPdf() {
     // Obtener las fechas del formulario
+    this.loadingBtn = true;
     const fechaInicio = this.form.get('f_ini').value;
     const fechaFin = this.form.get('f_fin').value;
 
@@ -130,6 +154,7 @@ export class RemittancesRecordedRegionComponent
       .fetchReport('RCOMERENVREMESA', params)
       .subscribe(response => {
         if (response !== null) {
+          this.loadingBtn = false;
           const blob = new Blob([response], { type: 'application/pdf' });
           const url = URL.createObjectURL(blob);
           let config = {
@@ -145,6 +170,7 @@ export class RemittancesRecordedRegionComponent
           };
           this.modalService.show(PreviewDocumentsComponent, config);
         } else {
+          this.loadingBtn = false;
           const blob = new Blob([response], { type: 'application/pdf' });
           const url = URL.createObjectURL(blob);
           let config = {
@@ -166,59 +192,4 @@ export class RemittancesRecordedRegionComponent
   clean() {
     this.form.reset();
   }
-
-  coordinationsTestData: any[] = [
-    {
-      no_delegacion: 0,
-      descripcion: 'OFICINAS CENTRALES',
-    },
-    {
-      no_delegacion: 1,
-      descripcion: 'COORD. REGIONAL TIJUANA',
-    },
-    {
-      no_delegacion: 2,
-      descripcion: 'COORD. REGIONAL HERMOSILLO',
-    },
-    {
-      no_delegacion: 3,
-      descripcion: 'COORD. REGIONAL CIUDAD JUAREZ',
-    },
-    {
-      no_delegacion: 4,
-      descripcion: 'COORD. REGIONAL MONTERREY',
-    },
-    {
-      no_delegacion: 5,
-      descripcion: 'COORD. REGIONAL CULIACAN',
-    },
-    {
-      no_delegacion: 6,
-      descripcion: 'COORD. REGIONAL GUADALAJARA',
-    },
-    {
-      no_delegacion: 7,
-      descripcion: 'COORD. REGIONAL QUERETARO',
-    },
-    {
-      no_delegacion: 8,
-      descripcion: 'COORD. REGIONAL VERACRUZ',
-    },
-    {
-      no_delegacion: 9,
-      descripcion: 'COORD. REGIONAL TUXTLA GTZ',
-    },
-    {
-      no_delegacion: 10,
-      descripcion: 'COORD. REGIONAL CANCUN',
-    },
-    {
-      no_delegacion: 11,
-      descripcion: 'COORD. REGIONAL CENTRO',
-    },
-    {
-      no_delegacion: 15,
-      descripcion: 'DELEGACION MIGRACION',
-    },
-  ];
 }

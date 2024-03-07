@@ -12,6 +12,7 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 //Components
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BehaviorSubject } from 'rxjs';
@@ -25,9 +26,11 @@ import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
+import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
+import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 import { DELEGATION_COLUMNS_REPORT } from '../../../../../app/pages/siab-web/commercialization/report-unsold-goods/report-unsold-goods/columns';
 import { SendRequestEmailComponent } from '../../destination-information-request/send-request-email/send-request-email.component';
@@ -41,11 +44,6 @@ import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/m
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
-import * as moment from 'moment';
-import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
-import { environment } from 'src/environments/environment';
-import { data } from 'src/app/pages/commercialization/catalogs/goods-available-sale/status/data';
-import { da } from 'date-fns/locale';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -54,7 +52,8 @@ import { da } from 'date-fns/locale';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
   protected override signOffice: boolean;
   protected override btnGrouper: boolean;
   protected override formatReport: boolean;
@@ -110,6 +109,7 @@ export class RequestCompDocTasksComponent
   steap3: boolean = false;
   isEdit: boolean = false;
   dictumInfo: boolean = false;
+  showExpedient: boolean = false;
 
   readonly: boolean = true;
 
@@ -326,10 +326,9 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) { }
+  requestRegistered(request: any) {}
 
   async openReport(first = true): Promise<void> {
-
     let doc = this.reportId;
 
     if (this.process == 'generate-compensation-act') {
@@ -348,8 +347,7 @@ export class RequestCompDocTasksComponent
 
     if (this.process == 'review-result-protection') {
       //this.showReportInfo(0, 0, '', '');
-      await this.getSampleCSJ((sample) => {
-        console.log('callback', sample);
+      await this.getSampleCSJ(sample => {
         this.openSignature({
           reportFolio: sample.sampleId,
           contentId: sample.contentId,
@@ -398,7 +396,6 @@ export class RequestCompDocTasksComponent
   }
 
   async turnRequest() {
-
     if (this.process == 'register-taxpayer-date') {
       let result = await this.openDelegation();
       if (!result) return;
@@ -522,7 +519,7 @@ export class RequestCompDocTasksComponent
         this.processDetonate = data.processDetonate;
       },
       error: error => {
-        console.log('no se encontraron datos en asuntos ', error);
+        //console.log('no se encontraron datos en asuntos ', error);
       },
     });
   }
@@ -574,7 +571,6 @@ export class RequestCompDocTasksComponent
   /* METODO QUE ITERA LOS BIENES PARA TURNAR VISITA PROGRAMACION OCULAR */
   async turnEyeVisitor() {
     return new Promise(async (resolve, reject) => {
-      console.log('verificando vienes oculares');
       let end = true;
       let _page: number = 1;
       let _limit: number = 100;
@@ -892,7 +888,7 @@ export class RequestCompDocTasksComponent
     });
     modalRef.content.onSend.subscribe(next => {
       if (next) {
-        console.log(next);
+        //console.log(next);
       }
     });
   }
@@ -946,7 +942,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -975,10 +971,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         break;
       case 'verify-compliance-return':
@@ -993,11 +989,6 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
-
         break;
       case 'approve-return':
         reportLoad = await this.getStatusReport();
@@ -1006,11 +997,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Firme el dictamen de resarcimiento');
           return false;
         }
-
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
 
         break;
 
@@ -1031,10 +1017,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         break;
 
@@ -1051,11 +1037,6 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
-
         break;
 
       case 'eye-visit-similar-goods':
@@ -1068,11 +1049,6 @@ export class RequestCompDocTasksComponent
           );
           return false;
         }
-
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
 
         break;
 
@@ -1089,11 +1065,6 @@ export class RequestCompDocTasksComponent
           );
           return false;
         }
-
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
 
         //REGISTRO
         //VALIDAR RESULTADOS
@@ -1129,10 +1100,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         break;
 
@@ -1141,11 +1112,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Verifique las observaciones de lineamientos');
           return false;
         }
-
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
@@ -1156,11 +1122,6 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'analysis-result-compensation':
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
-
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isSigned) {
           this.showWarning('Firme el dictamen de resarcimiento');
@@ -1181,11 +1142,6 @@ export class RequestCompDocTasksComponent
 
       case 'notification-taxpayer-compensation':
         //DATOS DEL DICTAMEN
-
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
@@ -1214,10 +1170,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
 
       case 'response-office-information-goods':
@@ -1231,10 +1187,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Generar el oficio destino');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
         break;
 
       case 'review-office-information-goods':
@@ -1243,10 +1195,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Firmar el oficio destino');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
         break;
 
       /*NUMERARIO*/
@@ -1264,18 +1212,13 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
 
         break;
       case 'request-economic-resources':
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
-
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
           this.showWarning('Generar la solicitud de recursos económicos');
@@ -1294,10 +1237,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Generar el dictamen de resarcimiento');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
 
         break;
       case 'generate-results-economic':
@@ -1310,16 +1249,9 @@ export class RequestCompDocTasksComponent
           this.showWarning('Verifique las observaciones de lineamientos');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
+
         break;
       case 'validate-dictum-economic':
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
         if (!this.validate.dictudData) {
           this.showWarning('Registre datos del dictamen');
           return false;
@@ -1335,11 +1267,6 @@ export class RequestCompDocTasksComponent
 
         break;
       case 'delivery-notify-request':
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
-
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
           this.showWarning('Genera el reporte de notificación');
@@ -1356,27 +1283,16 @@ export class RequestCompDocTasksComponent
           this.showWarning('Registre datos de la cita');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
+
         break;
       case 'register-pay-order':
         if (!this.validate.orderEntry) {
           this.showWarning('Registre datos de orden de ingreso');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
+
         break;
       case 'generate-compensation-act':
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
-
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
           this.showWarning('Genera el acta de resarcimiento');
@@ -1409,10 +1325,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
       case 'register-seizures':
         if (!this.validate.regdoc) {
@@ -1427,10 +1343,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
       case 'register-abandonment-goods':
         if (!this.validate.regdoc) {
@@ -1445,10 +1361,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
       case 'register-protections-goods':
         if (!this.validate.regdoc) {
@@ -1463,10 +1379,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
         break;
 
       case 'register-compensation-documentation':
@@ -1478,10 +1390,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Asocie el expediente de la solicitud');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
         break;
 
       case 'register-request-protection':
@@ -1497,10 +1405,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
           return false;
-        }*/
+        }
         break;
 
       case 'protection-regulation':
@@ -1509,10 +1417,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Genera el reporte de oficio jurídico');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
         break;
 
       case 'register-compensation-documentation':
@@ -1524,21 +1428,13 @@ export class RequestCompDocTasksComponent
           this.showWarning('Asocie el expediente de la solicitud');
           return false;
         }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }*/
         break;
 
       case 'review-result-protection':
         if (!reportLoad.isSigned) {
-          //this.showWarning('Firme el reporte de oficio jurídico');
-          //return false;
-        }
-        /* if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+          this.showWarning('Firme el reporte de oficio jurídico');
           return false;
-        }*/
+        }
 
         break;
       case 'register-seizures':
@@ -1552,10 +1448,6 @@ export class RequestCompDocTasksComponent
         }
         if (!this.validate.goods) {
           this.showWarning('Seleccione los bienes de la solicitud');
-          return false;
-        }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
         break;
@@ -1572,10 +1464,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }
         break;
       case 'register-protections-goods':
         if (!this.validate.regdoc) {
@@ -1590,10 +1478,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }
         break;
 
       case 'register-compensation-documentation':
@@ -1605,10 +1489,6 @@ export class RequestCompDocTasksComponent
           this.showWarning('Asocie el expediente de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }
         break;
     }
 
@@ -1616,7 +1496,6 @@ export class RequestCompDocTasksComponent
   }
 
   onChangeRegDoc(event) {
-
     this.validate.regdoc = event.isValid;
     if (event.update) {
       this.requestInfo.detail = event.object;
@@ -1631,7 +1510,9 @@ export class RequestCompDocTasksComponent
   }
 
   onSelectFiles(event) {
-    this.validate.files = event.isValid;
+    if (!this.validate.files) {
+      this.validate.files = event.isValid;
+    }
     //Agreagar validaciones en especifico
   }
 
@@ -1662,7 +1543,7 @@ export class RequestCompDocTasksComponent
     this.validate.registerAppointment = event.isValid;
   }
 
-  onSetData(event) { }
+  onSetData(event) {}
 
   onOrder(event) {
     this.validate.orderEntry = event.isValid;
@@ -1682,7 +1563,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1698,7 +1579,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1760,7 +1641,6 @@ export class RequestCompDocTasksComponent
   }
 
   openModalLegal(context?: Partial<ChangeLegalStatusComponent>) {
-
     const modalRef = this.modalService.show(ChangeLegalStatusComponent, {
       initialState: {
         ...context,
@@ -1780,7 +1660,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  createDictumReturn() { }
+  createDictumReturn() {}
 
   async showReport(data) {
     let report = await this.getStatusReport();
@@ -1813,7 +1693,7 @@ export class RequestCompDocTasksComponent
           const fileURL = URL.createObjectURL(file);
           this.openPrevPdf(fileURL);
         },
-        error: error => { },
+        error: error => {},
       });
     }
   }
@@ -1836,9 +1716,7 @@ export class RequestCompDocTasksComponent
           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
           type: 'pdf',
         },
-        callback: (data: any) => {
-          console.log(data);
-        },
+        callback: (data: any) => {},
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -1861,7 +1739,7 @@ export class RequestCompDocTasksComponent
             resolve({
               data: resp.data,
               isValid: resp.data.length > 0,
-              isSigned: true//resp.data[0].signedReport == 'Y',
+              isSigned: true, //resp.data[0].signedReport == 'Y',
             });
           } else {
             resolve({
@@ -1883,11 +1761,7 @@ export class RequestCompDocTasksComponent
   //Validar firmantes de reportes
   //En parametro validationocsp
   getStatusFirmantes() {
-
-    console.log('getStatusFirmantes');
-
     //Servicio http://sigebimsqa.indep.gob.mx/electronicfirm/api/v1/signatories
-
     //validationocsp ? firmarReporte : na
   }
 
@@ -1900,8 +1774,12 @@ export class RequestCompDocTasksComponent
     );
   }
 
-  async openModal(component: any, idSample?: any, typeAnnex?: string, contentId = ''): Promise<void> {
-
+  async openModal(
+    component: any,
+    idSample?: any,
+    typeAnnex?: string,
+    contentId = ''
+  ): Promise<void> {
     let report = await this.getStatusReport();
     report = report.isValid ? report.data[0] : report;
     let docId = report.isValid ? report.documentTypeId : this.reportId;
@@ -1918,7 +1796,13 @@ export class RequestCompDocTasksComponent
           callback: async (typeDocument: number, typeSign: string) => {
             if (typeAnnex == 'sign-annexJ-assets-classification') {
               if (typeDocument && typeSign) {
-                this.showReportInfo(idSample, typeDocument, typeSign, typeAnnex, contentId);
+                this.showReportInfo(
+                  idSample,
+                  typeDocument,
+                  typeSign,
+                  typeAnnex,
+                  contentId
+                );
               }
             }
           },
@@ -1932,7 +1816,13 @@ export class RequestCompDocTasksComponent
     }
   }
 
-  showReportInfo(id: number, typeDocument: number, typeSign: string, typeAnnex: string, contentId = '') {
+  showReportInfo(
+    id: number,
+    typeDocument: number,
+    typeSign: string,
+    typeAnnex: string,
+    contentId = ''
+  ) {
     const idTypeDoc = typeDocument;
     const idSample = id;
     const orderSampleId = id;
@@ -1994,7 +1884,6 @@ export class RequestCompDocTasksComponent
   //Firma de reportes
 
   async firmarReporte() {
-
     const user: any = this.authService.decodeToken();
     let report = await this.getStatusReport();
     report = report.data[0];
@@ -2002,14 +1891,12 @@ export class RequestCompDocTasksComponent
     report.modificationUser = user.username;
     report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
     this.reportgoodService.saveReportDynamic(report).subscribe({
-      next: resp => { },
-      error: err => { },
+      next: resp => {},
+      error: err => {},
     });
-
   }
 
   createSample(contentId) {
-    console.log('createSample', contentId);
     const sample: any = {
       regionalDelegationId: 0,
       startDate: moment(new Date()).format('YYYY-MM-DD'),
@@ -2025,7 +1912,6 @@ export class RequestCompDocTasksComponent
     return new Promise<any>(resolve => {
       return this.samplingGoodService.createSample(sample).subscribe({
         next: async resp => {
-          console.log('sampling', resp);
           //this.version.reportFolio = response.sampleId;
           //this.saveVersionsDoc(false, this.version);
           resolve(resp);
@@ -2037,44 +1923,47 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  async getSampleCSJ(execute = (sample) => { }) {
-
+  async getSampleCSJ(execute = sample => {}) {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.warehouseId'] = `$eq:${this.requestId}`;
 
     this.samplingGoodService.getSample(params.getValue()).subscribe({
-      next: async (response) => {
+      next: async response => {
         if (response.data.length > 0) {
           execute(response.data[0]);
         } else {
-          this.uploadOficioCSJ(async (contentId) => {
+          this.uploadOficioCSJ(async contentId => {
             let row = await this.createSample(contentId);
             execute(row);
           });
         }
       },
       error: error => {
-        this.showError('Error al consultar el documento de cambio de situación jurídica');
-      }
+        this.uploadOficioCSJ(async contentId => {
+          let row = await this.createSample(contentId);
+          execute(row);
+        });
+      },
     });
+  }
 
+  associeRequest = false;
+  onAssocie(event) {
+    this.associeRequest = !event;
   }
 
   uploadOficioCSJ(execute) {
-
     let urlBaseReport = `${environment.API_URL}processgoodreport/report/showReport?nombreReporte=`;
     urlBaseReport += `situacion_juridica_amparo.jasper&ID_SOLICITUD=${this.requestId}&ID_TIPO_DOCTO=${this.reportId}`;
 
-    console.log('urlBaseReport', urlBaseReport);
-
     let token = this.authService.decodeToken();
-    const docName = "situacion_juridica_amparo";
+    const docName = 'situacion_juridica_amparo';
     const extension = '.pdf';
     const nombreDoc = `Oficio de Cambio de Situación Jurídica${extension}`;
     const contentType: string = '.pdf';
     const formData = {
       keyDoc: docName,
-      xDelegacionRegional: "Delegación Regional",
+      xDelegacionRegional: 'Delegación Regional',
       dDocTitle: nombreDoc,
       xNombreProceso: 'Aceptar Solicitud Programación',
       xTipoDocumento: 221,
@@ -2085,43 +1974,36 @@ export class RequestCompDocTasksComponent
       xidProgramacion: this.requestId,
     };
 
-    this.wContentService
-      .downloadFile(urlBaseReport)
-      .subscribe({
-        next: response => {
-          //let blob = this.dataURItoBlob(response);
-          let file = new Blob([response], { type: 'application/pdf' });
-          //const fileURL = URL.createObjectURL(file);
-          //this.openPrevPdf(fileURL);
+    this.wContentService.downloadFile(urlBaseReport).subscribe({
+      next: response => {
+        //let blob = this.dataURItoBlob(response);
+        let file = new Blob([response], { type: 'application/pdf' });
+        //const fileURL = URL.createObjectURL(file);
+        //this.openPrevPdf(fileURL);
 
-          this.wContentService
-            .addDocumentToContent(
-              docName,
-              contentType,
-              JSON.stringify(formData),
-              file,
-              extension
-            )
-            .subscribe({
-              next: async document => {
-                execute(document.dDocName);
-              },
-              error: error => {
-                this.showError('Error al subir el documento de cambio de situación jurídica');
-              },
-            });
-
-        },
-        error: error => {
-          this.showError('Error al consultar el documento de cambio de situación jurídica');
-        },
-      });
-
+        this.wContentService
+          .addDocumentToContent(
+            docName,
+            contentType,
+            JSON.stringify(formData),
+            file,
+            extension
+          )
+          .subscribe({
+            next: async document => {
+              execute(document.dDocName);
+            },
+            error: error => {
+              this.showError(
+                'Error al subir el documento de cambio de situación jurídica'
+              );
+            },
+          });
+      },
+      error: error => {},
+    });
   }
-
 }
-
-
 
 export function isNullOrEmpty(value: any): boolean {
   return value === null || value === undefined || (value + '').trim() === '';
