@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { SharedModule } from '../../../shared/shared.module';
 import { ChangeLegalStatusComponent } from './change-legal-status/change-legal-status.component';
@@ -30,6 +31,7 @@ import { EconomicCompensationRoutingModule } from './economic-compensation-routi
     BsDatepickerModule.forRoot(),
     FormsModule,
     ReactiveFormsModule,
+    CollapseModule.forRoot(),
   ],
   exports: [
     DictumInformationTabComponent,

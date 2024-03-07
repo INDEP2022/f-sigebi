@@ -15,6 +15,7 @@ export class EntryOrderViewComponent implements OnInit {
   entryOrder: IEntryOrder;
 
   private entryOrderService = inject(orderentryService);
+  toggleInformation = true;
 
   constructor() {}
 

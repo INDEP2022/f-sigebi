@@ -31,6 +31,7 @@ export class EntryOrderComponent extends BasePage implements OnInit {
 
   @Input() requestId: number;
   maxDate: Date = new Date();
+  toggleInformation = true;
 
   respDoc: Object = null;
 
