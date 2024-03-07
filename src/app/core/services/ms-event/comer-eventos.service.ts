@@ -86,6 +86,9 @@ export class ComerEventosService extends HttpService {
     return this.post(EventEndpoints.AppGetfComer, body, params);
   }
 
+  spObtnEventXgood540(body: any): Observable<any> {
+    return this.post<any>(EventEndpoints.SpObtnEventXgood540, body);
+  }
   getSelectComerEvent(params: _Params, goodType: any) {
     return this.get(`application/selectComerEvent/${goodType}`, params);
   }
