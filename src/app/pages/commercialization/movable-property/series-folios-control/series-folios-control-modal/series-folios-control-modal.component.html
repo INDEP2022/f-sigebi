@@ -18,7 +18,7 @@
           <form-field [control]="form.get('delegationNumber')">
             <ngx-select
               [data]="delegations"
-              [searchOnInit]="true"
+              [searchOnInit]="false"
               (fetchItems)="getDelegation($event)"
               [form]="form"
               value="id"
@@ -90,7 +90,7 @@
               [form]="form"
               value="value"
               bindLabel="label"
-              label="Coordinación"
+              label="Tipo"
               [control]="'type'"
               [searchable]="false">
             </ngx-select>

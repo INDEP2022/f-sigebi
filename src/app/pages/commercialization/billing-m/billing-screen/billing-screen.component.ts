@@ -763,6 +763,39 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     this.billingCommunicationService.ejecutarFuncion$.subscribe(
       async (next: any) => {
         this.params = next;
+        const objeto = this.params.getValue();
+        const entries = Object.entries(objeto);
+        let result = entries.map(async item => {
+          console.log(item[0]);
+          console.log(item[1]);
+          if (item[0] == 'filter.eventId') {
+            console.log(item[0]);
+            let a = item[1].toString().split(':');
+            await this.forArrayFilters('eventId', a[1]);
+          }
+          if (item[0] == 'filter.batchId') {
+            console.log(item[0]);
+            let a = item[1].toString().split(':');
+            await this.forArrayFilters('batchId', a[1]);
+          }
+          if (item[0] == 'filter.delegationNumber') {
+            console.log(item[0]);
+            let a = item[1].toString().split(':');
+            await this.forArrayFilters('delegationNumber', a[1]);
+          }
+          if (item[0] == 'filter.cvman') {
+            console.log(item[0]);
+            let a = item[1].toString().split(':');
+            await this.forArrayFilters('cvman', a[1]);
+          }
+          if (item[0] == 'filter.vouchertype') {
+            console.log(item[0]);
+            let a = item[1].toString().split(':');
+            await this.forArrayFilters('vouchertype', a[1]);
+          }
+        });
+
+        this.data.refresh();
         this.valSelects = true;
         await this.getBillings('no');
       }
@@ -3189,7 +3222,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       this.performScroll();
     }, 500);
   }
-  async forArrayFilters(field: any, value: any) {
+  async forArrayFilters(field: any, value: any, opt?: boolean) {
     const subheaderFields: any = this.table.grid.source;
 
     const filterConf = subheaderFields.filterConf;
