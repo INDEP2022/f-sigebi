@@ -94,7 +94,8 @@
           type="number"
           formControlName="amountToPay"
           class="form-control"
-          enabled="false" />
+          enabled="false"
+          (keypress)="numericOnly($event)" />
       </form-field>
     </div>
     <div class="col-md-4">
@@ -117,7 +118,8 @@
         <input
           type="number"
           formControlName="adminResolutionNo"
-          class="form-control" />
+          class="form-control"
+          (keypress)="numericOnly($event)" />
       </form-field>
     </div>
     <div *ngIf="!visible" class="mt-5"></div>
@@ -149,7 +151,8 @@
         <input
           type="number"
           formControlName="payOrderNo"
-          class="form-control" />
+          class="form-control"
+          (keypress)="numericOnly($event)" />
       </form-field>
     </div>
     <div class="col-md-4">
