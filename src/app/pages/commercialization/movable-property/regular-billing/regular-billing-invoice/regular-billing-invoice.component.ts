@@ -2698,13 +2698,9 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         this.btnLoading13 = false;
         this.alert('success', 'Archivo descargado correctamente', '');
       },
-      error: () => {
+      error: error => {
         this.btnLoading13 = false;
-        this.alert(
-          'error',
-          'Ha ocurrido un fallo en la exportación del archivo',
-          ''
-        );
+        this.alert('warning', error.error.message, '');
       },
     });
   }

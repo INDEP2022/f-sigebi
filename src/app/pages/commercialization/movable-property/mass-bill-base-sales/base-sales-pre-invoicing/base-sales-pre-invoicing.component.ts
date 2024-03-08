@@ -1471,7 +1471,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       return;
     }
 
-    if (!this.invoiceSelected.folioinvoiceId) {
+    if (!this.invoiceSelected.Invoice) {
       this.alert('warning', 'No ha capturado el folio de la factura', '');
       return;
     }
@@ -1804,7 +1804,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     } else if (filterConf.filters.length == 0 && value) {
       filterConf.filters.push({ field: field, search: value });
     }
-    // this.dataFilter.refresh();
+    this.dataFilter.refresh();
     return true;
   }
 
