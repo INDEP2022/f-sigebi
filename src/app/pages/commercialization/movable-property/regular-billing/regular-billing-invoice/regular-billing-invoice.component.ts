@@ -1299,7 +1299,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
       await this.newMarkProcess('FL', 'PREF', c_indN);
       console.log({ pEvent: String(event), ptpevento: tp_event });
-      await this.generateInvoiceCtrl(String(event), tp_event);
+      // await this.generateInvoiceCtrl(String(event), tp_event);
 
       if (c_indN == 'F') {
         // this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
@@ -1327,9 +1327,9 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         invoice.billId &&
         invoice.factstatusId != 'CAN'
       ) {
-        invoice.factstatusId = 'FOL';
-        delete invoice.delegation;
-        await this.updateInvoice(invoice);
+        // invoice.factstatusId = 'FOL';
+        // delete invoice.delegation;
+        // await this.updateInvoice(invoice);
       }
     }
     this.paramsList.getValue()[
@@ -2698,13 +2698,9 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         this.btnLoading13 = false;
         this.alert('success', 'Archivo descargado correctamente', '');
       },
-      error: () => {
+      error: error => {
         this.btnLoading13 = false;
-        this.alert(
-          'error',
-          'Ha ocurrido un fallo en la exportación del archivo',
-          ''
-        );
+        this.alert('warning', error.error.message, '');
       },
     });
   }
