@@ -36,33 +36,13 @@ export class DictumInformationComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    this.getRequestInfo();
+    this.getAllCompensation();
     //this.getDictumInfo();
   }
 
   getDictumInfo() {
     // Llamar servicio para obtener informacion del dictamen
     this.dictumInfo = {};
-  }
-
-  getRequestInfo() {
-    // Llamar servicio para obtener informacion de la documentacion de la solicitud
-    const params = new ListParams();
-    params['filter.id'] = `$eq:${this.requestId}`;
-    this.requestService
-      .getAll(params)
-      .pipe(
-        map(x => {
-          return x.data[0];
-        })
-      )
-      .subscribe({
-        next: resp => {
-          this.recDoc = resp;
-          this.getAllCompensation();
-        },
-        error: error => {},
-      });
   }
 
   getAllCompensation() {
@@ -77,6 +57,7 @@ export class DictumInformationComponent implements OnInit {
       )
       .subscribe({
         next: resp => {
+          console.log('Este validar');
           console.log(resp);
 
           this.dictunNo = resp.opinionNumber;
@@ -89,27 +70,11 @@ export class DictumInformationComponent implements OnInit {
           this.adminiResolutionNo = resp.adminResolutionNo;
           this.paymentOrderNo = resp.payOrderNo;
           this.paymentAmount = resp.amountToPay;
-          this.contributor = this.recDoc['indicatedTaxpayer'];
+          this.contributor = resp.modificationUser;
           this.address1 = resp.taxpayerDomicile;
           this.address2 = resp.fiscalDomicile;
           this.legalRepresentative = resp.legalRepresentative;
           this.requiredSatCopy = this.val(resp.satCopy);
-          /*this.dictumInfo = {
-            dictumDate: new DatePipe('').transform(
-              resp.opinionDate,
-              'dd/MM/yyyy'
-            ),
-            courtroom: resp.veredict,
-            judgementNullity: resp.nullityTrial,
-            adminiResolutionNo: resp.adminResolutionNo,
-            paymentOrderNo: resp.payOrderNo,
-            paymentAmount: resp.amountToPay,
-            contributor: this.recDoc['indicatedTaxpayer'],
-            address1: resp.taxpayerDomicile,
-            address2: resp.fiscalDomicile,
-            legalRepresentative: resp.legalRepresentative,
-            requiredSatCopy: this.val(resp.satCopy),
-          };*/
         },
         error: error => {},
       });

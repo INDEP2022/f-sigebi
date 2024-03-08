@@ -358,6 +358,7 @@
           heading="Seleccionar Bienes"
           id="selectGoodsTab">
           <app-select-goods
+            [statusGood]="goodType"
             [btnGrouper]="btnGrouper"
             [updateInfo]="updateInfo"
             (onChange)="onSelectGoods($event)"

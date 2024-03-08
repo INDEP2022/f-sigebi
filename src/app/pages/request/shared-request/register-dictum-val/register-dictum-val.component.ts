@@ -28,7 +28,6 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   currentDate = new Date();
   minDate: Date = new Date();
 
-
   dictumForm: FormGroup = new FormGroup({});
   @Output() onSave = new EventEmitter<any>();
   @Output() onAppoiment = new EventEmitter<any>();
@@ -46,8 +45,6 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   respDate: Object = null;
   appoiment: boolean = false;
 
-
-
   private requestService = inject(RequestService);
   private compenstionService = inject(CompensationService);
   private entryOrderService = inject(orderentryService);
@@ -58,7 +55,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getRequestInfo();
+    //this.getRequestInfo();
     this.getAllOrderEntry();
     this.getAllCompensation();
     this.validateTime();
@@ -156,10 +153,10 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
               adminResolutionNo: parseInt(resp.unitadministrative + ''),
               orderDate: this.datePipe.transform(resp.orderDate, 'dd/MM/yyyy'),
               concept: resp.concept,
-              amountToPay: resp.amount,
+              amountToPay: resp.amountToPay,
               referenceNo: resp.numberreference,
               bank: resp.accountBank,
-              payOrderNo: resp.id,
+              payOrderNo: resp.payOrderNo,
             });
           }
         },
@@ -183,7 +180,6 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
           this.selectChanges();
           if (!isNullOrEmpty(resp)) {
-            console.log('resp', resp);
             this.dictumForm.patchValue({
               appoitmentDate: this.datePipe.transform(
                 resp.appoitmentDate,
@@ -202,6 +198,9 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
               taxpayerDomicile: resp.taxpayerDomicile,
               fiscalDomicile: resp.fiscalDomicile,
               satCopy: this.val(resp.satCopy),
+              amountToPay: resp.amountToPay,
+              payOrderNo: resp.payOrderNo,
+              modificationUser: resp.modificationUser,
             });
           }
         },
@@ -216,8 +215,8 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       return false;
     }
   }
+
   getRequestInfo() {
-    // Llamar servicio para obtener informacion de la documentacion de la solicitud
     const params = new ListParams();
     params['filter.id'] = `$eq:${this.requestId}`;
     this.requestService
@@ -252,7 +251,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
         this.respDoc = resp;
 
         this.selectChanges();
-        this.getRequestInfo();
+        this.getAllCompensation();
       },
       error: error => {
         if (this.steap3) {
@@ -282,7 +281,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
         this.respDoc = resp;
 
         this.selectChanges();
-        this.getRequestInfo();
+        this.getAllCompensation();
       },
       error: error => {
         if (this.steap3) {
@@ -299,6 +298,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       },
     });
   }
+
   save() {
     let date = new Date();
     let object = this.dictumForm.getRawValue();
@@ -306,7 +306,10 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
     object['requestId'] = this.requestId;
     object['orderDate'] = date.toISOString();
     if (this.steap1) {
+      let dateOpionion = new Date(object['opinionDate']);
+
       object['appoitmentDate'] = null;
+      object['opinionDate'] = dateOpionion;
     }
 
     if (this.steap2) {
@@ -334,14 +337,12 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
   selectChanges() {
     if (this.steap1) {
-      console.log('steap1');
       this.onSave.emit({
         isValid: !isNullOrEmpty(this.respDoc),
         object: this.respDoc,
       });
     }
     if (this.steap3) {
-      console.log('steap3');
       this.onAppoiment.emit({
         isValid: !isNullOrEmpty(this.respDate),
         object: this.respDate,
