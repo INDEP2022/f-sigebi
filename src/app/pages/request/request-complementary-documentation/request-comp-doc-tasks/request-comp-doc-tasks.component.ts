@@ -44,6 +44,8 @@ import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/m
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
+import { PrintReportModalComponent } from '../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
+
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -1780,9 +1782,12 @@ export class RequestCompDocTasksComponent
     typeAnnex?: string,
     contentId = ''
   ): Promise<void> {
+
     let report = await this.getStatusReport();
     report = report.isValid ? report.data[0] : report;
     let docId = report.isValid ? report.documentTypeId : this.reportId;
+
+    console.log('PRIMER PASO', this.reportId);
 
     if (!this.signReport) {
       let config: ModalOptions = {
@@ -1794,16 +1799,19 @@ export class RequestCompDocTasksComponent
           contentId: contentId,
           typeAnnex: typeAnnex,
           callback: async (typeDocument: number, typeSign: string) => {
-            if (typeAnnex == 'sign-annexJ-assets-classification') {
-              if (typeDocument && typeSign) {
-                this.showReportInfo(
-                  idSample,
-                  typeDocument,
-                  typeSign,
-                  typeAnnex,
-                  contentId
-                );
-              }
+
+            console.log('SEGUNDO PASO', typeDocument, typeSign);
+
+            if (typeSign == 'electronica') {
+              this.openFirma(true);
+            } else {
+              this.showReportInfo(
+                idSample,
+                typeDocument,
+                typeSign,
+                typeAnnex,
+                null
+              );
             }
           },
         },
@@ -2003,6 +2011,61 @@ export class RequestCompDocTasksComponent
       error: error => { },
     });
   }
+
+  openFirma(dynamic = false) {
+
+    let token = this.authService.decodeToken();
+    let today = new Date();
+    let folioReporte = '';
+
+    //Trae el año actuar
+    const year = today.getFullYear();
+    //Cadena final (Al final las siglas ya venian en el token xd)
+
+    if (token.siglasnivel4 != null) {
+      folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/?/${year}`;
+    } else {
+      folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/?/${year}`;
+    }
+
+    const idTypeDoc = this.reportId;
+    const typeAnnex = 'approval-request';
+    const requestInfo = this.requestInfo;
+    const idReportAclara = this.requestId;
+    const nameTypeDoc = 'DictamenProcendecia';
+    const nomenglatura = folioReporte;
+    const isDynamic = dynamic;
+
+    let config: ModalOptions = {
+      initialState: {
+        idReportAclara,
+        idTypeDoc,
+        typeAnnex,
+        requestInfo,
+        nameTypeDoc,
+        nomenglatura,
+        isDynamic,
+        callback: (next: boolean) => {
+
+          console.log('TERCER PASO', next);
+
+          if (next) {
+
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      keyboard: false,
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PrintReportModalComponent, config);
+
+  }
+
+  //Crear un sample para el tipo de firma
+
+
+
 }
 
 export function isNullOrEmpty(value: any): boolean {

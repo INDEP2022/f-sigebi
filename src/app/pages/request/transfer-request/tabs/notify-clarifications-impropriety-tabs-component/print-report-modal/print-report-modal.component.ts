@@ -48,6 +48,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   private pdf: PDFDocumentProxy;
   nomenglatura: string;
   infoReport: IClarificationDocumentsImpro;
+  isDynamic = false;
 
   @ViewChild('FileInput', { static: false }) inputFile: ElementRef;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -124,7 +125,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.signParams();
 
     //Condición para saber que ID tipo de documento lelga
-    switch (this.idTypeDoc) {
+    switch (parseInt(this.idTypeDoc)) {
       case 50: {
         let linkDoc: string = `${this.urlBaseReport}Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idReportAclara}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
         this.src = linkDoc;
@@ -172,10 +173,22 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         this.src = linkDoc;
         break;
       }
+      case 223: {
+        let linkDoc: string = `${this.urlBaseReport}situacion_juridica_amparo.jasper&ID_SOLICITUD=${this.idReportAclara}`;
+        this.src = linkDoc;
+        console.log('Link: ', linkDoc);
+        break;
+      }
       default: {
         break;
       }
     }
+
+    if (this.isDynamic) {
+      let linkDoc: string = `${this.urlBaseReport}sae.rptdesign&ID_TABLA=NOMBRE_TABLA,ID_REGISTRO,ID_TIPO_DOCTO&NOM_TABLA=REPORTES_DINAMICOS&NOM_CAMPO=CONTENIDO&ID_REGISTRO=SOLICITUDES,${this.idSolicitud},${this.idTypeDoc}`;
+      this.src = linkDoc;
+    }
+
   }
 
   //Verifica si ya existen usuarios, para eliminarlo (Evitar duplicidad)
@@ -203,7 +216,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   deleteSignatories() {
     this.signatoriesService.deleteFirmante(this.idReportAclara).subscribe({
-      next: response => {},
+      next: response => { },
     });
   }
 
@@ -212,7 +225,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       this.signatoriesService
         .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
         .subscribe({
-          next: response => {},
+          next: response => { },
           error: error => {
             let token = this.authService.decodeToken();
             const formData: Object = {
@@ -227,7 +240,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
               next: response => {
                 this.signParams(), console.log('Firmante creado: ', response);
               },
-              error: error => {},
+              error: error => { },
             });
           },
         });
@@ -298,7 +311,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
             urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
             type: 'pdf',
           },
-          callback: (response: any) => {},
+          callback: (response: any) => { },
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
         keyboard: false,
@@ -419,7 +432,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
     //Enviar nueva información a Request
     this.requestService.update(idDoc, obj).subscribe({
-      next: data => {},
+      next: data => { },
       error: error => (this.loading = false),
     });
   }
@@ -585,7 +598,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
             this.modalRef.content.callback(true);
             this.close();
           },
-          error: error => {},
+          error: error => { },
         });
     });
   }
@@ -682,11 +695,45 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
       this.firmReport(this.idReportAclara, nameTypeReport, formData);
     }
+
+    //String situacionJuridicaID = ID.split("-")[1];
+    //String solicitudID = ID.split("-")[0];
+    //String tipoDocumentoID = ID.split("-")[2];
+
+    //65991 - 2 - 223
+
+    if (parseInt(this.idTypeDoc) == 223) {
+
+      let id = this.idReportAclara + '-2-' + this.idTypeDoc;
+
+      const nameTypeReport = 'SituacionJuridicaAmparo';
+      const formData: Object = {
+        id: id,
+        firma: true,
+        tipoDocumento: nameTypeReport,
+      };
+
+      this.firmReport(id, nameTypeReport, formData);
+    }
+
+    if (this.isDynamic) {
+
+      let id = 'SOLICITUDES-' + this.idReportAclara + '-' + this.idTypeDoc;
+
+      const nameTypeReport = 'DocumentoDinamico';
+      const formData: Object = {
+        id: id,
+        firma: true,
+        tipoDocumento: nameTypeReport,
+      };
+
+      this.firmReport(id, nameTypeReport, formData);
+    }
   }
 
   xml: string = '';
   //Método para plasmar firma en reporte generado
-  firmReport(requestInfo?: number, nameTypeReport?: string, formData?: Object) {
+  firmReport(requestInfo, nameTypeReport?: string, formData?: Object) {
     this.gelectronicFirmService
       .firmDocument(requestInfo, nameTypeReport, formData)
       .subscribe({
@@ -822,8 +869,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         };
 
         this.requestService.update(this.idReportAclara, obj).subscribe({
-          next: resp => {},
-          error: error => {},
+          next: resp => { },
+          error: error => { },
         });
         break;
       }
@@ -840,8 +887,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         this.documentService
           .updateClarDocImp(this.infoReport.id, modelReport)
           .subscribe({
-            next: data => {},
-            error: error => {},
+            next: data => { },
+            error: error => { },
           });
 
         break;
@@ -911,7 +958,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           //this.modalRef.content.callback(true);
           //this.close();
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -964,7 +1011,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           //this.modalRef.content.callback(true);
           //this.close();
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -1017,7 +1064,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           //this.modalRef.content.callback(true);
           //this.close();
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -1070,7 +1117,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           //this.modalRef.content.callback(true);
           //this.close();
         },
-        error: error => {},
+        error: error => { },
       });
   }
 }
