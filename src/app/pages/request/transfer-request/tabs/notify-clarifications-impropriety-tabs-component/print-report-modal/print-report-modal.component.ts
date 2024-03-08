@@ -48,6 +48,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   private pdf: PDFDocumentProxy;
   nomenglatura: string;
   infoReport: IClarificationDocumentsImpro;
+  isDynamic = false;
 
   @ViewChild('FileInput', { static: false }) inputFile: ElementRef;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -126,7 +127,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.signParams();
 
     //Condición para saber que ID tipo de documento lelga
-    switch (this.idTypeDoc) {
+    switch (parseInt(this.idTypeDoc)) {
       case 50: {
         let linkDoc: string = `${this.urlBaseReport}Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idReportAclara}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
         this.src = linkDoc;
@@ -174,9 +175,20 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         this.src = linkDoc;
         break;
       }
+      case 223: {
+        let linkDoc: string = `${this.urlBaseReport}situacion_juridica_amparo.jasper&ID_SOLICITUD=${this.idReportAclara}`;
+        this.src = linkDoc;
+        console.log('Link: ', linkDoc);
+        break;
+      }
       default: {
         break;
       }
+    }
+
+    if (this.isDynamic) {
+      let linkDoc: string = `${this.urlBaseReport}sae.rptdesign&ID_TABLA=NOMBRE_TABLA,ID_REGISTRO,ID_TIPO_DOCTO&NOM_TABLA=REPORTES_DINAMICOS&NOM_CAMPO=CONTENIDO&ID_REGISTRO=SOLICITUDES,${this.idSolicitud},${this.idTypeDoc}`;
+      this.src = linkDoc;
     }
   }
 
@@ -683,11 +695,43 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
       this.firmReport(this.idReportAclara, nameTypeReport, formData);
     }
+
+    //String situacionJuridicaID = ID.split("-")[1];
+    //String solicitudID = ID.split("-")[0];
+    //String tipoDocumentoID = ID.split("-")[2];
+
+    //65991 - 2 - 223
+
+    if (parseInt(this.idTypeDoc) == 223) {
+      let id = this.idReportAclara + '-2-' + this.idTypeDoc;
+
+      const nameTypeReport = 'SituacionJuridicaAmparo';
+      const formData: Object = {
+        id: id,
+        firma: true,
+        tipoDocumento: nameTypeReport,
+      };
+
+      this.firmReport(id, nameTypeReport, formData);
+    }
+
+    if (this.isDynamic) {
+      let id = 'SOLICITUDES-' + this.idReportAclara + '-' + this.idTypeDoc;
+
+      const nameTypeReport = 'DocumentoDinamico';
+      const formData: Object = {
+        id: id,
+        firma: true,
+        tipoDocumento: nameTypeReport,
+      };
+
+      this.firmReport(id, nameTypeReport, formData);
+    }
   }
 
   xml: string = '';
   //Método para plasmar firma en reporte generado
-  firmReport(requestInfo?: number, nameTypeReport?: string, formData?: Object) {
+  firmReport(requestInfo, nameTypeReport?: string, formData?: Object) {
     this.loading = true;
     this.gelectronicFirmService
       .firmDocument(requestInfo, nameTypeReport, formData)

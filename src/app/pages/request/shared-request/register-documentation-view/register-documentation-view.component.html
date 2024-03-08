@@ -12,7 +12,7 @@
   <h6 class="d-inline">Datos de la Solicitud</h6>
 </div>
 <div id="collapseSearch" [isAnimated]="false" [collapse]="!toggleInformation">
-  <div class="row pt-5">
+  <div class="row pt-5" *ngIf="requestDoc?.priorityDate">
     <div class="col-md-4">
       <p class="font-size-13">
         <strong class="font-size-13">Fecha Prioridad&#58; </strong

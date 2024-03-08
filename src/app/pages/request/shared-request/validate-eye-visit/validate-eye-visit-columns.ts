@@ -25,7 +25,7 @@ export const GOODS_EYE_VISIT_COLUMNS = {
     sort: false,
   },
   goodId: {
-    title: 'No. Gestion',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
@@ -35,7 +35,7 @@ export const GOODS_EYE_VISIT_COLUMNS = {
     sort: false,
   },
   descriptionGood: {
-    title: 'Descriptión',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },

@@ -15,7 +15,10 @@ import { CompensationService } from 'src/app/core/services/compensation-option/c
 import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
@@ -55,7 +58,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getRequestInfo();
+    //this.getRequestInfo();
     this.getAllOrderEntry();
     this.getAllCompensation();
     this.validateTime();
@@ -119,7 +122,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
         ],
         modificationUser: [null, [Validators.pattern(STRING_PATTERN)]],
         opinionDate: [null],
-        adminResolutionNo: [null],
+        adminResolutionNo: [null, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
         taxpayerDomicile: [null, [Validators.pattern(STRING_PATTERN)]],
         fiscalDomicile: [null, [Validators.pattern(STRING_PATTERN)]],
         legalRepresentative: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -133,6 +136,14 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       //this.dictumForm.get('payOrderNo').disable();
       //this.dictumForm.get('amountToPay').disable();
     }
+  }
+
+  numericOnly(event): boolean {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
   }
 
   getAllOrderEntry() {
@@ -153,10 +164,10 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
               adminResolutionNo: parseInt(resp.unitadministrative + ''),
               orderDate: this.datePipe.transform(resp.orderDate, 'dd/MM/yyyy'),
               concept: resp.concept,
-              amountToPay: resp.amount,
+              amountToPay: resp.amountToPay,
               referenceNo: resp.numberreference,
               bank: resp.accountBank,
-              payOrderNo: resp.id,
+              payOrderNo: resp.payOrderNo,
             });
           }
         },
@@ -180,7 +191,6 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
           this.selectChanges();
           if (!isNullOrEmpty(resp)) {
-            console.log('resp', resp);
             this.dictumForm.patchValue({
               appoitmentDate: this.datePipe.transform(
                 resp.appoitmentDate,
@@ -199,6 +209,9 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
               taxpayerDomicile: resp.taxpayerDomicile,
               fiscalDomicile: resp.fiscalDomicile,
               satCopy: this.val(resp.satCopy),
+              amountToPay: resp.amountToPay,
+              payOrderNo: resp.payOrderNo,
+              modificationUser: resp.modificationUser,
             });
           }
         },
@@ -213,8 +226,8 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       return false;
     }
   }
+
   getRequestInfo() {
-    // Llamar servicio para obtener informacion de la documentacion de la solicitud
     const params = new ListParams();
     params['filter.id'] = `$eq:${this.requestId}`;
     this.requestService
@@ -249,7 +262,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
         this.respDoc = resp;
 
         this.selectChanges();
-        this.getRequestInfo();
+        this.getAllCompensation();
       },
       error: error => {
         if (this.steap3) {
@@ -279,7 +292,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
         this.respDoc = resp;
 
         this.selectChanges();
-        this.getRequestInfo();
+        this.getAllCompensation();
       },
       error: error => {
         if (this.steap3) {
@@ -296,6 +309,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       },
     });
   }
+
   save() {
     let date = new Date();
     let object = this.dictumForm.getRawValue();
@@ -303,7 +317,10 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
     object['requestId'] = this.requestId;
     object['orderDate'] = date.toISOString();
     if (this.steap1) {
+      let dateOpionion = new Date(object['opinionDate']);
+
       object['appoitmentDate'] = null;
+      object['opinionDate'] = dateOpionion;
     }
 
     if (this.steap2) {
@@ -331,14 +348,12 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
   selectChanges() {
     if (this.steap1) {
-      console.log('steap1');
       this.onSave.emit({
         isValid: !isNullOrEmpty(this.respDoc),
         object: this.respDoc,
       });
     }
     if (this.steap3) {
-      console.log('steap3');
       this.onAppoiment.emit({
         isValid: !isNullOrEmpty(this.respDate),
         object: this.respDate,

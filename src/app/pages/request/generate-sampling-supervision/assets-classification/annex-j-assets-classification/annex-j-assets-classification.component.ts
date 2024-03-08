@@ -276,7 +276,7 @@ export class AnnexJAssetsClassificationComponent
   checkSignatureInfo(name: string, charge: string, typeDocument: number) {
     return new Promise((resolve, reject) => {
       const learnedType = typeDocument;
-      const learnedId = this.idSample;
+      const learnedId = this.requestId > 0 ? this.requestId : this.idSample;
       this.signatoriesService
         .getSignatoriesFilter(learnedType, learnedId)
         .subscribe({

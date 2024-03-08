@@ -25,7 +25,7 @@ export const SELECT_GOODS_EYE_VISIT_COLUMNS = {
     sort: false,
   },
   goodId: {
-    title: 'No. Gestion',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
@@ -35,7 +35,7 @@ export const SELECT_GOODS_EYE_VISIT_COLUMNS = {
     sort: false,
   },
   descriptionGood: {
-    title: 'Descriptión',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
@@ -136,7 +136,7 @@ export const SELECTED_GOOD_REVIEW = {
     sort: false,
   },
   goodId: {
-    title: 'No. Gestion',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
@@ -146,7 +146,7 @@ export const SELECTED_GOOD_REVIEW = {
     sort: false,
   },
   descriptionGood: {
-    title: 'Descriptión',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
@@ -227,7 +227,7 @@ export const SELECTED_GOOD_VIEW = {
     sort: false,
   },
   descriptionGood: {
-    title: 'Descriptión',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
@@ -253,7 +253,7 @@ export const SELECTED_GOOD_VIEW = {
     sort: false,
   },
   goodId: {
-    title: 'No. Gestion',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },

@@ -152,7 +152,7 @@
             type="button"
             class="btn btn-info active btn-sm"
             [disabled]=""
-            (click)="openReport()">
+            (click)="openFirma()">
             Firmar Oficio
             <i class="bx bx-notepad mr-1 float-icon"></i>
           </button>
@@ -358,6 +358,7 @@
           heading="Seleccionar Bienes"
           id="selectGoodsTab">
           <app-select-goods
+            [statusGood]="goodType"
             [btnGrouper]="btnGrouper"
             [updateInfo]="updateInfo"
             (onChange)="onSelectGoods($event)"
