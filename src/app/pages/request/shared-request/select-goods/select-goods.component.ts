@@ -423,8 +423,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       //Aplicar filtro de estatus de bienes por cada proceso
       //DEVOLUCION DXV
       if (!isNullOrEmpty(this.statusGood)) {
-        this.params.getValue()['filter.status'] = `$eq:${this.statusGood}`;
-        this.params.getValue()['filter.statusGood'] = `$eq::${this.statusGood}`;
+        //this.params.getValue()['filter.status'] = `$eq:${this.statusGood}`;
+        //this.params.getValue()['filter.statusGood'] = `$eq::${this.statusGood}`;
       }
 
       //goodFinderService
