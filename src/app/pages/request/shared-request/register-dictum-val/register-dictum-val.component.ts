@@ -15,7 +15,10 @@ import { CompensationService } from 'src/app/core/services/compensation-option/c
 import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
@@ -119,7 +122,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
         ],
         modificationUser: [null, [Validators.pattern(STRING_PATTERN)]],
         opinionDate: [null],
-        adminResolutionNo: [null],
+        adminResolutionNo: [null, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
         taxpayerDomicile: [null, [Validators.pattern(STRING_PATTERN)]],
         fiscalDomicile: [null, [Validators.pattern(STRING_PATTERN)]],
         legalRepresentative: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -133,6 +136,14 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       //this.dictumForm.get('payOrderNo').disable();
       //this.dictumForm.get('amountToPay').disable();
     }
+  }
+
+  numericOnly(event): boolean {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
   }
 
   getAllOrderEntry() {
