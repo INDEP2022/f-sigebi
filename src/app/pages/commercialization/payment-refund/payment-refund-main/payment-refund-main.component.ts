@@ -1329,10 +1329,10 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         });
         Promise.all(result).then(resp => {
           if (res.data[0]) {
-            this.selectRowCtrol = res.data[0];
-            this.devolutionCtlDevPagId = res.data[0].ctlDevPagId;
-            this.getRelationEventData();
-            this.getBankData();
+            // this.selectRowCtrol = res.data[0];
+            // this.devolutionCtlDevPagId = res.data[0].ctlDevPagId;
+            // this.getRelationEventData();
+            // this.getBankData();
           }
           this.dataTableControl.load(res.data);
           this.dataTableControl.refresh();
@@ -2026,24 +2026,19 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
               originId: this.selectRowCtrol.idOrigen,
               ctldevpagId: this.selectRowCtrol.ctlDevPagId,
             };
-            let res: boolean = await this.verifySirsae(body);
-            if (!res) {
-              respuesta = res;
-              return;
+            let res: { message: string; val: boolean } =
+              await this.verifySirsae(body);
+            if (!res.val) {
+              respuesta = res.val;
+              this.alert(
+                'warning',
+                this.capitalizeFirstLetter(res.message),
+                ''
+              );
             }
           }
         });
         Promise.all(result).then(async res => {
-          if (!respuesta) {
-            this.btnLoading4 = false;
-            this.alert(
-              'warning',
-              'Ocurrió un error al intentar verificar pagos en SIRSAE',
-              ''
-            );
-            return;
-          }
-
           await this.continueVerifySirsae();
         });
         // this.startVariableVerifyPays(); // Antiguo llamado de serivicio
@@ -2051,6 +2046,10 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         this.btnLoading4 = false;
       }
     });
+  }
+
+  capitalizeFirstLetter(str: string) {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   }
 
   async continueVerifySirsae() {
@@ -2111,16 +2110,16 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         });
     });
   }
-  verifySirsae(body: any): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
+  verifySirsae(body: any): Promise<{ message: string; val: boolean }> {
+    return new Promise<{ message: string; val: boolean }>((resolve, reject) => {
       this.svPaymentDevolutionService
         .applicationPupVerifPagoSirsae(body)
         .subscribe({
           next(value) {
-            resolve(true);
+            resolve({ message: 'OK', val: true });
           },
           error(err) {
-            resolve(false);
+            resolve({ message: err.error.message, val: false });
           },
         });
     });
@@ -2211,28 +2210,58 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     });
   }
   generateFile2() {
+    if (!this.selectRowCtrol) {
+      this.alertInfo(
+        'warning',
+        'Control de Devoluciones',
+        'Debe seleccionar al menos un registro de la tabla'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.cambiarTab(0);
+        }
+      });
+      return;
+    }
+
     this.alertQuestion(
       'question',
       'Se generarán los Layouts',
       '¿Desea Continuar?'
     ).then(question => {
       if (question.isConfirmed) {
-        let data = {};
+        let data = {
+          ctldevpagId: this.selectRowCtrol.ctlDevPagId,
+          cScreenKey: 'FCOMERCTLDPAG',
+        };
         this.pupGeneLayout(data);
       }
     });
   }
   pupGeneLayout(data: any) {
-    return new Promise((resolve, reject) => {
-      this.massiveGoodService.applicationPupGenLayouts(data).subscribe({
-        next(value) {
-          resolve(value);
-        },
-        error(err) {
-          resolve(false);
-        },
-      });
+    this.btnLoadingCSV = true;
+    this.massiveGoodService.applicationPupGenLayouts(data).subscribe({
+      next: value => {
+        const base64Data = value;
+        this.downloadFileTXT(base64Data, 'Archivo_de_Pagos_y_Transferencias');
+        this.btnLoadingCSV = false;
+      },
+      error: err => {
+        this.alert('warning', 'No se pudo generar el archivo', '');
+      },
     });
+  }
+
+  downloadFileTXT(base64: any, fileName: any) {
+    const decodedData = atob(base64);
+    const blob = new Blob([decodedData], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const downloadLink = document.createElement('a');
+    downloadLink.href = url;
+    downloadLink.download = fileName;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+    downloadLink.remove();
+    this.alert('success', 'Archivo descargado correctamente', '');
   }
   async cambiarTab(numberTab: any) {
     console.log(numberTab);

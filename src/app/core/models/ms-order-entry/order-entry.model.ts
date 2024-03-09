@@ -5,6 +5,8 @@ export interface IOrderEntry {
   shapePay?: string | null;
   concept?: string | null;
   amount?: number | null;
+  amountToPay?: number | null;
+  payOrderNo?: number | null;
   numberreference?: string | null;
   userCreation?: string | null;
   userModification?: string | null;

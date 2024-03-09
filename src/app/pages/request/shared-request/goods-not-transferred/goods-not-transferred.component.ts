@@ -13,6 +13,8 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { INoTransfer } from 'src/app/core/models/no-transfer/no-transfer';
+import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 import { NoTransferService } from 'src/app/core/services/no-transfer/no-transfer.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
@@ -38,14 +40,20 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor(private modalService: BsModalService) {
+  typeRelevant: any[] = [];
+  unitMessure: any[] = [];
+
+  constructor(
+    private modalService: BsModalService,
+    private typeRelevantService: TypeRelevantService,
+    private unitMessureService: StrategyServiceService
+  ) {
     super();
     this.settings.columns = COLUMNS;
   }
 
   ngOnInit(): void {
-    this.getAllNotTransferred();
-    this.getPagination();
+    this.getTypeRelevant(new ListParams());
 
     if (this.readonly) {
       this.settings.actions = null;
@@ -92,6 +100,14 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
     this.tranferService.getAllNoTransfer(filter).subscribe({
       next: response => {
         this.data = response.data;
+        this.data.forEach((e: any) => {
+          e.strRelevant = this.typeRelevant.find(
+            x => x.id === e.relevantType
+          )?.description;
+          e.strUnit = this.unitMessure.find(
+            x => x.nbCode === e.unitExtent
+          )?.description;
+        });
         this.getData();
       },
       error: error => {},
@@ -125,6 +141,28 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
             error: error => (this.loading = false),
           });
       }
+    });
+  }
+
+  getTypeRelevant(params: ListParams) {
+    params['sortBy'] = 'description:ASC';
+    this.typeRelevantService.getAll(params).subscribe({
+      next: data => {
+        this.typeRelevant = data.data;
+        this.getCatalogUnit(params);
+      },
+    });
+  }
+
+  getCatalogUnit(params: ListParams) {
+    params['sortBy'] = 'description:ASC';
+    params['limit'] = 100;
+    this.unitMessureService.getMedUnits(params).subscribe({
+      next: data => {
+        this.unitMessure = data.data;
+        this.getAllNotTransferred();
+        this.getPagination();
+      },
     });
   }
 }

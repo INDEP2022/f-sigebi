@@ -1,3 +1,5 @@
+import * as moment from 'moment';
+
 export const DOC_REQUEST_TAB_COLUMNS = {
   //Documentos Solicitud arreglar paginado
   dDocName: {
@@ -35,10 +37,7 @@ export const DOC_REQUEST_TAB_COLUMNS = {
     valuePrepareFunction: (date: string) => {
       let raw = date;
       if (date) {
-        let formatted = raw.split(' ')[0]; // Para obtener solo la fecha sin la hora
-        let parts = formatted.split('-');
-        formatted = `${parts[2]}/${parts[1]}/${parts[0]}`; // Cambiar el formato a dd/MM/yyyy
-        return formatted;
+        return moment.utc(date).format('DD/MM/YYYY');
       }
       return '';
     },
@@ -141,10 +140,7 @@ export const DOC_SCHEDULE_TAB_COLUMNS = {
     valuePrepareFunction: (date: string) => {
       let raw = date;
       if (date) {
-        let formatted = raw.split(' ')[0]; // Para obtener solo la fecha sin la hora
-        let parts = formatted.split('-');
-        formatted = `${parts[2]}/${parts[1]}/${parts[0]}`; // Cambiar el formato a dd/MM/yyyy
-        return formatted;
+        return moment.utc(date).format('DD/MM/YYYY');
       }
       return '';
     },
@@ -247,10 +243,7 @@ export const DOC_GOODS_COLUMNS = {
     valuePrepareFunction: (date: string) => {
       let raw = date;
       if (date) {
-        let formatted = raw.split(' ')[0]; // Para obtener solo la fecha sin la hora
-        let parts = formatted.split('-');
-        formatted = `${parts[2]}/${parts[1]}/${parts[0]}`; // Cambiar el formato a dd/MM/yyyy
-        return formatted;
+        return moment.utc(date).format('DD/MM/YYYY');
       }
       return '';
     },
@@ -356,13 +349,10 @@ export const DOC_EXPEDIENT_COLUMNS = {
     title: 'Fecha Creación',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (date: string) => {
+    valuePrepareFunction: date => {
       let raw = date;
       if (date) {
-        let formatted = raw.split(' ')[0]; // Para obtener solo la fecha sin la hora
-        let parts = formatted.split('-');
-        formatted = `${parts[2]}/${parts[1]}/${parts[0]}`; // Cambiar el formato a dd/MM/yyyy
-        return formatted;
+        return moment.utc(date).format('DD/MM/YYYY');
       }
       return '';
     },

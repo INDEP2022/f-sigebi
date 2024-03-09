@@ -551,13 +551,13 @@ export class ExpenseCompositionComponent
       this.alert(
         'error',
         'Actualizar Clasificación a Reporte de Robo',
-        'No se han seleccionado los bienes para realizar el cambio de clasificador a Vehiculo con Reporte de Robo'
+        'No se han seleccionado los bienes para realizar el cambio de clasificador a Vehículo con Reporte de Robo'
       );
     } else {
       this.alertQuestion(
         'question',
         'Actualizar Clasificación',
-        '¿Desea cambiar el clasificador de los bienes a Vehiculo con Reporte de Robo?'
+        '¿Desea cambiar el clasificador de los bienes a Vehículo con Reporte de Robo?'
       ).then(x => {
         if (x.isConfirmed) {
           let errors: any[] = [];
@@ -590,7 +590,7 @@ export class ExpenseCompositionComponent
               if (errors.length === 0) {
                 this.alert(
                   'success',
-                  'Se realizó el cambio de Clasificación a Vehiculo con Reporte de Robo',
+                  'Se realizó el cambio de Clasificación a Vehículo con Reporte de Robo',
                   ''
                 );
                 this.getData2();
@@ -604,7 +604,7 @@ export class ExpenseCompositionComponent
               } else if (errors.length > 0) {
                 this.alert(
                   'warning',
-                  'Cambio de Clasificación a Vehiculo con Reporte de Robo',
+                  'Cambio de Clasificación a Vehículo con Reporte de Robo',
                   'No todos los bienes pudieron cambiar su clasificador por no encontrarse en búsqueda por clave pantalla y número de concepto'
                 );
                 this.getData2();
@@ -766,7 +766,7 @@ export class ExpenseCompositionComponent
     }
     let result = await this.alertQuestion(
       'question',
-      '¿Desea enviar solicitud de pago a sirsae?',
+      '¿Desea enviar solicitud de pago a SIRSAE?',
       ''
     );
     if (result.isConfirmed) {
@@ -864,7 +864,7 @@ export class ExpenseCompositionComponent
       return;
     }
     if (this.v_tip_gast === 'GASTOSEG' && !this.form.get('policie').value) {
-      this.alert('warning', 'Requiere cve poliza para cargar bienes', '');
+      this.alert('warning', 'Requiere CVE Póliza para cargar bienes', '');
       return;
     }
     const response = await this.alertQuestion(
@@ -1358,7 +1358,7 @@ export class ExpenseCompositionComponent
                   this.loader.load = false;
                   this.alert(
                     'success',
-                    'Se realizo la división de pagos entre los mandatos',
+                    'Se realizó la división de pagos entre los mandatos',
                     ''
                   );
                   this.getData2();
@@ -1402,7 +1402,7 @@ export class ExpenseCompositionComponent
       );
       return;
     }
-    const row = this.selectedRow;
+    const row = this.selectedRow.data;
     if (!row.amount) {
       this.alert('warning', 'Debe capturar los datos del importe', '');
       return;
@@ -1969,7 +1969,7 @@ export class ExpenseCompositionComponent
             this.loader.load = false;
             this.alert(
               'success',
-              'Se actualizarón los detalles del gasto ',
+              'Se actualizaron los detalles del gasto ',
               ''
             );
             this.getPaginated(this.params.value);

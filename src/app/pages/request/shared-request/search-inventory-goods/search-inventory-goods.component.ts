@@ -21,6 +21,7 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { ORIGIN_INFO } from './origin-data.model';
 
 @Component({
@@ -45,11 +46,12 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
   stateId: string = '';
   delegation: string = '';
   regionalDelegationUser: IRegionalDelegation;
+  regionalUser: IRegionalDelegation;
   authorities: any[] = [];
   goodTypes: any[] = [];
   origins = new DefaultSelect(ORIGIN_INFO);
   @Output() onSearch = new EventEmitter<any>();
-  @Input() recordId: number = 0;
+  @Input() recordId: number = null;
 
   constructor(
     private fb: FormBuilder,
@@ -93,6 +95,9 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
             .setValue(delegation.description);
           this.searchForm.get('regionalDelegationId').setValue(delegation.id);
           this.regionalDelegationUser = delegation;
+          if (isNullOrEmpty(this.regionalUser)) {
+            this.regionalUser = delegation;
+          }
           this.getStates(new ListParams());
         });
     });
@@ -142,19 +147,29 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
       descriptionGood: [null, [Validators.pattern(STRING_PATTERN)]],
       stationId: [null],
       origin: [null],
-      fileId: [],
+      fileId: [null],
       authorityId: [null],
       actFolio: [null],
       transferFile: [null, [Validators.pattern(STRING_PATTERN)]],
       relevantTypeId: [null],
     });
 
-    if (this.recordId > 0) {
+    if (!isNullOrEmpty(this.recordId)) {
       this.searchForm.get('fileId').setValue(this.recordId);
       this.searchForm.get('fileId').disable();
     }
+  }
 
-    const info = JSON.parse(localStorage.getItem('Task'));
+  ngOnChanges(changes: RecordIdChange): void {
+    if (changes.recordId && !changes.recordId.isFirstChange()) {
+      this.updateRecordId(changes.recordId.currentValue);
+    }
+  }
+
+  updateRecordId(newRecordId: number): void {
+    this.recordId = newRecordId;
+    this.searchForm.get('fileId').setValue(this.recordId);
+    this.searchForm.get('fileId').disable();
   }
 
   getDelegations(params: ListParams) {
@@ -285,6 +300,23 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
   } */
   reset() {
     this.searchForm.reset();
+
+    if (!isNullOrEmpty(this.recordId)) {
+      this.searchForm.get('fileId').setValue(this.recordId);
+      this.searchForm.get('fileId').disable();
+    }
+
+    this.searchForm
+      .get('regionalDelegation')
+      .setValue(this.regionalUser.description);
+    this.searchForm.get('regionalDelegationId').setValue(this.regionalUser.id);
+
     this.onSearch.emit(false);
   }
+}
+interface RecordIdChange {
+  recordId: {
+    currentValue: number;
+    isFirstChange: () => boolean;
+  };
 }

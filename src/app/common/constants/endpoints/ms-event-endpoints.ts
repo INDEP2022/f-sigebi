@@ -33,4 +33,5 @@ export enum EventEndpoints {
   PaLookLotsChangeExcel = 'application/paLookLotsChangeStatusDataExcel',
   PupRemiEnt = 'application/pup-remi-ent',
   PupGenLcsMasiv = 'application/pup-gen-lcs-masiv',
+  SpObtnEventXgood540 = 'application/spObtnEventXgood540',
 }

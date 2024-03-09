@@ -13,6 +13,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -120,9 +121,8 @@ export class DocRequestTabComponent
     this.getState(new ListParams());
     this.getTransfe(new ListParams());
     this.getDocType(new ListParams());
-    this.getInfoRequest();
     this.typeDoc = this.type ? this.type : this.typeDoc;
-    if (this.typeDoc === 'doc-request') {
+    if (this.typeDoc === 'doc-request' || this.typeDoc === 'doc-expedient') {
       this.container.createEmbeddedView(this.template);
     }
     this.settings = {
@@ -279,9 +279,10 @@ export class DocRequestTabComponent
                 }
               });
               const info = filterDoc.map(async (items: any) => {
-                const filter: any = await this.filterGoodDoc([
-                  items.xtipoDocumento,
-                ]);
+                const typedoc = this.typesDocuments.filter(
+                  x => parseInt(x.ddocType) == parseInt(items.xtipoDocumento)
+                );
+
                 /*if (items?.xdelegacionRegional) {
                 const regionalDelegation = await this.getRegionalDelegation(
                   items?.xdelegacionRegional
@@ -298,8 +299,11 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
+                if (isNullOrEmpty(items.xfecha)) {
+                  items.xfecha = moment.utc(items.dInDate);
+                }
                 items.xtipoDocumentoId = items.xtipoDocumento + '';
-                items.xtipoDocumento = filter[0]?.ddescription;
+                items.xtipoDocumento = typedoc[0]?.ddescription;
                 return items;
               });
               if (this.data.length == 0) {
@@ -309,10 +313,11 @@ export class DocRequestTabComponent
                   this.totalItems = data.length;
 
                   this.loading = false;
-                  this.onChanges();
                   this.allDataDocReq = this.docRequest; // Asigna los datos a allDataDocReq
+                  this.onChanges();
                   //this.paragraphs.load(x);
                 });
+                return;
               } else {
                 this.selectPage();
                 this.loading = false;
@@ -330,9 +335,10 @@ export class DocRequestTabComponent
                 }
               });
               const info = filterDoc.map(async (items: any) => {
-                const filter: any = await this.filterGoodDoc([
-                  items.xtipoDocumento,
-                ]);
+                const typedoc = this.typesDocuments.filter(
+                  x => parseInt(x.ddocType) == parseInt(items.xtipoDocumento)
+                );
+
                 /*if (items?.xdelegacionRegional) {
                 const regionalDelegation = await this.getRegionalDelegation(
                   items?.xdelegacionRegional
@@ -349,8 +355,11 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
+                if (isNullOrEmpty(items.xfecha)) {
+                  items.xfecha = moment.utc(items.dInDate);
+                }
                 items.xtipoDocumentoId = items.xtipoDocumento + '';
-                items.xtipoDocumento = filter[0]?.ddescription;
+                items.xtipoDocumento = typedoc[0]?.ddescription;
                 return items;
               });
               if (this.data.length == 0) {
@@ -359,10 +368,11 @@ export class DocRequestTabComponent
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
                   this.loading = false;
-                  this.onChanges();
                   this.allDataDocReq = this.docRequest; // Asigna los datos a allDataDocReq
+                  this.onChanges();
                   //this.paragraphs.load(x);
                 });
+                return;
               } else {
                 this.selectPage();
                 this.loading = false;
@@ -388,9 +398,10 @@ export class DocRequestTabComponent
                 }
               });
               const info = filterDoc.map(async (items: any) => {
-                const filter: any = await this.filterGoodDoc([
-                  items.xtipoDocumento,
-                ]);
+                const typedoc = this.typesDocuments.filter(
+                  x => parseInt(x.ddocType) == parseInt(items.xtipoDocumento)
+                );
+
                 /*if (items?.xdelegacionRegional) {
                 const regionalDelegation = await this.getRegionalDelegation(
                   items?.xdelegacionRegional
@@ -407,8 +418,11 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
-                items.xtipoDocumentoId = items.xtipoDocumento + '';
-                items.xtipoDocumento = filter[0]?.ddescription;
+                if (isNullOrEmpty(items.xfecha)) {
+                  items.xfecha = moment.utc(items.dInDate);
+                }
+                items.xtipoDocumentoId = parseInt(items.xtipoDocumento);
+                items.xtipoDocumento = typedoc[0]?.ddescription;
                 return items;
               });
               if (this.data.length == 0) {
@@ -417,10 +431,11 @@ export class DocRequestTabComponent
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
                   this.loading = false;
-                  this.onChanges();
                   this.allDataDocReq = this.docRequest; // Asigna los datos a allDataDocReq
+                  this.onChanges();
                   //this.paragraphs.load(x);
                 });
+                return;
               } else {
                 this.selectPageEx();
                 this.loading = false;
@@ -460,6 +475,9 @@ export class DocRequestTabComponent
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
+                if (isNullOrEmpty(items.xfecha)) {
+                  items.xfecha = moment.utc(items.dInDate);
+                }
                 items.xtipoDocumentoId = items.xtipoDocumento + '';
                 items.xtipoDocumento = filter[0]?.ddescription;
                 return items;
@@ -470,10 +488,11 @@ export class DocRequestTabComponent
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
                   this.loading = false;
-                  this.onChanges();
                   this.allDataDocReq = this.docRequest; // Asigna los datos a allDataDocReq
+                  this.onChanges();
                   //this.paragraphs.load(x)
                 });
+                return;
               } else {
                 this.selectPageEx();
                 this.loading = false;
@@ -481,9 +500,11 @@ export class DocRequestTabComponent
             }
           }
 
+          this.onChanges();
           this.loading = false;
         },
         error: error => {
+          this.onChanges();
           this.loading = false;
         },
       });
@@ -592,6 +613,7 @@ export class DocRequestTabComponent
       .subscribe({
         next: (resp: any) => {
           this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
+          this.getInfoRequest();
         },
       });
   }
@@ -987,7 +1009,7 @@ export class DocRequestTabComponent
           setTimeout(() => {
             this.getData(new ListParams());
             this.formLoading = false;
-          }, 7000);
+          }, 10000);
         }
       },
     };
@@ -1062,8 +1084,10 @@ export class DocRequestTabComponent
     let list =
       this.docExpedient.length > 0 ? this.docExpedient : this.docRequest;
 
-    let toks = [136, 138, 131, 125, 30, 148, 166, 31, 182, 32, 158, 78];
+    let toks = [136, 138, 131, 125, 30, 148, 166, 31, 182, 32, 158, 178];
     list = list.filter(x => toks.includes(parseInt(x.xtipoDocumentoId)));
+
+    console.log('list', list, this.typeDoc);
 
     this.onChange.emit({
       isValid: list.length > 0,

@@ -152,7 +152,7 @@
             type="button"
             class="btn btn-info active btn-sm"
             [disabled]=""
-            (click)="openReport()">
+            (click)="openFirma()">
             Firmar Oficio
             <i class="bx bx-notepad mr-1 float-icon"></i>
           </button>
@@ -324,7 +324,9 @@
           heading="Buscar Solicitudes de Bienes Similares"
           id="requestSimilarGoodsTab">
           <app-search-request-similar-goods
-            [selected]="true"></app-search-request-similar-goods>
+            [selected]="true"
+            [idRequest]="requestId"
+            (onAssocie)="onAssocie($event)"></app-search-request-similar-goods>
         </tab>
         <tab
           *ngIf="registAppointment"
@@ -356,11 +358,13 @@
           heading="Seleccionar Bienes"
           id="selectGoodsTab">
           <app-select-goods
+            [statusGood]="goodType"
             [btnGrouper]="btnGrouper"
             [updateInfo]="updateInfo"
             (onChange)="onSelectGoods($event)"
             [idRequest]="requestId"
-            [recordId]="requestInfo.recordId"></app-select-goods>
+            [recordId]="requestInfo.recordId"
+            [associeRequest]="associeRequest"></app-select-goods>
 
           <div *ngIf="selectGoodsNot">
             <app-goods-not-transferred
@@ -459,7 +463,7 @@
               id="tab1"
               (selectTab)="requestSelected(1)">
               <app-doc-request-tab
-                [typeDoc]="typeDoc"
+                [typeDoc]="'doc-request'"
                 [updateInfo]="updateInfo"
                 [typeModule]="typeModule"
                 (onChange)="onSelectFiles($event)"></app-doc-request-tab>
@@ -474,7 +478,7 @@
                   (selectTab)="requestSelected(2)">
                   <app-doc-request-tab
                     [updateInfo]="updateInfo"
-                    [typeDoc]="typeDoc"
+                    [typeDoc]="'doc-expedient'"
                     [typeModule]="typeModule"
                     (onChange)="onSelectFiles($event)"></app-doc-request-tab>
                 </tab>

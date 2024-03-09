@@ -276,7 +276,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
         this.selectEntity = new DefaultSelect(stateCode, stateCode.length);
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -392,7 +392,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     }
   }
 
-  getState(event: any): void { }
+  getState(event: any): void {}
 
   /*getIssue(event?: any, id?: string): void {
     let params = new ListParams();
@@ -431,6 +431,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   affairChange(e: any) {
+    console.log('asunto ... ', e);
     if (
       e.processDetonate == 'ABANDONO' ||
       e.processDetonate == 'EXT_DOMINIO' ||
@@ -507,7 +508,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
               cancelButtonColor: '#B38E5D',
               confirmButtonText: 'Aceptar',
               allowOutsideClick: false,
-            }).then(async result => { });
+            }).then(async result => {});
           }
         }
       }
@@ -883,7 +884,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         this.loadingTurn = false;
         if (taskResult && taskResult.task != null) {
           this.msgModal(
-            'Se turnó la solicitud con el Folio Nº'
+            'Se turnó la solicitud con el Folio Nº '
               .concat(`<strong>${idRequest}</strong>`)
               .concat(` al usuario <strong>${this.userName}</strong>`),
             'Solicitud Creada',

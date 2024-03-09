@@ -112,7 +112,7 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
 
       this.rejectedGoodService.updateGoodsResDev(id, body).subscribe({
         next: resp => {
-          this.onLoadToast('success', 'Se actualizo el bien');
+          this.onLoadToast('success', 'Se actualizó el bien');
           this.onReserve.emit(false);
           this.modalRef.hide();
           //this.processing = true;
@@ -136,7 +136,7 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
     goodResDev.proceedingsId = this.good.fileId;
     goodResDev.proceedingsType = this.good.fileType;
     goodResDev.uniqueKey = this.good.uniqueKey;
-    goodResDev.descriptionGood = this.good.goodDescription;
+    goodResDev.descriptionGood = this.good.descriptionGood;
     goodResDev.unitExtent = this.good.unitMeasurement;
     goodResDev.amountToReserve = this.good.quantity;
     goodResDev.applicationResDevId = goodResDev.applicationId;

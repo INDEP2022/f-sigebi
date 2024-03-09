@@ -42,6 +42,9 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.user = this.authService.decodeToken();
+    this.form.patchValue({
+      userV: this.user.preferred_username,
+    });
     console.log(this.data);
   }
 
@@ -240,7 +243,12 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                   cf_nuevafact = await this.copyInovice(body);
 
                   if (cf_nuevafact) {
-                    const success = await this.cancelInvoiceComer(body);
+                    const body1 = {
+                      invoiceId: invoice.billId,
+                      eventId: invoice.eventId,
+                      batchId: invoice.batchId,
+                    };
+                    const success = await this.cancelInvoiceComer(body1);
                     invoice.factstatusId = 'CAN';
                     invoice.causerebillId = causerebillId;
                     invoice.userIauthorize = this.user.preferred_username;
@@ -271,7 +279,12 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
 
                     if (cf_nuevafact) {
                       //procedimiento cancelar factura
-                      const success = await this.cancelInvoiceComer(body);
+                      const body1 = {
+                        invoiceId: invoice.billId,
+                        eventId: invoice.eventId,
+                        batchId: invoice.batchId,
+                      };
+                      const success = await this.cancelInvoiceComer(body1);
                       invoice.factstatusId = 'CAN';
                       invoice.causerebillId = causerebillId;
                       invoice.userIauthorize = this.user.preferred_username;
@@ -299,12 +312,12 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                     cf_nuevafact = await this.copyInovice(body);
 
                     if (cf_nuevafact) {
-                      const body = {
+                      const body1 = {
                         invoiceId: invoice.billId,
                         eventId: invoice.eventId,
                         batchId: invoice.batchId,
                       };
-                      const success = await this.cancelInvoiceComer(body);
+                      const success = await this.cancelInvoiceComer(body1);
                       // if (success) {
                       invoice.factstatusId = 'CAN';
                       invoice.causerebillId = causerebillId;
@@ -321,12 +334,12 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                   }
                 }
               } else if (yyyy > 2011) {
-                const body = {
+                const body1 = {
                   invoiceId: invoice.billId,
                   eventId: invoice.eventId,
                   batchId: invoice.batchId,
                 };
-                const VAL_FECHA = await this.cancelInvoiceComer(body);
+                const VAL_FECHA = await this.cancelInvoiceComer(body1);
 
                 invoice.factstatusId = 'CAN';
                 invoice.causerebillId = causerebillId;
@@ -363,6 +376,11 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
 
               if (cf_nuevafact > 0) {
                 //lipcommit silent
+                this.alert(
+                  'success',
+                  'Cancelación terminada correctamente',
+                  ''
+                );
               } else {
                 this.alert('warning', 'Fallo de operación de cancelación', '');
                 this.loading = false;
@@ -386,7 +404,12 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                 cf_nuevafact = await this.copyInovice(body);
 
                 if (cf_nuevafact) {
-                  const success = await this.cancelInvoiceComer(body);
+                  const body1 = {
+                    invoiceId: invoice.billId,
+                    eventId: invoice.eventId,
+                    batchId: invoice.batchId,
+                  };
+                  const success = await this.cancelInvoiceComer(body1);
                   invoice.factstatusId = 'CAN';
                   invoice.causerebillId = causerebillId;
                   invoice.userIauthorize = this.user.preferred_username;

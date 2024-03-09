@@ -22,6 +22,7 @@ import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
+import { ShowDocumentsGoodComponent } from '../expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
 import { SELECT_GOODS_COLUMNS } from '../select-goods/select-goods-columns';
 import { ViewDetailGoodsComponent } from '../select-goods/view-detail-goods/view-detail-goods.component';
 import { ViewFileButtonComponent } from '../select-goods/view-file-button/view-file-button.component';
@@ -137,7 +138,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
           renderComponent: ViewFileButtonComponent,
           onComponentInitFunction(instance: any, component: any = self) {
             instance.action.subscribe((row: any) => {
-              component.viewFile(row);
+              component.showDocuments(row.goodId);
             });
           },
         },
@@ -155,7 +156,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
           renderComponent: ViewFileButtonComponent,
           onComponentInitFunction(instance: any, component: any = self) {
             instance.action.subscribe((row: any) => {
-              component.viewFile(row);
+              component.showDocuments(row.goodId);
             });
           },
         },
@@ -172,6 +173,25 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
           this.getData(data);
         }
       });
+  }
+
+  showDocuments(goodId: any): void {
+    const idGood = goodId;
+    const idRequest = this.idRequest;
+    let config: ModalOptions = {
+      initialState: {
+        idGood,
+        idRequest,
+        parameter: '',
+        typeDoc: 'request-assets',
+        callback: (next: boolean) => {
+          //if(next) this.getExample();
+        },
+      },
+      class: `modalSizeXL modal-dialog-centered`,
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowDocumentsGoodComponent, config);
   }
 
   getData(params: ListParams) {

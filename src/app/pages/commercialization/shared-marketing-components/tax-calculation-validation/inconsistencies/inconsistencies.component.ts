@@ -93,11 +93,11 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
-            switch (filters.field) {
-              case 'value':
-                searchFilter = SearchFilter.ILIKE;
+            switch (filter.field) {
+              case 'valor':
+                searchFilter = SearchFilter.EQ;
                 break;
-              case 'description':
+              case 'descriptionparameter':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               default:
@@ -106,7 +106,7 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
             }
 
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              this.columnFilters[field] = `${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }

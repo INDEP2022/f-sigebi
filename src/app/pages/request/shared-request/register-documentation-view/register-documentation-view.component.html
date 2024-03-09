@@ -12,7 +12,7 @@
   <h6 class="d-inline">Datos de la Solicitud</h6>
 </div>
 <div id="collapseSearch" [isAnimated]="false" [collapse]="!toggleInformation">
-  <div class="row pt-5">
+  <div class="row pt-5" *ngIf="requestDoc?.priorityDate">
     <div class="col-md-4">
       <p class="font-size-13">
         <strong class="font-size-13">Fecha Prioridad&#58; </strong
@@ -129,14 +129,16 @@
       </p>
     </div>
   </div>
-  <div class="row mt-5">
-    <div class="col-md-4">
+  <div
+    *ngIf="requestDoc?.destinationManagement && requestDoc?.transferEntNotes"
+    class="row mt-5">
+    <div class="col-md-4" *ngIf="requestDoc.destinationManagement">
       <p class="font-size-13">
         <strong class="font-size-13">Gesti&oacute;n de Destino&#58; </strong
         >{{ requestDoc?.destinationManagement }}
       </p>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4" *ngIf="requestDoc.transferEntNotes">
       <p class="font-size-13">
         <strong class="font-size-13">Notas Ent&#46; Transferente&#58; </strong
         >{{ requestDoc?.transferEntNotes }}
@@ -211,7 +213,11 @@
     </div>
     <div
       class="col-md-4"
-      *ngIf="transference == 1 || transference == 3 || showInput('crime')">
+      *ngIf="
+        transference == 1 ||
+        transference == 3 ||
+        (showInput('crime') && requestDoc?.crime)
+      ">
       <p class="font-size-13">
         <strong class="font-size-13">Delito&#58; </strong
         >{{ requestDoc?.crime }}
