@@ -273,6 +273,15 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           sort: false,
           width: '10%',
         },
+        Invoice: {
+          title: 'Folio',
+          type: 'string',
+          sort: false,
+          width: '10%',
+          filterFunction: () => {
+            return true;
+          },
+        },
         series: {
           title: 'Serie',
           type: 'string',
@@ -286,7 +295,10 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           sort: false,
           valuePrepareFunction: (text: string) => {
             return `${
-              text ? text.split('T')[0].split('-').reverse().join('/') : ''
+              text
+                ? text.split('T')[0].split('-').reverse().join('/') +
+                  ' 00:00:00'
+                : ''
             }`;
           },
           // filter: {
@@ -321,7 +333,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           title: 'No.',
           type: 'string',
           sort: false,
-          width: '10%',
+          width: '15%',
         },
         desDelegation: {
           title: 'Delegación',
@@ -345,15 +357,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           type: 'string',
           sort: false,
           filter: false,
-        },
-        Invoice: {
-          title: 'Folio',
-          type: 'string',
-          sort: false,
-          width: '10%',
-          filterFunction: () => {
-            return true;
-          },
         },
         payId: {
           title: 'Id. Pago',
@@ -758,46 +761,22 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.params.getValue().limit = 500;
+    this.params.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
     this.params2.getValue().limit = 500;
     this.prepareForm();
     this.billingCommunicationService.ejecutarFuncion$.subscribe(
       async (next: any) => {
         this.params = next;
-        const objeto = this.params.getValue();
-        const entries = Object.entries(objeto);
-        let result = entries.map(async item => {
-          console.log(item[0]);
-          console.log(item[1]);
-          if (item[0] == 'filter.eventId') {
-            console.log(item[0]);
-            let a = item[1].toString().split(':');
-            await this.forArrayFilters('eventId', a[1]);
-          }
-          if (item[0] == 'filter.batchId') {
-            console.log(item[0]);
-            let a = item[1].toString().split(':');
-            await this.forArrayFilters('batchId', a[1]);
-          }
-          if (item[0] == 'filter.delegationNumber') {
-            console.log(item[0]);
-            let a = item[1].toString().split(':');
-            await this.forArrayFilters('delegationNumber', a[1]);
-          }
-          if (item[0] == 'filter.cvman') {
-            console.log(item[0]);
-            let a = item[1].toString().split(':');
-            await this.forArrayFilters('cvman', a[1]);
-          }
-          if (item[0] == 'filter.vouchertype') {
-            console.log(item[0]);
-            let a = item[1].toString().split(':');
-            await this.forArrayFilters('vouchertype', a[1]);
-          }
-        });
-
-        this.data.refresh();
-        this.valSelects = true;
-        await this.getBillings('no');
+        let insertFilterColumns: boolean = this.insertFilterColumns();
+        if (insertFilterColumns) {
+          this.data.refresh();
+          this.valSelects = true;
+          await this.getBillings('no');
+        } else {
+          this.data.refresh();
+          this.valSelects = true;
+          await this.getBillings('no');
+        }
       }
     );
     // ------------- PREPARAMOS FILTRADOS DE LAS TABLAS ------------- //
@@ -808,6 +787,43 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     this.filterTable5(); // Actualización de Eventos - COMER_EST_LOTES
   }
 
+  insertFilterColumns(): boolean | any {
+    const objeto = this.params.getValue();
+    const entries = Object.entries(objeto);
+    let result = entries.map(async item => {
+      console.log(item[0]);
+      console.log(item[1]);
+      if (item[0] == 'filter.eventId') {
+        console.log(item[0]);
+        let a = item[1].toString().split(':');
+        await this.forArrayFilters('eventId', a[1]);
+      }
+      if (item[0] == 'filter.batchId') {
+        console.log(item[0]);
+        let a = item[1].toString().split(':');
+        await this.forArrayFilters('batchId', a[1]);
+      }
+      if (item[0] == 'filter.delegationNumber') {
+        console.log(item[0]);
+        let a = item[1].toString().split(':');
+        await this.forArrayFilters('delegationNumber', a[1]);
+      }
+      if (item[0] == 'filter.cvman') {
+        console.log(item[0]);
+        let a = item[1].toString().split(':');
+        await this.forArrayFilters('cvman', a[1]);
+      }
+      if (item[0] == 'filter.vouchertype') {
+        console.log(item[0]);
+        let a = item[1].toString().split(':');
+        await this.forArrayFilters('vouchertype', a[1]);
+      }
+    });
+
+    Promise.all(result).then(async res => {
+      return true;
+    });
+  }
   async cambiarTab(numberTab: any) {
     this.tabset.tabs[numberTab].active = true;
   }
@@ -825,7 +841,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
 
-            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
               eventId: () => (searchFilter = SearchFilter.EQ),
               batchId: () => (searchFilter = SearchFilter.EQ),
@@ -849,15 +864,12 @@ export class BillingScreenComponent extends BasePage implements OnInit {
             search[filter.field]();
 
             if (filter.search !== '') {
-              // this.columnFilters[field] = `${filter.search}`;
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
           this.params = this.pageFilter(this.params);
-          //Su respectivo metodo de busqueda de datos
           this.getBillings('no');
         }
       });
@@ -916,7 +928,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
             }
           });
           this.params2 = this.pageFilter(this.params2);
-          //Su respectivo metodo de busqueda de datos
           this.getDetailsFacturas();
         }
       });
@@ -924,15 +935,11 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       .pipe(
         skip(1),
         tap(() => {
-          // aquí colocas la función que deseas ejecutar
           this.getDetailsFacturas();
         }),
         takeUntil(this.$unSubscribe)
       )
       .subscribe(() => {});
-    // this.params2
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(() => this.getDetailsFacturas());
   }
   filterTable3() {
     this.data3
@@ -1832,7 +1839,12 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       value: this.token.decodeToken().preferred_username,
       address: 'I',
     };
-    const c_Reg: any = await this.billingsService.pufUsuReg(obj___); // PUF_USU_REG;
+    let c_Reg: any = await this.billingsService.getParamterModSab(
+      'SUPUSUFACTR',
+      'I',
+      this.token.decodeToken().preferred_username.toUpperCase()
+    );
+    c_Reg = !c_Reg ? 'N' : 'S'; // PUF_USU_REG;
 
     if (this.selectedbillings.length == 0)
       return (
@@ -2186,7 +2198,12 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       value: this.token.decodeToken().preferred_username,
       address: 'I',
     };
-    const c_Reg: any = await this.billingsService.pufUsuReg(obj_); // PUF_USU_REG;
+    let c_Reg: any = await this.billingsService.getParamterModSab(
+      'SUPUSUFACTR',
+      'I',
+      this.token.decodeToken().preferred_username.toUpperCase()
+    );
+    c_Reg = !c_Reg ? 'N' : 'S'; // PUF_USU_REG;
     let cont = 0;
     let result = this.selectedbillings.map(async item => {
       if (item.factstatusId == 'PREF' && item.vouchertype == 'FAC') {
@@ -2451,13 +2468,19 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       dataSeleccionada: this.selectedbillings,
       cause: this.causeBlkCtrl.value,
       data,
-      callback: (next: boolean) => {
+      callback: async (next: boolean) => {
         this.valSelects = false;
         if (!next) {
           this.visualCancelYesNot(0);
         } else {
+          let insertFilterColumns: boolean = this.insertFilterColumns();
+          if (insertFilterColumns) {
+            this.data.refresh();
+            this.valSelects = true;
+            await this.getBillings('no');
+          }
           // this.valDefaultWhere = true;
-          this.getBillings('no');
+          // this.getBillings('no');
         }
 
         console.log('AQUI', next);
@@ -2756,7 +2779,12 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       value: this.token.decodeToken().preferred_username,
       address: 'I',
     };
-    const c_Reg: any = await this.billingsService.pufUsuReg(obj); // PUF_USU_REG;
+    let c_Reg: any = await this.billingsService.getParamterModSab(
+      'SUPUSUFACTR',
+      'I',
+      this.token.decodeToken().preferred_username.toUpperCase()
+    );
+    c_Reg = !c_Reg ? 'N' : 'S';
     let cont = 0;
     this.data.getElements().then(async item => {
       let result_ = item.map(async (item_: any) => {
@@ -2775,21 +2803,11 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           if (c_Reg == 'S') {
             if (item_.delegationNumber == this.token.decodeToken().department) {
               const updateDateImp = this.billingsService.updateBillings(obj);
-              // : COMER_FACTURAS.FECHA_IMPRESION := : BLK_CTRL.fecha;
-              (item_.impressionDate = this.datePipe.transform(
-                this.dateBlkCtrl.value,
-                'yyyy-MM-dd'
-              )),
-                (cont = cont + 1);
+              cont = cont + 1;
             }
           } else {
             const updateDateImp = this.billingsService.updateBillings(obj);
-            // : COMER_FACTURAS.FECHA_IMPRESION := : BLK_CTRL.fecha;
-            (item_.impressionDate = this.datePipe.transform(
-              this.dateBlkCtrl.value,
-              'yyyy-MM-dd'
-            )),
-              (cont = cont + 1);
+            cont = cont + 1;
           }
         }
       });
@@ -2807,10 +2825,17 @@ export class BillingScreenComponent extends BasePage implements OnInit {
   async pupNewSelecAll() {
     const obj: any = {
       parameter: 'SUPUSUFACTR',
-      value: this.token.decodeToken().preferred_username,
+      value: this.token.decodeToken().preferred_username.toUpperCase(),
       address: 'I',
     };
-    const c_Reg: any = await this.billingsService.pufUsuReg(obj); // PUF_USU_REG;
+    let c_Reg: any = await this.billingsService.getParamterModSab(
+      'SUPUSUFACTR',
+      'I',
+      this.token.decodeToken().preferred_username.toUpperCase()
+    );
+    c_Reg = !c_Reg ? 'N' : 'S';
+    console.log(c_Reg);
+    //await this.billingsService.pufUsuReg(obj); // PUF_USU_REG;
     // const c_Reg = 'S';
 
     if (!(await this.valBillingsSelects()))
@@ -2820,27 +2845,46 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       );
 
     let cont = 0;
+    let contN = 0;
     this.data.getElements().then(async item => {
       let arr: any[] = [];
       let result_ = item.map(async (item_: any) => {
         // if (!item_.impressionDate && !['CFDI', 'IMP', 'CAN'].includes(item_.factstatusId)) {
         if (c_Reg == 'S') {
-          if (item_.delegationNumber == this.token.decodeToken().department) {
-            arr.push(item_);
-            cont = cont + 1;
+          if (item_.delegationNumber === this.token.decodeToken().department) {
+            const index = this.selectedbillings.findIndex(
+              comer =>
+                comer.eventId == item_.eventId && comer.billId == item_.billId
+            );
+            if (index == -1)
+              this.selectedbillings.push(item_), (cont = cont + 1);
+            if (index > -1)
+              this.selectedbillings.splice(index, 1), (contN = contN + 1);
+            // arr.push(item_);
           }
         } else {
-          arr.push(item_);
-          cont = cont + 1;
+          const index = this.selectedbillings.findIndex(
+            comer =>
+              comer.eventId == item_.eventId && comer.billId == item_.billId
+          );
+          if (index == -1) this.selectedbillings.push(item_), (cont = cont + 1);
+          if (index > -1)
+            this.selectedbillings.splice(index, 1), (contN = contN + 1);
+          // arr.push(item_);
+          // cont = cont + 1;
         }
         // }
       });
 
       Promise.all(result_).then(resp => {
-        this.selectedbillings = arr;
+        // this.selectedbillings = arr;
         this.data.refresh();
         this.btnLoading13 = false;
-        this.alert('success', `Se seleccionaron ${cont} documentos.`, '');
+        this.alert(
+          'success',
+          `Se seleccionaron ${cont} documentos.`,
+          `Y se deseleccionaron ${contN} documentos`
+        );
       });
     });
   }
@@ -2979,7 +3023,14 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       );
     this.btnLoading7 = true;
     let arr: any = [];
+    let arr1 = { invoices: [] };
     let result = this.selectedbillings.map(async item => {
+      let obj = {
+        eventId: item.eventId,
+        batchId: item.batchId,
+        billId: item.billId,
+      };
+      arr1.invoices.push(obj);
       let obj2 = {
         EVENTO: item.eventId,
         ID_LOTE: item.batchId,
@@ -3008,11 +3059,27 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     });
 
     Promise.all(result).then(resp => {
-      setTimeout(() => {
-        const filename: string = 'FCOMER086_I_CSV';
-        this.excelService.export(arr, { type: 'csv', filename });
-        this.btnLoading7 = false;
-      }, 1000);
+      this.comerInvoiceService.postApplicationPupExportaNva(arr1).subscribe({
+        next: resp => {
+          console.log(resp);
+          if (resp.base64 == '') {
+            return this.alert('warning', 'No hay datos por exportar', '');
+          }
+          const linkSource = `data:application/xlsx;base64,${resp.base64}`;
+          const downloadLink = document.createElement('a');
+          downloadLink.href = linkSource;
+          downloadLink.download = 'FACTURAS_FCOMER086_I' + '.csv';
+          downloadLink.target = '_blank';
+          downloadLink.click();
+          downloadLink.remove();
+          this.btnLoading7 = false;
+          this.alert('success', 'Archivo descargado correctamente', '');
+        },
+        error: error => {
+          this.btnLoading7 = false;
+          this.alert('warning', error.error.message, '');
+        },
+      });
     });
   }
 
@@ -3026,7 +3093,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
   }
   generateInvoices() {
     // Genera Folios - FOLIOS
-    // EN ESPERA DEL ENDPOINT DE EDWIN
 
     if (this.selectedbillings.length == 0)
       return this.alert(
@@ -3072,12 +3138,13 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Ocurrió un error al intentar generar folios',
-            ''
+            foliosGenerated.message
           );
         }
         this.btnLoading8 = false;
       } else {
         this.btnLoading8 = false;
+        this.getBillings('no');
         this.alert('success', 'Proceso terminado correctamente', '');
       }
     });
@@ -3225,7 +3292,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
   async forArrayFilters(field: any, value: any, opt?: boolean) {
     const subheaderFields: any = this.table.grid.source;
 
-    const filterConf = subheaderFields.filterConf;
+    const filterConf = this.data.getFilter();
     if (filterConf.filters.length > 0) {
       filterConf.filters.forEach((item: any) => {
         if (item.field == field) {
@@ -3416,5 +3483,33 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     }
     this.data.refresh();
     return val;
+  }
+
+  async resetTable() {
+    // this.params = new BehaviorSubject<ListParams>(new ListParams());
+    this.loading = true;
+
+    this.params.getValue().limit = 500;
+    this.params.getValue().pageSize = 500;
+    this.params.getValue().take = 500;
+    this.data.getFilter().filters = [];
+    this.data.refresh();
+
+    this.data.load([]);
+    this.data.refresh();
+
+    this.totalItems = 0;
+
+    this.data2.getFilter().filters = [];
+    this.data2.refresh();
+
+    this.data2.load([]);
+    this.data2.refresh();
+    this.totalItems2 = 0;
+    this.selectedbillings = [];
+    this.selectedbillingsDet = [];
+    this.resetInput();
+
+    this.loading = false;
   }
 }

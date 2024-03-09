@@ -242,105 +242,133 @@
     </accordion>
   </div>
 </app-card>
-
-<div class="row">
-  <div class="ch-content">
-    <h5 class="title">PREFACTURAS DEL EVENTO</h5>
-    <div class="row justify-content-end mr-3">
-      <app-columns-select
-        [(settings)]="settings"
-        [leftList]="true"></app-columns-select>
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="title">FACTURAS</h5>
+      </div>
     </div>
   </div>
-  <div class="row pt-3">
-    <form-loader *ngIf="loading"></form-loader>
-    <div>
-      <ng2-smart-table
-        #myTable
-        [ngStyle]="{
-          height: loading ? '0px' : totalItems > 10 ? '600px' : 'auto'
-        }"
-        [attr.class]="'table-bordered table-responsive mb-4'"
-        [settings]="settings"
-        (userRowSelect)="rowsSelected($event)"
-        [source]="dataFilter">
-      </ng2-smart-table>
-    </div>
-    <app-pagination
-      [params]="paramsList"
-      [totalItems]="totalItems"
-      [limit]="limit"
-      [pageSizeOptions]="[500]">
-    </app-pagination>
-  </div>
-  <div class="row">
-    <form class="form-material" [formGroup]="form">
-      <div class="row justify-content-end">
-        <div class="col-md-3">
-          <form-field
-            [control]="form.get('numberInvoices')"
-            label="N&uacute;mero de facturas:">
-            <input
-              readonly
-              type="text"
-              [(ngModel)]="totalItems"
-              class="form-control"
-              formControlName="numberInvoices" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('order')" label="Ordenar por:">
-            <ng-select
-              (change)="changeOpt($event)"
-              formControlName="order"
-              class="form-control">
-              <ng-option value="1">LOTE</ng-option>
-              <ng-option value="2">REGIONAL</ng-option>
-              <ng-option value="4">FOLIO</ng-option>
-            </ng-select>
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('price')">
-            <input
-              readonly
-              type="string"
-              class="form-control"
-              formControlName="price"
-              currencyMask
-              oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('ivaT')">
-            <input
-              readonly
-              type="string"
-              class="form-control"
-              formControlName="ivaT"
-              currencyMask
-              oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('total')">
-            <input
-              readonly
-              type="string"
-              class="form-control"
-              formControlName="total"
-              currencyMask
-              oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
-          </form-field>
+  <div class="row" body>
+    <div class="col-12">
+      <div class="row text-end justify-content-end">
+        <div class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
+          <app-columns-select
+            [defaultColumns]="8"
+            [(settings)]="settings"
+            [leftList]="true"></app-columns-select>
+          <div>
+            <button
+              class="btn btn-danger btn-sm active mr-3 ml-3"
+              (click)="resetTable()"
+              tooltip="Limpia las tablas y sus filtros"
+              containerClass="tooltip-style">
+              Limpiar Tabla
+              <i class="fas fa-eraser"> </i>
+            </button>
+          </div>
         </div>
       </div>
-    </form>
-  </div>
-
-  <!-- <div class="row pt-3">
-    <div class="col-md-2">
-      <h5 class="font-size-14 d-inline">N&uacute;mero de facturas: &nbsp;</h5>
-      <h3 class="font-size-14 d-inline">&nbsp; 3</h3>
     </div>
-  </div> -->
-</div>
+    <div class="col-12">
+      <div class="row pt-3">
+        <form-loader *ngIf="loading"></form-loader>
+        <div>
+          <ng2-smart-table
+            #myTable
+            [ngStyle]="{
+              height: loading ? '0px' : totalItems > 10 ? '600px' : 'auto'
+            }"
+            [attr.class]="'table-bordered table-responsive mb-4'"
+            [settings]="settings"
+            (userRowSelect)="rowsSelected($event)"
+            [source]="dataFilter">
+          </ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="paramsList"
+          [totalItems]="totalItems"
+          [limit]="limit"
+          [pageSizeOptions]="[500]">
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <accordion style="margin-bottom: 0px !important" [isAnimated]="true">
+      <accordion-group
+        id="testAcc"
+        style="margin-bottom: 0px !important"
+        [isOpen]="true"
+        [class.disabled]="false">
+        <div accordion-heading class="d-flex justify-content-between">
+          <h5>INFORMACIÓN</h5>
+        </div>
+        <div class="row">
+          <form class="form-material" [formGroup]="form">
+            <div class="row justify-content-end mt-2">
+              <div class="col-md-3">
+                <form-field
+                  [control]="form.get('numberInvoices')"
+                  label="N&uacute;mero de facturas:">
+                  <input
+                    readonly
+                    type="text"
+                    [(ngModel)]="totalItems"
+                    class="form-control"
+                    formControlName="numberInvoices" />
+                </form-field>
+              </div>
+              <div class="col-md-3">
+                <form-field [control]="form.get('order')" label="Ordenar por:">
+                  <ng-select
+                    (change)="changeOpt($event)"
+                    formControlName="order"
+                    class="form-control">
+                    <ng-option value="1">LOTE</ng-option>
+                    <ng-option value="2">REGIONAL</ng-option>
+                    <ng-option value="4">FOLIO</ng-option>
+                  </ng-select>
+                </form-field>
+              </div>
+              <div class="col-md-2">
+                <form-field [control]="form.get('price')">
+                  <input
+                    readonly
+                    type="string"
+                    class="form-control"
+                    formControlName="price"
+                    currencyMask
+                    oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
+                </form-field>
+              </div>
+              <div class="col-md-2">
+                <form-field [control]="form.get('ivaT')">
+                  <input
+                    readonly
+                    type="string"
+                    class="form-control"
+                    formControlName="ivaT"
+                    currencyMask
+                    oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
+                </form-field>
+              </div>
+              <div class="col-md-2">
+                <form-field [control]="form.get('total')">
+                  <input
+                    readonly
+                    type="string"
+                    class="form-control"
+                    formControlName="total"
+                    currencyMask
+                    oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
+                </form-field>
+              </div>
+            </div>
+          </form>
+        </div>
+      </accordion-group>
+    </accordion>
+  </div>
+</app-card>

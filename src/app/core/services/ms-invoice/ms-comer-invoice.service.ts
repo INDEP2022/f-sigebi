@@ -389,4 +389,7 @@ export class ComerInvoiceService extends HttpService {
   putApplicationPutProcess(data: any) {
     return this.put(ENDPOINT_INVOICE.ApplicationPutProcess, data);
   }
+  postApplicationPupExportaNva(data: any) {
+    return this.post(ENDPOINT_INVOICE.ApplicationPupExportaNva, data);
+  }
 }
