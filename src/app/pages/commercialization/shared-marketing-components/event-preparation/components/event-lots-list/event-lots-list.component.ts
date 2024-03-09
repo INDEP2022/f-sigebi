@@ -239,6 +239,10 @@ export class EventLotsListComponent extends BasePage implements OnInit {
           operator = SearchFilter.LIKE;
         }
 
+        if (filter.field == 'client.rfc') {
+          operator = SearchFilter.LIKE;
+        }
+
         params.addFilter(
           filter.field,
           filter.search,

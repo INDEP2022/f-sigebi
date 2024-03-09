@@ -319,8 +319,10 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
         })
       )
       .subscribe({
-        next: response =>
-          this.handleDocumentsCount(response.count, response.data),
+        next: response => {
+          console.log('primera petición: ', response);
+          this.handleDocumentsCount(response.count, response.data);
+        },
       });
   }
 
@@ -330,10 +332,18 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     let Evento = this.form.get('event').value;
     let portafolio = this.form.get('portfolio').value;
     if (lote == null) {
-      this.alert('error', 'Error', 'Debe Ingresar el número de Lote');
+      this.alert(
+        'warning',
+        'Falta información',
+        'Debe Ingresar el número de Lote'
+      );
       return;
     } else if (Evento == null) {
-      this.alert('error', 'Error', 'Debe Ingresar el número de Evento');
+      this.alert(
+        'warning',
+        'Falta información',
+        'Debe Ingresar el número de Evento'
+      );
       return;
     } else if (portafolio == null) {
       this.alertQuestion(
@@ -349,11 +359,10 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
             this.portfolioInput.nativeElement.focus();
           }
           V_VER_PORT = false;
+        } else {
+          this.pupObtinFoPorta();
         }
       });
-    } else if ((V_VER_PORT = true)) {
-      //falta PUP_OBTINFOPORTA
-      this.pupObtinFoPorta();
     }
   }
 
@@ -364,8 +373,10 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     let TIPO_OF: any;
     console.log('count ----> ', count);
     if (count == 2) {
+      //:OFICIO := A
       this.chooseDocument(documents);
     } else if (count == 1) {
+      //Hace dos select y establece VAL_TIPOF y VAL_TIPOF2
       this.NoExpediente = documents[0].proceedingsNumber;
       this.jobDictumTextsService.getData(good).subscribe({
         next: response => {
@@ -382,6 +393,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       //servicio pedido a Eduardo
     }
     if (count < 2) {
+      //Have una consulta y establece valor a GLOBAL.V_VALBIEN
       let good = this.form.get('goodId').value;
       this.goodsJobManagementService.getblokOffice1(good).subscribe({
         next: response => {
@@ -398,7 +410,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
             'Aceptar',
             'Cancelar'
           ).then(res => {
-            console.log(res);
+            console.log('RESPUESTA DE ACCIÓN V_VALBIEN : ', res);
             if (res.isDismissed) {
               this.goodsJobManagementService
                 .getOficeJobManagementbyGood(this.V_VALBIEN)
@@ -427,45 +439,47 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                       });
                   },
                 });
-            } else {
-              if (VAL_TIPOF2 == 'ESCRITURACION') {
-                TIPO_OF = 'ESC';
-                this.PupAgregaTexto();
-              } else if (VAL_TIPOF2 == 'ENTREGA') {
-                TIPO_OF = 'ENT';
-                this.PupAgregaTexto();
-              }
-              if (this.V_VALBIEN == null) {
-                this.BANDERA = 0;
-                this.NO_BIEN = this.form.get('goodId').value;
-                let VC_PANTALLA = 'FOFICIOCOMER';
-                let params = {
-                  goodNo: this.NO_BIEN,
-                  screen: VC_PANTALLA,
-                };
-                this.V_VALBIEN = null;
-                this.goodprocessService.postBlokOffice3(params).subscribe({
-                  next: resp => {
-                    console.log('respuesta de BlokOFfice3 --> ', resp);
-                    this.NO_VOLANTE = resp.data[0].no_volante;
-                    this.NO_EXPEDIENTE = resp.data[0].no_expediente;
-                    this.form.patchValue({
-                      status: resp.data[0].estatus,
-                      desStatus: resp.data[0].descripcion,
-                    });
-                    this.BIEN = resp.data[0].no_bien;
-                    let param = {
-                      goodId: resp.data[0].no_bien,
-                      description: resp.data[0].descripcion,
-                      amout: resp.data[0].cantidad,
-                      identifier: resp.data[0].identificador,
-                    };
-                    this.goods.push(param);
-                    this.totalGoods = resp.data.length;
-                    this.localGoods.load(this.goodsData);
-                  },
-                });
-              }
+            }
+            console.log(VAL_TIPOF2);
+
+            if (VAL_TIPOF2 == 'ESCRITURACION') {
+              TIPO_OF = 'ESC';
+              this.PupAgregaTexto();
+            } else if (VAL_TIPOF2 == 'ENTREGA') {
+              TIPO_OF = 'ENT';
+              this.PupAgregaTexto();
+            }
+
+            if (this.V_VALBIEN == null) {
+              this.BANDERA = 0;
+              this.NO_BIEN = this.form.get('goodId').value;
+              let VC_PANTALLA = 'FOFICIOCOMER';
+              let params = {
+                goodNo: this.NO_BIEN,
+                screen: VC_PANTALLA,
+              };
+              this.V_VALBIEN = null;
+              this.goodprocessService.postBlokOffice3(params).subscribe({
+                next: resp => {
+                  console.log('respuesta de BlokOFfice3 --> ', resp);
+                  this.NO_VOLANTE = resp.data[0].no_volante;
+                  this.NO_EXPEDIENTE = resp.data[0].no_expediente;
+                  this.form.patchValue({
+                    status: resp.data[0].estatus,
+                    desStatus: resp.data[0].descripcion,
+                  });
+                  this.BIEN = resp.data[0].no_bien;
+                  let param = {
+                    goodId: resp.data[0].no_bien,
+                    description: resp.data[0].descripcion,
+                    amout: resp.data[0].cantidad,
+                    identifier: resp.data[0].identificador,
+                  };
+                  this.goods.push(param);
+                  this.totalGoods = resp.data.length;
+                  this.localGoods.load(this.goodsData);
+                },
+              });
             }
           });
         },
@@ -2982,7 +2996,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
   search() {
     const rbValue = this.form.get('recordCommerType').value;
     if (rbValue == 'por') {
-      this.searchByBatch();
+      this.eventInput();
     } else if (rbValue == 'bie') {
       this.goodNumChange();
     }
