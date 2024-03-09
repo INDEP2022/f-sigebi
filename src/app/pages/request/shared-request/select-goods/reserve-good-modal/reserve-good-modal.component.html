@@ -36,7 +36,8 @@
             <input
               type="number"
               formControlName="reserve"
-              class="form-control" />
+              class="form-control"
+              (keypress)="numericOnly($event)"  />
           </form-field>
         </div>
       </div>
