@@ -428,15 +428,16 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       }
 
       //goodFinderService
-      this.rejectedGoodService.getAll(this.params.getValue()).subscribe({
+      //goodResDevInvService OK
+      this.goodResDevInvService.getAll(this.params.getValue()).subscribe({
         next: response => {
           console.log('goods-res-dev', response);
           let data = [];
           response.data.forEach((item: any) => {
-            let merged = this.mergeWithoutNulls(item, item.good);
-            data.push(merged);
+            //let merged = this.mergeWithoutNulls(item, item.good);
+            //data.push(merged);
           });
-          this.goodColumns.load(data);
+          this.goodColumns.load(response.data);
           this.goodTotalItems = response.count;
           this.loading = false;
         },

@@ -313,7 +313,17 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
 
     this.onSearch.emit(false);
   }
+
+  numericOnly(event): boolean {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
+  }
 }
+
+
 interface RecordIdChange {
   recordId: {
     currentValue: number;
