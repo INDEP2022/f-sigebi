@@ -140,13 +140,14 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   clientIdSettings = SETTING_CLIENT_ID;
   batchReworkSettings = SETTING_BATCH_REWORK;
   rfcReworkSettings = SETTING_RFC_REWORK;
-  reprocesSettings = SETTING_REPROCESS;
+  reprocessSettings = SETTING_REPROCESS;
 
   dataSource: LocalDataSource = new LocalDataSource();
   rfcSource = new LocalDataSource();
   clientSource = new LocalDataSource();
   lcsSource = new LocalDataSource();
   isLoadingLcs = false;
+  isLoadingRep = false;
   pathGetBath = generateUrlOrPath('catalog', 'batch', true);
   title: string = "Conversión Masiva de LC'S";
 
@@ -158,12 +159,16 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   columnFiltersLc: any = [];
   totalItemsLc: number = 0;
 
+  reprocessParams = new BehaviorSubject<ListParams>(new ListParams());
+  columnFiltersReprocess: any = [];
+  reprocessTotalItems: number = 0;
+
   @ViewChild('tabset') tabset: TabsetComponent;
 
   activeTab: string = 'tab1';
   reProTabActive: boolean = true;
   tab3Active: boolean = false;
-  reprocesSource: [];
+  reprocessSource = new LocalDataSource();
   form: ModelForm<any>;
   validityDate: any;
   tipoConsul: string;
@@ -180,6 +185,21 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   loadingBtn2: boolean = false;
   loadingBtn3: boolean = false;
   loadingBtn4: boolean = false;
+
+  validEventCount: boolean = false;
+  count: number;
+
+  ID_TPEVENTO: string = '';
+  DIRECCION: string = '';
+  ID_ESTATUSVTA: string = '';
+  ID_TIPO_DISP: string = '';
+  ID_TIPO_FALLO: string = '';
+  ID_EVENTO: string = '';
+  CVE_PROCESO: string = '';
+  FECHA_EVENTO: string = '';
+  LUGAR: string = '';
+  FEC_FALLO: string = '';
+  DESCRIPCION: string = '';
 
   constructor(
     private excelService: ExcelService,
@@ -207,6 +227,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       this.clientIdSettings.columns
     );
 
+    //Tabla de Datos
     this.dataSource
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -262,6 +283,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.searchData());
 
+    //Tabla de lineas de captura
     this.lcsSource
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -305,6 +327,53 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     this.paramsLc
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.guarantyData());
+
+    //Tabla para Lineas de captura en reproceso
+    this.reprocessSource
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'idlcg':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'dateValidity':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'approPayDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFiltersReprocess[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersReprocess[field];
+            }
+          });
+          this.reprocessParams = this.pageFilter(this.reprocessParams);
+          this.reprocessParams
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getDataReprocess());
+        }
+      });
+
+    this.reprocessParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDataReprocess());
   }
 
   prepareForm() {
@@ -394,6 +463,14 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   consultInServer() {
     let fromButton = true;
     this.loadingBtn = true;
+    this.count = 0;
+    this.validEventCount = false;
+
+    this.tabset.tabs.forEach((tab, i) => {
+      tab.active = i === 0;
+      this.reProTabActive = true;
+      this.tab3Active = false;
+    });
 
     if (this.form.controls['eventId'].value == null) {
       this.alert(
@@ -407,6 +484,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     this.searchData(fromButton);
     // this.searchLcs();
     this.guarantyData(fromButton);
+
+    this.reprocessCount();
   }
 
   searchData(fromButton?: boolean) {
@@ -423,6 +502,10 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: res => {
+            if (fromButton) {
+              this.alert('success', 'Datos encontrados', '');
+            }
+
             this.dataSource.load(res.data);
             this.dataSource.refresh();
             this.totalItemsD = res.count;
@@ -437,6 +520,9 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
             this.loadingBtn = false;
           },
           error: error => {
+            if (fromButton) {
+              this.alert('warning', 'Advertencia', 'No se encontraron Datos');
+            }
             console.log('Error', error);
             this.loading = false;
             this.validGenerateLCs = false;
@@ -444,9 +530,6 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
             this.dataSource.refresh();
             this.totalItemsD = 0;
             this.loadingBtn = false;
-            if (fromButton) {
-              this.alert('warning', 'Advertencia', 'No se encontraron Datos');
-            }
           },
         });
     }
@@ -492,6 +575,9 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: res => {
+          if (fromButton) {
+            this.alert('success', 'Datos encontrados', '');
+          }
           this.dataSource.load(res.data);
           this.dataSource.refresh();
           this.totalItemsD = res.count;
@@ -532,6 +618,10 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: res => {
+          if (fromButton) {
+            this.alert('success', 'Lineas de Captura Encontradas', '');
+          }
+
           this.lcsSource.load(res.data);
           this.lcsSource.refresh();
           this.totalItemsLc = res.count;
@@ -539,14 +629,14 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           this.loadingBtn = false;
         },
         error: error => {
+          if (fromButton) {
+            this.alert('warning', 'Advertencia', 'No se encontraron Lc´s');
+          }
           this.lcsSource.load([]);
           this.lcsSource.refresh();
           this.isLoadingLcs = false;
           this.totalItemsLc = 0;
           this.loadingBtn = false;
-          if (fromButton) {
-            this.alert('warning', 'Advertencia', 'No se encontraron Lc´s');
-          }
         },
       });
   }
@@ -954,13 +1044,24 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     this.modalService.show(TableCheckPortalDialogComponent, config);
   }
 
+  async reprocessCount() {
+    this.count = await firstValueFrom(
+      this.prepareEventService.getCountEventMassiveConversionLc(
+        this.form.controls['eventId'].value
+      )
+    );
+
+    if (this.count >= 1) {
+      this.validEventCount = true;
+      this.alert('success', 'Mantto y Reprocesos Activado', '');
+    }
+  }
+
   async reprocess() {
     if (this.form.controls['eventId'].value == null) {
       this.alert('warning', 'Atención', 'Se necesita un ID de Evento');
       return;
     }
-
-    this.searchEvent();
 
     this.tabset.tabs.forEach((tab, i) => {
       tab.active = i === 2;
@@ -968,16 +1069,15 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       this.tab3Active = true;
     });
 
-    if (this.form.controls['eventId'].value) {
-      this.reprocessDisabled = true;
-    }
-    let count = await firstValueFrom(
+    this.count = await firstValueFrom(
       this.prepareEventService.getCountEventMassiveConversionLc(
         this.form.controls['eventId'].value
       )
     );
-    console.log('count:', count);
-    if (Number(count) === 0) {
+
+    console.log('count:', this.count);
+    if (this.count === 0 || this.count === undefined) {
+      this.isLoadingRep = false;
       this.alertInfo(
         'warning',
         'Advertencia',
@@ -994,7 +1094,92 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
       this.reprocessDisabled = false;
       return;
+    } else if (this.count != 0) {
+      const event = this.form.controls['eventId'].value;
+      this.comerEventService.getComerEventById(event).subscribe({
+        next: resp => {
+          console.log('Evento en reproceso: ', resp);
+          this.ID_TPEVENTO = resp.eventTpId;
+          this.DIRECCION = resp.address;
+          this.ID_ESTATUSVTA = resp.statusVtaId;
+          //this.ID_TIPO_DISP= resp.eventTpId;
+          //this.ID_TIPO_FALLO= resp.eventTpId;
+          this.ID_EVENTO = resp.id;
+          this.CVE_PROCESO = resp.processKey;
+          this.FECHA_EVENTO = resp.eventDate;
+          this.LUGAR = resp.place;
+          this.FEC_FALLO = resp.failureDate;
+          this.DESCRIPCION = resp.statusVtaId;
+
+          const dateEvent = new Date(this.FECHA_EVENTO);
+          const optionDateEvent: Intl.DateTimeFormatOptions = {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+          };
+          this.FECHA_EVENTO = dateEvent.toLocaleDateString(
+            'es-ES',
+            optionDateEvent
+          );
+
+          const dateFailure = new Date(this.FEC_FALLO);
+          const optionDateFailure: Intl.DateTimeFormatOptions = {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+          };
+          this.FEC_FALLO = dateFailure.toLocaleDateString(
+            'es-ES',
+            optionDateFailure
+          );
+
+          this.getDataReprocess();
+        },
+        error: error => {
+          console.log('Error Evento en reproceso: ', error);
+        },
+      });
     }
+  }
+
+  getDataReprocess(fromButton?: boolean) {
+    this.isLoadingRep = true;
+
+    let params = {
+      ...this.reprocessParams.getValue(),
+      ...this.columnFiltersReprocess,
+    };
+    params['filter.idEvent'] = `$eq:${this.form.controls['eventId'].value}`;
+
+    this.guarantyService
+      .getComerRefGuarantees(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: res => {
+          if (fromButton) {
+            this.alert('success', 'Lineas de Captura Encontradas', '');
+          }
+
+          this.reprocessSource.load(res.data);
+          this.reprocessSource.refresh();
+          this.reprocessTotalItems = res.count;
+          this.isLoadingRep = false;
+        },
+        error: error => {
+          if (fromButton) {
+            this.alert(
+              'warning',
+              'Advertencia',
+              `No se encontraron Lc´s para el evento en reproceso: ${this.ID_EVENTO}`
+            );
+          }
+
+          this.reprocessSource.load([]);
+          this.reprocessSource.refresh();
+          this.reprocessTotalItems = 0;
+          this.isLoadingRep = false;
+        },
+      });
   }
 
   get eventId() {

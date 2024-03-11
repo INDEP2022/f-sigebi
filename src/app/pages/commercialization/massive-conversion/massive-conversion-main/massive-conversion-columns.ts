@@ -513,10 +513,23 @@ export const SETTING_REPROCESS = {
       type: 'string',
       sort: false,
     },
-    approPayDate: {
+    dateapproPay: {
       title: 'Fecha Aprobación Pago',
       type: 'string',
       sort: false,
+      /*filter: {
+        type: 'custom',
+        component: CustomDateFilterComponent,
+      },*/
+      valuePrepareFunction: (date?: Date) => {
+        var raw = new Date(date);
+        var formatted = new DatePipe('en-EN').transform(
+          raw,
+          'dd/MM/yyyy',
+          'UTC'
+        );
+        return formatted;
+      },
     },
     palletteNumber: {
       title: 'No. Paleta',
@@ -562,6 +575,19 @@ export const SETTING_REPROCESS = {
       title: 'Fecha Videncia',
       type: 'string',
       sort: false,
+      filter: {
+        type: 'custom',
+        component: CustomDateFilterComponent,
+      },
+      valuePrepareFunction: (date?: Date) => {
+        var raw = new Date(date);
+        var formatted = new DatePipe('en-EN').transform(
+          raw,
+          'dd/MM/yyyy',
+          'UTC'
+        );
+        return formatted;
+      },
     },
     refGsae: {
       title: 'Ref. Gsae',

@@ -99,9 +99,9 @@
                   <button
                     class="btn btn-sm btn-primary btn-block active me-2 font-size-14"
                     (click)="reprocess()"
-                    [disabled]="!validGenerateLCs || !eventId.value">
+                    [disabled]="!validEventCount">
                     <!-- <i class="bx bx-send text-light float-icon"></i> -->
-                    Mantto y Reprocesos
+                    Mantto. y Reprocesos
                   </button>
                 </div>
                 <div class="col-12">
@@ -200,7 +200,7 @@
       </div>
     </div>
     <div class="row pt-5 mt-5">
-      <div class="md-tabs pt-5 mt-5">
+      <div class="pt-5 mt-5">
         <tabset #tabset [(ngModel)]="activeTab">
           <tab heading="Datos" id="dataTab">
             <div class="row">
@@ -219,11 +219,11 @@
                 [settings]="dataSettings"
                 [source]="dataSource">
               </ng2-smart-table>
-            </div>
 
-            <app-pagination
-              [params]="paramsD"
-              [totalItems]="totalItemsD"></app-pagination>
+              <app-pagination
+                [params]="paramsD"
+                [totalItems]="totalItemsD"></app-pagination>
+            </div>
           </tab>
           <tab heading="Líneas de Captura" id="lcsTab">
             <div class="row">
@@ -250,11 +250,10 @@
                 [settings]="lcsSettings"
                 [source]="lcsSource">
               </ng2-smart-table>
+              <app-pagination
+                [params]="paramsLc"
+                [totalItems]="totalItemsLc"></app-pagination>
             </div>
-
-            <app-pagination
-              [params]="paramsLc"
-              [totalItems]="totalItemsLc"></app-pagination>
           </tab>
           <tab
             (selectTab)="onTabSelected($event)"
@@ -263,81 +262,64 @@
             [disabled]="reProTabActive"
             [active]="tab3Active">
             <div class="row">
-              <!-- <div
-                class="col-md-2 d-flex"
-                *ngIf="!selectedEvent"
-                @OnEventSelected>
-                <div class="mr-auto">
-                  <button
-                    type="button"
-                    [ngClass]="'btn-primary'"
-                    class="btn active btn-sm mt-5"
-                    (click)="searchEvent()">
-                    Buscar
-                    <i class="bx bx-search-alt bx-sm float-icon"></i>
-                  </button>
-                </div>
-              </div> -->
-              <div
-                class="col-sm-2 col-md-2"
-                *ngIf="selectedEvent != null"
-                @OnEventSelected>
+              <div class="col-sm-2 col-md-2">
+                <i
+                  class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
+                <h5 class="font-size-14 mb-2 d-inline">Evento</h5>
+                <p class="text-muted">{{ ID_EVENTO }}</p>
+              </div>
+
+              <div class="col-sm-2 col-md-2">
                 <i
                   class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
                 <h5 class="font-size-14 mb-2 d-inline">Cve. Proceso</h5>
-                <p class="text-muted">{{ selectedEvent.processKey }}</p>
+                <p class="text-muted">{{ CVE_PROCESO }}</p>
               </div>
-              <div
-                class="col-sm-2 col-md-2"
-                *ngIf="selectedEvent != null"
-                @OnEventSelected>
+              <div class="col-sm-2 col-md-2">
                 <i
                   class="bx bx-detail text-success me-2 d-inline float-icon"></i>
                 <h5 class="font-size-14 mb-2 d-inline">Fecha Evento</h5>
                 <p class="text-muted">
-                  {{ selectedEvent.eventDate | date : 'medium' }}
+                  {{ FECHA_EVENTO }}
                 </p>
               </div>
-              <div
-                class="col-sm-2 col-md-2"
-                *ngIf="selectedEvent != null"
-                @OnEventSelected>
+              <div class="col-sm-2 col-md-2">
                 <i
                   class="bx bx-detail text-success me-2 d-inline float-icon"></i>
                 <h5 class="font-size-14 mb-2 d-inline">Lugar</h5>
                 <p class="text-muted">
-                  {{ selectedEvent.place }}
+                  {{ LUGAR }}
                 </p>
               </div>
-              <div
-                class="col-sm-2 col-md-2"
-                *ngIf="selectedEvent != null"
-                @OnEventSelected>
+              <div class="col-sm-2 col-md-2">
                 <i
                   class="bx bx-detail text-success me-2 d-inline float-icon"></i>
                 <h5 class="font-size-14 mb-2 d-inline">Fecha Fallo</h5>
                 <p class="text-muted">
-                  {{ selectedEvent.failedDate | date : 'medium' }}
+                  {{ FEC_FALLO }}
                 </p>
               </div>
-              <div
-                class="col-sm-2 col-md-2"
-                *ngIf="selectedEvent != null"
-                @OnEventSelected>
+              <div class="col-sm-2 col-md-2">
                 <i
                   class="bx bx-detail text-success me-2 d-inline float-icon"></i>
                 <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
                 <p class="text-muted">
-                  {{ selectedEvent.statusvtaId }}
+                  {{ ID_ESTATUSVTA }}
                 </p>
               </div>
             </div>
 
-            <div class="row">
+            <div class="row pt-5">
+              <h5 class="title">
+                Líneas de Captura para el evento: {{ ID_EVENTO }}
+              </h5>
+            </div>
+
+            <div class="row pt-2">
               <div class="d-flex justify-content-end my-3">
                 <div class="mr-3">
                   <app-columns-select
-                    [(settings)]="reprocesSettings"></app-columns-select>
+                    [(settings)]="reprocessSettings"></app-columns-select>
                 </div>
                 <div>
                   <button
@@ -348,19 +330,21 @@
                   </button>
                 </div>
               </div>
-            </div>
 
-            <div [class]="isLoadingLcs ? 'table-loading' : ''">
-              <ng2-smart-table
-                id="lcsTable"
-                [attr.class]="'table-bordered table-responsive'"
-                [settings]="reprocesSettings"
-                [source]="reprocesSource">
-              </ng2-smart-table>
-            </div>
+              <div [class]="isLoadingRep ? 'table-loading' : ''">
+                <ng2-smart-table
+                  id="lcsTable"
+                  [attr.class]="'table-bordered table-responsive'"
+                  [settings]="reprocessSettings"
+                  [source]="reprocessSource">
+                </ng2-smart-table>
+              </div>
 
-            <app-pagination [params]="lcsParams" [totalItems]="lcsTotalItems">
-            </app-pagination>
+              <app-pagination
+                [params]="reprocessParams"
+                [totalItems]="reprocessTotalItems">
+              </app-pagination>
+            </div>
           </tab>
         </tabset>
       </div>
