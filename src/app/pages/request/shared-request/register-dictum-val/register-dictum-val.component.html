@@ -20,6 +20,7 @@
           formControlName="appoitmentDate"
           class="form-control"
           [minDate]="minDate"
+          (keydown)="(false)"
           [bsConfig]="{
             withTimepicker: true,
             dateInputFormat: 'DD/MM/YYYY, h:mm:ss a',
