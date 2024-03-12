@@ -146,7 +146,11 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
   }
 
   report() {
-    this.alertInfo('warning', 'Atención', 'Reporte no disponible');
+    this.alertInfo(
+      'warning',
+      'Atención',
+      'Reporte no disponible. Por favor contactar a la DETI'
+    );
 
     /*let params = {
       //PN_DEVOLUCION: this.data,

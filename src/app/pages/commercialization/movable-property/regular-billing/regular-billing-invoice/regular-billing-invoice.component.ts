@@ -2698,13 +2698,9 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         this.btnLoading13 = false;
         this.alert('success', 'Archivo descargado correctamente', '');
       },
-      error: () => {
+      error: error => {
         this.btnLoading13 = false;
-        this.alert(
-          'error',
-          'Ha ocurrido un fallo en la exportación del archivo',
-          ''
-        );
+        this.alert('warning', error.error.message, '');
       },
     });
   }
@@ -3212,5 +3208,32 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       });
     }
     return val;
+  }
+
+  async resetTable() {
+    // this.params = new BehaviorSubject<ListParams>(new ListParams());
+    this.loading = true;
+
+    this.paramsList.getValue().limit = 500;
+    this.paramsList.getValue().pageSize = 500;
+    this.paramsList.getValue().take = 500;
+    this.dataFilter.getFilter().filters = [];
+    this.dataFilter.refresh();
+
+    this.dataFilter.load([]);
+    this.dataFilter.refresh();
+
+    this.totalItems = 0;
+
+    this.dataFilter2.getFilter().filters = [];
+    this.dataFilter2.refresh();
+
+    this.dataFilter2.load([]);
+    this.dataFilter2.refresh();
+    this.totalItems2 = 0;
+    this.isSelect = [];
+    // this.resetInput();
+
+    this.loading = false;
   }
 }

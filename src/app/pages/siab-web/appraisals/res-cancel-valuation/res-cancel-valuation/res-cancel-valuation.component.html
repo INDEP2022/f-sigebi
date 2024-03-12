@@ -5,13 +5,13 @@
     </div>
   </div>
   <div body>
-    <div class="d-flex justify-content-end">
+    <!-- <div class="d-flex justify-content-end">
       <div class="ml-auto" style="margin-top: -20px">
         <p class="font-weight-bold" style="border-bottom: 1px solid black">
           {{ dateNow | date : 'dd/MM/yyyy - HH:mm:ss' }}
         </p>
       </div>
-    </div>
+    </div> -->
     <div class="d-flex justify-content-center mb-3" style="margin-top: -20px">
       <h3>
         <span id="lblTipoAccOficio">{{ lblTipoAccOficio }}</span>
@@ -21,6 +21,7 @@
         <small>
           <span id="lblCvlOfocio">{{ lblCvlOfocio }}</span>
         </small>
+        <span id="lblDireccion">{{ statusOffice }}</span>
       </h3>
     </div>
 
@@ -231,13 +232,16 @@
     </div>
     <br />
     <!--  -->
-    <div class="d-flex justify-content-end">
-      <div class="ml-auto">
+    <div class="row">
+      <div class="col-md-12">
         <button class="btn btn-danger btn-sm active" (click)="reset()">
           Limpiar <i class="fas fa-eraser"> </i>
         </button>
       </div>
     </div>
+    <br />
+    <br />
+    <!-- *ngIf="statusOffice == 'ENVIADO' && tipoOficio == 2" -->
     <div class="row mb-3">
       <div class="col-md-12 p-3">
         <div class="table-responsive">
@@ -246,18 +250,18 @@
               #table
               [attr.class]="'table-bordered table-responsive'"
               [settings]="settings"
-              [source]="dataGood">
+              [source]="dataGood2">
             </ng2-smart-table>
           </div>
         </div>
-        <app-pagination [params]="params" [totalItems]="totalItems">
+        <app-pagination [params]="params2" [totalItems]="totalItems2">
         </app-pagination>
       </div>
     </div>
     <!--  -->
     <!-- <app-valued-table [body]="body1" [settings1]="settings"></app-valued-table> -->
     <!--  -->
-    <div class="row">
+    <!-- <div class="row" *ngIf="statusOffice == 'ENVIADO' && tipoOficio == 3">
       <div class="col-md-12 p-3">
         <div class="table-responsive">
           <div [class]="loading ? 'table-loading' : ''">
@@ -272,7 +276,7 @@
         <app-pagination [params]="params2" [totalItems]="totalItems2">
         </app-pagination>
       </div>
-    </div>
+    </div> -->
     <!-- [source]="dataPaginated" (userRowSelect)="onUserRowSelectCancel($event)"> -->
     <app-cancel-table
       [body]="body2"
@@ -281,10 +285,11 @@
       [showModalCambioRev]="showModalCambioRev"></app-cancel-table>
     <!--  -->
     <div>
-      <div>
+      <div class="row">
         <form class="form-material" [formGroup]="formTwo">
           <!--  -->
-          <div class="row" *ngIf="pnlControles2">
+          <!-- <div class="row" *ngIf="pnlControles2"> -->
+          <div class="row">
             <div class="col-md-6">
               <form-field
                 [control]="formTwo.get('allGood')"
@@ -305,6 +310,7 @@
             </div>
           </div>
           <!--  -->
+          <!-- <div class="row mb-3" *ngIf="statusOffice != 'ENVIADO'"> -->
           <div class="row mb-3">
             <div class="col-md-4">
               <button
@@ -331,7 +337,7 @@
               </button>
             </div>
             <div class="col-md-4">
-              <div *ngIf="btnMotCan">
+              <div>
                 <button
                   class="btn btn-primary btn-sm active"
                   (click)="showModal()">
@@ -366,6 +372,7 @@
                   </div> -->
           <!--  -->
           <!--  -->
+          <!-- <div *ngIf="statusOffice != 'ENVIADO'"> -->
           <div>
             <app-card [header]="true">
               <div header>
@@ -506,7 +513,7 @@
               </div>
             </app-card>
           </div>
-          <div class="d-flex justify-content-center">
+          <!-- <div class="d-flex justify-content-center">
             <div class="m-3" *ngIf="btnModificar">
               <button
                 type="button"
@@ -533,6 +540,41 @@
               </button>
             </div>
             <div class="m-3" *ngIf="btnEnviar">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="senders()">
+                Enviar Oficio
+              </button>
+            </div>
+          </div> -->
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="modifyOffice()">
+                Modificar Oficio
+              </button>
+            </div>
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="viewOffice()">
+                Visualizar Oficio
+              </button>
+            </div>
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                [disabled]="form.invalid"
+                (click)="save()">
+                Guardar Oficio
+              </button>
+            </div>
+            <div class="m-3">
               <button
                 type="button"
                 class="btn btn-primary btn-sm active"

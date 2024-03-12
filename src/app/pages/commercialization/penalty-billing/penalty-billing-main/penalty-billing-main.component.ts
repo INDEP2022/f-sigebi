@@ -391,6 +391,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
   newInvoice() {
     this.billingForm.reset();
     this.billingForm.get('Type').patchValue(20);
+    this.billingForm.get('factstatusId').patchValue('PREF');
     this.billingForm.get('tpinvoiceId').patchValue('P');
     this.displayCancel = false;
     this.getComerClientsData2(new ListParams());
@@ -401,98 +402,108 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     this.getEventData(new ListParams());
   }
 
-  getDataLote({ idLot }: any) {
+  getDataLote(idLot: any) {
     const { eventId, processKey } = this.billingForm.value;
-    this.comerInvoice
-      .getPenalizeData(Number(eventId), Number(idLot))
-      .subscribe({
-        next: resp => {
-          const data = resp.data[0];
-          //this.billingForm.get('authorize').patchValue(Number(data.AUTORIZO))
-          this.billingForm.get('street').patchValue(data.CALLE);
-          this.billingForm.get('customer').patchValue(data.CLIENTE);
-          this.billingForm.get('cologne').patchValue(data.COLONIA);
-          this.billingForm.get('cop').patchValue(data.CP);
-          this.billingForm.get('cvman').patchValue(data.CVMAN);
-          this.billingForm.get('delegationNumber').patchValue(data.DELEGACION);
-          this.billingForm
-            .get('description')
-            .patchValue(data.DESCRIPCION.concat(` ${processKey}`));
-          this.billingForm.get('downloadcvman').patchValue(data.DESC_CVMAN);
-          this.billingForm.get('state').patchValue(data.ESTADO);
-          this.billingForm.get('vat').patchValue(data.IVA);
-          this.billingForm.get('municipality').patchValue(data.MUNICIPIO);
-          this.billingForm.get('descDelegation').patchValue(data.NO_DELEGACION);
-          this.billingForm
-            .get('transfereeNumber')
-            .patchValue(data.NO_TRANSFERENTE);
-          this.billingForm.get('price').patchValue(data.PRECIO);
-          this.billingForm.get('rfc').patchValue(data.RFC);
-          this.billingForm.get('total').patchValue(data.TOTAL);
+    if (idLot)
+      this.comerInvoice
+        .getPenalizeData(Number(eventId), Number(idLot.idLot))
+        .subscribe({
+          next: resp => {
+            const data = resp.data[0];
+            //this.billingForm.get('authorize').patchValue(Number(data.AUTORIZO))
+            this.billingForm.get('street').patchValue(data.CALLE);
+            this.billingForm.get('customer').patchValue(data.CLIENTE);
+            this.billingForm.get('cologne').patchValue(data.COLONIA);
+            this.billingForm.get('cop').patchValue(data.CP);
+            this.billingForm.get('cvman').patchValue(data.CVMAN);
+            this.billingForm
+              .get('delegationNumber')
+              .patchValue(data.DELEGACION);
+            this.billingForm
+              .get('description')
+              .patchValue(data.DESCRIPCION.concat(` ${processKey}`));
+            this.billingForm.get('downloadcvman').patchValue(data.DESC_CVMAN);
+            this.billingForm.get('state').patchValue(data.ESTADO);
+            this.billingForm.get('vat').patchValue(data.IVA);
+            this.billingForm.get('municipality').patchValue(data.MUNICIPIO);
+            this.billingForm
+              .get('descDelegation')
+              .patchValue(data.NO_DELEGACION);
+            this.billingForm
+              .get('transfereeNumber')
+              .patchValue(data.NO_TRANSFERENTE);
+            this.billingForm.get('price').patchValue(data.PRECIO);
+            this.billingForm.get('rfc').patchValue(data.RFC);
+            this.billingForm.get('total').patchValue(data.TOTAL);
 
-          const params = new ListParams();
+            const params = new ListParams();
 
-          const value = parseInt(data.AUTORIZO);
+            const value = parseInt(data.AUTORIZO);
 
-          value
-            ? (params['filter.id'] = `${SearchFilter.EQ}:${data.AUTORIZO}`)
-            : ((params[
-                'filter.reasonName'
-              ] = `${SearchFilter.ILIKE}:${data.AUTORIZO}`),
-              (params.text = data.AUTORIZO));
+            value
+              ? (params['filter.id'] = `${SearchFilter.EQ}:${data.AUTORIZO}`)
+              : ((params[
+                  'filter.reasonName'
+                ] = `${SearchFilter.ILIKE}:${data.AUTORIZO}`),
+                (params.text = data.AUTORIZO));
 
-          this.getComerClientsData(params);
-        },
-        error: () => {
-          this.alert(
-            'error',
-            'Error',
-            `No se encontraron datos sobre el evento: ${eventId} y lote: ${idLot}`
-          );
-        },
-      });
+            this.getComerClientsData(params);
+          },
+          error: () => {
+            this.alert(
+              'error',
+              'Error',
+              `No se encontraron datos sobre el evento: ${eventId} y lote: ${idLot}`
+            );
+          },
+        });
   }
   valEvent: boolean = false;
-  checkEvent({ id_evento }: any) {
+  checkEvent(id_evento: any) {
+    console.log(id_evento);
     if (id_evento) {
-      this.comerEventService.getDataTpEvents(Number(id_evento)).subscribe({
-        next: resp => {
-          if (!resp.cve_proceso) {
+      this.comerEventService
+        .getDataTpEvents(Number(id_evento.id_evento))
+        .subscribe({
+          next: resp => {
+            if (!resp.cve_proceso) {
+              this.alert(
+                'warning',
+                'El evento no existe, debe crear un evento antes de emitir una factura',
+                ''
+              );
+              this.valEvent = false;
+              this.getLoteByEvent(new ListParams());
+              return;
+            }
+
+            this.billingForm
+              .get('processKey')
+              .patchValue(resp.cve_proceso ?? '');
+            this.billingForm
+              .get('tpprocessKey')
+              .patchValue(resp.cve_procesotp ?? '');
+            this.billingForm
+              .get('eventDate')
+              .patchValue(
+                resp.fec_evento
+                  ? resp.fec_evento.split('T')[0].split('-').reverse().join('/')
+                  : ''
+              );
+            this.billingForm.get('tpevent').patchValue(resp.tpevento ?? '');
+            this.getLoteByEvent(new ListParams());
+            this.valEvent = true;
+          },
+          error: () => {
             this.alert(
               'warning',
-              'El evento no existe, debe crear un evento antes de emitir una factura',
+              'No existe la información para el evento seleccionado, no podra emitir una factura',
               ''
             );
             this.valEvent = false;
             this.getLoteByEvent(new ListParams());
-            return;
-          }
-
-          this.billingForm.get('processKey').patchValue(resp.cve_proceso ?? '');
-          this.billingForm
-            .get('tpprocessKey')
-            .patchValue(resp.cve_procesotp ?? '');
-          this.billingForm
-            .get('eventDate')
-            .patchValue(
-              resp.fec_evento
-                ? resp.fec_evento.split('T')[0].split('-').reverse().join('/')
-                : ''
-            );
-          this.billingForm.get('tpevent').patchValue(resp.tpevento ?? '');
-          this.getLoteByEvent(new ListParams());
-          this.valEvent = true;
-        },
-        error: () => {
-          this.alert(
-            'warning',
-            'No existe la información para el evento seleccionado, no podra emitir una factura',
-            ''
-          );
-          this.valEvent = false;
-          this.getLoteByEvent(new ListParams());
-        },
-      });
+          },
+        });
     }
   }
 
@@ -1165,7 +1176,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     } else if (causerebillId) {
       if (this.refactureTemp == 'R') {
         // -- CREA OTRA FACTURA SIN FOLIO Y CANCELA LA ACTUAL
-        this.cancelComerInovice();
+
         this.btnLoading4 = true;
         CF_LEYENDA = `CANCELA Y SUSTITUYE A LA FACTURA ${series} - ${Invoice}`;
 
@@ -1187,6 +1198,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
         CF_NUEVAFACT = await this.copyInovice(body);
 
         if (CF_NUEVAFACT > 0) {
+          this.cancelComerInovice();
           this.alert('success', 'Factura Cancelada', 'Procesado Correctamente');
 
           const dataUpdate = this.billingForm.value;
