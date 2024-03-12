@@ -212,4 +212,8 @@ export class ComerEventosService extends HttpService {
   pupGenLcsMasiv(body: any) {
     return this.post(EventEndpoints.PupGenLcsMasiv, body);
   }
+
+  getByIdComerTevents(id: string | number) {
+    return this.get(`${EventEndpoints.ComerTevents}/${id}`);
+  }
 }
