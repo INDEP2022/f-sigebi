@@ -72,11 +72,11 @@ export class ValuedTableComponent
         },
         error: error => {
           if (error.status == 400) {
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para realizar el oficio de respuesta'
-            );
+            // this.alert(
+            //   'warning',
+            //   'Advertencia',
+            //   'No hay bienes para realizar el oficio de respuesta'
+            // );
           }
           this.notGetData();
         },

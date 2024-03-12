@@ -5,13 +5,13 @@
     </div>
   </div>
   <div body>
-    <div class="d-flex justify-content-end">
+    <!-- <div class="d-flex justify-content-end">
       <div class="ml-auto" style="margin-top: -20px">
         <p class="font-weight-bold" style="border-bottom: 1px solid black">
           {{ dateNow | date : 'dd/MM/yyyy - HH:mm:ss' }}
         </p>
       </div>
-    </div>
+    </div> -->
     <div class="d-flex justify-content-center mb-3" style="margin-top: -20px">
       <h3>
         <span id="lblTipoAccOficio">{{ lblTipoAccOficio }}</span>
@@ -21,6 +21,7 @@
         <small>
           <span id="lblCvlOfocio">{{ lblCvlOfocio }}</span>
         </small>
+        <span id="lblDireccion">{{ statusOffice }}</span>
       </h3>
     </div>
 
@@ -231,14 +232,17 @@
     </div>
     <br />
     <!--  -->
-    <div class="d-flex justify-content-end">
-      <div class="ml-auto">
+    <div class="row">
+      <div class="col-md-12">
         <button class="btn btn-danger btn-sm active" (click)="reset()">
           Limpiar <i class="fas fa-eraser"> </i>
         </button>
       </div>
     </div>
-    <div class="row mb-3">
+    <br />
+    <br />
+
+    <div class="row mb-3" *ngIf="statusOffice == 'ENVIADO' && tipoOficio == 2">
       <div class="col-md-12 p-3">
         <div class="table-responsive">
           <div [class]="loading ? 'table-loading' : ''">
@@ -257,7 +261,7 @@
     <!--  -->
     <!-- <app-valued-table [body]="body1" [settings1]="settings"></app-valued-table> -->
     <!--  -->
-    <div class="row">
+    <div class="row" *ngIf="statusOffice == 'ENVIADO' && tipoOficio == 3">
       <div class="col-md-12 p-3">
         <div class="table-responsive">
           <div [class]="loading ? 'table-loading' : ''">
@@ -281,7 +285,7 @@
       [showModalCambioRev]="showModalCambioRev"></app-cancel-table>
     <!--  -->
     <div>
-      <div>
+      <div class="row">
         <form class="form-material" [formGroup]="formTwo">
           <!--  -->
           <div class="row" *ngIf="pnlControles2">
@@ -305,7 +309,7 @@
             </div>
           </div>
           <!--  -->
-          <div class="row mb-3">
+          <div class="row mb-3" *ngIf="statusOffice != 'ENVIADO'">
             <div class="col-md-4">
               <button
                 class="btn btn-success btn-sm active"
@@ -366,7 +370,7 @@
                   </div> -->
           <!--  -->
           <!--  -->
-          <div>
+          <div *ngIf="statusOffice != 'ENVIADO'">
             <app-card [header]="true">
               <div header>
                 <div class="ch-content">
