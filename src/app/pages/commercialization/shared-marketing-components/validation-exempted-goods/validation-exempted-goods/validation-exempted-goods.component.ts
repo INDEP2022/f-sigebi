@@ -15,8 +15,10 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IPupGoodTrackerFComerGood } from 'src/app/core/models/catalogs/package.model';
+import { IGoodsTransAva } from 'src/app/core/models/ms-good/goods-trans-ava.model';
 import { BankMovementType } from 'src/app/core/services/ms-bank-movement/bank-movement.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -61,7 +63,8 @@ export class ValidationExemptedGoodsComponent
     private modalService: BsModalService,
     private router: Router,
     private processService: BankMovementType,
-    private massiveGoodService: MassiveGoodService
+    private massiveGoodService: MassiveGoodService,
+    private lotService: LotService
   ) {
     super();
   }
@@ -100,6 +103,36 @@ export class ValidationExemptedGoodsComponent
           }
         },
       });
+  }
+
+  deleteGood(e) {
+    console.log(e);
+    const data = e.data;
+
+    const bodyDelete: IGoodsTransAva = {
+      goodNumber: data.goodNumber.id,
+      process: data.process,
+      registryNumber: data.registryNumber,
+    };
+
+    this.goodService.deleteTransAva(bodyDelete).subscribe(
+      res => {
+        this.alert(
+          'success',
+          'Registro eliminado',
+          `Se eliminó el bien ${bodyDelete.goodNumber}, con proceso ${bodyDelete.process} y número de registro ${bodyDelete.registryNumber}`
+        );
+        this.getData();
+      },
+      err => {
+        console.log(err);
+        this.alert(
+          'error',
+          'Se presentó un error inesperado',
+          'Intentelo nuevamente'
+        );
+      }
+    );
   }
 
   navigateTable() {
@@ -246,4 +279,21 @@ export class ValidationExemptedGoodsComponent
       }
     );
   }
+
+  onFileChange(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    const formData = new FormData();
+  }
+
+  /* CARGA_BIENES_EXCEL(file: File) {
+    const filename = file.name;
+    const ext = filename.substring(filename.lastIndexOf('.') + 1) ?? '';
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.httpClient.post<any>(
+      `${this._url}massivegood/${this._prefix}application/load-good-excel`,
+      formData
+    );
+  } */
 }

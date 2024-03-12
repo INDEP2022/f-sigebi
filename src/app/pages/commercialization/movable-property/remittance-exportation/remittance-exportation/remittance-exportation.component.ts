@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { FileSaverService } from 'src/app/common/services/file-saver.service';
@@ -67,11 +67,11 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      rangeDate: [null, [Validators.required, maxDate(new Date())]],
-      coordination: [null, [Validators.required]],
-      opcion: [null, [Validators.required]],
-      goods: [null, [Validators.required]],
-      event: ['', [Validators.required]],
+      rangeDate: [null, [maxDate(new Date())]],
+      coordination: [null, []],
+      opcion: [null, []],
+      goods: [null, []],
+      event: ['', []],
       check1: [null],
       check2: [null],
     });

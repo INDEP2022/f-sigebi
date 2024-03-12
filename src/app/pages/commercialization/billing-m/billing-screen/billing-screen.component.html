@@ -65,12 +65,6 @@
                                 keepDatepickerOpened: true
                               }"
                               formControlName="date" />
-                            <!-- <input
-                              type="text"
-                              class="form-control"
-                              formControlName="date"
-                              bsDatepicker
-                              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" /> -->
                           </form-field>
                         </div>
                       </div>
@@ -309,16 +303,8 @@
                               label="Causa"
                               (fetchItems)="getCauses($event)">
                             </ngx-select>
-                            <!-- <input [readonly]="!disabledCause" type="text" class="form-control"
-                              formControlName="cause" /> -->
                           </form-field>
                         </div>
-                        <!-- <div class="col-md-6">
-                          <form-field *ngIf="disabledDescause" [control]="form.get('descause')" label="Causa">
-                            <input [readonly]="!disabledDescause" type="text" class="form-control"
-                              formControlName="descause" />
-                          </form-field>
-                        </div> -->
                         <div class="col-md-2">
                           <button
                             *ngIf="disabledRegCanc"
@@ -334,44 +320,62 @@
                 </accordion>
               </div>
             </app-card>
-            <app-card [header]="false" [footer]="true">
+            <app-card [header]="true" [footer]="true">
+              <div class="ch-content" header>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h5 class="title">FACTURAS</h5>
+                  </div>
+                </div>
+              </div>
               <div class="row" body>
-                <div class="ch-content" header>
-                  <div
-                    class="d-flex justify-content-between align-items-center">
-                    <div>
-                      <h5 class="title">FACTURAS</h5>
+                <div class="col-12">
+                  <div class="row text-end justify-content-end">
+                    <div
+                      class="col-md-4 text-end d-flex flex-row-reverse mb-3 mt-3">
+                      <app-columns-select
+                        [defaultColumns]="8"
+                        [(settings)]="settings"></app-columns-select>
+                      <div>
+                        <button
+                          class="btn btn-danger btn-sm active mr-3 ml-3"
+                          (click)="resetTable()"
+                          tooltip="Limpia las tablas y sus filtros"
+                          containerClass="tooltip-style">
+                          Limpiar Tabla
+                          <i class="fas fa-eraser"> </i>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div class="row text-end justify-content-end">
-                  <div
-                    class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
-                    <app-columns-select
-                      [defaultColumns]="8"
-                      [(settings)]="settings"></app-columns-select>
-                  </div>
-                </div>
                 <div class="col-12">
-                  <form-loader *ngIf="loading"></form-loader>
-                  <ng-scrollbar
-                    [track]="'all'"
-                    [ngStyle]="{ height: loading ? '0px' : '400px' }">
-                    <ng2-smart-table
-                      #myTable
-                      [attr.class]="''"
-                      [settings]="settings"
-                      [source]="data"
-                      (edit)="edit($event)"
-                      (userRowSelect)="rowsSelected($event)">
-                    </ng2-smart-table>
-                  </ng-scrollbar>
-                  <app-pagination
-                    [params]="params"
-                    [limit]="limit"
-                    [pageSizeOptions]="[500]"
-                    [totalItems]="totalItems">
-                  </app-pagination>
+                  <div class="row pt-3">
+                    <form-loader *ngIf="loading"></form-loader>
+                    <div>
+                      <ng2-smart-table
+                        #myTable
+                        [ngStyle]="{
+                          height: loading
+                            ? '0px'
+                            : totalItems > 10
+                            ? '600px'
+                            : 'auto'
+                        }"
+                        [attr.class]="'table-bordered table-responsive mb-4'"
+                        [settings]="settings"
+                        [source]="data"
+                        (edit)="edit($event)"
+                        (userRowSelect)="rowsSelected($event)">
+                      </ng2-smart-table>
+                    </div>
+                    <app-pagination
+                      [params]="params"
+                      [limit]="limit"
+                      [pageSizeOptions]="[500]"
+                      [totalItems]="totalItems">
+                    </app-pagination>
+                  </div>
                 </div>
               </div>
               <div footer>
@@ -637,16 +641,15 @@
                 </accordion>
               </div>
             </app-card>
-            <app-card [header]="false" [footer]="false">
-              <div class="row" body>
-                <div class="ch-content" header>
-                  <div
-                    class="d-flex justify-content-between align-items-center">
-                    <div>
-                      <h5 class="title">DETALLE DE LA FACTURA</h5>
-                    </div>
+            <app-card [header]="true" [footer]="false">
+              <div class="ch-content" header>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h5 class="title">DETALLE DE LA FACTURA</h5>
                   </div>
                 </div>
+              </div>
+              <div class="row" body>
                 <div class="row text-end justify-content-end">
                   <div
                     class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
@@ -674,16 +677,20 @@
                 </div>
                 <div class="col-12">
                   <form-loader *ngIf="loading2"></form-loader>
-                  <ng-scrollbar
-                    [track]="'all'"
-                    [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
-                    <ng2-smart-table
-                      (edit)="editDetalleFact($event)"
-                      [attr.class]="''"
-                      [settings]="settings2"
-                      [source]="data2">
-                    </ng2-smart-table>
-                  </ng-scrollbar>
+                  <ng2-smart-table
+                    [ngStyle]="{
+                      height: loading2
+                        ? '0px'
+                        : totalItems2 > 10
+                        ? '600px'
+                        : 'auto'
+                    }"
+                    (edit)="editDetalleFact($event)"
+                    [attr.class]="'table-bordered table-responsive mb-4'"
+                    [settings]="settings2"
+                    [source]="data2">
+                  </ng2-smart-table>
+
                   <app-pagination
                     [params]="params2"
                     [totalItems]="totalItems2"
@@ -770,11 +777,9 @@
                 </div>
                 <div class="col-12">
                   <form-loader *ngIf="loading5"></form-loader>
-                  <ng-scrollbar
-                    [track]="'all'"
-                    [ngStyle]="{ height: loading5 ? '0px' : '400px' }">
+                  <ng-scrollbar [track]="'all'">
                     <ng2-smart-table
-                      [attr.class]="''"
+                      [attr.class]="'table-bordered table-responsive mb-4'"
                       [settings]="settings5"
                       [source]="data5">
                     </ng2-smart-table>

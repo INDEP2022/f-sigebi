@@ -22,6 +22,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
+            (delete)="deleteGood($event)"
             [source]="goods">
           </ng2-smart-table>
           <app-pagination [filterParams]="params" [totalItems]="totalItems">
@@ -52,10 +53,21 @@
           (click)="goToGoodTracker()">
           Insertar via rastreador
         </button>
-        <button type="button" class="btn btn-sm btn-success active mr-3">
+        <button
+          class="btn btn-success btn-sm mr-3"
+          type="button"
+          (click)="file.click()">
           Insertar via archivo plano
           <i class="bi bi-file-earmark-excel-fill"></i>
         </button>
+        <input
+          type="file"
+          name="file"
+          #file
+          class="d-none"
+          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+          (change)="onFileChange($event)" />
+
         <button type="button" class="btn btn-primary active btn-sm mr-3">
           Copia proceso
         </button>

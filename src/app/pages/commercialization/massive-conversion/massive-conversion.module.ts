@@ -8,6 +8,8 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { BatchSharedComponent } from 'src/app/@standalone/shared-forms/batch-shared/batch-shared.component';
 import { CustomSelectComponent } from 'src/app/@standalone/shared-forms/custom-select/custom-select.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { ComerClientsTableComponent } from './comer-clients-table/comer-clients-table.component';
+import { ComerLotesTableComponent } from './comer-lotes-table/comer-lotes-table.component';
 import { AddLcModalComponent } from './components/add-lc-modal/add-lc-modal.component';
 import { TableCheckPortalDialogComponent } from './components/table-check-portal-dialog/table-check-portal-dialog.component';
 import { TableCheckboxComponent } from './components/table-checkbox/table-checkbox.component';
@@ -20,6 +22,8 @@ import { MassiveConversionRoutingModule } from './massive-conversion-routing.mod
     TableCheckboxComponent,
     AddLcModalComponent,
     TableCheckPortalDialogComponent,
+    ComerClientsTableComponent,
+    ComerLotesTableComponent,
   ],
   imports: [
     CommonModule,

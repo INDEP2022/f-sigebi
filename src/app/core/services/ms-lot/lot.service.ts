@@ -522,4 +522,8 @@ export class LotService extends HttpService {
   getAppsExportExcelComerFacturas(body) {
     return this.post(LotEndpoints.AppsExportExcelComerFacturas, body);
   }
+
+  pupStateFlat(body: FormData) {
+    return this.post('apps/pup-estate-flat', body);
+  }
 }
