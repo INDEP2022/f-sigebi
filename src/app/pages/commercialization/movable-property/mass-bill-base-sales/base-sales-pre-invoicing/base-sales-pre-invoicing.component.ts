@@ -389,9 +389,9 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       this.totalItems = 0;
       this.dataFilter.load([]);
       this.dataFilter.refresh();
-      this.form.get('price').patchValue(null);
-      this.form.get('ivaT').patchValue(null);
-      this.form.get('total').patchValue(null);
+      this.form.get('price').patchValue(0);
+      this.form.get('ivaT').patchValue(0);
+      this.form.get('total').patchValue(0);
 
       delete this.paramsList.getValue()['filter.eventId'];
     } else {
@@ -476,9 +476,9 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       iva: [0],
       date: [null],
       causerebillId: [null],
-      price: [null],
-      ivaT: [null],
-      total: [null],
+      price: [0],
+      ivaT: [0],
+      total: [0],
       userV: [null, Validators.required],
       passwordV: [null],
       order: [null],
@@ -1821,5 +1821,29 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       });
     }
     return val;
+  }
+
+  async resetTable() {
+    // this.params = new BehaviorSubject<ListParams>(new ListParams());
+    this.loading = true;
+    this.paramsList.getValue()['filter.tpevent'] = `${SearchFilter.EQ}:${11}`;
+    this.paramsList.getValue()['sortBy'] = 'batchId,eventId:ASC';
+    this.paramsList.getValue().limit = 500;
+    this.paramsList.getValue().pageSize = 500;
+    this.paramsList.getValue().take = 500;
+    this.dataFilter.getFilter().filters = [];
+    this.dataFilter.refresh();
+
+    this.dataFilter.load([]);
+    this.dataFilter.refresh();
+
+    this.totalItems = 0;
+
+    // this.resetInput();
+    this.form.get('price').patchValue(0);
+    this.form.get('ivaT').patchValue(0);
+    this.form.get('total').patchValue(0);
+
+    this.loading = false;
   }
 }

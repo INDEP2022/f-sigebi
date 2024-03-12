@@ -263,6 +263,7 @@
             [active]="tab3Active">
             <div class="row">
               <div class="col-sm-2 col-md-2">
+                <<<<<<< HEAD
                 <i
                   class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
                 <h5 class="font-size-14 mb-2 d-inline">Evento</h5>
@@ -278,30 +279,47 @@
               <div class="col-sm-2 col-md-2">
                 <i
                   class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                =======
+                <h5 class="font-size-14 mb-2 d-inline">Evento</h5>
+                <p class="text-muted">{{ ID_EVENTO }}</p>
+              </div>
+
+              <div class="col-sm-2 col-md-2">
+                <h5 class="font-size-14 mb-2 d-inline">Cve. Proceso</h5>
+                <p class="text-muted">{{ CVE_PROCESO }}</p>
+              </div>
+              <div class="col-sm-2 col-md-2">
+                >>>>>>> 4e597070d707fe7ad3d5f1f1e431f06478bbab1f
                 <h5 class="font-size-14 mb-2 d-inline">Fecha Evento</h5>
                 <p class="text-muted">
                   {{ FECHA_EVENTO }}
                 </p>
               </div>
               <div class="col-sm-2 col-md-2">
+                <<<<<<< HEAD
                 <i
                   class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                ======= >>>>>>> 4e597070d707fe7ad3d5f1f1e431f06478bbab1f
                 <h5 class="font-size-14 mb-2 d-inline">Lugar</h5>
                 <p class="text-muted">
                   {{ LUGAR }}
                 </p>
               </div>
               <div class="col-sm-2 col-md-2">
+                <<<<<<< HEAD
                 <i
                   class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                ======= >>>>>>> 4e597070d707fe7ad3d5f1f1e431f06478bbab1f
                 <h5 class="font-size-14 mb-2 d-inline">Fecha Fallo</h5>
                 <p class="text-muted">
                   {{ FEC_FALLO }}
                 </p>
               </div>
               <div class="col-sm-2 col-md-2">
+                <<<<<<< HEAD
                 <i
                   class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                ======= >>>>>>> 4e597070d707fe7ad3d5f1f1e431f06478bbab1f
                 <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
                 <p class="text-muted">
                   {{ ID_ESTATUSVTA }}
@@ -309,6 +327,42 @@
               </div>
             </div>
 
+            <<<<<<< HEAD =======
+            <div class="row">
+              <div class="col-sm-2 col-md-2">
+                <h5 class="font-size-14 mb-2 d-inline">ID_TPEVENTO</h5>
+                <p class="text-muted">
+                  {{ ID_TPEVENTO }}
+                </p>
+              </div>
+
+              <div class="col-sm-2 col-md-2">
+                <h5 class="font-size-14 mb-2 d-inline">DIRECCIÓN</h5>
+                <p class="text-muted">
+                  {{ DIRECCION }}
+                </p>
+              </div>
+
+              <!-- <div class="col-sm-2 col-md-2">
+              
+                <h5 class="font-size-14 mb-2 d-inline">ID_ESTATUSVTA</h5>
+                <p class="text-muted">
+                  {{ID_ESTATUSVTA}}
+                </p>
+              </div> -->
+
+              <div class="col-sm-2 col-md-2">
+                <h5 class="font-size-14 mb-2 d-inline">ID_TIPO_DISP</h5>
+                <p class="text-muted">{{ ID_TIPO_DISP }}</p>
+              </div>
+
+              <div class="col-sm-2 col-md-2">
+                <h5 class="font-size-14 mb-2 d-inline">ID_TIPO_FALLO</h5>
+                <p class="text-muted">{{ ID_TIPO_FALLO }}</p>
+              </div>
+            </div>
+
+            >>>>>>> 4e597070d707fe7ad3d5f1f1e431f06478bbab1f
             <div class="row pt-5">
               <h5 class="title">
                 Líneas de Captura para el evento: {{ ID_EVENTO }}
@@ -323,7 +377,6 @@
                 </div>
                 <div>
                   <button
-                    [disabled]="isLoadingExportFile"
                     class="btn btn-sm btn-primary active me-2 font-size-14"
                     (click)="rework()">
                     Ingresar a reproceso
@@ -338,12 +391,24 @@
                   [settings]="reprocessSettings"
                   [source]="reprocessSource">
                 </ng2-smart-table>
-              </div>
 
-              <app-pagination
-                [params]="reprocessParams"
-                [totalItems]="reprocessTotalItems">
-              </app-pagination>
+                <div class="d-flex justify-content-end pt-3">
+                  <div class="col-sm-2 col-md-2">
+                    <h5 class="font-size-14 mb-2 d-inline">Total</h5>
+                    <p class="text-muted">{{ totalQuantity }}</p>
+                  </div>
+
+                  <div class="col-sm-1 col-md-1">
+                    <h5 class="font-size-14 mb-2 d-inline">Registros</h5>
+                    <p class="text-muted">{{ reprocessTotalItems }}</p>
+                  </div>
+                </div>
+
+                <app-pagination
+                  [params]="reprocessParams"
+                  [totalItems]="reprocessTotalItems">
+                </app-pagination>
+              </div>
             </div>
           </tab>
         </tabset>

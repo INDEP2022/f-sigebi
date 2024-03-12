@@ -913,4 +913,9 @@ export class GoodService extends HttpService {
     const route = `${GoodEndpoints.GoodsTransAva}`;
     return this.post(route, body);
   }
+
+  deleteTransAva(body: IGoodsTransAva) {
+    const route = `${GoodEndpoints.GoodsTransAva}`;
+    return this.delete(route, body);
+  }
 }

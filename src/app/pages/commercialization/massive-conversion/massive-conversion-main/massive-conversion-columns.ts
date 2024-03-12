@@ -58,8 +58,22 @@ export const SETTING_DATA = {
     },
     amount: {
       title: 'Monto',
-      type: 'number',
+      type: 'string',
       sort: false,
+      valuePrepareFunction: (amount: string) => {
+        const numericAmount = parseFloat(amount);
+
+        if (!isNaN(numericAmount)) {
+          return numericAmount.toLocaleString('en-US', {
+            // style: 'currency',
+            // currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+        } else {
+          return amount;
+        }
+      },
     },
     validityDate: {
       title: 'Fecha Vigencia',
@@ -209,8 +223,22 @@ export const SETTING_LCS = {
     },
     amount: {
       title: 'Monto',
-      type: 'number',
+      type: 'string',
       sort: false,
+      valuePrepareFunction: (amount: string) => {
+        const numericAmount = parseFloat(amount);
+
+        if (!isNaN(numericAmount)) {
+          return numericAmount.toLocaleString('en-US', {
+            // style: 'currency',
+            // currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+        } else {
+          return amount;
+        }
+      },
     },
     refGsae: {
       title: 'Ref. Gsae',
@@ -244,6 +272,83 @@ export const SETTING_LCS = {
       title: 'Estatus',
       type: 'string',
       sort: false,
+      valuePrepareFunction: (cell: any, _row: any) => {
+        switch (cell) {
+          case 'PAG':
+            return 'PAGADA';
+          case 'GARA':
+            return 'EN GARANTIA';
+          case 'CAN':
+            return 'CANCELADO';
+          case 'PREP':
+            return 'EN PREPARACION';
+          case 'DES':
+            return 'DESIERTO';
+          case 'APRO':
+            return 'APROBADO';
+          case 'CONC':
+            return 'CONCILIADO A SIRSAE';
+          case 'NDIS':
+            return 'NO DISPONIBLE';
+          case 'CNE':
+            return 'CONVERTIDO A NUMERARIO';
+          case 'ACT':
+            return 'EVENTO PUBLICO ACTUALIZADO';
+          case 'GEN':
+            return 'GENERADA';
+          case 'CON1':
+            return 'CONCILIADO A SIRSAE PRIMERA FASE';
+          case 'CON2':
+            return 'CONCILIADO A SIRSAE SEGUNDA FASE';
+          case 'ETP':
+            return 'ETAPA DE PAGO EXTEMPORANEO';
+          case 'PAGE':
+            return 'PAGADO EN TIEMPO EXTEMPORANEO';
+          case 'CANC':
+            return 'CANCELADO POR COMERCIALIZACION';
+          case 'CDEV':
+            return 'CANCELADO POR DEVOLUCION';
+          case 'CAE':
+            return 'CANCELADO POR PAGO EN EFECTIVO';
+          case 'EFE':
+            return 'PAGO EN EFECTIVO';
+          case 'CANV':
+            return 'CANCELADO POR VALUACION';
+          case 'PG43':
+            return 'CANCELACION PARCIAL 43 POBALINES';
+          default:
+            return 'S/D';
+        }
+      },
+      filter: {
+        type: 'list',
+        config: {
+          selectText: 'Seleccionar',
+          list: [
+            { value: 'PAG', title: 'PAGADA' },
+            { value: 'GARA', title: 'EN GARANTIA' },
+            { value: 'CAN', title: 'CANCELADO' },
+            { value: 'PREP', title: 'EN PREPARACION' },
+            { value: 'DES', title: 'DESIERTO' },
+            { value: 'APRO', title: 'APROBADO' },
+            { value: 'CONC', title: 'CONCILIADO A SIRSAE' },
+            { value: 'NDIS', title: 'NO DISPONIBLE' },
+            { value: 'CNE', title: 'CONVERTIDO A NUMERARIO' },
+            { value: 'ACT', title: 'EVENTO PUBLICO ACTUALIZADO' },
+            { value: 'GEN', title: 'GENERADA' },
+            { value: 'CON1', title: 'CONCILIADO A SIRSAE PRIMERA FASE' },
+            { value: 'CON2', title: 'CONCILIADO A SIRSAE SEGUNDA FASE' },
+            { value: 'ETP', title: 'ETAPA DE PAGO EXTEMPORANEO' },
+            { value: 'PAGE', title: 'PAGADO EN TIEMPO EXTEMPORANEO' },
+            { value: 'CANC', title: 'CANCELADO POR COMERCIALIZACION' },
+            { value: 'CDEV', title: 'CANCELADO POR DEVOLUCION' },
+            { value: 'CAE', title: 'CANCELADO POR PAGO EN EFECTIVO' },
+            { value: 'EFE', title: 'PAGO EN EFECTIVO' },
+            { value: 'CANV', title: 'CANCELADO POR VALUACION' },
+            { value: 'PG43', title: 'CANCELACION PARCIAL 43 POBALINES' },
+          ],
+        },
+      },
     },
     dateRecord: {
       title: 'Fecha Registro',
@@ -313,9 +418,23 @@ export const SETTING_RFC = {
       sort: false,
     },
     amount: {
-      title: 'Monto',
+      title: 'string',
       type: 'number',
       sort: false,
+      valuePrepareFunction: (amount: string) => {
+        const numericAmount = parseFloat(amount);
+
+        if (!isNaN(numericAmount)) {
+          return numericAmount.toLocaleString('en-US', {
+            // style: 'currency',
+            // currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+        } else {
+          return amount;
+        }
+      },
     },
     palette: {
       title: 'Paleta',
@@ -387,8 +506,22 @@ export const SETTING_CLIENT_ID = {
     },
     amount: {
       title: 'Monto',
-      type: 'number',
+      type: 'string',
       sort: false,
+      valuePrepareFunction: (amount: string) => {
+        const numericAmount = parseFloat(amount);
+
+        if (!isNaN(numericAmount)) {
+          return numericAmount.toLocaleString('en-US', {
+            // style: 'currency',
+            // currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+        } else {
+          return amount;
+        }
+      },
     },
     palette: {
       title: 'Paleta',
@@ -522,13 +655,18 @@ export const SETTING_REPROCESS = {
         component: CustomDateFilterComponent,
       },*/
       valuePrepareFunction: (date?: Date) => {
-        var raw = new Date(date);
-        var formatted = new DatePipe('en-EN').transform(
-          raw,
-          'dd/MM/yyyy',
-          'UTC'
-        );
-        return formatted;
+        if (date) {
+          var raw = new Date(date);
+          var formatted = new DatePipe('en-EN').transform(
+            raw,
+            'dd/MM/yyyy',
+            'UTC'
+          );
+
+          return formatted;
+        } else {
+          return '';
+        }
       },
     },
     palletteNumber: {
@@ -553,8 +691,22 @@ export const SETTING_REPROCESS = {
     },*/
     amount: {
       title: 'Monto',
-      type: 'number',
+      type: 'string',
       sort: false,
+      valuePrepareFunction: (amount: string) => {
+        const numericAmount = parseFloat(amount);
+
+        if (!isNaN(numericAmount)) {
+          return numericAmount.toLocaleString('en-US', {
+            // style: 'currency',
+            // currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+        } else {
+          return amount;
+        }
+      },
     },
     /*PALETA: {
       title: 'Paleta',
@@ -608,6 +760,83 @@ export const SETTING_REPROCESS = {
       title: 'Estatus',
       type: 'string',
       sort: false,
+      valuePrepareFunction: (cell: any, _row: any) => {
+        switch (cell) {
+          case 'PAG':
+            return 'PAGADA';
+          case 'GARA':
+            return 'EN GARANTIA';
+          case 'CAN':
+            return 'CANCELADO';
+          case 'PREP':
+            return 'EN PREPARACION';
+          case 'DES':
+            return 'DESIERTO';
+          case 'APRO':
+            return 'APROBADO';
+          case 'CONC':
+            return 'CONCILIADO A SIRSAE';
+          case 'NDIS':
+            return 'NO DISPONIBLE';
+          case 'CNE':
+            return 'CONVERTIDO A NUMERARIO';
+          case 'ACT':
+            return 'EVENTO PUBLICO ACTUALIZADO';
+          case 'GEN':
+            return 'GENERADA';
+          case 'CON1':
+            return 'CONCILIADO A SIRSAE PRIMERA FASE';
+          case 'CON2':
+            return 'CONCILIADO A SIRSAE SEGUNDA FASE';
+          case 'ETP':
+            return 'ETAPA DE PAGO EXTEMPORANEO';
+          case 'PAGE':
+            return 'PAGADO EN TIEMPO EXTEMPORANEO';
+          case 'CANC':
+            return 'CANCELADO POR COMERCIALIZACION';
+          case 'CDEV':
+            return 'CANCELADO POR DEVOLUCION';
+          case 'CAE':
+            return 'CANCELADO POR PAGO EN EFECTIVO';
+          case 'EFE':
+            return 'PAGO EN EFECTIVO';
+          case 'CANV':
+            return 'CANCELADO POR VALUACION';
+          case 'PG43':
+            return 'CANCELACION PARCIAL 43 POBALINES';
+          default:
+            return 'S/D';
+        }
+      },
+      filter: {
+        type: 'list',
+        config: {
+          selectText: 'Seleccionar',
+          list: [
+            { value: 'PAG', title: 'PAGADA' },
+            { value: 'GARA', title: 'EN GARANTIA' },
+            { value: 'CAN', title: 'CANCELADO' },
+            { value: 'PREP', title: 'EN PREPARACION' },
+            { value: 'DES', title: 'DESIERTO' },
+            { value: 'APRO', title: 'APROBADO' },
+            { value: 'CONC', title: 'CONCILIADO A SIRSAE' },
+            { value: 'NDIS', title: 'NO DISPONIBLE' },
+            { value: 'CNE', title: 'CONVERTIDO A NUMERARIO' },
+            { value: 'ACT', title: 'EVENTO PUBLICO ACTUALIZADO' },
+            { value: 'GEN', title: 'GENERADA' },
+            { value: 'CON1', title: 'CONCILIADO A SIRSAE PRIMERA FASE' },
+            { value: 'CON2', title: 'CONCILIADO A SIRSAE SEGUNDA FASE' },
+            { value: 'ETP', title: 'ETAPA DE PAGO EXTEMPORANEO' },
+            { value: 'PAGE', title: 'PAGADO EN TIEMPO EXTEMPORANEO' },
+            { value: 'CANC', title: 'CANCELADO POR COMERCIALIZACION' },
+            { value: 'CDEV', title: 'CANCELADO POR DEVOLUCION' },
+            { value: 'CAE', title: 'CANCELADO POR PAGO EN EFECTIVO' },
+            { value: 'EFE', title: 'PAGO EN EFECTIVO' },
+            { value: 'CANV', title: 'CANCELADO POR VALUACION' },
+            { value: 'PG43', title: 'CANCELACION PARCIAL 43 POBALINES' },
+          ],
+        },
+      },
     },
     recordDate: {
       title: 'Fecha Registro',
@@ -616,6 +845,12 @@ export const SETTING_REPROCESS = {
     },
     idTypeSat: {
       title: 'Tipo de Pago',
+      type: 'string',
+      sort: false,
+    },
+
+    extra: {
+      title: 'Extra de prueba',
       type: 'string',
       sort: false,
     },

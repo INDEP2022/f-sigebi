@@ -27,6 +27,8 @@ import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-e
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ComerClientsTableComponent } from '../comer-clients-table/comer-clients-table.component';
+import { ComerLotesTableComponent } from '../comer-lotes-table/comer-lotes-table.component';
 import { AddLcModalComponent } from '../components/add-lc-modal/add-lc-modal.component';
 import { TableCheckPortalDialogComponent } from '../components/table-check-portal-dialog/table-check-portal-dialog.component';
 import { TableCheckboxComponent } from '../components/table-checkbox/table-checkbox.component';
@@ -200,6 +202,9 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   LUGAR: string = '';
   FEC_FALLO: string = '';
   DESCRIPCION: string = '';
+
+  totalQuantity: string = '';
+  numSumValid: number = 0;
 
   constructor(
     private excelService: ExcelService,
@@ -449,6 +454,9 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     });
 
     this.validGenerateLCs = false;
+
+    this.numSumValid = 0;
+    this.validEventCount = false;
   }
 
   //ViewChild('dataSource') miTabla: Ng2SmartTableComponent;
@@ -464,6 +472,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     let fromButton = true;
     this.loadingBtn = true;
     this.count = 0;
+    this.numSumValid = 0;
     this.validEventCount = false;
 
     this.tabset.tabs.forEach((tab, i) => {
@@ -1100,10 +1109,15 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
         next: resp => {
           console.log('Evento en reproceso: ', resp);
           this.ID_TPEVENTO = resp.eventTpId;
-          this.DIRECCION = resp.address;
+
+          if (resp.address === 'I') {
+            this.DIRECCION = 'Inmueble';
+          } else if (resp.address === 'M') {
+            this.DIRECCION = 'Mueble';
+          } else {
+            this.DIRECCION = 'NA';
+          }
           this.ID_ESTATUSVTA = resp.statusVtaId;
-          //this.ID_TIPO_DISP= resp.eventTpId;
-          //this.ID_TIPO_FALLO= resp.eventTpId;
           this.ID_EVENTO = resp.id;
           this.CVE_PROCESO = resp.processKey;
           this.FECHA_EVENTO = resp.eventDate;
@@ -1134,6 +1148,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           );
 
           this.getDataReprocess();
+
+          this.enterReprocess(this.ID_TPEVENTO);
         },
         error: error => {
           console.log('Error Evento en reproceso: ', error);
@@ -1156,14 +1172,20 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: res => {
+          this.numSumValid = this.numSumValid + 1;
           if (fromButton) {
             this.alert('success', 'Lineas de Captura Encontradas', '');
           }
 
+          res.data['extra'] = 'prueba';
           this.reprocessSource.load(res.data);
           this.reprocessSource.refresh();
           this.reprocessTotalItems = res.count;
           this.isLoadingRep = false;
+
+          if (this.numSumValid == 1) {
+            this.sumaTotalAmount(res.count);
+          }
         },
         error: error => {
           if (fromButton) {
@@ -1180,6 +1202,57 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           this.isLoadingRep = false;
         },
       });
+  }
+
+  sumaTotalAmount(total: number) {
+    let params2 = {
+      ...this.reprocessParams.getValue(),
+    };
+    params2['filter.idEvent'] = `$eq:${this.form.controls['eventId'].value}`;
+    params2['limit'] = total;
+
+    this.guarantyService
+      .getComerRefGuarantees(params2)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: res => {
+          const totalQuantitys = res.data.reduce(
+            (acumulador, objeto, indice) => {
+              if (indice <= this.reprocessTotalItems) {
+                return acumulador + Number(objeto.amount);
+              } else {
+                return acumulador;
+              }
+            },
+            0
+          );
+
+          this.totalQuantity = totalQuantitys.toLocaleString('es-MX', {
+            style: 'currency',
+            currency: 'MXN',
+          });
+        },
+        error: error => {},
+      });
+  }
+
+  enterReprocess(idTpeEven: any) {
+    console.log('enterReprocess, ID', idTpeEven);
+
+    this.comerEventService.getByIdComerTevents(idTpeEven).subscribe({
+      next: resp => {
+        console.log('Coincidencia: ', resp);
+
+        this.ID_TIPO_DISP = resp.typeDispId;
+        this.ID_TIPO_FALLO = resp.typeFailedpId;
+      },
+      error: error => {
+        console.log('No hay coincidencia, se asignan por defecto: ', error);
+
+        this.ID_TIPO_DISP = '1';
+        this.ID_TIPO_FALLO = '5';
+      },
+    });
   }
 
   get eventId() {
@@ -1353,21 +1426,29 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   rework() {
-    this.alertQuestion(
-      'question',
-      '¿Desea continuar?',
-      'La siguiente operación reprocesará el evento',
-      'Sí'
-    ).then(question => {
-      if (question.isConfirmed) {
-        console.log(this.reworkEntries);
-        this.onLoadToast(
-          'success',
-          'Reproceso',
-          'El reproceso se ejecutó con éxito'
-        );
-      }
-    });
+    if (
+      this.ID_TIPO_DISP == '1' ||
+      this.ID_TIPO_DISP == '2' ||
+      this.ID_TIPO_DISP == '3'
+    ) {
+      let config: ModalOptions = {
+        initialState: {
+          callback: (data: any) => {},
+        }, //pasar datos por aca
+        class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+        ignoreBackdropClick: true, //ignora el click fuera del modal
+      };
+      this.modalService.show(ComerClientsTableComponent, config);
+    } else {
+      let config: ModalOptions = {
+        initialState: {
+          callback: (data: any) => {},
+        }, //pasar datos por aca
+        class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+        ignoreBackdropClick: true, //ignora el click fuera del modal
+      };
+      this.modalService.show(ComerLotesTableComponent, config);
+    }
   }
 
   exportExcel() {
