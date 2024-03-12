@@ -83,17 +83,19 @@ export class valuationRequestComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    // this.route.queryParams.subscribe(params => {
-    //   if (params['user']) {
-    //     this.user= params['user'];
-    //   }else{
-    //     this.user = localStorage.getItem('username');
-    //   }
-    //   if (params['idEvent']) {
-    //     this.event = params['idEvent'];
+    this.route.queryParams.subscribe(params => {
+      if (params['user']) {
+        this.user = params['user'];
+      } else {
+        this.user = localStorage.getItem('username');
+      }
+      if (params['event']) {
+        this.event = params['event'];
+        this.form.controls['event'].setValue(this.event);
+        this.getsContent();
+      }
+    });
     // this.getsContent();
-    //   }
-    // });
     // 23959- 23496 - 23972 - 6185
 
     this.activatedRoute.queryParams
@@ -103,9 +105,8 @@ export class valuationRequestComponent extends BasePage implements OnInit {
         this.event = params['event'];
       });
     this.user = localStorage.getItem('username');
-    this.event = 6185;
-    this.form.controls['event'].setValue(this.event);
-    this.getsContent();
+    // this.event = 6185;
+    // this.form.controls['event'].setValue(this.event);
   }
 
   private prepareForm() {
