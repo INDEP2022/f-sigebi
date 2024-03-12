@@ -12,7 +12,8 @@ import {
   styleUrls: ['./request-information-similar-goods.component.scss'],
 })
 export class RequestInformationSimilarGoodsComponent
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   toggleInfo: boolean = true;
   requestInfo: any;
   @Input() request: number | any;
@@ -23,12 +24,12 @@ export class RequestInformationSimilarGoodsComponent
   station: string = '';
   authority: string = '';
 
-  constructor() { }
+  constructor() {}
   ngOnChanges(changes: SimpleChanges): void {
     this.getRequestInfo();
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   getRequestInfo() {
     if (this.request) {

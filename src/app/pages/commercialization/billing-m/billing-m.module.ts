@@ -3,16 +3,17 @@ import { NgModule } from '@angular/core';
 
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { NgxCurrencyModule } from 'ngx-currency';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BillingMRoutingModule } from './billing-m-routing.module';
+import { AutorizacionComponent } from './billing-screen/autorizacion/autorizacion.component';
 import { BillingScreenComponent } from './billing-screen/billing-screen.component';
 import { ClientComponent } from './billing-screen/components-table/client/client.component';
 import { DatCancComponent } from './billing-screen/dat-canc/dat-canc.component';
 import { UpdateDetfacturaComponent } from './billing-screen/update-detfactura/update-detfactura.component';
 import { UpdateFacturaComponent } from './billing-screen/update-factura/update-factura.component';
-
 export const customCurrencyMaskConfig = {
   align: 'right',
   allowNegative: false,
@@ -32,6 +33,7 @@ export const customCurrencyMaskConfig = {
     UpdateFacturaComponent,
     ClientComponent,
     UpdateDetfacturaComponent,
+    AutorizacionComponent,
   ],
   imports: [
     CommonModule,
@@ -40,6 +42,7 @@ export const customCurrencyMaskConfig = {
     TabsModule,
     FormLoaderComponent,
     AccordionModule,
+    TooltipModule,
     NgxCurrencyModule.forRoot(customCurrencyMaskConfig),
   ],
 })

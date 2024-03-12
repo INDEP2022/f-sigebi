@@ -37,7 +37,8 @@ import { CLARIFICATION_COLUMNS } from './clarification-columns';
 })
 export class ClarificationListTabComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   @Input() good: any[];
   @Input() request: any;
   paragraphs: LocalDataSource = new LocalDataSource();

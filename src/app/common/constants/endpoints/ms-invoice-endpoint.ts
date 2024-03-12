@@ -107,4 +107,5 @@ export enum ENDPOINT_INVOICE {
   ApplicationPufVerifyAmounts = 'application/puf-verify-amounts',
   ApplicationPupStatusCan = 'application/pup-status-can',
   ApplicationPutProcess = 'application/putProcess',
+  ApplicationPupExportaNva = 'application/pup-exporta-nva',
 }

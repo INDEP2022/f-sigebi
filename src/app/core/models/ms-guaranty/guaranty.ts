@@ -26,6 +26,7 @@ export interface IComerRefGuarantees {
   comerEvent: ComerEvent;
   comerLots: ComerLots;
   comerPaymenttypecatSat: any;
+  extra?: string;
 }
 
 export interface ComerClient {

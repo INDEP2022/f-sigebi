@@ -191,7 +191,6 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   typedocuments(params: ListParams) {
-
     if (this.typesDocuments.length > 0) return;
 
     params['filter.ddescription'] = params['text'];
@@ -724,14 +723,13 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     }
 
     this.loading = false;
-
   }
 
   close() {
     this.modalRef.hide();
   }
 
-  handleSuccess() { }
+  handleSuccess() {}
 
   formatDate(startDate: Date): string {
     let year = startDate.getFullYear();

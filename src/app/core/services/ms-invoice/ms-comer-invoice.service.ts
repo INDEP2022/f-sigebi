@@ -143,7 +143,7 @@ export class ComerInvoiceService extends HttpService {
     return this.post(ENDPOINT_INVOICE.Fcomer112ICountHeader, params);
   }
 
-  generateFolio(data: { pEvent: string; ptpevento: string }) {
+  generateFolio(data: any) {
     return this.post(ENDPOINT_INVOICE.GenerateFolio, data);
   }
 
@@ -388,5 +388,8 @@ export class ComerInvoiceService extends HttpService {
 
   putApplicationPutProcess(data: any) {
     return this.put(ENDPOINT_INVOICE.ApplicationPutProcess, data);
+  }
+  postApplicationPupExportaNva(data: any) {
+    return this.post(ENDPOINT_INVOICE.ApplicationPupExportaNva, data);
   }
 }

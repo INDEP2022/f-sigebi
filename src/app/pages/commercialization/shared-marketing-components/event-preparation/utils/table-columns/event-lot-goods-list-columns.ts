@@ -4,16 +4,16 @@ export const EVENT_LOT_GOODS_LIST_COLUMNS = {
   bienes: {
     title: 'No. Bien',
     sort: false,
-    valuePrepareFunction: (good: any) => good?.id ?? '',
+    valuePrepareFunction: (good: any, row: any) => row?.goodNumber.id ?? '',
     filterFunction: (cell: any, search?: string) => {
       return true;
     },
   },
-  'bienes.description': {
+  'goodNumber.description': {
     title: 'Descripción',
     sort: false,
     valuePrepareFunction: (empty: any, row: any) =>
-      row.bienes?.description ?? '',
+      row.goodNumber?.description ?? '',
     filterFunction: (cell: any, search?: string) => {
       return true;
     },
@@ -22,18 +22,19 @@ export const EVENT_LOT_GOODS_LIST_COLUMNS = {
     title: 'Transferente',
     sort: false,
     filter: false,
-    valuePrepareFunction: (transfer: any) =>
-      transfer
-        ? `${transfer?.cvman ?? ''}-${transfer?.nameTransferent ?? ''}`
-        : null,
+    valuePrepareFunction: (transfer: any, row: any) =>
+      row?.transferNumber.cvman != null
+        ? row?.transferNumber.cvman
+        : row?.transferNumber.nameTransferent,
     filterFunction: (cell: any, search?: string) => {
       return true;
     },
   },
-  'bienes.status': {
+  'goodNumber.status': {
     title: 'Estatus',
     sort: false,
-    valuePrepareFunction: (empty: any, row: any) => row.bienes?.status ?? '',
+    valuePrepareFunction: (empty: any, row: any) =>
+      row.goodNumber?.status ?? '',
     filterFunction: (cell: any, search?: string) => {
       return true;
     },
@@ -42,11 +43,11 @@ export const EVENT_LOT_GOODS_LIST_COLUMNS = {
     title: 'Cantidad',
     sort: false,
   },
-  'bienes.appraisedValue': {
+  'goodNumber.appraisedValue': {
     title: 'Valor Avalúo',
     sort: false,
     valuePrepareFunction: (empty: any, row: any) =>
-      row.bienes?.appraisedValue ?? '',
+      row.goodNumber?.appraisedValue ?? '',
     filterFunction: (cell: any, search?: string) => {
       return true;
     },

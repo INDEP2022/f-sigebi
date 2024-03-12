@@ -115,17 +115,6 @@ export class AuthorizationSOIModalComponent extends BasePage implements OnInit {
     );
   }
 
-  // async getUserXCancel(user: string) {
-  //   const filter = new FilterParams();
-  //   filter.addFilter('user', user.toUpperCase(), SearchFilter.EQ);
-  //   return firstValueFrom(
-  //     this.userService.getUseXEvent(filter.getParams()).pipe(
-  //       map(resp => resp[0] ?? [{}]),
-  //       catchError(() => of([{}]))
-  //     )
-  //   );
-  // }
-
   async checkUser(user: string) {
     const filter = new FilterParams();
     filter.addFilter('user', user, SearchFilter.EQ);

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable, Subject, takeUntil } from 'rxjs';
 import {
   FilterParams,
@@ -13,6 +13,7 @@ import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BillingsService } from '../../services/services';
+import { AutorizacionComponent } from '../autorizacion/autorizacion.component';
 import { BillingCommunicationService } from '../communication/communication.services';
 
 @Component({
@@ -71,7 +72,8 @@ export class DatCancComponent extends BasePage implements OnDestroy, OnInit {
     private token: AuthService,
     private msInvoiceService: MsInvoiceService,
     private lotService: LotService,
-    private billingCommunicationService: BillingCommunicationService
+    private billingCommunicationService: BillingCommunicationService,
+    private modalService: BsModalService
   ) {
     super();
     this._unsubscribeAll = new Subject();
@@ -173,7 +175,6 @@ export class DatCancComponent extends BasePage implements OnDestroy, OnInit {
     this.params.getValue()['filter.vouchertype'] = `$eq:FAC`;
 
     let res = await this.enviarParams(this.params);
-    console.log(res);
     contador = 0;
     let n_CONP = 0;
     let l_BAF = false;
@@ -246,10 +247,10 @@ export class DatCancComponent extends BasePage implements OnDestroy, OnInit {
       '¿Desea ejecutar el proceso?'
     ).then(async question => {
       if (question.isConfirmed) {
-        this.valUser();
+        this.openAutorizacion();
       } else {
         this.btnLoading = false;
-        // this.modalRef.content.callback(false);
+        this.modalRef.content.callback(false);
         // this.close();
       }
     });
@@ -261,10 +262,7 @@ export class DatCancComponent extends BasePage implements OnDestroy, OnInit {
   valUser() {
     // Validamos al usuario para autorizar la cancelación //
     const params = new ListParams();
-    params['filter.user'] = `$eq:${
-      this.token.decodeToken().preferred_username
-    }`;
-    // delete params.sortBy;
+    params['filter.user'] = `$eq:${this.form.value.userV}`;
     const user = this.billingsService.getSegAcessXAreasService(params);
     if (!user)
       return (
@@ -482,7 +480,7 @@ export class DatCancComponent extends BasePage implements OnDestroy, OnInit {
             if (item.factstatusId == 'PREF') {
               let obj_1 = {
                 eventId: item.eventId,
-                lotId: item.lotId,
+                lotId: item.batchId,
               };
               await this.billingsService.comerCtrFacRegxBatch(obj_1);
 
@@ -497,7 +495,7 @@ export class DatCancComponent extends BasePage implements OnDestroy, OnInit {
                 this.alert(
                   'warning',
                   `No se completó la eliminación`,
-                  `Para el Evento: ${item.eventId}, Lote: ${item.lotId}, Del.: ${item.delegationNumber}, Mandato.: ${item.cvman}`
+                  `Para el Evento: ${item.eventId}, Lote: ${item.batchId}, Del.: ${item.delegationNumber}, Mandato: ${item.cvman}`
                 );
               }
             } else {
@@ -523,13 +521,13 @@ export class DatCancComponent extends BasePage implements OnDestroy, OnInit {
                 this.alert(
                   'warning',
                   `No se completó la cancelación`,
-                  `N.C. para Evento: ${item.eventId}, Lote: ${item.lotId}, Del.: ${item.delegationNumber}, Mandato.:${item.cvman}`
+                  `N.C. para Evento: ${item.eventId}, Lote: ${item.batchId}, Del.: ${item.delegationNumber}, Mandato.:${item.cvman}`
                 );
               } else {
                 let obj: any = {
                   p_id_evento: item.eventId,
                   p_opcion: n_OPCION,
-                  p_lote_publico: item.lotId,
+                  p_lote_publico: item.batchId,
                   p_cve_pantalla: 'FCOMER086_I',
                   p_id_factura: item.billId,
                   p_id_pago: item.paymentId,
@@ -547,7 +545,7 @@ export class DatCancComponent extends BasePage implements OnDestroy, OnInit {
                   this.alert(
                     'warning',
                     'No se completó la cancelación',
-                    `Para el Evento: ${item.eventId}, Lote: ${item.lotId}, Del.: ${item.delegationNumber}, Mandato.:${item.cvman}`
+                    `Para el Evento: ${item.eventId}, Lote: ${item.batchId}, Del.: ${item.delegationNumber}, Mandato.:${item.cvman}`
                   );
                 }
               }
@@ -574,6 +572,31 @@ export class DatCancComponent extends BasePage implements OnDestroy, OnInit {
 
   async changeValSelect(bool: boolean) {
     this.billingCommunicationService.changeValSelect(bool);
+  }
+
+  openAutorizacion() {
+    if (this.dataSeleccionada.length == 0)
+      return (
+        (this.btnLoading = false),
+        this.alert('warning', 'No hay facturas seleccionadas', '')
+      );
+
+    let config: ModalOptions = {
+      initialState: {
+        bills: this.dataSeleccionada,
+        callback: (event: number | string) => {
+          console.log(event);
+          if (event) {
+            this.pupNvoCancFact();
+          } else {
+            this.btnLoading = false;
+          }
+        },
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(AutorizacionComponent, config);
   }
 
   public override ngOnDestroy(): void {
