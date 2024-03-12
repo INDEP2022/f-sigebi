@@ -52,6 +52,10 @@ export const VALUATION_REQUEST_COLUMNS_VALIDATED_TWO = {
     title: 'Descripción',
     sort: false,
   },
+  estatus: {
+    title: 'Estatus',
+    sort: false,
+  },
   motivos: {
     title: 'Motivo(s)',
     sort: false,
