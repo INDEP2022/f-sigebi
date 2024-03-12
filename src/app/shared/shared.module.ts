@@ -43,6 +43,7 @@ import { CustomHourFilterComponent } from '../@standalone/shared-forms/filter-da
 import { CustomDateDayFilterComponent } from '../@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
 import { CustomDateMounthFilterComponent } from '../@standalone/shared-forms/filter-date-mounth-custom/custom-date-mounth-filter';
 import { CustomFilterComponent } from '../@standalone/shared-forms/input-number/input-number';
+import { ButtonColumnDeleteComponent } from './components/button-column/button-column-delete.component';
 import { ButtonColumnComponent } from './components/button-column/button-column.component';
 import { DatePickerDirective } from './directives/date-picker.directive';
 import { UppercaseDirective } from './directives/uppercase.directive';
@@ -92,6 +93,7 @@ export const customCurrencyMaskConfig = {
     CustomDateMounthFilterComponent,
     CustomDateDayFilterComponent,
     ButtonColumnComponent,
+    ButtonColumnDeleteComponent,
     CustomFilterComponent,
     CustomHourFilterComponent,
   ],
@@ -147,6 +149,7 @@ export const customCurrencyMaskConfig = {
     CustomDateMounthFilterComponent,
     CustomDateDayFilterComponent,
     ButtonColumnComponent,
+    ButtonColumnDeleteComponent,
     CustomFilterComponent,
     NgxCurrencyModule,
   ],
