@@ -26,6 +26,8 @@ import { JobsService } from 'src/app/core/services/ms-office-management/jobs.ser
 import { GenerateCveService } from 'src/app/core/services/ms-security/application-generate-clave';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ButtonColumnAddComponent } from 'src/app/shared/components/button-column/button-column-add.component';
+import { ButtonColumnDeleteComponent } from 'src/app/shared/components/button-column/button-column-delete.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AppraisalsDataService } from '../../appraisals-data.service';
 import {
@@ -36,7 +38,6 @@ import {
 } from './res-cancel-valuation-class/class-service';
 import {
   VALUATION_REQUEST_COLUMNS,
-  VALUATION_REQUEST_COLUMNS_TWO,
   VALUATION_REQUEST_COLUMNS_VALIDATED_TWO,
 } from './res-cancel-valuation-columns';
 
@@ -161,10 +162,35 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
-      // selectMode: 'multi',
       actions: false,
       hideSubHeader: false,
-      columns: { ...VALUATION_REQUEST_COLUMNS_TWO },
+      columns: {
+        ...VALUATION_REQUEST_COLUMNS,
+        agregarMotivos: {
+          title: 'Agregar Motivo(s)',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          renderComponent: ButtonColumnAddComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              console.log(row);
+            });
+          },
+        },
+        motivosQ: {
+          title: 'Quitar Motivo(s)',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          renderComponent: ButtonColumnDeleteComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              console.log(row);
+            });
+          },
+        },
+      },
     };
     this.prepareForm();
     this.form
@@ -877,11 +903,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       this.pnlControles2 = true;
 
       if (this.form.get('radio').value == 2) {
-        this.settings = {
-          ...this.settings,
-          actions: false,
-          columns: { ...VALUATION_REQUEST_COLUMNS },
-        };
         this.obtainsValuedAssets(4, this.idOficio);
         this.btnMotCan = true;
       } else if (this.form.get('radio').value == 3) {
@@ -908,11 +929,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       this.pnlControles2 = true;
       this.setButtons(2);
       if (this.form.get('radio').value == 2) {
-        this.settings = {
-          ...this.settings,
-          actions: false,
-          columns: { ...VALUATION_REQUEST_COLUMNS },
-        };
       } else if (this.form.get('radio').value == 3) {
       }
     }
@@ -1092,6 +1108,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.serviceAppraise.postGetAppraise(data, params).subscribe({
       next: response => {
         console.log(response);
+        this.dataGoodList = response.data;
         this.dataGood2.load(response.data);
         this.dataGood2.refresh();
         this.totalItems2 = response.count;
