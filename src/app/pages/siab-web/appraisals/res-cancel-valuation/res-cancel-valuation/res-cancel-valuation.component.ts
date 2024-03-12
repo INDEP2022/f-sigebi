@@ -36,7 +36,8 @@ import {
 } from './res-cancel-valuation-class/class-service';
 import {
   VALUATION_REQUEST_COLUMNS,
-  VALUATION_REQUEST_COLUMNS_VALIDATED,
+  VALUATION_REQUEST_COLUMNS_TWO,
+  VALUATION_REQUEST_COLUMNS_VALIDATED_TWO,
 } from './res-cancel-valuation-columns';
 
 @Component({
@@ -93,6 +94,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   lbltipOficio: any = '-';
   lblDireccion: any = '-';
   lblCvlOfocio: any = '-';
+  statusOffice: any = '-';
   idOffice: number;
   countCopy: number = 0;
 
@@ -116,17 +118,23 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   formDialogOne: FormGroup;
 
   dataGood: LocalDataSource = new LocalDataSource();
+  dataGoodList: any;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   settings2 = {
     ...this.settings,
     hideSubHeader: false,
     actions: false,
-    columns: VALUATION_REQUEST_COLUMNS_VALIDATED,
+    columns: VALUATION_REQUEST_COLUMNS_VALIDATED_TWO,
   };
   dataGood2: LocalDataSource = new LocalDataSource();
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
+
+  tipoOficio: number = 0;
+
+  numOne: number;
+  numTwo: number;
   //#endregion
 
   //
@@ -153,10 +161,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
-      selectMode: 'multi',
+      // selectMode: 'multi',
       actions: false,
       hideSubHeader: false,
-      columns: { ...VALUATION_REQUEST_COLUMNS },
+      columns: { ...VALUATION_REQUEST_COLUMNS_TWO },
     };
     this.prepareForm();
     this.form
@@ -203,6 +211,12 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
   ngOnInit() {
     this.byUser = true;
+    this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.obtainsCancelAssets();
+    });
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.obtainsValuedAssets();
+    });
 
     this.updateHour();
     this.intervalId = setInterval(() => {
@@ -731,9 +745,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   async getOfficeResponse(body: any, type?: number, arrayLength?: number) {
-    // //
+    console.log(type);
     let array = [];
     array = await this.getOfficeRequest(body);
+    console.log(array);
     if (array.length > 0) {
       for (const i of array) {
         this.lblTipoAccOficio = i
@@ -754,6 +769,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           this.lblDireccion = ' ACTIVOS FINANCIEROS ';
         }
         this.lblCvlOfocio = i?.cve_oficio;
+
         this.form
           .get('event')
           .setValue(i?.id_evento, { onlySelf: true, emitEvent: false });
@@ -762,18 +778,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           this.dateFormat(i?.fecha_insert)
         );
         this.form.controls['ref'].setValue(
-          this.form.controls['ref'].value +
-            '\n' +
-            i?.referen +
-            ' ' +
-            this.lblDireccion
+          i?.referen + ' ' + this.lblDireccion
         );
         this.form.controls['aten'].setValue(
-          this.form.controls['aten'].value +
-            '\n' +
-            i?.atencion +
-            ' ' +
-            this.lblCvlOfocio
+          i?.atencion + ' ' + this.lblCvlOfocio
         );
         if (i.fol) {
           this.form.controls['fol'].setValue(i.fol);
@@ -785,14 +793,14 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         this.form
           .get('radio')
           .setValue('2', { onlySelf: true, emitEvent: false });
-        this.btnMotCan = false;
+        this.btnMotCan = true;
       } else if (type == 3) {
-        this.obtainsValuedAssets(3, 0);
+        this.obtainsCancelAssets(3, 0);
         this.form
           .get('radio')
           .setValue('3', { onlySelf: true, emitEvent: false });
         // this.redioValueTwo = true;
-        this.btnMotCan = true;
+        this.btnMotCan = false;
       }
     } else {
       this.alert(
@@ -820,6 +828,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       aten: null,
       espe: null,
       fol: null,
+      radio: null,
     });
     console.log(this.idOficio);
 
@@ -855,7 +864,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
             fol: i?.num_cv_armada,
           });
         }
+        this.tipoOficio = i?.tipo_oficio;
         statusOffice = i?.estatus_of;
+        this.statusOffice = i?.estatus_of;
       }
       this.validateFindOfficeOne(statusOffice);
     } else {
@@ -872,8 +883,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           columns: { ...VALUATION_REQUEST_COLUMNS },
         };
         this.obtainsValuedAssets(4, this.idOficio);
+        this.btnMotCan = true;
       } else if (this.form.get('radio').value == 3) {
         this.obtainsCancelAssets(5, this.idOficio);
+        this.btnMotCan = false;
       }
     }
     //Marca Bienes
@@ -882,16 +895,11 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   validateFindOfficeOne(status: any) {
     // //
     if (status == 'ENVIADO') {
-      this.pnlControles = false;
+      // this.pnlControles = false;
       console.log(this.pnlControles);
       this.pnlControles2 = false;
       this.setButtons(1);
       if (this.form.get('radio').value == 2) {
-        this.settings = {
-          ...this.settings,
-          actions: false,
-          columns: { ...VALUATION_REQUEST_COLUMNS_VALIDATED },
-        };
       } else if (this.form.get('radio').value == 3) {
       }
     } else {
@@ -913,11 +921,39 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.idOficio = this.form.controls['office'].value?.jobId;
     if (this.form.get('radio').value == 2) {
       this.obtainsValuedAssets(4, this.idOficio);
+      this.btnMotCan = true;
     } else if (this.form.get('radio').value == 3) {
       this.obtainsCancelAssets(5, this.idOficio);
+      this.btnMotCan = false;
+    }
+    setTimeout(() => {
+      this.marcaBienes(this.idOficio);
+    }, 3000);
+  }
+  async marcaBienes(idOficio: number) {
+    console.log(idOficio);
+    var goodOficio;
+    goodOficio = await this.getGoodsWithOffice(idOficio);
+
+    for (const row of goodOficio.data) {
+      console.log(row.goodNumber.id);
+      var no_bien = row.goodNumber.id;
+      console.log(this.dataGoodList);
+      if (this.form.get('radio').value == 2) {
+        for (let i = 0; i < this.dataGoodList.length; i++) {
+          if (this.dataGoodList[0].no_bien == no_bien) {
+            console.log(this.dataGoodList[0]);
+          }
+        }
+      } else if (this.form.get('radio').value == 3) {
+        for (let i = 0; i < this.dataGoodList.length; i++) {
+          if (this.dataGoodList[0].no_bien == no_bien) {
+            console.log(this.dataGoodList[0]);
+          }
+        }
+      }
     }
   }
-
   setButtons(ac: number) {
     if (ac == 1) {
       this.btnVerOficio = true;
@@ -985,18 +1021,34 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       });
   }
 
-  obtainsValuedAssets(numOne: number, numTwo: number) {
-    this.body1 = { idEventIn: this.event, tpJobIn: numOne, idJobIn: numTwo };
-    this.loading = true;
-    let data = {
-      idEventIn: this.event,
-      tpJobIn: numOne,
-      idJobIn: numTwo,
+  obtainsValuedAssets(numOne?: number, numTwo?: number) {
+    let data;
+    if (numOne != null && numTwo != null) {
+      this.numOne = numOne;
+      this.numTwo = numTwo;
+      this.body2 = { idEventIn: this.event, tpJobIn: numOne, idJobIn: numTwo };
+      console.log(this.body2);
+      this.loading = true;
+      data = {
+        idEventIn: this.event,
+        tpJobIn: numOne,
+        idJobIn: numTwo,
+      };
+    } else {
+      this.loading = true;
+      data = {
+        idEventIn: this.event,
+        tpJobIn: this.numOne,
+        idJobIn: this.numTwo,
+      };
+    }
+    let params = {
+      ...this.params.getValue(),
     };
-
-    this.serviceAppraise.postGetAppraise(data).subscribe({
+    this.serviceAppraise.postGetAppraise(data, params).subscribe({
       next: response => {
         console.log(response);
+        this.dataGoodList = response.data;
         this.dataGood.load(response.data);
         this.dataGood.refresh();
         this.totalItems = response.count;
@@ -1012,17 +1064,32 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     });
   }
 
-  obtainsCancelAssets(numOne: number, numTwo: number) {
-    this.body2 = { idEventIn: this.event, tpJobIn: numOne, idJobIn: numTwo };
-    console.log(this.body2);
-    this.loading = true;
-    let data = {
-      idEventIn: this.event,
-      tpJobIn: numOne,
-      idJobIn: numTwo,
-    };
+  obtainsCancelAssets(numOne?: number, numTwo?: number) {
+    let data;
+    if (numOne != null && numTwo != null) {
+      this.numOne = numOne;
+      this.numTwo = numTwo;
+      this.body2 = { idEventIn: this.event, tpJobIn: numOne, idJobIn: numTwo };
+      console.log(this.body2);
+      this.loading = true;
+      data = {
+        idEventIn: this.event,
+        tpJobIn: numOne,
+        idJobIn: numTwo,
+      };
+    } else {
+      this.loading = true;
+      data = {
+        idEventIn: this.event,
+        tpJobIn: this.numOne,
+        idJobIn: this.numTwo,
+      };
+    }
 
-    this.serviceAppraise.postGetAppraise(data).subscribe({
+    let params = {
+      ...this.params2.getValue(),
+    };
+    this.serviceAppraise.postGetAppraise(data, params).subscribe({
       next: response => {
         console.log(response);
         this.dataGood2.load(response.data);
@@ -1232,6 +1299,13 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.pnlControles = true;
     this.body1 = null;
     this.body2 = null;
+    this.dataGood.load([]);
+    this.dataGood.refresh();
+    this.dataGood2.load([]);
+    this.dataGood2.refresh();
+    this.totalItems = 0;
+    this.totalItems2 = 0;
+    this.setButtons(3);
   }
 
   //
