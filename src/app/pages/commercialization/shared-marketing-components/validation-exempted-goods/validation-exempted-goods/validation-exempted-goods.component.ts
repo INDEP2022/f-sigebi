@@ -250,6 +250,7 @@ export class ValidationExemptedGoodsComponent
       res => {
         console.log(res);
         this.alert('success', 'Proceso exitoso', res.message);
+        this.getData();
       },
       err => {
         this.alert('error', 'Error', 'No se pudo realizar el proceso');
@@ -281,19 +282,41 @@ export class ValidationExemptedGoodsComponent
   }
 
   onFileChange(event: Event) {
-    const files = (event.target as HTMLInputElement).files;
-    if (files.length != 1) throw 'No files selected, or more than of allowed';
-    const formData = new FormData();
-  }
-
-  /* CARGA_BIENES_EXCEL(file: File) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files[0];
     const filename = file.name;
-    const ext = filename.substring(filename.lastIndexOf('.') + 1) ?? '';
-    const formData = new FormData();
-    formData.append('file', file);
-    return this.httpClient.post<any>(
-      `${this._url}massivegood/${this._prefix}application/load-good-excel`,
-      formData
+
+    console.log(this.processForm.get('process').value);
+
+    const fd = new FormData();
+
+    if (!this.processForm.get('process').value) {
+      this.alert(
+        'warning',
+        'Proceso requerido',
+        'Por favor, seleccione un proceso'
+      );
+      this.processForm.get('process').markAsTouched();
+      return;
+    }
+
+    fd.append('file', file);
+    fd.append('process', this.processForm.get('process').value.value);
+
+    this.lotService.pupStateFlat(fd).subscribe(
+      res => {
+        console.log(res);
+        this.alert('success', res.message, '');
+        this.getData();
+      },
+      err => {
+        console.log(err);
+        this.alert(
+          'error',
+          'Se presentó un error inesperado',
+          'Por favor vuelva a intentarlo'
+        );
+      }
     );
-  } */
+  }
 }
