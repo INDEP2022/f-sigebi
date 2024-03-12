@@ -2,11 +2,14 @@ import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Params } from '@angular/router';
+import { format } from 'date-fns';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { catchError, firstValueFrom, map, of } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { InvoicefolioService } from 'src/app/core/services/ms-invoicefolio/invoicefolio.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -42,7 +45,8 @@ export class SeriesFoliosControlModalComponent
     private delegationService: DelegationService,
     private invoceFolio: InvoicefolioService,
     private userService: AuthService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private parametersService: ParametersService
   ) {
     super();
 
@@ -71,8 +75,24 @@ export class SeriesFoliosControlModalComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getEtapa();
   }
 
+  stagecreated: any = null;
+  getEtapa() {
+    this.parametersService
+      .getPhaseEdo(`date=${format(new Date(), 'yyyy-MM-dd')}`)
+      .subscribe(
+        (res: any) => {
+          this.stagecreated = !res.stagecreated ? 2 : res.stagecreated;
+          this.getDelegation(new ListParams());
+        },
+        err => {
+          this.stagecreated = 2;
+          this.getDelegation(new ListParams());
+        }
+      );
+  }
   private prepareForm() {
     this.form = this.fb.group({
       folioinvoiceId: [null],
@@ -133,6 +153,7 @@ export class SeriesFoliosControlModalComponent
   getDelegation(params?: Params) {
     params['limit'] = 50;
     params['sortBy'] = 'id:ASC';
+    params['filter.etapaEdo'] = `$eq:${this.stagecreated}`;
     this.delegationService.getAll(params).subscribe({
       next: resp => {
         this.delegations = new DefaultSelect(resp.data, resp.count);

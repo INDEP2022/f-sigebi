@@ -112,7 +112,7 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
 
       this.rejectedGoodService.updateGoodsResDev(id, body).subscribe({
         next: resp => {
-          this.onLoadToast('success', 'Se actualizo el bien');
+          this.onLoadToast('success', 'Se actualizó el bien');
           this.onReserve.emit(false);
           this.modalRef.hide();
           //this.processing = true;
@@ -188,5 +188,12 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
       availableAmount,
     }); */
     //
+  }
+  numericOnly(event): boolean {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
   }
 }

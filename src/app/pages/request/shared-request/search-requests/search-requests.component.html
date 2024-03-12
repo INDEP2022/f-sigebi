@@ -29,7 +29,8 @@
                   type="number"
                   formControlName="id"
                   min="0"
-                  class="form-control" />
+                  class="form-control"
+                  (keypress)="numericOnly($event)" />
               </form-field>
             </div>
             <div class="col-md-4">
@@ -76,7 +77,8 @@
                   type="number"
                   formControlName="recordId"
                   min="0"
-                  class="form-control" />
+                  class="form-control" 
+                  (keypress)="numericOnly($event)"/>
               </form-field>
             </div>
             <div class="col-md-4">

@@ -71,6 +71,7 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract reportId: string;
   protected abstract formatReport: boolean;
   protected abstract signReport: boolean;
+  protected abstract goodType: string;
 
   protected abstract showExpedient: boolean;
 
@@ -418,6 +419,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.searchRequestSimGoods = false;
         this.selectGoodForEyeVisit = false;
         this.validateGoodForEyeVisit = false;
+
+        this.goodType = 'ROP';
 
         break;
       case 'verify-compliance-return':

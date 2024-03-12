@@ -84,98 +84,6 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
   requestSource: LocalDataSource = new LocalDataSource();
   @Output() onReturn = new EventEmitter<boolean>();
 
-  conceptTestData = [
-    {
-      id: 1,
-      description: 'TEST CONCEPT 1',
-    },
-    {
-      id: 2,
-      description: 'TEST CONCEPT 2',
-    },
-    {
-      id: 3,
-      description: 'TEST CONCEPT 3',
-    },
-    {
-      id: 4,
-      description: 'TEST CONCEPT 4',
-    },
-    {
-      id: 5,
-      description: 'TEST CONCEPT 5',
-    },
-  ];
-
-  eventTestData = [
-    {
-      id: 1,
-      description: 'TEST EVENT 1',
-    },
-    {
-      id: 2,
-      description: 'TEST EVENT 2',
-    },
-    {
-      id: 3,
-      description: 'TEST EVENT 3',
-    },
-    {
-      id: 4,
-      description: 'TEST EVENT 4',
-    },
-    {
-      id: 5,
-      description: 'TEST EVENT 5',
-    },
-  ];
-
-  voucherTestData = [
-    {
-      id: 101,
-      name: 'ANTONIO RIVERA',
-    },
-    {
-      id: 201,
-      name: 'JUAN PEREZ',
-    },
-    {
-      id: 301,
-      name: 'MARIA COLINDRES',
-    },
-    {
-      id: 401,
-      name: 'ANDREA MORALES',
-    },
-    {
-      id: 501,
-      name: 'LUIS RODRIGUEZ',
-    },
-  ];
-
-  userTestData = [
-    {
-      user: 'MRIVERA',
-      name: 'MICHAEL RIVERA',
-    },
-    {
-      user: 'LPEREZ',
-      name: 'LUIS PEREZ',
-    },
-    {
-      user: 'APACHECO',
-      name: 'ALEJANDRA PACHECO',
-    },
-    {
-      user: 'JMENDOZA',
-      name: 'JULIA MENDOZA',
-    },
-    {
-      user: 'VPALACIOS',
-      name: 'VICTOR PALACIOS',
-    },
-  ];
-
   blkBankPays: any[];
   selectRowCtrol: any = null;
   btnLoading: boolean = false;
@@ -258,7 +166,10 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
         idevent: this.comerGastosFields.id_evento,
 
         documentDate: this.comerGastosFields.fecha_factura_rec,
-        paymentDate: this.comerGastosFields.fecha_pago,
+        paymentDate: this.datePipe.transform(
+          this.comerGastosFields.fecha_pago,
+          `dd/MM/yyyy`
+        ),
         captureDate: this.comerGastosFields.fecha_captura,
 
         userCapture: this.comerGastosFields.usuario_capturo,

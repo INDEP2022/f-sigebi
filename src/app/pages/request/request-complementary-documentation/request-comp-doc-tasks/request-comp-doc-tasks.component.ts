@@ -44,6 +44,8 @@ import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/m
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
+import { PrintReportModalComponent } from '../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
+
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -52,8 +54,8 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
+  protected override goodType: string;
   protected override signOffice: boolean;
   protected override btnGrouper: boolean;
   protected override formatReport: boolean;
@@ -326,7 +328,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   async openReport(first = true): Promise<void> {
     let doc = this.reportId;
@@ -942,7 +944,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1390,6 +1392,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Asocie el expediente de la solicitud');
           return false;
         }
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
+          return false;
+        }
         break;
 
       case 'register-request-protection':
@@ -1543,7 +1549,7 @@ export class RequestCompDocTasksComponent
     this.validate.registerAppointment = event.isValid;
   }
 
-  onSetData(event) {}
+  onSetData(event) { }
 
   onOrder(event) {
     this.validate.orderEntry = event.isValid;
@@ -1563,7 +1569,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1579,7 +1585,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1660,7 +1666,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
 
   async showReport(data) {
     let report = await this.getStatusReport();
@@ -1693,7 +1699,7 @@ export class RequestCompDocTasksComponent
           const fileURL = URL.createObjectURL(file);
           this.openPrevPdf(fileURL);
         },
-        error: error => {},
+        error: error => { },
       });
     }
   }
@@ -1716,7 +1722,7 @@ export class RequestCompDocTasksComponent
           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
           type: 'pdf',
         },
-        callback: (data: any) => {},
+        callback: (data: any) => { },
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -1780,9 +1786,12 @@ export class RequestCompDocTasksComponent
     typeAnnex?: string,
     contentId = ''
   ): Promise<void> {
+
     let report = await this.getStatusReport();
     report = report.isValid ? report.data[0] : report;
     let docId = report.isValid ? report.documentTypeId : this.reportId;
+
+    console.log('PRIMER PASO', this.reportId);
 
     if (!this.signReport) {
       let config: ModalOptions = {
@@ -1794,16 +1803,19 @@ export class RequestCompDocTasksComponent
           contentId: contentId,
           typeAnnex: typeAnnex,
           callback: async (typeDocument: number, typeSign: string) => {
-            if (typeAnnex == 'sign-annexJ-assets-classification') {
-              if (typeDocument && typeSign) {
-                this.showReportInfo(
-                  idSample,
-                  typeDocument,
-                  typeSign,
-                  typeAnnex,
-                  contentId
-                );
-              }
+
+            console.log('SEGUNDO PASO', typeDocument, typeSign);
+
+            if (typeSign == 'electronica') {
+              this.openFirma(true);
+            } else {
+              this.showReportInfo(
+                idSample,
+                typeDocument,
+                typeSign,
+                typeAnnex,
+                null
+              );
             }
           },
         },
@@ -1891,8 +1903,8 @@ export class RequestCompDocTasksComponent
     report.modificationUser = user.username;
     report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
     this.reportgoodService.saveReportDynamic(report).subscribe({
-      next: resp => {},
-      error: err => {},
+      next: resp => { },
+      error: err => { },
     });
   }
 
@@ -1923,7 +1935,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  async getSampleCSJ(execute = sample => {}) {
+  async getSampleCSJ(execute = sample => { }) {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.warehouseId'] = `$eq:${this.requestId}`;
 
@@ -2000,9 +2012,64 @@ export class RequestCompDocTasksComponent
             },
           });
       },
-      error: error => {},
+      error: error => { },
     });
   }
+
+  openFirma(dynamic = false) {
+
+    let token = this.authService.decodeToken();
+    let today = new Date();
+    let folioReporte = '';
+
+    //Trae el año actuar
+    const year = today.getFullYear();
+    //Cadena final (Al final las siglas ya venian en el token xd)
+
+    if (token.siglasnivel4 != null) {
+      folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/?/${year}`;
+    } else {
+      folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/?/${year}`;
+    }
+
+    const idTypeDoc = this.reportId;
+    const typeAnnex = 'approval-request';
+    const requestInfo = this.requestInfo;
+    const idReportAclara = this.requestId;
+    const nameTypeDoc = 'DictamenProcendecia';
+    const nomenglatura = folioReporte;
+    const isDynamic = dynamic;
+
+    let config: ModalOptions = {
+      initialState: {
+        idReportAclara,
+        idTypeDoc,
+        typeAnnex,
+        requestInfo,
+        nameTypeDoc,
+        nomenglatura,
+        isDynamic,
+        callback: (next: boolean) => {
+
+          console.log('TERCER PASO', next);
+
+          if (next) {
+
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      keyboard: false,
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PrintReportModalComponent, config);
+
+  }
+
+  //Crear un sample para el tipo de firma
+
+
+
 }
 
 export function isNullOrEmpty(value: any): boolean {

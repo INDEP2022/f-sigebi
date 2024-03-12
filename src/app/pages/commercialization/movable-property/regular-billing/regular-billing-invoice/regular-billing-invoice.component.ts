@@ -1320,7 +1320,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   async verifyProv(event: any) {
-    const data = await this.dataFilter.getAll();
+    const data = this.isSelect;
     for (const invoice of data) {
       if (
         invoice.archImgtemp &&
@@ -1646,7 +1646,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       check: [null],
       delegation: [null],
       userV: [null, Validators.required],
-      passwordV: [null, Validators.required],
+      passwordV: [null],
       folio: [null],
       refactura: [null],
     });
@@ -1849,7 +1849,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         this.getReport('RCOMERFACTURAS_VEH_VNR', data); // FUNCIONA
       } else {
         // this.getReportNull();
-        this.getReport('RCOMERFACTURAS_VEH', data);
+        this.getReport('RCOMERFACTURAS_VEH', data); // VERIFICAR
       }
     } else if (pTipo == 2) {
       const v_val = await this.etapaNexo(impressionDate);
@@ -2313,11 +2313,13 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       let resp = await this.updateInvoice(invoice);
       if (resp) {
         const current: any[] = await this.dataFilter.getAll();
+        console.log(current);
         const index = current.findIndex(inv => inv == this.isSelect[0]);
-        current[index].factstatusId = 'IMP';
-        current[index]['delegation'] = delegation;
+        console.log(current[0]);
+        current[0].factstatusId = 'IMP';
+        current[0]['delegation'] = delegation;
         // Realizar DesSelección
-        this.desSelectOne(current[index]);
+        this.desSelectOne(current[0]);
         // this.dataFilter.load(current);
         this.dataFilter.refresh();
         this.btnLoading2 = false;
@@ -2571,10 +2573,12 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
                     GO_BLOCK: boolean
                   ) => {
                     if (data) {
-                      if (data.factstatusId)
+                      if (data.factstatusId) {
                         this.paramsList.getValue()[
                           'filter.factstatusId'
                         ] = `${SearchFilter.NOT}:${data.factstatusId}`;
+                      }
+
                       this.paramsList.getValue()[
                         'filter.eventId'
                       ] = `${SearchFilter.EQ}:${data.eventId}`;
@@ -2682,7 +2686,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     this.btnLoading13 = true;
     await this.markProcess('EX', null);
     //update los seleccionados
-
     this.comerInvoice.exportExcell(data[0].eventId).subscribe({
       next: resp => {
         const linkSource = `data:application/xlsx;base64,${resp.resultExcel.base64File}`;
@@ -2695,13 +2698,9 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         this.btnLoading13 = false;
         this.alert('success', 'Archivo descargado correctamente', '');
       },
-      error: () => {
+      error: error => {
         this.btnLoading13 = false;
-        this.alert(
-          'error',
-          'Ha ocurrido un fallo en la exportación del archivo',
-          ''
-        );
+        this.alert('warning', error.error.message, '');
       },
     });
   }
@@ -2770,6 +2769,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     } else {
       let resp = await this.putApplicationPutProcess(arr);
       // console.log("NICE", resp)
+      return resp;
     }
 
     if (contg == 1 && aux_valgasto == 1) {
