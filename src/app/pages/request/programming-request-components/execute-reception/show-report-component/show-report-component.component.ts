@@ -130,6 +130,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('ID Tipo de Documento: ', this.idTypeDoc);
+    console.log('ID Documento: ', this.idProg);
     if (this.showTDR) {
       this.title = 'ETIQUETA';
     } else {
@@ -543,6 +545,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   sendSign() {
     //verificar que el estado de registro este como "datos completo" y enviarlo!
+    console.log('Id del tipo de documento a firmar: ', this.idTypeDoc);
     let message = '¿Está seguro de enviar la información a firmar?';
     this.openMessage(message);
   }
@@ -557,7 +560,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       question => {
         if (question.isConfirmed) {
           this.loadingButton = true;
-          if (electronic.includes(parseInt('' + this.idTypeDoc))) {
+          /*if (electronic.includes(parseInt('' + this.idTypeDoc))) {
             this.gelectronicFirmService
               .firmDocument(210, 'ProgramacionRecibo', {})
               .subscribe({
@@ -596,7 +599,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 },
               });
             return;
-          }
+          }*/
           if (this.idTypeDoc == 218) {
             this.gelectronicFirmService
               .firmDocument(this.programming?.id, 'ProgramacionRecibo', {})
@@ -801,6 +804,41 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
             this.gelectronicFirmService
               .firmDocument(idKeyDoc, 'AnexoKMuestreoOrdenServicio', {})
+              .subscribe({
+                next: () => {
+                  this.msjCheck = true;
+                  this.loadingButton = false;
+                  this.alert(
+                    'success',
+                    'Correcto',
+                    'Documento firmado correctamente'
+                  );
+                },
+                error: () => {
+                  //this.msjCheck = true;
+                  this.loadingButton = false;
+                  this.alertInfo(
+                    'error',
+                    'Acción Inválida',
+                    'No fue posible firmar el documento'
+                  ).then();
+                },
+              });
+            return;
+
+            /* const idKeyDoc = this.orderSampleId + '-K';
+            this.saveElectronicSign(idKeyDoc, 'AnexoKMuestreoOrdenServicio'); */
+          }
+          if (this.idTypeDoc == 221) {
+            const nameTypeReport = 'ProgramacionRecibo';
+            const formData: Object = {
+              id: this.idProg,
+              firma: true,
+              tipoDocumento: nameTypeReport,
+            };
+
+            this.gelectronicFirmService
+              .firmDocument(this.idProg, nameTypeReport, formData)
               .subscribe({
                 next: () => {
                   this.msjCheck = true;

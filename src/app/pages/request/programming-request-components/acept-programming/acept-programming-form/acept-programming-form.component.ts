@@ -641,23 +641,23 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   }
 
   aprobateProgramming() {
-    this.alertQuestion(
-      'question',
-      'Aprobar Programación',
-      `¿Esta seguro de aprobar la programación con folio: ${this.programming.folio}?`
-    ).then(async question => {
-      if (question.isConfirmed) {
-        this.sendEmailUsers();
-        const createTaskNotification: any = await this.createTaskNotification();
+    if (this.programming.contentId) {
+      this.alertQuestion(
+        'question',
+        'Aprobar Programación',
+        `¿Esta seguro de aprobar la programación con folio: ${this.programming.folio}?`
+      ).then(async question => {
+        if (question.isConfirmed) {
+          this.sendEmailUsers();
+          const createTaskNotification: any =
+            await this.createTaskNotification();
 
-        if (createTaskNotification) {
-          this.createTaskExecuteProgramming();
-          this.createTaskFormalize(createTaskNotification);
+          if (createTaskNotification) {
+            this.createTaskExecuteProgramming();
+            this.createTaskFormalize(createTaskNotification);
+          }
         }
-      }
-    });
-    /*if (this.programming.contentId) {
-      
+      });
     } else {
       // this.sendEmailUsers();
       this.alertInfo(
@@ -665,7 +665,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         'Acción no permitida',
         'Se necesita firmar el oficio para poder aprobar la solicitud'
       );
-    }*/
+    }
   }
   async sendEmailUsers() {
     this.infoUsers.map(user => {
