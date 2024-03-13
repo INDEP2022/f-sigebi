@@ -480,7 +480,7 @@ export class DatCancComponent extends BasePage implements OnDestroy, OnInit {
             if (item.factstatusId == 'PREF') {
               let obj_1 = {
                 eventId: item.eventId,
-                lotId: item.lotId,
+                lotId: item.batchId,
               };
               await this.billingsService.comerCtrFacRegxBatch(obj_1);
 
@@ -495,7 +495,7 @@ export class DatCancComponent extends BasePage implements OnDestroy, OnInit {
                 this.alert(
                   'warning',
                   `No se completó la eliminación`,
-                  `Para el Evento: ${item.eventId}, Lote: ${item.lotId}, Del.: ${item.delegationNumber}, Mandato.: ${item.cvman}`
+                  `Para el Evento: ${item.eventId}, Lote: ${item.batchId}, Del.: ${item.delegationNumber}, Mandato: ${item.cvman}`
                 );
               }
             } else {
@@ -521,13 +521,13 @@ export class DatCancComponent extends BasePage implements OnDestroy, OnInit {
                 this.alert(
                   'warning',
                   `No se completó la cancelación`,
-                  `N.C. para Evento: ${item.eventId}, Lote: ${item.lotId}, Del.: ${item.delegationNumber}, Mandato.:${item.cvman}`
+                  `N.C. para Evento: ${item.eventId}, Lote: ${item.batchId}, Del.: ${item.delegationNumber}, Mandato.:${item.cvman}`
                 );
               } else {
                 let obj: any = {
                   p_id_evento: item.eventId,
                   p_opcion: n_OPCION,
-                  p_lote_publico: item.lotId,
+                  p_lote_publico: item.batchId,
                   p_cve_pantalla: 'FCOMER086_I',
                   p_id_factura: item.billId,
                   p_id_pago: item.paymentId,
@@ -545,7 +545,7 @@ export class DatCancComponent extends BasePage implements OnDestroy, OnInit {
                   this.alert(
                     'warning',
                     'No se completó la cancelación',
-                    `Para el Evento: ${item.eventId}, Lote: ${item.lotId}, Del.: ${item.delegationNumber}, Mandato.:${item.cvman}`
+                    `Para el Evento: ${item.eventId}, Lote: ${item.batchId}, Del.: ${item.delegationNumber}, Mandato.:${item.cvman}`
                   );
                 }
               }
@@ -585,6 +585,7 @@ export class DatCancComponent extends BasePage implements OnDestroy, OnInit {
       initialState: {
         bills: this.dataSeleccionada,
         callback: (event: number | string) => {
+          console.log(event);
           if (event) {
             this.pupNvoCancFact();
           } else {

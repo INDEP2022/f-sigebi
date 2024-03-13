@@ -15,8 +15,10 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IPupGoodTrackerFComerGood } from 'src/app/core/models/catalogs/package.model';
+import { IGoodsTransAva } from 'src/app/core/models/ms-good/goods-trans-ava.model';
 import { BankMovementType } from 'src/app/core/services/ms-bank-movement/bank-movement.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -61,7 +63,8 @@ export class ValidationExemptedGoodsComponent
     private modalService: BsModalService,
     private router: Router,
     private processService: BankMovementType,
-    private massiveGoodService: MassiveGoodService
+    private massiveGoodService: MassiveGoodService,
+    private lotService: LotService
   ) {
     super();
   }
@@ -100,6 +103,36 @@ export class ValidationExemptedGoodsComponent
           }
         },
       });
+  }
+
+  deleteGood(e) {
+    console.log(e);
+    const data = e.data;
+
+    const bodyDelete: IGoodsTransAva = {
+      goodNumber: data.goodNumber.id,
+      process: data.process,
+      registryNumber: data.registryNumber,
+    };
+
+    this.goodService.deleteTransAva(bodyDelete).subscribe(
+      res => {
+        this.alert(
+          'success',
+          'Registro eliminado',
+          `Se eliminó el bien ${bodyDelete.goodNumber}, con proceso ${bodyDelete.process} y número de registro ${bodyDelete.registryNumber}`
+        );
+        this.getData();
+      },
+      err => {
+        console.log(err);
+        this.alert(
+          'error',
+          'Se presentó un error inesperado',
+          'Intentelo nuevamente'
+        );
+      }
+    );
   }
 
   navigateTable() {
@@ -217,6 +250,7 @@ export class ValidationExemptedGoodsComponent
       res => {
         console.log(res);
         this.alert('success', 'Proceso exitoso', res.message);
+        this.getData();
       },
       err => {
         this.alert('error', 'Error', 'No se pudo realizar el proceso');
@@ -243,6 +277,45 @@ export class ValidationExemptedGoodsComponent
       err => {
         this.processes = new DefaultSelect();
         this.alert('error', 'No se pudieron obtener los procesos', '');
+      }
+    );
+  }
+
+  onFileChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files[0];
+    const filename = file.name;
+
+    console.log(this.processForm.get('process').value);
+
+    const fd = new FormData();
+
+    if (!this.processForm.get('process').value) {
+      this.alert(
+        'warning',
+        'Proceso requerido',
+        'Por favor, seleccione un proceso'
+      );
+      this.processForm.get('process').markAsTouched();
+      return;
+    }
+
+    fd.append('file', file);
+    fd.append('process', this.processForm.get('process').value.value);
+
+    this.lotService.pupStateFlat(fd).subscribe(
+      res => {
+        console.log(res);
+        this.alert('success', res.message, '');
+        this.getData();
+      },
+      err => {
+        console.log(err);
+        this.alert(
+          'error',
+          'Se presentó un error inesperado',
+          'Por favor vuelva a intentarlo'
+        );
       }
     );
   }

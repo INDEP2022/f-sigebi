@@ -358,237 +358,286 @@
     </accordion>
   </div>
 </app-card>
-
-<div class="row">
-  <div class="ch-content">
-    <h5 class="title">PREFACTURAS DEL EVENTO</h5>
-    <div class="row justify-content-end mr-3">
-      <!-- [defaultColumns]="7" -->
-      <!-- [leftList]="true" -->
-      <app-columns-select
-        [defaultColumns]="7"
-        [(settings)]="settings"
-        [leftList]="true"></app-columns-select>
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">FACTURAS</h5>
+  </div>
+  <div class="row" body>
+    <div class="col-12">
+      <div class="row text-end justify-content-end">
+        <div class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
+          <app-columns-select
+            [defaultColumns]="7"
+            [(settings)]="settings"
+            [leftList]="true"></app-columns-select>
+          <div>
+            <button
+              class="btn btn-danger btn-sm active mr-3 ml-3"
+              (click)="resetTable()"
+              tooltip="Limpia las tablas y sus filtros"
+              containerClass="tooltip-style">
+              Limpiar Tabla
+              <i class="fas fa-eraser"> </i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <form-loader *ngIf="loading"></form-loader>
+        <div>
+          <ng2-smart-table
+            #myTable
+            [ngStyle]="{
+              height: loading ? '0px' : totalItems > 10 ? '600px' : 'auto'
+            }"
+            [attr.class]="'table-bordered table-responsive mb-4'"
+            [settings]="settings"
+            [source]="dataFilter"
+            (userRowSelect)="getComerDetInvocie($event.data)">
+          </ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="paramsList"
+          [limit]="limit"
+          [pageSizeOptions]="[500]"
+          [totalItems]="totalItems">
+        </app-pagination>
+      </div>
     </div>
   </div>
-  <div class="row pt-3">
-    <form-loader *ngIf="loading"></form-loader>
-    <div>
-      <ng2-smart-table
-        #myTable
-        [ngStyle]="{
-          height: loading ? '0px' : totalItems > 10 ? '600px' : 'auto'
-        }"
-        [attr.class]="'table-bordered table-responsive mb-4'"
-        [settings]="settings"
-        [source]="dataFilter"
-        (userRowSelect)="getComerDetInvocie($event.data)">
-      </ng2-smart-table>
-    </div>
-    <app-pagination
-      [params]="paramsList"
-      [limit]="limit"
-      [pageSizeOptions]="[500]"
-      [totalItems]="totalItems">
-    </app-pagination>
+  <div footer>
+    <accordion style="margin-bottom: 0px !important" [isAnimated]="true">
+      <accordion-group
+        id="testAcc"
+        style="margin-bottom: 0px !important"
+        [isOpen]="true"
+        [class.disabled]="false">
+        <div accordion-heading class="d-flex justify-content-between">
+          <h5>INFORMACIÓN</h5>
+        </div>
+        <div class="row">
+          <form class="form-material" [formGroup]="formFactura">
+            <div class="row pt-5">
+              <div class="col-md-2">
+                <form-field [control]="formFactura.get('xLote')">
+                  <form-check id="checkbox_fcomer" label="X Lote" for="Xlote">
+                    <input
+                      id="Xlote"
+                      formControlName="xLote"
+                      class="form-control"
+                      type="checkbox" />
+                  </form-check>
+                </form-field>
+              </div>
+              <div class="col-md-2">
+                <form-field
+                  [control]="formFactura.get('order')"
+                  label="Ordenar">
+                  <ng-select
+                    (change)="changeOpt($event)"
+                    formControlName="order"
+                    class="form-control pt-1">
+                    <ng-option value="1">LOTE</ng-option>
+                    <ng-option value="2">REGIONAL</ng-option>
+                    <ng-option value="4">FOLIO</ng-option>
+                  </ng-select>
+                  <!-- <input type="text" class="form-control" formControlName="order" /> -->
+                </form-field>
+              </div>
+              <div class="col-md-2">
+                <form-field
+                  [control]="formFactura.get('importE')"
+                  label="Importe Egresos">
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    currencyMask
+                    formControlName="importE"
+                    oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
+                </form-field>
+              </div>
+              <div class="col-md-2">
+                <form-field
+                  [control]="formFactura.get('ivaE')"
+                  label="Iva Egresos">
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    currencyMask
+                    formControlName="ivaE"
+                    oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
+                </form-field>
+              </div>
+              <div class="col-md-2">
+                <form-field
+                  [control]="formFactura.get('totalE')"
+                  label="Total Egresos">
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    currencyMask
+                    formControlName="totalE"
+                    oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
+                </form-field>
+              </div>
+              <div class="col-md-2">
+                <form-field
+                  [control]="formFactura.get('count')"
+                  label="No. Factura">
+                  <input
+                    readonly
+                    type="number"
+                    class="form-control"
+                    formControlName="count"
+                    oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
+                </form-field>
+              </div>
+              <div class="col-md-2 mt-5">
+                <form-field
+                  [control]="formFactura.get('importI')"
+                  label="Importe Ingresos">
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    currencyMask
+                    formControlName="importI"
+                    oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
+                </form-field>
+              </div>
+              <div class="col-md-2 mt-5">
+                <form-field
+                  [control]="formFactura.get('ivaI')"
+                  label="Iva Ingresos">
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    currencyMask
+                    formControlName="ivaI"
+                    oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
+                </form-field>
+              </div>
+              <div class="col-md-2 mt-5">
+                <form-field
+                  [control]="formFactura.get('totalI')"
+                  label="Total Ingresos">
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    currencyMask
+                    formControlName="totalI"
+                    oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
+                </form-field>
+              </div>
+            </div>
+          </form>
+
+          <form class="form-material" [formGroup]="formDetalle">
+            <div class="row pt-5">
+              <div class="col-md-2">
+                <form-field
+                  [control]="formFactura.get('count')"
+                  label="No. Registros">
+                  <input
+                    readonly
+                    type="number"
+                    class="form-control"
+                    formControlName="count"
+                    oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+                </form-field>
+              </div>
+              <div class="col-md-2">
+                <form-field
+                  [control]="formDetalle.get('totalI')"
+                  label="Total Importe">
+                  <input
+                    type="text"
+                    readonly
+                    class="form-control"
+                    currencyMask
+                    formControlName="totalI"
+                    oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+                </form-field>
+              </div>
+              <div class="col-md-2">
+                <form-field
+                  [control]="formDetalle.get('totalIva')"
+                  label="Total Iva">
+                  <input
+                    type="text"
+                    readonly
+                    class="form-control"
+                    currencyMask
+                    formControlName="totalIva"
+                    oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+                </form-field>
+              </div>
+              <div class="col-md-2">
+                <form-field [control]="formDetalle.get('total')" label="Total">
+                  <input
+                    type="text"
+                    readonly
+                    class="form-control"
+                    currencyMask
+                    formControlName="total"
+                    oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+                </form-field>
+              </div>
+              <div class="col-md-2">
+                <form-field
+                  [control]="formDetalle.get('countTotal')"
+                  label="Cantidad Total Bienes">
+                  <input
+                    type="number"
+                    readonly
+                    class="form-control"
+                    formControlName="countTotal"
+                    oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+                </form-field>
+              </div>
+            </div>
+          </form>
+        </div>
+      </accordion-group>
+    </accordion>
   </div>
-
-  <form class="form-material" [formGroup]="formFactura">
-    <div class="row pt-5">
-      <div class="col-md-2">
-        <form-field [control]="formFactura.get('xLote')">
-          <form-check id="checkbox_fcomer" label="X Lote" for="Xlote">
-            <input
-              id="Xlote"
-              formControlName="xLote"
-              class="form-control"
-              type="checkbox" />
-          </form-check>
-        </form-field>
-      </div>
-      <div class="col-md-2">
-        <form-field [control]="formFactura.get('order')" label="Ordenar">
-          <ng-select
-            (change)="changeOpt($event)"
-            formControlName="order"
-            class="form-control pt-1">
-            <ng-option value="1">LOTE</ng-option>
-            <ng-option value="2">REGIONAL</ng-option>
-            <ng-option value="4">FOLIO</ng-option>
-          </ng-select>
-          <!-- <input type="text" class="form-control" formControlName="order" /> -->
-        </form-field>
-      </div>
-      <div class="col-md-2">
-        <form-field
-          [control]="formFactura.get('importE')"
-          label="Importe Egresos">
-          <input
-            readonly
-            type="text"
-            class="form-control"
-            currencyMask
-            formControlName="importE"
-            oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
-        </form-field>
-      </div>
-      <div class="col-md-2">
-        <form-field [control]="formFactura.get('ivaE')" label="Iva Egresos">
-          <input
-            readonly
-            type="text"
-            class="form-control"
-            currencyMask
-            formControlName="ivaE"
-            oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
-        </form-field>
-      </div>
-      <div class="col-md-2">
-        <form-field [control]="formFactura.get('totalE')" label="Total Egresos">
-          <input
-            readonly
-            type="text"
-            class="form-control"
-            currencyMask
-            formControlName="totalE"
-            oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
-        </form-field>
-      </div>
-      <div class="col-md-2">
-        <form-field [control]="formFactura.get('count')" label="No. Factura">
-          <input
-            readonly
-            type="number"
-            class="form-control"
-            formControlName="count"
-            oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
-        </form-field>
-      </div>
-      <div class="col-md-2">
-        <form-field
-          [control]="formFactura.get('importI')"
-          label="Importe Ingresos">
-          <input
-            readonly
-            type="text"
-            class="form-control"
-            currencyMask
-            formControlName="importI"
-            oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
-        </form-field>
-      </div>
-      <div class="col-md-2">
-        <form-field [control]="formFactura.get('ivaI')" label="Iva Ingresos">
-          <input
-            readonly
-            type="text"
-            class="form-control"
-            currencyMask
-            formControlName="ivaI"
-            oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
-        </form-field>
-      </div>
-      <div class="col-md-2">
-        <form-field
-          [control]="formFactura.get('totalI')"
-          label="Total Ingresos">
-          <input
-            readonly
-            type="text"
-            class="form-control"
-            currencyMask
-            formControlName="totalI"
-            oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
-        </form-field>
-      </div>
-    </div>
-  </form>
-
-  <form class="form-material" [formGroup]="formDetalle">
-    <div class="row pt-5">
-      <div class="col-md-2">
-        <form-field [control]="formFactura.get('count')" label="No. Registros">
-          <input
-            readonly
-            type="number"
-            class="form-control"
-            formControlName="count"
-            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
-        </form-field>
-      </div>
-      <div class="col-md-2">
-        <form-field [control]="formDetalle.get('totalI')" label="Total Importe">
-          <input
-            type="text"
-            readonly
-            class="form-control"
-            currencyMask
-            formControlName="totalI"
-            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
-        </form-field>
-      </div>
-      <div class="col-md-2">
-        <form-field [control]="formDetalle.get('totalIva')" label="Total Iva">
-          <input
-            type="text"
-            readonly
-            class="form-control"
-            currencyMask
-            formControlName="totalIva"
-            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
-        </form-field>
-      </div>
-      <div class="col-md-2">
-        <form-field [control]="formDetalle.get('total')" label="Total">
-          <input
-            type="text"
-            readonly
-            class="form-control"
-            currencyMask
-            formControlName="total"
-            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
-        </form-field>
-      </div>
-      <div class="col-md-2">
-        <form-field
-          [control]="formDetalle.get('countTotal')"
-          label="Cantidad Total Bienes">
-          <input
-            type="number"
-            readonly
-            class="form-control"
-            formControlName="countTotal"
-            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
-        </form-field>
-      </div>
-    </div>
-  </form>
-
-  <div class="row pt-3">
-    <div class="col-12 d-flex justify-content-end pb-3">
-      <div></div>
-      <div></div>
-      <app-columns-select
-        [(settings)]="settings2"
-        [leftList]="true"></app-columns-select>
-    </div>
-    <form-loader *ngIf="loading2"></form-loader>
-    <div>
-      <ng2-smart-table
-        [ngStyle]="{
-          height: loading2 ? '0px' : totalItems2 > 10 ? '600px' : 'auto'
-        }"
-        [attr.class]="'table-bordered table-responsive mb-4'"
-        (userRowSelect)="selectDataComerDetInvocie($event.data)"
-        [settings]="settings2"
-        [source]="dataFilter2">
-      </ng2-smart-table>
-    </div>
-    <app-pagination
-      [params]="paramsList2"
-      [totalItems]="totalItems2"
-      [limit]="limit"
-      [pageSizeOptions]="[500]">
-    </app-pagination>
+</app-card>
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">DETALLES DE FACTURA</h5>
   </div>
-</div>
+  <div class="row" body>
+    <div class="col-12">
+      <div class="row pt-3">
+        <div class="col-12 d-flex justify-content-end pb-3">
+          <app-columns-select
+            [(settings)]="settings2"
+            [leftList]="true"></app-columns-select>
+        </div>
+        <form-loader *ngIf="loading2"></form-loader>
+        <div>
+          <ng2-smart-table
+            [ngStyle]="{
+              height: loading2 ? '0px' : totalItems2 > 10 ? '600px' : 'auto'
+            }"
+            [attr.class]="'table-bordered table-responsive mb-4'"
+            (userRowSelect)="selectDataComerDetInvocie($event.data)"
+            [settings]="settings2"
+            [source]="dataFilter2">
+          </ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="paramsList2"
+          [totalItems]="totalItems2"
+          [limit]="limit"
+          [pageSizeOptions]="[500]">
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+</app-card>

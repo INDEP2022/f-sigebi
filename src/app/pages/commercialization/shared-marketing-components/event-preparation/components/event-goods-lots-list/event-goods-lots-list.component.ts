@@ -183,7 +183,7 @@ export class EventGoodsLotsListComponent
           filter.field = 'goodNumber';
         }
 
-        if (filter.field == 'bienes.description') {
+        if (filter.field == 'goodNumber.description') {
           operator = SearchFilter.ILIKE;
         }
 
