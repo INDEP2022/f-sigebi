@@ -74,3 +74,17 @@ export interface ITransferenteSae {
   daysAdminGood?: string; //dias admin bien
   goodReceptionPlace?: string; //lugar recepcion bien
 }
+
+export interface IBienErrorSave {
+  BIEN: number | string;
+  ERROR: string;
+}
+
+export interface IBienActRecept {
+  numberGood: number | string;
+  description: string;
+  amount: number;
+  process: string;
+  status: string;
+  color: string;
+}
