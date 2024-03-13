@@ -32,6 +32,8 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   @Output() onSave = new EventEmitter<boolean>();
   @Output() onChange = new EventEmitter<any>();
 
+  @Input() secondRevision: boolean;
+
   guidelinesForm: FormGroup = new FormGroup({});
   maxDate: Date = new Date();
   saveButton: string =
@@ -179,11 +181,21 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   }
 
   prepareForm() {
-    this.guidelinesForm = this.fb.group({
-      firstRevisionDate: [null, [Validators.required]],
-      secondRevisionDate: [null],
-      observations: [null, [Validators.pattern(STRING_PATTERN)]],
-    });
+    if (this.secondRevision) {
+      this.guidelinesForm = this.fb.group({
+        firstRevisionDate: [null],
+        secondRevisionDate: [null, [Validators.required]],
+        observations: [null, [Validators.pattern(STRING_PATTERN)]],
+      });
+      this.guidelinesForm.get('firstRevisionDate').disable();
+    } else {
+      this.guidelinesForm = this.fb.group({
+        firstRevisionDate: [null, [Validators.required]],
+        secondRevisionDate: [null],
+        observations: [null, [Validators.pattern(STRING_PATTERN)]],
+      });
+      this.guidelinesForm.get('secondRevisionDate').disable();
+    }
   }
 
   getData(data) {
