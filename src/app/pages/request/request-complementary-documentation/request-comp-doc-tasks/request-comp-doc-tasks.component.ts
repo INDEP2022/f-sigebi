@@ -411,6 +411,10 @@ export class RequestCompDocTasksComponent
     ).then(async question => {
       if (question.isConfirmed) {
         this.generateTask();
+        if (!isNullOrEmpty(this.requestInfo.detail.rejectionComment)) {
+          this.requestInfo.detail.rejectionComment = null
+          this.updateRequest(false)
+        }
 
         if (true) return;
 
