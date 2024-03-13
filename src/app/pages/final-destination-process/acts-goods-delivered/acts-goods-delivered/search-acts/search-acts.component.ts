@@ -40,6 +40,7 @@ export class SearchActsComponent extends BasePage implements OnInit {
   dataTableGoodsActa: LocalDataSource = new LocalDataSource();
   dataFactActas: LocalDataSource = new LocalDataSource();
   @Output() onSave = new EventEmitter<any>();
+  @Output() onDelete = new EventEmitter<any>();
   @Output() cleanForm = new EventEmitter<any>();
   @Input() idConversion: number | string;
   actaActual: any;
@@ -227,9 +228,9 @@ export class SearchActsComponent extends BasePage implements OnInit {
   deleteD(data: any) {
     const dataaaID = data.id;
     this.alertQuestion(
-      'warning',
-      'Eliminar',
-      '¿Desea eliminar este registro?'
+      'question',
+      'Se eliminará el Acta',
+      '¿Desea continuar?'
     ).then(async question => {
       if (question.isConfirmed) {
         this.proceedingsDeliveryReceptionService
@@ -239,23 +240,25 @@ export class SearchActsComponent extends BasePage implements OnInit {
               if (this.actaActual)
                 if (this.actaActual.id == dataaaID) {
                   this.valDelete = true;
-                  this.ejecutarFuncionDesdeModal(true);
+                  this.onDelete.emit(true);
                 }
               this.alert('success', 'Acta eliminada correctamente', '');
+              this.selectedRow = null;
               this.getStatusDeliveryCve();
               // console.log(this.dataTableGoodsActa);
             },
             error: error => {
               this.loading = false;
-              this.totalItems2 = 0;
+              // this.totalItems2 = 0;
               this.alert(
                 'error',
                 'Ocurrió un error al intentar eliminar el Acta',
                 ''
               );
+              this.getStatusDeliveryCve();
               // console.log(error);
-              this.dataFactActas.load([]);
-              this.dataFactActas.refresh();
+              // this.dataFactActas.load([]);
+              // this.dataFactActas.refresh();
             },
           });
       }

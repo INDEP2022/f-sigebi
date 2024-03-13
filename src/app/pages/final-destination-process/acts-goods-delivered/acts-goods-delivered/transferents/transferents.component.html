@@ -1,13 +1,13 @@
 <app-modal>
   <div header class="d-flex justify-content-between">
     <div>
-      <h5 class="modal-title">BÚSQUEDA DE ACTAS DE ENTREGAS</h5>
+      <h5 class="modal-title">BÚSQUEDA DE TRANSFERENTES</h5>
     </div>
   </div>
   <div body>
     <div class="justify-content-end d-flex mb-3 ml-2">
       <app-columns-select
-        [defaultColumns]="6"
+        [defaultColumns]="5"
         [(settings)]="settings"></app-columns-select>
     </div>
     <form-loader *ngIf="loading"></form-loader>
@@ -18,9 +18,8 @@
         <ng2-smart-table
           [attr.class]="'table-responsive table-bordered'"
           [settings]="settings"
-          [source]="dataFactActas"
-          (userRowSelect)="onUserRowSelect($event)"
-          (delete)="showDeleteMsg($event)">
+          [source]="data"
+          (userRowSelect)="onUserRowSelect($event)">
         </ng2-smart-table>
       </ng-scrollbar>
       <app-pagination [params]="params" [totalItems]="totalItems2">
