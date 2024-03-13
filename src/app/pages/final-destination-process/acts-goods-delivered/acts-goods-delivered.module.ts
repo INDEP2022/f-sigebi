@@ -8,9 +8,18 @@ import { CustomSelectComponent } from 'src/app/@standalone/shared-forms/custom-s
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ActsGoodsDeliveredRoutingModule } from './acts-goods-delivered-routing.module';
 import { ActsGoodsDeliveredComponent } from './acts-goods-delivered/acts-goods-delivered.component';
+import { DelegationsComponent } from './acts-goods-delivered/delegations/delegations.component';
+import { GoodsErrorsComponent } from './acts-goods-delivered/goods-errors/goods-errors.component';
 import { SearchActsComponent } from './acts-goods-delivered/search-acts/search-acts.component';
+import { TransferentsComponent } from './acts-goods-delivered/transferents/transferents.component';
 @NgModule({
-  declarations: [ActsGoodsDeliveredComponent, SearchActsComponent],
+  declarations: [
+    ActsGoodsDeliveredComponent,
+    SearchActsComponent,
+    TransferentsComponent,
+    DelegationsComponent,
+    GoodsErrorsComponent,
+  ],
   imports: [
     CommonModule,
     ActsGoodsDeliveredRoutingModule,

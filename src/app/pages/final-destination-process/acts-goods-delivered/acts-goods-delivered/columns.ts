@@ -1,7 +1,7 @@
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const COLUMNS = {
-  goodNumb: {
+  numberGood: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
@@ -11,7 +11,7 @@ export const COLUMNS = {
     type: 'number',
     sort: false,
   },
-  quantity: {
+  amount: {
     title: 'Cantidad',
     type: 'number',
     sort: false,
@@ -22,7 +22,7 @@ export const COLUMNS = {
     sort: false,
   },
   status: {
-    title: 'Estado',
+    title: 'Estatus',
     type: 'string',
     sort: false,
   },
@@ -63,6 +63,12 @@ export const ACTAS = {
       component: CustomDateFilterComponent,
     },
   },
+  numTransfer_: {
+    title: 'No. Transferente',
+    type: 'string',
+    sort: false,
+    filter: false,
+  },
   numFile: {
     title: 'Expediente',
     type: 'string',
@@ -72,5 +78,56 @@ export const ACTAS = {
     title: 'Observaciones',
     type: 'string',
     sort: false,
+  },
+};
+
+export const TRANSFERENTES = {
+  id: {
+    title: 'No. Transferente',
+    type: 'string',
+    sort: false,
+    width: '30%',
+  },
+  keyTransferent: {
+    title: 'Clave Transferente',
+    type: 'string',
+    sort: false,
+    width: '35%',
+  },
+  nameTransferent: {
+    title: 'Descripción Transferente',
+    type: 'string',
+    sort: false,
+    width: '35%',
+  },
+};
+
+export const DELEGACIONES = {
+  id: {
+    title: 'No. Delegación',
+    type: 'string',
+    sort: false,
+    width: '30%',
+  },
+  keyTransferent: {
+    title: 'Clave Transferente',
+    type: 'string',
+    sort: false,
+    width: '35%',
+  },
+};
+
+export const GOODS_ERRORS = {
+  BIEN: {
+    title: 'No. Bien',
+    type: 'string',
+    sort: false,
+    width: '30%',
+  },
+  ERROR: {
+    title: 'Error',
+    type: 'string',
+    sort: false,
+    width: '70%',
   },
 };

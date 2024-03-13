@@ -1521,10 +1521,6 @@ export class DonationActsComponent extends BasePage implements OnInit {
   }
 
   async actualizarActa() {
-    console.log(
-      'this.actaRecepttionForm.value.elaboradate',
-      this.actaRecepttionForm.value.elaboradate
-    );
     if (!this.actaDefault) {
       this.alertInfo('warning', 'Debe seleccionar un Acta', '');
       return;
