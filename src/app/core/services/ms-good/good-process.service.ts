@@ -2,6 +2,7 @@ import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GoodProcessPoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
+import { GoodprocessEndpoints } from 'src/app/common/constants/endpoints/ms-goodprocess-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
@@ -412,5 +413,13 @@ export class GoodProcessService extends HttpService {
   //detail-process-clean-tmp
   detailProcessCleanTmp(body: any) {
     return this.post('application/detail-process-clean-tmp', body);
+  }
+
+  GetTypeMinuteDetailDelivery(body: any, params: _Params) {
+    return this.post(
+      `${GoodprocessEndpoints.GetTypeMinuteDetailDelivery}`,
+      body,
+      params
+    );
   }
 }

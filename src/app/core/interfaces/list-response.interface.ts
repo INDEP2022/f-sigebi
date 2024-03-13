@@ -37,3 +37,8 @@ export interface IQueryRegAdmin {
   delegatioGnu: number;
   recAdmGst: string;
 }
+
+export interface ICountDelivery {
+  good: number | string;
+  proceedingKey?: string;
+}
