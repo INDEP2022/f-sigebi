@@ -32,6 +32,8 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   @Output() onSave = new EventEmitter<boolean>();
   @Output() onChange = new EventEmitter<any>();
 
+  @Input() secondRevision: boolean;
+
   guidelinesForm: FormGroup = new FormGroup({});
   maxDate: Date = new Date();
   saveButton: string =
@@ -179,11 +181,21 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   }
 
   prepareForm() {
-    this.guidelinesForm = this.fb.group({
-      firstRevisionDate: [null, [Validators.required]],
-      secondRevisionDate: [null],
-      observations: [null, [Validators.pattern(STRING_PATTERN)]],
-    });
+    if (this.secondRevision) {
+      this.guidelinesForm = this.fb.group({
+        firstRevisionDate: [null],
+        secondRevisionDate: [null, [Validators.required]],
+        observations: [null, [Validators.pattern(STRING_PATTERN)]],
+      });
+      this.guidelinesForm.get('firstRevisionDate').disable();
+    } else {
+      this.guidelinesForm = this.fb.group({
+        firstRevisionDate: [null, [Validators.required]],
+        secondRevisionDate: [null],
+        observations: [null, [Validators.pattern(STRING_PATTERN)]],
+      });
+      this.guidelinesForm.get('secondRevisionDate').disable();
+    }
   }
 
   getData(data) {
@@ -262,7 +274,10 @@ export class GuidelinesComponent extends BasePage implements OnInit {
       );
     }
 
-    if (!(config.secondRevisionDate + '').includes('/')) {
+    if (
+      config.secondRevisionDate &&
+      !(config.secondRevisionDate + '').includes('/')
+    ) {
       deault.meetsRevision2 = moment(
         new Date(config.secondRevisionDate)
       ).format('DD/MM/YYYY');
@@ -355,9 +370,10 @@ export class GuidelinesComponent extends BasePage implements OnInit {
               firstRevisionDate: deault.meetsRevision1.includes('/')
                 ? deault.meetsRevision1
                 : null,
-              secondRevisionDate: deault.meetsRevision1.includes('/')
-                ? deault.meetsRevision2
-                : null,
+              secondRevisionDate:
+                deault.meetsRevision2 && deault.meetsRevision2.includes('/')
+                  ? deault.meetsRevision2
+                  : null,
               observations: (deault.missingActionsRev1 + '').trim(),
             });
           }

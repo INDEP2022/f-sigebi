@@ -425,6 +425,7 @@
         <tab *ngIf="guidelines" heading="Lineamientos" id="guidelinesTab">
           <app-guidelines
             [requestId]="requestId"
+            [secondRevision]="secondRevision"
             (onChange)="onGuidelines($event)"></app-guidelines>
         </tab>
         <tab *ngIf="viewGuidelines" heading="Lineamientos" id="guidelinesTab">
