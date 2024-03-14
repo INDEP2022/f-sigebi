@@ -1,51 +1,37 @@
 <!-- Modal #2 -->
 <!-- <div style="border: 1px solid black; padding: 10px; border-radius: 20px" class="mt-5"> -->
-<ng-template #modalRev>
-  <div>
-    <div>
-      <!-- <p>Este es el modal #2</p> -->
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Motivos de Cancelación</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-12">
+        <ng2-smart-table
+          [settings]="settingsModal"
+          [source]="dataModal"
+          (userRowSelect)="onUserRowSelect($event)"></ng2-smart-table>
+      </div>
       <div>
-        <div class="row mt-5">
-          <div class="col-md-12">
-            <!-- <p>Notificaciones</p> -->
-          </div>
-        </div>
-        <!--  -->
-        <div class="m-3">
-          <div>
-            <p><strong>Motivos de Cancelación</strong></p>
-          </div>
-          <div class="m-3">
-            <div>
-              <ng2-smart-table
-                [settings]="settingsModal"
-                [source]="dataModal"
-                (userRowSelect)="onUserRowSelect($event)"></ng2-smart-table>
-            </div>
-            <div>
-              <app-pagination
-                [params]="paramsModal"
-                [totalItems]="totalItemsModal">
-              </app-pagination>
-            </div>
-          </div>
-        </div>
-        <!--  -->
-        <div class="d-flex justify-content-center mb-3">
-          <button
-            class="btn btn-primary btn-sm active mr-3"
-            style="min-width: 100px"
-            (click)="modifySelectedRows()">
-            Aceptar
-          </button>
-          <button
-            class="btn btn-primary btn-sm active"
-            style="min-width: 100px"
-            (click)="closeModalSubtype()">
-            Cerrar
-          </button>
-        </div>
+        <app-pagination [params]="paramsModal" [totalItems]="totalItemsModal">
+        </app-pagination>
       </div>
     </div>
   </div>
-</ng-template>
+  <div footer>
+    <div class="d-flex justify-content-center mb-3">
+      <button
+        class="btn btn-primary btn-sm active mr-3"
+        style="min-width: 100px"
+        (click)="modifySelectedRows()">
+        Aceptar
+      </button>
+      <button
+        class="btn btn-primary btn-sm active"
+        style="min-width: 100px"
+        (click)="closeModalSubtype()">
+        Cerrar
+      </button>
+    </div>
+  </div>
+</app-modal>
