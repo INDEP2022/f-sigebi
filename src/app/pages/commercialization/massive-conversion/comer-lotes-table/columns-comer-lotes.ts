@@ -1,17 +1,22 @@
 export const COLUMNS_COMER_LOTES = {
-  eventId: {
+  idEvent: {
     title: 'ID Evento',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  clientId: {
+  idLot: {
     title: 'ID Lote',
-    type: 'number',
+    type: 'string',
+    sort: false,
+  },
+  publicLot: {
+    title: 'Lote Público',
+    type: 'string',
     sort: false,
   },
   description: {
     title: 'Descripción',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
 };

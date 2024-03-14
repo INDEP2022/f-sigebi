@@ -1,17 +1,22 @@
 export const COLUMNS_COMER_CLIENTS = {
-  eventId: {
+  idEvent: {
     title: 'ID Evento',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  clientId: {
+  idClient: {
     title: 'ID Cliente',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
   rfc: {
     title: 'RFC',
-    type: 'number',
+    type: 'string',
+    sort: false,
+  },
+  client: {
+    title: 'Cliente',
+    type: 'string',
     sort: false,
   },
 };

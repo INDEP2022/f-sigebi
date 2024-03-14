@@ -312,12 +312,25 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
                 filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'comerStatusVta':
+                field = 'status';
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.EQ;
                 break;
             }
             if (filter.search !== '') {
-              this.columnFiltersLc[field] = `${searchFilter}:${filter.search}`;
+              if (field == 'status') {
+                field = 'filter.status';
+                this.columnFiltersLc[
+                  field
+                ] = `${searchFilter}:${filter.search}`;
+              } else {
+                this.columnFiltersLc[
+                  field
+                ] = `${searchFilter}:${filter.search}`;
+              }
             } else {
               delete this.columnFiltersLc[field];
             }
@@ -357,14 +370,28 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
                 filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'idCustomer':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'comerStatusVta':
+                field = 'status';
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
             if (filter.search !== '') {
-              this.columnFiltersReprocess[
-                field
-              ] = `${searchFilter}:${filter.search}`;
+              if (field == 'status') {
+                field = 'filter.status';
+                this.columnFiltersReprocess[
+                  field
+                ] = `${searchFilter}:${filter.search}`;
+              } else {
+                this.columnFiltersReprocess[
+                  field
+                ] = `${searchFilter}:${filter.search}`;
+              }
             } else {
               delete this.columnFiltersReprocess[field];
             }
@@ -465,7 +492,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     this.lcsSource.setFilter([]);
     this.rfcSource.setFilter([]);
     this.clientSource.setFilter([]);
-    //this.reprocesSource.setFilter([]);
+    this.reprocessSource.setFilter([]);
   }
 
   consultInServer() {
