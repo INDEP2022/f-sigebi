@@ -229,6 +229,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       let name = token.name;
       let post = token.cargonivel1;
 
+      console.log("RequestInfo: ", this.requestInfo);
+
       if (!isNullOrEmpty(this.requestInfo.nameSignatoryRuling)) {
         name = this.requestInfo.nameSignatoryRuling;
         post = this.requestInfo.postSignatoryRuling;
@@ -756,6 +758,11 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           this.handleSuccess();
           //Plasmar la clave
           this.claveInReport();
+
+          if (!this.isDynamic) {
+            //this.updateRequest();
+            return;
+          }
 
           if (nameTypeReport === 'DictamenProcendecia') {
             //this.updateRequest();

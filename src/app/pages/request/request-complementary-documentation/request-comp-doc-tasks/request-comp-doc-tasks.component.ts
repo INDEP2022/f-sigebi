@@ -1676,25 +1676,27 @@ export class RequestCompDocTasksComponent
     let report = await this.getStatusReport();
     report = report.isValid ? report.data[0] : report;
 
-    if (isNullOrEmpty(report.ucmDocumentName)) {
-      this.wContentService
-        .downloadDinamycReport(
-          'sae.rptdesign',
-          this.reportTable,
-          this.requestId.toString(),
-          data.documentTypeId
-        )
-        .subscribe({
-          next: response => {
-            //let blob = this.dataURItoBlob(response);
-            let file = new Blob([response], { type: 'application/pdf' });
-            const fileURL = URL.createObjectURL(file);
-            this.openPrevPdf(fileURL);
-          },
-          error: error => {
-            this.showError('Vista previa no dipoonible');
-          },
-        });
+    this.wContentService
+      .downloadDinamycReport(
+        'sae.rptdesign',
+        this.reportTable,
+        this.requestId.toString(),
+        data.documentTypeId
+      )
+      .subscribe({
+        next: response => {
+          //let blob = this.dataURItoBlob(response);
+          let file = new Blob([response], { type: 'application/pdf' });
+          const fileURL = URL.createObjectURL(file);
+          this.openPrevPdf(fileURL);
+        },
+        error: error => {
+          this.showError('Vista previa no dipoonible');
+        },
+      });
+
+    /*if (isNullOrEmpty(report.ucmDocumentName)) {
+      
     } else {
       this.wContentService.obtainFile(report.ucmDocumentName).subscribe({
         next: response => {
@@ -1705,7 +1707,7 @@ export class RequestCompDocTasksComponent
         },
         error: error => { },
       });
-    }
+    }*/
   }
 
   dataURItoBlob(dataURI: any) {
@@ -2062,10 +2064,11 @@ export class RequestCompDocTasksComponent
         nameTypeDoc,
         nomenglatura,
         isDynamic,
-        callback: (next: boolean) => {
-          console.log('TERCER PASO', next);
-
+        callback: (next, xml) => {
+          console.log(next);
+          console.log(xml);
           if (next) {
+            this.updateReport(xml);
           }
         },
       },
@@ -2076,9 +2079,52 @@ export class RequestCompDocTasksComponent
     this.modalService.show(PrintReportModalComponent, config);
   }
 
+  async updateReport(xml) {
+
+    if (isXML(xml)) {
+
+      let token = this.authService.decodeToken();
+      let content = getXMLNode(xml, 'strXmlFirmado');
+      console.log(content);
+
+      let report = await this.getStatusReport();
+      report = report.data[0];
+      report.content = `${content?.textContent}`;
+      report.signedReport = 'Y';
+      report.modificationUser = token.username;
+      report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
+      this.reportgoodService.saveReportDynamic(report).subscribe({
+        next: resp => { },
+        error: err => { },
+      });
+    }
+
+
+  }
+
+
+
+
   //Crear un sample para el tipo de firma
 }
 
 export function isNullOrEmpty(value: any): boolean {
   return value === null || value === undefined || (value + '').trim() === '';
 }
+
+export function isXML(xmlStr: string): boolean {
+  let parser = new DOMParser();
+  let doc = parser.parseFromString(xmlStr, "application/xml");
+  return !doc.getElementsByTagName('parsererror').length;
+}
+
+export function getXMLNode(xmlStr: string, tagName: string): Node | null {
+  let parser = new DOMParser();
+  let doc = parser.parseFromString(xmlStr, "application/xml");
+
+  let nodes = doc.getElementsByTagName(tagName);
+
+  // Devuelve el primer nodo con el nombre de etiqueta especificado, o null si no se encontró ninguno
+  return nodes.length > 0 ? nodes[0] : null;
+}
+
