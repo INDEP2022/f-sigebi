@@ -114,10 +114,30 @@ export abstract class CompDocTasksComponent extends BasePage {
       }
     } else if (affair == 27) {
       this.title = `PROCESO DE ABANDONO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
+    } else if (affair == 98) {
+      this.title = `OFICIO DE INSTRUCCIÓN DE ABANDONO EMITIDO POR LA AUTORIDAD : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
+    } else if (affair == 99) {
+      this.title = ` ACUERDO DE DECLARACIÓN DE ABANDONO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
     } else if (affair == 15) {
       this.title = `DECOMISO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
+    } else if (affair == 102) {
+      this.title = `LA SENTENCIA DE DECOMISO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
+    } else if (affair == 103) {
+      this.title = `EL AUTO DONDE SE CONFIRMA O CAUSA EJECUTORIA EL DECOMISO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
+    } else if (affair == 104) {
+      this.title = `OFICIO DE CANCELACIÓN DE ASIENTOS REGISTRALES RELATIVOS AL ACUERDO DE ASEGURAMIENTO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
+    } else if (affair == 105) {
+      this.title = `CONSTANCIA DE INSCRIPCIÓN DE LA SENTENCIA : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
+    } else if (affair == 106) {
+      this.title = `CONSTANCIA DE LIBERTAD DE GRAVÁMENES : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
+    } else if (affair == 107) {
+      this.title = `EL AUTO DONDE SE CONFIRME LA DISTRIBUCIÓN DEL RECURSO. (PARA LOS BIENES QUE SON NUMERARIO) : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
     } else if (affair == 16) {
       this.title = `EXTINCIón DE DOMINIO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
+    } else if (affair == 100) {
+      this.title = `LA SENTENCIA DONDE SE DECLARA PROCEDENTE LA EXTINCIÓN DE DOMINIO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
+    } else if (affair == 101) {
+      this.title = `ACUERDO DONDE SE DECLARE EJECUTADA LA SENTENCIA DE EXTINCIÓN DE DOMINIO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
     }
   }
 
@@ -195,7 +215,71 @@ export abstract class CompDocTasksComponent extends BasePage {
           this.expRequest = true;
           this.saveRequest = true;
           this.turnReq = true;
+        } else if (affair == 102) {
+          ///DECOMISO
+          this.regDocForm = true;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.turnReq = true;
+        } else if (affair == 103) {
+          ///DECOMISO
+          this.regDocForm = true;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.turnReq = true;
+        } else if (affair == 104) {
+          ///DECOMISO
+          this.regDocForm = true;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.turnReq = true;
+        } else if (affair == 105) {
+          ///DECOMISO
+          this.regDocForm = true;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.turnReq = true;
+        } else if (affair == 106) {
+          ///DECOMISO
+          this.regDocForm = true;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.turnReq = true;
+        } else if (affair == 107) {
+          ///DECOMISO
+          this.regDocForm = true;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.turnReq = true;
         } else if (affair == 16) {
+          //EXTINCION DE DOMINIO
+          this.regDocForm = true;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.turnReq = true;
+        } else if (affair == 100) {
+          //EXTINCION DE DOMINIO
+          this.regDocForm = true;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.turnReq = true;
+        } else if (affair == 101) {
           //EXTINCION DE DOMINIO
           this.regDocForm = true;
           this.searchRequestSimGoods = true;
@@ -211,7 +295,25 @@ export abstract class CompDocTasksComponent extends BasePage {
           this.expRequest = true;
           this.saveRequest = true;
           this.turnReq = true;
+        } else if (affair == 98) {
+          ///PROCESO DE ABANDONO
+          this.regDocForm = true;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.turnReq = true;
+        } else if (affair == 99) {
+          ///PROCESO DE ABANDONO
+          this.regDocForm = true;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.turnReq = true;
         }
+
+
 
         break;
       case 'similar-good-register-documentation':
@@ -1051,6 +1153,15 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.finish = true;
         break;
 
+      case 'abandonment-instruction-letter':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+        break;
       case 'register-domain-extinction':
         this.regDocForm = true;
         this.searchAssociateFile = true;
