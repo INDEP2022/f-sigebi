@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { AppraisesService } from 'src/app/core/services/ms-appraises/appraises.service';
 import { EventAppService } from 'src/app/core/services/ms-event/event-app.service';
 import { FIndicaService } from 'src/app/core/services/ms-good/findica.service';
@@ -71,7 +75,10 @@ export class valuationRequestComponent extends BasePage implements OnInit {
     private cityService: CityService,
     private usersService: UsersService,
     private activatedRoute: ActivatedRoute,
-    private appraisesService: AppraisesService
+    private appraisesService: AppraisesService,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService
   ) {
     super();
     this.settings = {
@@ -285,9 +292,9 @@ export class valuationRequestComponent extends BasePage implements OnInit {
       this.lsbConCopiaList = [];
       let usuOfico: any = await this.getUserOt(this.m_comer.id_oficio);
       console.log(usuOfico);
-      if (usuOfico != 0) {
-        usuOfico.forEach((element: any) => {
-          this.lsbConCopiaList.push(element.usuario + '-' + element.nombre);
+      if (usuOfico != 0 && usuOfico != undefined) {
+        usuOfico.data.forEach((element: any) => {
+          this.lsbConCopiaList.push(element);
         });
       }
     }
@@ -325,7 +332,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
         },
         error: eror => {
           this.loader.load = false;
-          res(eror);
+          res('');
         },
       });
     });
@@ -511,15 +518,16 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   }
   getAddUser() {
     if (this.form.controls['user'].value) {
-      this.lsbConCopiaListSelect = new DefaultSelect([], 0, true);
-      this.lsbConCopiaList.push(this.usuariocopia);
-      console.log(this.lsbConCopiaList);
-      this.lsbConCopiaListSelect = new DefaultSelect(
-        this.lsbConCopiaList,
-        this.lsbConCopiaList.length
-      );
-      console.log(this.lsbConCopiaListSelect);
-
+      this.alertQuestion(
+        'question',
+        'Agregar Usuario',
+        '¿Desea agregar un usuario?'
+      ).then(x => {
+        if (x.isConfirmed) {
+          this.lsbConCopiaList.push(this.usuariocopia);
+          console.log(this.lsbConCopiaList);
+        }
+      });
       // let usuariocopia: string = '';
       // let verificauser: boolean = false;
       // // if (this.lsbConCopiaList.length > 0) {
@@ -541,30 +549,61 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   }
   getDeleteUser() {
     try {
-      if (this.form.controls['lsbConCopiaCCP'].value != null) {
-        let objetoAEliminar = this.usuariocopiaDelete;
+      this.alertQuestion(
+        'question',
+        'Eliminar Usuario',
+        '¿Desea eliminar un usuario?'
+      ).then(x => {
+        if (x.isConfirmed) {
+          if (this.form.controls['lsbConCopiaCCP'].value != null) {
+            let indice = Number(
+              String(this.form.controls['lsbConCopiaCCP'].value).charAt(0)
+            );
+            console.log('Este es el índice: ', indice - 1);
+            console.log('Este es el array: ', this.lsbConCopiaList);
+            this.lsbConCopiaList.splice(indice - 1, 1);
+          } else {
+            this.alert('info', 'Selecciona un registro', '');
+          }
 
-        // Encontrar la posición del objeto en el arreglo
-        let index = this.lsbConCopiaList.indexOf(objetoAEliminar);
+          const valorFormulario = this.form.controls['lsbConCopiaCCP'].value;
 
-        // Verificar si se encontró el objeto en el arreglo
-        if (index !== -1) {
-          this.lsbConCopiaListSelect = new DefaultSelect([], 0, true);
-          // Eliminar el objeto utilizando splice
-          this.lsbConCopiaList.splice(index, 1);
-          this.lsbConCopiaListSelect = new DefaultSelect(
-            this.lsbConCopiaList,
-            this.lsbConCopiaList.length
-          );
-          this.form.controls['lsbConCopiaCCP'].reset();
+          // Encuentra el índice del elemento que coincide con el valor del formulario
+          const indice = this.lsbConCopiaList.indexOf(valorFormulario);
+
+          // Si se encuentra el elemento, elimínalo
+          if (indice !== -1) {
+            this.lsbConCopiaList.splice(indice, 1);
+          } else {
+            // Aquí puedes manejar el caso en que el elemento no se encuentra
+            console.log('Elemento no encontrado');
+          }
         }
-        // if (this.idOficio != null) {
-        //InsertaUsuConCopia  SP_INSERTAR_CONCOPIA_OFICIO
-        //eliminar lsbCopia
-        // } else {
-        //eliminar lsbCopia
-        // }
-      }
+      });
+      // if (this.form.controls['lsbConCopiaCCP'].value != null) {
+      //   let objetoAEliminar = this.usuariocopiaDelete;
+
+      //   // Encontrar la posición del objeto en el arreglo
+      //   let index = this.lsbConCopiaList.indexOf(objetoAEliminar);
+
+      //   // Verificar si se encontró el objeto en el arreglo
+      //   if (index !== -1) {
+      //     this.lsbConCopiaListSelect = new DefaultSelect([], 0, true);
+      //     // Eliminar el objeto utilizando splice
+      //     this.lsbConCopiaList.splice(index, 1);
+      //     this.lsbConCopiaListSelect = new DefaultSelect(
+      //       this.lsbConCopiaList,
+      //       this.lsbConCopiaList.length
+      //     );
+      //     this.form.controls['lsbConCopiaCCP'].reset();
+      //   }
+      //   // if (this.idOficio != null) {
+      //   //InsertaUsuConCopia  SP_INSERTAR_CONCOPIA_OFICIO
+      //   //eliminar lsbCopia
+      //   // } else {
+      //   //eliminar lsbCopia
+      //   // }
+      // }
     } catch (error) {}
   }
   async saveChanges() {
@@ -582,7 +621,9 @@ export class valuationRequestComponent extends BasePage implements OnInit {
       if (this.form.controls['folio'].value != null) {
         let mComer = await this.getTrade(this.event);
         console.log(mComer);
-        this.m_comer = mComer;
+        if (mComer) {
+          this.m_comer = mComer;
+        }
         console.log(this.m_comer);
 
         if (this.m_comer.cve_oficio != null) {
@@ -597,10 +638,10 @@ export class valuationRequestComponent extends BasePage implements OnInit {
           this.m_comer.texto3 = this.form.controls['paragraph3'].value;
           this.m_comer.cve_oficio = this.m_comer.cve_oficio;
           this.m_comer.num_cv_armada = this.form.controls['folio'].value;
-
+          console.log(this.m_comer);
           let rest: any = await this.officeManagement('A', this.m_comer);
           console.log(rest);
-          if (rest != 0) {
+          if (rest == true) {
             let mComer: any = await this.getTrade(this.event);
             this.idOficio = mComer.id_oficio;
             this.form.controls['cveService'].setValue(mComer.cve_oficio);
@@ -610,12 +651,13 @@ export class valuationRequestComponent extends BasePage implements OnInit {
             console.log(values);
             this.postInsertUsuCopia('I', this.m_comer, values);
           }
-          if (rest > 0) {
+          if (rest) {
             this.alert('success', 'Datos Guardados', '');
           } else {
             this.alert('warning', 'No se pudo Guardar los Datos', '');
           }
         } else {
+          console.log(this.m_comer);
           this.m_comer.id_evento = type;
           this.m_comer.remitente = this.form.controls['sender'].value;
           this.m_comer.destinatario = this.form.controls['addressee'].value;
@@ -626,6 +668,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
           this.m_comer.texto3 = this.form.controls['paragraph3'].value;
           this.m_comer.cve_oficio = this.m_comer.cve_oficio;
           this.m_comer.num_cv_armada = this.form.controls['folio'].value;
+          console.log(this.m_comer);
           let rest: any = await this.officeManagement('R', this.m_comer);
           let mComer: any = await this.getTrade(this.event);
           this.idOficio = mComer.idOficio;
@@ -636,7 +679,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
             console.log(values);
             this.postInsertUsuCopia('I', this.m_comer, values);
           }
-          if (rest > 0) {
+          if (rest == true) {
             this.alert('success', 'Datos Guardados', '');
           } else {
             this.alert('warning', 'No se pudo Guardar los Datos', '');
@@ -664,13 +707,14 @@ export class valuationRequestComponent extends BasePage implements OnInit {
         this.m_comer.remitente = this.form.controls['sender'].value;
         this.m_comer.destinatario = this.form.controls['addressee'].value;
         this.m_comer.usuario_insert = this.user;
-        this.m_comer.ciudad = this.form.controls['Ciudad'].value;
+        this.m_comer.ciudad = this.form.controls['city'].value;
         this.m_comer.texto1 = this.form.controls['paragraph1'].value;
         this.m_comer.texto2 = this.form.controls['paragraph2'].value;
         this.m_comer.texto3 = this.form.controls['paragraph3'].value;
         this.m_comer.num_cv_armada = this.form.controls['folio'].value;
-        let rest: any = await this.officeManagement('E', this.m_comer);
-        if (rest > 0) {
+        let rest: any = await this.officeManagementSed('E', this.m_comer);
+        console.log(rest);
+        if (rest == true) {
           this.controlControls();
           this.loadGrid(va_evento, 'ENVIADO');
           this.generateReport();
@@ -689,6 +733,38 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   }
   generateReport() {
     //no se contruyo un reporte
+    let params = {};
+    this.siabService.fetchReport('blank', params).subscribe(response => {
+      //  response= null;
+      if (response !== null) {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {
+              if (data) {
+                data.map((item: any) => {
+                  return item;
+                });
+              }
+            },
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      } else {
+        this.onLoadToast(
+          'warning',
+          'advertencia',
+          'Sin datos para los rangos de fechas suministrados'
+        );
+      }
+    });
   }
   seeJob() {
     this.generateReport();
@@ -702,7 +778,8 @@ export class valuationRequestComponent extends BasePage implements OnInit {
         jobKeyIn: mComer.cve_oficio,
         userInsertIn: mComer.usuario_insert,
         userSendIn: mComer.usuario_envia,
-        idJobReferenceIn: mComer.id_oficio_referencia,
+        idJobReferenceIn:
+          mComer.id_oficio_referencia != null ? mComer.id_oficio_referencia : 0,
         senderIn: mComer.remitente,
         addresseeIn: mComer.destinatario,
         cityIn: mComer.ciudad,
@@ -714,8 +791,40 @@ export class valuationRequestComponent extends BasePage implements OnInit {
       console.log(data);
       this.appraisesService.getPaTriggerOAppraise(data).subscribe({
         next: resp => {
-          console.log(resp.data);
-          res(resp.data[0]);
+          console.log(resp);
+          res(resp);
+        },
+        error: eror => {
+          this.loader.load = false;
+          res(eror);
+        },
+      });
+    });
+  }
+  async officeManagementSed(acction: string, mComer: any) {
+    return new Promise((res, rej) => {
+      let data = {
+        actionIn: acction,
+        idJobIn: mComer.id_oficio,
+        idEventIn: mComer.id_evento,
+        jobKeyIn: mComer.cve_oficio,
+        userInsertIn: mComer.usuario_insert,
+        userSendIn: mComer.usuario_envia,
+        idJobReferenceIn:
+          mComer.id_oficio_referencia != null ? mComer.id_oficio_referencia : 0,
+        senderIn: mComer.remitente,
+        addresseeIn: mComer.destinatario,
+        cityIn: mComer.ciudad,
+        text1In: mComer.texto1,
+        text2In: mComer.texto2,
+        text3In: mComer.texto3,
+        navyNumberKeyIn: mComer.num_cv_armada,
+      };
+      console.log(data);
+      this.appraisesService.getPaTriggerOAppraise(data).subscribe({
+        next: resp => {
+          console.log(resp);
+          res(resp);
         },
         error: eror => {
           this.loader.load = false;
@@ -725,10 +834,11 @@ export class valuationRequestComponent extends BasePage implements OnInit {
     });
   }
   async postInsertUsuCopia(acction: string, mComer: any, value: any) {
-    return new Promise((res, rej) => {
+    return new Promise(async (res, rej) => {
       // falta endpoit del PROCEDIMIENTO -	SP_INSERTAR_CONCOPIA_OFICIO
+      let user = await this.obtenerTextoDespuesDelGuion(value);
       let data = {
-        user: value.usuario,
+        user: user,
         jobId: mComer.id_oficio,
         action: acction,
         userType: 'INTERNO',
@@ -746,6 +856,10 @@ export class valuationRequestComponent extends BasePage implements OnInit {
       });
       // res(0);
     });
+  }
+  obtenerTextoDespuesDelGuion(texto): string {
+    const partes = texto.split('-'); // Dividir el string en partes utilizando el guion como separador
+    return partes.length > 1 ? partes[1].trim() : ''; // Seleccionar la segunda parte y eliminar espacios en blanco al principio y al final
   }
   async postInsertUsuConCopia(acction: string) {
     return new Promise((res, rej) => {
