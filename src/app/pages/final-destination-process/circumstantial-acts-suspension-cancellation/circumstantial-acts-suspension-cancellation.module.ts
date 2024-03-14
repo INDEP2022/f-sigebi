@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ScanFileSharedComponent } from 'src/app/@standalone/shared-forms/scan-file-shared/scan-file-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CircumstantialActsSuspensionCancellationRoutingModule } from './circumstantial-acts-suspension-cancellation-routing.module';
@@ -18,6 +19,7 @@ import { ReceptionDeliveryComponent } from './reception-delivery/reception-deliv
     SharedModule,
     FormsModule,
     ScanFileSharedComponent,
+    TooltipModule.forRoot(),
   ],
 })
 export class CircumstantialActsSuspensionCancellationModule {}
