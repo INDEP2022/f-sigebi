@@ -1751,7 +1751,7 @@ export class RequestCompDocTasksComponent
             resolve({
               data: resp.data,
               isValid: resp.data.length > 0,
-              isSigned: true, //resp.data[0].signedReport == 'Y',
+              isSigned: resp.data[0].signedReport == 'Y',
             });
           } else {
             resolve({
