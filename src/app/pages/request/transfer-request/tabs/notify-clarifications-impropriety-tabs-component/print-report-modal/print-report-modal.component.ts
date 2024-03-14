@@ -194,8 +194,21 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   //Verifica si ya existen usuarios, para eliminarlo (Evitar duplicidad)
   verificateFirm() {
+
+    let learnedId = this.idReportAclara;
+    let learnedType = this.idTypeDoc;
+
+    if (this.isDynamic) {
+      learnedType = 217;
+      learnedId = 'SOLICITUDES-' + this.idReportAclara + '-' + this.idTypeDoc;
+    }
+
+    if (parseInt(this.idTypeDoc) == 223) {
+      learnedId = this.idReportAclara + '-2-' + this.idTypeDoc;
+    }
+
     this.signatoriesService
-      .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
+      .getSignatoriesName(learnedType, learnedId)
       .subscribe({
         next: response => {
           this.signatories = response.data;
@@ -238,6 +251,10 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         post = this.requestInfo.postSignatoryRuling;
       }
 
+      if (parseInt(this.idTypeDoc) == 223) {
+        learnedId = this.idReportAclara + '-2-' + this.idTypeDoc;
+      }
+
       this.signatoriesService
         .getSignatoriesName(learnedType, learnedId)
         .subscribe({
@@ -278,6 +295,10 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     if (this.isDynamic) {
       learnedType = 217;
       learnedId = 'SOLICITUDES-' + this.idReportAclara + '-' + this.idTypeDoc;
+    }
+
+    if (parseInt(this.idTypeDoc) == 223) {
+      learnedId = this.idReportAclara + '-2-' + this.idTypeDoc;
     }
 
 
@@ -768,7 +789,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           //Plasmar la clave
           this.claveInReport();
 
-          if (!this.isDynamic) {
+          if (!this.isDynamic || this.idTypeDoc == 223) {
             //this.updateRequest();
             return;
           }
