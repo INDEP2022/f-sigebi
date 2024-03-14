@@ -1690,8 +1690,12 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
   }
   deleteGood(data: any) {
     const { statusRecord } = this.formAct.value;
-    // if(statusRecord == 'CERRADA')
-    //   return this.alert('warning', 'El Acta se encuentra cerrada', 'No se puede modificar');
+    if (statusRecord == 'CERRADA')
+      return this.alert(
+        'warning',
+        'El Acta se encuentra cerrada',
+        'No se puede modificar'
+      );
 
     this.alertQuestion(
       'question',
