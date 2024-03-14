@@ -1814,7 +1814,6 @@ export class RequestCompDocTasksComponent
           typeSign,
           formOnly,
           callback: async (responsibleSae, saePosition, typeSign) => {
-            console.log('SEGUNDO PASO', responsibleSae, saePosition, typeSign);
 
             this.requestInfo.detail.nameSignatoryRuling = responsibleSae;
             this.requestInfo.detail.postSignatoryRuling = saePosition;

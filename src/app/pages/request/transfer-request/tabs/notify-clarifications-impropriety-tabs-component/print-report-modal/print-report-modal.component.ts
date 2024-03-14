@@ -225,7 +225,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     if (!this.process) {
 
       let token = this.authService.decodeToken();
-      //Se agrega validacion para tomar el firma de la solicitud
+      //Se agrega validacion para tomar el nombre y cargo del usuario
       let name = token.name;
       let post = token.cargonivel1;
 
@@ -233,9 +233,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         name = this.requestInfo.nameSignatoryRuling;
         post = this.requestInfo.postSignatoryRuling;
       }
-
-      console.log('Firmante: ', name, post);
-
 
       this.signatoriesService
         .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
