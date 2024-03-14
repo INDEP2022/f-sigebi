@@ -58,7 +58,8 @@
           [minDate]="maxDate"
           bsDatepicker
           [bsValue]="bsPriorityDate"
-          (bsValueChange)="changePriorityDateEvent($event)" />
+          (bsValueChange)="changePriorityDateEvent($event)"
+          (keydown)="(false)" />
       </form-field>
     </div>
   </div>
@@ -165,7 +166,8 @@
           [bsValue]="bsPaperValue"
           [maxDate]="maxDate"
           formControlName="paperDate"
-          bsDatepicker />
+          bsDatepicker
+          (keydown)="(false)" />
       </form-field>
     </div>
     <div class="col-md-4">

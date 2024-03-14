@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -91,6 +91,7 @@ export class DocRequestTabComponent
   idState: string = '';
   statusTask: any = '';
   task: any;
+  process: string = '';
 
   @Output() onChange = new EventEmitter<any>();
 
@@ -104,7 +105,8 @@ export class DocRequestTabComponent
     private regDelService: RegionalDelegationService,
     private transferentService: TransferenteService,
     private stateOfRepublicService: StateOfRepublicService,
-    private requestService: RequestService
+    private requestService: RequestService,
+    private route: ActivatedRoute,
   ) {
     super();
     this.idRequest = this.idRequest
@@ -115,6 +117,7 @@ export class DocRequestTabComponent
   ngOnInit(): void {
     this.task = JSON.parse(localStorage.getItem('Task'));
     this.statusTask = this.task?.status;
+    this.process = this.route.snapshot.paramMap.get('process');
 
     this.prepareForm();
     this.getRegDelegation(new ListParams());
@@ -1085,12 +1088,48 @@ export class DocRequestTabComponent
       this.docExpedient.length > 0 ? this.docExpedient : this.docRequest;
 
     let toks = [136, 138, 131, 125, 30, 148, 166, 31, 182, 32, 158, 178];
-    list = list.filter(x => toks.includes(parseInt(x.xtipoDocumentoId)));
+    let containDocCom = false;
+    let validToks = false;
 
-    console.log('list', list, this.typeDoc);
+    containDocCom = list.some(x => toks.includes(parseInt(x.xtipoDocumentoId)));
+
+    if (list.length > 0) {
+      switch (this.process) {
+
+        case 'register-seizures':
+          if (containDocCom) {
+            validToks = true;
+          }
+          break;
+
+        case 'register-abandonment-goods':
+          let hasType51 = list.some(x => parseInt(x.xtipoDocumentoId) === 51);
+          let hasType146 = list.some(x => parseInt(x.xtipoDocumentoId) === 146);
+
+          if (hasType146 && hasType51 && containDocCom) {
+            validToks = true;
+          }
+          break;
+
+        case 'register-domain-extinction':
+          let hasType83 = list.some(x => parseInt(x.xtipoDocumentoId) === 83);
+          if (hasType83 && containDocCom) {
+            validToks = true;
+          }
+          break;
+
+        default:
+          if (containDocCom) {
+            validToks = true;
+          }
+          break;
+      }
+    }
+
+    //let list2 = list.filter(x => toks.includes(parseInt(x.xtipoDocumentoId)));
 
     this.onChange.emit({
-      isValid: list.length > 0,
+      isValid: validToks,
       object: list,
       type: this.typeDoc,
     });
