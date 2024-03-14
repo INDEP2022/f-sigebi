@@ -22,6 +22,7 @@ import { UploadReportReceiptComponent } from 'src/app/pages/request/programming-
 import { environment } from 'src/environments/environment';
 import { UploadFielsModalComponent } from '../upload-fiels-modal/upload-fiels-modal.component';
 import { LIST_REPORTS_COLUMN } from './list-reports-column';
+import { isNullOrEmpty } from 'src/app/pages/request/request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-print-report-modal',
@@ -222,15 +223,28 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   registerSign() {
     if (!this.process) {
+
+      let token = this.authService.decodeToken();
+      //Se agrega validacion para tomar el firma de la solicitud
+      let name = token.name;
+      let post = token.cargonivel1;
+
+      if (!isNullOrEmpty(this.requestInfo.nameSignatoryRuling)) {
+        name = this.requestInfo.nameSignatoryRuling;
+        post = this.requestInfo.postSignatoryRuling;
+      }
+
+      console.log('Firmante: ', name, post);
+
+
       this.signatoriesService
         .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
         .subscribe({
           next: response => { },
           error: error => {
-            let token = this.authService.decodeToken();
             const formData: Object = {
-              name: token.name,
-              post: token.cargonivel1,
+              name: name,
+              post: post,
               learnedType: this.idTypeDoc,
               learnedId: this.idReportAclara, // Para los demás reportes
             };

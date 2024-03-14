@@ -53,8 +53,7 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
   protected override goodType: string;
   protected override signOffice: boolean;
   protected override btnGrouper: boolean;
@@ -329,7 +328,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   async openReport(first = true): Promise<void> {
     let doc = this.reportId;
@@ -949,7 +948,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1554,7 +1553,7 @@ export class RequestCompDocTasksComponent
     this.validate.registerAppointment = event.isValid;
   }
 
-  onSetData(event) {}
+  onSetData(event) { }
 
   onOrder(event) {
     this.validate.orderEntry = event.isValid;
@@ -1574,7 +1573,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1590,7 +1589,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1671,7 +1670,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
 
   async showReport(data) {
     let report = await this.getStatusReport();
@@ -1704,7 +1703,7 @@ export class RequestCompDocTasksComponent
           const fileURL = URL.createObjectURL(file);
           this.openPrevPdf(fileURL);
         },
-        error: error => {},
+        error: error => { },
       });
     }
   }
@@ -1727,7 +1726,7 @@ export class RequestCompDocTasksComponent
           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
           type: 'pdf',
         },
-        callback: (data: any) => {},
+        callback: (data: any) => { },
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -1791,11 +1790,15 @@ export class RequestCompDocTasksComponent
     typeAnnex?: string,
     contentId = ''
   ): Promise<void> {
+
     let report = await this.getStatusReport();
     report = report.isValid ? report.data[0] : report;
     let docId = report.isValid ? report.documentTypeId : this.reportId;
 
-    console.log('PRIMER PASO', this.reportId);
+    const formOnly = true;
+    const nameSignatoryRuling = this.requestInfo.detail.nameSignatoryRuling;
+    const postSignatoryRuling = this.requestInfo.detail.postSignatoryRuling;
+    const typeSign = this.requestInfo.detail.nameRecipientRuling;
 
     if (!this.signReport) {
       let config: ModalOptions = {
@@ -1806,15 +1809,24 @@ export class RequestCompDocTasksComponent
           idSample: idSample,
           contentId: contentId,
           typeAnnex: typeAnnex,
-          callback: async (typeDocument: number, typeSign: string) => {
-            console.log('SEGUNDO PASO', typeDocument, typeSign);
+          nameSignatoryRuling,
+          postSignatoryRuling,
+          typeSign,
+          formOnly,
+          callback: async (responsibleSae, saePosition, typeSign) => {
+            console.log('SEGUNDO PASO', responsibleSae, saePosition, typeSign);
+
+            this.requestInfo.detail.nameSignatoryRuling = responsibleSae;
+            this.requestInfo.detail.postSignatoryRuling = saePosition;
+            this.requestInfo.detail.nameRecipientRuling = typeSign;
+            this.updateRequest(false);
 
             if (typeSign == 'electronica') {
               this.openFirma(true);
             } else {
               this.showReportInfo(
                 idSample,
-                typeDocument,
+                docId,
                 typeSign,
                 typeAnnex,
                 null
@@ -1906,8 +1918,8 @@ export class RequestCompDocTasksComponent
     report.modificationUser = user.username;
     report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
     this.reportgoodService.saveReportDynamic(report).subscribe({
-      next: resp => {},
-      error: err => {},
+      next: resp => { },
+      error: err => { },
     });
   }
 
@@ -1938,7 +1950,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  async getSampleCSJ(execute = sample => {}) {
+  async getSampleCSJ(execute = sample => { }) {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.warehouseId'] = `$eq:${this.requestId}`;
 
@@ -2015,7 +2027,7 @@ export class RequestCompDocTasksComponent
             },
           });
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
