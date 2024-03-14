@@ -12,6 +12,8 @@ import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/samp
 import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
+import { isNullOrEmpty } from '../../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
+import { da } from 'date-fns/locale';
 
 @Component({
   selector: 'app-annex-j-assets-classification',
@@ -29,9 +31,10 @@ export class AnnexJAssetsClassificationComponent
   idSample: number = 0;
   sampleInfo: ISample;
 
-  requestId: number = 0;
-  reportId: number = 0;
-  reportTable: string = '';
+  formOnly = false;
+  postSignatoryRuling: string;
+  nameSignatoryRuling: string;
+  typeSign: string;
 
   constructor(
     private fb: FormBuilder,
@@ -46,7 +49,15 @@ export class AnnexJAssetsClassificationComponent
 
   ngOnInit(): void {
     this.initForm();
-    this.getInfoSample();
+
+    if (this.formOnly) {
+      this.signForm.get('name').setValue(this.nameSignatoryRuling);
+      this.signForm.get('inCharge').setValue(this.postSignatoryRuling);
+      this.signForm.get('tipeSign').setValue(this.typeSign);
+    } else {
+      this.getInfoSample();
+    }
+
   }
 
   getInfoSample() {
@@ -154,7 +165,15 @@ export class AnnexJAssetsClassificationComponent
   }
 
   async signAnnexJ() {
-    const typeDocument = this.reportId > 0 ? this.reportId : 218;
+
+    if (this.formOnly) {
+      let data = this.signForm.getRawValue();
+      this.bsModalRef.content.callback(data.name, data.inCharge, data.tipeSign);
+      this.close();
+      return;
+    }
+
+    const typeDocument = 218;
     if (this.typeAnnex == 'annexJ-assets-classification') {
       const responsibleSae = this.form.get('responsibleSae').value;
       const saePosition = this.form.get('saePosition').value;
@@ -275,7 +294,7 @@ export class AnnexJAssetsClassificationComponent
   checkSignatureInfo(name: string, charge: string, typeDocument: number) {
     return new Promise((resolve, reject) => {
       const learnedType = typeDocument;
-      const learnedId = this.requestId > 0 ? this.requestId : this.idSample;
+      const learnedId = this.idSample;
       this.signatoriesService
         .getSignatoriesFilter(learnedType, learnedId)
         .subscribe({
