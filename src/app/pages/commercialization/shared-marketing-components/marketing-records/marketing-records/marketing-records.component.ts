@@ -2776,30 +2776,35 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
           ).then(res => {
             console.log(res);
             if (res.isDismissed) {
-              //:PRUEBAS.NO_OF_GESTION := :M_OFICIO_GESTION.NO_OF_GESTION;
+              // : PRUEBAS.NO_OF_GESTION := : M_OFICIO_GESTION.NO_OF_GESTION;
+              // : GLOBAL.NO_OF_GESTION := : GLOBAL.V_OFICIO;
+              // PUP_EXTRAE_DATOS(: GLOBAL.V_OFICIO);
+              // : GLOBAL.BANDERA := 1;
+
               this.NO_OF_GESTION = V_OFICIO;
               this.form.patchValue({
                 managementNumber: V_OFICIO,
               });
               this.PupExtraeDatos(V_OFICIO);
               this.BANDERA = 1;
-            } else {
-              if (this.BANDERA == 0) {
-                if ((VAL_TIPOF2 = 'ESCRITURACION')) {
-                  TIPO_OF = 'ESC';
-                  this.PupAgregaTexto();
-                } else if ((VAL_TIPOF2 = 'ENTREGA')) {
-                  TIPO_OF = 'ENT';
-                  this.PupAgregaTexto();
-                }
-                this.V_OFICIO = null;
-                if (V_OFICIO == null) {
-                  this.BANDERA = 0;
-                  this.PupPortafolio();
-                }
+            }
+
+            if (this.BANDERA == 0) {
+              if ((VAL_TIPOF2 = 'ESCRITURACION')) {
+                TIPO_OF = 'ESC';
+                this.PupAgregaTexto();
+              } else if ((VAL_TIPOF2 = 'ENTREGA')) {
+                TIPO_OF = 'ENT';
+                this.PupAgregaTexto();
               }
+              this.V_OFICIO = null;
             }
           });
+        }
+
+        if (this.V_OFICIO == null) {
+          this.BANDERA = 0;
+          this.PupPortafolio();
         }
       },
     });

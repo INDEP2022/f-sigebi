@@ -12,8 +12,6 @@ import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/samp
 import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
-import { isNullOrEmpty } from '../../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
-import { da } from 'date-fns/locale';
 
 @Component({
   selector: 'app-annex-j-assets-classification',
@@ -22,7 +20,8 @@ import { da } from 'date-fns/locale';
 })
 export class AnnexJAssetsClassificationComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   signForm: ModelForm<any>;
   form: FormGroup = new FormGroup({});
   typeAnnex: string = '';
@@ -57,7 +56,6 @@ export class AnnexJAssetsClassificationComponent
     } else {
       this.getInfoSample();
     }
-
   }
 
   getInfoSample() {
@@ -165,7 +163,6 @@ export class AnnexJAssetsClassificationComponent
   }
 
   async signAnnexJ() {
-
     if (this.formOnly) {
       let data = this.signForm.getRawValue();
       this.bsModalRef.content.callback(data.name, data.inCharge, data.tipeSign);
@@ -210,7 +207,7 @@ export class AnnexJAssetsClassificationComponent
           typeSign
         );
 
-        console.log("registerInfoSample: " + registerInfoSample);
+        console.log('registerInfoSample: ' + registerInfoSample);
 
         if (registerInfoSample) {
           const checkSignature = await this.checkSignatureInfo(
@@ -301,8 +298,7 @@ export class AnnexJAssetsClassificationComponent
           next: response => {
             const deleteSignatures = this.deleteSignatores(response.data);
 
-            console.log("deleteSignatures: " + deleteSignatures);
-
+            console.log('deleteSignatures: ' + deleteSignatures);
 
             if (deleteSignatures) {
               const formData: Object = {
@@ -350,7 +346,7 @@ export class AnnexJAssetsClassificationComponent
             next: () => {
               resolve(true);
             },
-            error: error => { },
+            error: error => {},
           });
       });
     });
