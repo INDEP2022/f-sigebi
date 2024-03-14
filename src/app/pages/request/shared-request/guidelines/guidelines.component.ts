@@ -32,6 +32,8 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   @Output() onSave = new EventEmitter<boolean>();
   @Output() onChange = new EventEmitter<any>();
 
+  @Input() secondRevision: boolean;
+
   guidelinesForm: FormGroup = new FormGroup({});
   maxDate: Date = new Date();
   saveButton: string =
@@ -128,7 +130,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         onComponentInitFunction(instance) {
           if (!isNullOrEmpty(instance)) {
             instance.key = 'firstRevision';
-            instance.cellChanged.subscribe(row => { });
+            instance.cellChanged.subscribe(row => {});
           }
         },
       },
@@ -141,7 +143,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         onComponentInitFunction(instance) {
           if (!isNullOrEmpty(instance)) {
             instance.key = 'firstRevisionObserv';
-            instance.cellChanged.subscribe(row => { });
+            instance.cellChanged.subscribe(row => {});
           }
         },
       },
@@ -153,7 +155,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         onComponentInitFunction(instance) {
           if (!isNullOrEmpty(instance)) {
             instance.key = 'secondRevision';
-            instance.cellChanged.subscribe(row => { });
+            instance.cellChanged.subscribe(row => {});
           }
         },
       },
@@ -166,7 +168,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         onComponentInitFunction(instance) {
           if (!isNullOrEmpty(instance)) {
             instance.key = 'secondRevisionObserv';
-            instance.cellChanged.subscribe(row => { });
+            instance.cellChanged.subscribe(row => {});
           }
         },
       },
@@ -179,11 +181,21 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   }
 
   prepareForm() {
-    this.guidelinesForm = this.fb.group({
-      firstRevisionDate: [null, [Validators.required]],
-      secondRevisionDate: [null],
-      observations: [null, [Validators.pattern(STRING_PATTERN)]],
-    });
+    if (this.secondRevision) {
+      this.guidelinesForm = this.fb.group({
+        firstRevisionDate: [null],
+        secondRevisionDate: [null, [Validators.required]],
+        observations: [null, [Validators.pattern(STRING_PATTERN)]],
+      });
+      this.guidelinesForm.get('firstRevisionDate').disable();
+    } else {
+      this.guidelinesForm = this.fb.group({
+        firstRevisionDate: [null, [Validators.required]],
+        secondRevisionDate: [null],
+        observations: [null, [Validators.pattern(STRING_PATTERN)]],
+      });
+      this.guidelinesForm.get('secondRevisionDate').disable();
+    }
   }
 
   getData(data) {
@@ -240,7 +252,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
     let config = this.guidelinesForm.getRawValue();
     let isNew = true;
 
-    let deault = this.loadGuidelines.find(x => x.lineamentId == "5");
+    let deault = this.loadGuidelines.find(x => x.lineamentId == '5');
     isNew = isNullOrEmpty(deault);
     if (isNew) {
       deault = this.getObject({
@@ -256,12 +268,19 @@ export class GuidelinesComponent extends BasePage implements OnInit {
       ? ' '
       : config.observations;
 
-    if (!(config.firstRevisionDate + "").includes('/')) {
-      deault.meetsRevision1 = moment(new Date(config.firstRevisionDate)).format('DD/MM/YYYY');
+    if (!(config.firstRevisionDate + '').includes('/')) {
+      deault.meetsRevision1 = moment(new Date(config.firstRevisionDate)).format(
+        'DD/MM/YYYY'
+      );
     }
 
-    if (!(config.secondRevisionDate + "").includes('/')) {
-      deault.meetsRevision2 = moment(new Date(config.secondRevisionDate)).format('DD/MM/YYYY');
+    if (
+      config.secondRevisionDate &&
+      !(config.secondRevisionDate + '').includes('/')
+    ) {
+      deault.meetsRevision2 = moment(
+        new Date(config.secondRevisionDate)
+      ).format('DD/MM/YYYY');
     }
 
     deault.version = !isNullOrEmpty(config.secondRevisionDate) ? '2' : '1';
@@ -344,13 +363,17 @@ export class GuidelinesComponent extends BasePage implements OnInit {
             }
           });
 
-          let deault = this.loadGuidelines.find(x => x.lineamentId == "5");
+          let deault = this.loadGuidelines.find(x => x.lineamentId == '5');
           console.log('deault', deault);
           if (!isNullOrEmpty(deault)) {
-
             this.guidelinesForm.patchValue({
-              firstRevisionDate: deault.meetsRevision1.includes("/") ? deault.meetsRevision1 : null,
-              secondRevisionDate: deault.meetsRevision1.includes("/") ? deault.meetsRevision2 : null,
+              firstRevisionDate: deault.meetsRevision1.includes('/')
+                ? deault.meetsRevision1
+                : null,
+              secondRevisionDate:
+                deault.meetsRevision2 && deault.meetsRevision2.includes('/')
+                  ? deault.meetsRevision2
+                  : null,
               observations: (deault.missingActionsRev1 + '').trim(),
             });
           }

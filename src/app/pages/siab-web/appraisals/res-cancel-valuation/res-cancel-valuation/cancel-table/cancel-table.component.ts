@@ -6,7 +6,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, take, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -37,20 +37,20 @@ export class CancelTableComponent
     this._body = value;
     this.getData();
   }
-  @Input() event: any;
-  @Input() officeType: number;
-  @Input() set showModalCambioRev(value: number) {
-    if (value > 0) {
-      if (!this.event) {
-        this.alert(
-          'warning',
-          'Seleccione un evento o folio para continuar',
-          ''
-        );
-      }
-      this.reasonsForChange();
-    }
-  }
+  event: any;
+  officeType: number;
+  // @Input() set showModalCambioRev(value: number) {
+  //   if (value > 0) {
+  //     if (!this.event) {
+  //       this.alert(
+  //         'warning',
+  //         'Seleccione un evento o folio para continuar',
+  //         ''
+  //       );
+  //     }
+  //     this.reasonsForChange();
+  //   }
+  // }
 
   selectedRows: Array<any> = [];
   // Modal
@@ -65,6 +65,7 @@ export class CancelTableComponent
     private serviceAppraise: AppraiseService,
     private dataService: AppraisalsDataService,
     private modalService: BsModalService,
+    private modalRef: BsModalRef,
     private serviceJobs: JobsService
   ) {
     super();
@@ -82,6 +83,8 @@ export class CancelTableComponent
       columns: { ...MOT_CAN },
     };
     this.haveInitialCharge = false;
+  }
+  override ngOnInit(): void {
     this.paramsModal.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
         this.getReasonsChange();
@@ -113,7 +116,7 @@ export class CancelTableComponent
   }
 
   closeModalSubtype() {
-    this.modalService.hide();
+    this.modalRef.hide();
   }
 
   private reasonsForChange() {
@@ -165,7 +168,8 @@ export class CancelTableComponent
     this.dataService.selectedRowsValues = this.selectedRows;
     this.dataService.selectedRowsCancel = this.selectedRowsCancel;
     this.dataPaginated.refresh();
-    this.modalService.hide();
+    this.modalRef.content.callback(this.selectedRows);
+    this.modalRef.hide();
   }
 
   private validatedReasons() {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
@@ -7,25 +8,61 @@ import {
 } from 'ngx-bootstrap/datepicker';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+import { RNomenclaService } from 'src/app/core/services/ms-parametergood/r-nomencla.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { MODAL_CONFIG } from '../../../../common/constants/modal-config';
+import { SearchActasComponent } from '../../donation-acts/donation-acts/search-actas/search-actas.component';
+import { SearchExpedientComponent } from '../../donation-acts/donation-acts/search-expedient/search-expedient.component';
 import { COLUMNS1 } from './columns1';
 import { ModalMantenimientoEstatusActComponent } from './modal-mantenimiento-estatus-act/modal-mantenimiento-estatus-act.component';
 
 @Component({
   selector: 'app-acts-regularization-non-existence',
-  templateUrl: './acts-regularization-non-existence.component.html',
-  styles: [],
+  templateUrl: './acts.regularization-non-existence.component.html',
+  styles: [
+    `
+      .bg-gray {
+        background-color: #eee !important;
+      }
+
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class ActsRegularizationNonExistenceComponent
   extends BasePage
@@ -33,16 +70,24 @@ export class ActsRegularizationNonExistenceComponent
 {
   response: boolean = false;
   form: FormGroup;
+  formExpedient: FormGroup;
+  formActCreate: FormGroup;
+  formActReception: FormGroup;
+  formFolio: FormGroup;
   formTable1: FormGroup;
+  form2: FormGroup;
   bsValueFromYear: Date = new Date();
   minModeFromYear: BsDatepickerViewMode = 'year';
   bsConfigFromYear: Partial<BsDatepickerConfig>;
   bsValueFromMonth: Date = new Date();
   minModeFromMonth: BsDatepickerViewMode = 'month';
   bsConfigFromMonth: Partial<BsDatepickerConfig>;
+
   totalItems1: number = 0;
   totalItems2: number = 0;
-  settings2: any;
+  settings2 = {
+    ...this.settings,
+  };
   params1 = new BehaviorSubject<ListParams>(new ListParams());
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   data1: LocalDataSource = new LocalDataSource();
@@ -57,6 +102,38 @@ export class ActsRegularizationNonExistenceComponent
   statusActa: String = '';
   expedienteBuscado: number = 0;
 
+  dataExpediente: any = null;
+  actaDefault: any = null;
+
+  arrayDele = new DefaultSelect<any>();
+  dele = new DefaultSelect<any>();
+  trans = new DefaultSelect<any>();
+  actaCerrada: boolean = true;
+  loadingBtn: boolean = false;
+
+  years: number[] = [];
+  currentYear: number = new Date().getFullYear();
+  currentMonth: number = new Date().getMonth();
+  months = [
+    { value: 1, label: '01' },
+    { value: 2, label: '02' },
+    { value: 3, label: '03' },
+    { value: 4, label: '04' },
+    { value: 5, label: '05' },
+    { value: 6, label: '06' },
+    { value: 7, label: '07' },
+    { value: 8, label: '08' },
+    { value: 9, label: '09' },
+    { value: 10, label: '10' },
+    { value: 11, label: '11' },
+    { value: 12, label: '12' },
+  ];
+  valClave: boolean = false;
+  btnSave: boolean = false;
+  delegation: any;
+  stagecreated: string | number;
+  loading2: boolean = false;
+  statusGood_: string = '';
   constructor(
     private fb: FormBuilder,
     private proceedingsDelivery: ProceedingsDeliveryReceptionService,
@@ -64,7 +141,10 @@ export class ActsRegularizationNonExistenceComponent
     private modalService: BsModalService,
     private goodprocessService: GoodProcessService,
     private expedientService: ExpedientService,
-    private proceedingsDetailDelivery: ProceedingsDeliveryReceptionService
+    private proceedingsDetailDelivery: ProceedingsDeliveryReceptionService,
+    private parametersService: ParametersService,
+    private rNomenclaService: RNomenclaService,
+    private transferenteService: TransferenteService
   ) {
     super();
     this.settings = {
@@ -85,13 +165,26 @@ export class ActsRegularizationNonExistenceComponent
 
   ngOnInit(): void {
     this.initForm();
-    this.startCalendars();
+    this.delegationWhere();
+    // this.params1.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+    //   this.getGoods(this.expedienteBuscado);
+    // });
 
-    this.params1.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      this.getGoods(this.expedienteBuscado);
-    });
-
-    this.data2.load(this.dataTabla2);
+    // this.data2.load(this.dataTabla2);
+  }
+  delegationWhere() {
+    let date = `date=${format(new Date(), 'yyyy-MM-dd')}`;
+    this.parametersService
+      .getPhaseEdo(date)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(
+        (res: any) => {
+          this.stagecreated = res.stagecreated;
+        },
+        err => {
+          this.stagecreated = 2;
+        }
+      );
   }
 
   search(event: any) {
@@ -230,6 +323,79 @@ export class ActsRegularizationNonExistenceComponent
     this.formTable1 = this.fb.group({
       detail: [null, []],
     });
+
+    this.formExpedient = this.fb.group({
+      id: [null],
+      transferNumber: [null],
+      preliminaryInquiry: [null],
+      criminalCase: [null],
+      expedientType: [null],
+      expTransferNumber: [null],
+    });
+
+    this.formActCreate = this.fb.group({
+      acta: [null],
+      type: [null],
+      claveTrans: [null],
+      administra: [null],
+      cveReceived: [null, Validators.required],
+      consec: [null],
+      anio: [null],
+      mes: [null],
+    });
+
+    this.formActReception = this.fb.group({
+      keysProceedings: [null],
+      elaborationDate: [null],
+      datePhysicalReception: [null],
+      address: [null],
+      statusProceedings: [null],
+      elaborate: null,
+      numFile: [null],
+      witness1: [null],
+      witness2: [null],
+      typeProceedings: [null],
+      dateElaborationReceipt: [null],
+      dateDeliveryGood: [null],
+      responsible: [null],
+      destructionMethod: [null],
+      observations: [null],
+      approvedXAdmon: [null],
+      approvalDateXAdmon: [null],
+      approvalUserXAdmon: [null],
+      numRegister: [null],
+      captureDate: [null],
+      numDelegation1: [null],
+      numDelegation2: [null],
+      identifier: [null],
+      label: [null],
+      universalFolio: [null],
+      numeraryFolio: [null],
+      numTransfer: [null],
+      idTypeProceedings: [null],
+      receiptKey: [null],
+      comptrollerWitness: [null],
+      numRequest: [null],
+      closeDate: [null],
+      maxDate: [null],
+      indFulfilled: [null],
+      dateCaptureHc: [null],
+      dateCloseHc: [null],
+      dateMaxHc: [null],
+      receiveBy: [null],
+      affair: [null],
+      numDelegation_1: [null],
+      numDelegation_2: [null],
+      file: [null],
+    });
+
+    this.formFolio = this.fb.group({
+      folioUniversal: [null],
+    });
+
+    this.form2 = this.fb.group({
+      estatusBien: [null],
+    });
   }
 
   onSubmit() {
@@ -248,23 +414,6 @@ export class ActsRegularizationNonExistenceComponent
 
   settingsChange(event: any, op: number) {
     op === 1 ? (this.settings = event) : (this.settings2 = event);
-  }
-
-  startCalendars() {
-    this.bsConfigFromMonth = Object.assign(
-      {},
-      {
-        minMode: this.minModeFromMonth,
-        dateInputFormat: 'MM',
-      }
-    );
-    this.bsConfigFromYear = Object.assign(
-      {},
-      {
-        minMode: this.minModeFromYear,
-        dateInputFormat: 'YYYY',
-      }
-    );
   }
 
   getDisponible(goodNumber: number) {
@@ -411,7 +560,7 @@ export class ActsRegularizationNonExistenceComponent
     return `${year}-${month}-${day}`;
   }
 
-  cerrarActa(idActa: any) {
+  cerrarActa(idActa?: any) {
     const model: IProccedingsDeliveryReception = {};
     model.closeDate = this.getCurrentDate();
     model.statusProceedings = 'CERRADA';
@@ -428,4 +577,182 @@ export class ActsRegularizationNonExistenceComponent
       },
     });
   }
+
+  searchExpediente() {
+    const modalConfig = {
+      initialState: {},
+      class: 'modal-xl modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    modalConfig.initialState = {};
+
+    let modalRef = this.modalService.show(
+      SearchExpedientComponent,
+      modalConfig
+    );
+    modalRef.content.onSave.subscribe((next: any) => {
+      if (next) {
+        this.resetForm();
+        this.dataExpediente = next;
+        this.formExpedient.patchValue(next);
+        // this.getGoodsByStatus(this.dataExpediente.id);
+        // this.paramsOne.getValue().page = 1;
+      }
+    });
+  }
+
+  searchActa() {
+    const expedienteNumber = this.dataExpediente.id;
+    const actaActual = this.actaDefault;
+    const modalConfig = {
+      initialState: {},
+      class: 'modal-xl modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    modalConfig.initialState = {
+      expedienteNumber,
+      actaActual,
+    };
+
+    let modalRef = this.modalService.show(SearchActasComponent, modalConfig);
+    modalRef.content.onSave.subscribe(async (next: any) => {
+      if (next) {
+        console.log('next', next);
+        this.actaDefault = next;
+
+        if (this.actaDefault.statusProceedings == 'CERRADA')
+          this.actaCerrada = false;
+        else this.actaCerrada = true;
+
+        // this.selectData2 = null;
+        // this.actaRecepttionForm.reset();
+
+        this.formActReception.patchValue(next);
+        this.valClave = false;
+        this.btnSave = true;
+        // let clave = await this.obtenerValores(this.actaDefault.keysProceedings);
+        // this.getDetailProceedingsDevollution(this.actaDefault.id);
+      }
+    });
+  }
+
+  resetForm() {}
+  save() {}
+  cleanActa() {
+    this.formActReception.reset();
+    this.formActCreate.reset();
+    this.data2.load([]);
+    this.data2.refresh();
+    this.totalItems2 = 0;
+    // this.selectData2 = null;
+    this.actaDefault = null;
+    // this.actaRecepttionForm.patchValue({
+    //   elaboradate: await this.getDate(),
+    //   datePhysicalReception: await this.getDate(),
+    // });
+    this.valClave = true;
+    this.btnSave = true;
+    this.actaCerrada = true;
+    this.formActCreate.get('anio').setValue(this.currentYear);
+    this.consulREG_DEL_ADMIN(new ListParams());
+    this.consultREG_TRANSFERENTES(new ListParams());
+  }
+  async correctDate(date: string) {
+    const dateUtc = new Date(date);
+    return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
+  }
+
+  // REG_DEL_ADMIN
+  globalGstRecAdm: any = null;
+  async consulREG_DEL_ADMIN(lparams: ListParams) {
+    // let obj = {
+    //   gst_todo: 'TODO',
+    //   gnu_delegacion: 0,
+    //   gst_rec_adm: 'FILTRAR',
+    // };
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    let obj = {
+      globalGstAll: 'NADA',
+      globalGnuDelegation: this.delegation,
+      globalGstRecAdm: this.globalGstRecAdm,
+    };
+
+    if (lparams.text)
+      if (!isNaN(parseInt(lparams?.text))) {
+        params.addFilter('delegationNumber2', this.delegation, SearchFilter.EQ);
+      } else {
+        params.addFilter('delegation', lparams.text, SearchFilter.ILIKE);
+      }
+
+    params.addFilter('stageEdo', this.stagecreated, SearchFilter.EQ);
+    this.parametersService
+      .GetDelegationGlobal(obj, params.getParams())
+      .subscribe({
+        next: (data: any) => {
+          console.log('REG_DEL_ADMIN', data);
+          let result = data.data.map(async (item: any) => {
+            item['cveReceived'] =
+              item.delegationNumber2 + ' - ' + item.delegation;
+          });
+          Promise.all(result).then(resp => {
+            this.dele = new DefaultSelect(data.data, data.count);
+          });
+        },
+        error: error => {
+          this.dele = new DefaultSelect();
+        },
+      });
+  }
+
+  async consultREG_TRANSFERENTES(lparams: ListParams) {
+    if (!this.dataExpediente) return;
+    if (!this.dataExpediente.transferNumber) return;
+    let obj = {
+      transfereeNumber: this.dataExpediente.transferNumber,
+      expedientType: this.dataExpediente.expedientType,
+    };
+
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    if (lparams.text)
+      if (!isNaN(parseInt(lparams.text))) {
+        params.addFilter3('filter.TransfereeNumber', lparams.text);
+      } else {
+        params.addFilter3('filter.password', lparams.text);
+      }
+
+    this.transferenteService
+      .appsGetPassword(obj, params.getParams())
+      .subscribe({
+        next: (data: any) => {
+          let result = data.data.map(async (item: any) => {
+            item['transfer'] = item.password + ' - ' + item.number;
+          });
+          Promise.all(result).then(resp => {
+            this.trans = new DefaultSelect(data.data, data.count);
+          });
+        },
+        error: error => {
+          this.trans = new DefaultSelect([], 0);
+        },
+      });
+  }
+
+  initSolicitud() {}
+  openScannerPage() {}
+
+  getReport() {}
+  openScannerPageView() {}
+
+  addSelect() {}
+  removeSelect() {}
+  rowSelectedOne(event: any) {}
+  rowSelectedTwo(event: any) {}
 }
