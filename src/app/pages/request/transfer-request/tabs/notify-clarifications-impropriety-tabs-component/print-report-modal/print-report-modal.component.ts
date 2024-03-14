@@ -22,6 +22,7 @@ import { UploadReportReceiptComponent } from 'src/app/pages/request/programming-
 import { environment } from 'src/environments/environment';
 import { UploadFielsModalComponent } from '../upload-fiels-modal/upload-fiels-modal.component';
 import { LIST_REPORTS_COLUMN } from './list-reports-column';
+import { isNullOrEmpty } from 'src/app/pages/request/request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-print-report-modal',
@@ -193,8 +194,21 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   //Verifica si ya existen usuarios, para eliminarlo (Evitar duplicidad)
   verificateFirm() {
+
+    let learnedId = this.idReportAclara;
+    let learnedType = this.idTypeDoc;
+
+    if (this.isDynamic) {
+      learnedType = 217;
+      learnedId = 'SOLICITUDES-' + this.idReportAclara + '-' + this.idTypeDoc;
+    }
+
+    if (parseInt(this.idTypeDoc) == 223) {
+      learnedId = this.idReportAclara + '-2-' + this.idTypeDoc;
+    }
+
     this.signatoriesService
-      .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
+      .getSignatoriesName(learnedType, learnedId)
       .subscribe({
         next: response => {
           this.signatories = response.data;
@@ -222,17 +236,35 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   registerSign() {
     if (!this.process) {
+
+      let token = this.authService.decodeToken();
+      //Se agrega validacion para tomar el nombre y cargo del usuario
+      let name = token.name;
+      let post = token.cargonivel1;
+      let learnedId = this.idReportAclara;
+      let learnedType = this.idTypeDoc;
+
+      if (this.isDynamic) {
+        learnedType = 217;
+        learnedId = 'SOLICITUDES-' + this.idReportAclara + '-' + this.idTypeDoc;
+        name = this.requestInfo.nameSignatoryRuling;
+        post = this.requestInfo.postSignatoryRuling;
+      }
+
+      if (parseInt(this.idTypeDoc) == 223) {
+        learnedId = this.idReportAclara + '-2-' + this.idTypeDoc;
+      }
+
       this.signatoriesService
-        .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
+        .getSignatoriesName(learnedType, learnedId)
         .subscribe({
           next: response => { },
           error: error => {
-            let token = this.authService.decodeToken();
             const formData: Object = {
-              name: token.name,
-              post: token.cargonivel1,
-              learnedType: this.idTypeDoc,
-              learnedId: this.idReportAclara, // Para los demás reportes
+              name: name,
+              post: post,
+              learnedType: learnedType,
+              learnedId: learnedId, // Para los demás reportes
             };
 
             //Asigna un firmante según el usuario logeado
@@ -255,9 +287,20 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   //Trae listado de los firmantes disponibles para el reporte
   getSignatories() {
-    const learnedType = this.idTypeDoc;
-    const learnedId = this.idReportAclara;
     this.loading = true;
+
+    let learnedId = this.idReportAclara;
+    let learnedType = this.idTypeDoc;
+
+    if (this.isDynamic) {
+      learnedType = 217;
+      learnedId = 'SOLICITUDES-' + this.idReportAclara + '-' + this.idTypeDoc;
+    }
+
+    if (parseInt(this.idTypeDoc) == 223) {
+      learnedId = this.idReportAclara + '-2-' + this.idTypeDoc;
+    }
+
 
     this.signatoriesService
       .getSignatoriesFilter(learnedType, learnedId)
@@ -745,6 +788,11 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           this.handleSuccess();
           //Plasmar la clave
           this.claveInReport();
+
+          if (!this.isDynamic || this.idTypeDoc == 223) {
+            //this.updateRequest();
+            return;
+          }
 
           if (nameTypeReport === 'DictamenProcendecia') {
             //this.updateRequest();

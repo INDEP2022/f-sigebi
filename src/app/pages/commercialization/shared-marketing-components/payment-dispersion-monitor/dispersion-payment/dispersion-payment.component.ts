@@ -153,6 +153,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   dataBatch: any = null;
 
+  eventClientId: any = null;
+  eventClientEventId: any = null;
+
   private clie_procesar: boolean = false;
   private lot_procesar: boolean = false;
   private clie_solo_pend: boolean = false;
@@ -193,6 +196,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.initialize();
     //Navegador
     this.navigateCustomerXClient();
+    this.navigateClientEvet();
     //Settings
     this.prepareSettings();
     //Verificar si hay idEvento
@@ -213,6 +217,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
+            console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -849,7 +854,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.loadingCustomer = true;
     const paramsF = new FilterParams();
     paramsF.addFilter('EventId', this.event.value);
-
+    console.log('Evento: ', this.event.value);
     let params = {
       ...this.paramsCustomer.getValue(),
       ...this.ColumnFilterCustomer,
@@ -1111,6 +1116,16 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.idClientCustomer = e.data.ClientId;
     this.rfcClientCustomer = e.data.RFC;
 
+    this.eventClientId = e.data.ClientId;
+    this.eventClientEventId = e.data.EventId;
+
+    this.getPaymentByCustomer(e.data.ClientId, e.data.EventId);
+    this.getPaymentByCustomer(e.data.ClientId, e.data.EventId);
+    this.getTotalSums(e);
+  }
+
+  //NAVEGAR CLIENTES PARTICIPANTES EN EL EVENTO
+  navigateClientEvet() {
     this.dataCustomerBanks
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -1118,6 +1133,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
+            console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -1174,15 +1190,18 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
             }
           });
           this.paramsCustomerBanks = this.pageFilter(this.paramsCustomerBanks);
-          this.getPaymentByCustomer(e.data.ClientId, e.data.EventId);
+
+          this.getPaymentByCustomer(
+            this.eventClientId,
+            this.eventClientEventId
+          );
         }
       });
     this.paramsCustomerBanks
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        this.getPaymentByCustomer(e.data.ClientId, e.data.EventId);
+        this.getPaymentByCustomer(this.eventClientId, this.eventClientEventId);
       });
-    this.getTotalSums(e);
   }
 
   //TOTALES DE CLIENTES PARTICIPANTES EN EL EVENTO
