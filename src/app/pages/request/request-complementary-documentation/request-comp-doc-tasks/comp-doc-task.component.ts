@@ -75,6 +75,8 @@ export abstract class CompDocTasksComponent extends BasePage {
 
   protected abstract showExpedient: boolean;
 
+  protected abstract secondRevision: boolean;
+
   docTemplate: IRequestDocument[];
 
   private rejectedService = inject(RejectedGoodService);
@@ -251,6 +253,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.createReport = true;
         this.rejectReq = false;
 
+        this.secondRevision = false;
+
         break;
       case 'analysis-result':
         this.regDocForm = false;
@@ -270,6 +274,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.turnReq = true;
         this.createReport = true;
         this.rejectReq = true;
+
+        this.secondRevision = true;
 
         break;
       case 'dictum-validate':
@@ -490,6 +496,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.validateGoodForEyeVisit = false;
         this.createReport = false;
         this.rejectReq = false;
+
+        this.secondRevision = false;
         break;
 
       case 'notify-transfer-similar-goods':
@@ -511,6 +519,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.validateGoodForEyeVisit = false;
         this.createReport = false;
         this.rejectReq = false;
+
+        this.secondRevision = true;
 
         //Configuracion de reporte
         this.reportId = REPORT_DOCUMENTS.NOTIFICACION_EXISTENCIA_BIENES;
@@ -631,6 +641,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.signedReport = false;
         this.editReport = true;
 
+        this.secondRevision = false;
+
         break;
 
       case 'analysis-result-compensation':
@@ -653,6 +665,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.reportId = REPORT_DOCUMENTS.DICTAMEN_RESARCIMIENTO;
         this.signedReport = true;
         this.editReport = false;
+
+        this.secondRevision = true;
 
         break;
 
@@ -821,6 +835,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.signedReport = false;
         this.editReport = true;
 
+        this.secondRevision = false;
+
         break;
 
       case 'generate-results-economic':
@@ -839,6 +855,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.reportId = REPORT_DOCUMENTS.DICTAMEN_RESARCIMIENTO;
         this.signedReport = true;
         this.editReport = false;
+
+        this.secondRevision = true;
 
         break;
 

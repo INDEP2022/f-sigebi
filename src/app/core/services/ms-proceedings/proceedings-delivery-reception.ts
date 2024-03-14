@@ -5,12 +5,14 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ProceedingsEndpoints } from '../../../common/constants/endpoints/ms-proceedings-endpoints';
 import {
   IBlkBie,
+  ICountDelivery,
   IListResponse,
   IQueryRegAdmin,
   IResponse,
 } from '../../interfaces/list-response.interface';
 import { IProceedingDeliveryReception } from '../../models/ms-proceedings/proceeding-delivery-reception';
 import { IProccedingsDeliveryReception } from '../../models/ms-proceedings/proceedings-delivery-reception-model';
+import { IProceedings } from '../../models/ms-proceedings/proceedings.model';
 import {
   IValidations,
   TransferProceeding,
@@ -110,7 +112,6 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   }
 
   createDeliveryReception(model: any) {
-    console.log(model);
     return this.post<IResponse>('proceedings-delivery-reception', model);
   }
 
@@ -133,5 +134,22 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
 
   regDelAdmin(body: IQueryRegAdmin) {
     return this.post('aplication/query-reg-del-admin-delegation', body);
+  }
+  proceedingsDeliveryReceptionCount(body: ICountDelivery) {
+    return this.post(
+      `${ProceedingsEndpoints.ProceedingsDeliveryReceptionCount}`,
+      body
+    );
+  }
+  proceedingsDeliveryFaDelAdmBien(good: number | string) {
+    return this.get(
+      `${ProceedingsEndpoints.ProceedingsDeliveryFaDelAdmBien}/${good}`
+    );
+  }
+  getProceedingsById(
+    id: string | number
+  ): Observable<IListResponse<IProceedings>> {
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}?filter.id=${id}`;
+    return this.get<IListResponse<IProceedings>>(route);
   }
 }
