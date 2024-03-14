@@ -228,24 +228,26 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       //Se agrega validacion para tomar el nombre y cargo del usuario
       let name = token.name;
       let post = token.cargonivel1;
+      let learnedId = this.idReportAclara;
+      let learnedType = this.idTypeDoc;
 
-      console.log("RequestInfo: ", this.requestInfo);
-
-      if (!isNullOrEmpty(this.requestInfo.nameSignatoryRuling)) {
+      if (this.isDynamic) {
+        learnedType = 217;
+        learnedId = 'SOLICITUDES-' + this.idReportAclara + '-' + this.idTypeDoc;
         name = this.requestInfo.nameSignatoryRuling;
         post = this.requestInfo.postSignatoryRuling;
       }
 
       this.signatoriesService
-        .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
+        .getSignatoriesName(learnedType, learnedId)
         .subscribe({
           next: response => { },
           error: error => {
             const formData: Object = {
               name: name,
               post: post,
-              learnedType: this.idTypeDoc,
-              learnedId: this.idReportAclara, // Para los demás reportes
+              learnedType: learnedType,
+              learnedId: learnedId, // Para los demás reportes
             };
 
             //Asigna un firmante según el usuario logeado
@@ -268,9 +270,16 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   //Trae listado de los firmantes disponibles para el reporte
   getSignatories() {
-    const learnedType = this.idTypeDoc;
-    const learnedId = this.idReportAclara;
     this.loading = true;
+
+    let learnedId = this.idReportAclara;
+    let learnedType = this.idTypeDoc;
+
+    if (this.isDynamic) {
+      learnedType = 217;
+      learnedId = 'SOLICITUDES-' + this.idReportAclara + '-' + this.idTypeDoc;
+    }
+
 
     this.signatoriesService
       .getSignatoriesFilter(learnedType, learnedId)
