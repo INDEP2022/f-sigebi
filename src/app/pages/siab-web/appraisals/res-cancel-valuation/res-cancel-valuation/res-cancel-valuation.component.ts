@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
   catchError,
@@ -30,6 +31,7 @@ import { ButtonColumnAddComponent } from 'src/app/shared/components/button-colum
 import { ButtonColumnDeleteComponent } from 'src/app/shared/components/button-column/button-column-delete.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AppraisalsDataService } from '../../appraisals-data.service';
+import { CancelTableComponent } from './cancel-table/cancel-table.component';
 import {
   MyBody,
   OfficesSend,
@@ -37,6 +39,7 @@ import {
   ValidationResponseFile,
 } from './res-cancel-valuation-class/class-service';
 import {
+  goodCheck,
   VALUATION_REQUEST_COLUMNS,
   VALUATION_REQUEST_COLUMNS_VALIDATED_TWO,
 } from './res-cancel-valuation-columns';
@@ -119,7 +122,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   formDialogOne: FormGroup;
 
   dataGood: LocalDataSource = new LocalDataSource();
-  dataGoodList: any;
+  dataGoodList: any = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   settings2 = {
@@ -156,7 +159,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     private serviceDelegations: DelegationService,
     private serviceDepartments: DepartamentService,
     private jobDictumTextsService: JobDictumTextsService,
-    private cdr: ChangeDetectorRef,
+    private modalService: BsModalService,
     private excelService: ExcelService
   ) {
     super();
@@ -175,6 +178,41 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           onComponentInitFunction: (instance: any) => {
             instance.onClick.subscribe((row: any) => {
               console.log(row);
+              let event = row.id_evento;
+              let officeType = this.officeType;
+              let config: ModalOptions = {
+                initialState: {
+                  event,
+                  officeType,
+                  callback: (next: any) => {
+                    if (next) {
+                      console.log(next);
+
+                      let motive = next
+                        .map(item => item.descripcion_motivo)
+                        .join(',');
+                      this.dataGood2.getElements().then(_item => {
+                        let result = _item.map(item => {
+                          if (item.no_bien == row.no_bien) {
+                            item.motivos = motive;
+                          }
+                        });
+                        Promise.all(result).then(resp => {
+                          this.dataGood2.refresh();
+                        });
+                      });
+                      this.dataGoodList.forEach(item => {
+                        if (item.no_bien == row.no_bien) {
+                          item.motivos = motive;
+                        }
+                      });
+                    }
+                  },
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(CancelTableComponent, config);
             });
           },
         },
@@ -187,6 +225,21 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           onComponentInitFunction: (instance: any) => {
             instance.onClick.subscribe((row: any) => {
               console.log(row);
+              this.dataGood2.getElements().then(_item => {
+                let result = _item.map(item => {
+                  if (item.no_bien == row.no_bien) {
+                    item.motivos = '';
+                  }
+                });
+                Promise.all(result).then(resp => {
+                  this.dataGood2.refresh();
+                });
+              });
+              this.dataGoodList.forEach(item => {
+                if (item.no_bien == row.no_bien) {
+                  item.motivos = '';
+                }
+              });
             });
           },
         },
@@ -247,6 +300,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.updateHour();
     this.intervalId = setInterval(() => {
       this.updateHour();
+      let good = goodCheck.map(item => item.row.no_bien).join(',');
+      console.log(good);
+      this.formTwo.controls['selectedGood'].setValue(good);
     }, 1000);
 
     this.setButtons(3);
@@ -551,7 +607,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   validateBienesSelect() {
     let tpOfi = this.officeType;
     if (tpOfi === 2) {
-      if (this.dataService.selectedRowsValues.length === 0) {
+      if (goodCheck.length === 0) {
         this.alert(
           'warning',
           'Para continuar es necesario seleccionar bienes Valuados',
@@ -561,7 +617,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       }
     }
     if (tpOfi === 3) {
-      if (this.dataService.selectedRowsCancel.length === 0) {
+      if (goodCheck.length === 0) {
         this.alert(
           'warning',
           'Para continuar es necesario seleccionar bienes Cancelados',
@@ -569,10 +625,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         );
         return false;
       }
-      let widthMotives = this.dataService.selectedRowsCancel.filter(
-        x => x.motivos
-      );
-      if (widthMotives.length != this.dataService.selectedRowsCancel.length) {
+      let widthMotives = this.dataGoodList.filter(x => x.motivos);
+      if (widthMotives.length != goodCheck.length.length) {
         this.alert(
           'warning',
           'Para continuar es necesario que seleccione los motivos por los que se enviara a Rev el bien',
@@ -1017,8 +1071,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       radio: [null],
     });
     this.formTwo = this.fb.group({
-      allGood: [null],
-      selectedGood: [null],
+      allGood: [0],
+      selectedGood: [0],
     });
     this.formDialogOne = this.fb.group({
       noti: [null],
@@ -1030,6 +1084,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       copy: [null],
       radioThree: [null],
     });
+    this.formTwo.get('allGood').disable();
+    this.formTwo.get('selectedGood').disable();
     this.subscribeDelete = this.form
       .get('office')
       .valueChanges.subscribe(value => {
@@ -1064,10 +1120,16 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.serviceAppraise.postGetAppraise(data, params).subscribe({
       next: response => {
         console.log(response);
-        this.dataGoodList = response.data;
+        if (this.dataGoodList.length > 9) {
+          this.dataGoodList.push(response.data);
+        } else if (this.dataGoodList.length == 0) {
+          this.dataGoodList = response.data;
+        }
+
         this.dataGood.load(response.data);
         this.dataGood.refresh();
         this.totalItems = response.count;
+        this.formTwo.controls['allGood'].setValue(response.count);
         this.loading = false;
       },
       error: error => {
@@ -1075,6 +1137,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         this.dataGood.load([]);
         this.dataGood.refresh();
         this.totalItems = 0;
+        this.formTwo.controls['allGood'].setValue(0);
         this.loading = false;
       },
     });
@@ -1108,10 +1171,15 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.serviceAppraise.postGetAppraise(data, params).subscribe({
       next: response => {
         console.log(response);
-        this.dataGoodList = response.data;
+        if (this.dataGoodList.length > 9) {
+          this.dataGoodList.push(response.data);
+        } else if (this.dataGoodList.length == 0) {
+          this.dataGoodList = response.data;
+        }
         this.dataGood2.load(response.data);
         this.dataGood2.refresh();
         this.totalItems2 = response.count;
+        this.formTwo.controls['allGood'].setValue(response.count);
         this.loading = false;
       },
       error: error => {
@@ -1119,6 +1187,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         this.dataGood2.load([]);
         this.dataGood2.refresh();
         this.totalItems2 = 0;
+        this.formTwo.controls['allGood'].setValue(0);
         this.loading = false;
       },
     });

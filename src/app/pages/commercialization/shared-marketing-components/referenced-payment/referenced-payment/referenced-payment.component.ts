@@ -626,36 +626,32 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
               } else {
                 // this.getPayments('no');
                 // this.alert('success', 'Archivo Cargado Correctamente', '');
-                this.form2
-                  .get('BLK_CTRL_CUANTOS')
-                  .setValue(pupNew.BLK_CTRL_CUANTOS);
-                this.form2
-                  .get('BLK_CTRL_MONTO')
-                  .setValue(pupNew.BLK_CTRL_MONTO);
+                this.form2.get('BLK_CTRL_CUANTOS').setValue(pupNew.data.length);
 
                 let arr: any = [];
-                let result = pupNew.COMER_PAGOREF.map(async (item: any) => {
+                let monto: number = 0;
+                let result = pupNew.data.map(async (item: any) => {
                   let obj: any = {
-                    movementNumber: item.COMER_PAGOREF_NO_MOVIMIENTO,
-                    date: item.COMER_PAGOREF_FECHA,
-                    move: item.COMER_PAGOREF_DESCPAGO,
-                    bill: null,
-                    referenceOri: item.COMER_PAGOREF_REFERENCIAORI,
-                    bankKey: item.COMER_PAGOREF_CVE_BANCO,
-                    branchOffice: item.COMER_PAGOREF_SUCURSAL,
-                    amount: item.COMER_PAGOREF_MONTO,
-                    result: item.COMER_PAGOREF_RESULTADO,
-                    validSistem: item.COMER_PAGOREF_VAL,
-                    paymentId: item.COMER_PAGOREF_ID,
-                    reference: item.COMER_PAGOREF_REFERENCIA,
-                    lotPub: null,
-                    event: null,
-                    entryOrderId: null,
-                    typeSatId: item.COMER_PAGOREF_ID_TIPO_SAT,
-                    code: item.COMER_PAGOREF_CODIGO,
-                    lotId: item.COMER_PAGOREF_ID_LOTE,
+                    movementNumber: item.NO_MOVIMIENTO,
+                    date: item.FECHA,
+                    move: item.DESCPAGO,
+                    bill: item.CUENTA,
+                    referenceOri: item.REFERENCIAORI,
+                    bankKey: item.CVE_BANCO,
+                    branchOffice: item.SUCURSAL,
+                    amount: item.MONTO,
+                    result: item.RESULTADO,
+                    validSistem: item.VAL,
+                    paymentId: item.ID_PAGO,
+                    reference: item.REFERENCIA,
+                    lotPub: item.LOTEPUBLICO,
+                    event: item.EVENTO,
+                    entryOrderId: item.IDORDENINGRESO,
+                    typeSatId: item.ID_TIPO_SAT,
+                    code: item.CODIGO,
+                    lotId: item.ID_LOTE,
                     inTimeNumber: null,
-                    type: null,
+                    type: item.TIPO,
                     paymentReturnsId: null,
                     recordDate: item.COMER_PAGOREF_FECHA_REGISTRO,
                     dateOi: null,
@@ -669,26 +665,22 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
                     spentId: null,
                     paymentRequestId: null,
                     customers: null,
-                    bankAndNumber:
-                      item.COMER_PAGOREF_CODIGO +
-                      ' - ' +
-                      item.COMER_PAGOREF_CVE_BANCO,
+                    bankAndNumber: item.CODIGO + ' - ' + item.CVE_BANCO,
                   };
-                  const desc = await this.gettypeSatIdUpdate(
-                    item.COMER_PAGOREF_ID_TIPO_SAT
-                  );
+                  const desc = await this.gettypeSatIdUpdate(item.ID_TIPO_SAT);
                   obj['descriptionSAT'] = !desc ? null : desc;
+
+                  monto = Number(item.MONTO == null ? 0 : item.MONTO) + monto;
                   arr.push(obj);
                 });
 
                 Promise.all(result).then(resp => {
+                  this.form2.get('BLK_CTRL_MONTO').setValue(monto);
                   this.dataCargada.load(arr);
                   this.dataCargada.setSort([
                     { field: 'paymentId', direction: 'asc' },
                   ]);
                   this.dataCargada.refresh();
-                  console.log(this.dataCargada);
-                  // this.getPayments('no');
                   this.cargado2 = true;
                   this.cargado = true;
                   setTimeout(() => {

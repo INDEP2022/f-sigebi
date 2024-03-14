@@ -1,6 +1,6 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
-export let goodCheck: any[] = [];
+export let goodCheck: any = [];
 export const VALUATION_REQUEST_COLUMNS = {
   check: {
     width: '5px',
@@ -9,14 +9,18 @@ export const VALUATION_REQUEST_COLUMNS = {
     filter: false,
     renderComponent: CheckboxElementComponent,
     valuePrepareFunction: (isSelected: any, row: any) => {
-      return goodCheck.find((e: any) => e.row.id == row.id) ? true : false;
+      return goodCheck.find((e: any) => e.row.no_bien == row.no_bien)
+        ? true
+        : false;
     },
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         if (data.toggle) {
           goodCheck.push(data);
         } else {
-          goodCheck = goodCheck.filter(valor => valor.row.id != data.row.id);
+          goodCheck = goodCheck.filter(
+            valor => valor.row.no_bien != data.row.no_bien
+          );
         }
       });
     },
