@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IModComerOffice } from 'src/app/core/models/ms-officemanagement/mod-comer-office';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { AppraisesService } from 'src/app/core/services/ms-appraises/appraises.service';
@@ -38,7 +39,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   user: string;
   event: number = 0;
   tipo: any;
-  m_comer: any;
+  m_comer: IModComerOffice;
   v_evento: number;
   v_usuario: string;
   titulo_oficio: string;
@@ -52,7 +53,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   cityList = new DefaultSelect();
   existe: string;
   oficio: string;
-  idOficio: string;
+  idOficio: number;
   oficio_clave: string;
   num_armada: string;
   addUser: boolean = false;
@@ -78,7 +79,8 @@ export class valuationRequestComponent extends BasePage implements OnInit {
     private appraisesService: AppraisesService,
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private router: Router
   ) {
     super();
     this.settings = {
@@ -86,6 +88,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
       actions: false,
       columns: { ...VALUATION_REQUEST_COLUMNS },
     };
+    this.m_comer = new IModComerOffice();
   }
 
   ngOnInit(): void {
@@ -204,9 +207,12 @@ export class valuationRequestComponent extends BasePage implements OnInit {
     // }
     let mComer = await this.getTrade(this.event);
     console.log(mComer);
-    this.m_comer = mComer;
-    if (this.m_comer.estatusOf != null || this.m_comer.estatusOf == '') {
-      this.estatus = this.m_comer.estatusOf;
+    if (mComer != null) {
+      this.m_comer = mComer;
+    }
+    console.log(this.m_comer.estatus_of);
+    if (this.m_comer.estatus_of != null || this.m_comer.estatus_of == '') {
+      this.estatus = this.m_comer.estatus_of;
     } else {
       this.estatus = 'GENERADO';
     }
@@ -238,8 +244,8 @@ export class valuationRequestComponent extends BasePage implements OnInit {
     ) {
       this.form.controls['addressee'].setValue(this.m_comer.destinatario);
     }
-    if (this.m_comer.estatusOf != null) {
-      if (this.m_comer.estatusOf == 'ENVIADO') {
+    if (this.m_comer.estatus_of != null) {
+      if (this.m_comer.estatus_of == 'ENVIADO') {
         this.controlControls();
       }
     }
@@ -332,7 +338,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
         },
         error: eror => {
           this.loader.load = false;
-          res('');
+          res(null);
         },
       });
     });
@@ -421,9 +427,9 @@ export class valuationRequestComponent extends BasePage implements OnInit {
       });
     });
   }
-  async getUserOt(idOficio: string) {
+  async getUserOt(idOficio: number) {
     return new Promise((res, rej) => {
-      this.usersService.getUserOt(idOficio).subscribe({
+      this.usersService.getUserOt(idOficio.toString()).subscribe({
         next: resp => {
           console.log(resp);
           res(resp);
@@ -608,7 +614,8 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   }
   async saveChanges() {
     try {
-      let type = await this.getType(this.event);
+      this.loader.load = true;
+      let type: any = await this.getType(this.event);
       console.log(type);
       this.tipo = type;
       if (this.tipo.direccion == 'I') {
@@ -621,17 +628,17 @@ export class valuationRequestComponent extends BasePage implements OnInit {
       if (this.form.controls['folio'].value != null) {
         let mComer = await this.getTrade(this.event);
         console.log(mComer);
-        if (mComer) {
+        if (mComer != null) {
           this.m_comer = mComer;
         }
         console.log(this.m_comer);
 
         if (this.m_comer.cve_oficio != null) {
-          this.m_comer.id_evento = type;
+          this.m_comer.id_evento = type.id_evento;
           this.m_comer.remitente = this.form.controls['sender'].value;
           this.m_comer.destinatario = this.form.controls['addressee'].value;
           this.m_comer.usuario_insert = this.user;
-
+          this.m_comer.usuario_envia = this.user;
           this.m_comer.ciudad = this.form.controls['city'].value;
           this.m_comer.texto1 = this.form.controls['paragraph1'].value;
           this.m_comer.texto2 = this.form.controls['paragraph2'].value;
@@ -649,24 +656,28 @@ export class valuationRequestComponent extends BasePage implements OnInit {
           for (const values of this.lsbConCopiaList) {
             //InsertaUsuConCopia  SP_INSERTAR_CONCOPIA_OFICIO
             console.log(values);
-            this.postInsertUsuCopia('I', this.m_comer, values);
+            this.postInsertUsuCopia('I', values, values);
           }
           if (rest) {
             this.alert('success', 'Datos Guardados', '');
+            this.loader.load = false;
           } else {
             this.alert('warning', 'No se pudo Guardar los Datos', '');
+            this.loader.load = false;
           }
         } else {
           console.log(this.m_comer);
-          this.m_comer.id_evento = type;
+          this.m_comer.id_evento = type.id_evento;
           this.m_comer.remitente = this.form.controls['sender'].value;
           this.m_comer.destinatario = this.form.controls['addressee'].value;
           this.m_comer.usuario_insert = this.user;
+          this.m_comer.usuario_envia = this.user;
           this.m_comer.ciudad = this.form.controls['city'].value;
           this.m_comer.texto1 = this.form.controls['paragraph1'].value;
           this.m_comer.texto2 = this.form.controls['paragraph2'].value;
           this.m_comer.texto3 = this.form.controls['paragraph3'].value;
-          this.m_comer.cve_oficio = this.m_comer.cve_oficio;
+          this.m_comer.cve_oficio =
+            this.m_comer.cve_oficio != null ? this.m_comer.cve_oficio : '';
           this.m_comer.num_cv_armada = this.form.controls['folio'].value;
           console.log(this.m_comer);
           let rest: any = await this.officeManagement('R', this.m_comer);
@@ -677,20 +688,25 @@ export class valuationRequestComponent extends BasePage implements OnInit {
           for (const values of this.lsbConCopiaList) {
             //InsertaUsuConCopia  SP_INSERTAR_CONCOPIA_OFICIO
             console.log(values);
-            this.postInsertUsuCopia('I', this.m_comer, values);
+            this.postInsertUsuCopia('I', values, values);
           }
           if (rest == true) {
             this.alert('success', 'Datos Guardados', '');
+            this.loader.load = false;
           } else {
             this.alert('warning', 'No se pudo Guardar los Datos', '');
+            this.loader.load = false;
           }
         }
       }
-    } catch (error) {}
+    } catch (error) {
+      this.loader.load = false;
+    }
   }
   async sedValuation() {
     try {
-      let va_evento = this.event;
+      this.loader.load = true;
+      let va_evento: number = this.event;
       let type = await this.getType(this.event);
       this.tipo = type;
       if (this.tipo.direccion == 'I') {
@@ -707,6 +723,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
         this.m_comer.remitente = this.form.controls['sender'].value;
         this.m_comer.destinatario = this.form.controls['addressee'].value;
         this.m_comer.usuario_insert = this.user;
+        this.m_comer.usuario_envia = this.user;
         this.m_comer.ciudad = this.form.controls['city'].value;
         this.m_comer.texto1 = this.form.controls['paragraph1'].value;
         this.m_comer.texto2 = this.form.controls['paragraph2'].value;
@@ -719,8 +736,10 @@ export class valuationRequestComponent extends BasePage implements OnInit {
           this.loadGrid(va_evento, 'ENVIADO');
           this.generateReport();
           this.alert('success', 'Informacion Enviada', '');
+          this.loader.load = false;
         } else {
           this.alert('warning', 'Datos No Enviados', 'Vuelva a Intentar');
+          this.loader.load = false;
         }
       } else {
         this.alert(
@@ -728,8 +747,11 @@ export class valuationRequestComponent extends BasePage implements OnInit {
           'Es necesario Guardar cambios antes de Enviar los Datos',
           ''
         );
+        this.loader.load = false;
       }
-    } catch (error) {}
+    } catch (error) {
+      this.loader.load = false;
+    }
   }
   generateReport() {
     //no se contruyo un reporte
@@ -757,24 +779,23 @@ export class valuationRequestComponent extends BasePage implements OnInit {
           ignoreBackdropClick: true,
         };
         this.modalService.show(PreviewDocumentsComponent, config);
+        this.loader.load = false;
       } else {
-        this.onLoadToast(
-          'warning',
-          'advertencia',
-          'Sin datos para los rangos de fechas suministrados'
-        );
+        this.onLoadToast('warning', 'advertencia', '');
+        this.loader.load = false;
       }
     });
   }
   seeJob() {
+    this.loader.load = true;
     this.generateReport();
   }
   async officeManagement(acction: string, mComer: any) {
     return new Promise((res, rej) => {
       let data = {
         actionIn: acction,
-        idJobIn: mComer.id_oficio,
-        idEventIn: mComer.id_evento.id_evento,
+        idJobIn: mComer.id_oficio != null ? mComer.id_oficio : 0,
+        idEventIn: mComer.id_evento,
         jobKeyIn: mComer.cve_oficio,
         userInsertIn: mComer.usuario_insert,
         userSendIn: mComer.usuario_envia,
@@ -835,10 +856,9 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   }
   async postInsertUsuCopia(acction: string, mComer: any, value: any) {
     return new Promise(async (res, rej) => {
-      // falta endpoit del PROCEDIMIENTO -	SP_INSERTAR_CONCOPIA_OFICIO
-      let user = await this.obtenerTextoDespuesDelGuion(value);
+      console.log(mComer);
       let data = {
-        user: user,
+        user: mComer.usuario,
         jobId: mComer.id_oficio,
         action: acction,
         userType: 'INTERNO',
@@ -883,7 +903,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
     this.form.controls['user'].disable();
     this.searchChanges = true;
     this.sendFi = true;
-    this.viewOf = true;
+    this.viewOf = false;
     this.form.controls['sender'].disable();
     this.form.controls['folio'].disable();
     this.form.controls['addressee'].disable();
@@ -904,5 +924,9 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   }
   clear() {
     this.form.reset();
+  }
+  close() {
+    this.router.navigateByUrl('pages/commercialization/event-preparation');
+    return;
   }
 }

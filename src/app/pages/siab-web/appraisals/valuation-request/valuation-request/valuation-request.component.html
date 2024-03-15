@@ -178,7 +178,8 @@
               <button
                 type="button"
                 class="btn btn-primary btn-sm active"
-                (click)="getAddUser()">
+                (click)="getAddUser()"
+                [disabled]="addUser">
                 Agregar Usuario
               </button>
             </div>
@@ -188,7 +189,8 @@
               <button
                 type="button"
                 class="btn btn-primary btn-sm active"
-                (click)="getDeleteUser()">
+                (click)="getDeleteUser()"
+                [disabled]="removeUser">
                 Quitar Usuario
               </button>
             </div>
@@ -236,7 +238,8 @@
         <button
           type="button"
           class="btn btn-primary btn-sm active"
-          (click)="saveChanges()">
+          (click)="saveChanges()"
+          [disabled]="searchChanges">
           Guardar
           <i aria-hidden="true" class="fa fa-save"></i>
         </button>
@@ -245,7 +248,8 @@
         <button
           type="button"
           class="btn btn-primary btn-sm active"
-          (click)="sedValuation()">
+          (click)="sedValuation()"
+          [disabled]="sendFi">
           Enviar a Valuaci&oacute;n
         </button>
       </div>
@@ -253,8 +257,14 @@
         <button
           type="button"
           class="btn btn-primary btn-sm active"
-          (click)="seeJob()">
+          (click)="seeJob()"
+          [disabled]="viewOf">
           Ver oficio
+        </button>
+      </div>
+      <div class="m-3">
+        <button class="btn btn-primary active btn-sm" (click)="close()">
+          <i class="bx bx-chevron-left float-icon"></i>Regresar
         </button>
       </div>
     </div>
