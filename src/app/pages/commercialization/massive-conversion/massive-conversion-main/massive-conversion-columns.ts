@@ -268,56 +268,21 @@ export const SETTING_LCS = {
         return formatted;
       },
     },
-    status: {
+    comerStatusVta: {
       title: 'Estatus',
       type: 'string',
       sort: false,
-      valuePrepareFunction: (cell: any, _row: any) => {
-        switch (cell) {
-          case 'PAG':
-            return 'PAGADA';
-          case 'GARA':
-            return 'EN GARANTIA';
-          case 'CAN':
-            return 'CANCELADO';
-          case 'PREP':
-            return 'EN PREPARACION';
-          case 'DES':
-            return 'DESIERTO';
-          case 'APRO':
-            return 'APROBADO';
-          case 'CONC':
-            return 'CONCILIADO A SIRSAE';
-          case 'NDIS':
-            return 'NO DISPONIBLE';
-          case 'CNE':
-            return 'CONVERTIDO A NUMERARIO';
-          case 'ACT':
-            return 'EVENTO PUBLICO ACTUALIZADO';
-          case 'GEN':
-            return 'GENERADA';
-          case 'CON1':
-            return 'CONCILIADO A SIRSAE PRIMERA FASE';
-          case 'CON2':
-            return 'CONCILIADO A SIRSAE SEGUNDA FASE';
-          case 'ETP':
-            return 'ETAPA DE PAGO EXTEMPORANEO';
-          case 'PAGE':
-            return 'PAGADO EN TIEMPO EXTEMPORANEO';
-          case 'CANC':
-            return 'CANCELADO POR COMERCIALIZACION';
-          case 'CDEV':
-            return 'CANCELADO POR DEVOLUCION';
-          case 'CAE':
-            return 'CANCELADO POR PAGO EN EFECTIVO';
-          case 'EFE':
-            return 'PAGO EN EFECTIVO';
-          case 'CANV':
-            return 'CANCELADO POR VALUACION';
-          case 'PG43':
-            return 'CANCELACION PARCIAL 43 POBALINES';
-          default:
-            return 'S/D';
+      /*valuePrepareFunction: (value: any) => {
+      return value.description },*/
+      valuePrepareFunction: (value: any) => {
+        return value != null ? value.description : '';
+      },
+      filterFunction(cell?: any, search?: string): boolean {
+        let column = cell.description;
+        if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+          return true;
+        } else {
+          return false;
         }
       },
       filter: {
@@ -684,11 +649,11 @@ export const SETTING_REPROCESS = {
       type: 'number',
       sort: false,
     },
-    /*idPublicBatch: {
+    lote_public: {
       title: 'Lote Público',
-      type: 'number',
+      type: 'string',
       sort: false,
-    },*/
+    },
     amount: {
       title: 'Monto',
       type: 'string',
@@ -756,56 +721,21 @@ export const SETTING_REPROCESS = {
       type: 'string',
       sort: false,
     },*/
-    status: {
+    comerStatusVta: {
       title: 'Estatus',
       type: 'string',
       sort: false,
-      valuePrepareFunction: (cell: any, _row: any) => {
-        switch (cell) {
-          case 'PAG':
-            return 'PAGADA';
-          case 'GARA':
-            return 'EN GARANTIA';
-          case 'CAN':
-            return 'CANCELADO';
-          case 'PREP':
-            return 'EN PREPARACION';
-          case 'DES':
-            return 'DESIERTO';
-          case 'APRO':
-            return 'APROBADO';
-          case 'CONC':
-            return 'CONCILIADO A SIRSAE';
-          case 'NDIS':
-            return 'NO DISPONIBLE';
-          case 'CNE':
-            return 'CONVERTIDO A NUMERARIO';
-          case 'ACT':
-            return 'EVENTO PUBLICO ACTUALIZADO';
-          case 'GEN':
-            return 'GENERADA';
-          case 'CON1':
-            return 'CONCILIADO A SIRSAE PRIMERA FASE';
-          case 'CON2':
-            return 'CONCILIADO A SIRSAE SEGUNDA FASE';
-          case 'ETP':
-            return 'ETAPA DE PAGO EXTEMPORANEO';
-          case 'PAGE':
-            return 'PAGADO EN TIEMPO EXTEMPORANEO';
-          case 'CANC':
-            return 'CANCELADO POR COMERCIALIZACION';
-          case 'CDEV':
-            return 'CANCELADO POR DEVOLUCION';
-          case 'CAE':
-            return 'CANCELADO POR PAGO EN EFECTIVO';
-          case 'EFE':
-            return 'PAGO EN EFECTIVO';
-          case 'CANV':
-            return 'CANCELADO POR VALUACION';
-          case 'PG43':
-            return 'CANCELACION PARCIAL 43 POBALINES';
-          default:
-            return 'S/D';
+      /*valuePrepareFunction: (value: any) => {
+      return value.description },*/
+      valuePrepareFunction: (value: any) => {
+        return value != null ? value.description : '';
+      },
+      filterFunction(cell?: any, search?: string): boolean {
+        let column = cell.description;
+        if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+          return true;
+        } else {
+          return false;
         }
       },
       filter: {
@@ -838,21 +768,43 @@ export const SETTING_REPROCESS = {
         },
       },
     },
+
     recordDate: {
       title: 'Fecha Registro',
       type: 'string',
       sort: false,
     },
-    idTypeSat: {
-      title: 'Tipo de Pago',
-      type: 'string',
-      sort: false,
-    },
 
-    extra: {
-      title: 'Extra de prueba',
+    n_count: {
+      title: 'Tipo',
       type: 'string',
       sort: false,
+      editable: false,
+      valuePrepareFunction: (_cell: any, row: any) => {
+        if (row.n_count == 0) {
+          return 'Línea';
+        } else {
+          return 'Cheque';
+        }
+      },
+      /*filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.n_count;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },*/
+      filter: {
+        type: 'list',
+        config: {
+          selectText: 'Seleccionar',
+          list: [
+            { value: '1', title: 'Cheque' },
+            { value: '0', title: 'Línea' },
+          ],
+        },
+      },
     },
   },
 };

@@ -60,7 +60,7 @@
         <tab heading="Reporte" id="editReport" *ngIf="editReport && !isSigned">
           <!--Templates Editor-->
           <quill-editor
-            [sanitize]="true"
+            [sanitize]="false"
             placeholder="Escribe aquí"
             [(ngModel)]="version.content"
             (onEditorCreated)="created($event)"

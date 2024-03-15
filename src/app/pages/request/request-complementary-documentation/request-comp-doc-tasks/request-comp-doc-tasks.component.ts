@@ -742,7 +742,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  updateRequest(alert = true) {
+  updateRequest(alert = true, execute = () => {}) {
     this.updateInfo = true;
     let request: any = { ...this.requestInfo.detail };
 
@@ -751,6 +751,7 @@ export class RequestCompDocTasksComponent
         if (alert) {
           this.alert('success', 'Correcto', 'Registro Actualizado');
         }
+        execute();
       },
       error: error => {
         if (alert) {
@@ -1319,6 +1320,8 @@ export class RequestCompDocTasksComponent
 
         break;
 
+      case 'register-extinction-agreement':
+      case 'register-extinction-sentence':
       case 'register-domain-extinction':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
@@ -1337,6 +1340,13 @@ export class RequestCompDocTasksComponent
           return false;
         }
         break;
+
+      case 'register-distribution-resource':
+      case 'register-freedom-liens':
+      case 'register-registration-sentence':
+      case 'register-office-cancellation':
+      case 'register-confiscation-confirmed':
+      case 'register-consfiscation-sentence':
       case 'register-seizures':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
@@ -1355,7 +1365,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
         break;
+
       case 'register-abandonment-goods':
+      case 'register-declaration-abandonment':
+      case 'register-abandonment-instruction':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
           return false;
@@ -1373,6 +1386,7 @@ export class RequestCompDocTasksComponent
           return false;
         }
         break;
+
       case 'register-protections-goods':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
@@ -1448,34 +1462,7 @@ export class RequestCompDocTasksComponent
         }
 
         break;
-      case 'register-seizures':
-        if (!this.validate.regdoc) {
-          this.showWarning('Registre la información de la solicitud');
-          return false;
-        }
-        if (!this.requestInfo.recordId) {
-          this.showWarning('Asocie el expediente de la solicitud');
-          return false;
-        }
-        if (!this.validate.goods) {
-          this.showWarning('Seleccione los bienes de la solicitud');
-          return false;
-        }
-        break;
-      case 'register-abandonment-goods':
-        if (!this.validate.regdoc) {
-          this.showWarning('Registre la información de la solicitud');
-          return false;
-        }
-        if (!this.requestInfo.recordId) {
-          this.showWarning('Asocie el expediente de la solicitud');
-          return false;
-        }
-        if (!this.validate.goods) {
-          this.showWarning('Seleccione los bienes de la solicitud');
-          return false;
-        }
-        break;
+
       case 'register-protections-goods':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
@@ -1677,25 +1664,27 @@ export class RequestCompDocTasksComponent
     let report = await this.getStatusReport();
     report = report.isValid ? report.data[0] : report;
 
-    if (isNullOrEmpty(report.ucmDocumentName)) {
-      this.wContentService
-        .downloadDinamycReport(
-          'sae.rptdesign',
-          this.reportTable,
-          this.requestId.toString(),
-          data.documentTypeId
-        )
-        .subscribe({
-          next: response => {
-            //let blob = this.dataURItoBlob(response);
-            let file = new Blob([response], { type: 'application/pdf' });
-            const fileURL = URL.createObjectURL(file);
-            this.openPrevPdf(fileURL);
-          },
-          error: error => {
-            this.showError('Vista previa no dipoonible');
-          },
-        });
+    this.wContentService
+      .downloadDinamycReport(
+        'sae.rptdesign',
+        this.reportTable,
+        this.requestId.toString(),
+        data.documentTypeId
+      )
+      .subscribe({
+        next: response => {
+          //let blob = this.dataURItoBlob(response);
+          let file = new Blob([response], { type: 'application/pdf' });
+          const fileURL = URL.createObjectURL(file);
+          this.openPrevPdf(fileURL);
+        },
+        error: error => {
+          this.showError('Vista previa no dipoonible');
+        },
+      });
+
+    /*if (isNullOrEmpty(report.ucmDocumentName)) {
+      
     } else {
       this.wContentService.obtainFile(report.ucmDocumentName).subscribe({
         next: response => {
@@ -1704,9 +1693,9 @@ export class RequestCompDocTasksComponent
           const fileURL = URL.createObjectURL(file);
           this.openPrevPdf(fileURL);
         },
-        error: error => {},
+        error: error => { },
       });
-    }
+    }*/
   }
 
   dataURItoBlob(dataURI: any) {
@@ -1750,7 +1739,7 @@ export class RequestCompDocTasksComponent
             resolve({
               data: resp.data,
               isValid: resp.data.length > 0,
-              isSigned: true, //resp.data[0].signedReport == 'Y',
+              isSigned: resp.data[0].signedReport == 'Y',
             });
           } else {
             resolve({
@@ -1795,7 +1784,10 @@ export class RequestCompDocTasksComponent
     report = report.isValid ? report.data[0] : report;
     let docId = report.isValid ? report.documentTypeId : this.reportId;
 
-    console.log('PRIMER PASO', this.reportId);
+    const formOnly = true;
+    const nameSignatoryRuling = this.requestInfo.detail.nameSignatoryRuling;
+    const postSignatoryRuling = this.requestInfo.detail.postSignatoryRuling;
+    const typeSign = this.requestInfo.detail.nameRecipientRuling;
 
     if (!this.signReport) {
       let config: ModalOptions = {
@@ -1806,20 +1798,21 @@ export class RequestCompDocTasksComponent
           idSample: idSample,
           contentId: contentId,
           typeAnnex: typeAnnex,
-          callback: async (typeDocument: number, typeSign: string) => {
-            console.log('SEGUNDO PASO', typeDocument, typeSign);
-
-            if (typeSign == 'electronica') {
-              this.openFirma(true);
-            } else {
-              this.showReportInfo(
-                idSample,
-                typeDocument,
-                typeSign,
-                typeAnnex,
-                null
-              );
-            }
+          nameSignatoryRuling,
+          postSignatoryRuling,
+          typeSign,
+          formOnly,
+          callback: async (responsibleSae, saePosition, typeSign) => {
+            this.requestInfo.detail.nameSignatoryRuling = responsibleSae;
+            this.requestInfo.detail.postSignatoryRuling = saePosition;
+            this.requestInfo.detail.nameRecipientRuling = typeSign;
+            this.updateRequest(false, () => {
+              if (typeSign == 'electronica') {
+                this.openFirma(true);
+              } else {
+                this.showReportInfo(idSample, docId, typeSign, typeAnnex, null);
+              }
+            });
           },
         },
         class: 'modal-lg modal-dialog-centered',
@@ -2036,7 +2029,7 @@ export class RequestCompDocTasksComponent
 
     const idTypeDoc = this.reportId;
     const typeAnnex = 'approval-request';
-    const requestInfo = this.requestInfo;
+    const requestInfo = this.requestInfo.detail;
     const idReportAclara = this.requestId;
     const nameTypeDoc = 'DictamenProcendecia';
     const nomenglatura = folioReporte;
@@ -2051,10 +2044,9 @@ export class RequestCompDocTasksComponent
         nameTypeDoc,
         nomenglatura,
         isDynamic,
-        callback: (next: boolean) => {
-          console.log('TERCER PASO', next);
-
+        callback: (next, xml) => {
           if (next) {
+            this.updateReport(xml);
           }
         },
       },
@@ -2065,9 +2057,65 @@ export class RequestCompDocTasksComponent
     this.modalService.show(PrintReportModalComponent, config);
   }
 
+  async updateReport(xml) {
+    if (isXML(xml)) {
+      let token = this.authService.decodeToken();
+      let content = getXMLNode(xml, 'strXmlFirmado')?.textContent;
+      this.updateInfo = !this.updateInfo;
+
+      if (!isNullOrEmpty(content)) {
+        /*
+        let regexs = /<SignatureValue>(.*?)<\/SignatureValue>/;
+        let matchs = regexs.exec(content);
+        let signature = matchs[1] + "";
+        let regexc = /<X509Certificate>(.*?)<\/X509Certificate>/;
+        let matchc = regexc.exec(content);
+        let certificate = matchc[1] + "";
+        report.content += '<br/><br/><br/><b>Firma Electrónica:</b><br/>' + signature;
+        report.content += '<br/><br/><br/><b>Certificado:</b><br/>' + certificate;
+        */
+
+        //Como mostrar caracteres especiales
+        //content = content.replace(/&lt;/g, '<');
+        //content = content.replace(/&gt;/g, '>');
+        //content = content.replace(/&quot;/g, '"');
+        //content = content.replace(/&apos;/g, "'");
+        //content = content.replace(/&amp;/g, '&');
+
+        let report = await this.getStatusReport();
+        report = report.data[0];
+        report.content +=
+          '<br/><br/><br/><b>Firma Electrónica:</b><br/>' + content;
+        report.signedReport = 'Y';
+        report.modificationUser = token.username;
+        report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
+        this.reportgoodService.saveReportDynamic(report).subscribe({
+          next: resp => {},
+          error: err => {},
+        });
+      }
+    }
+  }
+
   //Crear un sample para el tipo de firma
 }
 
 export function isNullOrEmpty(value: any): boolean {
   return value === null || value === undefined || (value + '').trim() === '';
+}
+
+export function isXML(xmlStr: string): boolean {
+  let parser = new DOMParser();
+  let doc = parser.parseFromString(xmlStr, 'application/xml');
+  return !doc.getElementsByTagName('parsererror').length;
+}
+
+export function getXMLNode(xmlStr: string, tagName: string): Node | null {
+  let parser = new DOMParser();
+  let doc = parser.parseFromString(xmlStr, 'application/xml');
+
+  let nodes = doc.getElementsByTagName(tagName);
+
+  // Devuelve el primer nodo con el nombre de etiqueta especificado, o null si no se encontró ninguno
+  return nodes.length > 0 ? nodes[0] : null;
 }

@@ -278,11 +278,11 @@
       </div>
     </div> -->
     <!-- [source]="dataPaginated" (userRowSelect)="onUserRowSelectCancel($event)"> -->
-    <app-cancel-table
+    <!-- <app-cancel-table
       [body]="body2"
       [officeType]="officeType"
       [event]="form.get('event').value"
-      [showModalCambioRev]="showModalCambioRev"></app-cancel-table>
+      [showModalCambioRev]="showModalCambioRev"></app-cancel-table> -->
     <!--  -->
     <div>
       <div class="row">
@@ -294,9 +294,10 @@
               <form-field
                 [control]="formTwo.get('allGood')"
                 label="Total de Bienes">
-                <textarea
+                <input
+                  type="text"
                   class="form-control"
-                  formControlName="allGood"></textarea>
+                  formControlName="allGood" />
               </form-field>
             </div>
             <div class="col-md-6">
@@ -304,6 +305,7 @@
                 [control]="formTwo.get('selectedGood')"
                 label="Bienes Seleccionados">
                 <textarea
+                  rows="3"
                   class="form-control"
                   formControlName="selectedGood"></textarea>
               </form-field>
@@ -335,15 +337,6 @@
               <button type="button" class="btn btn-sm btn-success active">
                 Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
               </button>
-            </div>
-            <div class="col-md-4">
-              <div>
-                <button
-                  class="btn btn-primary btn-sm active"
-                  (click)="showModal()">
-                  Motivos de Cambio a REV
-                </button>
-              </div>
             </div>
           </div>
           <!--  -->

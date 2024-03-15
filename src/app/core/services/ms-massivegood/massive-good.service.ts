@@ -63,6 +63,10 @@ export class MassiveGoodService extends HttpService {
     );
   }
 
+  getPupInsertTmpComer(body: any) {
+    return this.post(this.route.pupInsertTmpComer, body);
+  }
+
   getIdentifier(params: ListParams) {
     return this.get(MassiveGoodEndpoints.getIdentifierCount, params);
   }

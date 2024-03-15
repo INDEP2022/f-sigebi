@@ -12,28 +12,44 @@
         </button>
       </div>
     </div>
-    <div class="row justify-content-center">
-      <div class="col-12 col-sm-12 col-md-6">
-        <search-bar-simple
-          (eventEmit)="search($event)"
-          [label]="''"
-          [initValue]="inputValue"
-          [placeholder]="'N&uacute;mero de expediente'">
-        </search-bar-simple>
-      </div>
-    </div>
-    <div class="row">
-      <form class="form-material" [formGroup]="formBlkExpedient">
+    <form class="form-material" [formGroup]="formBlkExpedient">
+      <div class="row mb-5">
         <form-field
           [control]="formBlkExpedient.get('noExpedient')"
+          class="col-md-3"
           label="Expediente">
           <input
             type="text"
             class="form-control"
             formControlName="noExpedient" />
         </form-field>
+        <div class="col">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm mr-3"
+            (click)="search()">
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active mr-3"
+            containerClass="tooltip-style"
+            tooltip="Lista general de expedientes">
+            <i class="bx bx-list-plus bx-sm float-icon"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active mr-3"
+            containerClass="tooltip-style"
+            tooltip="Lista general de actas">
+            <i class="bx bx-list-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+      <div class="row">
         <form-field
           [control]="formBlkExpedient.get('averiguacionPrevia')"
+          class="col"
           label="Averiguaci&oacute;n Previa">
           <input
             type="text"
@@ -42,14 +58,15 @@
         </form-field>
         <form-field
           [control]="formBlkExpedient.get('causePenal')"
+          class="col"
           label="Causa Penal">
           <input
             type="text"
             class="form-control"
             formControlName="causePenal" />
         </form-field>
-      </form>
-    </div>
+      </div>
+    </form>
     <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="row mt-4">
         <div class="col-md-2">
@@ -57,6 +74,7 @@
             <ng-select
               class="form-control"
               formControlName="actSelect"
+              [class]="form.get('statusAct').value != null ? 'disabled' : ''"
               (change)="manejarTipoActa($event)">
               <ng-option [value]="'C/DON'">C/DON</ng-option>
               <ng-option [value]="'S/DON'">S/DON</ng-option>
@@ -74,27 +92,44 @@
             <input
               type="text"
               class="form-control"
-              formControlName="authority" />
+              formControlName="authority"
+              [readOnly]="form.get('statusAct').value != null" />
           </form-field>
         </div>
         <div class="col">
           <form-field [control]="form.get('ident')" label="Ident">
-            <input type="text" class="form-control" formControlName="ident" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ident"
+              [readOnly]="form.get('statusAct').value != null" />
           </form-field>
         </div>
         <div class="col">
           <form-field [control]="form.get('receive')" label="Recibe">
-            <input type="text" class="form-control" formControlName="receive" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="receive"
+              [readOnly]="form.get('statusAct').value != null" />
           </form-field>
         </div>
         <div class="col">
           <form-field [control]="form.get('admin')" label="Admin">
-            <input type="text" class="form-control" formControlName="admin" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="admin"
+              [readOnly]="form.get('statusAct').value != null" />
           </form-field>
         </div>
         <div class="col">
           <form-field [control]="form.get('folio')" label="Folio">
-            <input type="text" class="form-control" formControlName="folio" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="folio"
+              [readOnly]="form.get('statusAct').value != null" />
           </form-field>
         </div>
         <div class="col">
@@ -102,10 +137,7 @@
             <input
               type="text"
               class="form-control"
-              [bsConfig]="bsConfigFromYear"
-              #dp="bsDatepicker"
-              bsDatepicker
-              [(bsValue)]="bsValueFromYear"
+              readonly
               formControlName="year" />
           </form-field>
         </div>
@@ -114,10 +146,7 @@
             <input
               type="text"
               class="form-control"
-              [bsConfig]="bsConfigFromMonth"
-              #dp="bsDatepicker"
-              bsDatepicker
-              [(bsValue)]="bsValueFromMonth"
+              readonly
               formControlName="month" />
           </form-field>
         </div>
@@ -156,7 +185,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="statusAct" />
+              formControlName="statusAct"
+              readonly />
           </form-field>
         </div>
       </div>
@@ -164,7 +194,11 @@
       <div class="row mt-4">
         <div class="col-md-6">
           <form-field [control]="form.get('act')" label="&Aacute;cta">
-            <input type="text" class="form-control" formControlName="act" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="act"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-6">

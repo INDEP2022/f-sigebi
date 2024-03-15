@@ -15,4 +15,7 @@ export class ComerEventosServiceTwo extends HttpService {
     const route = `${EventEndpoints.ComerE}/${id}`;
     return this.get(route);
   }
+  getPupConsult(body: any) {
+    return this.post(EventEndpoints.ApplicationPupConsult, body);
+  }
 }

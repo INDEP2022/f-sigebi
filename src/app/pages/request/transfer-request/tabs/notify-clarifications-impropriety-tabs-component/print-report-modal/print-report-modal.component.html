@@ -72,6 +72,7 @@
           <div
             class="p-2"
             *ngIf="
+              !msjCheck &&
               selectedRow?.post != null &&
               selectedRow?.rfcUser != null &&
               selectedRow?.validationocsp == 'true'
@@ -90,10 +91,9 @@
           </div>
           <div class="p-2">
             <button
+              *ngIf="!msjCheck"
               class="btn btn-primary btn-sm active"
-              (click)="backStep()"
-              [ngClass]="{ loading: loadingButton }"
-              [disabled]="loadingButton">
+              (click)="backStep()">
               <i class="bx bx-left-arrow-alt"></i> Paso Anterior
             </button>
           </div>

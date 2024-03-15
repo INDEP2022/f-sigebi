@@ -30,9 +30,10 @@ export class AnnexJAssetsClassificationComponent
   idSample: number = 0;
   sampleInfo: ISample;
 
-  requestId: number = 0;
-  reportId: number = 0;
-  reportTable: string = '';
+  formOnly = false;
+  postSignatoryRuling: string;
+  nameSignatoryRuling: string;
+  typeSign: string;
 
   constructor(
     private fb: FormBuilder,
@@ -47,7 +48,14 @@ export class AnnexJAssetsClassificationComponent
 
   ngOnInit(): void {
     this.initForm();
-    this.getInfoSample();
+
+    if (this.formOnly) {
+      this.signForm.get('name').setValue(this.nameSignatoryRuling);
+      this.signForm.get('inCharge').setValue(this.postSignatoryRuling);
+      this.signForm.get('tipeSign').setValue(this.typeSign);
+    } else {
+      this.getInfoSample();
+    }
   }
 
   getInfoSample() {
@@ -155,7 +163,14 @@ export class AnnexJAssetsClassificationComponent
   }
 
   async signAnnexJ() {
-    const typeDocument = this.reportId > 0 ? this.reportId : 218;
+    if (this.formOnly) {
+      let data = this.signForm.getRawValue();
+      this.bsModalRef.content.callback(data.name, data.inCharge, data.tipeSign);
+      this.close();
+      return;
+    }
+
+    const typeDocument = 218;
     if (this.typeAnnex == 'annexJ-assets-classification') {
       const responsibleSae = this.form.get('responsibleSae').value;
       const saePosition = this.form.get('saePosition').value;
@@ -276,7 +291,7 @@ export class AnnexJAssetsClassificationComponent
   checkSignatureInfo(name: string, charge: string, typeDocument: number) {
     return new Promise((resolve, reject) => {
       const learnedType = typeDocument;
-      const learnedId = this.requestId > 0 ? this.requestId : this.idSample;
+      const learnedId = this.idSample;
       this.signatoriesService
         .getSignatoriesFilter(learnedType, learnedId)
         .subscribe({
