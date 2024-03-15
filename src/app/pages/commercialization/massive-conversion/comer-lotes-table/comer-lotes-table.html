@@ -15,7 +15,8 @@
           <div class="table-responsive">
             <ng2-smart-table
               [settings]="settings"
-              [source]="source"></ng2-smart-table>
+              [source]="source"
+              (userRowSelect)="selectRows($event)"></ng2-smart-table>
           </div>
           <app-pagination
             [params]="params"

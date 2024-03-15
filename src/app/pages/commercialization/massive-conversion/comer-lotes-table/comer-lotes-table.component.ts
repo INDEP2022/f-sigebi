@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -17,6 +17,10 @@ export class ComerLotesTableComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
+  listObjects: any[] = [];
+  @ViewChild('table', { static: false }) table: any;
+  object: any;
+
   constructor(
     private modalRef: BsModalRef,
     private guarantyService: GuarantyService
@@ -26,6 +30,7 @@ export class ComerLotesTableComponent extends BasePage implements OnInit {
       ...this.settings,
       hideSubHeader: true,
       actions: false,
+      selectMode: 'multi',
       /*actions: {
         columnTitle: 'Acciones',
         edit: true,
@@ -67,6 +72,26 @@ export class ComerLotesTableComponent extends BasePage implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  selectRows(event: any) {
+    console.log('event.selected', event);
+
+    if (event.isSelected == false) {
+      this.table.isAllSelected = false;
+    }
+    this.listObjects = event.selected;
+
+    if (this.listObjects.length <= 1) {
+      if (event.isSelected === true) {
+        this.object = this.listObjects[0];
+      } else {
+        this.object = null;
+      }
+    } else {
+      this.object = this.listObjects;
+      console.log('Objetos seleccionados: ', this.object);
+    }
   }
 
   close() {

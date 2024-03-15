@@ -15,7 +15,8 @@
           <div class="table-responsive">
             <ng2-smart-table
               [settings]="settings"
-              [source]="source"></ng2-smart-table>
+              [source]="source"
+              (userRowSelect)="selectRows($event)"></ng2-smart-table>
           </div>
           <app-pagination
             [params]="params"
@@ -29,7 +30,15 @@
         <confirm-button
           [text]="'Ejectar Reproceso'"
           [type]="'button'"
-          (confirm)="close()"></confirm-button>
+          (confirm)="reProcess()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="allEvent()">
+          Todo el Evento
+        </button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
