@@ -103,7 +103,7 @@ export class EventLotFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', 'El Evento se ha ' + message);
+    this.onLoadToast('success', 'El Lote se ha ' + message);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
