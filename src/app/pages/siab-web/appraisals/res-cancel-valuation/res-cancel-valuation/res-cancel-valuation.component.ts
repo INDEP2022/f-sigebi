@@ -638,24 +638,206 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     return true;
   }
 
-  modifyOffice() {
-    if (!this.validateBienesSelect()) {
-      return;
+  async modifyOffice() {
+    try {
+      if (!this.validateBienesSelect()) {
+        return;
+      }
+      let tpOfi = this.officeType();
+      let idOficio = 0;
+      let body = {
+        officeId: this.form.get('office').value,
+        eventId: this.event,
+        officeType: tpOfi,
+        userInsert: this.formThree.controls['user'].value,
+        remi: this.form.get('remi').value,
+        dest: this.form.get('dest').value,
+        city: this.form.get('cityCi').value,
+        ref: this.form.get('ref').value,
+        aten: this.form.get('aten').value,
+        espe: this.form.get('espe').value,
+        key: this.form.get('key').value,
+      };
+      let dtidOfi: any = await this.insertaOficio(body);
+      dtidOfi.forEach(element => {
+        idOficio = element.id;
+        let mensaje = element.MSJ;
+        if (idOficio == 0 && mensaje != null) {
+          throw new Error(mensaje);
+        }
+      });
+      if (tpOfi == 2) {
+        await this.insertaBien(idOficio, 0, 'D');
+        for (let i = 0; i < goodCheck.length; i++) {
+          await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+        }
+      } else if (tpOfi == 3) {
+        await this.insertaBien(idOficio, 0, 'D');
+        for (let i = 0; i < this.dataGoodList.length; i++) {
+          await this.insertaMotRev(
+            this.dataGoodList[i].no_bien,
+            this.form.controls['event'].value,
+            'NADA',
+            'NADA',
+            'D'
+          );
+        }
+        for (let i = 0; i < goodCheck.length; i++) {
+          this.dataGoodList.forEach(async element => {
+            if (element.no_bien == goodCheck[i].no_bien) {
+              await this.insertaMotRev(
+                goodCheck[i].no_bien,
+                this.form.controls['event'].value,
+                this.changeChar(element.motivos.toString()),
+                element.idMotivos.toString(),
+                'I'
+              );
+              await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+            }
+          });
+        }
+      }
+      this.arrayCopy.forEach(element => {
+        this.postInsertUsuCopia('I', idOficio, element);
+      });
+      this.setButtons(4);
+      this.alert('success', '', 'El oficio se actualizó correctamente');
+    } catch (error) {
+      this.alert('warning', '', 'Problema para actualizar el oficio');
     }
-    let tpOfi = this.officeType();
-    let body = {
-      officeId: this.form.get('office').value,
-      eventId: this.event,
-      officeType: tpOfi,
-      userInsert: this.formThree.controls['user'].value,
-      remi: this.form.get('remi').value,
-      dest: this.form.get('dest').value,
-      city: this.form.get('cityCi').value,
-      ref: this.form.get('ref').value,
-      aten: this.form.get('aten').value,
-      espe: this.form.get('espe').value,
-      key: this.form.get('key').value,
-    };
+  }
+  async postInsertUsuCopia(acction: string, mComer: any, value: any) {
+    return new Promise(async (res, rej) => {
+      let user = await this.obtenerTextoDespuesDelGuion(value);
+      let data = {
+        user: user,
+        jobId: mComer,
+        action: acction,
+        userType: 'INTERNO',
+      };
+
+      this.usersService.postSpInsertWithcopyOfficia(data).subscribe({
+        next: resp => {
+          console.log(resp);
+          res(resp);
+        },
+        error: eror => {
+          this.loader.load = false;
+          res(eror);
+        },
+      });
+      // res(0);
+    });
+  }
+  obtenerTextoDespuesDelGuion(texto): string {
+    const partes = texto.split('-'); // Dividir el string en partes utilizando el guion como separador
+    return partes.length > 1 ? partes[1].trim() : ''; // Seleccionar la segunda parte y eliminar espacios en blanco al principio y al final
+  }
+  private changeChar(chain: string): string {
+    let replacements = [
+      { from: '&nbsp;', to: '' },
+      { from: 'nbsp;', to: '' },
+      { from: 'amp;NBSP;', to: '' },
+      { from: '&amp;nbsp;', to: '' },
+      { from: '&amp;amp;nbsp;', to: '' },
+      { from: '&AMP;AMP;NBSP;', to: '' },
+      { from: '&amp;', to: '' },
+      { from: '&AMP;', to: '' },
+      { from: '&#193;', to: 'Á' },
+      { from: '#193;', to: 'Á' },
+      { from: '&#225;', to: 'á' },
+      { from: '#225;', to: 'á' },
+      { from: '&#201;', to: 'É' },
+      { from: '#201;', to: 'É' },
+      { from: '&#233;', to: 'é' },
+      { from: '#233;', to: 'é' },
+      { from: '&#205;', to: 'Í' },
+      { from: '&#237;', to: 'í' },
+      { from: '&#211;', to: 'Ó' },
+      { from: '#211;', to: 'Ó' },
+      { from: '&#243;', to: 'ó' },
+      { from: '#243;', to: 'ó' },
+      { from: '&#218;', to: 'Ú' },
+      { from: '#218;', to: 'Ú' },
+      { from: '&#250;', to: 'ú' },
+      { from: '#250;', to: 'ú' },
+      { from: '&amp;amp;#225;', to: 'á' },
+      { from: '&amp;amp;#233;', to: 'é' },
+      { from: '&amp;amp;#237;', to: 'í' },
+      { from: '&amp;amp;#243;', to: 'ó' },
+      { from: '&amp;amp;#250;', to: 'ú' },
+      { from: '&#241;', to: 'ñ' },
+      { from: '&#209;', to: 'Ñ' },
+      { from: '&amp;#209;', to: 'Ñ' },
+      { from: '&#220;', to: 'Ü' },
+      { from: '&#252;', to: 'ü' },
+      { from: '&quot;', to: '' },
+      { from: "'", to: '' },
+    ];
+
+    for (let replacement of replacements) {
+      chain = chain.split(replacement.from).join(replacement.to);
+    }
+
+    return chain;
+  }
+
+  async insertaOficio(modeloOficio: any) {
+    return new Promise((resolve, reject) => {
+      // this.jobDictumTextsService.getcomerJobsDet(params).subscribe({
+      //   next: response => {
+      //     resolve(response);
+      //   },
+      //   error: error => {
+      //     reject(error);
+      //   },
+      // });
+      reject(null);
+    });
+  }
+  async insertaBien(idOficio: number, noBien: number, accion: string) {
+    return new Promise((resolve, reject) => {
+      let body = {
+        idOficio: idOficio,
+        idBien: noBien,
+        accion: accion,
+      };
+      // this.jobDictumTextsService.getcomerJobsDet(params).subscribe({
+      //   next: response => {
+      //     resolve(response);
+      //   },
+      //   error: error => {
+      //     reject(error);
+      //   },
+      // });
+      reject(null);
+    });
+  }
+  async insertaMotRev(
+    noBien: number,
+    idEvento: number,
+    motivos: string,
+    noMotivos: string,
+    accion: string
+  ) {
+    return new Promise((resolve, reject) => {
+      let body = {
+        noBien: noBien,
+        idEvento: idEvento,
+        noMotivos: noMotivos,
+        motivos: motivos,
+        accion: accion,
+      };
+      // this.jobDictumTextsService.getcomerJobsDet(params).subscribe({
+      //   next: response => {
+      //     resolve(response);
+      //   },
+      //   error: error => {
+      //     reject(error);
+      //   },
+      // });
+      reject(null);
+    });
   }
   async viewOffice() {
     try {
@@ -1327,40 +1509,76 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     return true;
   }
 
-  save() {
-    if (this.fol.value === null) {
-      this.alert('warning', 'Es necesario capturar el folio', '');
-      return;
-    }
-    let tpOfi = this.officeType();
-    if (
-      (tpOfi === 3 || tpOfi === 2) &&
-      !this.validateSelectes(
-        tpOfi === 3 ? this.selectedRowsCancel : this.selectedRowsValueds
-      )
-    ) {
-      return;
-    }
-    this.arrayCopy.forEach(element => {
-      console.log(element);
-      // let data = {
-      //   user: value.usuario,
-      //   jobId: mComer.id_oficio,
-      //   action: acction,
-      //   userType: 'INTERNO',
-      // };
+  async save() {
+    try {
+      if (this.fol.value === null) {
+        this.alert('warning', 'Es necesario capturar el folio', '');
+        return;
+      }
+      let tpOfi = this.officeType();
+      let idOficio = 0;
+      let bienesTotales = 0;
+      let body = {
+        officeId: this.form.get('office').value,
+        eventId: this.event,
+        officeType: tpOfi,
+        userInsert: this.formThree.controls['user'].value,
+        remi: this.form.get('remi').value,
+        dest: this.form.get('dest').value,
+        city: this.form.get('cityCi').value,
+        ref: this.form.get('ref').value,
+        aten: this.form.get('aten').value,
+        espe: this.form.get('espe').value,
+        key: this.form.get('key').value,
+      };
+      if (
+        (tpOfi === 3 || tpOfi === 2) &&
+        !this.validateSelectes(
+          tpOfi === 3 ? this.selectedRowsCancel : this.selectedRowsValueds
+        )
+      ) {
+        return;
+      }
+      let dtidOfi: any = await this.insertaOficio(body);
+      dtidOfi.forEach(element => {
+        idOficio = element.id;
+        let mensaje = element.MSJ;
+        if (idOficio == 0 && mensaje != null) {
+          throw new Error(mensaje);
+        }
+      });
+      if (tpOfi == 2) {
+        await this.insertaBien(idOficio, 0, 'D');
+        for (let i = 0; i < goodCheck.length; i++) {
+          await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+        }
+      } else if (tpOfi == 3) {
+        for (let i = 0; i < goodCheck.length; i++) {
+          this.dataGoodList.forEach(async element => {
+            if (element.no_bien == goodCheck[i].no_bien) {
+              await this.insertaMotRev(
+                goodCheck[i].no_bien,
+                this.form.controls['event'].value,
+                this.changeChar(element.motivos.toString()),
+                element.idMotivos.toString(),
+                'I'
+              );
+              await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+              bienesTotales++;
+            }
+          });
+        }
+      }
 
-      // this.usersService.postSpInsertWithcopyOfficia(data).subscribe({
-      //   next: resp => {
-      //     console.log(resp);
-
-      //   },
-      //   error: eror => {
-      //     this.loader.load = false;
-      //   },
-      // });
-    });
-    // add setButtons(2) edit setButtons(4)
+      this.arrayCopy.forEach(element => {
+        this.postInsertUsuCopia('I', idOficio, element);
+      });
+      this.setButtons(2);
+      this.alert('success', '', 'El oficio se guardó correctamente');
+      // add setButtons(2) edit setButtons(4)
+    } catch (error) {
+      this.alert('warning', '', 'Problema para guardar el oficio');
+    }
   }
 
   get fol() {
@@ -1371,9 +1589,43 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.showModalCambioRev++;
   }
   senders() {
-    //AGREGAR FUNCION ENVIAR
+    this.alertQuestion(
+      'question',
+      'Una vez que el oficio sea enviado no se podrá realizar ninguna modificación.',
+      '¿Está seguro que desea continuar?'
+    ).then(async x => {
+      if (x.isConfirmed) {
+        if (this.event && this.event != null) {
+          await this.actualizarEstatus(
+            this.event,
+            this.form.get('office').value,
+            this.formThree.controls['user'].value
+          );
+          this.reset();
+          this.setButtons(5);
+          this.alert('success', '', 'El oficio fue enviado exitosamente');
+        }
+      }
+    });
   }
-
+  async actualizarEstatus(idEvento: number, oficio: string, usuario: string) {
+    return new Promise((resolve, reject) => {
+      let body = {
+        idEvento: idEvento,
+        oficio: oficio,
+        usuario: usuario,
+      };
+      // this.jobDictumTextsService.getcomerJobsDet(params).subscribe({
+      //   next: response => {
+      //     resolve(response);
+      //   },
+      //   error: error => {
+      //     reject(error);
+      //   },
+      // });
+      reject(null);
+    });
+  }
   reset() {
     this.form.reset({}, { onlySelf: true, emitEvent: false });
     this.formTwo.reset({}, { onlySelf: true, emitEvent: false });
