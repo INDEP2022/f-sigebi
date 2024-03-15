@@ -1,9 +1,11 @@
 import {
   Component,
   EventEmitter,
+  Injectable,
   Input,
   OnInit,
   Output,
+  SecurityContext,
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -11,7 +13,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import Quill from 'quill';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Components
 import * as moment from 'moment';
@@ -25,14 +26,13 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { SignatureTypeComponent } from '../signature-type/signature-type.component';
 
-const font = Quill.import('formats/font');
-font.whitelist = ['mirza', 'roboto', 'aref', 'serif', 'sansserif', 'monospace'];
-Quill.register(font, true);
+import Quill from 'quill';
 
-class Document {
-  _id: string;
-  content: string;
-}
+const parchment = Quill.import('parchment');
+const block = parchment.query('block');
+block.tagName = 'DIV';
+// or class NewBlock extends Block {} NewBlock.tagName = 'DIV'
+Quill.register(block /* or NewBlock */, true);
 
 @Component({
   selector: 'app-create-report',
@@ -91,7 +91,8 @@ export class CreateReportComponent extends BasePage implements OnInit {
     private reportgoodService: ReportgoodService,
     private reportService: ReportService,
     private wContentService: WContentService,
-    private samplingGoodService: SamplingGoodService
+    private samplingGoodService: SamplingGoodService,
+    private htmlConversionService: HtmlConversionService //private readonly bankService: BankService
   ) {
     super();
   }
@@ -143,7 +144,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   async getVersionsDoc() {
-
     let params = new ListParams();
     params['filter.documentTypeId'] = `$eq:${this.format.doctoTypeId.id}`;
     params['filter.tableName'] = `$eq:${this.tableName}`;
@@ -157,7 +157,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
           this.isSigned = this.version.signedReport == 'Y';
         }
       },
-      error: err => { },
+      error: err => {},
     });
   }
 
@@ -169,11 +169,17 @@ export class CreateReportComponent extends BasePage implements OnInit {
       x => x.id == this.form.get('template').value
     );
 
+    // Aplicar la conversión aquí
+    const convertedContent =
+      this.htmlConversionService.convertClassesToAlignAttributes(
+        this.version.content
+      );
+
     let doc: any = {
       tableName: this.tableName,
       registryId: this.requestId,
       documentTypeId: this.format.doctoTypeId.id,
-      content: this.version.content,
+      content: convertedContent, // Usar contenido convertido
       signedReport: 'N',
       version: '1',
       ucmDocumentName: null,
@@ -187,7 +193,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
     };
 
     if (!isNullOrEmpty(data)) {
-      doc = { ...data };
+      doc = { ...data, content: convertedContent }; // Asegurarse de que el contenido convertido se use también aquí
       doc.modificationUser = user.username;
       doc.modificationDate = moment(new Date()).format('YYYY-MM-DD');
     }
@@ -199,7 +205,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
           this.onLoadToast('success', 'Documento guardado correctamente', '');
         }
       },
-      error: err => { },
+      error: err => {},
     });
   }
 
@@ -308,9 +314,9 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   generateReport() {
-
-    let documentTypeId = !isNullOrEmpty(this.version.documentTypeId) ?
-      this.version.documentTypeId : this.format.documentTypeId;
+    let documentTypeId = !isNullOrEmpty(this.version.documentTypeId)
+      ? this.version.documentTypeId
+      : this.format.documentTypeId;
 
     this.wContentService
       .downloadDinamycReport(
@@ -385,7 +391,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
                   },
                 });
               },
-              error: error => { },
+              error: error => {},
             });
         },
         error: error => {
@@ -400,8 +406,9 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
   showFile() {
     this.version.isSigned = this.isSigned;
-    let version = !isNullOrEmpty(this.version.documentTypeId) ?
-      this.version : this.format;
+    let version = !isNullOrEmpty(this.version.documentTypeId)
+      ? this.version
+      : this.format;
 
     console.log('showFile', version);
     console.log('showFile', this.version);
@@ -417,5 +424,29 @@ export class CreateReportComponent extends BasePage implements OnInit {
       this.sign.emit(this.version);
       this.close();
     }
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class HtmlConversionService {
+  constructor(private sanitizer: DomSanitizer) {}
+
+  convertClassesToAlignAttributes(html: string): string {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    const alignments = ['right', 'center', 'justify']; // Añade 'left' si es necesario
+    alignments.forEach(align => {
+      doc.querySelectorAll(`.ql-align-${align}`).forEach(el => {
+        el.removeAttribute('class'); // Considera conservar otras clases si es necesario
+        el.setAttribute('align', align);
+      });
+    });
+
+    return (
+      this.sanitizer.sanitize(SecurityContext.HTML, doc.body.innerHTML) || ''
+    );
   }
 }

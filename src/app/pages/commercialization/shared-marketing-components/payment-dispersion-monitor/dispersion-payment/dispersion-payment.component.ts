@@ -197,6 +197,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     //Navegador
     this.navigateCustomerXClient();
     this.navigateClientEvet();
+    this.navigateLotBanks();
+    this.navigatePaymentLots();
     //Settings
     this.prepareSettings();
     //Verificar si hay idEvento
@@ -1236,6 +1238,73 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.formLotEvent.get('txtCancel').setValue(e.data.txtCan);
     this.lotId = e.data.lotId;
 
+    this.getLotsBanks(this.lotId);
+    this.getPaymentLots(this.lotId);
+  }
+
+  //NAVEGAR PAGOS POR LOTE
+  navigatePaymentLots() {
+    this.dataPaymentLots
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'reference':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'amountAppVat':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'vat':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'amountNoAppVat':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'desc_tipo':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'transferent.nameTransferent':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFiltersPaymentLots[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersPaymentLots[field];
+            }
+          });
+          this.paramsPaymentLots = this.pageFilter(this.paramsPaymentLots);
+          this.getPaymentLots(this.lotId);
+        }
+      });
+
+    this.paramsPaymentLots
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.getPaymentLots(this.lotId);
+      });
+  }
+
+  //NAVEGAR REGISTRO LOTES ASIGNADOS EN EL EVENTO
+  navigateLotBanks() {
     this.dataLotsBanks
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -1295,71 +1364,13 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
             }
           });
           this.paramsLotsBanks = this.pageFilter(this.paramsLotsBanks);
-          this.getLotsBanks(e.data.lotId);
+          this.getLotsBanks(this.lotId);
         }
       });
     this.paramsLotsBanks
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        this.getLotsBanks(e.data.lotId);
-      });
-
-    this.dataPaymentLots
-      .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(change => {
-        if (change.action === 'filter') {
-          let filters = change.filter.filters;
-          filters.map((filter: any) => {
-            let field = ``;
-            let searchFilter = SearchFilter.ILIKE;
-            field = `filter.${filter.field}`;
-            switch (filter.field) {
-              case 'reference':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}`;
-                break;
-              case 'amountAppVat':
-                searchFilter = SearchFilter.EQ;
-                field = `filter.${filter.field}`;
-                break;
-              case 'vat':
-                searchFilter = SearchFilter.EQ;
-                field = `filter.${filter.field}`;
-                break;
-              case 'amountNoAppVat':
-                searchFilter = SearchFilter.EQ;
-                field = `filter.${filter.field}`;
-                break;
-              case 'desc_tipo':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}`;
-                break;
-              case 'transferent.nameTransferent':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}`;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
-            if (filter.search !== '') {
-              this.columnFiltersPaymentLots[
-                field
-              ] = `${searchFilter}:${filter.search}`;
-            } else {
-              delete this.columnFiltersPaymentLots[field];
-            }
-          });
-          this.paramsPaymentLots = this.pageFilter(this.paramsPaymentLots);
-          this.getPaymentLots(e.data.lotId);
-        }
-      });
-
-    this.paramsPaymentLots
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(params => {
-        this.getPaymentLots(e.data.lotId);
+        this.getLotsBanks(this.lotId);
       });
   }
 

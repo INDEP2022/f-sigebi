@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { formLoadAppraisalService } from 'src/app/common/constants/endpoints/form-load-appraisals';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 @Injectable({
   providedIn: 'root',
@@ -15,9 +16,9 @@ export class FormLoadAppraisalsService extends HttpService {
     super();
     this.microservice = formLoadAppraisalService.BasePage;
   }
-  obtenerEvento(body: any) {
+  obtenerEvento(body: any, params?: ListParams) {
     console.log(body);
-    return this.post(this.route, body);
+    return this.post(this.route, body, params);
   }
   obtenerEstatusLotes(body: any) {
     console.log(body);
