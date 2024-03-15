@@ -1143,6 +1143,64 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.finish = true;
         break;
 
+      case 'register-consfiscation-sentence':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+        break;
+
+      case 'register-confiscation-confirmed':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+        break;
+
+      case 'register-office-cancellation':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+        break;
+
+      case 'register-registration-sentence':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+        break;
+
+      case 'register-freedom-liens':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+        break;
+      case 'register-distribution-resource':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+        break;
       case 'register-abandonment-goods':
         this.regDocForm = true;
         this.searchAssociateFile = true;
@@ -1153,7 +1211,16 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.finish = true;
         break;
 
-      case 'abandonment-instruction-letter':
+      case 'register-abandonment-instruction':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+        break;
+      case 'register-declaration-abandonment':
         this.regDocForm = true;
         this.searchAssociateFile = true;
         this.selectGoods = true;
@@ -1172,6 +1239,25 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.finish = true;
         break;
 
+      case 'register-extinction-sentence':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+        break;
+
+      case 'register-extinction-agreement':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+        break;
       default:
         break;
     }
