@@ -29,7 +29,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
         case 102: //LA SENTENCIA DE DECOMISO.
           return {
-            title: `DECOMISO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            title: `LA SENTENCIA DE DECOMISO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
             url: 'pages/request/request-comp-doc/tasks/register-consfiscation-sentence',
             process: 'SentenciaDecomiso',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -40,7 +40,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
         case 103: //EL AUTO DONDE SE CONFIRMA O CAUSA EJECUTORIA EL DECOMISO.
           return {
-            title: `DECOMISO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            title: `EL AUTO DONDE SE CONFIRMA O CAUSA EJECUTORIA EL DECOMISO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
             url: 'pages/request/request-comp-doc/tasks/register-confiscation-confirmed',
             process: 'ACEDecomiso',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -51,7 +51,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
         case 104: //OFICIO DE CANCELACIÓN DE ASIENTOS REGISTRALES RELATIVOS AL ACUERDO DE ASEGURAMIENTO.
           return {
-            title: `DECOMISO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            title: `OFICIO DE CANCELACIÓN DE ASIENTOS REGISTRALES RELATIVOS AL ACUERDO DE ASEGURAMIENTO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
             url: 'pages/request/request-comp-doc/tasks/register-office-cancellation',
             process: 'OCARAcuerdoAseguramiento',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -62,7 +62,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
         case 105: //CONSTANCIA DE INSCRIPCIÓN DE LA SENTENCIA.
           return {
-            title: `DECOMISO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            title: `CONSTANCIA DE INSCRIPCIÓN DE LA SENTENCIA: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
             url: 'pages/request/request-comp-doc/tasks/register-registration-sentence',
             process: 'CInscripcionSentencia',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -73,7 +73,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
         case 106: //CONSTANCIA DE LIBERTAD DE GRAVÁMENES
           return {
-            title: `DECOMISO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            title: `CONSTANCIA DE LIBERTAD DE GRAVÁMENES: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
             url: 'pages/request/request-comp-doc/tasks/register-freedom-liens',
             process: 'CLibertadGravamenes',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -84,7 +84,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
         case 107: //EL AUTO DONDE SE CONFIRME LA DISTRIBUCIÓN DEL RECURSO. (PARA LOS BIENES QUE SON NUMERARIO).
           return {
-            title: `DECOMISO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            title: `EL AUTO DONDE SE CONFIRME LA DISTRIBUCIÓN DEL RECURSO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
             url: 'pages/request/request-comp-doc/tasks/register-distribution-resource',
             process: 'ADCDistribucionRecurso',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -106,7 +106,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
         case 100: //LA SENTENCIA DONDE SE DECLARA PROCEDENTE LA EXTINCIÓN DE DOMINIO.
           return {
-            title: `EXTINCION DE DOMINIO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            title: `LA SENTENCIA DONDE SE DECLARA PROCEDENTE LA EXTINCIÓN DE DOMINIO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
             url: 'pages/request/request-comp-doc/tasks/register-extinction-sentence',
             process: 'SDDPExtincionDominio',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -117,7 +117,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
         case 101: // ACUERDO DONDE SE DECLARE EJECUTADA LA SENTENCIA DE EXTINCIÓN DE DOMINIO.
           return {
-            title: `EXTINCION DE DOMINIO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            title: `ACUERDO DONDE SE DECLARE EJECUTADA LA SENTENCIA DE EXTINCIÓN DE DOMINIO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
             url: 'pages/request/request-comp-doc/tasks/register-extinction-agreement',
             process: 'ADDESentenciaExtincionDominio',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -139,7 +139,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
         case 98: //Oficio de instrucción de abandono emitido por la autoridad.
           return {
-            title: `ABANDONO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            title: `OFICIO DE INSTRUCCIÓN DE ABANDONO EMITIDO POR LA AUTORIDAD: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
             url: 'pages/request/request-comp-doc/tasks/register-abandonment-instruction',
             process: 'OficioInstruccionAbandono',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -150,7 +150,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
         case 99: //ACUERDO DE DECLARACIÓN DE ABANDONO.
           return {
-            title: `ABANDONO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            title: `ACUERDO DE DECLARACIÓN DE ABANDONO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
             url: 'pages/request/request-comp-doc/tasks/register-declaration-abandonment',
             process: 'AcuerdoDeclaracionAbandono',
             type: 'DOCUMENTACION_COMPLEMENTARIA',

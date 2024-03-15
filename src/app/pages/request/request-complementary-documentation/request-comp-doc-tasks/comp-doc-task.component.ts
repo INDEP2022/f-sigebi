@@ -131,7 +131,7 @@ export abstract class CompDocTasksComponent extends BasePage {
     } else if (affair == 106) {
       this.title = `CONSTANCIA DE LIBERTAD DE GRAVÁMENES : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
     } else if (affair == 107) {
-      this.title = `EL AUTO DONDE SE CONFIRME LA DISTRIBUCIÓN DEL RECURSO. (PARA LOS BIENES QUE SON NUMERARIO) : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
+      this.title = `EL AUTO DONDE SE CONFIRME LA DISTRIBUCIÓN DEL RECURSO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
     } else if (affair == 16) {
       this.title = `EXTINCIón DE DOMINIO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
     } else if (affair == 100) {
