@@ -901,10 +901,10 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   updateStatusSigned(signature = null) {
 
+    //Validar si no ha seleccionado firmante
     if (isNullOrEmpty(this.valuesSign.validationocsp)) {
       this.valuesSign.validationocsp = true;
     }
-
 
     const formData = new FormData();
     formData.append('learnedType', this.valuesSign.learnedType);
