@@ -9,7 +9,12 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { Subscription } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -35,7 +40,8 @@ import { isNullOrEmpty } from '../../request-complementary-documentation/request
 })
 export class RegisterDocumentationFormComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   fileTypes: any[] = [];
   infoOrigins: any[] = [];
   maxDate: Date = new Date();
@@ -148,14 +154,16 @@ export class RegisterDocumentationFormComponent
   }
 
   formChanges(update = false) {
-
     let requiredFields = this.getRequiredFields(this.registerForm);
-    let isValid = this.validateParameters(this.requestIfo, requiredFields["keys"]);
+    let isValid = this.validateParameters(
+      this.requestIfo,
+      requiredFields['keys']
+    );
 
     this.onChange.emit({
       isValid: this.registerForm.valid && isValid && this.loadInfo,
       object: this.requestIfo,
-      update: update
+      update: update,
     });
   }
 
@@ -276,9 +284,19 @@ export class RegisterDocumentationFormComponent
       'register-request-economic': ['trialType'],
       'register-request-information-goods': ['trialType'],
       'register-request-protection': ['trialType', 'protectNumber'],
+      'register-distribution-resource': ['trialType'],
+      'register-freedom-liens': ['trialType'],
+      'register-registration-sentence': ['trialType'],
+      'register-office-cancellation': ['trialType'],
+      'register-confiscation-confirmed': ['trialType'],
+      'register-consfiscation-sentence': ['trialType'],
       'register-seizures': ['trialType'],
       'register-abandonment-goods': ['trialType'],
+      'register-declaration-abandonment': ['trialType'],
+      'register-abandonment-instruction': ['trialType'],
       'register-domain-extinction': ['trialType'],
+      'register-extinction-sentence': ['trialType'],
+      'register-extinction-agreement': ['trialType'],
       'register-compensation-documentation': ['trialType'],
     };
 
@@ -366,7 +384,9 @@ export class RegisterDocumentationFormComponent
       this.registerForm.controls['priorityDate'].clearValidators();
       this.registerForm.controls['priorityDate'].updateValueAndValidity();
     } else {
-      this.registerForm.controls['priorityDate'].setValidators(Validators.required);
+      this.registerForm.controls['priorityDate'].setValidators(
+        Validators.required
+      );
       this.registerForm.controls['priorityDate'].updateValueAndValidity();
     }
   }
@@ -471,10 +491,40 @@ export class RegisterDocumentationFormComponent
       case 'register-seizures':
         input = ['trialType'];
         break;
+      case 'register-consfiscation-sentence':
+        input = ['trialType'];
+        break;
+      case 'register-confiscation-confirmed':
+        input = ['trialType'];
+        break;
+      case 'register-office-cancellation':
+        input = ['trialType'];
+        break;
+      case 'register-registration-sentence':
+        input = ['trialType'];
+        break;
+      case 'register-freedom-liens':
+        input = ['trialType'];
+        break;
+      case 'register-distribution-resource':
+        input = ['trialType'];
+        break;
       case 'register-abandonment-goods':
         input = ['trialType'];
         break;
+      case 'register-abandonment-instruction':
+        input = ['trialType'];
+        break;
+      case 'register-declaration-abandonment':
+        input = ['trialType'];
+        break;
       case 'register-domain-extinction':
+        input = ['trialType'];
+        break;
+      case 'register-extinction-sentence':
+        input = ['trialType'];
+        break;
+      case 'register-extinction-agreement':
         input = ['trialType'];
         break;
       case 'register-compensation-documentation':
@@ -489,16 +539,19 @@ export class RegisterDocumentationFormComponent
     let requiredFields: { [key: string]: any } = {};
 
     Object.keys(formGroup.controls).forEach(key => {
-
-      let control: any = formGroup.get(key)
-      if (control.validator && control.validator({} as AbstractControl) && control.validator({} as AbstractControl).required) {
+      let control: any = formGroup.get(key);
+      if (
+        control.validator &&
+        control.validator({} as AbstractControl) &&
+        control.validator({} as AbstractControl).required
+      ) {
         requiredFields[key] = control.value;
       }
     });
 
     return {
       data: requiredFields,
-      keys: Object.keys(requiredFields)
+      keys: Object.keys(requiredFields),
     };
   }
 
@@ -511,5 +564,4 @@ export class RegisterDocumentationFormComponent
 
     return true;
   }
-
 }

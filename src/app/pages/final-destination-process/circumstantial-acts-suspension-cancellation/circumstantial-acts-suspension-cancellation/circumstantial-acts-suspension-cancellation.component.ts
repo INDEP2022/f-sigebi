@@ -80,13 +80,13 @@ export class CircumstantialActsSuspensionCancellationComponent
   formTable2: FormGroup;
   formTag: FormGroup;
   response: boolean;
-  bsValueFromYear: Date = new Date();
+  bsValueFromYear = new Date().getFullYear();
   minModeFromYear: BsDatepickerViewMode = 'year';
   bsConfigFromYear: Partial<BsDatepickerConfig>;
   settings2: any;
   data1: LocalDataSource = new LocalDataSource();
   data2: LocalDataSource = new LocalDataSource();
-  bsValueFromMonth: Date = new Date();
+  bsValueFromMonth = new Date().getMonth() + 1;
   minModeFromMonth: BsDatepickerViewMode = 'month';
   bsConfigFromMonth: Partial<BsDatepickerConfig>;
   totalItems: number = 0;
@@ -173,7 +173,10 @@ export class CircumstantialActsSuspensionCancellationComponent
         if (params['origin']) {
           this.queryParams.origin = params['origin'];
           this.queryParams.noExpedient = params['noExpedient'];
-          this.search(this.queryParams.noExpedient);
+          this.formBlkExpedient
+            .get('noExpedient')
+            .setValue(this.queryParams.noExpedient);
+          this.search();
           this.inputValue = Number(this.queryParams.noExpedient);
         }
       });
@@ -194,8 +197,10 @@ export class CircumstantialActsSuspensionCancellationComponent
       if (folio) {
         this.form.controls['universalFolio'].setValue(folio);
       }
-      this.search(Number(localExpdeient));
+      this.formBlkExpedient.get('noExpedient').setValue(Number(localExpdeient));
+      this.search();
       localStorage.removeItem('expediente');
+      //
     }
   }
 
@@ -302,6 +307,7 @@ export class CircumstantialActsSuspensionCancellationComponent
       causePenal: [null],
     });
     this.formBlkExpedient.disable();
+    this.formBlkExpedient.get('noExpedient').enable();
     this.formTable1 = this.fb.group({
       detail: [null],
     });
@@ -891,8 +897,8 @@ export class CircumstantialActsSuspensionCancellationComponent
     }
   }
 
-  search(term: number | string) {
-    this.expediente = Number(term);
+  search() {
+    this.expediente = this.formBlkExpedient.get('noExpedient').value;
     const params: ListParams = {};
     params['filter.id'] = `$eq:${this.expediente}`;
     this.expedientService.getAll(params).subscribe({

@@ -526,4 +526,8 @@ export class LotService extends HttpService {
   pupStateFlat(body: FormData) {
     return this.post('apps/pup-estate-flat', body);
   }
+
+  paGarantXLote(event: number) {
+    return this.get(`${LotEndpoints.QueryPaGarantByLot}/${event}`);
+  }
 }
