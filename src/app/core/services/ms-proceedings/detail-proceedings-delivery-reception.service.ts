@@ -227,4 +227,11 @@ export class DetailProceeDelRecService extends HttpService {
   paGenConstMassive(body: IPaGenConstMassive) {
     return this.post('aplication/pa-gen-const-massive', body);
   }
+
+  addGoodToProceedings_(model: IDetailProceedingsDeliveryReception) {
+    return this.post(
+      ProceedingsEndpoints.DetailProceedingsDeliveryReception,
+      model
+    );
+  }
 }

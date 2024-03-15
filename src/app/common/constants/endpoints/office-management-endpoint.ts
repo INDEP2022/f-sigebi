@@ -12,4 +12,5 @@ export enum OfficeManagementEndpoint {
   ComerJobs = 'comer-jobs',
   paTriggerOAppraise = 'paTriggerOAppraise',
   LegalTrades = 'legal-trades',
+  PupGenOficio = 'application/get-pupGenOficio',
 }

@@ -34,4 +34,5 @@ export enum MassiveGoodEndpoints {
   pupProcesaCsvPaymentSearch = 'application/pup-procesa-csv',
   ApplicationPupExpCsvReldevGar = 'application/pup-exp-csv-reldevgar',
   ApplicationPupGenLayouts = 'application/pup-gen-layouts',
+  pupInsertTmpComer = 'application/pupInsertTmpcomerappraisal',
 }
