@@ -46,6 +46,7 @@ export class SearchActsComponent extends BasePage implements OnInit {
   actaActual: any;
   valDelete: boolean = false;
   // @Output() onConfirm = new EventEmitter<any>();
+  valRif: boolean = false;
   constructor(
     private modalRef: BsModalRef,
     private activateRoute: ActivatedRoute,
@@ -164,9 +165,14 @@ export class SearchActsComponent extends BasePage implements OnInit {
         'filter.captureDate'
       ] = `$btw:${fechaFormateada}T00:00:00.000Z,${fechaFormateada}T23:59:59.999Z`;
     }
+    if (this.valRif == true) {
+      params['filter.typeProceedings'] = `$eq:RIF`;
+      // params['filter.numFile'] = `$eq:${this.expedienteNumber}`;
+    } else {
+      params['filter.typeProceedings'] = `$eq:ENTEST`;
+      params['filter.idTypeProceedings'] = `$eq:BEE`;
+    }
 
-    params['filter.typeProceedings'] = `$eq:ENTEST`;
-    params['filter.idTypeProceedings'] = `$eq:BEE`;
     this.proceedingsDeliveryReceptionService
       .getStatusDeliveryCveExpendienteAll(params)
       .subscribe({
