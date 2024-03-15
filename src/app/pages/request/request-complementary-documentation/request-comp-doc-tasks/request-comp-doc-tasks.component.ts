@@ -1380,6 +1380,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
+          return false;
+        }
         break;
 
       case 'register-protections-goods':
