@@ -191,7 +191,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
 
         //this.onLoadToast('error', 'Error', error);
       },
-      () => {}
+      () => { }
     );
   }
 
@@ -305,6 +305,27 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
         object['creationDate'] = moment(new Date()).format('YYYY-MM-DD');
         object['version'] = 1;
         object['documentTypeId'] = this.docTypeId;
+        object['situationLegal'] = 2;
+
+        /*
+        //object['agreementDate'] = "agreementDate";
+        object['contentId'] = "contentId";
+        object['exhibitExtDomain'] = "exhibitExtDomain";
+        //object['judgmentDate'] = "judgmentDate";
+        object['label'] = "label";
+        object['nameSender'] = "nameSender";
+        object['label'] = "label";
+        object['paragraphClaim'] = "paragraphClaim";
+        object['paragraphExtDomain'] = "paragraphExtDomain";
+        object['paragraphProtection'] = "paragraphProtection";
+        object['postSender'] = "postSender";
+        object['resolution'] = "resolution";
+        object['resolutionNumber'] = "0000";
+        //object['resultDate'] = "resultDate";
+
+        //object['statementDate'] = "statementDate";
+        //object['touchPenalDate'] = "touchPenalDate";
+        */
 
         if (isNullOrEmpty(this.recDoc)) {
           object['jobLegalId'] = splitId;
