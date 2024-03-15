@@ -53,8 +53,7 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
   protected override goodType: string;
   protected override signOffice: boolean;
   protected override btnGrouper: boolean;
@@ -329,7 +328,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   async openReport(first = true): Promise<void> {
     let doc = this.reportId;
@@ -345,18 +344,6 @@ export class RequestCompDocTasksComponent
     if (!this.nextTurn) {
       let report = await this.getStatusReport(first ? 0 : 1);
       this.showReport(report);
-      return;
-    }
-
-    if (this.process == 'review-result-protection') {
-      //this.showReportInfo(0, 0, '', '');
-      await this.getSampleCSJ(sample => {
-        this.openSignature({
-          reportFolio: sample.sampleId,
-          contentId: sample.contentId,
-        });
-      });
-
       return;
     }
 
@@ -742,7 +729,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  updateRequest(alert = true) {
+  updateRequest(alert = true, execute = () => { }) {
     this.updateInfo = true;
     let request: any = { ...this.requestInfo.detail };
 
@@ -751,6 +738,7 @@ export class RequestCompDocTasksComponent
         if (alert) {
           this.alert('success', 'Correcto', 'Registro Actualizado');
         }
+        execute();
       },
       error: error => {
         if (alert) {
@@ -949,7 +937,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1319,6 +1307,8 @@ export class RequestCompDocTasksComponent
 
         break;
 
+      case 'register-extinction-agreement':
+      case 'register-extinction-sentence':
       case 'register-domain-extinction':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
@@ -1337,6 +1327,13 @@ export class RequestCompDocTasksComponent
           return false;
         }
         break;
+
+      case 'register-distribution-resource':
+      case 'register-freedom-liens':
+      case 'register-registration-sentence':
+      case 'register-office-cancellation':
+      case 'register-confiscation-confirmed':
+      case 'register-consfiscation-sentence':
       case 'register-seizures':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
@@ -1355,7 +1352,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
         break;
+
       case 'register-abandonment-goods':
+      case 'register-declaration-abandonment':
+      case 'register-abandonment-instruction':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
           return false;
@@ -1373,6 +1373,7 @@ export class RequestCompDocTasksComponent
           return false;
         }
         break;
+
       case 'register-protections-goods':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
@@ -1442,40 +1443,13 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'review-result-protection':
-        if (!reportLoad.isSigned) {
+        if (this.requestInfo.detail.version != '1') {
           this.showWarning('Firme el reporte de oficio jurídico');
           return false;
         }
 
         break;
-      case 'register-seizures':
-        if (!this.validate.regdoc) {
-          this.showWarning('Registre la información de la solicitud');
-          return false;
-        }
-        if (!this.requestInfo.recordId) {
-          this.showWarning('Asocie el expediente de la solicitud');
-          return false;
-        }
-        if (!this.validate.goods) {
-          this.showWarning('Seleccione los bienes de la solicitud');
-          return false;
-        }
-        break;
-      case 'register-abandonment-goods':
-        if (!this.validate.regdoc) {
-          this.showWarning('Registre la información de la solicitud');
-          return false;
-        }
-        if (!this.requestInfo.recordId) {
-          this.showWarning('Asocie el expediente de la solicitud');
-          return false;
-        }
-        if (!this.validate.goods) {
-          this.showWarning('Seleccione los bienes de la solicitud');
-          return false;
-        }
-        break;
+
       case 'register-protections-goods':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
@@ -1554,7 +1528,7 @@ export class RequestCompDocTasksComponent
     this.validate.registerAppointment = event.isValid;
   }
 
-  onSetData(event) {}
+  onSetData(event) { }
 
   onOrder(event) {
     this.validate.orderEntry = event.isValid;
@@ -1574,7 +1548,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1590,7 +1564,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1671,7 +1645,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
 
   async showReport(data) {
     let report = await this.getStatusReport();
@@ -1729,7 +1703,7 @@ export class RequestCompDocTasksComponent
           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
           type: 'pdf',
         },
-        callback: (data: any) => {},
+        callback: (data: any) => { },
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -1802,39 +1776,44 @@ export class RequestCompDocTasksComponent
     const postSignatoryRuling = this.requestInfo.detail.postSignatoryRuling;
     const typeSign = this.requestInfo.detail.nameRecipientRuling;
 
-    if (!this.signReport) {
-      let config: ModalOptions = {
-        initialState: {
-          requestId: this.requestId,
-          reportId: docId,
-          reportTable: this.reportTable,
-          idSample: idSample,
-          contentId: contentId,
-          typeAnnex: typeAnnex,
-          nameSignatoryRuling,
-          postSignatoryRuling,
-          typeSign,
-          formOnly,
-          callback: async (responsibleSae, saePosition, typeSign) => {
-            this.requestInfo.detail.nameSignatoryRuling = responsibleSae;
-            this.requestInfo.detail.postSignatoryRuling = saePosition;
-            this.requestInfo.detail.nameRecipientRuling = typeSign;
-            this.updateRequest(false);
+    let config: ModalOptions = {
+      initialState: {
+        requestId: this.requestId,
+        reportId: docId,
+        reportTable: this.reportTable,
+        idSample: idSample,
+        contentId: contentId,
+        typeAnnex: typeAnnex,
+        nameSignatoryRuling,
+        postSignatoryRuling,
+        typeSign,
+        formOnly,
+        callback: async (responsibleSae, saePosition, typeSign) => {
+          this.requestInfo.detail.nameSignatoryRuling = responsibleSae;
+          this.requestInfo.detail.postSignatoryRuling = saePosition;
+          this.requestInfo.detail.nameRecipientRuling = typeSign;
+          this.updateRequest(false, () => {
 
             if (typeSign == 'electronica') {
               this.openFirma(true);
             } else {
-              this.showReportInfo(idSample, docId, typeSign, typeAnnex, null);
+              this.showReportInfo(
+                idSample,
+                docId,
+                typeSign,
+                typeAnnex,
+                null
+              );
             }
-          },
+
+          });
         },
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      };
-      this.modalService.show(component, config);
-    } else {
-      this.showReportInfo(idSample, 0, '', '', contentId);
-    }
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(component, config);
+
   }
 
   showReportInfo(
@@ -1912,8 +1891,8 @@ export class RequestCompDocTasksComponent
     report.modificationUser = user.username;
     report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
     this.reportgoodService.saveReportDynamic(report).subscribe({
-      next: resp => {},
-      error: err => {},
+      next: resp => { },
+      error: err => { },
     });
   }
 
@@ -1944,7 +1923,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  async getSampleCSJ(execute = sample => {}) {
+  async getSampleCSJ(execute = sample => { }) {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.warehouseId'] = `$eq:${this.requestId}`;
 
@@ -2021,7 +2000,7 @@ export class RequestCompDocTasksComponent
             },
           });
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -2042,11 +2021,13 @@ export class RequestCompDocTasksComponent
 
     const idTypeDoc = this.reportId;
     const typeAnnex = 'approval-request';
-    const requestInfo = this.requestInfo;
+    const requestInfo = this.requestInfo.detail;
     const idReportAclara = this.requestId;
     const nameTypeDoc = 'DictamenProcendecia';
     const nomenglatura = folioReporte;
     const isDynamic = dynamic;
+    const readOnly = this.requestInfo.detail.version == "1";
+    console.log('readOnly', readOnly);
 
     let config: ModalOptions = {
       initialState: {
@@ -2057,9 +2038,8 @@ export class RequestCompDocTasksComponent
         nameTypeDoc,
         nomenglatura,
         isDynamic,
+        readOnly,
         callback: (next, xml) => {
-          console.log(next);
-          console.log(xml);
           if (next) {
             this.updateReport(xml);
           }
@@ -2075,21 +2055,55 @@ export class RequestCompDocTasksComponent
   async updateReport(xml) {
     if (isXML(xml)) {
       let token = this.authService.decodeToken();
-      let content = getXMLNode(xml, 'strXmlFirmado');
-      console.log(content);
+      let content = getXMLNode(xml, 'strXmlFirmado')?.textContent;
+      this.updateInfo = !this.updateInfo;
 
-      let report = await this.getStatusReport();
-      report = report.data[0];
-      report.content = `${content?.textContent}`;
-      report.signedReport = 'Y';
-      report.modificationUser = token.username;
-      report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
-      this.reportgoodService.saveReportDynamic(report).subscribe({
-        next: resp => {},
-        error: err => {},
-      });
+      if (!isNullOrEmpty(content)) {
+
+        /*
+        let regexs = /<SignatureValue>(.*?)<\/SignatureValue>/;
+        let matchs = regexs.exec(content);
+        let signature = matchs[1] + "";
+        let regexc = /<X509Certificate>(.*?)<\/X509Certificate>/;
+        let matchc = regexc.exec(content);
+        let certificate = matchc[1] + "";
+        report.content += '<br/><br/><br/><b>Firma Electrónica:</b><br/>' + signature;
+        report.content += '<br/><br/><br/><b>Certificado:</b><br/>' + certificate;
+        */
+
+        //Como mostrar caracteres especiales
+        //content = content.replace(/&lt;/g, '<');
+        //content = content.replace(/&gt;/g, '>');
+        //content = content.replace(/&quot;/g, '"');
+        //content = content.replace(/&apos;/g, "'");
+        //content = content.replace(/&amp;/g, '&');
+
+        this.requestInfo.detail.version = "1";
+        this.updateRequest(false);
+
+        let report = await this.getStatusReport();
+
+        if (report.isValid) {
+          report = report.data[0];
+          report.content += '<br/><br/><br/><b>Firma Electrónica:</b><br/>' + content;
+          report.signedReport = 'Y';
+          report.modificationUser = token.username;
+          report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
+          this.reportgoodService.saveReportDynamic(report).subscribe({
+            next: resp => { },
+            error: err => { },
+          });
+        } else {
+          this.requestInfo.detail.version = "1";
+          this.updateRequest(false);
+        }
+
+      }
+
     }
+
   }
+
 
   //Crear un sample para el tipo de firma
 }

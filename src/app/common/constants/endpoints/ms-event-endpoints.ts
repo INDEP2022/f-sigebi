@@ -34,4 +34,5 @@ export enum EventEndpoints {
   PupRemiEnt = 'application/pup-remi-ent',
   PupGenLcsMasiv = 'application/pup-gen-lcs-masiv',
   SpObtnEventXgood540 = 'application/spObtnEventXgood540',
+  ApplicationPupConsult = 'application/pupConsult',
 }

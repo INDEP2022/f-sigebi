@@ -42,6 +42,10 @@ export class OfficeManagementService extends HttpService {
     );
   }
 
+  pupGenOficio(body: any) {
+    return this.post(OfficeManagementEndpoint.PupGenOficio, body);
+  }
+
   customPostTmpClasifGood(body: any) {
     const route = OfficeManagementEndpoint.TmpClasifBienCustomPost;
     return this.post(`${route}`, body);

@@ -61,6 +61,14 @@ export class AppraiseService extends HttpService {
     return this.post(AppraiseEndpoints.PostAppraise, body, params);
   }
 
+  postPcValEvent(body: any, params?: _Params) {
+    return this.post(AppraiseEndpoints.PcValEvent, body, params);
+  }
+
+  postPupInseertAppraisal(body: any) {
+    return this.post(AppraiseEndpoints.PupInseertAppraisal, body);
+  }
+
   getDelegation(coordination: number) {
     return this.get(`${AppraiseEndpoints.Delegation}/${coordination}`);
   }

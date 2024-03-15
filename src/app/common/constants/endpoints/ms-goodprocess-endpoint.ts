@@ -48,4 +48,5 @@ export enum GoodprocessEndpoints {
   ApplicationGetvwComerPaymentsReturn = 'application/get-vw-comer-payments-return',
   GetGoods540XGood = 'application/getGoods540XGood',
   GetGoods540 = 'application/getGoods540',
+  TbClientsEvent = 'application/tb-clients-event',
 }

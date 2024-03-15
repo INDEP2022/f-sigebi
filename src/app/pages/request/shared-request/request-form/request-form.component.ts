@@ -441,6 +441,26 @@ export class RequestFormComponent extends BasePage implements OnInit {
     } else {
       this.displayOfficeCenter = false;
     }
+
+    if (
+      e.id == '98' ||
+      e.id == '99' ||
+      e.id == '100' ||
+      e.id == '101' ||
+      e.id == '102' ||
+      e.id == '103' ||
+      e.id == '104' ||
+      e.id == '105' ||
+      e.id == '106' ||
+      e.id == '107'
+    ) {
+      this.displayOfficeCenter = true;
+    } else {
+      this.displayOfficeCenter = false;
+    }
+
+
+
   }
 
   openModalSelectUser() {
