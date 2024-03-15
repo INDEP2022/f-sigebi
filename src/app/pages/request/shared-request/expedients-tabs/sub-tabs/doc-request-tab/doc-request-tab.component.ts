@@ -1097,12 +1097,20 @@ export class DocRequestTabComponent
       switch (this.process) {
 
         case 'register-seizures':
+        case 'register-consfiscation-sentence':
+        case 'register-confiscation-confirmed':
+        case 'register-office-cancellation':
+        case 'register-registration-sentence':
+        case 'register-freedom-liens':
+        case 'register-distribution-resource':
           if (containDocCom) {
             validToks = true;
           }
           break;
 
         case 'register-abandonment-goods':
+        case 'register-abandonment-instruction':
+        case 'register-declaration-abandonment':  
           let hasType51 = list.some(x => parseInt(x.xtipoDocumentoId) === 51);
           let hasType146 = list.some(x => parseInt(x.xtipoDocumentoId) === 146);
 
@@ -1112,6 +1120,8 @@ export class DocRequestTabComponent
           break;
 
         case 'register-domain-extinction':
+        case 'register-extinction-sentence':
+        case 'register-extinction-agreement':
           let hasType83 = list.some(x => parseInt(x.xtipoDocumentoId) === 83);
           if (hasType83 && containDocCom) {
             validToks = true;

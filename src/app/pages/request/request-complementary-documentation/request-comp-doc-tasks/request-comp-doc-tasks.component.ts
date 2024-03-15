@@ -742,7 +742,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  updateRequest(alert = true) {
+  updateRequest(alert = true, execute = () => { }) {
     this.updateInfo = true;
     let request: any = { ...this.requestInfo.detail };
 
@@ -751,6 +751,7 @@ export class RequestCompDocTasksComponent
         if (alert) {
           this.alert('success', 'Correcto', 'Registro Actualizado');
         }
+        execute();
       },
       error: error => {
         if (alert) {
@@ -1319,6 +1320,8 @@ export class RequestCompDocTasksComponent
 
         break;
 
+      case 'register-extinction-agreement':
+      case 'register-extinction-sentence':
       case 'register-domain-extinction':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
@@ -1337,6 +1340,13 @@ export class RequestCompDocTasksComponent
           return false;
         }
         break;
+
+      case 'register-distribution-resource':
+      case 'register-freedom-liens':
+      case 'register-registration-sentence':
+      case 'register-office-cancellation':
+      case 'register-confiscation-confirmed':
+      case 'register-consfiscation-sentence':
       case 'register-seizures':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
@@ -1355,7 +1365,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
         break;
+
       case 'register-abandonment-goods':
+      case 'register-declaration-abandonment':
+      case 'register-abandonment-instruction':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
           return false;
@@ -1373,6 +1386,7 @@ export class RequestCompDocTasksComponent
           return false;
         }
         break;
+
       case 'register-protections-goods':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
@@ -1448,34 +1462,7 @@ export class RequestCompDocTasksComponent
         }
 
         break;
-      case 'register-seizures':
-        if (!this.validate.regdoc) {
-          this.showWarning('Registre la información de la solicitud');
-          return false;
-        }
-        if (!this.requestInfo.recordId) {
-          this.showWarning('Asocie el expediente de la solicitud');
-          return false;
-        }
-        if (!this.validate.goods) {
-          this.showWarning('Seleccione los bienes de la solicitud');
-          return false;
-        }
-        break;
-      case 'register-abandonment-goods':
-        if (!this.validate.regdoc) {
-          this.showWarning('Registre la información de la solicitud');
-          return false;
-        }
-        if (!this.requestInfo.recordId) {
-          this.showWarning('Asocie el expediente de la solicitud');
-          return false;
-        }
-        if (!this.validate.goods) {
-          this.showWarning('Seleccione los bienes de la solicitud');
-          return false;
-        }
-        break;
+
       case 'register-protections-goods':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
@@ -1819,13 +1806,21 @@ export class RequestCompDocTasksComponent
             this.requestInfo.detail.nameSignatoryRuling = responsibleSae;
             this.requestInfo.detail.postSignatoryRuling = saePosition;
             this.requestInfo.detail.nameRecipientRuling = typeSign;
-            this.updateRequest(false);
+            this.updateRequest(false, () => {
 
-            if (typeSign == 'electronica') {
-              this.openFirma(true);
-            } else {
-              this.showReportInfo(idSample, docId, typeSign, typeAnnex, null);
-            }
+              if (typeSign == 'electronica') {
+                this.openFirma(true);
+              } else {
+                this.showReportInfo(
+                  idSample,
+                  docId,
+                  typeSign,
+                  typeAnnex,
+                  null
+                );
+              }
+
+            });
           },
         },
         class: 'modal-lg modal-dialog-centered',
@@ -2042,7 +2037,7 @@ export class RequestCompDocTasksComponent
 
     const idTypeDoc = this.reportId;
     const typeAnnex = 'approval-request';
-    const requestInfo = this.requestInfo;
+    const requestInfo = this.requestInfo.detail;
     const idReportAclara = this.requestId;
     const nameTypeDoc = 'DictamenProcendecia';
     const nomenglatura = folioReporte;
@@ -2058,8 +2053,6 @@ export class RequestCompDocTasksComponent
         nomenglatura,
         isDynamic,
         callback: (next, xml) => {
-          console.log(next);
-          console.log(xml);
           if (next) {
             this.updateReport(xml);
           }
@@ -2075,21 +2068,45 @@ export class RequestCompDocTasksComponent
   async updateReport(xml) {
     if (isXML(xml)) {
       let token = this.authService.decodeToken();
-      let content = getXMLNode(xml, 'strXmlFirmado');
-      console.log(content);
+      let content = getXMLNode(xml, 'strXmlFirmado')?.textContent;
+      this.updateInfo = !this.updateInfo;
 
-      let report = await this.getStatusReport();
-      report = report.data[0];
-      report.content = `${content?.textContent}`;
-      report.signedReport = 'Y';
-      report.modificationUser = token.username;
-      report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
-      this.reportgoodService.saveReportDynamic(report).subscribe({
-        next: resp => {},
-        error: err => {},
-      });
+      if (!isNullOrEmpty(content)) {
+
+        /*
+        let regexs = /<SignatureValue>(.*?)<\/SignatureValue>/;
+        let matchs = regexs.exec(content);
+        let signature = matchs[1] + "";
+        let regexc = /<X509Certificate>(.*?)<\/X509Certificate>/;
+        let matchc = regexc.exec(content);
+        let certificate = matchc[1] + "";
+        report.content += '<br/><br/><br/><b>Firma Electrónica:</b><br/>' + signature;
+        report.content += '<br/><br/><br/><b>Certificado:</b><br/>' + certificate;
+        */
+
+        //Como mostrar caracteres especiales
+        //content = content.replace(/&lt;/g, '<');
+        //content = content.replace(/&gt;/g, '>');
+        //content = content.replace(/&quot;/g, '"');
+        //content = content.replace(/&apos;/g, "'");
+        //content = content.replace(/&amp;/g, '&');
+
+        let report = await this.getStatusReport();
+        report = report.data[0];
+        report.content += '<br/><br/><br/><b>Firma Electrónica:</b><br/>' + content;
+        report.signedReport = 'Y';
+        report.modificationUser = token.username;
+        report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
+        this.reportgoodService.saveReportDynamic(report).subscribe({
+          next: resp => { },
+          error: err => { },
+        });
+      }
+
     }
+
   }
+
 
   //Crear un sample para el tipo de firma
 }

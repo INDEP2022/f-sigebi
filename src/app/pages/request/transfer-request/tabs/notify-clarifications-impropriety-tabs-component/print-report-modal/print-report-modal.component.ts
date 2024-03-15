@@ -782,7 +782,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           //Plasmar la clave
           this.claveInReport();
 
-          if (!this.isDynamic || this.idTypeDoc == 223) {
+          if (this.isDynamic || this.idTypeDoc == 223) {
             //this.updateRequest();
             return;
           }
