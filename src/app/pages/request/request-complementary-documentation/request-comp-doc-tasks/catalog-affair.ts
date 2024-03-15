@@ -27,11 +27,99 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
             close: true,
           };
 
+        case 102: //LA SENTENCIA DE DECOMISO.
+          return {
+            title: `LA SENTENCIA DE DECOMISO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-consfiscation-sentence',
+            process: 'SentenciaDecomiso',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
+
+        case 103: //EL AUTO DONDE SE CONFIRMA O CAUSA EJECUTORIA EL DECOMISO.
+          return {
+            title: `EL AUTO DONDE SE CONFIRMA O CAUSA EJECUTORIA EL DECOMISO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-confiscation-confirmed',
+            process: 'ACEDecomiso',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
+
+        case 104: //OFICIO DE CANCELACIÓN DE ASIENTOS REGISTRALES RELATIVOS AL ACUERDO DE ASEGURAMIENTO.
+          return {
+            title: `OFICIO DE CANCELACIÓN DE ASIENTOS REGISTRALES RELATIVOS AL ACUERDO DE ASEGURAMIENTO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-office-cancellation',
+            process: 'OCARAcuerdoAseguramiento',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
+
+        case 105: //CONSTANCIA DE INSCRIPCIÓN DE LA SENTENCIA.
+          return {
+            title: `CONSTANCIA DE INSCRIPCIÓN DE LA SENTENCIA: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-registration-sentence',
+            process: 'CInscripcionSentencia',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
+
+        case 106: //CONSTANCIA DE LIBERTAD DE GRAVÁMENES
+          return {
+            title: `CONSTANCIA DE LIBERTAD DE GRAVÁMENES: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-freedom-liens',
+            process: 'CLibertadGravamenes',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
+
+        case 107: //EL AUTO DONDE SE CONFIRME LA DISTRIBUCIÓN DEL RECURSO. (PARA LOS BIENES QUE SON NUMERARIO).
+          return {
+            title: `EL AUTO DONDE SE CONFIRME LA DISTRIBUCIÓN DEL RECURSO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-distribution-resource',
+            process: 'ADCDistribucionRecurso',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
+
         case 16: //extincion de dominio
           return {
             title: `EXTINCION DE DOMINIO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
             url: 'pages/request/request-comp-doc/tasks/register-domain-extinction',
             process: 'ExtinciondeDominio',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
+
+        case 100: //LA SENTENCIA DONDE SE DECLARA PROCEDENTE LA EXTINCIÓN DE DOMINIO.
+          return {
+            title: `LA SENTENCIA DONDE SE DECLARA PROCEDENTE LA EXTINCIÓN DE DOMINIO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-extinction-sentence',
+            process: 'SDDPExtincionDominio',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
+
+        case 101: // ACUERDO DONDE SE DECLARE EJECUTADA LA SENTENCIA DE EXTINCIÓN DE DOMINIO.
+          return {
+            title: `ACUERDO DONDE SE DECLARE EJECUTADA LA SENTENCIA DE EXTINCIÓN DE DOMINIO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-extinction-agreement',
+            process: 'ADDESentenciaExtincionDominio',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
             subtype: 'Registro_Solicitud',
             ssubtype: 'TURNAR',
@@ -48,6 +136,30 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
             ssubtype: 'TURNAR',
             close: true,
           };
+
+        case 98: //Oficio de instrucción de abandono emitido por la autoridad.
+          return {
+            title: `OFICIO DE INSTRUCCIÓN DE ABANDONO EMITIDO POR LA AUTORIDAD: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-abandonment-instruction',
+            process: 'OficioInstruccionAbandono',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
+
+        case 99: //ACUERDO DE DECLARACIÓN DE ABANDONO.
+          return {
+            title: `ACUERDO DE DECLARACIÓN DE ABANDONO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-declaration-abandonment',
+            process: 'AcuerdoDeclaracionAbandono',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
+
+
 
         case 10: //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
           return {
@@ -389,6 +501,8 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
     case 'register-seizures':
       break;
     case 'register-abandonment-goods':
+      break;
+    case 'abandonment-instruction-letter':
       break;
     case 'register-domain-extinction':
       break;
