@@ -22,7 +22,7 @@ import { UploadReportReceiptComponent } from 'src/app/pages/request/programming-
 import { environment } from 'src/environments/environment';
 import { UploadFielsModalComponent } from '../upload-fiels-modal/upload-fiels-modal.component';
 import { LIST_REPORTS_COLUMN } from './list-reports-column';
-import { getXMLNode } from 'src/app/pages/request/request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
+import { getXMLNode, isNullOrEmpty } from 'src/app/pages/request/request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-print-report-modal',
@@ -500,6 +500,10 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.isAttachDoc = false;
     this.printReport = true;
     this.paragraphs = [];
+
+    this.rowSelected = false;
+    this.selectedRow = null;
+
   }
 
   nextStep() {
@@ -782,17 +786,41 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           this.loadingButton = false;
 
           this.xml = data;
-          this.msjCheck = true;
-          this.handleSuccess();
-          //Plasmar la clave
-          this.claveInReport();
+
 
           if (this.isDynamic || this.idTypeDoc == 223) {
             //this.updateRequest();
             let content = getXMLNode(this.xml, 'strXmlFirmado')?.textContent;
-            this.updateStatusSigned(content);
+
+            if (!isNullOrEmpty(content)) {
+              this.msjCheck = true;
+              this.handleSuccess();
+              //Plasmar la clave
+              this.claveInReport();
+              this.updateStatusSigned(content);
+            } else {
+
+              this.selectedRow = null;
+              this.rowSelected = false;
+
+              this.valuesSign.validationocsp = false;
+
+              this.updateStatusSigned();
+              this.signParams();
+
+              let error = getXMLNode(this.xml, 'strError')?.textContent;
+
+              this.alertInfo(
+                'error',
+                'Acción Inválida',
+                'Error al generar firma electronica\n' + error.split('.')[0] + ''
+              );
+            }
+
             return;
           }
+
+          this.msjCheck = true;
 
           if (nameTypeReport === 'DictamenProcendecia') {
             //this.updateRequest();
@@ -872,6 +900,12 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   updateStatusSigned(signature = null) {
+
+    //Validar si no ha seleccionado firmante
+    if (isNullOrEmpty(this.valuesSign.validationocsp)) {
+      this.valuesSign.validationocsp = true;
+    }
+
     const formData = new FormData();
     formData.append('learnedType', this.valuesSign.learnedType);
     formData.append('signatoryId', String(this.valuesSign.signatoryId));
@@ -880,7 +914,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     formData.append('pass', this.valuesSign.pass);
     formData.append('post', this.valuesSign.post);
     formData.append('rfcUser', this.valuesSign.rfcUser);
-    formData.append('validationocsp', 'true');
+    formData.append('validationocsp', this.valuesSign.validationocsp + '');
     formData.append('identifierSystem', '1');
     formData.append('identifierSignatory', '1');
 
