@@ -1048,8 +1048,18 @@ export class EventGoodsLotsListActionsComponent
           this.alert('error', ' Error', UNEXPECTED_ERROR);
           return throwError(() => error);
         }),
-        tap(() => {
+        tap(response => {
           this.loader.load = false;
+          console.log(response);
+
+          if (response.updatedLots == 0 && response.insertLots == 0) {
+            this.alert(
+              'warning',
+              'No se procesaron servicios',
+              `Se intentaron cargar ${response.verifiedRows}`
+            );
+            throw new Error('No se procesaron servicios');
+          }
         })
       );
   }
@@ -1068,7 +1078,7 @@ export class EventGoodsLotsListActionsComponent
         }),
         tap(() => {
           this.loader.load = false;
-          this.alert('success', 'Proceso Terminado', '');
+          this.alert('success', 'Proceso Terminado', 'Se carga de aquí');
         })
       );
   }

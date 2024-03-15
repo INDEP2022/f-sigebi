@@ -352,17 +352,26 @@
                   <div>
                     <h5 class="title">Histórico Estatus del Bien</h5>
                   </div>
-                  <div class="ml-auto mb-3">
-                    <button class="btn btn-sm btn-success active mr-3">
-                      Exportar a Excel
-                      <i class="bx bx-download float-icon"></i>
-                    </button>
-                    <app-columns-select
-                      [(settings)]="settingsFour"
-                      [leftList]="true"></app-columns-select>
-                    <!--  -->
+                </div>
+                <div class="row pt-4">
+                  <div class="col-md-12">
+                    <div class="row mt-12">
+                      <div class="col-md-6 mb-1"></div>
+                      <div
+                        class="col-md-6"
+                        style="display: flex; justify-content: flex-end">
+                        <button class="btn btn-sm btn-success active mr-3">
+                          Exportar a Excel
+                          <i class="bx bx-download float-icon"></i>
+                        </button>
+                        <app-columns-select
+                          [(settings)]="settingsFour"
+                          [leftList]="true"></app-columns-select>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
                 <div class="table-responsive">
                   <ng2-smart-table
                     [settings]="settingsFour"
@@ -397,18 +406,26 @@
                   <div>
                     <h5 class="title">Histórico Eventos del Bien</h5>
                   </div>
-                  <div class="ml-auto mb-3">
-                    <app-columns-select
-                      [(settings)]="settingsFive"
-                      [leftList]="true"></app-columns-select>
-                    <button class="btn btn-sm btn-success active mr-3">
-                      Exportar a Excel
-                      <i class="bx bx-download float-icon"></i>
-                    </button>
-
-                    <!--  -->
+                </div>
+                <div class="row pt-4">
+                  <div class="col-md-12">
+                    <div class="row mt-12">
+                      <div class="col-md-6 mb-1"></div>
+                      <div
+                        class="col-md-6"
+                        style="display: flex; justify-content: flex-end">
+                        <button class="btn btn-sm btn-success active mr-3">
+                          Exportar a Excel
+                          <i class="bx bx-download float-icon"></i>
+                        </button>
+                        <app-columns-select
+                          [(settings)]="settingsFive"
+                          [leftList]="true"></app-columns-select>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
                 <div class="table-responsive">
                   <ng2-smart-table
                     [settings]="settingsFive"

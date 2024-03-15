@@ -1,0 +1,545 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Actas de Regularizaci&oacute;n por Inexistencia F&iacute;sica
+    </h5>
+  </div>
+  <div body>
+    <accordion [isAnimated]="true">
+      <accordion-group [isOpen]="true">
+        <div accordion-heading class="d-flex justify-content-between">
+          <h5>EXPEDIENTE</h5>
+        </div>
+        <div class="float-right pl-3">
+          <button
+            (click)="searchExpediente()"
+            class="btn btn-primary btn-sm active m-1"
+            tooltip="Lista de Expedientes"
+            containerClass="tooltip-style">
+            <i class="bx bx-list-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+        <app-card [header]="false" [footer]="false">
+          <div body>
+            <!-- FORMULARIO EXPEDIENTE -->
+            <form [formGroup]="formExpedient" class="form-material">
+              <div class="row">
+                <div class="col-4 mt-2">
+                  <form-field
+                    [control]="formExpedient.get('id')"
+                    label="No. Expediente">
+                    <input
+                      readonly
+                      type="number"
+                      class="form-control"
+                      formControlName="id" />
+                  </form-field>
+                </div>
+                <div class="col-8 mt-2">
+                  <form-field
+                    [control]="formExpedient.get('preliminaryInquiry')"
+                    label="Averiguaci&oacute;n Previa">
+                    <input
+                      readonly
+                      type="text"
+                      class="form-control"
+                      formControlName="preliminaryInquiry" />
+                  </form-field>
+                </div>
+                <div class="col-4 mt-2">
+                  <form-field
+                    [control]="formExpedient.get('criminalCase')"
+                    label="Causa Penal">
+                    <input
+                      readonly
+                      type="text"
+                      class="form-control"
+                      formControlName="criminalCase" />
+                  </form-field>
+                </div>
+                <div class="col-4 mt-2">
+                  <form-field
+                    [control]="formExpedient.get('expTransferNumber')"
+                    label="No. Exp. Transferente">
+                    <input
+                      readonly
+                      type="text"
+                      class="form-control"
+                      formControlName="expTransferNumber" />
+                  </form-field>
+                </div>
+                <div class="col-2 mt-2">
+                  <!-- <form-field
+                    [control]="formExpedient.get('expedientType')"
+                    label="Ti. Expediente">
+                    <input
+                      readonly
+                      type="text"
+                      class="form-control"
+                      formControlName="expedientType" />
+                  </form-field> -->
+                </div>
+                <div class="col-2 mt-2">
+                  <button
+                    (click)="resetForm()"
+                    class="btn btn-danger btn-block btn-sm active mt-1">
+                    Limpiar <i class="fas fa-eraser"> </i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </app-card>
+      </accordion-group>
+    </accordion>
+    <accordion [isAnimated]="true">
+      <accordion-group [isOpen]="true">
+        <div accordion-heading class="d-flex justify-content-between">
+          <h5>ACTAS Y BIENES RELACIONADOS</h5>
+        </div>
+        <app-card [header]="false" [footer]="false">
+          <div body>
+            <div class="row mb-3 mt-2 ml-1 mr-1">
+              <div class="col-4">
+                <h6>ACTA</h6>
+              </div>
+              <div class="col-md-8 text-end">
+                <button
+                  [disabled]="!actaCerrada || !btnSave"
+                  (click)="save()"
+                  type="button"
+                  class="btn btn-primary active btn-sm mr-3">
+                  Guardar
+                  <i aria-hidden="true" class="fa fa-save"></i>
+                </button>
+                <button
+                  [ngClass]="{ loading: loadingBtn }"
+                  [disabled]="!actaCerrada || !actaDefault"
+                  class="btn btn-primary btn-sm active mr-3"
+                  (click)="cerrarActa()">
+                  Cerrar Acta
+                </button>
+                <button
+                  [disabled]="!dataExpediente"
+                  button
+                  type="button"
+                  tooltip="Nuevo"
+                  containerClass="tooltip-style"
+                  class="btn btn-info btn-sm active mr-3"
+                  (click)="cleanActa()">
+                  Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+                <button
+                  [disabled]="!dataExpediente"
+                  (click)="searchActa()"
+                  class="btn btn-primary btn-sm active"
+                  tooltip="Lista de Actas"
+                  containerClass="tooltip-style">
+                  <i class="bx bx-list-plus bx-sm float-icon"></i>
+                </button>
+              </div>
+            </div>
+            <app-card [header]="false" [footer]="false">
+              <div body>
+                <form [formGroup]="formActCreate" class="form-material">
+                  <div class="row">
+                    <div class="col-md-2 mt-2">
+                      <div>
+                        <form-field
+                          [control]="formActCreate.get('acta')"
+                          label="Acta">
+                          <ng-select
+                            [readonly]="!valClave || !actaCerrada"
+                            formControlName="acta"
+                            class="form-control pt-1">
+                            <ng-option value="AC">AC</ng-option>
+                          </ng-select>
+                        </form-field>
+                      </div>
+                    </div>
+                    <div class="col-md-2 mt-2">
+                      <div>
+                        <form-field
+                          [control]="formActCreate.get('type')"
+                          label="Tipo">
+                          <ng-select
+                            [readonly]="!valClave || !actaCerrada"
+                            formControlName="type"
+                            class="form-control pt-1">
+                            <ng-option value="RIF">RIF</ng-option>
+                          </ng-select>
+                        </form-field>
+                      </div>
+                    </div>
+                    <div class="col-md-2 mt-2">
+                      <div>
+                        <form-field
+                          [control]="formActCreate.get('cveReceived')">
+                          <ngx-select
+                            [readonly]="!valClave || !actaCerrada"
+                            [form]="formActCreate"
+                            [data]="dele"
+                            (fetchItems)="consulREG_DEL_ADMIN($event)"
+                            bindLabel="cveReceived"
+                            value="delegation"
+                            control="cveReceived"
+                            label="Admin"
+                            [searchOnInit]="false"
+                            [showTooltip]="true"
+                            termMaxLength="30">
+                          </ngx-select>
+                        </form-field>
+                      </div>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                      <div>
+                        <form-field [control]="formActCreate.get('claveTrans')">
+                          <ngx-select
+                            [readonly]="!valClave || !actaCerrada"
+                            [form]="formActCreate"
+                            [data]="trans"
+                            (fetchItems)="consultREG_TRANSFERENTES($event)"
+                            bindLabel="transfer"
+                            value="password"
+                            control="claveTrans"
+                            label="Cve. Transferente"
+                            [searchOnInit]="true"
+                            [showTooltip]="true"
+                            termMaxLength="30">
+                          </ngx-select>
+                        </form-field>
+                      </div>
+                    </div>
+                    <div class="col-md-2 mt-2">
+                      <div>
+                        <form-field
+                          [control]="formActCreate.get('consec')"
+                          label="Folio">
+                          <input
+                            [readonly]="!valClave || !actaCerrada"
+                            [max-length]="4"
+                            pattern="^[0-9]+"
+                            type="number"
+                            class="form-control pt-1"
+                            formControlName="consec" />
+                        </form-field>
+                      </div>
+                    </div>
+                    <div class="col-md-2 mt-2">
+                      <div>
+                        <form-field
+                          [control]="formActCreate.get('anio')"
+                          label="Año">
+                          <ng-select
+                            [readonly]="!valClave || !actaCerrada"
+                            class="form-control pt-1"
+                            formControlName="anio"
+                            [items]="years"
+                            [ngModel]="currentYear"></ng-select>
+                        </form-field>
+                      </div>
+                    </div>
+                    <div class="col-md-2 mt-2">
+                      <div>
+                        <form-field
+                          [control]="formActCreate.get('mes')"
+                          label="Mes">
+                          <ng-select
+                            [readonly]="!valClave || !actaCerrada"
+                            class="form-control pt-1"
+                            formControlName="mes"
+                            [items]="months"></ng-select>
+                        </form-field>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </app-card>
+            <app-card [header]="false" [footer]="false">
+              <div body>
+                <form [formGroup]="formActReception" class="form-material">
+                  <div class="row">
+                    <div class="col-6 mt-2">
+                      <form-field
+                        [control]="formActReception.get('keysProceedings')"
+                        label="Acta:">
+                        <input
+                          readonly
+                          type="text"
+                          class="form-control"
+                          formControlName="keysProceedings" />
+                      </form-field>
+                    </div>
+                    <div class="col-6 mt-2">
+                      <form-field
+                        [control]="formActReception.get('responsible')"
+                        label="Responsable:">
+                        <input
+                          [readonly]="!actaCerrada || !dataExpediente"
+                          type="text"
+                          maxlength="100"
+                          class="form-control"
+                          formControlName="responsible" />
+                      </form-field>
+                    </div>
+                    <div class="col-3 mt-2">
+                      <form-field
+                        [control]="formActReception.get('elaborationDate')"
+                        label="Fecha de Elaboración">
+                        <input
+                          [ngClass]="{
+                            'not-press bg-gray': !actaCerrada || !dataExpediente
+                          }"
+                          #datepickerElement
+                          type="text"
+                          class="form-control pt-1"
+                          formControlName="elaborationDate"
+                          bsDatepicker
+                          [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+                      </form-field>
+                    </div>
+                    <div class="col-3 mt-2">
+                      <form-field
+                        [control]="formActReception.get('statusProceedings')"
+                        label="Estatus Acta:">
+                        <input
+                          readonly
+                          type="text"
+                          class="form-control"
+                          formControlName="statusProceedings" />
+                      </form-field>
+                    </div>
+                    <div class="col-6 mt-2">
+                      <form-field
+                        [control]="formActReception.get('witness1')"
+                        label="Testigo 1:">
+                        <input
+                          maxlength="100"
+                          [readonly]="!actaCerrada || !dataExpediente"
+                          type="text"
+                          class="form-control"
+                          formControlName="witness1" />
+                      </form-field>
+                    </div>
+                    <div class="col-6 mt-2">
+                      <form-field
+                        [control]="formActReception.get('destructionMethod')"
+                        label="Número de Sesión:">
+                        <input
+                          [readonly]="!actaCerrada || !dataExpediente"
+                          type="text"
+                          class="form-control"
+                          formControlName="destructionMethod" />
+                      </form-field>
+                    </div>
+                    <div class="col-6 mt-2">
+                      <form-field
+                        [control]="formActReception.get('witness2')"
+                        label="Testigo 2:">
+                        <input
+                          [readonly]="!actaCerrada || !dataExpediente"
+                          type="text"
+                          maxlength="100"
+                          class="form-control"
+                          formControlName="witness2" />
+                      </form-field>
+                    </div>
+                    <div class="col-6 mt-2">
+                      <div class="row">
+                        <div class="col-12">
+                          <form-field
+                            [control]="
+                              formActReception.get('comptrollerWitness')
+                            "
+                            label="Número de Caso:">
+                            <input
+                              [readonly]="!actaCerrada || !dataExpediente"
+                              type="text"
+                              class="form-control"
+                              formControlName="comptrollerWitness" />
+                          </form-field>
+                        </div>
+                        <div class="col-12 mt-2">
+                          <div class="row">
+                            <div class="col-md-3 text-center">
+                              <button
+                                tooltip="Generar Folio de Escaneo y Solicitud"
+                                containerClass="tooltip-style"
+                                class="btn btn-secondary btn-sm active ml-1 mr-1 mb-1"
+                                (click)="initSolicitud()">
+                                <i class="bx bxs-file-find"></i>
+                              </button>
+                              <button
+                                tooltip="Escanear"
+                                containerClass="tooltip-style"
+                                class="btn btn-secondary btn-sm active ml-1 mr-1 mb-1"
+                                (click)="openScannerPage()">
+                                <i class="bx bxs-file"></i>
+                              </button>
+                            </div>
+                            <div class="col-md-6 w-100 p-0">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <form-field
+                                  label="Folio De Escaneo"
+                                  [control]="
+                                    formActReception.get('universalFolio')
+                                  ">
+                                  <input
+                                    type="text"
+                                    class="form-control"
+                                    formControlName="universalFolio"
+                                    readonly />
+                                </form-field>
+                              </div>
+                            </div>
+                            <div class="col-md-3 text-center">
+                              <button
+                                tooltip="Imprimir Solicitud de Escaneo"
+                                containerClass="tooltip-style"
+                                class="btn btn-secondary btn-sm active ml-1 mr-1 mb-1"
+                                (click)="getReport()">
+                                <i class="bx bxs-printer"></i>
+                              </button>
+                              <button
+                                tooltip="Consulta de Imágenes Escaneadas"
+                                containerClass="tooltip-style"
+                                class="btn btn-secondary btn-sm active ml-1 mr-1 mb-1"
+                                (click)="openScannerPageView()">
+                                <i class="bx bxs-file-find"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-6 mt-2">
+                      <form-field
+                        [control]="formActReception.get('observations')"
+                        label="Observaciones:">
+                        <textarea
+                          [readonly]="!actaCerrada || !dataExpediente"
+                          type="text"
+                          maxlength="1000"
+                          rows="4"
+                          cols="4"
+                          class="form-control"
+                          formControlName="observations"></textarea>
+                      </form-field>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </app-card>
+            <app-card [header]="false" [footer]="false">
+              <div body>
+                <div>
+                  <div class="col-md-12 justify-content-center">
+                    <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
+                    <div class="row">
+                      <form-loader *ngIf="loading"></form-loader>
+                      <div class="col-md-12">
+                        <ng-scrollbar
+                          [track]="'all'"
+                          [ngStyle]="{ height: loading ? '0px' : '400px' }">
+                          <ng2-smart-table
+                            [attr.class]="'table-bordered table-responsive'"
+                            [settings]="settings"
+                            [source]="data1"
+                            (userRowSelect)="rowSelectedOne($event)">
+                          </ng2-smart-table>
+                        </ng-scrollbar>
+                      </div>
+
+                      <app-pagination
+                        [params]="params1"
+                        [totalItems]="totalItems1"></app-pagination>
+                      <form [formGroup]="form2" class="form-material">
+                        <div class="row">
+                          <div class="col-6 mt-4">
+                            <form-field
+                              [control]="form2.get('estatusBien')"
+                              label="Estatus Bien">
+                              <input
+                                [(ngModel)]="statusGood_"
+                                type="text"
+                                class="form-control"
+                                formControlName="estatusBien"
+                                readonly />
+                            </form-field>
+                          </div>
+                          <div
+                            class="col-6 text-center justify-content-center mt-5">
+                            <p class="">
+                              <span class="text-success mr-5"
+                                ><i class="fa fa-square"></i>Disponibles</span
+                              >
+                              <span class="text-dark"
+                                ><i class="fa fa-square"></i>No
+                                disponibles</span
+                              >
+                            </p>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                  <div class="row pt-2">
+                    <div class="col-md-12 text-center mt-4 mb-4">
+                      <!-- <div> -->
+                      <span style="font-weight: 700">Agregar</span>
+                      <button
+                        tooltip="Agregar Bien al Acta"
+                        containerClass="tooltip-style"
+                        class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                        type="button"
+                        (click)="addSelect()">
+                        <i class="bx bx-chevron-down bx-md"></i>
+                      </button>
+                      <!-- </div> -->
+                      <!-- <div> -->
+                      <span style="font-weight: 700; margin-left: 20px">
+                        Eliminar
+                      </span>
+                      <button
+                        tooltip="Quitar Bien del Acta"
+                        containerClass="tooltip-style"
+                        class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                        type="button"
+                        (click)="removeSelect()">
+                        <i class="bx bx-chevron-up bx-md"></i>
+                      </button>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <h6>BIENES RELACIONADOS CON EL ACTA</h6>
+                    <div class="row">
+                      <form-loader *ngIf="loading2"></form-loader>
+                      <div class="col-md-12">
+                        <ng-scrollbar
+                          [track]="'all'"
+                          [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
+                          <ng2-smart-table
+                            class="table-responsive"
+                            [attr.class]="'table-bordered table-responsive'"
+                            [settings]="settings2"
+                            (userRowSelect)="rowSelectedTwo($event)"
+                            [source]="data2">
+                          </ng2-smart-table>
+                        </ng-scrollbar>
+                      </div>
+                      <app-pagination
+                        [params]="params2"
+                        [totalItems]="totalItems2"></app-pagination>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </app-card>
+          </div>
+        </app-card>
+      </accordion-group>
+    </accordion>
+  </div>
+</app-card>
