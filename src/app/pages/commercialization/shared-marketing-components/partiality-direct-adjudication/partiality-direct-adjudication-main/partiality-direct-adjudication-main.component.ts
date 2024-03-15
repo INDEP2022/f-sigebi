@@ -502,7 +502,7 @@ export class PartialityDirectAdjudicationMainComponent
       this.alert(
         'error',
         'Error',
-        'El valor del parámetro Cliente es un valor obligatorio para Genera Licitación'
+        'El valor del parámetro Cliente es un valor obligatorio para Generar Licitación'
       );
       LV_PROCESO = 0;
       return;

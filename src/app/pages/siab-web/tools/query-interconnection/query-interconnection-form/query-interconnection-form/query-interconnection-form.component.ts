@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -36,7 +37,7 @@ export class QueryInterconnectionFormComponent
   splitCveUnicas: any;
   nameFile: string;
   splitCve: any;
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private datePipe: DatePipe) {
     super();
   }
 
@@ -91,6 +92,7 @@ export class QueryInterconnectionFormComponent
 
   download() {
     if (this.splitCve) {
+      this.Report();
     } else {
       this.alert('warning', 'No se puede descargar el archivo', '');
     }
@@ -167,5 +169,79 @@ export class QueryInterconnectionFormComponent
     resultado = splitCveUnicas3.length;
 
     return strClavesUnicas;
+  }
+
+  Report() {
+    /*this.massiveGoodService.getObtnGoodExcel(this.array).subscribe({
+      next: resp => {
+        console.log(resp.nameFile);
+        const date = new Date(Date());
+        var formatted = new DatePipe('en-EN').transform(
+          date,
+          'dd/MM/yyyy',
+          'UTC'
+        );
+        this.downloadDocument(
+          `Informacion del Bien - ${formatted}`,
+          'excel',
+          resp.base64File
+        );
+      },
+      error: err => {
+        console.log(err);
+      },
+    });*/
+
+    const date = new Date(Date());
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    const formattedTime = `${hours}:${minutes}:${seconds}`;
+    const name = `Resultado_CveUnicas_Busqueda_${formattedTime}`;
+    const nameFile = `Resultado del archivo(${name})`;
+    console.log(nameFile);
+  }
+
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.loading = false;
+    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    URL.revokeObjectURL(objURL);
+  }
+
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
   }
 }

@@ -3,15 +3,15 @@ export const BIENES_RECH = {
     title: 'Bien',
     sort: false,
   },
-  DESCRIPCION: {
+  descripcion: {
     title: 'Descripción',
     sort: false,
   },
-  ESTATUS: {
+  status: {
     title: 'Estatus',
     sort: false,
   },
-  CAUSA: {
+  causa: {
     title: 'Causa',
     sort: false,
   },
