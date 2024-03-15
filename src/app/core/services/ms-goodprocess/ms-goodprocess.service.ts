@@ -350,4 +350,7 @@ export class GoodprocessService extends HttpService {
       params
     );
   }
+  postTbClientsEvent(body: any) {
+    return this.post(`${GoodprocessEndpoints.TbClientsEvent}`, body);
+  }
 }
