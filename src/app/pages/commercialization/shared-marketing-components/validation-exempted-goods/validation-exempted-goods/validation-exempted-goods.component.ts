@@ -17,6 +17,7 @@ import {
 import { IPupGoodTrackerFComerGood } from 'src/app/core/models/catalogs/package.model';
 import { IGoodsTransAva } from 'src/app/core/models/ms-good/goods-trans-ava.model';
 import { BankMovementType } from 'src/app/core/services/ms-bank-movement/bank-movement.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
@@ -64,7 +65,8 @@ export class ValidationExemptedGoodsComponent
     private router: Router,
     private processService: BankMovementType,
     private massiveGoodService: MassiveGoodService,
-    private lotService: LotService
+    private lotService: LotService,
+    private goodProcessService: GoodProcessService
   ) {
     super();
   }
@@ -316,6 +318,35 @@ export class ValidationExemptedGoodsComponent
           'Se presentó un error inesperado',
           'Por favor vuelva a intentarlo'
         );
+      }
+    );
+  }
+
+  cloneProcess() {
+    if (!this.processForm.get('process').value) {
+      this.alert(
+        'warning',
+        'Proceso requerido',
+        'Por favor, seleccione un proceso'
+      );
+      this.processForm.get('process').markAsTouched();
+      return;
+    }
+
+    const body = {
+      process: this.processForm.get('process').value.value,
+    };
+
+    this.goodProcessService.postCloneProcess(body).subscribe(
+      res => {
+        console.log(res);
+        this.alert('success', 'Proceso exitoso', 'Se copiaron los procesos');
+        this.processForm.get('process').setValue(null);
+        this.getData();
+      },
+      err => {
+        console.log(err);
+        this.alert('error', 'Error', 'No se pudo realizar el proceso');
       }
     );
   }
