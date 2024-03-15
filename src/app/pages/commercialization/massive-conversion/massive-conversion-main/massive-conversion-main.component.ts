@@ -1459,10 +1459,11 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       this.ID_TIPO_DISP == '3'
     ) {
       const ID_TIPO_FALLO = this.ID_TIPO_FALLO;
-      const idEvent = this.eventId;
+      const idEventTMP = Number(this.form.controls['eventId'].value);
       let config: ModalOptions = {
         initialState: {
           ID_TIPO_FALLO,
+          idEventTMP,
           callback: (data: any) => {},
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado

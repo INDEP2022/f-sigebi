@@ -8,6 +8,7 @@ import { GuarantyService } from 'src/app/core/services/ms-guaranty/guaranty.serv
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { BasePage } from 'src/app/core/shared';
 import { COLUMNS_COMER_CLIENTS } from './columns-comer-clients';
+import { cliente } from './object-clients';
 
 @Component({
   selector: 'app-comer-clients-table',
@@ -20,6 +21,7 @@ export class ComerClientsTableComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   ID_TIPO_FALLO: string;
+  idEventTMP: number;
 
   listObjects: any[] = [];
   @ViewChild('table', { static: false }) table: any;
@@ -33,7 +35,9 @@ export class ComerClientsTableComponent extends BasePage implements OnInit {
   n_CONP: number = 0;
   n_CONE: number = 0;
   n_CONK: number = 0;
-  c_RELL: string;
+  c_RELL: string = '';
+
+  clientes: cliente[] = [];
 
   constructor(
     private modalRef: BsModalRef,
@@ -42,6 +46,7 @@ export class ComerClientsTableComponent extends BasePage implements OnInit {
     private goodprocessService: GoodprocessService
   ) {
     super();
+
     this.settings = {
       ...this.settings,
       hideSubHeader: true,
@@ -92,19 +97,33 @@ export class ComerClientsTableComponent extends BasePage implements OnInit {
     });
   }
 
+  objectBuilder: string = '';
+  miArray: [] = [];
+
   reProcess() {
     if (this.listObjects.length >= 2) {
+      for (let i = 0; i < this.listObjects.length; i++) {
+        //console.log('this.object[i]', this.object[i]);
+
+        this.clientes.push(
+          new cliente(
+            this.object[i].idEvent,
+            'S',
+            this.object[i].rfc,
+            this.object[i].idClient
+          )
+        );
+      }
+
+      console.log('Objeto construido: ', this.clientes);
+
       const body = {
-        clientsEvent: [
-          {
-            eventId: 14485,
-            process: 'S',
-            rfc: 'VIOB620213E67',
-            clientId: 10550,
-          },
-        ],
-        C_RELL: '233',
+        clientsEvent: this.clientes,
+
+        C_RELL: null,
       };
+
+      console.log('Body construido: ', body);
 
       this.goodprocessService.postTbClientsEvent(body).subscribe({
         next: resp => {
@@ -114,7 +133,9 @@ export class ComerClientsTableComponent extends BasePage implements OnInit {
           this.n_CONK = resp.n_CONK;
           this.n_CONT = resp.n_CONT;
 
-          this.executeValids(this.n_CONL, this.n_CONK, this.n_CONT);
+          const rfc = resp.t_CLIENTES[1].RFC;
+
+          this.executeValids(this.n_CONL, this.n_CONK, this.n_CONT, rfc);
         },
         error: error => {
           console.log('Error de postTbClientsEvent', error);
@@ -125,7 +146,7 @@ export class ComerClientsTableComponent extends BasePage implements OnInit {
     }
   }
 
-  executeValids(n_CONL: number, n_CONK: number, n_CONT: number) {
+  executeValids(n_CONL: number, n_CONK: number, n_CONT: number, rfc: string) {
     console.log(
       'Método executeValids, n_CONL: ',
       n_CONL,
@@ -134,9 +155,76 @@ export class ComerClientsTableComponent extends BasePage implements OnInit {
       'n_CONT:',
       n_CONT
     );
+
+    if (n_CONL == 0) {
+      this.alert('success', 'No se seleccionó algún Cliente', '');
+    } else if (n_CONK >= 1) {
+      this.alert(
+        'success',
+        `Clientes con dispersión definitiva:${this.c_RELL}`,
+        ''
+      );
+    } else if (n_CONT == n_CONL) {
+      //const id_evento = this.idEventTMP;
+      const id_evento = this.idEvent;
+
+      this.alertQuestion(
+        'question',
+        'Se reprocesará todo el Evento',
+        '¿Continuar?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.lotService.paGarantXLote(id_evento).subscribe({
+            next: resp => {
+              console.log('respuesta de paGarantXLote', resp);
+              this.alert(
+                'success',
+                'El Reproceso se realizó satisfactoriamente',
+                ''
+              );
+              this.c_RESUL = 'OK';
+            },
+            error: error => {
+              console.log('Error respuesta de paGarantXLote', error);
+              this.alert('warning', 'El Reproceso no se realizó', '');
+              this.c_RESUL = 'ERROR';
+            },
+          });
+        }
+      });
+    } else {
+      this.alertQuestion(
+        'question',
+        `Se reprocesará(n) ${n_CONL} Cliente(s) del Evento. `,
+        '¿Continuar?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          //const id_evento = this.idEventTMP;
+          const id_evento = this.idEvent;
+
+          for (let i = 1; i <= n_CONL; i++) {
+            this.lotService.paGarantXLote(id_evento).subscribe({
+              next: resp => {
+                console.log('respuesta de paGarantXLote', resp);
+                this.alert('success', `Cliente: ${rfc}, ${this.c_RESUL}`, '');
+                this.c_RESUL = 'OK';
+              },
+              error: error => {
+                console.log('Error respuesta de paGarantXLote', error);
+                this.alert('warning', 'El Reproceso no se realizó', '');
+                this.c_RESUL = 'ERROR';
+              },
+            });
+          }
+
+          this.alert('success', 'Ejecución realizada', '');
+        }
+      });
+    }
   }
 
   allEvent() {
+    //const id_evento = this.idEventTMP;
     const id_evento = this.idEvent;
 
     this.alertQuestion(
@@ -171,6 +259,7 @@ export class ComerClientsTableComponent extends BasePage implements OnInit {
     console.log('event.selected', event);
     this.idEvent = Number(event.data.idEvent);
     console.log('ID del primer Evento seleccionado', this.idEvent);
+    this.c_RELL = event.data.rfc;
 
     if (event.isSelected == false) {
       this.table.isAllSelected = false;
