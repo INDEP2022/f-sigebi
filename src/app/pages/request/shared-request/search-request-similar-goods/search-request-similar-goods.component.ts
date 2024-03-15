@@ -449,6 +449,11 @@ export class SearchRequestSimilarGoodsComponent
     });
   }
 
+  resetList() {
+    // Aquí va el código para resetear la lista
+    this.data.load([]);
+  }
+
   deleteGoodResDev(good: any) {
     if (isNullOrEmpty(good)) {
       return Promise.resolve();

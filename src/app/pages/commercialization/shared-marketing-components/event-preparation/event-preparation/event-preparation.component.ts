@@ -223,8 +223,9 @@ export class EventPreparationComponent
   taskOpenEvent() {
     this.hideCanvas();
     this.cleanStadistics();
-    const params = new FilterParams();
-    this.comerEventsListParams.next(params);
+    // const params = new FilterParams();
+    console.log('taskOpenEvent: ', this.comerEventsListParams);
+    // this.comerEventsListParams.next(params);
   }
 
   /**
@@ -304,8 +305,9 @@ export class EventPreparationComponent
   openEvent() {
     const { id } = this.eventControls;
     if (!id.value) {
-      const params = new FilterParams();
-      this.comerEventsListParams.next(params);
+      // const params = new FilterParams();
+      console.log('open event:  ', this.comerEventsListParams);
+      // this.comerEventsListParams.next(params);
       return;
     }
     this.hideCanvas();
