@@ -491,10 +491,40 @@ export class RegisterDocumentationFormComponent
       case 'register-seizures':
         input = ['trialType'];
         break;
+      case 'register-consfiscation-sentence':
+        input = ['trialType'];
+        break;
+      case 'register-confiscation-confirmed':
+        input = ['trialType'];
+        break;
+      case 'register-office-cancellation':
+        input = ['trialType'];
+        break;
+      case 'register-registration-sentence':
+        input = ['trialType'];
+        break;
+      case 'register-freedom-liens':
+        input = ['trialType'];
+        break;
+      case 'register-distribution-resource':
+        input = ['trialType'];
+        break;
       case 'register-abandonment-goods':
         input = ['trialType'];
         break;
+      case 'register-abandonment-instruction':
+        input = ['trialType'];
+        break;
+      case 'register-declaration-abandonment':
+        input = ['trialType'];
+        break;
       case 'register-domain-extinction':
+        input = ['trialType'];
+        break;
+      case 'register-extinction-sentence':
+        input = ['trialType'];
+        break;
+      case 'register-extinction-agreement':
         input = ['trialType'];
         break;
       case 'register-compensation-documentation':
