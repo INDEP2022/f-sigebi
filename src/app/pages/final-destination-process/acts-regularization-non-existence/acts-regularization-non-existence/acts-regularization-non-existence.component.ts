@@ -7,7 +7,7 @@ import {
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, skip, takeUntil, tap } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -18,19 +18,25 @@ import { TransferenteService } from 'src/app/core/services/catalogs/transferente
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { RNomenclaService } from 'src/app/core/services/ms-parametergood/r-nomencla.service';
-import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  KEYGENERATION_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { MODAL_CONFIG } from '../../../../common/constants/modal-config';
-import { SearchActasComponent } from '../../donation-acts/donation-acts/search-actas/search-actas.component';
+
+import { DatePipe } from '@angular/common';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
+import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceeding-delivery-reception';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
+import { SearchActsComponent } from '../../acts-goods-delivered/acts-goods-delivered/search-acts/search-acts.component';
+import { GOODSEXPEDIENT_COLUMNS_GOODS } from '../../donation-acts/donation-acts/columns1';
+import { COLUMNS2 } from '../../donation-acts/donation-acts/columns2';
 import { SearchExpedientComponent } from '../../donation-acts/donation-acts/search-expedient/search-expedient.component';
-import { COLUMNS1 } from './columns1';
 import { ModalMantenimientoEstatusActComponent } from './modal-mantenimiento-estatus-act/modal-mantenimiento-estatus-act.component';
 
 @Component({
@@ -108,6 +114,7 @@ export class ActsRegularizationNonExistenceComponent
   arrayDele = new DefaultSelect<any>();
   dele = new DefaultSelect<any>();
   trans = new DefaultSelect<any>();
+  responsables = new DefaultSelect<any>();
   actaCerrada: boolean = true;
   loadingBtn: boolean = false;
 
@@ -134,6 +141,12 @@ export class ActsRegularizationNonExistenceComponent
   stagecreated: string | number;
   loading2: boolean = false;
   statusGood_: string = '';
+  dataUser: TokenInfoModel;
+  selectData: any = null;
+  selectData2: any = null;
+  columnFilters1: any = [];
+  columnFilters2: any = [];
+  dataRecepcion: any[] = [];
   constructor(
     private fb: FormBuilder,
     private proceedingsDelivery: ProceedingsDeliveryReceptionService,
@@ -141,38 +154,142 @@ export class ActsRegularizationNonExistenceComponent
     private modalService: BsModalService,
     private goodprocessService: GoodProcessService,
     private expedientService: ExpedientService,
-    private proceedingsDetailDelivery: ProceedingsDeliveryReceptionService,
+    private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService,
     private parametersService: ParametersService,
     private rNomenclaService: RNomenclaService,
-    private transferenteService: TransferenteService
+    private transferenteService: TransferenteService,
+    private authService: AuthService,
+    private serviceDetailProc: DetailProceeDelRecService,
+    private goodprocessService_: GoodprocessService,
+    private statusGoodService: StatusGoodService,
+    private goodService: GoodService,
+    private datePipe: DatePipe,
+    private securityService: SecurityService
   ) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
       rowClassFunction: (row: any) => {
-        if (row.data.disponible === 'S') {
+        if (row.data.di_disponible === 'S') {
           return 'bg-success text-white';
         } else {
-          return 'bg-danger text-white';
+          return 'bg-dark text-white';
         }
       },
     };
     this.settings2 = { ...this.settings, actions: false };
-    this.settings.columns = COLUMNS1;
-    this.settings2.columns = COLUMNS1;
+
+    this.settings.columns = GOODSEXPEDIENT_COLUMNS_GOODS;
+    this.settings2.columns = COLUMNS2;
+
+    this.settings.hideSubHeader = false;
+    this.settings2.hideSubHeader = false;
   }
 
   ngOnInit(): void {
+    this.dataUser = this.authService.decodeToken();
     this.initForm();
-    this.delegationWhere();
-    // this.params1.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-    //   this.getGoods(this.expedienteBuscado);
-    // });
-
-    // this.data2.load(this.dataTabla2);
+    this.getDataSelectInitial();
+    this.initFilters();
+    this.responsablesList(new ListParams());
+    for (let i = 1900; i <= this.currentYear; i++) {
+      this.years.push(i);
+    }
   }
-  delegationWhere() {
+  initFilters() {
+    // FILTRO PARA PRIMERA TABLA **** BIENES **** //
+    this.data1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            const search: any = {
+              goodNumber: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.ILIKE),
+              amount: () => (searchFilter = SearchFilter.EQ),
+              minutesKey: () => (searchFilter = SearchFilter.ILIKE),
+            };
+
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters1[field];
+            }
+          });
+          this.params1 = this.pageFilter(this.params1);
+          this.getGoodsByExpedient(this.dataExpediente.id);
+        }
+      });
+
+    this.params1
+      .pipe(
+        skip(1),
+        tap(() => {
+          this.getGoodsByExpedient(this.dataExpediente.id);
+        }),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(() => {});
+
+    // FILTRO PARA SEGUNDA TABLA **** BIENES ASOCIADOS A LAS ACTAS **** //
+    this.data2
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        // console.log('SI');
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            const search: any = {
+              numberGood: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.ILIKE),
+              amount: () => (searchFilter = SearchFilter.EQ),
+            };
+
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters2[field];
+            }
+          });
+          this.params2 = this.pageFilter(this.params2);
+          //Su respectivo metodo de busqueda de datos
+          this.getDetailProceedingsDevollution(this.actaDefault.id);
+        }
+      });
+
+    this.params2
+      .pipe(
+        skip(1),
+        tap(() => {
+          this.getDetailProceedingsDevollution(this.actaDefault.id);
+        }),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(() => {});
+  }
+  // -------------- PUP_INICIALIZA_FORMA START ------------- //
+  async getDataSelectInitial() {
+    this.delegation = this.dataUser.department;
+    await this.delegationWhereStageCreated();
+    await this.validacionFirst();
+  }
+  async delegationWhereStageCreated() {
     let date = `date=${format(new Date(), 'yyyy-MM-dd')}`;
     this.parametersService
       .getPhaseEdo(date)
@@ -186,36 +303,126 @@ export class ActsRegularizationNonExistenceComponent
         }
       );
   }
+  async validacionFirst() {
+    const params = new FilterParams();
+    params.addFilter('numberDelegation2', this.delegation, SearchFilter.EQ);
 
-  search(event: any) {
-    this.expedienteBuscado = event;
-
-    this.proceedingsDelivery.getProceeding(event).subscribe({
-      next: data => {
-        this.response = true;
-        this.alert('success', 'Expediente Encontrado', '');
-
-        this.listaActas = data.data;
-        this.getGoods(event, data.data[0].id);
+    this.rNomenclaService.getAll(params.getParams()).subscribe({
+      next: async (data: any) => {
+        console.log('datarNomen', data);
+        if (data.count > 1) {
+          this.globalGstRecAdm = 'FILTRAR';
+        } else {
+          this.globalGstRecAdm = this.delegation;
+        }
+        await this.consulREG_DEL_ADMIN(new ListParams());
       },
-      error: err => {
-        this.alert('error', 'Error', 'El expediente ingresado no existe');
-        this.response = false;
-        return;
+      error: async error => {
+        this.globalGstRecAdm = 'NADA';
+        await this.consulREG_DEL_ADMIN(new ListParams());
       },
-    });
-
-    this.expedientService.getById(event).subscribe({
-      next: (data: any) => {
-        this.form.controls['preliminaryAscertainment'].setValue(
-          data.preliminaryInquiry
-        );
-        this.form.controls['causePenal'].setValue(data.criminalCase);
-      },
-      error: err => console.log(err),
     });
   }
+  // -------------- PUP_INICIALIZA_FORMA END ------------- //
+  // ------ TABLA BIENES RELACIONADOS AL EXPEDIENTE ------ // START
+  async getGoodsByExpedient(id: number) {
+    this.loading = true;
+    let params: any = {
+      ...this.params1.getValue(),
+      ...this.columnFilters1,
+    };
+    params['sortBy'] = `goodNumber:ASC`;
+    let body = {
+      proceedingsNumber: id,
+      typeMinutes: 'RIF',
+    };
+    this.goodprocessService
+      .GetTypeMinuteDetailDelivery(body, params)
+      .subscribe({
+        next: data => {
+          let result = data.data.map(async (item: any) => {
+            let obj = {
+              vcScreen: 'FACTDESACTASRIF',
+              pNumberGood: item.goodNumber,
+            };
+            const di_dispo = await this.getStatusScreen(obj);
+            item['di_disponible'] = di_dispo;
+            if (item.minutesKey) {
+              item.di_disponible = 'N';
+            }
+            item['quantity'] = item.amount;
+            item['di_acta'] = item.minutesKey;
+            item['id'] = item.goodNumber;
+          });
 
+          Promise.all(result).then(item => {
+            this.data1.load(data.data);
+            this.data1.refresh();
+            this.totalItems1 = data.count;
+            this.loading = false;
+          });
+        },
+        error: error => {
+          this.loading = false;
+          this.data1.load([]);
+          this.data1.refresh();
+          this.totalItems1 = 0;
+        },
+      });
+  }
+  async getStatusScreen(body: any) {
+    return new Promise((resolve, reject) => {
+      this.goodprocessService_.getScreenGood(body).subscribe({
+        next: async (state: any) => {
+          if (state.data) {
+            // console.log('di_dispo', state);
+            resolve('S');
+          } else {
+            // console.log('di_dispo', state);
+            resolve('N');
+          }
+        },
+        error: () => {
+          resolve('N');
+        },
+      });
+    });
+  }
+  // ------ TABLA BIENES RELACIONADOS AL EXPEDIENTE ------ // END
+  // ---------- TABLA BIENES RELACIONADOS AL ACTA -------- // START
+  async getDetailProceedingsDevollution(id: any) {
+    this.loading2 = true;
+    let params: any = {
+      ...this.params2.getValue(),
+      ...this.columnFilters2,
+    };
+    return new Promise((resolve, reject) => {
+      this.serviceDetailProc.getGoodsByProceedings(id, params).subscribe({
+        next: data => {
+          let result = data.data.map((item: any) => {
+            item['description'] = item.good ? item.good.description : null;
+          });
+
+          Promise.all(result).then(item => {
+            // this.ocultarPaginado = true;
+            this.dataRecepcion = data.data;
+            this.data2.load(this.dataRecepcion);
+            this.data2.refresh();
+            this.totalItems2 = data.count;
+            this.loading2 = false;
+          });
+        },
+        error: error => {
+          this.dataRecepcion = [];
+          this.data2.load([]);
+          this.data2.refresh();
+          this.loading2 = false;
+          // this.ocultarPaginado = false;
+        },
+      });
+    });
+  }
+  // ---------- TABLA BIENES RELACIONADOS AL ACTA -------- // END
   onCambioActa(event: any) {
     let actaSeleccionada = event.target.value;
     this.actaSelected = event.target.value;
@@ -242,88 +449,6 @@ export class ActsRegularizationNonExistenceComponent
   }
 
   initForm() {
-    this.form = this.fb.group({
-      preliminaryAscertainment: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(40),
-        ],
-      ],
-      causePenal: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(40),
-        ],
-      ],
-      actSelect: [null, [Validators.required]],
-      type: [null],
-      del: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      trans: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      folio: [null, [Validators.required]],
-      year: [this.bsValueFromYear, [Validators.required]],
-      month: [this.bsValueFromMonth, [Validators.required]],
-      act: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      elabDate: [null, [Validators.required]],
-      authorization: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(70),
-        ],
-      ],
-      sessionNumb: [null, [Validators.required, Validators.maxLength(200)]],
-      caseNumb: [null, [Validators.required, Validators.maxLength(100)]],
-      folioScan: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(KEYGENERATION_PATTERN),
-          Validators.maxLength(15),
-        ],
-      ],
-      responsible: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(70),
-        ],
-      ],
-      witness1: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(1000),
-        ],
-      ],
-      witness2: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
-        ],
-      ],
-      observations: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(1000),
-        ],
-      ],
-    });
-
-    this.formTable1 = this.fb.group({
-      detail: [null, []],
-    });
-
     this.formExpedient = this.fb.group({
       id: [null],
       transferNumber: [null],
@@ -337,7 +462,6 @@ export class ActsRegularizationNonExistenceComponent
       acta: [null],
       type: [null],
       claveTrans: [null],
-      administra: [null],
       cveReceived: [null, Validators.required],
       consec: [null],
       anio: [null],
@@ -346,7 +470,7 @@ export class ActsRegularizationNonExistenceComponent
 
     this.formActReception = this.fb.group({
       keysProceedings: [null],
-      elaborationDate: [null],
+      elaborationDate: [null, Validators.required],
       datePhysicalReception: [null],
       address: [null],
       statusProceedings: [null],
@@ -373,20 +497,11 @@ export class ActsRegularizationNonExistenceComponent
       numeraryFolio: [null],
       numTransfer: [null],
       idTypeProceedings: [null],
-      receiptKey: [null],
       comptrollerWitness: [null],
-      numRequest: [null],
       closeDate: [null],
-      maxDate: [null],
-      indFulfilled: [null],
-      dateCaptureHc: [null],
-      dateCloseHc: [null],
-      dateMaxHc: [null],
-      receiveBy: [null],
       affair: [null],
       numDelegation_1: [null],
       numDelegation_2: [null],
-      file: [null],
     });
 
     this.formFolio = this.fb.group({
@@ -396,18 +511,6 @@ export class ActsRegularizationNonExistenceComponent
     this.form2 = this.fb.group({
       estatusBien: [null],
     });
-  }
-
-  onSubmit() {
-    if (this.statusActa === 'CERRADA') {
-      this.alert('warning', 'Atención', 'El acta ya esta cerrada.');
-      this.form.reset();
-      return;
-    } else {
-      this.cerrarActa(this.actaSelected);
-
-      this.form.reset();
-    }
   }
 
   expedientChange() {}
@@ -433,39 +536,6 @@ export class ActsRegularizationNonExistenceComponent
     });
   }
 
-  getGoods(id: number, actaRecibida?: any) {
-    this.loading = true;
-
-    const params1 = {
-      ...this.params1.getValue(),
-    };
-
-    this.goodsService.getByExpedient_(id, params1).subscribe({
-      next: async data => {
-        let dataTabla1Creada: any[] = [];
-
-        for (let ficha of data.data) {
-          let fichaObjeto: any = {};
-
-          fichaObjeto.id = ficha.id;
-          fichaObjeto.description = ficha.description.toLowerCase();
-          fichaObjeto.quantity = ficha.quantity;
-          fichaObjeto.act = actaRecibida;
-          fichaObjeto.disponible = await this.getDisponible(ficha.id);
-          dataTabla1Creada.push(fichaObjeto);
-        }
-        this.totalItems1 = data.count;
-        this.data1.load(dataTabla1Creada);
-        this.data1.refresh();
-
-        this.loading = false;
-      },
-      error: err => {
-        this.loading = false;
-      },
-    });
-  }
-
   selectFila1(event: any) {
     this.bienSelecionado = {
       id: event.data.id,
@@ -476,73 +546,6 @@ export class ActsRegularizationNonExistenceComponent
     };
 
     this.formTable1.controls['detail'].setValue(event.data.description);
-  }
-
-  agregar() {
-    const filtra = this.dataTabla2.filter(
-      item => item.id === this.bienSelecionado.id
-    );
-
-    if (this.bienSelecionado.disponible === 'N') {
-      this.alert(
-        'error',
-        'ATENCIÓN',
-        'El bien tiene un estatus invalido para ser asignado a alguna acta.'
-      );
-      return;
-    }
-    if (filtra.length < 1 && this.bienSelecionado.id) {
-      this.dataTabla2 = [...this.dataTabla2, this.bienSelecionado];
-      this.data2.load(this.dataTabla2);
-
-      this.alert('success', 'AGREGADO', 'El bien ha sido agregado.');
-      this.formTable1.controls['detail'].setValue('');
-      this.bienSelecionado = {};
-      this.bienSelecionado2 = {};
-    } else {
-      this.formTable1.controls['detail'].setValue('');
-      this.bienSelecionado = {};
-      this.bienSelecionado2 = {};
-      return;
-    }
-
-    this.totalItems2 = this.dataTabla2.length;
-  }
-
-  selectFila2(event: any) {
-    this.bienSelecionado2 = {
-      id: event.data.id,
-      description: event.data.description,
-      quantity: event.data.quantity,
-      act: event.data.act,
-    };
-
-    this.formTable1.controls['detail'].setValue(event.data.description);
-  }
-
-  retirar() {
-    if (this.bienSelecionado2.id) {
-      const filtra2 = this.dataTabla2.filter(
-        item => item.id !== this.bienSelecionado2.id
-      );
-      this.alert('success', 'ELIMINADO', 'El bien ha sido eliminado.');
-
-      this.dataTabla2 = filtra2;
-      this.data2.load(this.dataTabla2);
-      this.totalItems2 = this.dataTabla2.length;
-      this.formTable1.controls['detail'].setValue('');
-      this.bienSelecionado = {};
-      this.bienSelecionado2 = {};
-    } else {
-      this.bienSelecionado = {};
-      this.bienSelecionado2 = {};
-      this.formTable1.controls['detail'].setValue('');
-      this.alert(
-        'warning',
-        'ATENCIÓN',
-        'Debe seleccionar un bien que forme parte del acta primero.'
-      );
-    }
   }
 
   getScreenStatusFinal() {
@@ -558,24 +561,6 @@ export class ActsRegularizationNonExistenceComponent
     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
     const day = String(currentDate.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
-  }
-
-  cerrarActa(idActa?: any) {
-    const model: IProccedingsDeliveryReception = {};
-    model.closeDate = this.getCurrentDate();
-    model.statusProceedings = 'CERRADA';
-    model.id = idActa;
-
-    this.proceedingsDetailDelivery.update(idActa, model).subscribe({
-      next: resp => {
-        this.alert('success', 'ACTA CERRADA', 'El acta ha sido cerrada.');
-        // this.disableClosedAct = true;
-        // this.searchByExp(this.expediente);
-      },
-      error: err => {
-        this.alert('error', 'HUBO UN ERROR', 'No se ha podido cerrar la acta.');
-      },
-    });
   }
 
   searchExpediente() {
@@ -595,8 +580,9 @@ export class ActsRegularizationNonExistenceComponent
         this.resetForm();
         this.dataExpediente = next;
         this.formExpedient.patchValue(next);
-        // this.getGoodsByStatus(this.dataExpediente.id);
-        // this.paramsOne.getValue().page = 1;
+        this.getGoodsByExpedient(this.dataExpediente.id);
+        this.params1.getValue().page = 1;
+        this.params2.getValue().page = 1;
       }
     });
   }
@@ -612,9 +598,10 @@ export class ActsRegularizationNonExistenceComponent
     modalConfig.initialState = {
       expedienteNumber,
       actaActual,
+      valRif: true,
     };
 
-    let modalRef = this.modalService.show(SearchActasComponent, modalConfig);
+    let modalRef = this.modalService.show(SearchActsComponent, modalConfig);
     modalRef.content.onSave.subscribe(async (next: any) => {
       if (next) {
         console.log('next', next);
@@ -623,33 +610,224 @@ export class ActsRegularizationNonExistenceComponent
         if (this.actaDefault.statusProceedings == 'CERRADA')
           this.actaCerrada = false;
         else this.actaCerrada = true;
-
-        // this.selectData2 = null;
-        // this.actaRecepttionForm.reset();
-
+        this.formActReception.reset();
+        this.formActCreate.reset();
+        next.elaborationDate = !next.elaborationDate
+          ? null
+          : this.datePipe.transform(
+              await this.correctDate(next.elaborationDate),
+              'dd/MM/yyyy'
+            );
         this.formActReception.patchValue(next);
+        this.valClave = false;
+        this.formActCreate.get('anio').setValue(this.currentYear);
+
+        this.getDetailProceedingsDevollution(this.actaDefault.id);
         this.valClave = false;
         this.btnSave = true;
         // let clave = await this.obtenerValores(this.actaDefault.keysProceedings);
         // this.getDetailProceedingsDevollution(this.actaDefault.id);
       }
     });
+    modalRef.content.onDelete.subscribe(async (next: any) => {
+      this.ejecutarFuncion();
+    });
   }
+  ejecutarFuncion() {
+    this.cleanActa();
+  }
+  async resetForm() {
+    this.dataExpediente = null;
+    this.actaDefault = null;
+    this.selectData = null;
+    this.selectData2 = null;
+    this.formActReception.reset();
+    this.form2.reset();
+    this.formActCreate.reset();
+    this.totalItems1 = 0;
+    this.totalItems2 = 0;
+    this.data1.load([]);
+    this.data2.load([]);
+    this.actaCerrada = false;
+    this.valClave = false;
+    this.btnSave = false;
+    this.formActCreate.get('anio').setValue(this.currentYear);
+    this.consulREG_DEL_ADMIN(new ListParams());
+    this.consultREG_TRANSFERENTES(new ListParams());
+  }
+  save() {
+    const { statusProceedings } = this.formActReception.value;
+    if (!this.actaDefault) {
+      if (statusProceedings == 'CERRADA')
+        return this.alert(
+          'warning',
+          'No se puede crear un acta con estatus cerrado',
+          ''
+        );
+      this.agregarActa();
+    } else {
+      this.actualizarActa();
+    }
+  }
+  async agregarActa() {
+    let { acta, type, claveTrans, cveReceived, consec, anio, mes } =
+      this.formActCreate.value;
+    if (!cveReceived)
+      return (
+        this.formActCreate.get('cveReceived').markAllAsTouched(),
+        this.alert(
+          'warning',
+          'Debe ingresar primero la Delegación en la clave',
+          ''
+        )
+      );
 
-  resetForm() {}
-  save() {}
+    const month = this.datePipe.transform(new Date(), 'MM');
+    const year = this.datePipe.transform(new Date(), 'yy');
+    acta = !acta ? 'AC' : acta;
+    type = !type ? 'RIF' : type;
+    claveTrans = !claveTrans ? '' : claveTrans;
+    cveReceived = !cveReceived ? '' : cveReceived;
+    consec = !consec ? '' : consec;
+    anio = !anio ? '' : anio;
+    mes = !mes ? '' : mes;
+
+    const miCadenaAnio = anio.toString();
+    let miSubcadena = '';
+    if (miCadenaAnio) miSubcadena = miCadenaAnio.slice(2, 5);
+
+    let consec_ = '';
+    if (consec) {
+      consec_ = consec.toString().padStart(4, '0');
+      if (consec_.length > 4) {
+        consec_ = consec_.toString().slice(0, 4);
+      }
+    }
+
+    const cveActa = `${acta}/${type}/${cveReceived}/${claveTrans}/${consec_}/${
+      !miSubcadena ? year : miSubcadena.toString().padStart(2, '0')
+    }/${!mes ? month : mes.value.toString().padStart(2, '0')}`;
+    let valFolio_: any = await this.valFolio(cveReceived, consec_);
+    console.log(valFolio_);
+    if (valFolio_ == 1) {
+      return this.alert(
+        'warning',
+        'Ya se cuenta un Acta con este folio.',
+        'Verifique e intente nuevamente'
+      );
+    } else if (valFolio_ > 1) {
+      return this.alert(
+        'warning',
+        'Se tiene más de un Acta con este folio',
+        'Verifique e intente nuevamente'
+      );
+    }
+    if (cveActa) {
+      const params = new ListParams();
+      params['filter.keysProceedings'] = `$eq:${cveActa}`;
+      this.proceedingsDelivery.getByFilter_(params).subscribe({
+        next: (data: any) => {
+          if (data.data.length == 1) {
+            this.alert(
+              'warning',
+              'El Acta ya se tiene registrada',
+              `${cveActa}`
+            );
+          } else {
+            this.alert(
+              'warning',
+              'Actas duplicadas en ACTAS_ENTREGA_RECEPCION',
+              ''
+            );
+          }
+          return;
+        },
+        error: error => {
+          this.guardarRegistro(cveActa);
+        },
+      });
+    }
+  }
+  valFolio(cveRecibe: string, folio: number | string) {
+    const params = new ListParams();
+    params['filter.typeProceedings'] = `$eq:RIF`;
+    params[
+      'filter.keysProceedings'
+    ] = `$ilike:AC/RIF/${cveRecibe}/%/${folio}/%/%`;
+    return new Promise((resolve, reject) => {
+      this.proceedingsDeliveryReceptionService
+        .getStatusDeliveryCveExpendienteAll(params)
+        .subscribe({
+          next: data => {
+            resolve(data.count);
+          },
+          error: error => {
+            resolve(0);
+          },
+        });
+    });
+  }
+  transferenSelected: any;
+  selectTransfer($event) {
+    this.transferenSelected = $event;
+  }
+  async guardarRegistro(cveActa: any) {
+    let body: IProccedingsDeliveryReception = {};
+    body.affair = this.formActReception.value.affair;
+    body.numTransfer = this.transferenSelected?.id;
+    body.numDelegation1 = this.dataUser.department;
+    body.numDelegation2 = this.dataUser.department;
+    body.witness1 = this.formActReception.value.witness1;
+    body.witness2 = this.formActReception.value.witness2;
+    body.numFile = this.dataExpediente.id;
+    body.statusProceedings = 'ABIERTA';
+    body.elaborationDate = this.formActReception.value.elaborationDate;
+    body.keysProceedings = cveActa;
+    body.typeProceedings = 'RIF';
+    body.idTypeProceedings = 'RIF';
+    body.elaborate = this.dataUser.preferred_username;
+    body.responsible = this.formActReception.value.responsible;
+    body.destructionMethod = this.formActReception.value.destructionMethod;
+    body.comptrollerWitness = this.formActReception.value.comptrollerWitness;
+    body.observations = this.formActReception.value.observations;
+    body.universalFolio = this.formActReception.value.universalFolio;
+    body.captureDate = new Date();
+
+    this.proceedingsDeliveryReceptionService
+      .createDeliveryReception(body)
+      .subscribe({
+        next: async (data: any) => {
+          console.log('DATA', data);
+          this.actaDefault = data;
+          this.alert('success', 'El Acta se ha creado correctamente', '');
+          this.formActReception.reset();
+          data.elaborationDate = !data.elaborationDate
+            ? null
+            : this.datePipe.transform(
+                await this.correctDate(data.elaborationDate),
+                'dd/MM/yyyy'
+              );
+          this.formActReception.patchValue(data);
+          this.valClave = false;
+          this.formActCreate.get('anio').setValue(this.currentYear);
+
+          this.getDetailProceedingsDevollution(this.actaDefault.id);
+        },
+        error: error => {
+          this.alert('error', 'El Acta no se puede crear', '');
+        },
+      });
+  }
+  actualizarActa() {}
   cleanActa() {
     this.formActReception.reset();
     this.formActCreate.reset();
     this.data2.load([]);
     this.data2.refresh();
     this.totalItems2 = 0;
-    // this.selectData2 = null;
+    this.selectData = null;
+    this.selectData2 = null;
     this.actaDefault = null;
-    // this.actaRecepttionForm.patchValue({
-    //   elaboradate: await this.getDate(),
-    //   datePhysicalReception: await this.getDate(),
-    // });
     this.valClave = true;
     this.btnSave = true;
     this.actaCerrada = true;
@@ -662,21 +840,17 @@ export class ActsRegularizationNonExistenceComponent
     return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
   }
 
+  // --------------- LISTAS --------------- //
   // REG_DEL_ADMIN
   globalGstRecAdm: any = null;
   async consulREG_DEL_ADMIN(lparams: ListParams) {
-    // let obj = {
-    //   gst_todo: 'TODO',
-    //   gnu_delegacion: 0,
-    //   gst_rec_adm: 'FILTRAR',
-    // };
     const params = new FilterParams();
 
-    params.page = lparams.page;
-    params.limit = lparams.limit;
+    params.page = 1;
+    params.limit = 50;
 
     let obj = {
-      globalGstAll: 'NADA',
+      globalGstAll: this.globalGstRecAdm,
       globalGnuDelegation: this.delegation,
       globalGstRecAdm: this.globalGstRecAdm,
     };
@@ -711,38 +885,235 @@ export class ActsRegularizationNonExistenceComponent
   async consultREG_TRANSFERENTES(lparams: ListParams) {
     if (!this.dataExpediente) return;
     if (!this.dataExpediente.transferNumber) return;
-    let obj = {
-      transfereeNumber: this.dataExpediente.transferNumber,
-      expedientType: this.dataExpediente.expedientType,
-    };
+    //  this.dataExpediente.transferNumber,
 
-    const params = new FilterParams();
+    const params = new ListParams();
+    params.page = 1;
+    params.limit = 50;
 
+    params[
+      'filter.id'
+    ] = `${SearchFilter.EQ}:${this.dataExpediente.transferNumber}`;
+    if (lparams.text)
+      params['filter.id'] = `${SearchFilter.ILIKE}:${lparams.text}`;
+    // params.addFilter('filter.keyTransferent', lparams.text, SearchFilter.ILIKE);
+
+    this.transferenteService.getAll(params).subscribe({
+      next: (data: any) => {
+        let result = data.data.map(async (item: any) => {
+          item['transfer'] = item.id + ' - ' + item.keyTransferent;
+        });
+        Promise.all(result).then(resp => {
+          this.trans = new DefaultSelect(data.data, data.count);
+        });
+      },
+      error: error => {
+        this.trans = new DefaultSelect([], 0);
+      },
+    });
+  }
+
+  async responsablesList(lparams: ListParams) {
+    const params = new ListParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
 
+    params[
+      'filter.delegationNumber'
+    ] = `${SearchFilter.EQ}:${this.dataUser.department}`;
     if (lparams.text)
-      if (!isNaN(parseInt(lparams.text))) {
-        params.addFilter3('filter.TransfereeNumber', lparams.text);
-      } else {
-        params.addFilter3('filter.password', lparams.text);
-      }
+      params['filter.user'] = `${SearchFilter.ILIKE}:${lparams.text}`;
 
-    this.transferenteService
-      .appsGetPassword(obj, params.getParams())
-      .subscribe({
-        next: (data: any) => {
-          let result = data.data.map(async (item: any) => {
-            item['transfer'] = item.password + ' - ' + item.number;
-          });
-          Promise.all(result).then(resp => {
-            this.trans = new DefaultSelect(data.data, data.count);
-          });
+    this.securityService.getAllUsersAccessTracking(params).subscribe({
+      next: (data: any) => {
+        console.log('Responsables', data);
+        let result = data.data.map(async (item: any) => {
+          item['name'] = item.user ? item.user.name : null;
+        });
+        Promise.all(result).then(resp => {
+          this.responsables = new DefaultSelect(data.data, data.count);
+        });
+      },
+      error: error => {
+        this.responsables = new DefaultSelect();
+      },
+    });
+  }
+  // --------------- LISTAS --------------- //
+  async addSelect() {
+    if (this.data1.count() == 0) return null;
+    if (this.selectData) {
+      if (this.actaDefault == null) {
+        this.alert(
+          'warning',
+          'No existe un Acta en la cual asignar el Bien.',
+          'Debe capturar un acta.'
+        );
+        return;
+      } else {
+        if (!this.actaCerrada) {
+          this.alert(
+            'warning',
+            'El Acta ya está cerrada, no puede realizar modificaciones a esta',
+            ''
+          );
+          return;
+        } else {
+          if (this.selectData.di_acta != null) {
+            this.alert(
+              'warning',
+              `Ese Bien ya se encuentra en el Acta ${this.selectData.di_acta}`,
+              ''
+            );
+          } else if (this.selectData.di_disponible == 'N') {
+            this.alert(
+              'warning',
+              `El Bien ${this.selectData.id} tiene un estatus inválido para ser asignado a algún acta`,
+              ''
+            );
+            return;
+          } else {
+            this.loading2 = true;
+
+            await this.createDET(this.selectData);
+            await this.getGoodsByExpedient(this.dataExpediente.id);
+            await this.getDetailProceedingsDevollution(this.actaDefault.id);
+          }
+        }
+      }
+    } else {
+      this.alert('warning', 'Seleccione primero el Bien a asignar.', '');
+    }
+  }
+  async createDET(good: any) {
+    let obj: IDetailProceedingsDeliveryReception;
+    obj.amount = good.quantity;
+    obj.numberGood = good.id;
+    obj.numberProceedings = this.actaDefault.id;
+    let result = await this.saveGoodActas(obj);
+    return result;
+  }
+
+  async saveGoodActas(body: any) {
+    return new Promise((resolve, reject) => {
+      this.serviceDetailProc.addGoodToProceedings_(body).subscribe({
+        next: data => {
+          resolve(true);
         },
         error: error => {
-          this.trans = new DefaultSelect([], 0);
+          // this.authorityName = '';
+          resolve(false);
         },
       });
+    });
+  }
+
+  async removeSelect() {
+    if (this.data2.count() == 0) {
+      return;
+    }
+    if (!this.actaCerrada) {
+      this.alert(
+        'warning',
+        'El Acta ya está cerrada, no puede realizar modificaciones a esta',
+        ''
+      );
+      return;
+    } else {
+      if (!this.selectData2) {
+        this.alert(
+          'warning',
+          'Debe seleccionar un Bien que forme parte del Acta primero',
+          'Debe capturar un Acta.'
+        );
+        return;
+      } else {
+        this.loading2 = true;
+        let result = await this.deleteDET(this.selectData2);
+        if (!result) {
+          this.alert('error', 'No se pudo eliminar el bien del acta', '');
+        } else {
+          this.alert('success', 'Bien eliminado correctamente', '');
+          await this.getGoodsByExpedient(this.dataExpediente.id);
+          await this.getDetailProceedingsDevollution(this.actaDefault.id);
+        }
+      }
+    }
+  }
+  async rowSelectedOne(event: any) {
+    const { data } = event;
+    this.selectData = data;
+    await this.getStatusGoodService(this.selectData.status);
+  }
+  rowSelectedTwo(event: any) {
+    const { data } = event;
+    this.selectData2 = data;
+  }
+  async getStatusGoodService(status: any) {
+    this.statusGoodService.getById(status).subscribe({
+      next: async (resp: any) => {
+        // this.statusGood_ = resp.description;
+        this.form2.patchValue({
+          estatusBien: resp.description,
+        });
+        // this.statusGoodForm.get('statusGood').setValue(resp.description)
+      },
+      error: err => {
+        this.statusGood_ = '';
+        this.form2.patchValue({
+          estatusBien: null,
+        });
+        // this.statusGoodForm.get('statusGood').setValue('')
+      },
+    });
+  }
+
+  async deleteDET(good: any) {
+    const valid: any = await this.getGoodsDelete(good.numberGood);
+    if (valid != null) {
+      let obj: any = {
+        numberGood: good.numberGood,
+        numberProceedings: this.actaDefault.id,
+      };
+
+      let result = await this.deleteDetailProcee(obj);
+      return result;
+    } else {
+      return false;
+    }
+  }
+
+  async getGoodsDelete(id: any) {
+    const params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
+    return new Promise((resolve, reject) => {
+      this.goodService
+        .getByExpedient_(this.dataExpediente.id, params)
+        .subscribe({
+          next: data => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(null);
+          },
+        });
+    });
+  }
+
+  async deleteDetailProcee(params: any) {
+    return new Promise((resolve, reject) => {
+      this.serviceDetailProc.deleteDetailProcee(params).subscribe({
+        next: data => {
+          // console.log('data', data);
+          // this.loading2 = false;
+          resolve(true);
+        },
+        error: error => {
+          // this.loading2 = false;
+          resolve(false);
+        },
+      });
+    });
   }
 
   initSolicitud() {}
@@ -751,8 +1122,5 @@ export class ActsRegularizationNonExistenceComponent
   getReport() {}
   openScannerPageView() {}
 
-  addSelect() {}
-  removeSelect() {}
-  rowSelectedOne(event: any) {}
-  rowSelectedTwo(event: any) {}
+  cerrarActa() {}
 }
