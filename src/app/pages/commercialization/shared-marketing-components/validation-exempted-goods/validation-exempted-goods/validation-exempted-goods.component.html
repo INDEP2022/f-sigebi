@@ -68,7 +68,10 @@
           accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
           (change)="onFileChange($event)" />
 
-        <button type="button" class="btn btn-primary active btn-sm mr-3">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm mr-3"
+          (click)="cloneProcess()">
           Copia proceso
         </button>
       </div>
