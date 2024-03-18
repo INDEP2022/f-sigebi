@@ -148,7 +148,10 @@ export class ValidationExemptedGoodsComponent
       distinctUntilChanged(),
       debounceTime(500),
       takeUntil(this.$unSubscribe),
-      tap(dataSource => this.buildColumnFilter(dataSource))
+      tap(dataSource => {
+        console.log(dataSource);
+        this.buildColumnFilter(dataSource);
+      })
     );
   }
 
@@ -164,11 +167,13 @@ export class ValidationExemptedGoodsComponent
         let operator = columns[filter.field]?.operator;
 
         if (!filter.search) {
-          params.removeAllFilters();
           return;
         }
 
-        if (filter.field == 'goodNumber.description') {
+        if (
+          filter.field == 'goodNumber.description' ||
+          filter.field == 'goodNumber.unit'
+        ) {
           operator = SearchFilter.LIKE;
         }
 
@@ -210,7 +215,11 @@ export class ValidationExemptedGoodsComponent
   openModalNew() {
     let config: ModalOptions = {
       initialState: {
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => {
+          if (next) {
+            this.getData();
+          }
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -308,7 +317,7 @@ export class ValidationExemptedGoodsComponent
     this.lotService.pupStateFlat(fd).subscribe(
       res => {
         console.log(res);
-        this.alert('success', res.message, '');
+        this.alert('success', 'Bienes cargados', '');
         this.getData();
       },
       err => {
@@ -341,7 +350,7 @@ export class ValidationExemptedGoodsComponent
       res => {
         console.log(res);
         this.alert('success', 'Proceso exitoso', 'Se copiaron los procesos');
-        this.processForm.get('process').setValue(null);
+        this.processForm.get('process').reset();
         this.getData();
       },
       err => {
