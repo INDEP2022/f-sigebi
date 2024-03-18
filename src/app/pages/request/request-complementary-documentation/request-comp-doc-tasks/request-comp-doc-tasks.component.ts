@@ -2058,6 +2058,8 @@ export class RequestCompDocTasksComponent
       let content = getXMLNode(xml, 'strXmlFirmado')?.textContent;
       this.updateInfo = !this.updateInfo;
 
+      console.log('content xml', content);
+
       if (!isNullOrEmpty(content)) {
 
         /*
