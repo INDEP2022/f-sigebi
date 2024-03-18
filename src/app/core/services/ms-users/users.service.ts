@@ -277,4 +277,9 @@ export class UsersService extends HttpService {
       })
     );
   }
+
+  getApplicationPhysicalNonexistence(id: string | number, params: _Params) {
+    const route = `${UserEndpoints.ApplicationPhysicalNonexistence}/${id}/`;
+    return this.get<IListResponse>(route, params);
+  }
 }
