@@ -73,6 +73,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
   @Input() signReport: boolean = false; // default value
   @Input() tableName: string = null; // default value
   @Input() documentTypeId: string = null; // default value
+  @Input() reVersion: string = null; // default value
 
   signReportTab: boolean = false;
 
@@ -148,6 +149,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
     params['filter.documentTypeId'] = `$eq:${this.format.doctoTypeId.id}`;
     params['filter.tableName'] = `$eq:${this.tableName}`;
     params['filter.registryId'] = `$eq:${this.requestId}`;
+    params['filter.version'] = `$eq:${this.reVersion}`;
 
     this.reportgoodService.getReportDynamic(params).subscribe({
       next: async resp => {
@@ -157,7 +159,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
           this.isSigned = this.version.signedReport == 'Y';
         }
       },
-      error: err => {},
+      error: err => { },
     });
   }
 
@@ -181,7 +183,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
       documentTypeId: this.format.doctoTypeId.id,
       content: convertedContent, // Usar contenido convertido
       signedReport: 'N',
-      version: '1',
+      version: this.reVersion,
       ucmDocumentName: null,
       reportFolio: null,
       folioDate: null,
@@ -198,15 +200,24 @@ export class CreateReportComponent extends BasePage implements OnInit {
       doc.modificationDate = moment(new Date()).format('YYYY-MM-DD');
     }
 
-    this.reportgoodService.saveReportDynamic(doc, !this.template).subscribe({
+    let create = !this.template;
+    if (this.reVersion != '1') {
+      doc.version = this.reVersion;
+      create = false;
+    }
+
+    this.reportgoodService.saveReportDynamic(doc, create).subscribe({
       next: resp => {
         this.template = true;
         if (close) {
           this.onLoadToast('success', 'Documento guardado correctamente', '');
         }
       },
-      error: err => {},
+      error: err => {
+
+      },
     });
+
   }
 
   onContentChanged = (event: any) => {
@@ -364,7 +375,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
             )
             .subscribe({
               next: async resp => {
-                this.version.ucmDocumentName = resp.dDocName;
+                //this.version.ucmDocumentName = resp.dDocName;
 
                 const sample: any = {
                   regionalDelegationId: 0,
@@ -391,7 +402,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
                   },
                 });
               },
-              error: error => {},
+              error: error => { },
             });
         },
         error: error => {
@@ -418,12 +429,15 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   openSignature() {
-    if (isNullOrEmpty(this.version.ucmDocumentName)) {
+
+    this.sign.emit(this.version);
+    this.close();
+
+    /*if (isNullOrEmpty(this.version.ucmDocumentName)) {
       this.generateReport();
     } else {
-      this.sign.emit(this.version);
-      this.close();
-    }
+      
+    }*/
   }
 }
 
@@ -431,7 +445,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
   providedIn: 'root',
 })
 export class HtmlConversionService {
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(private sanitizer: DomSanitizer) { }
 
   convertClassesToAlignAttributes(html: string): string {
     const parser = new DOMParser();

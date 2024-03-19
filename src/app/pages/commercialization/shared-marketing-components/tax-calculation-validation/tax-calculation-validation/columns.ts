@@ -1,3 +1,5 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const COLUMNS = {
   id: {
     title: 'No. Avalúo',
@@ -14,6 +16,17 @@ export const COLUMNS = {
   insertDate: {
     title: 'Insertar Fecha',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      console.log('text', text);
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
 };
 

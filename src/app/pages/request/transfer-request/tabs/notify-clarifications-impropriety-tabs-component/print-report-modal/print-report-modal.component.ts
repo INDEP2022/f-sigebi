@@ -642,7 +642,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         .subscribe({
           next: resp => {
             this.alert('success', 'El Documento ha sido Guardado', '');
-            this.modalRef.content.callback(true);
+            this.modalRef.content.callback(false, null);
             this.close();
           },
           error: error => { },
@@ -664,6 +664,43 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   firm() {
+
+    //Firmar reporte Documento Dinamico
+    if (this.isDynamic) {
+      let id = 'SOLICITUDES-' + this.idReportAclara + '-' + this.idTypeDoc;
+
+      const nameTypeReport = 'DocumentoDinamico';
+      const formData: Object = {
+        id: id,
+        firma: true,
+        tipoDocumento: nameTypeReport,
+      };
+
+      this.firmReport(id, nameTypeReport, formData);
+      return;
+    }
+
+    //String situacionJuridicaID = ID.split("-")[1];
+    //String solicitudID = ID.split("-")[0];
+    //String tipoDocumentoID = ID.split("-")[2];
+
+    //65991 - 2 - 223
+
+    if (parseInt(this.idTypeDoc) == 223) {
+      let id = this.idReportAclara + '-2-' + this.idTypeDoc;
+
+      const nameTypeReport = 'SituacionJuridicaAmparo';
+      const formData: Object = {
+        id: id,
+        firma: true,
+        tipoDocumento: nameTypeReport,
+      };
+
+      this.firmReport(id, nameTypeReport, formData);
+      return;
+    }
+
+
     //Firmar reporte Dictamen Procedencia
     if (this.idTypeDoc == 50) {
       const requestInfo = this.requestInfo; //ID solicitud
@@ -743,37 +780,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       this.firmReport(this.idReportAclara, nameTypeReport, formData);
     }
 
-    //String situacionJuridicaID = ID.split("-")[1];
-    //String solicitudID = ID.split("-")[0];
-    //String tipoDocumentoID = ID.split("-")[2];
-
-    //65991 - 2 - 223
-
-    if (parseInt(this.idTypeDoc) == 223) {
-      let id = this.idReportAclara + '-2-' + this.idTypeDoc;
-
-      const nameTypeReport = 'SituacionJuridicaAmparo';
-      const formData: Object = {
-        id: id,
-        firma: true,
-        tipoDocumento: nameTypeReport,
-      };
-
-      this.firmReport(id, nameTypeReport, formData);
-    }
-
-    if (this.isDynamic) {
-      let id = 'SOLICITUDES-' + this.idReportAclara + '-' + this.idTypeDoc;
-
-      const nameTypeReport = 'DocumentoDinamico';
-      const formData: Object = {
-        id: id,
-        firma: true,
-        tipoDocumento: nameTypeReport,
-      };
-
-      this.firmReport(id, nameTypeReport, formData);
-    }
   }
 
   xml: string = '';
