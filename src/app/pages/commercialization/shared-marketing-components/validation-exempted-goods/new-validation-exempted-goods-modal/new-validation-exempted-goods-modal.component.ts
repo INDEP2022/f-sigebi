@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import {
   FilterParams,
   SearchFilter,
@@ -26,7 +26,7 @@ export class NewValidationExemptedGoodModalComponent
   processes = new DefaultSelect();
 
   constructor(
-    private modalService: BsModalService,
+    private modalService: BsModalRef,
     private fb: FormBuilder,
     private goodFinderService: GoodFinderService,
     private goodService: GoodService,
@@ -126,6 +126,7 @@ export class NewValidationExemptedGoodModalComponent
           'Bien registrado',
           'El bien se ha registrado correctamente'
         );
+        this.modalService.content.callback(true);
         this.modalService.hide();
       },
       err => {

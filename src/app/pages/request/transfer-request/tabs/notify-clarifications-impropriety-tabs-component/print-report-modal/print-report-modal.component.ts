@@ -22,6 +22,7 @@ import { UploadReportReceiptComponent } from 'src/app/pages/request/programming-
 import { environment } from 'src/environments/environment';
 import { UploadFielsModalComponent } from '../upload-fiels-modal/upload-fiels-modal.component';
 import { LIST_REPORTS_COLUMN } from './list-reports-column';
+import { getXMLNode, isNullOrEmpty } from 'src/app/pages/request/request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-print-report-modal',
@@ -49,6 +50,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   nomenglatura: string;
   infoReport: IClarificationDocumentsImpro;
   isDynamic = false;
+  readOnly = false;
 
   @ViewChild('FileInput', { static: false }) inputFile: ElementRef;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -121,8 +123,11 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.idSolicitud = this.requestInfo.id;
     this.idRegionalDelegation = this.requestInfo.regionalDelegationId;
     //Borrar firmantes existentes
-    this.verificateFirm();
-    this.signParams();
+
+    if (!this.readOnly) {
+      this.verificateFirm();
+      this.signParams();
+    }
 
     //Condición para saber que ID tipo de documento lelga
     switch (parseInt(this.idTypeDoc)) {
@@ -227,7 +232,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   deleteSignatories() {
     this.signatoriesService.deleteFirmante(this.idReportAclara).subscribe({
-      next: response => {},
+      next: response => { },
     });
   }
 
@@ -254,7 +259,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       this.signatoriesService
         .getSignatoriesName(learnedType, learnedId)
         .subscribe({
-          next: response => {},
+          next: response => { },
           error: error => {
             const formData: Object = {
               name: name,
@@ -268,7 +273,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
               next: response => {
                 this.signParams(), console.log('Firmante creado: ', response);
               },
-              error: error => {},
+              error: error => { },
             });
           },
         });
@@ -349,7 +354,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
             urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
             type: 'pdf',
           },
-          callback: (response: any) => {},
+          callback: (response: any) => { },
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
         keyboard: false,
@@ -470,7 +475,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
     //Enviar nueva información a Request
     this.requestService.update(idDoc, obj).subscribe({
-      next: data => {},
+      next: data => { },
       error: error => (this.loading = false),
     });
   }
@@ -495,6 +500,10 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.isAttachDoc = false;
     this.printReport = true;
     this.paragraphs = [];
+
+    this.rowSelected = false;
+    this.selectedRow = null;
+
   }
 
   nextStep() {
@@ -636,7 +645,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
             this.modalRef.content.callback(true);
             this.close();
           },
-          error: error => {},
+          error: error => { },
         });
     });
   }
@@ -777,15 +786,41 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           this.loadingButton = false;
 
           this.xml = data;
-          this.msjCheck = true;
-          this.handleSuccess();
-          //Plasmar la clave
-          this.claveInReport();
+
 
           if (this.isDynamic || this.idTypeDoc == 223) {
             //this.updateRequest();
+            let content = getXMLNode(this.xml, 'strXmlFirmado')?.textContent;
+
+            if (!isNullOrEmpty(content)) {
+              this.msjCheck = true;
+              this.handleSuccess();
+              //Plasmar la clave
+              this.claveInReport();
+              this.updateStatusSigned(content);
+            } else {
+
+              this.selectedRow = null;
+              this.rowSelected = false;
+
+              this.valuesSign.validationocsp = false;
+
+              this.updateStatusSigned();
+              this.signParams();
+
+              let error = getXMLNode(this.xml, 'strError')?.textContent;
+
+              this.alertInfo(
+                'error',
+                'Acción Inválida',
+                'Error al generar firma electronica\n' + error.split('.')[0] + ''
+              );
+            }
+
             return;
           }
+
+          this.msjCheck = true;
 
           if (nameTypeReport === 'DictamenProcendecia') {
             //this.updateRequest();
@@ -864,7 +899,13 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.modalService.show(UploadReportReceiptComponent, config);
   }
 
-  updateStatusSigned() {
+  updateStatusSigned(signature = null) {
+
+    //Validar si no ha seleccionado firmante
+    if (isNullOrEmpty(this.valuesSign.validationocsp)) {
+      this.valuesSign.validationocsp = true;
+    }
+
     const formData = new FormData();
     formData.append('learnedType', this.valuesSign.learnedType);
     formData.append('signatoryId', String(this.valuesSign.signatoryId));
@@ -873,9 +914,14 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     formData.append('pass', this.valuesSign.pass);
     formData.append('post', this.valuesSign.post);
     formData.append('rfcUser', this.valuesSign.rfcUser);
-    formData.append('validationocsp', 'true');
+    formData.append('validationocsp', this.valuesSign.validationocsp + '');
     formData.append('identifierSystem', '1');
     formData.append('identifierSignatory', '1');
+
+    if (signature) {
+      formData.append('signature', signature);
+    }
+
     this.signatoriesService
       .update(this.valuesSign.signatoryId, formData)
       .subscribe({
@@ -910,8 +956,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         };
 
         this.requestService.update(this.idReportAclara, obj).subscribe({
-          next: resp => {},
-          error: error => {},
+          next: resp => { },
+          error: error => { },
         });
         break;
       }
@@ -928,8 +974,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         this.documentService
           .updateClarDocImp(this.infoReport.id, modelReport)
           .subscribe({
-            next: data => {},
-            error: error => {},
+            next: data => { },
+            error: error => { },
           });
 
         break;
@@ -999,7 +1045,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           //this.modalRef.content.callback(true);
           //this.close();
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -1052,7 +1098,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           //this.modalRef.content.callback(true);
           //this.close();
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -1105,7 +1151,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           //this.modalRef.content.callback(true);
           //this.close();
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -1158,7 +1204,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           //this.modalRef.content.callback(true);
           //this.close();
         },
-        error: error => {},
+        error: error => { },
       });
   }
 }

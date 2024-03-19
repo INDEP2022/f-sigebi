@@ -109,4 +109,22 @@ export class ScreenStatusService extends HttpService {
   validateDelegationConcept() {
     return this.post;
   }
+
+  createStatusXScreen(data: IStatusXScreen) {
+    return this.post<IStatusXScreen>(
+      `${this.endpoint.StatusXScreenList}`,
+      data
+    );
+  }
+
+  updateStatusXScreen(data: IStatusXScreen, id: string | number) {
+    return this.put<IStatusXScreen>(
+      `${this.endpoint.StatusXScreenList}/${id}`,
+      data
+    );
+  }
+
+  deleteStatusXScreen(id: string | number) {
+    return this.delete(`${this.endpoint.StatusXScreenList}/${id}`);
+  }
 }

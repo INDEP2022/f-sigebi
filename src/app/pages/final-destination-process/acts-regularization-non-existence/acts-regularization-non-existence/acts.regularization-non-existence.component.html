@@ -14,7 +14,7 @@
           <button
             (click)="searchExpediente()"
             class="btn btn-primary btn-sm active m-1"
-            tooltip="Lista de Expedientes"
+            tooltip="Lista General de Expedientes"
             containerClass="tooltip-style">
             <i class="bx bx-list-plus bx-sm float-icon"></i>
           </button>
@@ -105,7 +105,7 @@
               </div>
               <div class="col-md-8 text-end">
                 <button
-                  [disabled]="!actaCerrada || !btnSave"
+                  [disabled]="!actaCerrada || formActReception.invalid"
                   (click)="save()"
                   type="button"
                   class="btn btn-primary active btn-sm mr-3">
@@ -179,11 +179,12 @@
                             [readonly]="!valClave || !actaCerrada"
                             [form]="formActCreate"
                             [data]="dele"
+                            [searchable]="false"
                             (fetchItems)="consulREG_DEL_ADMIN($event)"
                             bindLabel="cveReceived"
                             value="delegation"
                             control="cveReceived"
-                            label="Admin"
+                            label="Del"
                             [searchOnInit]="false"
                             [showTooltip]="true"
                             termMaxLength="30">
@@ -198,9 +199,10 @@
                             [readonly]="!valClave || !actaCerrada"
                             [form]="formActCreate"
                             [data]="trans"
+                            [searchable]="false"
                             (fetchItems)="consultREG_TRANSFERENTES($event)"
                             bindLabel="transfer"
-                            value="password"
+                            value="keyTransferent"
                             control="claveTrans"
                             label="Cve. Transferente"
                             [searchOnInit]="true"
@@ -273,14 +275,45 @@
                     </div>
                     <div class="col-6 mt-2">
                       <form-field
-                        [control]="formActReception.get('responsible')"
-                        label="Responsable:">
+                        [control]="formActReception.get('responsible')">
+                        <ngx-select
+                          [readonly]="!actaCerrada || !dataExpediente"
+                          [form]="formActReception"
+                          [data]="responsables"
+                          [searchable]="true"
+                          (fetchItems)="responsablesList($event)"
+                          bindLabel="name"
+                          value="name"
+                          control="responsible"
+                          label="Responsable"
+                          [searchOnInit]="false"
+                          [showTooltip]="true"
+                          termMaxLength="30">
+                        </ngx-select>
+                      </form-field>
+                    </div>
+                    <div class="col-6 mt-2">
+                      <form-field
+                        [control]="formActReception.get('affair')"
+                        label="Asunto:">
                         <input
                           [readonly]="!actaCerrada || !dataExpediente"
                           type="text"
-                          maxlength="100"
+                          maxlength="70"
                           class="form-control"
-                          formControlName="responsible" />
+                          formControlName="affair" />
+                      </form-field>
+                    </div>
+                    <div class="col-6 mt-2">
+                      <form-field
+                        [control]="formActReception.get('witness1')"
+                        label="Testigo 1:">
+                        <input
+                          maxlength="100"
+                          [readonly]="!actaCerrada || !dataExpediente"
+                          type="text"
+                          class="form-control"
+                          formControlName="witness1" />
                       </form-field>
                     </div>
                     <div class="col-3 mt-2">
@@ -312,29 +345,6 @@
                     </div>
                     <div class="col-6 mt-2">
                       <form-field
-                        [control]="formActReception.get('witness1')"
-                        label="Testigo 1:">
-                        <input
-                          maxlength="100"
-                          [readonly]="!actaCerrada || !dataExpediente"
-                          type="text"
-                          class="form-control"
-                          formControlName="witness1" />
-                      </form-field>
-                    </div>
-                    <div class="col-6 mt-2">
-                      <form-field
-                        [control]="formActReception.get('destructionMethod')"
-                        label="Número de Sesión:">
-                        <input
-                          [readonly]="!actaCerrada || !dataExpediente"
-                          type="text"
-                          class="form-control"
-                          formControlName="destructionMethod" />
-                      </form-field>
-                    </div>
-                    <div class="col-6 mt-2">
-                      <form-field
                         [control]="formActReception.get('witness2')"
                         label="Testigo 2:">
                         <input
@@ -346,20 +356,31 @@
                       </form-field>
                     </div>
                     <div class="col-6 mt-2">
+                      <form-field
+                        [control]="formActReception.get('destructionMethod')"
+                        label="Número de Sesión:">
+                        <input
+                          maxlength="200"
+                          [readonly]="!actaCerrada || !dataExpediente"
+                          type="text"
+                          class="form-control"
+                          formControlName="destructionMethod" />
+                      </form-field>
+                    </div>
+                    <div class="col-6 mt-2">
+                      <form-field
+                        [control]="formActReception.get('comptrollerWitness')"
+                        label="Número de Caso:">
+                        <input
+                          [readonly]="!actaCerrada || !dataExpediente"
+                          type="text"
+                          maxlength="100"
+                          class="form-control"
+                          formControlName="comptrollerWitness" />
+                      </form-field>
+                    </div>
+                    <div class="col-6 mt-5">
                       <div class="row">
-                        <div class="col-12">
-                          <form-field
-                            [control]="
-                              formActReception.get('comptrollerWitness')
-                            "
-                            label="Número de Caso:">
-                            <input
-                              [readonly]="!actaCerrada || !dataExpediente"
-                              type="text"
-                              class="form-control"
-                              formControlName="comptrollerWitness" />
-                          </form-field>
-                        </div>
                         <div class="col-12 mt-2">
                           <div class="row">
                             <div class="col-md-3 text-center">
@@ -450,7 +471,6 @@
                           </ng2-smart-table>
                         </ng-scrollbar>
                       </div>
-
                       <app-pagination
                         [params]="params1"
                         [totalItems]="totalItems1"></app-pagination>
@@ -532,6 +552,15 @@
                       <app-pagination
                         [params]="params2"
                         [totalItems]="totalItems2"></app-pagination>
+                    </div>
+                  </div>
+                  <div class="row mt-5">
+                    <div class="col-12 text-center text-md-right">
+                      <button
+                        class="btn btn-info btn-sm active"
+                        (click)="getScreenStatusFinal()">
+                        Mantenimiento de Estatus
+                      </button>
                     </div>
                   </div>
                 </div>
