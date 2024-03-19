@@ -373,7 +373,7 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
               error: err => {
                 this.alert(
                   'error',
-                  'Ocurrió un error al obtenere el Número de Volante',
+                  'Ocurrió un error al obtener el Número de Volante máximo',
                   ''
                 );
               },

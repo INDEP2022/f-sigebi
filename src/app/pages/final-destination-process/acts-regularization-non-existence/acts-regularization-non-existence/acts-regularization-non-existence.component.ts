@@ -26,19 +26,30 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { MODAL_CONFIG } from '../../../../common/constants/modal-config';
 
 import { DatePipe } from '@angular/common';
+import { DomSanitizer } from '@angular/platform-browser';
+import { ActivatedRoute, Router } from '@angular/router';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
-import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceeding-delivery-reception';
+import { IDocuments } from 'src/app/core/models/ms-documents/documents';
+import { IDetailProceedingsDeliveryReception_ } from 'src/app/core/models/ms-proceedings/detail-proceeding-delivery-reception';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
+import { FractionsService } from 'src/app/core/services/catalogs/fractions.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { SearchActsComponent } from '../../acts-goods-delivered/acts-goods-delivered/search-acts/search-acts.component';
 import { GOODSEXPEDIENT_COLUMNS_GOODS } from '../../donation-acts/donation-acts/columns1';
 import { COLUMNS2 } from '../../donation-acts/donation-acts/columns2';
 import { SearchExpedientComponent } from '../../donation-acts/donation-acts/search-expedient/search-expedient.component';
+import { ACTASRIF } from './columns1';
 import { ModalMantenimientoEstatusActComponent } from './modal-mantenimiento-estatus-act/modal-mantenimiento-estatus-act.component';
-
 @Component({
   selector: 'app-acts-regularization-non-existence',
   templateUrl: './acts.regularization-non-existence.component.html',
@@ -147,6 +158,11 @@ export class ActsRegularizationNonExistenceComponent
   columnFilters1: any = [];
   columnFilters2: any = [];
   dataRecepcion: any[] = [];
+  transferenSelected: any;
+  departamentNumber: string | number;
+  subdelegationNumber: string | number;
+  userdelegacion: any;
+  COLUMNS_ACTARIF = ACTASRIF;
   constructor(
     private fb: FormBuilder,
     private proceedingsDelivery: ProceedingsDeliveryReceptionService,
@@ -164,7 +180,16 @@ export class ActsRegularizationNonExistenceComponent
     private statusGoodService: StatusGoodService,
     private goodService: GoodService,
     private datePipe: DatePipe,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private usersService: UsersService,
+    private documentsService: DocumentsService,
+    private notificationService: NotificationService,
+    private fractionsService: FractionsService,
+    private router: Router,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
+    private documentsForDictumService: DocumentsForDictumService,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
     this.settings = {
@@ -189,7 +214,23 @@ export class ActsRegularizationNonExistenceComponent
 
   ngOnInit(): void {
     this.dataUser = this.authService.decodeToken();
+    console.log(this.dataUser);
     this.initForm();
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        console.log(params);
+        const folio = params['folioScan'] ? Number(params['folioScan']) : null;
+        const expedient = params['expedient']
+          ? Number(params['expedient'])
+          : null;
+        const idActa = params['cveActa'] ? Number(params['cveActa']) : null;
+
+        if (folio) {
+          console.log();
+          this.goBackScanning(idActa, expedient, folio);
+        }
+      });
     this.getDataSelectInitial();
     this.initFilters();
     this.responsablesList(new ListParams());
@@ -197,6 +238,26 @@ export class ActsRegularizationNonExistenceComponent
       this.years.push(i);
     }
   }
+  async getDataDepartment() {
+    const params = new ListParams();
+    params.page = 1;
+    params.limit = 1;
+
+    params[
+      'filter.user'
+    ] = `${SearchFilter.EQ}:${this.dataUser.preferred_username}`;
+    this.securityService.getAllUsersAccessTracking(params).subscribe({
+      next: (data: any) => {
+        this.departamentNumber = data.data[0].departmentNumber;
+        this.subdelegationNumber = data.data[0].subdelegationNumber;
+      },
+      error: error => {
+        this.departamentNumber = null;
+        this.subdelegationNumber = null;
+      },
+    });
+  }
+
   initFilters() {
     // FILTRO PARA PRIMERA TABLA **** BIENES **** //
     this.data1
@@ -288,6 +349,7 @@ export class ActsRegularizationNonExistenceComponent
     this.delegation = this.dataUser.department;
     await this.delegationWhereStageCreated();
     await this.validacionFirst();
+    await this.getDataDepartment();
   }
   async delegationWhereStageCreated() {
     let date = `date=${format(new Date(), 'yyyy-MM-dd')}`;
@@ -471,37 +533,24 @@ export class ActsRegularizationNonExistenceComponent
     this.formActReception = this.fb.group({
       keysProceedings: [null],
       elaborationDate: [null, Validators.required],
-      datePhysicalReception: [null],
-      address: [null],
       statusProceedings: [null],
-      elaborate: null,
+      elaborate: [null],
       numFile: [null],
-      witness1: [null],
-      witness2: [null],
+      witness1: [null, Validators.pattern(STRING_PATTERN)],
+      witness2: [null, Validators.pattern(STRING_PATTERN)],
       typeProceedings: [null],
-      dateElaborationReceipt: [null],
-      dateDeliveryGood: [null],
       responsible: [null],
-      destructionMethod: [null],
-      observations: [null],
-      approvedXAdmon: [null],
-      approvalDateXAdmon: [null],
-      approvalUserXAdmon: [null],
-      numRegister: [null],
+      claveTrans: [null],
+      destructionMethod: [null, Validators.pattern(STRING_PATTERN)],
+      observations: [null, Validators.pattern(STRING_PATTERN)],
       captureDate: [null],
       numDelegation1: [null],
       numDelegation2: [null],
-      identifier: [null],
-      label: [null],
       universalFolio: [null],
-      numeraryFolio: [null],
-      numTransfer: [null],
       idTypeProceedings: [null],
-      comptrollerWitness: [null],
+      comptrollerWitness: [null, Validators.pattern(STRING_PATTERN)],
       closeDate: [null],
-      affair: [null],
-      numDelegation_1: [null],
-      numDelegation_2: [null],
+      affair: [null, Validators.pattern(STRING_PATTERN)],
     });
 
     this.formFolio = this.fb.group({
@@ -548,10 +597,17 @@ export class ActsRegularizationNonExistenceComponent
     this.formTable1.controls['detail'].setValue(event.data.description);
   }
 
-  getScreenStatusFinal() {
+  async getScreenStatusFinal() {
+    let cUSUVAL: any = await this.valCargo();
+    if (cUSUVAL != 'ATES')
+      return this.alert(
+        'warning',
+        'Usuario sin privilegios para mantenimiento de estatus.',
+        ''
+      );
     this.modalService.show(ModalMantenimientoEstatusActComponent, {
       ...MODAL_CONFIG,
-      class: 'modal-dialog-centered',
+      class: 'modal-dialog-centered modal-lg',
     });
   }
 
@@ -599,6 +655,7 @@ export class ActsRegularizationNonExistenceComponent
       expedienteNumber,
       actaActual,
       valRif: true,
+      ACTASRIF: this.COLUMNS_ACTARIF,
     };
 
     let modalRef = this.modalService.show(SearchActsComponent, modalConfig);
@@ -619,6 +676,7 @@ export class ActsRegularizationNonExistenceComponent
               'dd/MM/yyyy'
             );
         this.formActReception.patchValue(next);
+        // this.formActReception.get('responsible').setValue(next.responsible)
         this.valClave = false;
         this.formActCreate.get('anio').setValue(this.currentYear);
 
@@ -641,6 +699,7 @@ export class ActsRegularizationNonExistenceComponent
     this.actaDefault = null;
     this.selectData = null;
     this.selectData2 = null;
+    this.formExpedient.reset();
     this.formActReception.reset();
     this.form2.reset();
     this.formActCreate.reset();
@@ -654,6 +713,7 @@ export class ActsRegularizationNonExistenceComponent
     this.formActCreate.get('anio').setValue(this.currentYear);
     this.consulREG_DEL_ADMIN(new ListParams());
     this.consultREG_TRANSFERENTES(new ListParams());
+    this.responsablesList(new ListParams());
   }
   save() {
     const { statusProceedings } = this.formActReception.value;
@@ -708,7 +768,6 @@ export class ActsRegularizationNonExistenceComponent
       !miSubcadena ? year : miSubcadena.toString().padStart(2, '0')
     }/${!mes ? month : mes.value.toString().padStart(2, '0')}`;
     let valFolio_: any = await this.valFolio(cveReceived, consec_);
-    console.log(valFolio_);
     if (valFolio_ == 1) {
       return this.alert(
         'warning',
@@ -767,14 +826,10 @@ export class ActsRegularizationNonExistenceComponent
         });
     });
   }
-  transferenSelected: any;
-  selectTransfer($event) {
-    this.transferenSelected = $event;
-  }
+
   async guardarRegistro(cveActa: any) {
     let body: IProccedingsDeliveryReception = {};
     body.affair = this.formActReception.value.affair;
-    body.numTransfer = this.transferenSelected?.id;
     body.numDelegation1 = this.dataUser.department;
     body.numDelegation2 = this.dataUser.department;
     body.witness1 = this.formActReception.value.witness1;
@@ -818,7 +873,46 @@ export class ActsRegularizationNonExistenceComponent
         },
       });
   }
-  actualizarActa() {}
+
+  async actualizarActa(folio?: string | number) {
+    const { elaborationDate } = this.formActReception.value;
+    if (!elaborationDate)
+      return (
+        this.formActReception.controls['elaborationDate'].markAllAsTouched(),
+        this.alert('warning', 'La fecha de elaboración no puede ser vacía', '')
+      );
+    let dateElaboration: Date | string;
+    if (typeof elaborationDate == 'string') {
+      dateElaboration = elaborationDate.split('/').reverse().join('-');
+    } else {
+      dateElaboration = elaborationDate;
+    }
+    let body: IProccedingsDeliveryReception = {};
+    body.affair = this.formActReception.value.affair;
+    body.witness1 = this.formActReception.value.witness1;
+    body.witness2 = this.formActReception.value.witness2;
+    body.elaborationDate = dateElaboration;
+    body.responsible = this.formActReception.value.responsible;
+    body.destructionMethod = this.formActReception.value.destructionMethod;
+    body.comptrollerWitness = this.formActReception.value.comptrollerWitness;
+    body.observations = this.formActReception.value.observations;
+    body.universalFolio = folio
+      ? folio
+      : this.formActReception.value.universalFolio;
+    this.proceedingsDeliveryReceptionService
+      .editProceeding(this.actaDefault.id, body)
+      .subscribe({
+        next: async resp => {
+          if (!folio) {
+            this.alertInfo('success', 'Acta actualizada correctamente', '');
+            await this.getDetailProceedingsDevollution(this.actaDefault.id);
+          }
+        },
+        error: error => {
+          this.alert('error', 'Ocurrió un error al actualizar el Acta', '');
+        },
+      });
+  }
   cleanActa() {
     this.formActReception.reset();
     this.formActCreate.reset();
@@ -918,26 +1012,22 @@ export class ActsRegularizationNonExistenceComponent
     params.page = lparams.page;
     params.limit = lparams.limit;
 
-    params[
-      'filter.delegationNumber'
-    ] = `${SearchFilter.EQ}:${this.dataUser.department}`;
     if (lparams.text)
       params['filter.user'] = `${SearchFilter.ILIKE}:${lparams.text}`;
 
-    this.securityService.getAllUsersAccessTracking(params).subscribe({
-      next: (data: any) => {
-        console.log('Responsables', data);
-        let result = data.data.map(async (item: any) => {
-          item['name'] = item.user ? item.user.name : null;
-        });
-        Promise.all(result).then(resp => {
-          this.responsables = new DefaultSelect(data.data, data.count);
-        });
-      },
-      error: error => {
-        this.responsables = new DefaultSelect();
-      },
-    });
+    this.usersService
+      .getApplicationPhysicalNonexistence(this.dataUser.department, params)
+      .subscribe({
+        next: (data: any) => {
+          let result = data.data.map(async (item: any) => {});
+          Promise.all(result).then(resp => {
+            this.responsables = new DefaultSelect(data.data, data.count);
+          });
+        },
+        error: error => {
+          this.responsables = new DefaultSelect();
+        },
+      });
   }
   // --------------- LISTAS --------------- //
   async addSelect() {
@@ -986,7 +1076,7 @@ export class ActsRegularizationNonExistenceComponent
     }
   }
   async createDET(good: any) {
-    let obj: IDetailProceedingsDeliveryReception;
+    let obj: IDetailProceedingsDeliveryReception_ = {};
     obj.amount = good.quantity;
     obj.numberGood = good.id;
     obj.numberProceedings = this.actaDefault.id;
@@ -1116,11 +1206,481 @@ export class ActsRegularizationNonExistenceComponent
     });
   }
 
-  initSolicitud() {}
-  openScannerPage() {}
+  initSolicitud() {
+    const { statusProceedings, universalFolio } = this.formActReception.value;
+    if (
+      statusProceedings != 'CERRADA' &&
+      statusProceedings &&
+      !this.pufValidaClave()
+    ) {
+      if (!universalFolio) {
+        this.alertQuestion(
+          'question',
+          'Se generará un nuevo folio de escaneo para el Acta abierta',
+          '¿Deseas continuar?'
+        ).then(res => {
+          if (res.isConfirmed) {
+            this.notificationService
+              .getByFileNumber(this.dataExpediente.id)
+              .subscribe({
+                next: async resp => {
+                  await this.generateDocument(
+                    this.formActReception.value,
+                    resp.data[0].max,
+                    true
+                  );
+                  await this.generateDocument(
+                    this.formActReception.value,
+                    resp.data[0].max,
+                    false
+                  );
+                  await this.getReport();
+                },
+                error: err => {
+                  this.alert(
+                    'error',
+                    'Ocurrió un error al obtener el Número de Volante máximo',
+                    ''
+                  );
+                },
+              });
+          }
+        });
+      } else {
+        this.alertQuestion(
+          'question',
+          'El acta ya tiene folio de escaneo',
+          '¿Quiere reimprimir la solicitud de digitalización?'
+        ).then(res => {
+          if (res.isConfirmed) {
+            this.getReport();
+          }
+        });
+      }
+    } else {
+      if (statusProceedings == 'CERRADA') {
+        this.alertQuestion(
+          'question',
+          'Se reimprimirá la solicitud de digitalización',
+          '¿Deseas continuar?'
+        ).then(res => {
+          if (res.isConfirmed) {
+            this.getReport();
+          }
+        });
+      } else {
+        this.alert(
+          'warning',
+          'No se puede generar el folio de escaneo en un acta ya cerrada o clave inválida',
+          ''
+        );
+      }
+    }
+  }
+  async generateDocument(
+    form: any,
+    flyerNumber: number | string,
+    valFolio?: boolean
+  ) {
+    const documents: IDocuments = {
+      numberProceedings: this.dataExpediente.id,
+      keySeparator: 60,
+      keyTypeDocument: 'RIF',
+      natureDocument: 'ORIGINAL',
+      descriptionDocument: `ACTA ${form.keysProceedings}`,
+      significantDate: this.datePipe.transform(new Date(), 'MM/yyyy'),
+      scanStatus: 'SOLICITADO',
+      userRequestsScan: this.dataUser.preferred_username,
+      scanRequestDate: new Date(),
+      associateUniversalFolio: null,
+      flyerNumber: flyerNumber,
+      goodNumber: null,
+      numberDelegationRequested: this.delegation,
+      numberDepartmentRequest: this.departamentNumber,
+      numberSubdelegationRequests: this.subdelegationNumber,
+    };
+    this.documentsService.create(documents).subscribe({
+      next: async response => {
+        console.log(response);
+        if (valFolio) {
+          this.formActReception.patchValue({
+            universalFolio: response.id,
+          });
+          await this.actualizarActa(response.id);
+          this.alert('success', `Folio de Escaneo generado correctamente`, ``);
+        }
+      },
+      error: err => {
+        console.log(err);
+        this.alert('warning', 'No se pudo generar el folio', err.error.message);
+      },
+    });
+  }
+  openScannerPage() {
+    const { universalFolio, statusProceedings, keysProceedings } =
+      this.formActReception.value;
+    if (
+      (statusProceedings != 'CERRADA' && statusProceedings != null) ||
+      !keysProceedings
+    ) {
+      if (universalFolio) {
+        this.alertQuestion(
+          'question',
+          'Se abrirá la pantalla de escaneo para el folio de escaneo del Acta abierta',
+          '¿Deseas continuar?'
+        ).then(res => {
+          if (res.isConfirmed) {
+            this.router.navigate([`/pages/general-processes/scan-documents`], {
+              queryParams: {
+                origin: 'FACTDESACTASRIF',
+                folio: universalFolio,
+                expedient: this.dataExpediente.id,
+                cveActa: this.actaDefault.id,
+              },
+            });
+          }
+        });
+      } else {
+        this.alert('warning', 'No existe folio de escaneo a escanear', '');
+      }
+    } else {
+      this.alert(
+        'warning',
+        'No se puede escanear para un Acta que no esté abierta',
+        ''
+      );
+    }
+  }
 
-  getReport() {}
-  openScannerPageView() {}
+  async getReport() {
+    const { universalFolio } = this.formActReception.value;
+    if (!universalFolio) {
+      return this.alert(
+        'warning',
+        'No tiene folio de escaneo para imprimir',
+        ''
+      );
+    }
 
-  cerrarActa() {}
+    let params = {
+      pn_folio: universalFolio,
+    };
+    this.siabService.fetchReport('RGERGENSOLICDIGIT', params).subscribe({
+      next: res => {
+        const blob = new Blob([res], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+      error: (error: any) => {
+        this.alert('warning', 'No se pudo generar el reporte', '');
+      },
+    });
+  }
+  openScannerPageView() {
+    const { universalFolio } = this.formActReception.value;
+    if (!universalFolio) {
+      return this.alert(
+        'warning',
+        'No tiene folio de escaneo para imprimir',
+        ''
+      );
+    }
+    this.documentsForDictumService.getByFolio(universalFolio).subscribe({
+      next: response => {
+        if (response.data[0].scanStatus == 'ESCANEADO') {
+          this.alertQuestion(
+            'question',
+            'Se abrirá la pantalla de escaneo para visualizar las imágenes',
+            '¿Deseas continuar?'
+          ).then(res => {
+            if (res.isConfirmed) {
+              this.router.navigate(
+                [`/pages/general-processes/scan-documents`],
+                {
+                  queryParams: {
+                    origin: 'FACTDESACTASRIF',
+                    folio: universalFolio,
+                    expedient: this.dataExpediente.id,
+                    cveActa: this.actaDefault.id,
+                  },
+                }
+              );
+            }
+          });
+        } else {
+          this.alert('warning', 'El Folio no se encuentra escaneado', '');
+        }
+      },
+      error: err => {
+        this.alert('warning', 'El Folio no existe', '');
+      },
+    });
+  }
+
+  async cerrarActa() {
+    const {
+      statusProceedings,
+      affair,
+      destructionMethod,
+      comptrollerWitness,
+      responsible,
+      universalFolio,
+    } = this.formActReception.value;
+    if (statusProceedings == 'CERRADA')
+      return this.alert('warning', 'El acta ya está cerrada', '');
+    // OBTENCIÓN DE CARGO //
+    let cUSUVAL: any = await this.valCargo();
+    console.log(cUSUVAL);
+    if (cUSUVAL != 'ATES')
+      return this.alert(
+        'warning',
+        'Usuario sin privilegios para cerrar el Acta.',
+        ''
+      );
+    // PUF_VALIDA_CLAVE
+    if (this.pufValidaClave())
+      return this.alert(
+        'warning',
+        'Clave de Acta inconsistente',
+        'Verifique e intente nuevamente'
+      );
+    if (!affair)
+      return this.alert(
+        'warning',
+        'Debe especificar la entidad que Autoriza',
+        'Verifique e intente nuevamente'
+      );
+    if (!destructionMethod)
+      return this.alert(
+        'warning',
+        'Debe especificar el Número de Sesión',
+        'Verifique e intente nuevamente'
+      );
+    if (!comptrollerWitness)
+      return this.alert(
+        'warning',
+        'Debe especificar el Número de caso',
+        'Verifique e intente nuevamente'
+      );
+    if (!responsible)
+      return this.alert(
+        'warning',
+        'Debe especificar el Responsable',
+        'Verifique e intente nuevamente'
+      );
+    if (!universalFolio)
+      return this.alert(
+        'warning',
+        'No se tiene Folio de Escaneo',
+        'Verifique e intente nuevamente'
+      );
+
+    // VALIDAMOS DOCUMENTOS //
+    let lnuContador: any = await this.getValScaningFolio(universalFolio);
+    if (lnuContador == 0)
+      return this.alert(
+        'warning',
+        'El acta no tiene documentos escaneados',
+        'No se puede cerrar'
+      );
+    if (this.data2.count() == 0)
+      return this.alert(
+        'warning',
+        'El acta no tiene ningún bien asignado',
+        'No se puede cerrar'
+      );
+    this.alertQuestion(
+      'question',
+      'Se cerrará el Acta',
+      '¿Desea Continuar?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        const { elaborationDate } = this.formActReception.value;
+        if (!elaborationDate)
+          return (
+            this.formActReception.controls[
+              'elaborationDate'
+            ].markAllAsTouched(),
+            this.alert(
+              'warning',
+              'La fecha de elaboración no puede ser vacía',
+              ''
+            )
+          );
+        let dateElaboration: Date | string;
+        if (typeof elaborationDate == 'string') {
+          dateElaboration = elaborationDate.split('/').reverse().join('-');
+        } else {
+          dateElaboration = elaborationDate;
+        }
+        let body: IProccedingsDeliveryReception = {};
+        body.affair = this.formActReception.value.affair;
+        body.witness1 = this.formActReception.value.witness1;
+        body.witness2 = this.formActReception.value.witness2;
+        body.elaborationDate = dateElaboration;
+        body.statusProceedings = 'CERRADA';
+        body.responsible = this.formActReception.value.responsible;
+        body.destructionMethod = this.formActReception.value.destructionMethod;
+        body.comptrollerWitness =
+          this.formActReception.value.comptrollerWitness;
+        body.observations = this.formActReception.value.observations;
+        body.universalFolio = this.formActReception.value.universalFolio;
+        this.loadingBtn = true;
+        this.proceedingsDeliveryReceptionService
+          .editProceeding(this.actaDefault.id, body)
+          .subscribe({
+            next: async data => {
+              this.formActReception.patchValue({
+                statusProceedings: 'CERRADA',
+              });
+
+              let obj = {
+                pActaNumber: this.actaDefault.id,
+                pStatusActa: 'CERRADA',
+                pVcScreen: 'FACTDESACTASRIF',
+                pUser: this.authService.decodeToken().preferred_username,
+              };
+
+              await this.updateGoodEInsertHistoric(obj);
+
+              this.alertInfo(
+                'success',
+                'Se cerró el Acta correctamente',
+                'También se realizó el cambio de estatus de los bienes'
+              );
+              this.loadingBtn = false;
+              this.actaCerrada = false;
+              this.getGoodsByExpedient(this.dataExpediente.id);
+              this.getDetailProceedingsDevollution(this.actaDefault.id);
+            },
+            error: error => {
+              this.loadingBtn = false;
+              this.alert('error', 'Ocurrió un error al cerrar el Acta', '');
+            },
+          });
+      }
+    });
+  }
+  updateGoodEInsertHistoric(good: any) {
+    return new Promise((resolve, reject) => {
+      this.proceedingsDeliveryReceptionService
+        .updateGoodEInsertHistoric(good)
+        .subscribe({
+          next: (resp: any) => {
+            resolve(true);
+          },
+          error: (error: any) => {
+            resolve(false);
+          },
+        });
+    });
+  }
+  // PUF_VALIDA_CLAVE
+  pufValidaClave(): boolean {
+    const { keysProceedings } = this.formActReception.value;
+    let val = false;
+    for (const part of keysProceedings.split('/')) {
+      if (!part) {
+        val = true;
+      }
+    }
+    return val;
+  }
+  // VALIDAMOS EL CARGO //
+  async valCargo() {
+    const params = new ListParams();
+    params.page = 1;
+    params.limit = 1;
+
+    params[
+      'filter.user'
+    ] = `${SearchFilter.EQ}:${this.dataUser.preferred_username}`;
+    return new Promise<string>((resolve, reject) => {
+      this.securityService.getAllUsersTracker(params).subscribe({
+        next: (data: any) => {
+          resolve(
+            data.data[0].postKey ? data.data[0].postKey.substring(0, 4) : 'XX'
+          );
+        },
+        error: error => {
+          resolve('XX');
+        },
+      });
+    });
+  }
+
+  // VALIDAMOS FOLIOS ESCANEADOS //
+  async getValScaningFolio(folio: number | string) {
+    return new Promise((resolve, reject) => {
+      this.documentsService.getByFolio(folio).subscribe({
+        next: (response: any) => {
+          if (response.data[0].scanStatus == 'ESCANEADO') {
+            resolve(1);
+          } else {
+            resolve(0);
+          }
+        },
+        error(err) {
+          resolve(0);
+        },
+      });
+    });
+  }
+  async goBackScanning(
+    idActa: number,
+    idExpedient: string | number,
+    folio: number | string
+  ) {
+    this.formActReception.patchValue({
+      universalFolio: folio,
+    });
+    await this.getExpedient(idExpedient);
+    await this.getActa(idActa);
+  }
+  async getExpedient(id: string | number) {
+    this.expedientService.getById(id).subscribe({
+      next: response => {
+        this.formExpedient.patchValue(response);
+        this.dataExpediente = response;
+        this.getGoodsByExpedient(this.dataExpediente.id);
+      },
+      error: error => {
+        this.dataExpediente = null;
+      },
+    });
+  }
+
+  async getActa(idActa: string | number) {
+    this.proceedingsDeliveryReceptionService
+      .getProceedingsById2(idActa)
+      .subscribe({
+        next: async response => {
+          this.actaDefault = response.data[0];
+          if (this.actaDefault.statusProceedings == 'CERRADA')
+            this.actaCerrada = false;
+          else this.actaCerrada = true;
+          let date = response.data[0].elaborationDate;
+          response.data[0].elaborationDate = !date
+            ? null
+            : this.datePipe.transform(
+                await this.correctDate(date.toString()),
+                'dd/MM/yyyy'
+              );
+          this.formActReception.patchValue(response.data[0]);
+
+          this.getDetailProceedingsDevollution(this.actaDefault.id);
+        },
+      });
+  }
 }
