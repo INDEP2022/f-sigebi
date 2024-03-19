@@ -200,7 +200,9 @@ export class CreateReportComponent extends BasePage implements OnInit {
       doc.modificationDate = moment(new Date()).format('YYYY-MM-DD');
     }
 
-    let create = !this.template;
+
+    let create = isNullOrEmpty(this.version.version);
+
     if (this.reVersion != '1') {
       doc.version = this.reVersion;
       create = false;
@@ -209,11 +211,26 @@ export class CreateReportComponent extends BasePage implements OnInit {
     this.reportgoodService.saveReportDynamic(doc, create).subscribe({
       next: resp => {
         this.template = true;
+        if (create) {
+          this.version = resp;
+        }
         if (close) {
           this.onLoadToast('success', 'Documento guardado correctamente', '');
         }
       },
       error: err => {
+
+        this.reportgoodService.saveReportDynamic(doc, !create).subscribe({
+          next: resp => {
+            this.template = true;
+            if (create) {
+              this.version = resp;
+            }
+            if (close) {
+              this.onLoadToast('success', 'Documento guardado correctamente', '');
+            }
+          }
+        });
 
       },
     });
