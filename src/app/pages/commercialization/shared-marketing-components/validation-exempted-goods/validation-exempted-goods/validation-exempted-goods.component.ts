@@ -177,6 +177,10 @@ export class ValidationExemptedGoodsComponent
           operator = SearchFilter.LIKE;
         }
 
+        if (filter.field == 'process') {
+          filter.search = filter.search.toUpperCase();
+        }
+
         params.addFilter(
           filter.field,
           filter.search,
