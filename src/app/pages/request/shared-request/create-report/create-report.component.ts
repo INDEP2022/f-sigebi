@@ -375,7 +375,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
             )
             .subscribe({
               next: async resp => {
-                this.version.ucmDocumentName = resp.dDocName;
+                //this.version.ucmDocumentName = resp.dDocName;
 
                 const sample: any = {
                   regionalDelegationId: 0,
@@ -429,12 +429,15 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   openSignature() {
-    if (isNullOrEmpty(this.version.ucmDocumentName)) {
+
+    this.sign.emit(this.version);
+    this.close();
+
+    /*if (isNullOrEmpty(this.version.ucmDocumentName)) {
       this.generateReport();
     } else {
-      this.sign.emit(this.version);
-      this.close();
-    }
+      
+    }*/
   }
 }
 
