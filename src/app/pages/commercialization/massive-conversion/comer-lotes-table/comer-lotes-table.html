@@ -3,12 +3,12 @@
     <h5 class="title">LOTES</h5>
   </div>
   <div body>
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-md-8 mb-3"></div>
       <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
         <app-columns-select [(settings)]="settings"></app-columns-select>
       </div>
-    </div>
+    </div> -->
     <div class="row">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
@@ -16,7 +16,8 @@
             <ng2-smart-table
               [settings]="settings"
               [source]="source"
-              (userRowSelect)="selectRows($event)"></ng2-smart-table>
+              (userRowSelect)="selectRows($event)"
+              #table></ng2-smart-table>
           </div>
           <app-pagination
             [params]="params"
@@ -30,11 +31,17 @@
         <confirm-button
           [text]="'Ejectar Reproceso'"
           [type]="'button'"
-          (confirm)="close()"></confirm-button>
+          (confirm)="reProcess()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <confirm-button
+          [text]="'Todo el Evento'"
+          [type]="'button'"
+          (confirm)="allEvent()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
+          Cerrar
         </button>
       </div>
     </div>
