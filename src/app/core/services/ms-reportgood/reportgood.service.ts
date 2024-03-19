@@ -21,11 +21,11 @@ export class ReportgoodService extends HttpService {
     return this.get(ReportGoodEndpoints.ReportDynamic, params);
   }
 
-  saveReportDynamic(object: any, update = false) {
-    if (!update) {
-      return this.put(ReportGoodEndpoints.ReportDynamic, object);
-    } else {
+  saveReportDynamic(object: any, create = true) {
+    if (create) {
       return this.post(ReportGoodEndpoints.ReportDynamic, object);
+    } else {
+      return this.put(ReportGoodEndpoints.ReportDynamic, object);
     }
   }
 }

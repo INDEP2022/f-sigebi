@@ -353,6 +353,7 @@ export class RequestCompDocTasksComponent
       tableName: this.reportTable,
       documentTypeId: doc,
       process: this.process,
+      reVersion: this.requestInfo.detail.version,
       requestId: this.requestId.toString(),
     };
 
@@ -730,7 +731,7 @@ export class RequestCompDocTasksComponent
   }
 
   updateRequest(alert = true, execute = () => { }) {
-    this.updateInfo = true;
+    this.updateInfo = !this.updateInfo;
     let request: any = { ...this.requestInfo.detail };
 
     this.requestService.update(this.requestId, request).subscribe({
@@ -906,6 +907,9 @@ export class RequestCompDocTasksComponent
     }
 
     this.requestInfo.detail.rejectionComment = data.comment;
+    let version = parseInt(this.requestInfo.detail.version);
+    this.requestInfo.detail.version = version + 1;
+
     this.updateRequest(false);
 
     this.taskService.createTaskWitOrderService(body).subscribe({
@@ -1443,7 +1447,7 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'review-result-protection':
-        if (this.requestInfo.detail.version != '1') {
+        if (this.requestInfo.detail.dataSheet != 'OCSJ') {
           this.showWarning('Firme el reporte de oficio jurídico');
           return false;
         }
@@ -1639,8 +1643,8 @@ export class RequestCompDocTasksComponent
     });
     modalRef.content.refresh.subscribe(next => {
       if (next) {
-        this.requestInfo.detail.reportSheet = 'OCSJ';
-        this.updateRequest(false);
+        //this.requestInfo.detail.reportSheet = 'OCSJ';
+        //this.updateRequest(false);
       }
     });
   }
@@ -1715,9 +1719,11 @@ export class RequestCompDocTasksComponent
     let params = new ListParams();
 
     let ids = this.reportId.split(',');
+    let version = this.requestInfo.detail.version;
     params['filter.documentTypeId'] = `$eq:${ids[position]}`;
     params['filter.tableName'] = `$eq:${this.reportTable}`;
     params['filter.registryId'] = `$eq:${this.requestId}`;
+    params['filter.version'] = `$eq:${version}`;
 
     return new Promise<any>(resolve => {
       this.reportgoodService.getReportDynamic(params).subscribe({
@@ -2004,7 +2010,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  openFirma(dynamic = false) {
+  async openFirma(dynamic = false) {
     let token = this.authService.decodeToken();
     let today = new Date();
     let folioReporte = '';
@@ -2019,15 +2025,26 @@ export class RequestCompDocTasksComponent
       folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/?/${year}`;
     }
 
-    const idTypeDoc = this.reportId;
+    let idTypeDoc = this.reportId;
+
+    let report = await this.getStatusReport();
+    let readOnly = report.isValid;
+
+    if (report.isValid) {
+      report = report.data[0];
+      idTypeDoc = report.documentTypeId;
+      readOnly = report.signedReport == 'Y';
+    } else {
+      readOnly = (this.requestInfo.detail.reportSheet == 'OCSJ')
+    }
+
     const typeAnnex = 'approval-request';
     const requestInfo = this.requestInfo.detail;
     const idReportAclara = this.requestId;
     const nameTypeDoc = 'DictamenProcendecia';
     const nomenglatura = folioReporte;
     const isDynamic = dynamic;
-    const readOnly = this.requestInfo.detail.version == "1";
-    console.log('readOnly', readOnly);
+    //const readOnly = this.requestInfo.detail.version == "1";
 
     let config: ModalOptions = {
       initialState: {
@@ -2040,6 +2057,7 @@ export class RequestCompDocTasksComponent
         isDynamic,
         readOnly,
         callback: (next, xml) => {
+          this.updateInfo = !this.updateInfo;
           if (next) {
             this.updateReport(xml);
           }
@@ -2056,9 +2074,6 @@ export class RequestCompDocTasksComponent
     if (isXML(xml)) {
       let token = this.authService.decodeToken();
       let content = getXMLNode(xml, 'strXmlFirmado')?.textContent;
-      this.updateInfo = !this.updateInfo;
-
-      console.log('content xml', content);
 
       if (!isNullOrEmpty(content)) {
 
@@ -2080,9 +2095,6 @@ export class RequestCompDocTasksComponent
         //content = content.replace(/&apos;/g, "'");
         //content = content.replace(/&amp;/g, '&');
 
-        this.requestInfo.detail.version = "1";
-        this.updateRequest(false);
-
         let report = await this.getStatusReport();
 
         if (report.isValid) {
@@ -2096,7 +2108,7 @@ export class RequestCompDocTasksComponent
             error: err => { },
           });
         } else {
-          this.requestInfo.detail.version = "1";
+          this.requestInfo.detail.reportSheet == 'OCSJ'
           this.updateRequest(false);
         }
 
