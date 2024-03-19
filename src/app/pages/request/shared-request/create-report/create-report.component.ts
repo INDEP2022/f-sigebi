@@ -201,7 +201,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
     }
 
     let create = !this.template;
-    if (this.reVersion != '1') {
+    if (this.reVersion != '1' && !create) {
       doc.version = this.reVersion;
       create = false;
     }
