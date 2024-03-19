@@ -173,6 +173,8 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     this.createForm();
   }
   async inicialize() {
+    this.cargaDDLEvento();
+
     if (!this.requested) {
       console.log('cargarEvento');
       this.cargaDDLEvento();
@@ -220,11 +222,6 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
       body['pTypeGood'] = '';
       body['pEventKey'] = 0;
       body['pTrans'] = 0;
-      if (this.form.value.Tipo != '') {
-        if (JSON.parse(this.form.value.Tipo) > 0) {
-          idTipoOficio = JSON.parse(this.form.value.Tipo);
-        }
-      }
       this.formLoadAppraisalsService.obtenerEstatusLotes(body).subscribe({
         next: data => {
           console.log(data);
