@@ -109,7 +109,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       next: response => {
         this.folioPro = response.data[0].folioProceedings;
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -122,7 +122,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           this.goodId += item.idGood + ' ';
         });
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -135,7 +135,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           this.goodId += item.goodId;
         });
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -146,7 +146,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       next: response => {
         this.receipt = response.data[0];
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -158,7 +158,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         this.proceeding = response.data[0];
         this.getGoodsReceipt();
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -175,7 +175,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           this.goodId += item.goodId + ' ';
         });
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -184,7 +184,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       next: response => {
         this.programming = response;
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -620,36 +620,18 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           },
         });
     }
-    if (
-      this.typeDoc == 2 ||
-      174 ||
-      7 ||
-      192 ||
-      108 ||
-      183 ||
-      26 ||
-      27 ||
-      50 ||
-      68 ||
-      217 ||
-      94 ||
-      40 ||
-      101 ||
-      105 ||
-      104 ||
-      72 ||
-      222 ||
-      223 ||
-      224 ||
-      225 ||
-      245 ||
-      246 ||
-      249
-    ) {
+
+    let types = [
+      174, 7, 192, 108, 183, 26, 27, 50, 68, 217, 94, 40, 101, 105, 104, 72,
+      222, 223, 224, 225, 245, 246, 249,
+    ];
+
+    if (types.includes(parseInt('' + this.typeDoc))) {
       const token = this.authService.decodeToken();
       console.log('entro', token);
 
       const formData = {
+        xIdSolicitud: this.requestId,
         keyDoc: this.idSample,
         xNivelRegistroNSBDB: 'Reporte',
         xNombreProceso: 'Reporte',
@@ -734,7 +716,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => { },
+          error: error => {},
         });
     });
   }
@@ -753,7 +735,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -793,7 +775,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => { },
+          error: error => {},
         });
       });
     });
@@ -812,7 +794,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => { },
+          error: error => {},
         });
       });
     });
@@ -834,7 +816,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => { },
+          error: error => {},
         });
       });
     });
