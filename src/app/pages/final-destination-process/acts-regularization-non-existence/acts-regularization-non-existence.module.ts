@@ -8,11 +8,13 @@ import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ActsRegularizationNonExistenceRoutingModule } from './acts-regularization-non-existence-routing.module';
 import { ActsRegularizationNonExistenceComponent } from './acts-regularization-non-existence/acts-regularization-non-existence.component';
+import { AddAndUpdateComponent } from './acts-regularization-non-existence/modal-mantenimiento-estatus-act/add-and-update/add-and-update.component';
 import { ModalMantenimientoEstatusActComponent } from './acts-regularization-non-existence/modal-mantenimiento-estatus-act/modal-mantenimiento-estatus-act.component';
 @NgModule({
   declarations: [
     ActsRegularizationNonExistenceComponent,
     ModalMantenimientoEstatusActComponent,
+    AddAndUpdateComponent,
   ],
   imports: [
     CommonModule,

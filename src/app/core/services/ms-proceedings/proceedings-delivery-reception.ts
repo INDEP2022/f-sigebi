@@ -152,4 +152,11 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}?filter.id=${id}`;
     return this.get<IListResponse<IProceedings>>(route);
   }
+
+  getProceedingsById2(
+    id: string | number
+  ): Observable<IListResponse<IProceedingDeliveryReception>> {
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}?filter.id=${id}`;
+    return this.get<IListResponse<IProceedingDeliveryReception>>(route);
+  }
 }

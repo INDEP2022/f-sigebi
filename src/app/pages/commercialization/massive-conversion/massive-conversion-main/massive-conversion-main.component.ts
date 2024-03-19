@@ -1471,8 +1471,12 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       };
       this.modalService.show(ComerClientsTableComponent, config);
     } else {
+      const ID_TIPO_FALLO = this.ID_TIPO_FALLO;
+      const idEventTMP = Number(this.form.controls['eventId'].value);
       let config: ModalOptions = {
         initialState: {
+          ID_TIPO_FALLO,
+          idEventTMP,
           callback: (data: any) => {},
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
