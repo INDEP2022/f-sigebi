@@ -976,7 +976,7 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         //Configuracion de reporte
         this.reportId = REPORT_DOCUMENTS.DOCUMENTO_VALIDACION_DICTAMEN;
-        this.signedReport = false;
+        this.signedReport = true;
         this.editReport = true;
 
         this.steap1 = true;
