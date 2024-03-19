@@ -48,6 +48,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   sampleOrder: ISamplingOrder = null;
   idSample: number = 0;
   fileSelected: boolean = false;
+  requestId: number = 0;
 
   constructor(
     private modalRef: BsModalRef,
@@ -108,7 +109,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       next: response => {
         this.folioPro = response.data[0].folioProceedings;
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -121,7 +122,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           this.goodId += item.idGood + ' ';
         });
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -134,7 +135,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           this.goodId += item.goodId;
         });
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -145,7 +146,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       next: response => {
         this.receipt = response.data[0];
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -157,7 +158,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         this.proceeding = response.data[0];
         this.getGoodsReceipt();
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -174,7 +175,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           this.goodId += item.goodId + ' ';
         });
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -183,7 +184,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       next: response => {
         this.programming = response;
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -619,47 +620,34 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           },
         });
     }
-    if (
-      this.typeDoc == 2 ||
-      174 ||
-      7 ||
-      192 ||
-      108 ||
-      183 ||
-      26 ||
-      27 ||
-      50 ||
-      68 ||
-      217 ||
-      94 ||
-      40 ||
-      101 ||
-      105 ||
-      104 ||
-      72 ||
-      222 ||
-      223 ||
-      224 ||
-      225 ||
-      245 ||
-      246 ||
-      249
-    ) {
+
+    let types = [
+      174, 7, 192, 108, 183, 26, 27, 50, 68, 217, 94, 40, 101, 105, 104, 72,
+      222, 223, 224, 225, 245, 246, 249,
+    ];
+
+    if (types.includes(parseInt('' + this.typeDoc))) {
       const token = this.authService.decodeToken();
-      console.log('entro', token);
 
       const formData = {
-        keyDoc: this.idSample,
-        xNivelRegistroNSBDB: 'Reporte',
-        xNombreProceso: 'Reporte',
+        dDocTitle: "DOC_.pdf",
+        dDocAuthor: token.name,
+        dDocType: '.pdf',
+        dDocCreator: token.name,
+        dInDate: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+        xidSolicitud: this.requestId,
+        xtipoDocumento: this.typeDoc,
+        xestado: null,
         xDelegacionRegional: token.department,
-        DocTitle: 'Reporte',
-        dSecurityGroup: 'Public',
-        xTipoDocumento: this.typeDoc,
+        xremitente: null,
+        xcargoRemitente: null,
+        texto: 'prueba_unir',
       };
 
+
+
       const extension = '.pdf';
-      const docName = 'Reporte';
+      const docName = 'Documento.pdf';
 
       this.wContentService
         .addDocumentToContent(
@@ -671,19 +659,19 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: async response => {
-            const updateSample = await this.updateSamplek(response.dDocName);
-            if (updateSample) {
-              this.alertInfo(
-                'success',
-                'Acción Correcta',
-                'Documento adjuntado correctamente'
-              ).then(question => {
-                if (question.isConfirmed) {
-                  this.close();
-                  this.modalRef.content.callback(true);
-                }
-              });
-            }
+            //const updateSample = await this.updateSamplek(response.dDocName);
+            //if (updateSample) {
+            this.alertInfo(
+              'success',
+              'Acción Correcta',
+              'Documento adjuntado correctamente'
+            ).then(question => {
+              if (question.isConfirmed) {
+                this.close();
+                this.modalRef.content.callback(true, response.dDocName);
+              }
+            });
+            //}
           },
         });
     }
@@ -733,7 +721,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {},
+          error: error => { },
         });
     });
   }
@@ -752,7 +740,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -792,7 +780,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {},
+          error: error => { },
         });
       });
     });
@@ -811,7 +799,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {},
+          error: error => { },
         });
       });
     });
@@ -833,7 +821,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {},
+          error: error => { },
         });
       });
     });

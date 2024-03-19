@@ -233,4 +233,8 @@ export class ParameterModService
   aplicationVwColumnsBd(params: _Params) {
     return this.get(ParameterComerEndpoints.AplicationVwColumnsBd, params);
   }
+  postSpInsertGoodRes(body: any): Observable<any> {
+    const route = ParameterComerEndpoints.SpInsertGoodRes;
+    return this.post(`${route}`, body);
+  }
 }

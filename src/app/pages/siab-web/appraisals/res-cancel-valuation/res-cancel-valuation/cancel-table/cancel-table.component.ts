@@ -134,6 +134,8 @@ export class CancelTableComponent
       .getMoCanById(eventGlobal, this.paramsModal.getValue())
       .subscribe({
         next: response => {
+          console.log(response);
+          this.dataService.valuedsData = response.data[0];
           this.dataModal.load(response.data[0]);
           this.dataModal.refresh();
           this.totalItemsModal = response.count || 0;
