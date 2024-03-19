@@ -19,4 +19,5 @@ export enum ParameterComerEndpoints {
   ChargeValidateGoods = 'aplication/pup-charge-validate-goods',
   GetvValue = 'aplication/get-v-value',
   AplicationVwColumnsBd = 'aplication/vw-columns-bd',
+  SpInsertGoodRes = 'aplication/sp-insert-good-res',
 }
