@@ -1719,11 +1719,10 @@ export class RequestCompDocTasksComponent
     let params = new ListParams();
 
     let ids = this.reportId.split(',');
-    let version = this.requestInfo.detail.version;
     params['filter.documentTypeId'] = `$eq:${ids[position]}`;
     params['filter.tableName'] = `$eq:${this.reportTable}`;
     params['filter.registryId'] = `$eq:${this.requestId}`;
-    params['filter.version'] = `$eq:${version}`;
+    params['filter.version'] = `$eq:${this.requestInfo.detail.version}`;
 
     return new Promise<any>(resolve => {
       this.reportgoodService.getReportDynamic(params).subscribe({
@@ -2077,24 +2076,6 @@ export class RequestCompDocTasksComponent
 
       if (!isNullOrEmpty(content)) {
 
-        /*
-        let regexs = /<SignatureValue>(.*?)<\/SignatureValue>/;
-        let matchs = regexs.exec(content);
-        let signature = matchs[1] + "";
-        let regexc = /<X509Certificate>(.*?)<\/X509Certificate>/;
-        let matchc = regexc.exec(content);
-        let certificate = matchc[1] + "";
-        report.content += '<br/><br/><br/><b>Firma Electrónica:</b><br/>' + signature;
-        report.content += '<br/><br/><br/><b>Certificado:</b><br/>' + certificate;
-        */
-
-        //Como mostrar caracteres especiales
-        //content = content.replace(/&lt;/g, '<');
-        //content = content.replace(/&gt;/g, '>');
-        //content = content.replace(/&quot;/g, '"');
-        //content = content.replace(/&apos;/g, "'");
-        //content = content.replace(/&amp;/g, '&');
-
         let report = await this.getStatusReport();
 
         if (report.isValid) {
@@ -2103,12 +2084,12 @@ export class RequestCompDocTasksComponent
           report.signedReport = 'Y';
           report.modificationUser = token.username;
           report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
-          this.reportgoodService.saveReportDynamic(report).subscribe({
+          this.reportgoodService.saveReportDynamic(report, false).subscribe({
             next: resp => { },
             error: err => { },
           });
         } else {
-          this.requestInfo.detail.reportSheet == 'OCSJ'
+          this.requestInfo.detail.reportSheet = 'OCSJ'
           this.updateRequest(false);
         }
 
