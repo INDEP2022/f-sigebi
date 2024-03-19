@@ -48,6 +48,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   sampleOrder: ISamplingOrder = null;
   idSample: number = 0;
   fileSelected: boolean = false;
+  requestId: number = 0;
 
   constructor(
     private modalRef: BsModalRef,

@@ -1643,8 +1643,8 @@ export class RequestCompDocTasksComponent
     });
     modalRef.content.refresh.subscribe(next => {
       if (next) {
-        //this.requestInfo.detail.reportSheet = 'OCSJ';
-        //this.updateRequest(false);
+        this.requestInfo.detail.reportSheet = 'OCSJ';
+        this.updateRequest(false);
       }
     });
   }
@@ -1873,6 +1873,8 @@ export class RequestCompDocTasksComponent
     config.initialState = {
       typeDoc: typeDocument,
       idSample: id,
+      requestId: this.requestId,
+
       callback: async (check, contentId) => {
         if (check) {
           //this.getInfoSample();
@@ -1935,7 +1937,7 @@ export class RequestCompDocTasksComponent
       idTypeDoc = report.documentTypeId;
       readOnly = report.signedReport == 'Y';
     } else {
-      readOnly = (this.requestInfo.detail.reportSheet == 'OCSJ')
+      readOnly = this.requestInfo.detail.reportSheet != 'OCSJ';
     }
 
     const typeAnnex = 'approval-request';
@@ -1990,7 +1992,7 @@ export class RequestCompDocTasksComponent
             error: err => { },
           });
         } else {
-          this.requestInfo.detail.reportSheet = 'OCSJ'
+          this.requestInfo.detail.reportSheet = 'OCSJ_SIGN';
           this.updateRequest(false);
         }
 
