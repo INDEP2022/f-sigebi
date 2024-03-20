@@ -219,7 +219,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           console.log(response);
           if (response && this.form.get('event').value) {
             this.tipoOficio = response;
-
             this.changeRatio(response);
           }
         },
@@ -612,7 +611,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       if (tpOfi == 2) {
         await this.insertaBien(idOficio, 0, 'D');
         for (let i = 0; i < goodCheck.length; i++) {
-          await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+          await this.insertaBien(idOficio, goodCheck[i].row.no_bien, 'I');
         }
       } else if (tpOfi == 3) {
         await this.insertaBien(idOficio, 0, 'D');
@@ -627,15 +626,15 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         }
         for (let i = 0; i < goodCheck.length; i++) {
           this.dataGoodList.forEach(async element => {
-            if (element.no_bien == goodCheck[i].no_bien) {
+            if (element.no_bien == goodCheck[i].row.no_bien) {
               await this.insertaMotRev(
-                goodCheck[i].no_bien,
+                goodCheck[i].row.no_bien,
                 this.form.controls['event'].value,
                 this.changeChar(element.motivos.toString()),
                 element.idMotivos.toString(),
                 'I'
               );
-              await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+              await this.insertaBien(idOficio, goodCheck[i].row.no_bien, 'I');
             }
           });
         }
@@ -1680,7 +1679,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       if (tpOfi == 2) {
         await this.insertaBien(idOficio, 0, 'D');
         for (let i = 0; i < goodCheck.length; i++) {
-          await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+          await this.insertaBien(idOficio, goodCheck[i].row.no_bien, 'I');
         }
       } else if (tpOfi == 3) {
         console.log(this.dataGoodList);
@@ -1693,13 +1692,13 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
             if (element.no_bien == goodCheck[i].no_bien) {
               console.log(element.motivos);
               await this.insertaMotRev(
-                goodCheck[i].no_bien,
+                goodCheck[i].row.no_bien,
                 this.form.controls['event'].value,
                 this.changeChar(element.motivos),
                 element.idMotivos.toString(),
                 'I'
               );
-              await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+              await this.insertaBien(idOficio, goodCheck[i].row.no_bien, 'I');
               bienesTotales++;
             }
           });
