@@ -85,6 +85,7 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
       universe: [null],
       event: [null],
       idEvent: [null],
+      typeEvent: [null],
     });
   }
 
@@ -256,7 +257,7 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
           psem1: psem1,
           psem2: psem2,
           pdele: Number(this.DELE),
-          //opcDatos: this.form.get('goods').value,
+          opcDatos: this.form.get('goods').value,
         };
         this.DetResumen(param2);
 
@@ -266,7 +267,9 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
         let param3 = {
           psem1: psem1,
           psem2: psem2,
-          pdele: Number(this.DELE),
+          eventId: this.form.get('idEvent').value,
+          panio: this.ANIO,
+          pdele: this.DELE,
         };
         this.ResumenRemesa(param3);
 
@@ -276,7 +279,9 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
         let param4 = {
           psem1: psem1,
           psem2: psem2,
-          pdele: Number(this.DELE),
+          eventId: this.form.get('event').value,
+          panio: this.ANIO,
+          pdele: this.DELE,
         };
         this.DetRemesa(param4);
 
@@ -284,30 +289,38 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
 
       case 5:
         let param5 = {
-          psem1: psem1,
+          psem1: this.form.get('f_ini').value,
           psem2: psem2,
-          pdele: Number(this.DELE),
+          dateFinal: this.FEC3,
+          delegationNumber: this.form.get('coordination').value,
+          typeEventId: this.form.get('typeEvent').value,
+          eventId: this.form.get('idEvent').value,
         };
 
         this.ResumenEvento(param5);
 
         break;
 
-      case 6:
+      case 6: //No encontré registros
         let param6 = {
           psem1: psem1,
           psem2: psem2,
-          pdele: Number(this.DELE),
+          pDele: this.DELE,
+          ptevento: this.form.get('typeEvent').value,
+          pidevento: this.form.get('idEvent').value,
+          endDate: this.FEC3,
+          //limit: 'Parametro de tipo numerico',
         };
         this.DetEvent(param6);
 
         break;
 
-      case 7:
+      case 7: //Excel sin registros
         let param7 = {
           psem1: psem1,
           psem2: psem2,
-          pdele: Number(this.DELE),
+          pDele: this.DELE,
+          endDate: this.FEC3,
         };
         this.ResumenAdmvxr(param7);
 
@@ -678,86 +691,69 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
   }
 
   DetResumen(params: any) {
-    this.eventAppService.postDetResumer(params).subscribe(
-      resp => {
-        if (resp != null && resp != undefined) {
-          this.convertBase64ToCsv(resp, 'Bienes del Resumen');
-        }
+    this.eventAppService.postDetResumer(params).subscribe({
+      next: resp => {
+        this.convertBase64ToCsv(resp, 'Bienes del Resumen');
       },
-      err => {
-        this.alert('error', 'Error', 'NNo se encontraron registros');
-      }
-    );
+      error: error => {
+        this.alert('error', 'Error', 'No se encontraron registros');
+      },
+    });
   }
 
   DetRemesa(params: any) {
-    this.eventAppService.postDetRemesa(params).subscribe(
-      resp => {
-        if (resp != null && resp != undefined) {
-          this.convertBase64ToCsv(resp, 'Bienes en Remesa');
-        }
+    this.eventAppService.postDetRemesa(params).subscribe({
+      next: resp => {
+        this.convertBase64ToCsv(resp, 'Bienes en Remesa');
       },
-      err => {
+      error: error => {
         this.alert('error', 'Error', 'No se encontraron registros');
-      }
-    );
+      },
+    });
   }
 
   DetEvent(params: any) {
-    this.comerEventService.postDetEvento(params).subscribe(
-      resp => {
-        if (resp != null && resp != undefined) {
-          console.log('Resp DetEvent->', resp);
-          this.convertBase64ToExcel(resp.base64, 'Bienes por Tipo de Evento');
-        }
+    this.comerEventService.postDetEvento(params).subscribe({
+      next: resp => {
+        this.convertBase64ToExcel(resp.base64, 'Bienes por Tipo de Evento');
       },
-      err => {
+      error: error => {
         this.alert('error', 'Error', 'No se encontraron registros');
-      }
-    );
+      },
+    });
   }
 
   ResumenAdmvxr(params: any) {
-    this.comerEventService.postResumenAdmvxr(params).subscribe(
-      resp => {
-        if (resp != null && resp != undefined) {
-          let base64 = resp.base64;
-          this.convertBase64ToExcel(resp.base64, 'Resumen ADM y VXR');
-        }
+    this.comerEventService.postResumenAdmvxr(params).subscribe({
+      next: resp => {
+        this.convertBase64ToExcel(resp.base64, 'Resumen ADM y VXR');
       },
-      err => {
+      error: error => {
         this.alert('error', 'Error', 'No se encontraron registros');
-      }
-    );
+      },
+    });
   }
 
   ResumenRemesa(params: any) {
-    this.eventAppService.postResumenRemesa(params).subscribe(
-      resp => {
-        if (resp != null && resp != undefined) {
-          this.convertBase64ToCsv(resp, 'Resumen Remesa');
-        }
+    this.eventAppService.postResumenRemesa(params).subscribe({
+      next: resp => {
+        this.convertBase64ToCsv(resp, 'Resumen Remesa');
       },
-      err => {
+      error: error => {
         this.alert('error', 'Error', 'No se encontraron registros');
-      }
-    );
+      },
+    });
   }
 
   ResumenEvento(params: any) {
-    this.comerLotService.PostResumenEven(params).subscribe(
-      resp => {
-        console.log('Respuesta Base64->', resp.base64);
-        if (resp != null && resp != undefined) {
-          let base64 = resp.base64;
-          //this.convertBase64ToCsv(resp.base64, 'ResumenEvento');
-          this.convertBase64ToExcel(resp.base64, 'Resumen por Tipo de Evento');
-        }
+    this.comerLotService.PostResumenEven(params).subscribe({
+      next: resp => {
+        this.convertBase64ToExcel(resp.base64, 'Resumen por Tipo de Evento');
       },
-      err => {
+      error: error => {
         this.alert('error', 'Error', 'No se encontraron registros');
-      }
-    );
+      },
+    });
   }
 
   convertBase64ToCsv(base64Data: string, filename: string) {
