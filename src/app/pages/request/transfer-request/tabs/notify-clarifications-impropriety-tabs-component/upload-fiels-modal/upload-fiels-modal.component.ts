@@ -183,6 +183,8 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
   }
 
   confirm() {
+    this.loading = true;
+
     let pass = this.fileForm.controls['pass'].value;
 
     if (pass.length <= 40) {

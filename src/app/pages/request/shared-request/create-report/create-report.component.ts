@@ -221,7 +221,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
         this.reportgoodService.saveReportDynamic(doc, !create).subscribe({
           next: resp => {
             this.template = true;
-            if (create) {
+            if (!isNullOrEmpty(resp.version)) {
               this.version = resp;
             }
             if (close) {
