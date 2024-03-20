@@ -85,7 +85,7 @@
       <div class="m-3">
         <button
           class="btn btn-primary btn-sm active"
-          [disabled]="fileForm.invalid"
+          [disabled]="fileForm.invalid || loading"
           (click)="confirm()">
           Guardar <i aria-hidden="true" class="fa fa-save"></i>
         </button>
