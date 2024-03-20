@@ -52,8 +52,7 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
   protected override goodType: string;
   protected override signOffice: boolean;
   protected override btnGrouper: boolean;
@@ -328,7 +327,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   async openReport(first = true): Promise<void> {
     let doc = this.reportId;
@@ -730,7 +729,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  updateRequest(alert = true, execute = () => {}) {
+  updateRequest(alert = true, execute = () => { }) {
     this.updateInfo = !this.updateInfo;
     let request: any = { ...this.requestInfo.detail };
 
@@ -941,7 +940,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1447,7 +1446,7 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'review-result-protection':
-        if (this.requestInfo.detail.dataSheet != 'OCSJ') {
+        if (this.requestInfo.detail.dataSheet == 'OCSJ') {
           this.showWarning('Firme el reporte de oficio jurídico');
           return false;
         }
@@ -1532,7 +1531,7 @@ export class RequestCompDocTasksComponent
     this.validate.registerAppointment = event.isValid;
   }
 
-  onSetData(event) {}
+  onSetData(event) { }
 
   onOrder(event) {
     this.validate.orderEntry = event.isValid;
@@ -1552,7 +1551,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1568,7 +1567,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1649,7 +1648,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
 
   async showReport(data) {
     let report = await this.getStatusReport();
@@ -1682,7 +1681,7 @@ export class RequestCompDocTasksComponent
           const fileURL = URL.createObjectURL(file);
           this.openPrevPdf(fileURL);
         },
-        error: error => {},
+        error: error => { },
       });
     }
   }
@@ -1705,7 +1704,7 @@ export class RequestCompDocTasksComponent
           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
           type: 'pdf',
         },
-        callback: (data: any) => {},
+        callback: (data: any) => { },
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -1889,8 +1888,8 @@ export class RequestCompDocTasksComponent
     report.modificationUser = user.username;
     report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
     this.reportgoodService.saveReportDynamic(report, false).subscribe({
-      next: resp => {},
-      error: err => {},
+      next: resp => { },
+      error: err => { },
     });
   }
 
@@ -1975,8 +1974,8 @@ export class RequestCompDocTasksComponent
           report.modificationUser = token.username;
           report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
           this.reportgoodService.saveReportDynamic(report, false).subscribe({
-            next: resp => {},
-            error: err => {},
+            next: resp => { },
+            error: err => { },
           });
         } else {
           this.requestInfo.detail.reportSheet = 'OCSJ_SIGN';
