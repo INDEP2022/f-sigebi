@@ -777,9 +777,11 @@
                 </div>
                 <div class="col-12">
                   <form-loader *ngIf="loading5"></form-loader>
-                  <ng-scrollbar [track]="'all'">
+                  <ng-scrollbar
+                    [track]="'all'"
+                    [ngStyle]="{ height: loading4 ? '0px' : '400px' }">
                     <ng2-smart-table
-                      [attr.class]="'table-bordered table-responsive mb-4'"
+                      [attr.class]="''"
                       [settings]="settings5"
                       [source]="data5">
                     </ng2-smart-table>
