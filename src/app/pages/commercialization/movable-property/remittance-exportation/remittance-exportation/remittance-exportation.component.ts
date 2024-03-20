@@ -265,11 +265,16 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
 
       case 3:
         let param3 = {
-          psem1: psem1,
+          fechaInicio: psem1,
+          fechaFin: psem2,
+          pSem1: psem1,
+          pSem2: psem2,
+          pDele: this.DELE,
+          /*psem1: psem1,
           psem2: psem2,
           eventId: this.form.get('idEvent').value,
           panio: this.ANIO,
-          pdele: this.DELE,
+          pdele: this.DELE,*/
         };
         this.ResumenRemesa(param3);
 
@@ -277,9 +282,9 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
 
       case 4:
         let param4 = {
-          psem1: psem1,
-          psem2: psem2,
-          eventId: this.form.get('event').value,
+          psem1: this.form.controls['f_ini'].value,
+          psem2: this.form.controls['f_fin'].value,
+          eventId: this.form.get('idEvent').value,
           panio: this.ANIO,
           pdele: this.DELE,
         };
