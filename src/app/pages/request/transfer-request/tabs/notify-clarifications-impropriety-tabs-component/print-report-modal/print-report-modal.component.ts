@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -126,7 +126,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
     if (!this.readOnly) {
       this.verificateFirm();
-      this.signParams();
     }
 
     //Condición para saber que ID tipo de documento lelga
@@ -196,7 +195,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   //Verifica si ya existen usuarios, para eliminarlo (Evitar duplicidad)
-  verificateFirm() {
+  async verificateFirm() {
     let learnedId = this.idReportAclara;
     let learnedType = this.idTypeDoc;
 
@@ -212,15 +211,21 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.signatoriesService
       .getSignatoriesName(learnedType, learnedId)
       .subscribe({
-        next: response => {
-          this.signatories = response.data;
+        next: async response => {
+          //this.signatories = response.data;
           //Ciclo para eliminar todos los posibles firmantes existentes para esa solicitud
           const count = response.count;
           for (let i = 0; i < count; i++) {
-            this.signatoriesService
-              .deleteFirmante(this.signatories[i].signatoryId)
-              .subscribe({});
+
+            let observable: Observable<any> = this.signatoriesService
+              .deleteFirmante(response.data[i].signatoryId);
+
+            let result = await observable.toPromise();
+            console.log('Firmante eliminado: ', result);
+
           }
+
+          this.signParams();
         },
         error: error => {
           //Si no hay firmantes, entonces asignar nuevos
@@ -819,7 +824,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
               this.alertInfo(
                 'error',
                 'Acción Inválida',
-                'Error al generar firma electronica\n' + error.split('.')[0] + ''
+                'Error al generar firma electrónica\nFavor de revisar la información'
+                //+ error.split('.')[0] + ''
               );
             }
 
@@ -841,7 +847,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           this.alertInfo(
             'error',
             'Acción Inválida',
-            'Error al generar firma electronica'
+            'Error al generar firma electrónica'
           );
         },
       });
