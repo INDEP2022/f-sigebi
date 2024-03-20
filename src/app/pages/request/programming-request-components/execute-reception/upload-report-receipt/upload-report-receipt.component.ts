@@ -109,7 +109,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       next: response => {
         this.folioPro = response.data[0].folioProceedings;
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -122,7 +122,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           this.goodId += item.idGood + ' ';
         });
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -135,7 +135,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           this.goodId += item.goodId;
         });
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -146,7 +146,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       next: response => {
         this.receipt = response.data[0];
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -158,7 +158,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         this.proceeding = response.data[0];
         this.getGoodsReceipt();
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -175,7 +175,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           this.goodId += item.goodId + ' ';
         });
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -184,7 +184,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       next: response => {
         this.programming = response;
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -630,7 +630,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       const token = this.authService.decodeToken();
 
       const formData = {
-        dDocTitle: "DOC_.pdf",
+        dDocTitle: 'DOC_.pdf',
         dDocAuthor: token.name,
         dDocType: '.pdf',
         dDocCreator: token.name,
@@ -643,8 +643,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         xcargoRemitente: null,
         texto: 'prueba_unir',
       };
-
-
 
       const extension = '.pdf';
       const docName = 'Documento.pdf';
@@ -721,7 +719,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => { },
+          error: error => {},
         });
     });
   }
@@ -740,7 +738,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -780,7 +778,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => { },
+          error: error => {},
         });
       });
     });
@@ -799,7 +797,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => { },
+          error: error => {},
         });
       });
     });
@@ -821,7 +819,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => { },
+          error: error => {},
         });
       });
     });

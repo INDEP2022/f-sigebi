@@ -49,10 +49,34 @@ import {
   VALUATION_REQUEST_COLUMNS_VALIDATED_TWO,
 } from './res-cancel-valuation-columns';
 
+interface IExcelToJson {
+  ID_BIENES: number;
+  ID_MOTIVOS1: number;
+  MOTIVOS1: string;
+  ID_MOTIVOS2: number;
+  MOTIVOS2: string;
+  ID_MOTIVOS3: number;
+  MOTIVOS3: string;
+  ID_MOTIVOS4: number;
+  MOTIVOS4: string;
+}
 @Component({
   selector: 'app-res-cancel-valuation',
   templateUrl: './res-cancel-valuation.component.html',
-  styles: [],
+  styles: [
+    `
+      input[type='file']::file-selector-button {
+        margin-right: 20px;
+        border: none;
+        background: #9d2449;
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        /* transition: background.2s ease-in-out; */
+      }
+    `,
+  ],
 })
 export class resCancelValuationComponent extends BasePage implements OnInit {
   //
@@ -145,6 +169,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   numOne: number;
   numTwo: number;
   m_comer: IModComerOffice;
+  dataExcel: any = [];
+  fileName: string;
+
   //#endregion
 
   //
@@ -1023,6 +1050,12 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           .get('radio')
           .setValue('3', { onlySelf: true, emitEvent: false });
         // this.redioValueTwo = true;
+        this.settings = {
+          ...this.settings,
+          hideSubHeader: false,
+          actions: false,
+          columns: VALUATION_REQUEST_COLUMNS_VALIDATED_TWO,
+        };
         this.btnMotCan = false;
       }
     } else {
@@ -1230,6 +1263,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.formTwo = this.fb.group({
       allGood: [0],
       selectedGood: [0],
+      file: [null],
     });
     this.formDialogOne = this.fb.group({
       noti: [null],
@@ -1500,91 +1534,86 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   //Export and Import Excel
   exportExcel() {
     // //
-
-    this.loadingExcel = true;
+    let params = {
+      ...this.params2.getValue(),
+    };
     this.loader.load = true;
-    console.log('data' + this.officeType + '==2');
-    if (this.officeType == '3') {
-      if (this.cancelData.length > 0) {
-        console.log('data' + this.cancelData.length);
+    this.serviceAppraise
+      .postGetAppraise(this.body2, { ...params, limit: 100000000 })
+      .subscribe({
+        next: resp => {
+          console.log(resp);
+          if (resp && resp.data && resp.data.length > 0) {
+            let bienesArray = [];
+            bienesArray = resp.data.map((row: any) => {
+              return { ...row };
+            });
+            let params = new ListParams();
+            this.serviceJobs
+              .getMoCanById(this.event, { ...params, limit: 100000000 })
+              .subscribe({
+                next: response => {
+                  console.log(response);
+                  this.nameExcel = 'Motivos REV';
+                  this.elementsToExport = response.data[0].map((x: any) => {
+                    let newRow1: any = {
+                      ID_MOTIVOS: x.id_motivo,
+                      MOTIVOS: x.descripcion_motivo,
+                    };
+                    return newRow1;
+                  });
+                  const filename: string = this.nameExcel;
 
-        let haveMotives = false;
-        this.nameExcel = 'Bienes Cancelación';
-        if (haveMotives) {
-          this.nameExcel += ' Motivos de AVA a REV';
-        }
-        this.nameExcel += '.xlsx';
-        this.elementsToExport = this.cancelData.map((x: any) => {
-          let motives = x.motivos;
-          let motivesArray = [];
-          if (motives.includes('/')) {
-            motivesArray = motives
-              .split('/')
-              .filter((x: string) => x.trim().length > 0);
-          } else if (motives.trim().length > 0) {
-            motivesArray.push(motives);
+                  bienesArray = resp.data.map((x: any) => {
+                    let newRow: any = {
+                      ID_BIENES: x.no_bien,
+                      ID_MOTIVO1: '',
+                      MOTIVOS1: '',
+                      ID_MOTIVO2: '',
+                      MOTIVOS2: '',
+                      ID_MOTIVO3: '',
+                      MOTIVOS3: '',
+                      ID_MOTIVO4: '',
+                      MOTIVOS4: '',
+                    };
+                    return newRow;
+                  });
+                  const filename1: string = 'Bienes';
+                  const filename2: string = 'RespuestaAvaluo';
+                  this.excelService.exportTwo(
+                    bienesArray,
+                    this.elementsToExport,
+                    {
+                      type: 'xlsx',
+                      filename1,
+                      filename,
+                      filename2,
+                    }
+                  );
+                  this.loader.load = false;
+                },
+                error: error => {
+                  this.loader.load = false;
+                },
+              });
+          } else {
+            this.loader.load = false;
+            this.alert('warning', 'Sin bienes para descargar', '');
           }
-          let newRow: any = { ID_EVENTO: x.id_evento };
-          motivesArray.forEach((motive: string, index: number) => {
-            let title = 'MOTIVO_' + (index + 1);
-            newRow[title] = motive;
-            haveMotives = true;
-          });
-          return newRow;
-        });
-        const filename: string = this.nameExcel;
-        this.excelService.export(this.elementsToExport, {
-          type: 'xlsx',
-          filename,
-        });
-        console.log(this.elementsToExport);
-
-        console.log(this.nameExcel);
-        // this.flagDownload = !this.flagDownload;
-        this.loadingExcel = false;
-        this.loader.load = false;
-      } else {
-        this.loadingExcel = false;
-        this.loader.load = false;
-
-        this.alert('warning', 'Sin bienes para descargar', '');
-      }
-    } else if (this.officeType == '2') {
-      if (this.valuedData.length > 0) {
-        console.log('data' + this.valuedData.length);
-
-        this.nameExcel = 'Bienes Respuesta';
-        this.elementsToExport = this.valuedData.map((x: any) => {
-          let newRow: any = {
-            ID_MOTIVOS: x.id_motivo,
-            MOTIVOS: x.descripcion_motivo,
-          };
-          return newRow;
-        });
-        const filename: string = this.nameExcel;
-
-        this.excelService.export(this.elementsToExport, {
-          type: 'xlsx',
-          filename,
-        });
-        console.log(this.elementsToExport);
-        this.flagDownload = !this.flagDownload;
-        this.loadingExcel = false;
-        this.loader.load = false;
-      } else {
-        this.loadingExcel = false;
-        this.loader.load = false;
-
-        this.alert('warning', 'Sin bienes para descargar', '');
-      }
-    }
+        },
+        error: error => {
+          if (error.status == 400) {
+            this.loader.load = false;
+            this.alert('warning', 'Sin bienes para descargar', '');
+            // this.alert(
+            //   'warning',
+            //   'Advertencia',
+            //   'No hay bienes para realizar el oficio de respuesta'
+            // );
+          }
+        },
+      });
   }
-  //#endregion
-
-  // Metodo del modal #2
-  // selectedRowsCancel: Array<any> = [];
-
-  updateOffice() {}
 
   private validateSelectes(array: any[]) {
     if (array.length === 0) {
@@ -1658,9 +1687,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         for (let i = 0; i < goodCheck.length; i++) {
           this.dataGoodList.forEach(async element => {
             console.log(element.no_bien);
-            console.log(goodCheck[i].row.no_bien);
+            console.log(goodCheck[i].no_bien);
 
-            if (element.no_bien == goodCheck[i].row.no_bien) {
+            if (element.no_bien == goodCheck[i].no_bien) {
               console.log(element.motivos);
               await this.insertaMotRev(
                 goodCheck[i].row.no_bien,
@@ -1760,5 +1789,86 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       clearInterval(this.intervalId);
     }
     this.subscribeDelete.unsubscribe();
+  }
+
+  chargeFile(event: Event) {
+    try {
+      const files = (event.target as HTMLInputElement).files;
+
+      if (!files || files.length !== 1)
+        throw new Error('Please select one file.');
+      this.fileName = files[0].name;
+      console.log(this.fileName);
+      const fileReader = new FileReader();
+      fileReader.readAsBinaryString(files[0]);
+      fileReader.onload = () => this.readExcel(fileReader.result);
+
+      // Lee el contenido binario del archivo
+    } catch (error) {
+      console.error('Error:', error);
+      // Maneja el error de acuerdo a tus necesidades
+    }
+  }
+
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      this.dataExcel = this.excelService.getData<IExcelToJson>(binaryExcel);
+      this.dataExcel.forEach(element => {
+        this.dataGood2.getElements().then(_item => {
+          let result = _item.map(item => {
+            if (item.no_bien == element.ID_BIENES) {
+              item.motivos =
+                (element.MOTIVOS1 ? `${element.MOTIVOS1},` : '') +
+                (element.MOTIVOS2 ? `${element.MOTIVOS2},` : '') +
+                (element.MOTIVOS3 ? `${element.MOTIVOS3},` : '') +
+                `${element.MOTIVOS4}`;
+              item.idMotivos =
+                (element.ID_MOTIVO1 ? `${element.ID_MOTIVO2},` : '') +
+                (element.ID_MOTIVO2 ? `${element.ID_MOTIVO2},` : '') +
+                (element.ID_MOTIVO3 ? `${element.ID_MOTIVO3},` : '') +
+                `${element.ID_MOTIVO4}`;
+            }
+          });
+          Promise.all(result).then(resp => {
+            this.dataGood2.refresh();
+          });
+        });
+        this.dataGood.getElements().then(_item => {
+          let result = _item.map(item => {
+            if (item.no_bien == element.ID_BIENES) {
+              item.motivos =
+                (element.MOTIVOS1 ? `${element.MOTIVOS1},` : '') +
+                (element.MOTIVOS2 ? `${element.MOTIVOS2},` : '') +
+                (element.MOTIVOS3 ? `${element.MOTIVOS3},` : '') +
+                `${element.MOTIVOS4}`;
+              item.idMotivos =
+                (element.ID_MOTIVO1 ? `${element.ID_MOTIVO2},` : '') +
+                (element.ID_MOTIVO2 ? `${element.ID_MOTIVO2},` : '') +
+                (element.ID_MOTIVO3 ? `${element.ID_MOTIVO3},` : '') +
+                `${element.ID_MOTIVO4}`;
+            }
+          });
+          Promise.all(result).then(resp => {
+            this.dataGood.refresh();
+          });
+        });
+        this.dataGoodList.forEach(item => {
+          if (item.no_bien == element.ID_BIENES) {
+            item.motivos =
+              (element.MOTIVOS1 ? `${element.MOTIVOS1},` : '') +
+              (element.MOTIVOS2 ? `${element.MOTIVOS2},` : '') +
+              (element.MOTIVOS3 ? `${element.MOTIVOS3},` : '') +
+              `${element.MOTIVOS4}`;
+            item.idMotivos =
+              (element.ID_MOTIVO1 ? `${element.ID_MOTIVO2},` : '') +
+              (element.ID_MOTIVO2 ? `${element.ID_MOTIVO2},` : '') +
+              (element.ID_MOTIVO3 ? `${element.ID_MOTIVO3},` : '') +
+              `${element.ID_MOTIVO4}`;
+          }
+        });
+      });
+    } catch (error) {
+      this.onLoadToast('error', 'Ocurrio un error al leer el archivo' + error);
+    }
   }
 }
