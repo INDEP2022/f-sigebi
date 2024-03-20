@@ -457,26 +457,21 @@ export class RequestFormComponent extends BasePage implements OnInit {
     ) {
       this.displayOfficeCenter = true;
       this.displayOfficeCenterED = false;
-    } else if (
-      e.id == '16' ||
-      e.id == '100' ||
-      e.id == '101'
-    ) {
+    } else if (e.id == '16' || e.id == '100' || e.id == '101') {
       this.displayOfficeCenter = false;
-      this.displayOfficeCenterED = true
+      this.displayOfficeCenterED = true;
     } else {
       this.displayOfficeCenterED = false;
       this.displayOfficeCenter = false;
     }
-
   }
 
   openModalSelectUser() {
     let central = this.displayOfficeCenter || this.displayOfficeCenterED;
     if (this.displayOfficeCenterED) {
-      central = this.requestForm.get('targetUserType').value == 'TE'
+      central = this.requestForm.get('targetUserType').value == 'TE';
     }
-    console.log(this.op)
+    console.log(this.op);
     let config: ModalOptions = {
       initialState: {
         request: this.requestForm.value,
@@ -517,6 +512,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         this.loadingTurn = true;
         const form = this.requestForm.getRawValue();
         form.id = this.requestId;
+        form.version = 1;
         form.requestStatus = this.op != 2 ? 'POR_TURNAR' : 'Recepcion';
         let date = this.requestForm.controls['applicationDate'].value;
         form.applicationDate = date.toISOString();

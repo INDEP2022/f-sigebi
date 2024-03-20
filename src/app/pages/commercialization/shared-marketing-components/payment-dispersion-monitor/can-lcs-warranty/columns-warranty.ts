@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const COLUMNS_LCS_WARRANTY = {
   LCG_ID: {
@@ -27,6 +28,10 @@ export const COLUMNS_LCS_WARRANTY = {
     valuePrepareFunction: (cell: any, row: any) => {
       console.log(cell);
       return format(correctDate(cell), 'dd/MM/yyyy');
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
     },
   },
   Status: {

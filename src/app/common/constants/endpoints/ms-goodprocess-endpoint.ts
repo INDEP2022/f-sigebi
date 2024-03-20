@@ -49,4 +49,5 @@ export enum GoodprocessEndpoints {
   GetGoods540XGood = 'application/getGoods540XGood',
   GetGoods540 = 'application/getGoods540',
   TbClientsEvent = 'application/tb-clients-event',
+  TbLotsEvent = 'application/tb-event-lotes',
 }
