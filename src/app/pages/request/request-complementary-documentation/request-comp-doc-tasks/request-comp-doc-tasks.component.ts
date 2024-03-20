@@ -1772,7 +1772,7 @@ export class RequestCompDocTasksComponent
   ): Promise<void> {
     let report = await this.getStatusReport();
     report = report.isValid ? report.data[0] : report;
-    let docId = report.isValid ? report.documentTypeId : this.reportId;
+    let docId = isNullOrEmpty(report.isValid) ? report.documentTypeId : this.reportId;
 
     const formOnly = true;
     const nameSignatoryRuling = this.requestInfo.detail.nameSignatoryRuling;
