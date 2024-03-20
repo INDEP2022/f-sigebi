@@ -336,9 +336,20 @@
               </div> -->
             </div>
             <div class="col-md-4">
-              <button type="button" class="btn btn-sm btn-success active">
+              <button
+                type="button"
+                class="btn btn-sm btn-success active"
+                (click)="file.click()">
                 Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
               </button>
+
+              <input
+                type="file"
+                name="file"
+                #file
+                class="d-none"
+                accept=".xls, .xlsx, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                (change)="chargeFile($event)" />
             </div>
           </div>
           <!--  -->

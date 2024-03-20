@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as FileSaver from 'file-saver';
-import { read, utils, WorkBook, WorkSheet, write, writeFile } from 'xlsx';
+import { read, utils, WorkBook, WorkSheet, write } from 'xlsx';
 import { FileSaverService } from './file-saver.service';
 
 export const EXCEL_TYPE =
@@ -46,11 +46,11 @@ export class ExcelService {
     { type = 'xlsx', filename, filename1, filename2 }: IXLSXExportConfig
   ) {
     const wb: WorkBook = utils.book_new();
-    const hoja1: WorkSheet = utils.aoa_to_sheet(json);
-    const hoja2: WorkSheet = utils.aoa_to_sheet(json1);
-    utils.book_append_sheet(wb, hoja1, filename);
-    utils.book_append_sheet(wb, hoja2, filename1);
-    const buffer = writeFile(wb, filename2);
+    const hoja1: WorkSheet = utils.json_to_sheet(json);
+    const hoja2: WorkSheet = utils.json_to_sheet(json1);
+    utils.book_append_sheet(wb, hoja1, filename1);
+    utils.book_append_sheet(wb, hoja2, filename);
+    const buffer = write(wb, { bookType: type, type: 'array' });
     this.saveFile(buffer, filename2, XLSX_EXTENSIONS[type]);
   }
 

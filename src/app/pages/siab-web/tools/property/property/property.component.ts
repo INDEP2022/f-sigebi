@@ -295,6 +295,18 @@ export class PropertyComponent extends BasePage implements OnInit {
               case 'no_of_gestion':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'fecha_desahogo':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fecha_dictamen_procedencia':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fecha_captura_acta_recepcion':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -355,8 +367,6 @@ export class PropertyComponent extends BasePage implements OnInit {
         this.totalItems1 = 0;
         this.data1.load([]);
         this.data1.refresh();
-        // En caso de error, restaura this.array a su estado anterior
-        // this.array = [];
         this.loading = false;
       },
     });
