@@ -105,9 +105,7 @@
               </div>
               <div class="col-md-8 text-end">
                 <button
-                  [disabled]="
-                    !actaCerrada || !btnSave || formActReception.invalid
-                  "
+                  [disabled]="!actaCerrada || formActReception.invalid"
                   (click)="save()"
                   type="button"
                   class="btn btn-primary active btn-sm mr-3">
@@ -203,7 +201,6 @@
                             [data]="trans"
                             [searchable]="false"
                             (fetchItems)="consultREG_TRANSFERENTES($event)"
-                            (change)="selectTransfer($event)"
                             bindLabel="transfer"
                             value="keyTransferent"
                             control="claveTrans"
@@ -280,25 +277,19 @@
                       <form-field
                         [control]="formActReception.get('responsible')">
                         <ngx-select
-                          [readonly]="!valClave || !actaCerrada"
-                          [form]="formActCreate"
+                          [readonly]="!actaCerrada || !dataExpediente"
+                          [form]="formActReception"
                           [data]="responsables"
                           [searchable]="true"
                           (fetchItems)="responsablesList($event)"
                           bindLabel="name"
                           value="name"
-                          control="claveTrans"
+                          control="responsible"
                           label="Responsable"
                           [searchOnInit]="false"
                           [showTooltip]="true"
                           termMaxLength="30">
                         </ngx-select>
-                        <!-- <input
-                          [readonly]="!actaCerrada || !dataExpediente"
-                          type="text"
-                          maxlength="100"
-                          class="form-control"
-                          formControlName="responsible" /> -->
                       </form-field>
                     </div>
                     <div class="col-6 mt-2">
@@ -369,6 +360,7 @@
                         [control]="formActReception.get('destructionMethod')"
                         label="Número de Sesión:">
                         <input
+                          maxlength="200"
                           [readonly]="!actaCerrada || !dataExpediente"
                           type="text"
                           class="form-control"
@@ -382,6 +374,7 @@
                         <input
                           [readonly]="!actaCerrada || !dataExpediente"
                           type="text"
+                          maxlength="100"
                           class="form-control"
                           formControlName="comptrollerWitness" />
                       </form-field>
@@ -478,7 +471,6 @@
                           </ng2-smart-table>
                         </ng-scrollbar>
                       </div>
-
                       <app-pagination
                         [params]="params1"
                         [totalItems]="totalItems1"></app-pagination>

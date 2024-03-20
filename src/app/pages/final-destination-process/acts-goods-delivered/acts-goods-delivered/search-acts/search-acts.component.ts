@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -42,11 +42,11 @@ export class SearchActsComponent extends BasePage implements OnInit {
   @Output() onSave = new EventEmitter<any>();
   @Output() onDelete = new EventEmitter<any>();
   @Output() cleanForm = new EventEmitter<any>();
-  @Input() idConversion: number | string;
   actaActual: any;
   valDelete: boolean = false;
   // @Output() onConfirm = new EventEmitter<any>();
   valRif: boolean = false;
+  ACTASRIF: any;
   constructor(
     private modalRef: BsModalRef,
     private activateRoute: ActivatedRoute,
@@ -69,9 +69,7 @@ export class SearchActsComponent extends BasePage implements OnInit {
         edit: false,
         add: false,
       },
-      columns: {
-        ...ACTAS,
-      },
+      // columns: this.ACTASRIF ? this.ACTASRIF : ACTAS,
       delete: {
         deleteButtonContent:
           '<i class="fa fa-trash text-danger mx-2 ml-5"></i>',
@@ -80,11 +78,11 @@ export class SearchActsComponent extends BasePage implements OnInit {
     };
   }
   ngOnInit(): void {
+    this.settings.columns = this.ACTASRIF ? this.ACTASRIF : ACTAS;
     this.dataFactActas
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
-        console.log('SI');
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
@@ -122,7 +120,6 @@ export class SearchActsComponent extends BasePage implements OnInit {
   }
 
   return() {
-    console.log('SIIII', this.valDelete);
     if (this.valDelete) {
       this.ejecutarFuncionDesdeModal(true);
     }
@@ -167,7 +164,7 @@ export class SearchActsComponent extends BasePage implements OnInit {
     }
     if (this.valRif == true) {
       params['filter.typeProceedings'] = `$eq:RIF`;
-      // params['filter.numFile'] = `$eq:${this.expedienteNumber}`;
+      params['filter.numFile'] = `$eq:${this.expedienteNumber}`;
     } else {
       params['filter.typeProceedings'] = `$eq:ENTEST`;
       params['filter.idTypeProceedings'] = `$eq:BEE`;

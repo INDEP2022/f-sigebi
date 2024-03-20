@@ -37,6 +37,7 @@ export class AppraisesService extends HttpService {
     const route = AppraiseEndpoints.PaTriggerOAppraise;
     return this.post(`${route}`, body);
   }
+
   getRequestAppraisalById(id: string | number) {
     const route = `request-x-appraisal/${id}`;
     return this.get(route);

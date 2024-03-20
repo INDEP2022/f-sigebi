@@ -1,7 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { DomSanitizer } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
@@ -16,15 +17,19 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IModComerOffice } from 'src/app/core/models/ms-officemanagement/mod-comer-office';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { AppraiseService } from 'src/app/core/services/ms-appraise/appraise.service';
+import { ClarificationsService } from 'src/app/core/services/ms-office-management/clarifications.service';
 import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
-import { GenerateCveService } from 'src/app/core/services/ms-security/application-generate-clave';
+import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ButtonColumnAddComponent } from 'src/app/shared/components/button-column/button-column-add.component';
@@ -44,10 +49,34 @@ import {
   VALUATION_REQUEST_COLUMNS_VALIDATED_TWO,
 } from './res-cancel-valuation-columns';
 
+interface IExcelToJson {
+  ID_BIENES: number;
+  ID_MOTIVOS1: number;
+  MOTIVOS1: string;
+  ID_MOTIVOS2: number;
+  MOTIVOS2: string;
+  ID_MOTIVOS3: number;
+  MOTIVOS3: string;
+  ID_MOTIVOS4: number;
+  MOTIVOS4: string;
+}
 @Component({
   selector: 'app-res-cancel-valuation',
   templateUrl: './res-cancel-valuation.component.html',
-  styles: [],
+  styles: [
+    `
+      input[type='file']::file-selector-button {
+        margin-right: 20px;
+        border: none;
+        background: #9d2449;
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        /* transition: background.2s ease-in-out; */
+      }
+    `,
+  ],
 })
 export class resCancelValuationComponent extends BasePage implements OnInit {
   //
@@ -139,6 +168,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
   numOne: number;
   numTwo: number;
+  m_comer: IModComerOffice;
+  dataExcel: any = [];
+  fileName: string;
+
   //#endregion
 
   //
@@ -151,109 +184,29 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     private datePipe: DatePipe,
     private dataService: AppraisalsDataService,
     private serviceAppraise: AppraiseService,
-    private generateCveService: GenerateCveService,
     private route: ActivatedRoute,
-    private router: Router,
-    private serviceUser: GenerateCveService,
     private usersService: UsersService,
     private serviceDelegations: DelegationService,
     private serviceDepartments: DepartamentService,
     private jobDictumTextsService: JobDictumTextsService,
     private modalService: BsModalService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private clarificationsService: ClarificationsService,
+    private parameterModService: ParameterModService,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer
   ) {
     super();
-    this.settings = {
-      ...this.settings,
-      actions: false,
-      hideSubHeader: false,
-      columns: {
-        ...VALUATION_REQUEST_COLUMNS,
-        agregarMotivos: {
-          title: 'Agregar Motivo(s)',
-          width: '5%',
-          type: 'custom',
-          sort: false,
-          renderComponent: ButtonColumnAddComponent,
-          onComponentInitFunction: (instance: any) => {
-            instance.onClick.subscribe((row: any) => {
-              console.log(row);
-              let event = row.id_evento;
-              let officeType = this.officeType;
-              let config: ModalOptions = {
-                initialState: {
-                  event,
-                  officeType,
-                  callback: (next: any) => {
-                    if (next) {
-                      console.log(next);
-
-                      let motive = next
-                        .map(item => item.descripcion_motivo)
-                        .join(',');
-                      this.dataGood2.getElements().then(_item => {
-                        let result = _item.map(item => {
-                          if (item.no_bien == row.no_bien) {
-                            item.motivos = motive;
-                          }
-                        });
-                        Promise.all(result).then(resp => {
-                          this.dataGood2.refresh();
-                        });
-                      });
-                      this.dataGoodList.forEach(item => {
-                        if (item.no_bien == row.no_bien) {
-                          item.motivos = motive;
-                        }
-                      });
-                    }
-                  },
-                },
-                class: 'modal-lg modal-dialog-centered',
-                ignoreBackdropClick: true,
-              };
-              this.modalService.show(CancelTableComponent, config);
-            });
-          },
-        },
-        motivosQ: {
-          title: 'Quitar Motivo(s)',
-          width: '5%',
-          type: 'custom',
-          sort: false,
-          renderComponent: ButtonColumnDeleteComponent,
-          onComponentInitFunction: (instance: any) => {
-            instance.onClick.subscribe((row: any) => {
-              console.log(row);
-              this.dataGood2.getElements().then(_item => {
-                let result = _item.map(item => {
-                  if (item.no_bien == row.no_bien) {
-                    item.motivos = '';
-                  }
-                });
-                Promise.all(result).then(resp => {
-                  this.dataGood2.refresh();
-                });
-              });
-              this.dataGoodList.forEach(item => {
-                if (item.no_bien == row.no_bien) {
-                  item.motivos = '';
-                }
-              });
-            });
-          },
-        },
-      },
-    };
+    this.columnsTable();
     this.prepareForm();
     this.form
-
       .get('event')
       .valueChanges.pipe(takeUntil(this.$unSubscribe), debounceTime(500))
       .subscribe({
         next: response => {
           console.log(response);
           if (response && this.form.get('radio').value) {
+            this.tipoOficio = response;
             this.changeRatio(this.form.get('radio').value);
           }
         },
@@ -264,15 +217,17 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           console.log(response);
-
           if (response && this.form.get('event').value) {
+            this.tipoOficio = response;
             this.changeRatio(response);
           }
         },
       });
+    this.m_comer = new IModComerOffice();
   }
 
   private changeRatio(radioValue: any) {
+    console.log(this.event);
     if (this.event != '' && this.event != null) {
       this.btnMotCan = false;
       // this.resetVariables();
@@ -591,6 +546,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     let body: OfficesSend = new OfficesSend();
     body.eventId = event;
     body.officeType = num ? num : 0;
+    this.columnsTable();
     this.getOfficeResponse(body, num, arrayLength);
   }
 
@@ -643,33 +599,19 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       if (!this.validateBienesSelect()) {
         return;
       }
-      let tpOfi = this.officeType();
+      let tpOfi = this.officeType;
+      console.log(tpOfi);
       let idOficio = 0;
-      let body = {
-        officeId: this.form.get('office').value,
-        eventId: this.event,
-        officeType: tpOfi,
-        userInsert: this.formThree.controls['user'].value,
-        remi: this.form.get('remi').value,
-        dest: this.form.get('dest').value,
-        city: this.form.get('cityCi').value,
-        ref: this.form.get('ref').value,
-        aten: this.form.get('aten').value,
-        espe: this.form.get('espe').value,
-        key: this.form.get('key').value,
-      };
-      let dtidOfi: any = await this.insertaOficio(body);
-      dtidOfi.forEach(element => {
-        idOficio = element.id;
-        let mensaje = element.MSJ;
-        if (idOficio == 0 && mensaje != null) {
-          throw new Error(mensaje);
-        }
-      });
+      let dtidOfi: any = await this.insertaOficio();
+      idOficio = dtidOfi.ID_OFICIO;
+      let mensaje = dtidOfi.MSJ;
+      if (idOficio == 0 && mensaje != null) {
+        throw new Error(mensaje);
+      }
       if (tpOfi == 2) {
         await this.insertaBien(idOficio, 0, 'D');
         for (let i = 0; i < goodCheck.length; i++) {
-          await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+          await this.insertaBien(idOficio, goodCheck[i].row.no_bien, 'I');
         }
       } else if (tpOfi == 3) {
         await this.insertaBien(idOficio, 0, 'D');
@@ -684,15 +626,15 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         }
         for (let i = 0; i < goodCheck.length; i++) {
           this.dataGoodList.forEach(async element => {
-            if (element.no_bien == goodCheck[i].no_bien) {
+            if (element.no_bien == goodCheck[i].row.no_bien) {
               await this.insertaMotRev(
-                goodCheck[i].no_bien,
+                goodCheck[i].row.no_bien,
                 this.form.controls['event'].value,
                 this.changeChar(element.motivos.toString()),
                 element.idMotivos.toString(),
                 'I'
               );
-              await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+              await this.insertaBien(idOficio, goodCheck[i].row.no_bien, 'I');
             }
           });
         }
@@ -734,6 +676,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     return partes.length > 1 ? partes[1].trim() : ''; // Seleccionar la segunda parte y eliminar espacios en blanco al principio y al final
   }
   private changeChar(chain: string): string {
+    console.log(chain);
     let replacements = [
       { from: '&nbsp;', to: '' },
       { from: 'nbsp;', to: '' },
@@ -782,35 +725,51 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     return chain;
   }
 
-  async insertaOficio(modeloOficio: any) {
+  async insertaOficio() {
     return new Promise((resolve, reject) => {
-      // this.jobDictumTextsService.getcomerJobsDet(params).subscribe({
-      //   next: response => {
-      //     resolve(response);
-      //   },
-      //   error: error => {
-      //     reject(error);
-      //   },
-      // });
-      reject(null);
+      let body = {
+        TIPO_OFICIO_IN: this.m_comer.tipo_oficio,
+        USUARIO_INSERT_IN: this.m_comer.usuario_insert,
+        REMITENTE_IN: this.m_comer.remitente,
+        DESTINATARIO_IN: this.m_comer.destinatario,
+        CIUDAD_IN: this.m_comer.ciudad,
+        TEXTO1_IN: this.m_comer.texto1,
+        TEXTO2_IN: this.m_comer.texto2,
+        TEXTO3_IN: this.m_comer.texto3,
+        ID_OFICIO_IN: this.m_comer.id_oficio,
+        ID_EVENTO_IN: this.m_comer.id_evento,
+        ID_OFICIO_RES_IN: '',
+        NUM_CV_ARMADA_IN: this.m_comer.num_cv_armada,
+        ID_PROGRAMACION_IN:
+          this.m_comer.id_programacion != null
+            ? this.m_comer.id_programacion
+            : null,
+      };
+      this.clarificationsService.postSpInsertaOficioRespuesta(body).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          reject(null);
+        },
+      });
     });
   }
   async insertaBien(idOficio: number, noBien: number, accion: string) {
     return new Promise((resolve, reject) => {
       let body = {
-        idOficio: idOficio,
-        idBien: noBien,
-        accion: accion,
+        jobId: idOficio,
+        goodNumber: noBien,
+        action: accion,
       };
-      // this.jobDictumTextsService.getcomerJobsDet(params).subscribe({
-      //   next: response => {
-      //     resolve(response);
-      //   },
-      //   error: error => {
-      //     reject(error);
-      //   },
-      // });
-      reject(null);
+      this.parameterModService.postSpInsertGoodRes(body).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          reject(error);
+        },
+      });
     });
   }
   async insertaMotRev(
@@ -822,21 +781,20 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   ) {
     return new Promise((resolve, reject) => {
       let body = {
-        noBien: noBien,
-        idEvento: idEvento,
-        noMotivos: noMotivos,
-        motivos: motivos,
-        accion: accion,
+        goodInNumber: noBien,
+        eventInId: idEvento,
+        reasonsInNumber: noMotivos,
+        reasonsIn: motivos,
+        actionIn: accion,
       };
-      // this.jobDictumTextsService.getcomerJobsDet(params).subscribe({
-      //   next: response => {
-      //     resolve(response);
-      //   },
-      //   error: error => {
-      //     reject(error);
-      //   },
-      // });
-      reject(null);
+      this.clarificationsService.postInsertReasonsRev(body).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          reject(error);
+        },
+      });
     });
   }
   async viewOffice() {
@@ -988,6 +946,36 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     console.log(myBody);
     console.log(address);
     this.loader.load = false;
+    let params = {};
+    this.siabService.fetchReport('blank', params).subscribe(response => {
+      //  response= null;
+      if (response !== null) {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {
+              if (data) {
+                data.map((item: any) => {
+                  return item;
+                });
+              }
+            },
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+        this.loader.load = false;
+      } else {
+        this.onLoadToast('warning', 'advertencia', '');
+        this.loader.load = false;
+      }
+    });
   }
 
   returnIdOffice(): number {
@@ -1062,6 +1050,12 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           .get('radio')
           .setValue('3', { onlySelf: true, emitEvent: false });
         // this.redioValueTwo = true;
+        this.settings = {
+          ...this.settings,
+          hideSubHeader: false,
+          actions: false,
+          columns: VALUATION_REQUEST_COLUMNS_VALIDATED_TWO,
+        };
         this.btnMotCan = false;
       }
     } else {
@@ -1097,6 +1091,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     // //
     if (this.idOficio > 0) {
       let array = await this.getOfficeResponseTwo(body);
+      console.log(array);
       let statusOffice: string;
       for (const [index, i] of array.entries()) {
         await firstValueFrom(this.getCityById(i?.ciudad));
@@ -1129,6 +1124,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         this.tipoOficio = i?.tipo_oficio;
         statusOffice = i?.estatus_of;
         this.statusOffice = i?.estatus_of;
+        this.m_comer = i;
       }
       this.validateFindOfficeOne(statusOffice);
     } else {
@@ -1157,7 +1153,19 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       this.pnlControles2 = false;
       this.setButtons(1);
       if (this.form.get('radio').value == 2) {
+        this.settings = {
+          ...this.settings,
+          hideSubHeader: false,
+          actions: false,
+          columns: VALUATION_REQUEST_COLUMNS_VALIDATED_TWO,
+        };
       } else if (this.form.get('radio').value == 3) {
+        this.settings = {
+          ...this.settings,
+          hideSubHeader: false,
+          actions: false,
+          columns: VALUATION_REQUEST_COLUMNS_VALIDATED_TWO,
+        };
       }
     } else {
       this.pnlControles = true;
@@ -1179,7 +1187,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       this.btnMotCan = false;
     }
     setTimeout(() => {
-      this.marcaBienes(this.idOficio);
+      // this.marcaBienes(this.idOficio);
     }, 3000);
   }
   async marcaBienes(idOficio: number) {
@@ -1255,6 +1263,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.formTwo = this.fb.group({
       allGood: [0],
       selectedGood: [0],
+      file: [null],
     });
     this.formDialogOne = this.fb.group({
       noti: [null],
@@ -1274,9 +1283,120 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         this.findOfficeService(value);
       });
   }
+  columnsTable() {
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      hideSubHeader: false,
+      columns: {
+        ...VALUATION_REQUEST_COLUMNS,
+        agregarMotivos: {
+          title: 'Agregar Motivo(s)',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          renderComponent: ButtonColumnAddComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              console.log(row);
+              let event = row.id_evento;
+              let officeType = this.officeType;
+              let config: ModalOptions = {
+                initialState: {
+                  event,
+                  officeType,
+                  callback: (next: any) => {
+                    if (next) {
+                      console.log(next);
 
+                      let motive = next
+                        .map(item => item.descripcion_motivo)
+                        .join(',');
+                      let idMotive = next.map(item => item.id_motivo).join(',');
+                      this.dataGood2.getElements().then(_item => {
+                        let result = _item.map(item => {
+                          if (item.no_bien == row.no_bien) {
+                            item.motivos = motive;
+                            item.idMotivos = idMotive;
+                          }
+                        });
+                        Promise.all(result).then(resp => {
+                          this.dataGood2.refresh();
+                        });
+                      });
+                      this.dataGood.getElements().then(_item => {
+                        let result = _item.map(item => {
+                          if (item.no_bien == row.no_bien) {
+                            item.motivos = motive;
+                            item.idMotivos = idMotive;
+                          }
+                        });
+                        Promise.all(result).then(resp => {
+                          this.dataGood.refresh();
+                        });
+                      });
+                      this.dataGoodList.forEach(item => {
+                        if (item.no_bien == row.no_bien) {
+                          item.motivos = motive;
+                          item.idMotivos = idMotive;
+                        }
+                      });
+                    }
+                  },
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(CancelTableComponent, config);
+            });
+          },
+        },
+        motivosQ: {
+          title: 'Quitar Motivo(s)',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          renderComponent: ButtonColumnDeleteComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              console.log(row);
+              this.dataGood2.getElements().then(_item => {
+                let result = _item.map(item => {
+                  if (item.no_bien == row.no_bien) {
+                    item.motivos = '';
+                    item.idMotivos = '';
+                  }
+                });
+                Promise.all(result).then(resp => {
+                  this.dataGood2.refresh();
+                });
+              });
+              this.dataGood.getElements().then(_item => {
+                let result = _item.map(item => {
+                  if (item.no_bien == row.no_bien) {
+                    item.motivos = '';
+                    item.idMotivos = '';
+                  }
+                });
+                Promise.all(result).then(resp => {
+                  this.dataGood.refresh();
+                });
+              });
+              this.dataGoodList.forEach(item => {
+                if (item.no_bien == row.no_bien) {
+                  item.motivos = '';
+                  item.idMotivos = '';
+                }
+              });
+            });
+          },
+        },
+      },
+    };
+  }
   obtainsValuedAssets(numOne?: number, numTwo?: number) {
     let data;
+
     if (numOne != null && numTwo != null) {
       this.numOne = numOne;
       this.numTwo = numTwo;
@@ -1299,6 +1419,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     let params = {
       ...this.params.getValue(),
     };
+    this.dataGood.load([]);
+    this.dataGood.refresh();
+    this.totalItems = 0;
+    this.dataGoodList = [];
     this.serviceAppraise.postGetAppraise(data, params).subscribe({
       next: response => {
         console.log(response);
@@ -1350,14 +1474,19 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     let params = {
       ...this.params2.getValue(),
     };
+    this.dataGood.load([]);
+    this.dataGood.refresh();
+    this.totalItems = 0;
+    this.dataGoodList = [];
     this.serviceAppraise.postGetAppraise(data, params).subscribe({
       next: response => {
         console.log(response);
-        if (this.dataGoodList.length > 9) {
+        if (params.page > 2) {
           this.dataGoodList.push(response.data);
-        } else if (this.dataGoodList.length == 0) {
+        } else {
           this.dataGoodList = response.data;
         }
+        console.log(this.dataGoodList);
         this.dataGood2.load(response.data);
         this.dataGood2.refresh();
         this.totalItems2 = response.count;
@@ -1405,77 +1534,86 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   //Export and Import Excel
   exportExcel() {
     // //
-
-    this.loadingExcel = true;
+    let params = {
+      ...this.params2.getValue(),
+    };
     this.loader.load = true;
-    console.log(this.officeType);
-    if (this.officeType + '' === '3') {
-      if (this.cancelData.length > 0) {
-        let haveMotives = false;
-        this.nameExcel = 'Bienes Cancelación';
-        if (haveMotives) {
-          this.nameExcel += ' Motivos de AVA a REV';
-        }
-        this.nameExcel += '.xlsx';
-        this.elementsToExport = this.cancelData.map((x: any) => {
-          let motives = x.motivos;
-          let motivesArray = [];
-          if (motives.includes('/')) {
-            motivesArray = motives
-              .split('/')
-              .filter((x: string) => x.trim().length > 0);
-          } else if (motives.trim().length > 0) {
-            motivesArray.push(motives);
+    this.serviceAppraise
+      .postGetAppraise(this.body2, { ...params, limit: 100000000 })
+      .subscribe({
+        next: resp => {
+          console.log(resp);
+          if (resp && resp.data && resp.data.length > 0) {
+            let bienesArray = [];
+            bienesArray = resp.data.map((row: any) => {
+              return { ...row };
+            });
+            let params = new ListParams();
+            this.serviceJobs
+              .getMoCanById(this.event, { ...params, limit: 100000000 })
+              .subscribe({
+                next: response => {
+                  console.log(response);
+                  this.nameExcel = 'Motivos REV';
+                  this.elementsToExport = response.data[0].map((x: any) => {
+                    let newRow1: any = {
+                      ID_MOTIVOS: x.id_motivo,
+                      MOTIVOS: x.descripcion_motivo,
+                    };
+                    return newRow1;
+                  });
+                  const filename: string = this.nameExcel;
+
+                  bienesArray = resp.data.map((x: any) => {
+                    let newRow: any = {
+                      ID_BIENES: x.no_bien,
+                      ID_MOTIVO1: '',
+                      MOTIVOS1: '',
+                      ID_MOTIVO2: '',
+                      MOTIVOS2: '',
+                      ID_MOTIVO3: '',
+                      MOTIVOS3: '',
+                      ID_MOTIVO4: '',
+                      MOTIVOS4: '',
+                    };
+                    return newRow;
+                  });
+                  const filename1: string = 'Bienes';
+                  const filename2: string = 'RespuestaAvaluo';
+                  this.excelService.exportTwo(
+                    bienesArray,
+                    this.elementsToExport,
+                    {
+                      type: 'xlsx',
+                      filename1,
+                      filename,
+                      filename2,
+                    }
+                  );
+                  this.loader.load = false;
+                },
+                error: error => {
+                  this.loader.load = false;
+                },
+              });
+          } else {
+            this.loader.load = false;
+            this.alert('warning', 'Sin bienes para descargar', '');
           }
-          let newRow: any = { ID_EVENTO: x.id_evento };
-          motivesArray.forEach((motive: string, index: number) => {
-            let title = 'MOTIVO_' + (index + 1);
-            newRow[title] = motive;
-            haveMotives = true;
-          });
-          return newRow;
-        });
-        const filename: string = this.nameExcel;
-        this.excelService.export(this.elementsToExport, {
-          type: 'xlsx',
-          filename,
-        });
-        console.log(this.elementsToExport);
-
-        console.log(this.nameExcel);
-        // this.flagDownload = !this.flagDownload;
-        this.loadingExcel = false;
-        this.loader.load = false;
-      } else {
-        this.loadingExcel = false;
-        this.loader.load = false;
-
-        this.alert('warning', 'Sin bienes para descargar', '');
-      }
-    } else if (this.officeType + '' === '2') {
-      if (this.valuedData.length > 0) {
-        this.nameExcel = 'Bienes Respuesta.xlsx';
-        this.elementsToExport = this.valuedData.map((x: any) => {
-          let newRow: any = { ID_EVENTO: x.eventId, MOTIVOS: x.motivos };
-          return newRow;
-        });
-        this.flagDownload = !this.flagDownload;
-        this.loadingExcel = false;
-        this.loader.load = false;
-      } else {
-        this.loadingExcel = false;
-        this.loader.load = false;
-
-        this.alert('warning', 'Sin bienes para descargar', '');
-      }
-    }
+        },
+        error: error => {
+          if (error.status == 400) {
+            this.loader.load = false;
+            this.alert('warning', 'Sin bienes para descargar', '');
+            // this.alert(
+            //   'warning',
+            //   'Advertencia',
+            //   'No hay bienes para realizar el oficio de respuesta'
+            // );
+          }
+        },
+      });
   }
-  //#endregion
-
-  // Metodo del modal #2
-  // selectedRowsCancel: Array<any> = [];
-
-  updateOffice() {}
 
   private validateSelectes(array: any[]) {
     if (array.length === 0) {
@@ -1511,26 +1649,16 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
   async save() {
     try {
-      if (this.fol.value === null) {
+      if (this.fol.value == null) {
+        console.log(this.fol.value);
         this.alert('warning', 'Es necesario capturar el folio', '');
         return;
       }
-      let tpOfi = this.officeType();
+      let tpOfi = this.officeType;
+      console.log(tpOfi);
+
       let idOficio = 0;
       let bienesTotales = 0;
-      let body = {
-        officeId: this.form.get('office').value,
-        eventId: this.event,
-        officeType: tpOfi,
-        userInsert: this.formThree.controls['user'].value,
-        remi: this.form.get('remi').value,
-        dest: this.form.get('dest').value,
-        city: this.form.get('cityCi').value,
-        ref: this.form.get('ref').value,
-        aten: this.form.get('aten').value,
-        espe: this.form.get('espe').value,
-        key: this.form.get('key').value,
-      };
       if (
         (tpOfi === 3 || tpOfi === 2) &&
         !this.validateSelectes(
@@ -1539,31 +1667,38 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       ) {
         return;
       }
-      let dtidOfi: any = await this.insertaOficio(body);
-      dtidOfi.forEach(element => {
-        idOficio = element.id;
-        let mensaje = element.MSJ;
-        if (idOficio == 0 && mensaje != null) {
-          throw new Error(mensaje);
-        }
-      });
+      let dtidOfi: any = await this.insertaOficio();
+      console.log(dtidOfi);
+      // dtidOfi.forEach(element => {
+      idOficio = dtidOfi.ID_OFICIO;
+      let mensaje = dtidOfi.MSJ;
+      if (idOficio == 0 && mensaje != null) {
+        throw new Error(mensaje);
+      }
+      // });
       if (tpOfi == 2) {
         await this.insertaBien(idOficio, 0, 'D');
         for (let i = 0; i < goodCheck.length; i++) {
-          await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+          await this.insertaBien(idOficio, goodCheck[i].row.no_bien, 'I');
         }
       } else if (tpOfi == 3) {
+        console.log(this.dataGoodList);
+        console.log(goodCheck);
         for (let i = 0; i < goodCheck.length; i++) {
           this.dataGoodList.forEach(async element => {
+            console.log(element.no_bien);
+            console.log(goodCheck[i].no_bien);
+
             if (element.no_bien == goodCheck[i].no_bien) {
+              console.log(element.motivos);
               await this.insertaMotRev(
-                goodCheck[i].no_bien,
+                goodCheck[i].row.no_bien,
                 this.form.controls['event'].value,
-                this.changeChar(element.motivos.toString()),
+                this.changeChar(element.motivos),
                 element.idMotivos.toString(),
                 'I'
               );
-              await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+              await this.insertaBien(idOficio, goodCheck[i].row.no_bien, 'I');
               bienesTotales++;
             }
           });
@@ -1577,7 +1712,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       this.alert('success', '', 'El oficio se guardó correctamente');
       // add setButtons(2) edit setButtons(4)
     } catch (error) {
-      this.alert('warning', '', 'Problema para guardar el oficio');
+      this.alert('warning', '', 'Problema para guardar el oficio' + error);
     }
   }
 
@@ -1598,7 +1733,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         if (this.event && this.event != null) {
           await this.actualizarEstatus(
             this.event,
-            this.form.get('office').value,
+            this.returnIdOffice(),
             this.formThree.controls['user'].value
           );
           this.reset();
@@ -1608,22 +1743,22 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       }
     });
   }
-  async actualizarEstatus(idEvento: number, oficio: string, usuario: string) {
+  async actualizarEstatus(idEvento: number, oficio: number, usuario: string) {
     return new Promise((resolve, reject) => {
       let body = {
-        idEvento: idEvento,
-        oficio: oficio,
-        usuario: usuario,
+        id_evento_in: idEvento,
+        id_oficio_in: oficio,
+        usuario_envia_in: usuario,
+        pc_no_bien: 0,
       };
-      // this.jobDictumTextsService.getcomerJobsDet(params).subscribe({
-      //   next: response => {
-      //     resolve(response);
-      //   },
-      //   error: error => {
-      //     reject(error);
-      //   },
-      // });
-      reject(null);
+      this.clarificationsService.postGetSpEnviaRespuestaOficio(body).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          reject(error);
+        },
+      });
     });
   }
   reset() {
@@ -1654,5 +1789,86 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       clearInterval(this.intervalId);
     }
     this.subscribeDelete.unsubscribe();
+  }
+
+  chargeFile(event: Event) {
+    try {
+      const files = (event.target as HTMLInputElement).files;
+
+      if (!files || files.length !== 1)
+        throw new Error('Please select one file.');
+      this.fileName = files[0].name;
+      console.log(this.fileName);
+      const fileReader = new FileReader();
+      fileReader.readAsBinaryString(files[0]);
+      fileReader.onload = () => this.readExcel(fileReader.result);
+
+      // Lee el contenido binario del archivo
+    } catch (error) {
+      console.error('Error:', error);
+      // Maneja el error de acuerdo a tus necesidades
+    }
+  }
+
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      this.dataExcel = this.excelService.getData<IExcelToJson>(binaryExcel);
+      this.dataExcel.forEach(element => {
+        this.dataGood2.getElements().then(_item => {
+          let result = _item.map(item => {
+            if (item.no_bien == element.ID_BIENES) {
+              item.motivos =
+                (element.MOTIVOS1 ? `${element.MOTIVOS1},` : '') +
+                (element.MOTIVOS2 ? `${element.MOTIVOS2},` : '') +
+                (element.MOTIVOS3 ? `${element.MOTIVOS3},` : '') +
+                `${element.MOTIVOS4}`;
+              item.idMotivos =
+                (element.ID_MOTIVO1 ? `${element.ID_MOTIVO2},` : '') +
+                (element.ID_MOTIVO2 ? `${element.ID_MOTIVO2},` : '') +
+                (element.ID_MOTIVO3 ? `${element.ID_MOTIVO3},` : '') +
+                `${element.ID_MOTIVO4}`;
+            }
+          });
+          Promise.all(result).then(resp => {
+            this.dataGood2.refresh();
+          });
+        });
+        this.dataGood.getElements().then(_item => {
+          let result = _item.map(item => {
+            if (item.no_bien == element.ID_BIENES) {
+              item.motivos =
+                (element.MOTIVOS1 ? `${element.MOTIVOS1},` : '') +
+                (element.MOTIVOS2 ? `${element.MOTIVOS2},` : '') +
+                (element.MOTIVOS3 ? `${element.MOTIVOS3},` : '') +
+                `${element.MOTIVOS4}`;
+              item.idMotivos =
+                (element.ID_MOTIVO1 ? `${element.ID_MOTIVO2},` : '') +
+                (element.ID_MOTIVO2 ? `${element.ID_MOTIVO2},` : '') +
+                (element.ID_MOTIVO3 ? `${element.ID_MOTIVO3},` : '') +
+                `${element.ID_MOTIVO4}`;
+            }
+          });
+          Promise.all(result).then(resp => {
+            this.dataGood.refresh();
+          });
+        });
+        this.dataGoodList.forEach(item => {
+          if (item.no_bien == element.ID_BIENES) {
+            item.motivos =
+              (element.MOTIVOS1 ? `${element.MOTIVOS1},` : '') +
+              (element.MOTIVOS2 ? `${element.MOTIVOS2},` : '') +
+              (element.MOTIVOS3 ? `${element.MOTIVOS3},` : '') +
+              `${element.MOTIVOS4}`;
+            item.idMotivos =
+              (element.ID_MOTIVO1 ? `${element.ID_MOTIVO2},` : '') +
+              (element.ID_MOTIVO2 ? `${element.ID_MOTIVO2},` : '') +
+              (element.ID_MOTIVO3 ? `${element.ID_MOTIVO3},` : '') +
+              `${element.ID_MOTIVO4}`;
+          }
+        });
+      });
+    } catch (error) {
+      this.onLoadToast('error', 'Ocurrio un error al leer el archivo' + error);
+    }
   }
 }

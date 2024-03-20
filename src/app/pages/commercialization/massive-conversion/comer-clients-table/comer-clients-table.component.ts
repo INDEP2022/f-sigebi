@@ -2,7 +2,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { GuarantyService } from 'src/app/core/services/ms-guaranty/guaranty.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
@@ -25,6 +28,7 @@ export class ComerClientsTableComponent extends BasePage implements OnInit {
 
   listObjects: any[] = [];
   @ViewChild('table', { static: false }) table: any;
+
   object: any;
 
   c_RESUL: string;
@@ -38,6 +42,10 @@ export class ComerClientsTableComponent extends BasePage implements OnInit {
   c_RELL: string = '';
 
   clientes: cliente[] = [];
+
+  idEvent: number = 0;
+
+  columnFilters: any = [];
 
   constructor(
     private modalRef: BsModalRef,
@@ -64,7 +72,47 @@ export class ComerClientsTableComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.params = this.pageFilter(this.params);
+    //Tabla de Datos
+    this.source
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'idEvent':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'idClient':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'rfc':
+                searchFilter = SearchFilter.LIKE;
+                break;
+              case 'client':
+                searchFilter = SearchFilter.LIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.LIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getData());
+        }
+      });
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -81,30 +129,45 @@ export class ComerClientsTableComponent extends BasePage implements OnInit {
     this.params.getValue()['sortBy'] = `rfc:DESC`;
     let params = {
       ...this.params.getValue(),
-      //...this.columnFiltersReprocess,
+      ...this.columnFilters,
     };
 
     this.guarantyService.idEventXClient(params).subscribe({
       next: resp => {
-        this.source = resp.data;
+        this.source.load(resp.data);
+        this.source.refresh();
         this.totalItems = resp.count;
         this.loading = false;
       },
       error: error => {
+        this.source.load([]);
+        this.source.refresh();
         this.totalItems = 0;
         this.loading = false;
       },
     });
   }
 
-  objectBuilder: string = '';
-  miArray: [] = [];
-
   reProcess() {
-    if (this.listObjects.length >= 2) {
-      for (let i = 0; i < this.listObjects.length; i++) {
-        //console.log('this.object[i]', this.object[i]);
+    this.c_RESUL = '';
+    this.c_TIPO = '';
+    this.t_CLIENTES = '';
+    this.n_CONT = 0;
+    this.n_CONL = 0;
+    this.n_CONP = 0;
+    this.n_CONE = 0;
+    this.n_CONK = 0;
+    this.c_RELL = '';
+    this.clientes = [];
 
+    if (this.listObjects.length == 0) {
+      this.alertInfo('warning', 'No ha seleccionado ningún registro', '');
+    }
+
+    if (this.listObjects.length >= 2) {
+      console.log('Mayor a 1');
+
+      for (let i = 0; i < this.listObjects.length; i++) {
         this.clientes.push(
           new cliente(
             this.object[i].idEvent,
@@ -133,15 +196,30 @@ export class ComerClientsTableComponent extends BasePage implements OnInit {
           this.n_CONK = resp.n_CONK;
           this.n_CONT = resp.n_CONT;
 
-          const rfc = resp.t_CLIENTES[1].RFC;
+          const registerResponse = resp.t_CLIENTES.length;
+          let uniqueValues = new Set();
 
-          this.executeValids(this.n_CONL, this.n_CONK, this.n_CONT, rfc);
+          for (let i = 1; i < registerResponse; i++) {
+            uniqueValues.add(resp.t_CLIENTES[i].RFC);
+
+            // this.c_RELL = `${this.c_RELL}, ${resp.t_CLIENTES[i].RFC}`;
+          }
+
+          this.c_RELL = Array.from(uniqueValues).join(', ');
+
+          this.executeValids(
+            this.n_CONL,
+            this.n_CONK,
+            this.n_CONT,
+            this.c_RELL
+          );
         },
         error: error => {
           console.log('Error de postTbClientsEvent', error);
         },
       });
     } else if (this.listObjects.length == 1) {
+      console.log('Igual a 1');
       this.allEvent();
     }
   }
@@ -157,13 +235,17 @@ export class ComerClientsTableComponent extends BasePage implements OnInit {
     );
 
     if (n_CONL == 0) {
-      this.alert('success', 'No se seleccionó algún Cliente', '');
+      this.alert('warning', 'No se seleccionó algún Cliente', '');
     } else if (n_CONK >= 1) {
-      this.alert(
+      this.alertInfo(
         'success',
-        `Clientes con dispersión definitiva:${this.c_RELL}`,
-        ''
-      );
+        'Ejecución Correcta',
+        `Clientes con dispersión definitiva:${rfc}`
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.deselectRows();
+        }
+      });
     } else if (n_CONT == n_CONL) {
       //const id_evento = this.idEventTMP;
       const id_evento = this.idEvent;
@@ -183,11 +265,13 @@ export class ComerClientsTableComponent extends BasePage implements OnInit {
                 ''
               );
               this.c_RESUL = 'OK';
+              this.deselectRows();
             },
             error: error => {
               console.log('Error respuesta de paGarantXLote', error);
               this.alert('warning', 'El Reproceso no se realizó', '');
               this.c_RESUL = 'ERROR';
+              this.deselectRows();
             },
           });
         }
@@ -208,11 +292,13 @@ export class ComerClientsTableComponent extends BasePage implements OnInit {
                 console.log('respuesta de paGarantXLote', resp);
                 this.alert('success', `Cliente: ${rfc}, ${this.c_RESUL}`, '');
                 this.c_RESUL = 'OK';
+                this.deselectRows();
               },
               error: error => {
                 console.log('Error respuesta de paGarantXLote', error);
                 this.alert('warning', 'El Reproceso no se realizó', '');
                 this.c_RESUL = 'ERROR';
+                this.deselectRows();
               },
             });
           }
@@ -223,13 +309,28 @@ export class ComerClientsTableComponent extends BasePage implements OnInit {
     }
   }
 
+  deselectRows() {
+    this.listObjects.splice(0, this.listObjects.length);
+    this.table.grid.dataSet['willSelect'] = [];
+    this.table.grid.dataSet.deselectAll();
+  }
+
   allEvent() {
-    //const id_evento = this.idEventTMP;
-    const id_evento = this.idEvent;
+    this.c_RESUL = '';
+    this.c_TIPO = '';
+    this.t_CLIENTES = '';
+    this.n_CONT = 0;
+    this.n_CONL = 0;
+    this.n_CONP = 0;
+    this.n_CONE = 0;
+    this.n_CONK = 0;
+    this.c_RELL = '';
+    //const id_evento = this.idEvent;
+    const id_evento = this.idEventTMP;
 
     this.alertQuestion(
       'question',
-      'Se reprocesará todo el Evento',
+      `Se reprocesará todo el Evento ${this.idEventTMP}`,
       '¿Continuar?'
     ).then(question => {
       if (question.isConfirmed) {
@@ -252,8 +353,6 @@ export class ComerClientsTableComponent extends BasePage implements OnInit {
       }
     });
   }
-
-  idEvent: number = 0;
 
   selectRows(event: any) {
     console.log('event.selected', event);
