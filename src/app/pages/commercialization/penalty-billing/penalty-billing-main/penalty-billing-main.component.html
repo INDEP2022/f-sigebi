@@ -149,14 +149,13 @@
               <div class="d-flex justify-content-end">
                 <div class="d-inline">
                   <button
-                    [disabled]="!valResult"
                     type="button"
                     tooltip="Ver más coincidencias"
                     class="btn btn-primary btn-sm active mr-3"
                     (click)="openModalSearch()">
                     <i class="bx bx-list-plus bx-sm float-icon"></i>
                   </button>
-                  <button
+                  <!-- <button
                     [ngClass]="{ loading: loadingSearch }"
                     [disabled]="loadingSearch"
                     type="button"
@@ -166,7 +165,7 @@
                     <i
                       *ngIf="!loadingSearch"
                       class="bx bx-search-alt bx-sm float-icon"></i>
-                  </button>
+                  </button> -->
                   <button
                     type="button"
                     class="btn btn-info btn-sm active mr-3"
