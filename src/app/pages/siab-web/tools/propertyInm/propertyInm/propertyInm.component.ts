@@ -146,7 +146,7 @@ export class PropertyInmComponent extends BasePage implements OnInit {
       ...this.params1.getValue(),
       ...this.columnFilters1,
     };
-
+    console.log(this.array);
     params['filter.clasif'] = `$in:${this.array}`;
     console.log(params);
 
@@ -163,10 +163,6 @@ export class PropertyInmComponent extends BasePage implements OnInit {
         this.totalItems1 = 0;
         this.good.load([]);
         this.good.refresh();
-
-        // En caso de error, restaura this.array a su estado anterior
-        this.array = [...this.tempArray];
-
         this.loading1 = false;
       },
     });
@@ -291,6 +287,18 @@ export class PropertyInmComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'no_of_gestion':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fecha_desahogo':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fecha_dictamen_procedencia':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fecha_captura_acta_recepcion':
+                filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
