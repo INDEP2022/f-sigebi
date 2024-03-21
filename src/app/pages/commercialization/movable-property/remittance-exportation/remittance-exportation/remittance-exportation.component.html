@@ -81,11 +81,21 @@
 
       <div class="row pt-3">
         <div class="col-md-2">
-          <app-event-type-shared
+          <ng-custom-select-loading
+            [form]="form"
+            formControlName="typeEvent"
+            [multiple]="false"
+            label="Tipo de Evento"
+            value="id"
+            bindLabel="description"
+            paramSearch="search"
+            path="event/api/v1/comer-tevents">
+          </ng-custom-select-loading>
+          <!-- <app-event-type-shared
             [form]="form"
             formControlName="event"
             (onEventsChange)="event()"
-            [bindLabel]="'id'"></app-event-type-shared>
+            [bindLabel]="'id'"></app-event-type-shared> -->
         </div>
         <div class="col-md-2">
           <form-field [control]="form.get('idEvent')" label="ID Evento">

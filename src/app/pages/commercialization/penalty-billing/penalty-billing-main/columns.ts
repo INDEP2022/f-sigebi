@@ -68,7 +68,7 @@ export const PEN_INVOICING_COLUMNS = {
     title: 'Serie',
     sort: false,
   },
-  folioinvoiceId: {
+  Invoice: {
     title: 'Folio',
     sort: false,
     filter: {
