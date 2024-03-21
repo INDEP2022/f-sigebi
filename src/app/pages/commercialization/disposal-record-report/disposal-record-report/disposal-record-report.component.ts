@@ -121,16 +121,15 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
     }
 
     let params = {
-      PN_DELEGACION: this.form.controls['delegation'].value,
-      PN_SUBDELEGACION: this.form.controls['subdelegation'].value,
-      PN_EXPINI: this.form.controls['PN_EXPINI'].value,
-      PN_EXPFIN: this.form.controls['PN_EXPFIN'].value,
-      PC_ACTA: this.estatus,
-      PF_ELABIN: formattedELABIN,
-      PF_ELABFIN: formattedELABFIN,
-      PN_ACTAINI: this.form.controls['PN_ACTAINI'].value,
-      PN_ACTAFIN: this.form.controls['PN_ACTAFIN'].value,
-      // noFile: this.form.controls['noFile'].value,
+      pn_delegacion: this.form.controls['delegation'].value,
+      pn_subdelegacion: this.form.controls['subdelegation'].value,
+      pn_expini: this.form.controls['PN_EXPINI'].value,
+      pn_expfin: this.form.controls['PN_EXPFIN'].value,
+      pc_acta: this.estatus,
+      pf_elabin: formattedELABIN,
+      pf_elabfin: formattedELABFIN,
+      pn_actaini: this.form.controls['PN_ACTAINI'].value,
+      pn_actafin: this.form.controls['PN_ACTAFIN'].value,
     };
 
     console.log(params);
@@ -169,7 +168,7 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
       );
       return;
     }*/
-    this.onSubmit();
+    this.onSubmit(params);
     /*setTimeout(() => {
       this.onLoadToast('success', 'Reporte generado', '');
     }, 2000);*/
@@ -248,9 +247,10 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
     console.log(event);
   }
 
-  onSubmit() {
-    if (this.params != null) {
-      this.siabService.fetchReport('RGERDESACTAENAJEN', this.params).subscribe({
+  onSubmit(params: any) {
+    if (params != null) {
+      console.log(params);
+      this.siabService.fetchReport('RGERDESACTAENAJEN', params).subscribe({
         next: res => {
           if (res !== null) {
             const blob = new Blob([res], { type: 'application/pdf' });
