@@ -129,6 +129,7 @@ export class PhotosAssetsComponent
     if (this.idRequest) {
       this.params.getValue()['filter.requestId'] = this.idRequest;
       this.params.getValue()['filter.applicationId'] = null;
+      this.params.getValue()['filter.status'] = '$not:STI';
       this.goodFinderService.goodFinder(this.params.getValue()).subscribe({
         next: async (data: any) => {
           if (data.data.length > 0) {

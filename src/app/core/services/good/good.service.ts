@@ -10,6 +10,7 @@ import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGood } from '../../models/good/good.model';
 import { IAttribGoodBad, IGoodSiab } from '../../models/ms-good/good';
+import { StrategyServiceService } from '../ms-strategy/strategy-service.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +22,8 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
   private readonly route: string = 'pendiente/parametros';
   constructor(
     private goodRepository: Repository<IGood>,
-    private http: HttpClient
+    private http: HttpClient,
+    private strategy: StrategyServiceService
   ) {
     super();
     this.microservice = GoodEndpoints.Good;
@@ -291,6 +293,17 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
   updateGoodTable(good: IGood | any) {
     //Homologar descripción
     good.description = good?.goodDescription ?? good.description;
+
+    if (good.unit == null && good.unitMeasure != null) {
+      const params = new ListParams();
+      params['filter.nbCode'] = good.unitMeasure;
+      this.strategy.getMedUnits(params).subscribe({
+        next: resp => {
+          good.unit = resp.data[0].unit;
+        },
+        error: error => {},
+      });
+    }
 
     //Para homologar los atributos
     switch (Number(good?.goodTypeId)) {

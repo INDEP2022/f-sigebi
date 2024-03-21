@@ -1052,6 +1052,9 @@ export class RegistrationOfRequestsComponent
       task['idTransferee'] = this.requestData?.transferenceId;
       task['idAuthority'] = this.requestData?.authorityId;
       task['idDelegationRegional'] = user.department;
+      task['activityName'] = 'Aprobar Solicitud';
+      task['processName'] = 'SOLICITUD_TRANSFERENCIA';
+      //task['outcome'] = ''
 
       this.taskService.createTask(task).subscribe({
         next: resp => {
