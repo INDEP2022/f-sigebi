@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { ClarificationsEndpoints } from 'src/app/common/constants/endpoints/officemanagement/ms-clarifications-endpoint';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
@@ -18,5 +19,17 @@ export class ClarificationsService extends HttpService {
       ClarificationsEndpoints.Clarifications,
       params
     );
+  }
+  postSpInsertaOficioRespuesta(body: any): Observable<any> {
+    const route = ClarificationsEndpoints.SpInsertaOficioRespuesta;
+    return this.post(`${route}`, body);
+  }
+  postInsertReasonsRev(body: any): Observable<any> {
+    const route = ClarificationsEndpoints.InsertReasonsRev;
+    return this.post(`${route}`, body);
+  }
+  postGetSpEnviaRespuestaOficio(body: any): Observable<any> {
+    const route = ClarificationsEndpoints.GetSpEnviaRespuestaOficio;
+    return this.post(`${route}`, body);
   }
 }

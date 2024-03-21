@@ -9,18 +9,16 @@ export const VALUATION_REQUEST_COLUMNS = {
     filter: false,
     renderComponent: CheckboxElementComponent,
     valuePrepareFunction: (isSelected: any, row: any) => {
-      return goodCheck.find((e: any) => e.row.no_bien == row.no_bien)
+      return goodCheck.find((e: any) => e.no_bien == row.no_bien)
         ? true
         : false;
     },
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         if (data.toggle) {
-          goodCheck.push(data);
+          goodCheck.push(data.row);
         } else {
-          goodCheck = goodCheck.filter(
-            valor => valor.row.no_bien != data.row.no_bien
-          );
+          goodCheck = goodCheck.filter(valor => valor.no_bien != data.no_bien);
         }
       });
     },

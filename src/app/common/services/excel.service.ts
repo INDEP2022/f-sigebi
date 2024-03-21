@@ -13,6 +13,8 @@ const XLSX_EXTENSIONS = {
 const EXCEL_EXTENSION = '.xlsx';
 interface IXLSXExportConfig {
   filename: string;
+  filename1?: string;
+  filename2?: string;
   type?: 'xlsx' | 'csv';
 }
 
@@ -36,6 +38,20 @@ export class ExcelService {
     };
     const buffer = write(workBook, { bookType: type, type: 'array' });
     this.saveFile(buffer, filename, XLSX_EXTENSIONS[type]);
+  }
+
+  exportTwo(
+    json: any[],
+    json1: any[],
+    { type = 'xlsx', filename, filename1, filename2 }: IXLSXExportConfig
+  ) {
+    const wb: WorkBook = utils.book_new();
+    const hoja1: WorkSheet = utils.json_to_sheet(json);
+    const hoja2: WorkSheet = utils.json_to_sheet(json1);
+    utils.book_append_sheet(wb, hoja1, filename1);
+    utils.book_append_sheet(wb, hoja2, filename);
+    const buffer = write(wb, { bookType: type, type: 'array' });
+    this.saveFile(buffer, filename2, XLSX_EXTENSIONS[type]);
   }
 
   private saveFile(buffer: any, filename: string, extension: string): void {

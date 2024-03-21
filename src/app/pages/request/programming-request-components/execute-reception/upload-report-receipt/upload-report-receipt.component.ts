@@ -622,7 +622,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     }
 
     let types = [
-      174, 7, 192, 108, 183, 26, 27, 50, 68, 217, 94, 40, 101, 105, 104, 72,
+      2, 174, 7, 192, 108, 183, 26, 27, 50, 68, 217, 94, 40, 101, 105, 104, 72,
       222, 223, 224, 225, 245, 246, 249,
     ];
 
@@ -630,7 +630,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       const token = this.authService.decodeToken();
 
       const formData = {
-        dDocTitle: "DOC_.pdf",
+        dDocTitle: 'DOC_.pdf',
         dDocAuthor: token.name,
         dDocType: '.pdf',
         dDocCreator: token.name,
@@ -643,8 +643,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         xcargoRemitente: null,
         texto: 'prueba_unir',
       };
-
-
 
       const extension = '.pdf';
       const docName = 'Documento.pdf';

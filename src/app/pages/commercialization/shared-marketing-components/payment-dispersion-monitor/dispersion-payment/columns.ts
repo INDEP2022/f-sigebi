@@ -288,10 +288,24 @@ export const COLUMNS_PAYMENT_LOT = {
     valuePrepareFunction: (isSelected: any, row: any) => {
       return row.transferent.nameTransferent;
     },
+    filterFunction(): boolean {
+      return true;
+    },
   },
-  desc_tipo: {
+  type: {
     title: 'Pago Origen',
     type: 'text',
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Todos',
+        list: [
+          { value: 'N', title: 'NORMAL' },
+          { value: 'P', title: 'PENALIZACIÓN' },
+          { value: 'D', title: 'DEVOLUCIÓN' },
+        ],
+      },
+    },
     sort: false,
     valuePrepareFunction: (isSelected: any, row: any) => {
       switch (row.type) {
@@ -307,6 +321,9 @@ export const COLUMNS_PAYMENT_LOT = {
         default:
           return null;
       }
+    },
+    filterFunction(): boolean {
+      return true;
     },
   },
 };
