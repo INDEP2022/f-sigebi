@@ -1359,7 +1359,6 @@ export class RequestCompDocTasksComponent
 
       case 'register-abandonment-goods':
       case 'register-declaration-abandonment':
-      case 'register-abandonment-instruction':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
           return false;
@@ -1376,6 +1375,51 @@ export class RequestCompDocTasksComponent
           this.showWarning('Suba la documentación correspondiente');
           return false;
         }
+        break;
+
+      case 'register-abandonment-instruction':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
+          return false;
+        }
+
+        break;
+      case 'verify-compliance-abandonment':
+        if (!this.validate.vercom) {
+          this.showWarning('Verifique el cumplimiento de los artículos');
+          return false;
+        }
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning('Genere el Dictamen de Devolución');
+          return false;
+        }
+
+        break;
+      case 'approve-abandonment':
+        reportLoad = await this.getStatusReport();
+
+        if (!reportLoad.isSigned) {
+          this.showWarning('Firme el dictamen de resarcimiento');
+          return false;
+        }
+
         break;
 
       case 'register-protections-goods':
