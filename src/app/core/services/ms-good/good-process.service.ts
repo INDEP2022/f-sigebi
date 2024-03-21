@@ -422,4 +422,8 @@ export class GoodProcessService extends HttpService {
       params
     );
   }
+
+  postCloneProcess(body: { process: string }) {
+    return this.post('application/copy-process', body);
+  }
 }

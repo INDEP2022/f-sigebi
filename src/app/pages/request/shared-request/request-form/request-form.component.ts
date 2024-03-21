@@ -89,6 +89,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   selectedRegDel: any = null;
   displayOfficeCenter: boolean = false;
+  displayOfficeCenterED: boolean = false;
   currentRequest: any = null;
 
   constructor(
@@ -432,21 +433,21 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   affairChange(e: any) {
     console.log('asunto ... ', e);
-    if (
-      e.processDetonate == 'ABANDONO' ||
-      e.processDetonate == 'EXT_DOMINIO' ||
-      e.processDetonate == 'DECOMISO'
-    ) {
-      this.displayOfficeCenter = true;
-    } else {
-      this.displayOfficeCenter = false;
-    }
+    // if (
+    //   e.processDetonate == 'ABANDONO' ||
+    //   e.processDetonate == 'EXT_DOMINIO' ||
+    //   e.processDetonate == 'DECOMISO'
+    // ) {
+    //   this.displayOfficeCenter = true;
+    // } else {
+    //   this.displayOfficeCenter = false;
+    // }
 
     if (
+      e.id == '27' ||
+      e.id == '30' ||
       e.id == '98' ||
       e.id == '99' ||
-      e.id == '100' ||
-      e.id == '101' ||
       e.id == '102' ||
       e.id == '103' ||
       e.id == '104' ||
@@ -455,17 +456,27 @@ export class RequestFormComponent extends BasePage implements OnInit {
       e.id == '107'
     ) {
       this.displayOfficeCenter = true;
+      this.displayOfficeCenterED = false;
+    } else if (e.id == '16' || e.id == '100' || e.id == '101') {
+      this.displayOfficeCenter = false;
+      this.displayOfficeCenterED = true;
     } else {
+      this.displayOfficeCenterED = false;
       this.displayOfficeCenter = false;
     }
   }
 
   openModalSelectUser() {
+    let central = this.displayOfficeCenter || this.displayOfficeCenterED;
+    if (this.displayOfficeCenterED) {
+      central = this.requestForm.get('targetUserType').value == 'TE';
+    }
+    console.log(this.op);
     let config: ModalOptions = {
       initialState: {
         request: this.requestForm.value,
         op: this.op,
-        officeCentral: this.displayOfficeCenter,
+        officeCentral: central,
         /*callback: (next: boolean) => {
           if (next) this.getExample();
         },*/
@@ -501,6 +512,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         this.loadingTurn = true;
         const form = this.requestForm.getRawValue();
         form.id = this.requestId;
+        form.version = 1;
         form.requestStatus = this.op != 2 ? 'POR_TURNAR' : 'Recepcion';
         let date = this.requestForm.controls['applicationDate'].value;
         form.applicationDate = date.toISOString();

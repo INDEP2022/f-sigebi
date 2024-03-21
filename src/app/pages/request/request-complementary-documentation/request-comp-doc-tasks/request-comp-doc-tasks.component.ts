@@ -30,7 +30,6 @@ import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/samp
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
-import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 import { DELEGATION_COLUMNS_REPORT } from '../../../../../app/pages/siab-web/commercialization/report-unsold-goods/report-unsold-goods/columns';
 import { SendRequestEmailComponent } from '../../destination-information-request/send-request-email/send-request-email.component';
@@ -348,24 +347,13 @@ export class RequestCompDocTasksComponent
       return;
     }
 
-    if (this.process == 'review-result-protection') {
-      //this.showReportInfo(0, 0, '', '');
-      await this.getSampleCSJ(sample => {
-        this.openSignature({
-          reportFolio: sample.sampleId,
-          contentId: sample.contentId,
-        });
-      });
-
-      return;
-    }
-
     const initialState: Partial<CreateReportComponent> = {
       signReport: this.signedReport && this.nextTurn,
       editReport: this.editReport && this.nextTurn,
       tableName: this.reportTable,
       documentTypeId: doc,
       process: this.process,
+      reVersion: this.requestInfo.detail.version,
       requestId: this.requestId.toString(),
     };
 
@@ -743,7 +731,7 @@ export class RequestCompDocTasksComponent
   }
 
   updateRequest(alert = true, execute = () => {}) {
-    this.updateInfo = true;
+    this.updateInfo = !this.updateInfo;
     let request: any = { ...this.requestInfo.detail };
 
     this.requestService.update(this.requestId, request).subscribe({
@@ -919,6 +907,9 @@ export class RequestCompDocTasksComponent
     }
 
     this.requestInfo.detail.rejectionComment = data.comment;
+    let version = parseInt(this.requestInfo.detail.version);
+    this.requestInfo.detail.version = version + 1;
+
     this.updateRequest(false);
 
     this.taskService.createTaskWitOrderService(body).subscribe({
@@ -1456,7 +1447,7 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'review-result-protection':
-        if (!reportLoad.isSigned) {
+        if (this.requestInfo.detail.dataSheet == 'OCSJ') {
           this.showWarning('Firme el reporte de oficio jurídico');
           return false;
         }
@@ -1664,27 +1655,25 @@ export class RequestCompDocTasksComponent
     let report = await this.getStatusReport();
     report = report.isValid ? report.data[0] : report;
 
-    this.wContentService
-      .downloadDinamycReport(
-        'sae.rptdesign',
-        this.reportTable,
-        this.requestId.toString(),
-        data.documentTypeId
-      )
-      .subscribe({
-        next: response => {
-          //let blob = this.dataURItoBlob(response);
-          let file = new Blob([response], { type: 'application/pdf' });
-          const fileURL = URL.createObjectURL(file);
-          this.openPrevPdf(fileURL);
-        },
-        error: error => {
-          this.showError('Vista previa no dipoonible');
-        },
-      });
-
-    /*if (isNullOrEmpty(report.ucmDocumentName)) {
-      
+    if (isNullOrEmpty(report.ucmDocumentName)) {
+      this.wContentService
+        .downloadDinamycReport(
+          'sae.rptdesign',
+          this.reportTable,
+          this.requestId.toString(),
+          data.documentTypeId
+        )
+        .subscribe({
+          next: response => {
+            //let blob = this.dataURItoBlob(response);
+            let file = new Blob([response], { type: 'application/pdf' });
+            const fileURL = URL.createObjectURL(file);
+            this.openPrevPdf(fileURL);
+          },
+          error: error => {
+            this.showError('Vista previa no dipoonible');
+          },
+        });
     } else {
       this.wContentService.obtainFile(report.ucmDocumentName).subscribe({
         next: response => {
@@ -1693,9 +1682,9 @@ export class RequestCompDocTasksComponent
           const fileURL = URL.createObjectURL(file);
           this.openPrevPdf(fileURL);
         },
-        error: error => { },
+        error: error => {},
       });
-    }*/
+    }
   }
 
   dataURItoBlob(dataURI: any) {
@@ -1731,6 +1720,7 @@ export class RequestCompDocTasksComponent
     params['filter.documentTypeId'] = `$eq:${ids[position]}`;
     params['filter.tableName'] = `$eq:${this.reportTable}`;
     params['filter.registryId'] = `$eq:${this.requestId}`;
+    params['filter.version'] = `$eq:${this.requestInfo.detail.version}`;
 
     return new Promise<any>(resolve => {
       this.reportgoodService.getReportDynamic(params).subscribe({
@@ -1782,46 +1772,44 @@ export class RequestCompDocTasksComponent
   ): Promise<void> {
     let report = await this.getStatusReport();
     report = report.isValid ? report.data[0] : report;
-    let docId = report.isValid ? report.documentTypeId : this.reportId;
+    let docId = isNullOrEmpty(report.isValid)
+      ? report.documentTypeId
+      : this.reportId;
 
     const formOnly = true;
     const nameSignatoryRuling = this.requestInfo.detail.nameSignatoryRuling;
     const postSignatoryRuling = this.requestInfo.detail.postSignatoryRuling;
     const typeSign = this.requestInfo.detail.nameRecipientRuling;
 
-    if (!this.signReport) {
-      let config: ModalOptions = {
-        initialState: {
-          requestId: this.requestId,
-          reportId: docId,
-          reportTable: this.reportTable,
-          idSample: idSample,
-          contentId: contentId,
-          typeAnnex: typeAnnex,
-          nameSignatoryRuling,
-          postSignatoryRuling,
-          typeSign,
-          formOnly,
-          callback: async (responsibleSae, saePosition, typeSign) => {
-            this.requestInfo.detail.nameSignatoryRuling = responsibleSae;
-            this.requestInfo.detail.postSignatoryRuling = saePosition;
-            this.requestInfo.detail.nameRecipientRuling = typeSign;
-            this.updateRequest(false, () => {
-              if (typeSign == 'electronica') {
-                this.openFirma(true);
-              } else {
-                this.showReportInfo(idSample, docId, typeSign, typeAnnex, null);
-              }
-            });
-          },
+    let config: ModalOptions = {
+      initialState: {
+        requestId: this.requestId,
+        reportId: docId,
+        reportTable: this.reportTable,
+        idSample: idSample,
+        contentId: contentId,
+        typeAnnex: typeAnnex,
+        nameSignatoryRuling,
+        postSignatoryRuling,
+        typeSign,
+        formOnly,
+        callback: async (responsibleSae, saePosition, typeSign) => {
+          this.requestInfo.detail.nameSignatoryRuling = responsibleSae;
+          this.requestInfo.detail.postSignatoryRuling = saePosition;
+          this.requestInfo.detail.nameRecipientRuling = typeSign;
+          this.updateRequest(false, () => {
+            if (typeSign == 'electronica') {
+              this.openFirma(true);
+            } else {
+              this.showReportInfo(idSample, docId, typeSign, typeAnnex, null);
+            }
+          });
         },
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      };
-      this.modalService.show(component, config);
-    } else {
-      this.showReportInfo(idSample, 0, '', '', contentId);
-    }
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(component, config);
   }
 
   showReportInfo(
@@ -1861,7 +1849,7 @@ export class RequestCompDocTasksComponent
               this.uploadDocument(idSample, typeDocument);
             }
           } else if (typeFirm == 'electronica') {
-            this.firmarReporte();
+            this.firmarReporte(data);
           }
         },
       },
@@ -1876,82 +1864,35 @@ export class RequestCompDocTasksComponent
     config.initialState = {
       typeDoc: typeDocument,
       idSample: id,
-      callback: async data => {
-        if (data) {
+      requestId: this.requestId,
+
+      callback: async (check, contentId) => {
+        if (check) {
           //this.getInfoSample();
           //reporte dinamico marcar como firmado
-          this.firmarReporte();
+          this.firmarReporte(contentId);
         }
       },
     };
-
     this.modalService.show(UploadReportReceiptComponent, config);
   }
 
   //Reportes dinamicos
   //Firma de reportes
 
-  async firmarReporte() {
+  async firmarReporte(contentId = null) {
+    console.log('Firmar reporte content', contentId);
+
     const user: any = this.authService.decodeToken();
     let report = await this.getStatusReport();
     report = report.data[0];
+    report.ucmDocumentName = contentId;
     report.signedReport = 'Y';
     report.modificationUser = user.username;
     report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
-    this.reportgoodService.saveReportDynamic(report).subscribe({
+    this.reportgoodService.saveReportDynamic(report, false).subscribe({
       next: resp => {},
       error: err => {},
-    });
-  }
-
-  createSample(contentId) {
-    const sample: any = {
-      regionalDelegationId: 0,
-      startDate: moment(new Date()).format('YYYY-MM-DD'),
-      endDate: moment(new Date()).format('YYYY-MM-DD'),
-      speciesInstance: 'DOC_COMPLEMENTARIA',
-      numeraryInstance: 'DOC_COMPLEMENTARIA',
-      warehouseId: this.requestId,
-      version: 1,
-      transfereeId: this.reportId,
-      contentId: contentId,
-    };
-
-    return new Promise<any>(resolve => {
-      return this.samplingGoodService.createSample(sample).subscribe({
-        next: async resp => {
-          //this.version.reportFolio = response.sampleId;
-          //this.saveVersionsDoc(false, this.version);
-          resolve(resp);
-        },
-        error: err => {
-          resolve(err);
-        },
-      });
-    });
-  }
-
-  async getSampleCSJ(execute = sample => {}) {
-    const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.warehouseId'] = `$eq:${this.requestId}`;
-
-    this.samplingGoodService.getSample(params.getValue()).subscribe({
-      next: async response => {
-        if (response.data.length > 0) {
-          execute(response.data[0]);
-        } else {
-          this.uploadOficioCSJ(async contentId => {
-            let row = await this.createSample(contentId);
-            execute(row);
-          });
-        }
-      },
-      error: error => {
-        this.uploadOficioCSJ(async contentId => {
-          let row = await this.createSample(contentId);
-          execute(row);
-        });
-      },
     });
   }
 
@@ -1960,59 +1901,7 @@ export class RequestCompDocTasksComponent
     this.associeRequest = !event;
   }
 
-  uploadOficioCSJ(execute) {
-    let urlBaseReport = `${environment.API_URL}processgoodreport/report/showReport?nombreReporte=`;
-    urlBaseReport += `situacion_juridica_amparo.jasper&ID_SOLICITUD=${this.requestId}&ID_TIPO_DOCTO=${this.reportId}`;
-
-    let token = this.authService.decodeToken();
-    const docName = 'situacion_juridica_amparo';
-    const extension = '.pdf';
-    const nombreDoc = `Oficio de Cambio de Situación Jurídica${extension}`;
-    const contentType: string = '.pdf';
-    const formData = {
-      keyDoc: docName,
-      xDelegacionRegional: 'Delegación Regional',
-      dDocTitle: nombreDoc,
-      xNombreProceso: 'Aceptar Solicitud Programación',
-      xTipoDocumento: 221,
-      xNivelRegistroNSBDB: 'Bien',
-      dDocType: contentType,
-      dDocAuthor: token.name,
-      dInDate: new Date(),
-      xidProgramacion: this.requestId,
-    };
-
-    this.wContentService.downloadFile(urlBaseReport).subscribe({
-      next: response => {
-        //let blob = this.dataURItoBlob(response);
-        let file = new Blob([response], { type: 'application/pdf' });
-        //const fileURL = URL.createObjectURL(file);
-        //this.openPrevPdf(fileURL);
-
-        this.wContentService
-          .addDocumentToContent(
-            docName,
-            contentType,
-            JSON.stringify(formData),
-            file,
-            extension
-          )
-          .subscribe({
-            next: async document => {
-              execute(document.dDocName);
-            },
-            error: error => {
-              this.showError(
-                'Error al subir el documento de cambio de situación jurídica'
-              );
-            },
-          });
-      },
-      error: error => {},
-    });
-  }
-
-  openFirma(dynamic = false) {
+  async openFirma(dynamic = false) {
     let token = this.authService.decodeToken();
     let today = new Date();
     let folioReporte = '';
@@ -2027,13 +1916,26 @@ export class RequestCompDocTasksComponent
       folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/?/${year}`;
     }
 
-    const idTypeDoc = this.reportId;
+    let idTypeDoc = this.reportId;
+
+    let report = await this.getStatusReport();
+    let readOnly = report.isValid;
+
+    if (report.isValid) {
+      report = report.data[0];
+      idTypeDoc = report.documentTypeId;
+      readOnly = report.signedReport == 'Y';
+    } else {
+      readOnly = this.requestInfo.detail.reportSheet != 'OCSJ';
+    }
+
     const typeAnnex = 'approval-request';
     const requestInfo = this.requestInfo.detail;
     const idReportAclara = this.requestId;
     const nameTypeDoc = 'DictamenProcendecia';
     const nomenglatura = folioReporte;
     const isDynamic = dynamic;
+    //const readOnly = this.requestInfo.detail.version == "1";
 
     let config: ModalOptions = {
       initialState: {
@@ -2044,7 +1946,9 @@ export class RequestCompDocTasksComponent
         nameTypeDoc,
         nomenglatura,
         isDynamic,
+        readOnly,
         callback: (next, xml) => {
+          this.updateInfo = !this.updateInfo;
           if (next) {
             this.updateReport(xml);
           }
@@ -2061,38 +1965,25 @@ export class RequestCompDocTasksComponent
     if (isXML(xml)) {
       let token = this.authService.decodeToken();
       let content = getXMLNode(xml, 'strXmlFirmado')?.textContent;
-      this.updateInfo = !this.updateInfo;
 
       if (!isNullOrEmpty(content)) {
-        /*
-        let regexs = /<SignatureValue>(.*?)<\/SignatureValue>/;
-        let matchs = regexs.exec(content);
-        let signature = matchs[1] + "";
-        let regexc = /<X509Certificate>(.*?)<\/X509Certificate>/;
-        let matchc = regexc.exec(content);
-        let certificate = matchc[1] + "";
-        report.content += '<br/><br/><br/><b>Firma Electrónica:</b><br/>' + signature;
-        report.content += '<br/><br/><br/><b>Certificado:</b><br/>' + certificate;
-        */
-
-        //Como mostrar caracteres especiales
-        //content = content.replace(/&lt;/g, '<');
-        //content = content.replace(/&gt;/g, '>');
-        //content = content.replace(/&quot;/g, '"');
-        //content = content.replace(/&apos;/g, "'");
-        //content = content.replace(/&amp;/g, '&');
-
         let report = await this.getStatusReport();
-        report = report.data[0];
-        report.content +=
-          '<br/><br/><br/><b>Firma Electrónica:</b><br/>' + content;
-        report.signedReport = 'Y';
-        report.modificationUser = token.username;
-        report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
-        this.reportgoodService.saveReportDynamic(report).subscribe({
-          next: resp => {},
-          error: err => {},
-        });
+
+        if (report.isValid) {
+          report = report.data[0];
+          report.content +=
+            '<br/><br/><br/><b>Firma Electrónica:</b><br/>' + content;
+          report.signedReport = 'Y';
+          report.modificationUser = token.username;
+          report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
+          this.reportgoodService.saveReportDynamic(report, false).subscribe({
+            next: resp => {},
+            error: err => {},
+          });
+        } else {
+          this.requestInfo.detail.reportSheet = 'OCSJ_SIGN';
+          this.updateRequest(false);
+        }
       }
     }
   }

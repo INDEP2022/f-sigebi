@@ -159,6 +159,12 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     //     this.navigateCount += 1;
     //   }
     // });
+
+    this.prepareForm();
+
+    // this.getComerFacturas();
+  }
+  getFilters() {
     this.dataFilter2
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -220,12 +226,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     this.paramsList.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       if (this.totalItems > 0) this.getComerFacturasTable();
     });
-
-    this.prepareForm();
-
-    // this.getComerFacturas();
   }
-
   //nuevo
 
   getEventData(params?: ListParams) {
@@ -759,14 +760,11 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
           ? dataUpdate.eventDate.split('/').reverse().join('-')
           : dataUpdate.eventDate
         : null;
-
       delete dataUpdate.descDelegation;
       delete dataUpdate.any;
 
       this.comerInvoice.update(dataUpdate).subscribe({
         next: () => {
-          this.getComerFacturas(this.createFilter());
-
           this.comerInvoice
             .generateFolio({
               pEvent: dataUpdate.eventId,
@@ -775,6 +773,12 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
             .subscribe({
               next: () => {
                 this.btnLoading = false;
+                let params = new FilterParams();
+                params.addFilter('billId', billId, SearchFilter.EQ);
+                params.addFilter('eventId', eventId, SearchFilter.EQ);
+                params.addFilter('tpinvoiceId', 'P', SearchFilter.EQ);
+
+                this.getComerFacturas(params);
                 this.alert('success', 'Folios Generados Correctamente', '');
               },
               error: () => {
@@ -862,14 +866,18 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     delete dataUpdate.descDelegation;
     delete dataUpdate.any;
 
-    this.comerInvoice.update(this.billingForm.value).subscribe({
+    this.comerInvoice.update(dataUpdate).subscribe({
       next: () => {
-        this.getComerFacturas(this.createFilter());
         this.comerInvoice
           .deleteFolio({ eventId, invoiceId: billId })
           .subscribe({
             next: () => {
               this.btnLoading2 = false;
+              let params = new FilterParams();
+              params.addFilter('billId', billId, SearchFilter.EQ);
+              params.addFilter('eventId', eventId, SearchFilter.EQ);
+              params.addFilter('tpinvoiceId', 'P', SearchFilter.EQ);
+              this.getComerFacturas(params);
               this.alert('success', 'Folios Eliminados Correctamente', '');
             },
             error: err => {
@@ -1199,8 +1207,6 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
 
         if (CF_NUEVAFACT > 0) {
           this.cancelComerInovice();
-          this.alert('success', 'Factura Cancelada', 'Procesado Correctamente');
-
           const dataUpdate = this.billingForm.value;
 
           dataUpdate.impressionDate = dataUpdate.impressionDate
@@ -1218,12 +1224,19 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
           delete dataUpdate.descDelegation;
           delete dataUpdate.any;
 
-          this.comerInvoice.update(this.billingForm.value).subscribe({
+          this.comerInvoice.update(dataUpdate).subscribe({
             next: () => {
               let params = new FilterParams();
               params.addFilter('billId', billId, SearchFilter.EQ);
+              params.addFilter('eventId', eventId, SearchFilter.EQ);
+              params.addFilter('tpinvoiceId', 'P', SearchFilter.EQ);
               this.getComerFacturas(params);
               this.btnLoading4 = false;
+              this.alert(
+                'success',
+                'Factura Cancelada',
+                'Procesado Correctamente'
+              );
             },
             error: err => {
               this.btnLoading4 = false;
@@ -1236,7 +1249,43 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
         }
       } else if (this.refactureTemp == 'C') {
         this.btnLoading4 = true;
-        this.cancelComerInovice();
+        await this.cancelComerInovice();
+        const dataUpdate = this.billingForm.value;
+
+        dataUpdate.impressionDate = dataUpdate.impressionDate
+          ? typeof dataUpdate.impressionDate == 'string'
+            ? dataUpdate.impressionDate.split('/').reverse().join('-')
+            : dataUpdate.impressionDate
+          : null;
+
+        dataUpdate.eventDate = dataUpdate.eventDate
+          ? typeof dataUpdate.eventDate == 'string'
+            ? dataUpdate.eventDate.split('/').reverse().join('-')
+            : dataUpdate.eventDate
+          : null;
+
+        delete dataUpdate.descDelegation;
+        delete dataUpdate.any;
+
+        this.comerInvoice.update(dataUpdate).subscribe({
+          next: () => {
+            let params = new FilterParams();
+            params.addFilter('billId', billId, SearchFilter.EQ);
+            params.addFilter('eventId', eventId, SearchFilter.EQ);
+            params.addFilter('tpinvoiceId', 'P', SearchFilter.EQ);
+            this.getComerFacturas(params);
+            this.btnLoading4 = false;
+            this.alert(
+              'success',
+              'Factura Cancelada',
+              'Procesado Correctamente'
+            );
+          },
+          error: err => {
+            this.btnLoading4 = false;
+            this.alert('error', 'Error', err.error.message);
+          },
+        });
         this.btnLoading4 = false;
       }
     }
@@ -1251,7 +1300,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     );
   }
 
-  cancelComerInovice() {
+  async cancelComerInovice() {
     const user = this.authSerivce.decodeToken();
     this.billingForm.get('factstatusId').patchValue('CAN');
     this.billingForm
@@ -1315,28 +1364,32 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
       price,
       vat,
       total,
+      billId,
     } = this.billingForm.value;
 
+    if (billId) {
+      filter.addFilter('billId', billId, SearchFilter.EQ);
+    }
     filter.addFilter('tpinvoiceId', 'P', SearchFilter.EQ);
-    this.paramsList.getValue()['filter.tpinvoiceId'] = `$eq:P`;
+    // this.paramsList.getValue()['filter.tpinvoiceId'] = `$eq:P`;
 
     if (eventId) {
       filter.addFilter('eventId', eventId, SearchFilter.EQ);
-      this.paramsList.getValue()['filter.eventId'] = `$eq:${eventId}`;
+      // this.paramsList.getValue()['filter.eventId'] = `$eq:${eventId}`;
     } else {
-      delete this.paramsList.getValue()['filter.eventId'];
+      // delete this.paramsList.getValue()['filter.eventId'];
     }
     if (batchId) {
       filter.addFilter('batchId', batchId, SearchFilter.EQ);
-      this.paramsList.getValue()['filter.batchId'] = `$eq:${batchId}`;
+      // this.paramsList.getValue()['filter.batchId'] = `$eq:${batchId}`;
     } else {
-      delete this.paramsList.getValue()['filter.batchId'];
+      // delete this.paramsList.getValue()['filter.batchId'];
     }
     if (Invoice) {
       filter.addFilter('Invoice', Invoice, SearchFilter.EQ);
-      this.paramsList.getValue()['filter.Invoice'] = `$eq:${Invoice}`;
+      // this.paramsList.getValue()['filter.Invoice'] = `$eq:${Invoice}`;
     } else {
-      delete this.paramsList.getValue()['filter.Invoice'];
+      // delete this.paramsList.getValue()['filter.Invoice'];
     }
     if (eventDate) {
       let date = '';
@@ -1346,38 +1399,38 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
         date = this.datePipe.transform(eventDate, 'yyyy-MM-dd');
       }
       filter.addFilter('eventDate', date, SearchFilter.EQ);
-      this.paramsList.getValue()['filter.eventDate'] = `$eq:${date}`;
+      // this.paramsList.getValue()['filter.eventDate'] = `$eq:${date}`;
     } else {
-      delete this.paramsList.getValue()['filter.eventDate'];
+      // delete this.paramsList.getValue()['filter.eventDate'];
     }
 
     if (series) {
       filter.addFilter('series', series, SearchFilter.EQ);
-      this.paramsList.getValue()['filter.series'] = `$eq:${series}`;
+      // this.paramsList.getValue()['filter.series'] = `$eq:${series}`;
     } else {
-      delete this.paramsList.getValue()['filter.series'];
+      // delete this.paramsList.getValue()['filter.series'];
     }
     if (factstatusId) {
       filter.addFilter('factstatusId', factstatusId, SearchFilter.ILIKE);
-      this.paramsList.getValue()[
-        'filter.factstatusId'
-      ] = `$ilike:${factstatusId}`;
+      // this.paramsList.getValue()[
+      //   'filter.factstatusId'
+      // ] = `$ilike:${factstatusId}`;
     } else {
-      delete this.paramsList.getValue()['filter.factstatusId'];
+      // delete this.paramsList.getValue()['filter.factstatusId'];
     }
 
     if (vouchertype) {
       filter.addFilter('vouchertype', vouchertype, SearchFilter.EQ);
-      this.paramsList.getValue()['filter.vouchertype'] = `$eq:${vouchertype}`;
+      // this.paramsList.getValue()['filter.vouchertype'] = `$eq:${vouchertype}`;
     } else {
-      delete this.paramsList.getValue()['filter.vouchertype'];
+      // delete this.paramsList.getValue()['filter.vouchertype'];
     }
 
     if (customer) {
       filter.addFilter('customer', customer, SearchFilter.EQ);
-      this.paramsList.getValue()['filter.customer'] = `$eq:${customer}`;
+      // this.paramsList.getValue()['filter.customer'] = `$eq:${customer}`;
     } else {
-      delete this.paramsList.getValue()['filter.customer'];
+      // delete this.paramsList.getValue()['filter.customer'];
     }
     if (impressionDate) {
       let date = '';
@@ -1387,97 +1440,97 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
         date = this.datePipe.transform(impressionDate, 'yyyy-MM-dd');
       }
       filter.addFilter('impressionDate', date, SearchFilter.EQ);
-      this.paramsList.getValue()['filter.impressionDate'] = `$eq:${date}`;
+      // this.paramsList.getValue()['filter.impressionDate'] = `$eq:${date}`;
     } else {
-      delete this.paramsList.getValue()['filter.impressionDate'];
+      // delete this.paramsList.getValue()['filter.impressionDate'];
     }
     if (cvman) {
       filter.addFilter('cvman', cvman, SearchFilter.EQ);
-      this.paramsList.getValue()['filter.cvman'] = `$eq:${cvman}`;
+      // this.paramsList.getValue()['filter.cvman'] = `$eq:${cvman}`;
     } else {
-      delete this.paramsList.getValue()['filter.cvman'];
+      // delete this.paramsList.getValue()['filter.cvman'];
     }
     if (delegationNumber) {
       filter.addFilter('delegationNumber', delegationNumber, SearchFilter.EQ);
-      this.paramsList.getValue()[
-        'filter.delegationNumber'
-      ] = `$eq:${delegationNumber}`;
+      // this.paramsList.getValue()[
+      //   'filter.delegationNumber'
+      // ] = `$eq:${delegationNumber}`;
     } else {
-      delete this.paramsList.getValue()['filter.delegationNumber'];
+      // delete this.paramsList.getValue()['filter.delegationNumber'];
     }
 
     if (Iauthorize) {
       filter.addFilter('Iauthorize', Iauthorize, SearchFilter.ILIKE);
-      this.paramsList.getValue()['filter.Iauthorize'] = `$ilike:${Iauthorize}`;
+      // this.paramsList.getValue()['filter.Iauthorize'] = `$ilike:${Iauthorize}`;
     } else {
-      delete this.paramsList.getValue()['filter.Iauthorize'];
+      // elete this.paramsList.getValue()['filter.Iauthorize'];
     }
 
     if (description) {
       filter.addFilter('description', description, SearchFilter.ILIKE);
-      this.paramsList.getValue()[
-        'filter.description'
-      ] = `$ilike:${description}`;
+      // this.paramsList.getValue()[
+      //   'filter.description'
+      // ] = `$ilike:${description}`;
     } else {
-      delete this.paramsList.getValue()['filter.description'];
+      // delete this.paramsList.getValue()['filter.description'];
     }
 
     if (street) {
       filter.addFilter('street', street, SearchFilter.ILIKE);
-      this.paramsList.getValue()['filter.street'] = `$ilike:${street}`;
+      // this.paramsList.getValue()['filter.street'] = `$ilike:${street}`;
     } else {
-      delete this.paramsList.getValue()['filter.street'];
+      // delete this.paramsList.getValue()['filter.street'];
     }
     if (cologne) {
       filter.addFilter('cologne', cologne, SearchFilter.ILIKE);
-      this.paramsList.getValue()['filter.cologne'] = `$ilike:${cologne}`;
+      // this.paramsList.getValue()['filter.cologne'] = `$ilike:${cologne}`;
     } else {
-      delete this.paramsList.getValue()['filter.cologne'];
+      // delete this.paramsList.getValue()['filter.cologne'];
     }
     if (rfc) {
       filter.addFilter('rfc', rfc, SearchFilter.EQ);
-      this.paramsList.getValue()['filter.rfc'] = `$eq:${rfc}`;
+      // this.paramsList.getValue()['filter.rfc'] = `$eq:${rfc}`;
     } else {
-      delete this.paramsList.getValue()['filter.rfc'];
+      // delete this.paramsList.getValue()['filter.rfc'];
     }
     if (municipality) {
       filter.addFilter('municipality', municipality, SearchFilter.ILIKE);
-      this.paramsList.getValue()[
-        'filter.municipality'
-      ] = `$ilike:${municipality}`;
+      // this.paramsList.getValue()[
+      //   'filter.municipality'
+      // ] = `$ilike:${municipality}`;
     } else {
-      delete this.paramsList.getValue()['filter.municipality'];
+      // delete this.paramsList.getValue()['filter.municipality'];
     }
 
     if (state) {
       filter.addFilter('state', state, SearchFilter.ILIKE);
-      this.paramsList.getValue()['filter.state'] = `$ilike:${state}`;
+      // this.paramsList.getValue()['filter.state'] = `$ilike:${state}`;
     } else {
-      delete this.paramsList.getValue()['filter.state'];
+      // delete this.paramsList.getValue()['filter.state'];
     }
     if (cop) {
       filter.addFilter('cop', cop, SearchFilter.EQ);
-      this.paramsList.getValue()['filter.cop'] = `$eq:${cop}`;
+      // this.paramsList.getValue()['filter.cop'] = `$eq:${cop}`;
     } else {
-      delete this.paramsList.getValue()['filter.cop'];
+      // delete this.paramsList.getValue()['filter.cop'];
     }
     if (price) {
       filter.addFilter('price', price, SearchFilter.EQ);
-      this.paramsList.getValue()['filter.price'] = `$eq:${price}`;
+      // this.paramsList.getValue()['filter.price'] = `$eq:${price}`;
     } else {
-      delete this.paramsList.getValue()['filter.price'];
+      // delete this.paramsList.getValue()['filter.price'];
     }
     if (vat) {
       filter.addFilter('vat', vat, SearchFilter.EQ);
-      this.paramsList.getValue()['filter.vat'] = `$eq:${vat}`;
+      // this.paramsList.getValue()['filter.vat'] = `$eq:${vat}`;
     } else {
-      delete this.paramsList.getValue()['filter.vat'];
+      // delete this.paramsList.getValue()['filter.vat'];
     }
     if (total) {
       filter.addFilter('total', total, SearchFilter.EQ);
-      this.paramsList.getValue()['filter.total'] = `$eq:${total}`;
+      // this.paramsList.getValue()['filter.total'] = `$eq:${total}`;
     } else {
-      delete this.paramsList.getValue()['filter.total'];
+      // delete this.paramsList.getValue()['filter.total'];
     }
 
     return filter;
@@ -1521,6 +1574,9 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     this.modal.hide();
   }
   openModalSearch() {
+    this.getFilters();
+    this.rowSelected = null;
+    this.getComerFacturasTable();
     this.modal.show();
   }
   selectRow(row: any) {
@@ -1538,6 +1594,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
+    params['filter.tpinvoiceId'] = `$eq:P`;
     this.comerInvoice.getAll(params).subscribe({
       next: resp => {
         this.dataFilter2.load(resp.data);

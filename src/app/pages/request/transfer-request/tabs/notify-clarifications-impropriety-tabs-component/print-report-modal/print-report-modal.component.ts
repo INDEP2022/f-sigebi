@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -19,6 +19,10 @@ import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.serv
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { UploadReportReceiptComponent } from 'src/app/pages/request/programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
+import {
+  getXMLNode,
+  isNullOrEmpty,
+} from 'src/app/pages/request/request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { environment } from 'src/environments/environment';
 import { UploadFielsModalComponent } from '../upload-fiels-modal/upload-fiels-modal.component';
 import { LIST_REPORTS_COLUMN } from './list-reports-column';
@@ -49,6 +53,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   nomenglatura: string;
   infoReport: IClarificationDocumentsImpro;
   isDynamic = false;
+  readOnly = false;
 
   @ViewChild('FileInput', { static: false }) inputFile: ElementRef;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -123,8 +128,10 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.idSolicitud = this.requestInfo.id;
     this.idRegionalDelegation = this.requestInfo.regionalDelegationId;
     //Borrar firmantes existentes
-    this.verificateFirm();
-    this.signParams();
+
+    if (!this.readOnly) {
+      this.verificateFirm();
+    }
 
     //Condición para saber que ID tipo de documento lelga
     switch (parseInt(this.idTypeDoc)) {
@@ -193,7 +200,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   //Verifica si ya existen usuarios, para eliminarlo (Evitar duplicidad)
-  verificateFirm() {
+  async verificateFirm() {
     let learnedId = this.idReportAclara;
     let learnedType = this.idTypeDoc;
 
@@ -209,15 +216,21 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.signatoriesService
       .getSignatoriesName(learnedType, learnedId)
       .subscribe({
-        next: response => {
-          this.signatories = response.data;
+        next: async response => {
+          //this.signatories = response.data;
           //Ciclo para eliminar todos los posibles firmantes existentes para esa solicitud
           const count = response.count;
           for (let i = 0; i < count; i++) {
-            this.signatoriesService
-              .deleteFirmante(this.signatories[i].signatoryId)
-              .subscribe({});
+            let observable: Observable<any> =
+              this.signatoriesService.deleteFirmante(
+                response.data[i].signatoryId
+              );
+
+            let result = await observable.toPromise();
+            console.log('Firmante eliminado: ', result);
           }
+
+          this.signParams();
         },
         error: error => {
           //Si no hay firmantes, entonces asignar nuevos
@@ -497,6 +510,9 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.isAttachDoc = false;
     this.printReport = true;
     this.paragraphs = [];
+
+    this.rowSelected = false;
+    this.selectedRow = null;
   }
 
   nextStep() {
@@ -635,8 +651,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         .subscribe({
           next: resp => {
             this.alert('success', 'El Documento ha sido Guardado', '');
-            const confirmDocument = 'ok';
-            this.modalRef.content.callback(true, confirmDocument);
+            this.modalRef.content.callback(false, null);
             this.close();
           },
           error: error => {},
@@ -656,6 +671,41 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   firm() {
+    //Firmar reporte Documento Dinamico
+    if (this.isDynamic) {
+      let id = 'SOLICITUDES-' + this.idReportAclara + '-' + this.idTypeDoc;
+
+      const nameTypeReport = 'DocumentoDinamico';
+      const formData: Object = {
+        id: id,
+        firma: true,
+        tipoDocumento: nameTypeReport,
+      };
+
+      this.firmReport(id, nameTypeReport, formData);
+      return;
+    }
+
+    //String situacionJuridicaID = ID.split("-")[1];
+    //String solicitudID = ID.split("-")[0];
+    //String tipoDocumentoID = ID.split("-")[2];
+
+    //65991 - 2 - 223
+
+    if (parseInt(this.idTypeDoc) == 223) {
+      let id = this.idReportAclara + '-2-' + this.idTypeDoc;
+
+      const nameTypeReport = 'SituacionJuridicaAmparo';
+      const formData: Object = {
+        id: id,
+        firma: true,
+        tipoDocumento: nameTypeReport,
+      };
+
+      this.firmReport(id, nameTypeReport, formData);
+      return;
+    }
+
     //Firmar reporte Dictamen Procedencia
     if (this.idTypeDoc == 50) {
       const requestInfo = this.requestInfo; //ID solicitud
@@ -734,38 +784,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
       this.firmReport(this.idReportAclara, nameTypeReport, formData);
     }
-
-    //String situacionJuridicaID = ID.split("-")[1];
-    //String solicitudID = ID.split("-")[0];
-    //String tipoDocumentoID = ID.split("-")[2];
-
-    //65991 - 2 - 223
-
-    if (parseInt(this.idTypeDoc) == 223) {
-      let id = this.idReportAclara + '-2-' + this.idTypeDoc;
-
-      const nameTypeReport = 'SituacionJuridicaAmparo';
-      const formData: Object = {
-        id: id,
-        firma: true,
-        tipoDocumento: nameTypeReport,
-      };
-
-      this.firmReport(id, nameTypeReport, formData);
-    }
-
-    if (this.isDynamic) {
-      let id = 'SOLICITUDES-' + this.idReportAclara + '-' + this.idTypeDoc;
-
-      const nameTypeReport = 'DocumentoDinamico';
-      const formData: Object = {
-        id: id,
-        firma: true,
-        tipoDocumento: nameTypeReport,
-      };
-
-      this.firmReport(id, nameTypeReport, formData);
-    }
   }
 
   xml: string = '';
@@ -779,15 +797,40 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           this.loadingButton = false;
           this.loading = false;
           this.xml = data;
-          this.msjCheck = true;
-          this.handleSuccess();
-          //Plasmar la clave
-          this.claveInReport();
 
           if (this.isDynamic || this.idTypeDoc == 223) {
             //this.updateRequest();
+            let content = getXMLNode(this.xml, 'strXmlFirmado')?.textContent;
+
+            if (!isNullOrEmpty(content)) {
+              this.msjCheck = true;
+              this.handleSuccess();
+              //Plasmar la clave
+              this.claveInReport();
+              this.updateStatusSigned(content);
+            } else {
+              this.selectedRow = null;
+              this.rowSelected = false;
+
+              this.valuesSign.validationocsp = false;
+
+              this.updateStatusSigned();
+              this.signParams();
+
+              let error = getXMLNode(this.xml, 'strError')?.textContent;
+
+              this.alertInfo(
+                'error',
+                'Acción Inválida',
+                'Error al generar firma electrónica\nFavor de revisar la información'
+                //+ error.split('.')[0] + ''
+              );
+            }
+
             return;
           }
+
+          this.msjCheck = true;
 
           if (nameTypeReport === 'DictamenProcendecia') {
             //this.updateRequest();
@@ -803,7 +846,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           this.alertInfo(
             'error',
             'Acción Inválida',
-            'Error al generar firma electronica'
+            'Error al generar firma electrónica'
           );
         },
       });
@@ -867,7 +910,12 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.modalService.show(UploadReportReceiptComponent, config);
   }
 
-  updateStatusSigned() {
+  updateStatusSigned(signature = null) {
+    //Validar si no ha seleccionado firmante
+    if (isNullOrEmpty(this.valuesSign.validationocsp)) {
+      this.valuesSign.validationocsp = true;
+    }
+
     const formData = new FormData();
     formData.append('learnedType', this.valuesSign.learnedType);
     formData.append('signatoryId', String(this.valuesSign.signatoryId));
@@ -876,9 +924,14 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     formData.append('pass', this.valuesSign.pass);
     formData.append('post', this.valuesSign.post);
     formData.append('rfcUser', this.valuesSign.rfcUser);
-    formData.append('validationocsp', 'true');
+    formData.append('validationocsp', this.valuesSign.validationocsp + '');
     formData.append('identifierSystem', '1');
     formData.append('identifierSignatory', '1');
+
+    if (signature) {
+      formData.append('signature', signature);
+    }
+
     this.signatoriesService
       .update(this.valuesSign.signatoryId, formData)
       .subscribe({

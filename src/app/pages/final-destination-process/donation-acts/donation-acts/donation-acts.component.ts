@@ -1504,6 +1504,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
     this.data2.load([]);
     this.data2.refresh();
     this.totalItems2 = 0;
+    this.selectData = null;
     this.selectData2 = null;
     this.actaDefault = null;
     this.actaRecepttionForm.patchValue({
@@ -1655,14 +1656,10 @@ export class DonationActsComponent extends BasePage implements OnInit {
   }
 
   async getDate() {
-    // const formattedDate = moment(date).format('DD-MM-YYYY');
-
     const fechaEscritura: any = new Date();
     fechaEscritura.setUTCDate(fechaEscritura.getUTCDate());
     const _fechaEscritura: any = new Date(fechaEscritura.toISOString());
     return _fechaEscritura;
-    // { authorizeDate: formattedDate }
-    // { emitEvent: false }
   }
 
   // REG_DEL_ADMIN
@@ -2221,7 +2218,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
         this.loading2 = true;
         let result = await this.deleteDET(this.selectData2);
         if (!result) {
-          this.alert('error', 'No se eliminar el bien del acta', '');
+          this.alert('error', 'No se pudo eliminar el bien del acta', '');
         } else {
           this.alert('success', 'Bien eliminado correctamente', '');
           await this.getGoodsByStatus(this.dataExpediente.id);

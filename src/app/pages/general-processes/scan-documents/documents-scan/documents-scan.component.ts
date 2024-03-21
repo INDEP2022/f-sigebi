@@ -706,6 +706,19 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         '/pages/final-destination-process/proof-of-delivery',
       ]);
     }
+
+    if (this.origin == 'FACTDESACTASRIF') {
+      this.router.navigate(
+        ['/pages/final-destination-process/acts-regularization-non-existence'],
+        {
+          queryParams: {
+            folioScan: this.originFolio,
+            cveActa: this.cveActa,
+            expedient: this.expedient,
+          },
+        }
+      );
+    }
     this.locations.back();
   }
 }

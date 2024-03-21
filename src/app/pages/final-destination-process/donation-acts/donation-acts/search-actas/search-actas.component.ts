@@ -45,6 +45,7 @@ export class SearchActasComponent extends BasePage implements OnInit {
   actaActual: any;
   valDelete: boolean = false;
   // @Output() onConfirm = new EventEmitter<any>();
+  valRif: boolean = false;
   constructor(
     private modalRef: BsModalRef,
     private activateRoute: ActivatedRoute,
