@@ -295,8 +295,8 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
       case 5:
         let param5 = {
           psem1: this.form.get('f_ini').value,
-          psem2: psem2,
-          dateFinal: this.FEC3,
+          psem2: this.form.get('f_fin').value,
+          dateFinal: this.form.get('f_fin').value,
           delegationNumber: this.form.get('coordination').value,
           typeEventId: this.form.get('typeEvent').value,
           eventId: this.form.get('idEvent').value,
@@ -308,8 +308,8 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
 
       case 6: //No encontré registros
         let param6 = {
-          psem1: psem1,
-          psem2: psem2,
+          psem1: this.form.get('f_ini').value,
+          psem2: this.form.get('f_fin').value,
           pDele: this.DELE,
           ptevento: this.form.get('typeEvent').value,
           pidevento: this.form.get('idEvent').value,
@@ -322,8 +322,8 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
 
       case 7: //Excel sin registros
         let param7 = {
-          psem1: psem1,
-          psem2: psem2,
+          psem1: this.form.get('f_ini').value,
+          psem2: this.form.get('f_fin').value,
           pDele: this.DELE,
           endDate: this.FEC3,
         };

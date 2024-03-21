@@ -82,13 +82,6 @@
         <button class="btn btn-danger btn-sm active mr-3" (click)="clear()">
           Limpiar Filtros <i class="fas fa-eraser"> </i>
         </button>
-        <button
-          type="button"
-          class="btn btn-primary active btn-sm"
-          [disabled]="!form.valid">
-          Generar Constancia(s) de Entrega
-          <i class="bx bx-search-alt bx-sm float-icon"></i>
-        </button>
       </div>
     </div>
     <!--  -->
@@ -99,10 +92,13 @@
         </div>
       </div>
       <div class="table-responsive">
-        <ng2-smart-table
-          [attr.class]="'table-bordered table-responsive'"
-          [settings]="settings"
-          [source]="data"></ng2-smart-table>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            #table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="data"></ng2-smart-table>
+        </div>
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">
       </app-pagination>
