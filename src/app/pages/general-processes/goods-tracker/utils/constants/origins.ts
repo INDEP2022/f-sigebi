@@ -15,6 +15,7 @@ export enum GOOD_TRACKER_ORIGINS {
   DonationGood = 'FMCOMDONAC_1',
   DonationAuthorization = 'FDONSOLAUTORIZA',
   OutstandingAssetsValidation = 'FCOMERBIENEX',
+  ChangesGoodsDestinationIndicators = 'FACTADBCAMBIOETIQ',
 }
 
 export enum GOOD_TRACKER_ORIGINS_TITLES {
@@ -32,4 +33,6 @@ export enum GOOD_TRACKER_ORIGINS_TITLES {
   'FDONAC_DIRECT' = 'Registro para inventarios y donacion directa',
   'FMCOMDONAC_1' = 'Captura de Eventos por Donación',
   'FDONSOLAUTORIZA' = 'Solicitud y Autorización de Donaciones',
+  'FCOMERBIENEX' = 'Bienes exentos de validación',
+  'FACTADBCAMBIOETIQ' = 'Cambio de Indicadores de Destino de Bienes',
 }

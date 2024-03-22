@@ -15,9 +15,13 @@ import { GoodsSharedComponent } from 'src/app/@standalone/shared-forms/goods-sha
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { PaCdgiCChangeDestinationGoodsIndicatorsComponent } from './pa-cdgi-c-change-destination-goods-indicators/pa-cdgi-c-change-destination-goods-indicators.component';
 import { PaMChangeDestinationGoodsIndicatorsRoutingModule } from './pa-m-change-destination-goods-indicators-routing.module';
+import { SelectLabelGoodComponent } from './select-label-good/select-label-good.component';
 
 @NgModule({
-  declarations: [PaCdgiCChangeDestinationGoodsIndicatorsComponent],
+  declarations: [
+    PaCdgiCChangeDestinationGoodsIndicatorsComponent,
+    SelectLabelGoodComponent,
+  ],
   imports: [
     CommonModule,
     SharedModule,
