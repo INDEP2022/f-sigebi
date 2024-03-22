@@ -3098,15 +3098,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           if (resp.base64 == '') {
             return this.alert('warning', 'No hay datos por exportar', '');
           }
-          const linkSource = `data:application/xlsx;base64,${resp.base64}`;
-          const downloadLink = document.createElement('a');
-          downloadLink.href = linkSource;
-          downloadLink.download = 'FACTURAS_FCOMER086_I' + '.csv';
-          downloadLink.target = '_blank';
-          downloadLink.click();
-          downloadLink.remove();
-          this.btnLoading7 = false;
-          this.alert('success', 'Archivo descargado correctamente', '');
+          this.downloadExcel(resp.base64);
         },
         error: error => {
           this.btnLoading7 = false;
@@ -3115,7 +3107,17 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       });
     });
   }
-
+  async downloadExcel(base64String: any) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = 'FACTURAS_FCOMER086_I.csv';
+    link.click();
+    link.remove();
+    this.btnLoading7 = false;
+    this.alert('success', 'Archivo descargado correctamente', '');
+  }
   async typeBilling(type: any) {
     const item = this.typesBillings.find(item => item.tpinvoiceId == type);
     if (item) {
