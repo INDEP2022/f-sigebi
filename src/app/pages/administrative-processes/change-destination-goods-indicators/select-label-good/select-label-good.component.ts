@@ -66,13 +66,20 @@ export class SelectLabelGoodComponent extends BasePage implements OnInit {
     this.goodService.update(objGood).subscribe({
       next: resp => {
         console.log('Actualizado: ', resp);
+        this.alert('success', 'Etiqueta Actualizada', '');
+        this.modalRef.hide();
+        this.modalRef.content.callback(true);
       },
       error: error => {
         console.log('No se actualizó: ', error);
+        this.alert(
+          'warning',
+          'No se logró cambiar la etiqueta',
+          'Revisar la información del Bien a modificar'
+        );
+        this.modalRef.hide();
       },
     });
-
-    this.modalRef.hide();
   }
 
   close() {
