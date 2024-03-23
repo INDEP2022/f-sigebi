@@ -67,7 +67,6 @@ export const ACTAS = {
     title: 'No. Transferente',
     type: 'string',
     sort: false,
-    filter: false,
   },
   numFile: {
     title: 'Expediente',

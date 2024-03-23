@@ -95,6 +95,7 @@ export class SearchActsComponent extends BasePage implements OnInit {
               keysProceedings: () => (searchFilter = SearchFilter.ILIKE),
               idTypeProceedings: () => (searchFilter = SearchFilter.EQ),
               typeProceedings: () => (searchFilter = SearchFilter.EQ),
+              numTransfer_: () => (searchFilter = SearchFilter.EQ),
               datePhysicalReception: () => (searchFilter = SearchFilter.EQ),
               captureDate: () => (searchFilter = SearchFilter.EQ),
               observations: () => (searchFilter = SearchFilter.ILIKE),
@@ -169,7 +170,10 @@ export class SearchActsComponent extends BasePage implements OnInit {
       params['filter.typeProceedings'] = `$eq:ENTEST`;
       params['filter.idTypeProceedings'] = `$eq:BEE`;
     }
-
+    if (params['filter.numTransfer_']) {
+      params['filter.numTransfer'] = params['filter.numTransfer_'];
+      delete params['filter.numTransfer_'];
+    }
     this.proceedingsDeliveryReceptionService
       .getStatusDeliveryCveExpendienteAll(params)
       .subscribe({
