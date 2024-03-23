@@ -240,10 +240,12 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
   openForm(data: any) {
     console.log('data', data.labelNumber);
     const labelNumber = data.labelNumber;
+    const goodData = data;
 
     let config: ModalOptions = {
       initialState: {
         labelNumber,
+        goodData,
         callback: (next: boolean) => {
           //if (next) this.getAffairAll();
         },
