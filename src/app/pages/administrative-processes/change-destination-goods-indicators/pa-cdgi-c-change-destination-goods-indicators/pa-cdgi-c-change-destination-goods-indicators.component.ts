@@ -247,7 +247,7 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
         labelNumber,
         goodData,
         callback: (next: boolean) => {
-          //if (next) this.getAffairAll();
+          if (next) this.searchData();
         },
       },
       class: 'modal-lg modal-dialog-centered',
