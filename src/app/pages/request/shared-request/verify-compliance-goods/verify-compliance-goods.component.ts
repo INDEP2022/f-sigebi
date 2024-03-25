@@ -83,7 +83,35 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
     this.requestId = Number(this.route.snapshot.paramMap.get('request'));
     this.process = this.route.snapshot.paramMap.get('process');
 
-    this.editable = this.process != 'approve-return';
+    if (this.process != 'approve-return' && this.process != 'approve-abandonment') {
+      this.editable = true;
+    }
+
+    console.log(this.process, this.editable);
+
+    if (this.process == 'approve-abandonment') {
+      this.tableSettings.columns["documentOficioInstruccion"] = {
+        title: 'Oficio de instrucción de abandono emitido por la autoridad',
+        type: 'custom',
+        sort: false,
+        valuePrepareFunction: (cell: any, row: any) => cell,
+        onComponentInitFunction: (instance: any) => {
+          instance.checkId = 'documentOficioInstruccion';
+        },
+        renderComponent: CheckVerifyComplianceComponent,
+      }
+
+      this.tableSettings.columns["documentAcuerdoDeclaracion"] = {
+        title: 'Acuerdo de declaración de abandono',
+        type: 'custom',
+        sort: false,
+        valuePrepareFunction: (cell: any, row: any) => cell,
+        onComponentInitFunction: (instance: any) => {
+          instance.checkId = 'documentAcuerdoDeclaracion';
+        },
+        renderComponent: CheckVerifyComplianceComponent,
+      }
+    }
 
     this.getGoods();
   }
@@ -108,7 +136,7 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
         });
         this.onChanges();
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
