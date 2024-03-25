@@ -2385,7 +2385,7 @@ export class SchedulingDeliveriesFormComponent
       this.alertQuestion(
         'question',
         'Confirmación',
-        `¿Desea enviar la programación de entrega con folio ${this.programmingDeliveryInfo.folio}?`
+        `¿Desea enviar la programación de entrega con folio ${this.programmingDeliveryInfo.id}?`
       ).then(question => {
         if (question.isConfirmed) {
           const formData = {
@@ -2415,7 +2415,7 @@ export class SchedulingDeliveriesFormComponent
     body['ssubtype'] = 'APPROVE_ER';
 
     let task: any = {};
-    //task['id'] = 0;
+    //task['id'] = this.programmingDeliveryInfo.id;
     task['assignees'] = _task.assignees;
     task['assigneesDisplayname'] = _task.assigneesDisplayname;
     task['creator'] = user.username;
@@ -2423,13 +2423,14 @@ export class SchedulingDeliveriesFormComponent
     task['taskNumber'] = Number(this.programmingDeliveryInfo.id);
     task[
       'title'
-    ] = `Ejecutar entrega (Destrucción) para la programación: ${this.programmingDeliveryInfo.folio}`;
+    ] = `Ejecutar entrega (Destrucción) para la programación: R-${this.programmingDeliveryInfo.id}`;
     task['programmingId'] = this.programmingDeliveryInfo.id;
-    task['requestId'] = this.programmingDeliveryInfo.id;
-    task['expedientId'] = 0;
+    //task['requestId'] = this.programmingDeliveryInfo.id;
     task['idDelegationRegional'] = user.department;
-    task['urlNb'] = '/pages/scheduling-deliveries/execute-schelude-delivery';
+    task['urlNb'] =
+      '/pages/request/scheduling-deliveries/execute-schelude-delivery';
     task['processName'] = 'SolicitudProgramacion';
+    task['requestId'] = this.programmingDeliveryInfo.id;
     task['idAuthority'] = this.programmingDeliveryInfo.id;
     task['idStore'] = this.programmingDeliveryInfo.store;
     task['idTransferee'] = this.programmingDeliveryInfo.transferId;
