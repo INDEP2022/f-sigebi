@@ -126,6 +126,9 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
           this.loadDataEventSelected();
         }
       });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.loadDataEventSelected());
     setTimeout(() => {
       this.getEvents(new ListParams());
     }, 1000);
@@ -153,23 +156,17 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
     };
     this.serviceInvoice.getInvoiceByEvent(params).subscribe({
       next: response => {
-        // this.getRrcs(this.array('rfc', response.data));
-        // this.getPublic(this.array('publicLot', response.data));
-        // this.getDelegations(this.array('delegationNumber', response.data));
-        // this.fillGridInvoces(response.data);
         this.dataFilter = response.data;
         this.data.load(this.dataFilter);
         this.totalItems = response.count;
         this.data.refresh();
         this.loading = false;
-        // this.filterInvoices();
       },
       error: () => {
         this.data.load([]);
         this.totalItems = 0;
         this.data.refresh();
         this.loading = false;
-        this.alert('warning', 'Advertencia', `No se encontraron registros`);
       },
     });
   }
