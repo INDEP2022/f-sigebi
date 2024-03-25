@@ -183,7 +183,7 @@ export class SchedulingDeliveriesFormComponent
         this.nameUser = response.username;
         this.getWarehouseSelect(new ListParams());
         this.getClientSelect(new ListParams());
-        this.checkProgrammingDelivery();
+        //this.checkProgrammingDelivery();
         const getClientName = await this.getClientName();
 
         //if (getClientName)
