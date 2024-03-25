@@ -29,6 +29,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
 import { NotificationDestructionFormComponent } from '../notification-destruction-form/notification-destruction-form.component';
 import { NotificationDestructionFoundFormComponent } from '../notification-destruction-found-form/notification-destruction-found-form.component';
+import { IGoodDelivery } from './good-delivery.interface';
 import {
   SCHEDULING_DELIVERIES_COLUMNS,
   SCHEDULING_DELIVERIES_SALES_COLUMNS,
@@ -2031,8 +2032,7 @@ export class SchedulingDeliveriesFormComponent
   async addGoodsProgrammingDelivery() {
     if (this.goodDesSelect.length > 0) {
       const saveProgramming = await this.saveProgrammingDelivery();
-
-      /*this.goodDesSelect.map(good => {
+      this.goodDesSelect.map(good => {
         const goodForm: IGoodDelivery = {
           programmingDeliveryId: this.programmingDelId,
           goodId: good?.managementNum,
@@ -2060,25 +2060,18 @@ export class SchedulingDeliveriesFormComponent
           foundInd: 'N',
         };
 
-       
-
         this.programmingRequestService
           .createGoodProgrammingDevilery(goodForm)
           .subscribe({
             next: async response => {
-           
-
               this.checkProgrammingDelivery();
               this.params
                 .pipe(takeUntil(this.$unSubscribe))
                 .subscribe(() => this.showInfoProgrammingDelivery());
             },
-            error: error => {
-             
-            },
+            error: error => {},
           });
-      
-      }); */
+      });
     } else {
       this.alert(
         'warning',
