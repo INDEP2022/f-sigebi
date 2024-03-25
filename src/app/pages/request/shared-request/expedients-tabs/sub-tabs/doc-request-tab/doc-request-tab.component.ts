@@ -1103,8 +1103,16 @@ export class DocRequestTabComponent
         case 'register-registration-sentence':
         case 'register-freedom-liens':
         case 'register-distribution-resource':
-          if (containDocCom) {
+          let hasType252 = list.some(x => parseInt(x.xtipoDocumentoId) === 252);
+          let hasType253 = list.some(x => parseInt(x.xtipoDocumentoId) === 253);
+          let hasType254 = list.some(x => parseInt(x.xtipoDocumentoId) === 254);
+          let hasType255 = list.some(x => parseInt(x.xtipoDocumentoId) === 255);
+          let hasType256 = list.some(x => parseInt(x.xtipoDocumentoId) === 256);
+          let hasType257 = list.some(x => parseInt(x.xtipoDocumentoId) === 257);
+          if (hasType252 && hasType253 && hasType254 && hasType255 && hasType256 && hasType257 && containDocCom) {
+
             validToks = true;
+
           }
           break;
 
@@ -1122,8 +1130,10 @@ export class DocRequestTabComponent
         case 'register-domain-extinction':
         case 'register-extinction-sentence':
         case 'register-extinction-agreement':
-          let hasType83 = list.some(x => parseInt(x.xtipoDocumentoId) === 83);
-          if (hasType83 && containDocCom) {
+          //let hasType83 = list.some(x => parseInt(x.xtipoDocumentoId) === 83);
+          let hasType258 = list.some(x => parseInt(x.xtipoDocumentoId) === 258);
+          let hasType259 = list.some(x => parseInt(x.xtipoDocumentoId) === 259);
+          if (hasType258 && hasType259 && containDocCom) {
             validToks = true;
           }
           break;
