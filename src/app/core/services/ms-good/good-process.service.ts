@@ -426,4 +426,8 @@ export class GoodProcessService extends HttpService {
   postCloneProcess(body: { process: string }) {
     return this.post('application/copy-process', body);
   }
+
+  validInitiationLabel(body: any) {
+    return this.post(GoodprocessEndpoints.InitiationLabel, body);
+  }
 }
