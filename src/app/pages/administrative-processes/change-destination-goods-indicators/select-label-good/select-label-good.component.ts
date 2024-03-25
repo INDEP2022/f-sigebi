@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { LabelOkeyService } from 'src/app/core/services/catalogs/label-okey.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared';
 
@@ -22,7 +23,8 @@ export class SelectLabelGoodComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private labelOkeyService: LabelOkeyService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private goodProcessService: GoodProcessService
   ) {
     super();
   }
@@ -35,7 +37,9 @@ export class SelectLabelGoodComponent extends BasePage implements OnInit {
         console.log('Respuesta etiqueta: ', resp);
         this.title = resp.description;
       },
-      error: error => {},
+      error: error => {
+        this.title = '(Sin indicador)';
+      },
     });
 
     this.prepareForm();
@@ -56,14 +60,37 @@ export class SelectLabelGoodComponent extends BasePage implements OnInit {
 
     console.log('ID de etiqueta seleccionado:_ ', labelGood);
 
-    let objGood = {
+    let objGood1 = {
+      goodNumber: Number(this.goodData.id),
+      label: Number(labelGood),
+      classificationOfGoodsNumber: Number(this.goodData.goodClassNumber),
+    };
+    console.log('ObjGood', objGood1);
+
+    this.goodProcessService.validInitiationLabel(objGood1).subscribe({
+      next: resp => {
+        console.log('respuesta de validinitiationLabel', resp);
+        //this.alert('warning','Atención',resp.data);
+        this.changeLabel();
+      },
+      error: error => {
+        console.log('respuesta de error validinitiationLabel', error);
+        this.alert('warning', 'Atención', error.error.message);
+      },
+    });
+  }
+
+  changeLabel() {
+    const labelGood = this.form.controls['labelGood'].value;
+
+    let objGood2 = {
       id: this.goodData.id,
       goodId: this.goodData.id,
       labelNumber: labelGood,
     };
-    console.log('ObjGood', objGood);
+    console.log('ObjGood', objGood2);
 
-    this.goodService.update(objGood).subscribe({
+    this.goodService.update(objGood2).subscribe({
       next: resp => {
         console.log('Actualizado: ', resp);
         this.alert('success', 'Etiqueta Actualizada', '');

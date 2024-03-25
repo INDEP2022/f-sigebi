@@ -1214,6 +1214,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.searchRequestSimGoods = false;
         this.selectGoodForEyeVisit = false;
         this.validateGoodForEyeVisit = false;
+        this.selectGoodsNot = true;
 
         this.goodType = 'ROP';
 
@@ -1223,11 +1224,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.regDocView = true;
         this.verifyCompliance = true; //AGREGAR  VERIFICAR CUMPLIMIENTO DE BIENES (TAB) VALIDAR
         this.selectGoodForEyeVisit = true;
-
         this.expRequest = true;
-
         this.btnRequestAprove = true;
         this.dictumReturn = true;
+
+        this.selectGoodNotForEyeVisit = true;
 
         this.turnReq = false;
         this.searchAssociateFile = false;
@@ -1244,11 +1245,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.expRequest = true;
         this.verifyCompliance = true;
         this.selectGoodForEyeVisit = true;
+        this.selectGoodNotForEyeVisit = true;
 
         this.btnAprove = true;
         this.dictumReturn = true;
         this.btnDecline = true;
-
         this.signedReport = true;
 
         this.turnReq = false;
