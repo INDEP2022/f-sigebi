@@ -7,6 +7,7 @@ export const DETAIL_ESTATE_COLUMNS = {
     type: 'custom',
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
+      console.log('instance: any', instance);
       instance.toggle.subscribe((data: any) => {
         data.row.to = data.toggle;
       });

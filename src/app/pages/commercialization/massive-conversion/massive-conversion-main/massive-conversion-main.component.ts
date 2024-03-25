@@ -227,11 +227,6 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
     this.prepareForm();
 
-    this.rfcSettings.columns = this.modifyColumns(this.rfcSettings.columns);
-    this.clientIdSettings.columns = this.modifyColumns(
-      this.clientIdSettings.columns
-    );
-
     //Tabla de Datos
     this.dataSource
       .onChanged()
