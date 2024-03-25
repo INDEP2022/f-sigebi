@@ -114,7 +114,7 @@ export class SchedulingDeliveriesFormComponent
   totalItemsSearchDevol: number = 0;
   totalItemsSearchDonation: number = 0;
   totalItemsSearchSales: number = 0;
-  programmingDelId: number = 0;
+  //programmingDelId: number = 0;
   settingsSearchSales = {
     ...this.settings,
     selectMode: 'multi',
@@ -218,9 +218,8 @@ export class SchedulingDeliveriesFormComponent
       .getProgrammingDelivery(params.getValue())
       .subscribe({
         next: async response => {
-          this.programmingDelId = response.data[0].id;
+          //this.programmingDelId = response.data[0].id;
           this.programmingDeliveryInfo = response.data[0];
-          console.log(this.programmingDeliveryInfo);
 
           if (this.programmingDeliveryInfo?.startDate) {
             this.programmingDeliveryInfo.startDate = moment(
@@ -275,7 +274,7 @@ export class SchedulingDeliveriesFormComponent
             .createProgrammingDelivery(formData)
             .subscribe({
               next: (data: any) => {
-                this.programmingDelId = data.id;
+                //this.programmingDelId = data.id;
               },
               error: error => {},
             });
@@ -655,7 +654,7 @@ export class SchedulingDeliveriesFormComponent
         };
 
         this.programmingRequestService
-          .updateProgrammingDelivery(this.programmingDelId, infoSave)
+          .updateProgrammingDelivery(this.programmingDeliveryInfo.id, infoSave)
           .subscribe({
             next: async response => {
               const generateFolio = await this.generateFolioProgrammingDelivery(
@@ -687,14 +686,17 @@ export class SchedulingDeliveriesFormComponent
       );
 
       if (showNameDelegation) {
-        const folioProgDel = `E-${showNameDelegation}-${this.programmingDelId}`;
+        const folioProgDel = `E-${showNameDelegation}-${this.programmingDeliveryInfo.id}`;
         const infoProgramming: IprogrammingDelivery = {
-          id: this.programmingDelId,
+          id: this.programmingDeliveryInfo.id,
           folio: folioProgDel,
         };
 
         this.programmingRequestService
-          .updateProgrammingDelivery(this.programmingDelId, infoProgramming)
+          .updateProgrammingDelivery(
+            this.programmingDeliveryInfo.id,
+            infoProgramming
+          )
           .subscribe({
             next: response => {
               resolve(true);
@@ -2045,7 +2047,7 @@ export class SchedulingDeliveriesFormComponent
 
       this.goodDesSelect.map(good => {
         const goodForm: IGoodDelivery = {
-          programmingDeliveryId: this.programmingDelId,
+          programmingDeliveryId: saveProgramming['id'],
           goodId: good?.managementNum,
           client: good?.client,
           delReg: good?.delRegSol,
@@ -2075,7 +2077,7 @@ export class SchedulingDeliveriesFormComponent
           .createGoodProgrammingDevilery(goodForm)
           .subscribe({
             next: async response => {
-              this.checkProgrammingDelivery();
+              //this.checkProgrammingDelivery();
               this.params
                 .pipe(takeUntil(this.$unSubscribe))
                 .subscribe(() => this.showInfoProgrammingDelivery());
@@ -2092,9 +2094,8 @@ export class SchedulingDeliveriesFormComponent
     }
   }
 
-  saveProgrammingDelivery() {
+  async saveProgrammingDelivery() {
     const infoProg = {
-      id: this.programmingDelId,
       typeEvent: this.schedulingDeliverieForm.get('typeEvent').value,
       startDate: moment(
         this.schedulingDeliverieForm.get('startDate').value
@@ -2136,24 +2137,24 @@ export class SchedulingDeliveriesFormComponent
       typeUser: this.schedulingDeliverieForm.get('typeUser').value,
     };
 
-    this.programmingRequestService
-      .updateProgrammingDelivery(this.programmingDelId, infoProg)
-      .subscribe({
-        next: () => {
-          //resolve(true);
-        },
-        error: () => {
-          //resolve(false);
-        },
-      });
-    /*return new Promise((resolve, reject) => {
-      
-    }); */
+    return new Promise((resolve, reject) => {
+      this.programmingRequestService
+        .createProgrammingDelivery(infoProg)
+        .subscribe({
+          next: response => {
+            this.programmingDeliveryInfo = response;
+            resolve(response);
+          },
+          error: error => {
+            resolve(false);
+          },
+        });
+    });
   }
 
   showInfoProgrammingDelivery() {
     this.params.getValue()['filter.programmingDeliveryId'] =
-      this.programmingDelId;
+      this.programmingDeliveryInfo.id;
     this.programmingRequestService
       .getGoodsProgrammingDelivery(this.params.getValue())
       .subscribe({
@@ -2177,12 +2178,15 @@ export class SchedulingDeliveriesFormComponent
         ).then(question => {
           if (question.isConfirmed) {
             const formData = {
-              id: this.programmingDelId,
+              id: this.programmingDeliveryInfo.id,
               statusNotification: 'Y',
             };
 
             this.programmingRequestService
-              .updateProgrammingDelivery(this.programmingDelId, formData)
+              .updateProgrammingDelivery(
+                this.programmingDeliveryInfo.id,
+                formData
+              )
               .subscribe({
                 next: response => {
                   this.alert(
@@ -2220,7 +2224,7 @@ export class SchedulingDeliveriesFormComponent
               class: 'modal-xl modal-dialog-centered',
             };
             config.initialState = {
-              idprogDel: this.programmingDelId,
+              idprogDel: this.programmingDeliveryInfo.id,
               callback: (next: boolean) => {
                 if (next) {
                   this.showReportDestruction();
@@ -2247,7 +2251,8 @@ export class SchedulingDeliveriesFormComponent
   checkExistNotificationDestruction() {
     return new Promise((resolve, reject) => {
       const params = new BehaviorSubject<ListParams>(new ListParams());
-      params.getValue()['filter.programmingDeliveryId'] = this.programmingDelId;
+      params.getValue()['filter.programmingDeliveryId'] =
+        this.programmingDeliveryInfo.id;
       params.getValue()['filter.​typeNotification'] = 1;
       this.notificationService
         .getNotificationDestruction(params.getValue())
@@ -2265,7 +2270,8 @@ export class SchedulingDeliveriesFormComponent
   checkExistNotificationDestructionFond() {
     return new Promise((resolve, reject) => {
       const params = new BehaviorSubject<ListParams>(new ListParams());
-      params.getValue()['filter.programmingDeliveryId'] = this.programmingDelId;
+      params.getValue()['filter.programmingDeliveryId'] =
+        this.programmingDeliveryInfo.id;
       params.getValue()['filter.typeNotification'] = '2';
       this.notificationService
         .getNotificationDestruction(params.getValue())
@@ -2285,7 +2291,7 @@ export class SchedulingDeliveriesFormComponent
       class: 'modal-xl modal-dialog-centered',
     };
     config.initialState = {
-      idprogDel: this.programmingDelId,
+      idprogDel: this.programmingDeliveryInfo.id,
       typeNotification: 1,
       callback: (next: boolean) => {
         if (next) {
@@ -2303,7 +2309,7 @@ export class SchedulingDeliveriesFormComponent
       class: 'modal-xl modal-dialog-centered',
     };
     config.initialState = {
-      idprogDel: this.programmingDelId,
+      idprogDel: this.programmingDeliveryInfo.id,
       typeNotification: 2,
       callback: (next: boolean) => {
         if (next) {
@@ -2329,7 +2335,7 @@ export class SchedulingDeliveriesFormComponent
               class: 'modal-xl modal-dialog-centered',
             };
             config.initialState = {
-              idprogDel: this.programmingDelId,
+              idprogDel: this.programmingDeliveryInfo.id,
               callback: (next: boolean) => {
                 if (next) {
                   this.showReportDestructionFond();
@@ -2383,7 +2389,7 @@ export class SchedulingDeliveriesFormComponent
       ).then(question => {
         if (question.isConfirmed) {
           const formData = {
-            idprogramming: this.programmingDelId,
+            idprogramming: this.programmingDeliveryInfo.id,
             eventType: typeEvent,
           };
           this.programmingRequestService
