@@ -255,7 +255,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.updateHour();
     this.intervalId = setInterval(() => {
       this.updateHour();
-      let good = goodCheck.map(item => item.row.no_bien).join(',');
+      let good = goodCheck.map(item => item.no_bien).join(',');
       console.log(good);
       this.formTwo.controls['selectedGood'].setValue(good);
     }, 1000);
@@ -611,7 +611,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       if (tpOfi == 2) {
         await this.insertaBien(idOficio, 0, 'D');
         for (let i = 0; i < goodCheck.length; i++) {
-          await this.insertaBien(idOficio, goodCheck[i].row.no_bien, 'I');
+          await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
         }
       } else if (tpOfi == 3) {
         await this.insertaBien(idOficio, 0, 'D');
@@ -626,15 +626,15 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         }
         for (let i = 0; i < goodCheck.length; i++) {
           this.dataGoodList.forEach(async element => {
-            if (element.no_bien == goodCheck[i].row.no_bien) {
+            if (element.no_bien == goodCheck[i].no_bien) {
               await this.insertaMotRev(
-                goodCheck[i].row.no_bien,
+                goodCheck[i].no_bien,
                 this.form.controls['event'].value,
                 this.changeChar(element.motivos.toString()),
                 element.idMotivos.toString(),
                 'I'
               );
-              await this.insertaBien(idOficio, goodCheck[i].row.no_bien, 'I');
+              await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
             }
           });
         }
@@ -1416,6 +1416,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         idJobIn: this.numTwo,
       };
     }
+    this.params.getValue()['sortBy'] = 'descripcion:ASC';
     let params = {
       ...this.params.getValue(),
     };
@@ -1470,7 +1471,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         idJobIn: this.numTwo,
       };
     }
-
+    this.params.getValue()['sortBy'] = 'descripcion:ASC';
     let params = {
       ...this.params2.getValue(),
     };
@@ -1534,6 +1535,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   //Export and Import Excel
   exportExcel() {
     // //
+
     let params = {
       ...this.params2.getValue(),
     };
@@ -1548,9 +1550,14 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
             bienesArray = resp.data.map((row: any) => {
               return { ...row };
             });
+
             let params = new ListParams();
             this.serviceJobs
-              .getMoCanById(this.event, { ...params, limit: 100000000 })
+              .getMoCanById(this.event, {
+                ...params,
+                limit: 100000000,
+                sortBy: 'descripcion:ASC',
+              })
               .subscribe({
                 next: response => {
                   console.log(response);
@@ -1679,7 +1686,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       if (tpOfi == 2) {
         await this.insertaBien(idOficio, 0, 'D');
         for (let i = 0; i < goodCheck.length; i++) {
-          await this.insertaBien(idOficio, goodCheck[i].row.no_bien, 'I');
+          await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
         }
       } else if (tpOfi == 3) {
         console.log(this.dataGoodList);
@@ -1692,13 +1699,13 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
             if (element.no_bien == goodCheck[i].no_bien) {
               console.log(element.motivos);
               await this.insertaMotRev(
-                goodCheck[i].row.no_bien,
+                goodCheck[i].no_bien,
                 this.form.controls['event'].value,
                 this.changeChar(element.motivos),
                 element.idMotivos.toString(),
                 'I'
               );
-              await this.insertaBien(idOficio, goodCheck[i].row.no_bien, 'I');
+              await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
               bienesTotales++;
             }
           });
