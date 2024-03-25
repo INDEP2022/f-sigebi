@@ -721,7 +721,7 @@ export class ActsRegularizationNonExistenceComponent
       if (statusProceedings == 'CERRADA')
         return this.alert(
           'warning',
-          'No se puede crear un acta con estatus cerrado',
+          'No se puede crear un Acta con estatus cerrado',
           ''
         );
       this.agregarActa();
@@ -1037,7 +1037,7 @@ export class ActsRegularizationNonExistenceComponent
         this.alert(
           'warning',
           'No existe un Acta en la cual asignar el Bien.',
-          'Debe capturar un acta.'
+          'Debe capturar un Acta.'
         );
         return;
       } else {
@@ -1058,7 +1058,7 @@ export class ActsRegularizationNonExistenceComponent
           } else if (this.selectData.di_disponible == 'N') {
             this.alert(
               'warning',
-              `El Bien ${this.selectData.id} tiene un estatus inválido para ser asignado a algún acta`,
+              `El Bien ${this.selectData.id} tiene un estatus inválido para ser asignado a algún Acta`,
               ''
             );
             return;
@@ -1121,7 +1121,7 @@ export class ActsRegularizationNonExistenceComponent
         this.loading2 = true;
         let result = await this.deleteDET(this.selectData2);
         if (!result) {
-          this.alert('error', 'No se pudo eliminar el bien del acta', '');
+          this.alert('error', 'No se pudo eliminar el bien del Acta', '');
         } else {
           this.alert('success', 'Bien eliminado correctamente', '');
           await this.getGoodsByExpedient(this.dataExpediente.id);
@@ -1249,7 +1249,7 @@ export class ActsRegularizationNonExistenceComponent
       } else {
         this.alertQuestion(
           'question',
-          'El acta ya tiene folio de escaneo',
+          'El Acta ya tiene folio de escaneo',
           '¿Quiere reimprimir la solicitud de digitalización?'
         ).then(res => {
           if (res.isConfirmed) {
@@ -1271,7 +1271,7 @@ export class ActsRegularizationNonExistenceComponent
       } else {
         this.alert(
           'warning',
-          'No se puede generar el folio de escaneo en un acta ya cerrada o clave inválida',
+          'No se puede generar el folio de escaneo en un Acta ya cerrada o clave inválida',
           ''
         );
       }
@@ -1438,7 +1438,7 @@ export class ActsRegularizationNonExistenceComponent
       universalFolio,
     } = this.formActReception.value;
     if (statusProceedings == 'CERRADA')
-      return this.alert('warning', 'El acta ya está cerrada', '');
+      return this.alert('warning', 'El Acta ya está cerrada', '');
     // OBTENCIÓN DE CARGO //
     let cUSUVAL: any = await this.valCargo();
     console.log(cUSUVAL);
@@ -1491,13 +1491,13 @@ export class ActsRegularizationNonExistenceComponent
     if (lnuContador == 0)
       return this.alert(
         'warning',
-        'El acta no tiene documentos escaneados',
+        'El Acta no tiene documentos escaneados',
         'No se puede cerrar'
       );
     if (this.data2.count() == 0)
       return this.alert(
         'warning',
-        'El acta no tiene ningún bien asignado',
+        'El Acta no tiene ningún bien asignado',
         'No se puede cerrar'
       );
     this.alertQuestion(
