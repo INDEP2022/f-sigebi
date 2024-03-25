@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { addDays } from 'date-fns';
@@ -59,6 +59,7 @@ export class SchedulingDeliveriesFormComponent
   loadingGoodsDest: boolean = false;
   saveLoading: boolean = false;
   isReadOnly: boolean = true;
+  isReadOnlyDes: string = "N";
   loadingGoodsDevolution: boolean = false;
   loadingGoodsDonation: boolean = false;
   loadingGoodsSales: boolean = false;
@@ -169,7 +170,6 @@ export class SchedulingDeliveriesFormComponent
     this.prepareSearchSalesForm();
     this.getInfoUserLog();
   }
-
   getInfoUserLog() {
     this.programmingRequestService.getUserInfo().subscribe({
       next: async (response: any) => {
@@ -547,16 +547,25 @@ export class SchedulingDeliveriesFormComponent
   }
 
   typeEventSelect(typeEvent: any, infoSelect: string) {
+
     if (infoSelect == 'typeEvent') {
+      //this.disabledTypeEvent = true;
       this.idTypeEvent = typeEvent.id;
+      //this.schedulingDeliverieForm.get('typeEventInfo').setValue(typeEvent.nameEvent);
     }
 
     if (infoSelect == 'transferent') {
+      //this.disableTransfer = true;
       this.transferent = typeEvent.id;
+      //this.schedulingDeliverieForm.get('transferName').setValue(typeEvent.nameAndId);
+
     }
 
     if (infoSelect == 'organization') {
+      //this.disableStore = true;
       this.organizationCode = typeEvent.organizationCode;
+      //this.schedulingDeliverieForm.get('storeName').setValue(typeEvent.name);
+
     }
 
     if (this.idTypeEvent && this.organizationCode && this.transferent) {
@@ -2187,6 +2196,7 @@ export class SchedulingDeliveriesFormComponent
                     'Se crearon los reportes de destrucción correctamente'
                   );
                   this.checkProgrammingDelivery();
+
                 },
                 error: error => {},
               });
