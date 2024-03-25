@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { addDays } from 'date-fns';
@@ -12,12 +12,14 @@ import { minDate } from 'src/app/common/validations/date.validators';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 import { IGoodInvAvailableView } from 'src/app/core/models/ms-goodsinv/goodsinv.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN2,
@@ -60,7 +62,7 @@ export class SchedulingDeliveriesFormComponent
   loadingGoodsDest: boolean = false;
   saveLoading: boolean = false;
   isReadOnly: boolean = true;
-  isReadOnlyDes: string = "N";
+  isReadOnlyDes: string = 'N';
   loadingGoodsDevolution: boolean = false;
   loadingGoodsDonation: boolean = false;
   loadingGoodsSales: boolean = false;
@@ -151,7 +153,9 @@ export class SchedulingDeliveriesFormComponent
     private modalService: BsModalService,
     private modalRef: BsModalRef,
     private notificationService: NotificationService,
-    private regionalDelegationService: RegionalDelegationService
+    private regionalDelegationService: RegionalDelegationService,
+    private authService: AuthService,
+    private taskService: TaskService
   ) {
     super();
 
@@ -216,6 +220,7 @@ export class SchedulingDeliveriesFormComponent
         next: async response => {
           this.programmingDelId = response.data[0].id;
           this.programmingDeliveryInfo = response.data[0];
+          console.log(this.programmingDeliveryInfo);
 
           if (this.programmingDeliveryInfo?.startDate) {
             this.programmingDeliveryInfo.startDate = moment(
@@ -259,7 +264,6 @@ export class SchedulingDeliveriesFormComponent
         },
         error: error => {
           const formData = {
-            id: 16902,
             delRegId: this.regionalDelegationNum,
             cretationUser: this.nameUser,
             creationDate: new Date(),
@@ -548,7 +552,6 @@ export class SchedulingDeliveriesFormComponent
   }
 
   typeEventSelect(typeEvent: any, infoSelect: string) {
-
     if (infoSelect == 'typeEvent') {
       //this.disabledTypeEvent = true;
       this.idTypeEvent = typeEvent.id;
@@ -559,14 +562,12 @@ export class SchedulingDeliveriesFormComponent
       //this.disableTransfer = true;
       this.transferent = typeEvent.id;
       //this.schedulingDeliverieForm.get('transferName').setValue(typeEvent.nameAndId);
-
     }
 
     if (infoSelect == 'organization') {
       //this.disableStore = true;
       this.organizationCode = typeEvent.organizationCode;
       //this.schedulingDeliverieForm.get('storeName').setValue(typeEvent.name);
-
     }
 
     if (this.idTypeEvent && this.organizationCode && this.transferent) {
@@ -605,7 +606,7 @@ export class SchedulingDeliveriesFormComponent
           transferent = this.schedulingDeliverieForm.get('transferId');
         }
 
-        this.schedulingDeliverieForm.get('id').setValue(this.programmingDelId);
+        //this.schedulingDeliverieForm.get('id').setValue(this.programmingDelId);
 
         const startDate = moment(
           this.schedulingDeliverieForm.get('startDate').value,
@@ -2041,6 +2042,7 @@ export class SchedulingDeliveriesFormComponent
   async addGoodsProgrammingDelivery() {
     if (this.goodDesSelect.length > 0) {
       const saveProgramming = await this.saveProgrammingDelivery();
+
       this.goodDesSelect.map(good => {
         const goodForm: IGoodDelivery = {
           programmingDeliveryId: this.programmingDelId,
@@ -2189,7 +2191,6 @@ export class SchedulingDeliveriesFormComponent
                     'Se crearon los reportes de destrucción correctamente'
                   );
                   this.checkProgrammingDelivery();
-
                 },
                 error: error => {},
               });
@@ -2388,11 +2389,61 @@ export class SchedulingDeliveriesFormComponent
           this.programmingRequestService
             .sendEmailProgrammingDelivery(formData)
             .subscribe({
-              next: () => {},
+              next: () => {
+                this.createTaskExecuteProgramming();
+              },
               error: () => {},
             });
         }
       });
     }
+  }
+
+  //Creamos la tarea de ejecutar la recepción//
+  async createTaskExecuteProgramming() {
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    const user: any = this.authService.decodeToken();
+    let body: any = {};
+    body['type'] = 'SOLICITUD_PROGRAMACION';
+    body['subtype'] = 'Aceptar_Programacion';
+    body['ssubtype'] = 'APPROVE_ER';
+
+    let task: any = {};
+    //task['id'] = 0;
+    task['assignees'] = _task.assignees;
+    task['assigneesDisplayname'] = _task.assigneesDisplayname;
+    task['creator'] = user.username;
+    task['reviewers'] = user.username;
+    task['taskNumber'] = Number(this.programmingDeliveryInfo.id);
+    task[
+      'title'
+    ] = `Ejecutar entrega (Destrucción) para la programación: ${this.programmingDeliveryInfo.folio}`;
+    task['programmingId'] = this.programmingDeliveryInfo.id;
+    task['requestId'] = this.programmingDeliveryInfo.id;
+    task['expedientId'] = 0;
+    task['idDelegationRegional'] = user.department;
+    task['urlNb'] = '/pages/scheduling-deliveries/execute-schelude-delivery';
+    task['processName'] = 'SolicitudProgramacion';
+    task['idAuthority'] = this.programmingDeliveryInfo.id;
+    task['idStore'] = this.programmingDeliveryInfo.store;
+    task['idTransferee'] = this.programmingDeliveryInfo.transferId;
+    task['nbTransferee'] = this.programmingDeliveryInfo.transferName;
+    body['task'] = task;
+
+    await this.createTaskOrderService(body);
+    this.loading = false;
+  }
+
+  createTaskOrderService(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(false);
+        },
+      });
+    });
   }
 }
