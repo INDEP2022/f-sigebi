@@ -491,16 +491,41 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         close: true,
       };
 
-    case 'review-result-protection':
+    //ABANDONO
+
+    case 'register-abandonment-instruction':
+      return {
+        title: `Abandono: Verificar Cumplimiento, No. Solicitud: ${requestId} ${contributor}`,
+        url: 'pages/request/request-comp-doc/tasks/verify-compliance-abandonment',
+        process: 'ProcesoAbandono',
+        type: 'DOCUMENTACION_COMPLEMENTARIA',
+        subtype: 'Registro_Solicitud',
+        ssubtype: 'TURNAR',
+        close: true,
+        rollBack: true,
+      };
+
+    case 'verify-compliance-abandonment':
+      return {
+        title: `Aprobar Abandono, No. Solicitud: ${requestId} ${contributor}`,
+        url: 'pages/request/request-comp-doc/tasks/approve-abandonment',
+        process: 'ProcesoAbandono',
+        type: 'DOCUMENTACION_COMPLEMENTARIA',
+        subtype: 'Registro_Solicitud',
+        ssubtype: 'TURNAR',
+        close: true,
+      };
+
+    case 'register-abandonment-goods':
+      break;
+    case 'approve-abandonment':
       break;
 
+    case 'review-result-protection':
+      break;
     case 'register-compensation-documentation':
       break;
     case 'register-seizures':
-      break;
-    case 'register-abandonment-goods':
-      break;
-    case 'abandonment-instruction-letter':
       break;
     case 'register-domain-extinction':
       break;

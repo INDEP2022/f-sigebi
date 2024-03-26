@@ -1,5 +1,4 @@
 //Components
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export const COLUMNS = {
   id: {
@@ -17,9 +16,80 @@ export const COLUMNS = {
   labelNumber: {
     title: 'Ind. Destino',
     sort: false,
-    type: 'html',
+    valuePrepareFunction: (row: any) => {
+      switch (Number(row)) {
+        case 1:
+          return 'VENTA';
+          break;
+        case 2:
+          return 'DONACION';
+          break;
+        case 3:
+          return 'RESGUARDO';
+          break;
+        case 4:
+          return 'DESTRUCCION';
+          break;
+        case 5:
+          return 'DEVOLUCION';
+          break;
+        case 6:
+          return 'AMPARO';
+          break;
+        case 7:
+          return 'ENTERADO LIF';
+          break;
+        default:
+          // return row != null ? row.labelNumber : '';
+          return '0';
+          break;
+      }
+    },
+    filterFunction: (cell: any, search?: string) => {
+      return true;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: 0, title: 'SIN INDICADOR' },
+          { value: 1, title: 'VENTA' },
+          { value: 2, title: 'DONACION' },
+          { value: 3, title: 'RESGUARDO' },
+          { value: 4, title: 'DESTRUCCION' },
+          { value: 5, title: 'DEVOLUCION' },
+          { value: 6, title: 'AMPARO' },
+          { value: 7, title: 'ENTERADO LIF' },
+        ],
+      },
+    },
   },
-  valid: {
+  fileNumber: {
+    title: 'No. Expediente',
+    sort: false,
+  },
+  goodClassNumber: {
+    title: 'No. Clasificación',
+    sort: false,
+  },
+  transferNumberExpedient: {
+    title: 'No. Transferente',
+    sort: false,
+    valuePrepareFunction: (row: any) => {
+      if (row == null || row == '') {
+        return '0';
+      } else {
+        return row;
+      }
+    },
+  },
+  nameInstitutionExpedient: {
+    title: 'Transferente',
+    sort: false,
+  },
+
+  /*valid: {
     title: 'Válido',
     type: 'custom',
     renderComponent: CheckboxElementComponent,
@@ -29,5 +99,5 @@ export const COLUMNS = {
       });
     },
     sort: false,
-  },
+  },*/
 };

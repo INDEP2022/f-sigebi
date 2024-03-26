@@ -83,7 +83,36 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
     this.requestId = Number(this.route.snapshot.paramMap.get('request'));
     this.process = this.route.snapshot.paramMap.get('process');
 
-    this.editable = this.process != 'approve-return';
+    if (this.process != 'approve-return' && this.process != 'approve-abandonment') {
+      this.editable = true;
+    }
+
+    if (this.process == 'verify-compliance-abandonment' ||
+      this.process == 'register-abandonment-instruction' ||
+      this.process == 'approve-abandonment') {
+
+      this.tableSettings.columns["contentId"] = {
+        title: 'Oficio de instrucción de abandono emitido por la autoridad',
+        type: 'custom',
+        sort: false,
+        valuePrepareFunction: (cell: any, row: any) => cell,
+        onComponentInitFunction: (instance: any) => {
+          instance.checkId = 'contentId';
+        },
+        renderComponent: CheckVerifyComplianceComponent,
+      }
+
+      this.tableSettings.columns["codeStore"] = {
+        title: 'Acuerdo de declaración de abandono',
+        type: 'custom',
+        sort: false,
+        valuePrepareFunction: (cell: any, row: any) => cell,
+        onComponentInitFunction: (instance: any) => {
+          instance.checkId = 'codeStore';
+        },
+        renderComponent: CheckVerifyComplianceComponent,
+      }
+    }
 
     this.getGoods();
   }
@@ -105,10 +134,13 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
           element.meetsArticle24 = element.meetsArticle24 == '1';
           element.meetsArticle28 = element.meetsArticle28 == '1';
           element.meetsArticle29 = element.meetsArticle29 == '1';
+          element.contentId = element.contentId == '1';
+          element.codeStore = element.codeStore == '1';
+
         });
         this.onChanges();
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -118,7 +150,7 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
       object: this.data,
       atLeastOne:
         this.data.filter(
-          x => x.meetsArticle24 || x.meetsArticle28 || x.meetsArticle29
+          x => x.meetsArticle24 || x.meetsArticle28 || x.meetsArticle29 || x.contentId || x.codeStore
         ).length > 0,
     });
   }
@@ -131,6 +163,8 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
           meetsArticle24: element.meetsArticle24 ? 1 : 0,
           meetsArticle28: element.meetsArticle28 ? 1 : 0,
           meetsArticle29: element.meetsArticle29 ? 1 : 0,
+          contentId: element.contentId ? 1 : 0,
+          codeStore: element.codeStore ? 1 : 0,
         };
 
         element.change = false;
@@ -151,6 +185,8 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
       element.meetsArticle24 = 0;
       element.meetsArticle28 = 0;
       element.meetsArticle29 = 0;
+      element.contentId = 0;
+      element.codeStore = 0;
     });
 
     this.data = [...this.data];

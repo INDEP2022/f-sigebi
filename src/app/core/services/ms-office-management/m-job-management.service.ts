@@ -185,4 +185,8 @@ export class MJobManagementService extends HttpService {
   getJobs(params?: _Params) {
     return this.get('jobs', params);
   }
+
+  keyNextItem(body: { screenVc: string; goodNumber: string }) {
+    return this.post('application/key-next-item', body);
+  }
 }
