@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -10,6 +10,8 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
@@ -40,13 +42,17 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
 
   ngGlobal: IGlobalVars = null;
 
+  @ViewChild('table', { static: false }) table: any;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private goodFinderService: GoodFinderService,
     private globalVarsService: GlobalVarsService,
     private router: Router,
-    private goodTrackerService: GoodTrackerService
+    private goodTrackerService: GoodTrackerService,
+    private goodService: GoodService,
+    private goodProcessService: GoodProcessService
   ) {
     super();
 
@@ -202,21 +208,6 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
         console.log('respuesta TMPTRAKER', res);
         console.log('tamaño', res.count);
         this.searchData(res.data);
-
-        /*let obj = {
-          goodNumber: [],
-        };
-
-        let result = response.data.map(item => {
-          obj.goodNumber.push(item.goodNumber);
-        });
-
-        Promise.all(result).then(resp => {
-          this.goodsTracker = obj;
-          console.log('this.goodstracker', this.goodsTracker);
-          console.log('this.goodstracker tamaño', this.goodsTracker.length);
-          
-        });*/
       },
       error: err => {},
     });
@@ -234,7 +225,24 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
         'Atención',
         'Debe especificar el indicador de destino'
       );
+      return;
     }
+
+    this.alertQuestion(
+      'question',
+      'Se cambiará el indicador a los bienes seleccionados',
+      `¿Continuar?`
+    ).then(question => {
+      if (question.isConfirmed) {
+        for (let i = 0; i < this.registerSelected; i++) {
+          const goodData = this.selectedRows[i];
+
+          this.changeIndicataors(goodData);
+        }
+        this.table.isAllSelected = false;
+        this.searchData();
+      }
+    });
   }
 
   openForm(data: any) {
@@ -254,5 +262,79 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(SelectLabelGoodComponent, config);
+  }
+
+  selectedRows: any;
+  activeButton: boolean = false;
+  registerSelected: number = 0;
+  goodsids: string = '';
+
+  onSelectedRows(event) {
+    this.selectedRows = event.selected;
+    console.log(this.selectedRows);
+
+    if (this.selectedRows.length != 0) {
+      this.registerSelected = this.selectedRows.length;
+      this.activeButton = true;
+
+      for (let i = 0; i < this.registerSelected; i++) {
+        this.goodsids = this.goodsids + this.selectedRows[i].goodId + ', ';
+      }
+    } else {
+      this.registerSelected = 0;
+      this.activeButton = false;
+      this.goodsids = '';
+    }
+  }
+
+  changeIndicataors(goodData1: any) {
+    const labelGood = this.form.controls['labelGood'].value;
+
+    console.log('ID de etiqueta seleccionado:_ ', labelGood);
+
+    let objGood1 = {
+      goodNumber: Number(goodData1.id),
+      label: Number(labelGood),
+      classificationOfGoodsNumber: Number(goodData1.goodClassNumber),
+    };
+    console.log('ObjGood', objGood1);
+
+    this.goodProcessService.validInitiationLabel(objGood1).subscribe({
+      next: resp => {
+        console.log('respuesta de validinitiationLabel', resp);
+        //this.alert('warning','Atención',resp.data);
+        this.changeLabel(goodData1);
+      },
+      error: error => {
+        console.log('respuesta de error validinitiationLabel', error);
+        this.alert('warning', `El Bien: ${goodData1.id}`, error.error.message);
+      },
+    });
+  }
+
+  changeLabel(goodData2: any) {
+    const labelGood = this.form.controls['labelGood'].value;
+
+    let objGood2 = {
+      id: goodData2.id,
+      goodId: goodData2.id,
+      labelNumber: labelGood,
+    };
+    console.log('ObjGood', objGood2);
+
+    this.goodService.update(objGood2).subscribe({
+      next: resp => {
+        console.log('Actualizado: ', resp);
+        //this.alert('success', 'Etiqueta Actualizada', '');
+      },
+      error: error => {
+        console.log('No se actualizó: ', error);
+        this.alert(
+          'warning',
+          `No se logró cambiar la etiqueta del Bien: ${goodData2.id}`,
+          'Revisar la información del Bien a modificar'
+        );
+      },
+    });
   }
 }
