@@ -29,6 +29,7 @@ import {
 import { IprogrammingDelivery } from 'src/app/pages/siab-web/sami/receipt-generation-sami/receipt-table-goods/ireceipt';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { NotificationDestructionFormComponent } from '../notification-destruction-form/notification-destruction-form.component';
 import { NotificationDestructionFoundFormComponent } from '../notification-destruction-found-form/notification-destruction-found-form.component';
 import { IGoodDelivery } from './good-delivery.interface';
@@ -39,7 +40,6 @@ import {
   SEARCH_SALES_TABLE,
 } from './scheduling-deliveries-columns';
 import { IClient, TypeEvent } from './type-events';
-import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-scheduling-deliveries-form',
@@ -168,6 +168,7 @@ export class SchedulingDeliveriesFormComponent
   }
 
   ngOnInit(): void {
+    this.programmingDeliveryInfo = null;
     this.getTransferentSelect(new ListParams());
     this.prepareForm();
     this.prepareSearchDesForm();
@@ -2040,62 +2041,110 @@ export class SchedulingDeliveriesFormComponent
 
   goodsSelectDest(goodInvSelect: IGoodInvAvailableView[]) {
     this.goodDesSelect = goodInvSelect;
-    console.log("gS", this.goodDesSelect)
-    console.log("goods", this.goodsToProgramData)
   }
+
+  addedGoods: IGoodDelivery[] = [];
 
   async addGoodsProgrammingDelivery() {
     if (this.goodDesSelect.length > 0) {
       const saveProgramming = await this.saveProgrammingDelivery();
 
-      this.goodDesSelect.map(good => {
-        const goodForm: IGoodDelivery = {
-          programmingDeliveryId: saveProgramming['id'],
-          goodId: good?.managementNum,
-          client: good?.client,
-          delReg: good?.delRegSol,
-          descriptionGood: good?.descriptionGood,
-          amountGood: good?.quantity,
-          compensationOpinion: good?.dictumCompensation,
-          commercialEvent: good?.commercialEvent,
-          invoice: good?.bill,
-          item: good?.item,
-          commercialLot: good?.commercialLot,
-          inventoryNumber: good?.inventoryNum,
-          resolutionSat: good?.satResolution,
-          unit: good?.uomCode,
-          typeProgrammingId: good?.type,
-          transactionId: good?.transactionId,
-          siabGoodNumber: good?.bienSiabNum,
-          origen: good?.origin,
-          commercialEventDate: good?.commercialEventDate,
-          tranferId: good?.organizationId,
-          typeRelevantId: good?.relevant_type,
-          locatorId: good?.locatorId,
-          inventoryItemId: good?.inventoryItemId,
-          foundInd: 'N',
-        };
+      let alreadyAddedGoods = this.goodDesSelect.filter(good =>
+        this.addedGoods.find(
+          addedGood => addedGood.goodId === good.managementNum
+        )
+      );
 
-        this.programmingRequestService
-          .createGoodProgrammingDevilery(goodForm)
-          .subscribe({
-            next: async response => {
-              //this.checkProgrammingDelivery();
-              this.params
-                .pipe(takeUntil(this.$unSubscribe))
-                .subscribe(() => this.showInfoProgrammingDelivery());
-              //this.disabledTypeEvent = true;
-              this.isReadOnly = true;
-              //this.schedulingDeliverieForm.get('typeEvent').setValue(this.programmingDeliveryInfo.transferId['nameEvent'])
-            },
-            error: error => {},
-          });
-      });
+      if (alreadyAddedGoods.length > 0) {
+        let alreadyAddedGoodsNames = alreadyAddedGoods
+          .map(good => good.managementNum)
+          .join(', ');
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          `Los siguientes bienes ya han sido agregados a la programación de entrega: ${alreadyAddedGoodsNames}`
+        );
+      } else {
+        this.goodDesSelect.map(good => {
+          const goodForm: IGoodDelivery = {
+            programmingDeliveryId: saveProgramming['id'],
+            goodId: good?.managementNum,
+            client: good?.client,
+            delReg: good?.delRegSol,
+            descriptionGood: good?.descriptionGood,
+            amountGood: good?.quantity,
+            compensationOpinion: good?.dictumCompensation,
+            commercialEvent: good?.commercialEvent,
+            invoice: good?.bill,
+            item: good?.item,
+            commercialLot: good?.commercialLot,
+            inventoryNumber: good?.inventoryNum,
+            resolutionSat: good?.satResolution,
+            unit: good?.uomCode,
+            typeProgrammingId: good?.type,
+            transactionId: good?.transactionId,
+            siabGoodNumber: good?.bienSiabNum,
+            origen: good?.origin,
+            commercialEventDate: good?.commercialEventDate,
+            tranferId: good?.organizationId,
+            typeRelevantId: good?.relevant_type,
+            locatorId: good?.locatorId,
+            inventoryItemId: good?.inventoryItemId,
+            foundInd: 'N',
+          };
+
+          this.programmingRequestService
+            .createGoodProgrammingDevilery(goodForm)
+            .subscribe({
+              next: async response => {
+                // Agrega el bien a la lista
+                this.addedGoods.push(goodForm);
+                this.params
+                  .pipe(takeUntil(this.$unSubscribe))
+                  .subscribe(() => this.showInfoProgrammingDelivery());
+                this.isReadOnly = true;
+              },
+              error: error => {},
+            });
+        });
+      }
     } else {
       this.alert(
         'warning',
         'Acción Invalida',
         'Se requiere seleccionar un bien para agregar a la programación de entrega'
+      );
+    }
+  }
+
+  selectedRow: any;
+  goodsSelect(data): void {
+    if (this.selectedRow === data) {
+      this.selectedRow = null;
+    } else {
+      this.selectedRow = data;
+    }
+  }
+
+  async deleteGoodProgrammingDelivery() {
+    if (this.selectedRow) {
+      this.programmingRequestService
+        .deleteGoodProgrammingDevilery(this.selectedRow.id)
+        .subscribe({
+          next: async response => {
+            this.addedGoods = this.addedGoods.filter(
+              good => good.goodId !== this.selectedRow.goodId
+            );
+
+            this.showInfoProgrammingDelivery();
+          },
+          error: error => {},
+        });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere seleccionar un bien para eliminar de la programación de entrega'
       );
     }
   }
@@ -2142,54 +2191,36 @@ export class SchedulingDeliveriesFormComponent
       ).value,
       typeUser: this.schedulingDeliverieForm.get('typeUser').value,
     };
-    //console.log(this.programmingDeliveryInfo.id)
-    // if (this.programmingDeliveryInfo.id &&
-    //   this.programmingDeliveryInfo.id !== undefined &&
-    //   this.programmingDeliveryInfo.id !== null) {
-    //   return new Promise((resolve, reject) => {
-    //     this.programmingRequestService
-    //       .updateProgrammingDelivery(this.programmingDeliveryInfo.id, infoProg)
-    //       .subscribe({
-    //         next: response => {
-    //           this.programmingDeliveryInfo = response;
-    //           resolve(response);
-    //         },
-    //         error: error => {
-    //           resolve(false);
-    //         },
-    //       });
-    //   });
-    // } else {
-    //   return new Promise((resolve, reject) => {
-    //     this.programmingRequestService
-    //       .createProgrammingDelivery(infoProg)
-    //       .subscribe({
-    //         next: response => {
-    //           this.programmingDeliveryInfo = response;
-    //           resolve(response);
-    //         },
-    //         error: error => {
-    //           resolve(false);
-    //         },
-    //       });
-    //   });
-    // }
+
     return new Promise((resolve, reject) => {
-      this.programmingRequestService
-        .createProgrammingDelivery(infoProg)
-        .subscribe({
-          next: response => {
-            this.programmingDeliveryInfo = response;
-            resolve(response);
-          },
-          error: error => {
-            resolve(false);
-          },
-        });
+      if (!isNullOrEmpty(this.programmingDeliveryInfo)) {
+        infoProg['id'] = this.programmingDeliveryInfo.id;
+        this.programmingRequestService
+          .updateProgrammingDelivery(this.programmingDeliveryInfo.id, infoProg)
+          .subscribe({
+            next: response => {
+              this.programmingDeliveryInfo = response;
+              resolve(response);
+            },
+            error: error => {
+              resolve(false);
+            },
+          });
+      } else {
+        this.programmingRequestService
+          .createProgrammingDelivery(infoProg)
+          .subscribe({
+            next: response => {
+              this.programmingDeliveryInfo = response;
+              resolve(response);
+            },
+            error: error => {
+              resolve(false);
+            },
+          });
+      }
     });
-
   }
-
 
   showInfoProgrammingDelivery() {
     this.params.getValue()['filter.programmingDeliveryId'] =
@@ -2234,7 +2265,7 @@ export class SchedulingDeliveriesFormComponent
                     'Se crearon los reportes de destrucción correctamente'
                   );
                   //this.checkProgrammingDelivery();
-                  this.isReadOnlyDes = 'Y'
+                  this.isReadOnlyDes = 'Y';
                 },
                 error: error => {},
               });
