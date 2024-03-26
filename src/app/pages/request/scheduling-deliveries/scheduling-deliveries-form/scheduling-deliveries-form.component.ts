@@ -98,7 +98,7 @@ export class SchedulingDeliveriesFormComponent
   nameUser: string = '';
   clientName: string = '';
   idTypeEvent: number = 0;
-  typeEventname: string = ''
+  typeEventname: string = '';
   organizationCode: string = '';
   organizationName: string = '';
   transferent: number = 0;
@@ -169,7 +169,7 @@ export class SchedulingDeliveriesFormComponent
       actions: false,
       columns: SCHEDULING_DELIVERIES_COLUMNS,
     };
-    this.date.setDate(this.date.getDate() + 5)
+    this.date.setDate(this.date.getDate() + 5);
   }
 
   ngOnInit(): void {
@@ -558,24 +558,25 @@ export class SchedulingDeliveriesFormComponent
   }
 
   typeEventSelect(typeEvent: any, infoSelect: string) {
+    console.log(typeEvent);
     if (infoSelect == 'typeEvent') {
       //this.disabledTypeEvent = true;
       this.idTypeEvent = typeEvent.id;
-      this.typeEventname = typeEvent.nameEvent
+      this.typeEventname = typeEvent.nameEvent;
       //this.schedulingDeliverieForm.get('typeEventInfo').setValue(typeEvent.nameEvent);
     }
 
     if (infoSelect == 'transferent') {
       //this.disableTransfer = true;
       this.transferent = typeEvent.id;
-      this.transferentName = typeEvent.nameAndId
+      this.transferentName = typeEvent.nameAndId;
       //this.schedulingDeliverieForm.get('transferName').setValue(typeEvent.nameAndId);
     }
 
     if (infoSelect == 'organization') {
       //this.disableStore = true;
       this.organizationCode = typeEvent.organizationCode;
-      this.organizationName = typeEvent.name
+      this.organizationName = typeEvent.name;
       //this.schedulingDeliverieForm.get('storeName').setValue(typeEvent.name);
     }
 
@@ -2128,33 +2129,47 @@ export class SchedulingDeliveriesFormComponent
     }
   }
 
-  selectedRow: any;
+  selectedRows: any[] = [];
   goodsSelect(data): void {
-    if (this.selectedRow === data) {
-      this.selectedRow = null;
-    } else {
-      this.selectedRow = data;
+    // Si data no es un array, lo convierte en un array
+    if (!Array.isArray(data)) {
+      data = [data];
     }
+
+    data.forEach(row => {
+      const index = this.selectedRows.findIndex(
+        selectedRow => selectedRow.id === row.id
+      );
+      if (index > -1) {
+        // Si la fila ya está seleccionada, la elimina de selectedRows
+        this.selectedRows.splice(index, 1);
+      } else {
+        // Si la fila no está seleccionada, la agrega a selectedRows
+        this.selectedRows.push(row);
+      }
+    });
   }
 
   async deleteGoodProgrammingDelivery() {
-    if (this.selectedRow) {
-      this.programmingRequestService
-        .deleteGoodProgrammingDevilery(this.selectedRow.id)
-        .subscribe({
-          next: async response => {
-            this.addedGoods = this.addedGoods.filter(
-              good => good.goodId !== this.selectedRow.goodId
-            );
-            this.showInfoProgrammingDelivery();
-            this.alert(
-              'success',
-              'Acción Exitosa',
-              `El bien con el ID ${this.selectedRow.goodId} ha sido eliminado correctamente`
-            );
-          },
-          error: error => {},
-        });
+    if (this.selectedRows.length > 0) {
+      this.selectedRows.forEach(row => {
+        this.programmingRequestService
+          .deleteGoodProgrammingDevilery(row.id)
+          .subscribe({
+            next: async response => {
+              this.addedGoods = this.addedGoods.filter(
+                good => good.goodId !== row.goodId
+              );
+              this.showInfoProgrammingDelivery();
+              this.alert(
+                'success',
+                'Acción Exitosa',
+                `El bien con el ID ${row.goodId} ha sido eliminado correctamente`
+              );
+            },
+            error: error => {},
+          });
+      });
     } else {
       this.alert(
         'warning',
@@ -2282,9 +2297,15 @@ export class SchedulingDeliveriesFormComponent
                   //this.checkProgrammingDelivery();
                   this.isReadOnlyDes = 'Y';
                   this.isReadOnly = true;
-                  this.schedulingDeliverieForm.get('storeName').setValue(this.organizationName);
-                  this.schedulingDeliverieForm.get('transferName').setValue(this.transferentName);
-                  this.schedulingDeliverieForm.get('typeEventInfo').setValue(this.typeEventname);
+                  this.schedulingDeliverieForm
+                    .get('storeName')
+                    .setValue(this.organizationName);
+                  this.schedulingDeliverieForm
+                    .get('transferName')
+                    .setValue(this.transferentName);
+                  this.schedulingDeliverieForm
+                    .get('typeEventInfo')
+                    .setValue(this.typeEventname);
                 },
                 error: error => {},
               });
@@ -2301,6 +2322,7 @@ export class SchedulingDeliveriesFormComponent
   }
 
   notificationDestruccion() {
+    console.log('notificationDestruccion', this.goodsToProgramData);
     this.goodsToProgramData.getElements().then(async data => {
       if (data.length > 0) {
         if (this.programmingDeliveryInfo.statusNotification == 'Y') {
@@ -2511,12 +2533,39 @@ export class SchedulingDeliveriesFormComponent
     task['creator'] = user.username;
     task['reviewers'] = user.username;
     task['taskNumber'] = Number(this.programmingDeliveryInfo.id);
-    task[
-      'title'
-    ] = `Ejecutar entrega (Destrucción) para la programación: R-${this.programmingDeliveryInfo.id}`;
     task['programmingId'] = this.programmingDeliveryInfo.id;
-    //task['requestId'] = this.programmingDeliveryInfo.id;
     task['idDelegationRegional'] = user.department;
+    task['urlNb'] =
+      '/pages/request/scheduling-deliveries/execute-schelude-delivery';
+    switch (this.programmingDeliveryInfo.typeEvent) {
+      case 5:
+        task[
+          'title'
+        ] = `Ejecutar entrega (Destrucción) para la programación: R-${this.programmingDeliveryInfo.id}`;
+        break;
+      case 4:
+        task[
+          'title'
+        ] = `Ejecutar entrega (Devolución) para la programación: R-${this.programmingDeliveryInfo.id}`;
+        break;
+      case 3:
+        task[
+          'title'
+        ] = `Ejecutar entrega (Resarcimiento) para la programación: R-${this.programmingDeliveryInfo.id}`;
+        break;
+      case 2:
+        task[
+          'title'
+        ] = `Ejecutar entrega (Donación) para la programación: R-${this.programmingDeliveryInfo.id}`;
+        break;
+      case 2:
+        task[
+          'title'
+        ] = `Ejecutar entrega (Ventas) para la programación: R-${this.programmingDeliveryInfo.id}`;
+        break;
+      default:
+        break;
+    }
     task['urlNb'] =
       '/pages/request/scheduling-deliveries/execute-schelude-delivery';
     task['processName'] = 'SolicitudProgramacion';
