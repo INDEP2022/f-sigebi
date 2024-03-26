@@ -44,6 +44,7 @@ import { RejectRequestModalComponent } from '../../shared-request/reject-request
 import { PrintReportModalComponent } from '../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
+import { NotificationEmailService } from 'src/app/core/services/ms-notification/notification-emai.service';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -203,6 +204,7 @@ export class RequestCompDocTasksComponent
   private wContentService = inject(WContentService);
   private sanitizer = inject(DomSanitizer);
   private samplingGoodService = inject(SamplingGoodService);
+  private emailService = inject(NotificationEmailService);
 
   //private rejectedService = inject(RejectedGoodService)
 
@@ -1635,6 +1637,11 @@ export class RequestCompDocTasksComponent
         if (await this.validateTurn()) {
           let response = await this.updateTask(this.taskInfo.id);
 
+          if (this.process == 'approve-abandonment') {
+            await this.sendEmailAprobeAbandono();
+            this.updateGoods("extDomProcess", "ABANDONO");
+          }
+
           if (response) {
             this.msgModal(
               'Se aprobo la solicitud con el Folio Nº '.concat(
@@ -2029,6 +2036,59 @@ export class RequestCompDocTasksComponent
         }
       }
     }
+  }
+
+  async sendEmailAprobeAbandono() {
+
+    let dat1 = new Date();
+    let dat2 = dat1.getTime();
+    let dat3 = dat2.toString();
+    let dat4 = dat3.substring(3);
+    let idDon = parseInt(dat4);
+
+    //Confirmar los correos a los que se enviará el mensaje
+    let emails = ["test@gmail.com"];
+
+    await this.sendMail({
+      id: idDon,
+      subject: 'Cambio de Subinventario',
+      body: 'Se realizó la declaratoria de Abandono. “Concatenar nomenclatura de oficio" y es necesario cambiar el bien o bienes al subinventario de acuerdo con las características físicas de los mismos para continuar con los procesos de destino que correspondan de acuerdo con el cambio de subinventario que se realice',
+      recipients: emails.join(','),
+      message: 'Se realizó la declaratoria de Abandono: ',
+      answerTo: 'Cambio de Subinventario',
+    });
+  }
+
+  sendMail(object: any) {
+    return new Promise((resolve, reject) => {
+      this.emailService.createNotificationEmail(object).subscribe({
+        next: resp => {
+          console.log(resp);
+          resolve(resp);
+        },
+        error: e => {
+          this.onLoadToast(
+            'error',
+            'Ocurrio un error al enviar los mensaje',
+            `${e.error?.message}`
+          );
+          console.log(e);
+          reject('error');
+        },
+      });
+    });
+  }
+
+  async updateGoods(param, value) {
+
+    let goods = [];
+
+    goods.forEach(good => {
+      good[param] = value;
+      //actualizar el bien
+
+    });
+
   }
 
   //Crear un sample para el tipo de firma
