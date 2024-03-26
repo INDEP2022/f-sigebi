@@ -444,7 +444,7 @@ export class EventCaptureComponent
 
   async removeDetail(detail: any) {
     if (this.proceeding.statusProceedings.includes('CERRAD')) {
-      this.alert('error', 'Error', 'El programa esta cerrado');
+      this.alert('warning', '', 'El programa esta cerrado');
       return;
     }
 
@@ -546,8 +546,8 @@ export class EventCaptureComponent
       instance.control.updateValueAndValidity();
       if (!instance.control.valid) {
         this.alert(
-          'error',
-          'Error',
+          'warning',
+          '',
           'La fecha de finalización no puede ser menor a la fecha de inicio'
         );
         instance.control.setValue(null, { emitEvent: false });
@@ -590,12 +590,12 @@ export class EventCaptureComponent
 
   async saveProceeding() {
     if (!this.registerControls.captureDate.valid) {
-      this.alert('error', 'Error', 'Verifica el formulario');
+      this.alert('warning', '', 'Verifica el formulario');
       return;
     }
     if (this.proceeding.id) {
       if (this.proceeding.statusProceedings.includes('CERRAD')) {
-        this.alert('error', 'Error', 'El programa esta cerrado');
+        this.alert('warning', '', 'El programa esta cerrado');
         return;
       }
       this.updateProceeding().subscribe();
@@ -684,7 +684,7 @@ export class EventCaptureComponent
     const formValue = this.form.getRawValue();
     const { numFile, keysProceedings, captureDate, responsible } = formValue;
     if (!responsible) {
-      this.alert('error', 'Error', 'Eliga un responsable');
+      this.alert('warning', '', 'Elija un responsable');
       return;
     }
     if (!numFile) {
@@ -759,19 +759,19 @@ export class EventCaptureComponent
 
   validateDates() {
     if (!this.proceeding.id) {
-      this.alert('error', 'Error', 'No hay un programa');
+      this.alert('warning', '', 'No hay un programa');
       return;
     }
     if (this.detail.length == 0) {
-      this.alert('error', 'Error', 'No hay bienes agregados');
+      this.alert('warning', '', 'No hay bienes agregados');
       return;
     }
     if (this.proceeding?.statusProceedings?.includes('CERRAD')) {
-      this.alert('error', 'Error', 'El programa esta cerrado');
+      this.alert('warning', '', 'El programa esta cerrado');
       return;
     }
     if (!this.startDateCtrl.valid || !this.endDateCtrl.valid) {
-      this.alert('error', 'Error', 'Verifique las fechas');
+      this.alert('warning', '', 'Verifique las fechas');
       return;
     }
     const start = this.startDateCtrl.value;
@@ -806,8 +806,8 @@ export class EventCaptureComponent
         },
         error: error => {
           this.alert(
-            'error',
-            'Error',
+            'warning',
+            '',
             'Ocurrio un error al actualizar las fechas'
           );
         },
@@ -950,9 +950,9 @@ export class EventCaptureComponent
     const nullFilters = filters.filter(filter => !filter);
     if (nullFilters.length == totalFilters.length) {
       this.alert(
-        'error',
-        'Error',
-        'Debe ingresar almenos 1 parametro de busqueda'
+        'warning',
+        '',
+        'Debe ingresar como mínimo 1 parámetro de búsqueda'
       );
       return;
     }
@@ -960,17 +960,17 @@ export class EventCaptureComponent
       this.proceeding.statusProceedings == 'CERRADA' ||
       this.proceeding.statusProceedings == 'CERRADO'
     ) {
-      this.alert('error', 'Error', 'El programa esta cerrado');
+      this.alert('warning', '', 'El programa esta cerrado');
       return;
     }
 
     if (!typeEvent.value) {
-      this.alert('error', 'Error', 'No se ha especificado el Tipo de Evento');
+      this.alert('warning', '', 'No se ha especificado el Tipo de Evento');
       return;
     }
 
     if (!keysProceedings.value) {
-      this.alert('error', 'Error', 'No se ha ingresado el programa');
+      this.alert('warning', '', 'No se ha ingresado el programa');
       return;
     }
     let continueProcess = false;
@@ -1362,7 +1362,7 @@ export class EventCaptureComponent
 
   invalidTransfer() {
     this.global.tran = null;
-    this.alert('error', 'Error', 'La transferente no es válida para este tipo');
+    this.alert('warning', '', 'La transferente no es válida para este tipo');
   }
 
   getInitialParameter() {
@@ -1430,8 +1430,8 @@ export class EventCaptureComponent
           catchError(error => {
             if (error.status < 500) {
               this.alert(
-                'error',
-                ' Error',
+                'warning',
+                '',
                 'No existen tipos de evento para el usuario ' + this.authUser
               );
             }
@@ -1844,7 +1844,7 @@ export class EventCaptureComponent
     return await lastValueFrom(
       this.indicatorParametersService.getAll(params.getParams()).pipe(
         catchError(error => {
-          this.alert('error', 'Error', 'No se localizo el tipo de acta');
+          this.alert('warning', '', 'No se localizo el tipo de acta');
           return throwError(() => error);
         }),
 
@@ -2464,7 +2464,7 @@ export class EventCaptureComponent
       // Valida que la clave de la programación este completa (valida 2)
       if (this.PUF_VERIFICA_CLAVE()) {
         this.alert(
-          'error',
+          'warning',
           'El Programa es inconsistente en su estructura.',
           'Valide que la Cve. del Acta este correcta'
         );
@@ -2472,7 +2472,7 @@ export class EventCaptureComponent
       }
       if (this.detail[0].goodnumber === null) {
         this.alert(
-          'error',
+          'warning',
           'No se pudo realizar la actualización de bienes.',
           'Revise que los bienes sean los correctos'
         );
@@ -2498,7 +2498,7 @@ export class EventCaptureComponent
             v_COUNT = (await this.getVCount()) ?? 0;
             if (v_COUNT === 0) {
               this.alert(
-                'error',
+                'warning',
                 'No se ha firmado el oficio de programación de entrega.',
                 ''
               );
@@ -2521,8 +2521,8 @@ export class EventCaptureComponent
           this.global.paperworkArea = this.originalType;
           await this.initForm();
           this.alert(
-            'error',
-            'Ha ocurrido un error',
+            'warning',
+            '',
             'Falta complementar Fechas de Recepción/Entrega y/o Finalización de los bienes'
           );
         }
@@ -2568,8 +2568,8 @@ export class EventCaptureComponent
       this.global.paperworkArea = this.originalType;
       await this.initForm();
       this.alert(
-        'error',
-        'Ha ocurrido un error',
+        'warning',
+        '',
         'La Programación no ha sido cerrada, probableamente los bienes no tienen un estatus válido'
       );
     } else {
@@ -2652,12 +2652,12 @@ export class EventCaptureComponent
       this.proceeding.typeProceedings === 'CERRADO' ||
       this.proceeding.statusProceedings === 'CERRADA'
     ) {
-      this.alert('error', 'Error', 'El Programa está cerrado');
+      this.alert('warning', '', 'El Programa está cerrado');
       return;
     }
 
     if (this.registerControls.typeEvent.value === null) {
-      this.alert('error', 'Error', 'No se ha especificado el Tipo de Evento');
+      this.alert('warning', '', 'No se ha especificado el Tipo de Evento');
       return;
     }
 
@@ -2666,12 +2666,12 @@ export class EventCaptureComponent
     );
 
     if (V_TIPO_ACTA === null) {
-      this.alert('error', 'Error', 'No se localizó el Tipo de Acta');
+      this.alert('warning', '', 'No se localizó el Tipo de Acta');
       return;
     }
 
     if (this.proceeding.keysProceedings === null) {
-      this.alert('error', 'Error', 'No se ha ingresado el Programa');
+      this.alert('warning', '', 'No se ha ingresado el Programa');
       return;
     }
 
@@ -2748,8 +2748,8 @@ export class EventCaptureComponent
         };
         if (SSF3_ACTAS_PROG_DST.EMAIL === null) {
           this.alert(
-            'error',
-            'Error',
+            'warning',
+            '',
             'No se cuenta con Lista de Distribución de correo'
           );
           this.PUP_ING_CORREO_SAE();
