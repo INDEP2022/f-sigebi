@@ -9,7 +9,6 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
   catchError,
-  map,
   skip,
   switchMap,
   tap,
@@ -290,40 +289,50 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       localStorage.removeItem('bie');
       this.eventInput();
     }
+
+    this.officeTypeCtrl.valueChanges.subscribe(res => {
+      console.log(res);
+      this.PupAgregaTexto();
+    });
+
+    this.problematicRadios.disable();
+    this.form.get('problematiclegal').disable();
   }
 
   goodNumChange() {
-    const goodId = this.controls.goodId.value;
-    if (!goodId) {
+    if (this.form.get('goodId').value == null) {
+      this.form.get('goodId').markAsTouched();
       return;
     }
-    const params = new FilterParams();
-    params.limit = 100;
-    params.addFilter('goods.goodId', goodId);
-    this.goodService
-      .getById(goodId)
-      .pipe(
-        catchError(error => {
-          this.onLoadToast('error', 'Error', 'El bien no existe');
-          this.form.get('goodId').setErrors({ customErrorKey: true });
-          return throwError(() => error);
-        }),
-        switchMap(() => {
-          this.showHide.showHideError(false);
-          return this.goodsJobManagementService
-            .getAllFilteredV2(params.getParams())
-            .pipe(
-              map(response => response.data.map(row => row.managementNumber)),
-              switchMap(ids => this.getMGoods(ids, 'refersTo', 'OFCOMER'))
-            );
-        })
-      )
-      .subscribe({
-        next: response => {
-          console.log('primera petición: ', response);
-          this.handleDocumentsCount(response.count, response.data);
-        },
-      });
+
+    const body = {
+      screenVc: 'FOFICIOCOMER',
+      goodNumber: this.form.get('goodId').value,
+    };
+
+    this.mJobManagement.keyNextItem(body).subscribe(
+      res => {
+        console.log(res);
+        if (res.data[0].V_VALBIEN != null) {
+          this.alertQuestion(
+            'question',
+            'Este bien tiene un oficio de: ' +
+              res.data[0].VAL_TIPOF +
+              ' generar el oficio de: ' +
+              res.data[0].VAL_TIPOF2 +
+              '.',
+            '¿Deseas continuar?'
+          ).then(res => {
+            if (res.isDismissed) {
+              this.PupAgregaTexto();
+            }
+          });
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   eventInput() {
@@ -2319,14 +2328,22 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
           });
         },
       });
-    } else if (recordCommerType == 'por' && officeTypeCtrl == 'ENT') {
+    }
+
+    if (recordCommerType == 'por' && officeTypeCtrl == 'ENT') {
+      console.log('entra 2');
       this.M_DES = 'PENT';
       this.V_BANDERA = 1;
+
+      let text1 = '';
+      let text2 = '';
+      let text3 = '';
 
       let paramsAptFolio = {
         publicLot: lote,
         eventId: evento,
       };
+
       this.comerClientsService.getCursorAptFolio(paramsAptFolio).subscribe({
         next: response => {
           console.log('response Cursor AptFolio-->', response);
@@ -2390,16 +2407,73 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                 resp.data[0].cve_evento +
                 '\n';
               let text3 = 'Sin otro particular, reciba un cordial saludo..';
+
               this.form.patchValue({
                 text1: text1,
                 text2: text2,
                 text3: text3,
               });
             },
+            error: err => {
+              console.log('error Cursor DesBienes --> ', err);
+            },
+          });
+        },
+        error: err => {
+          console.log('error Cursor DesBienes --> ', err);
+          let text1 =
+            'Con relacion a los inmuebles, bajo administracion del SAE te informo que el precio de venta del/los bienes descrito en próximas líneas ha sido cubierto en su totalidad, por lo que requiero tu apoyo para coordinar las acciones que permitan llevar a cabo la entrega física del bien al comprador, asimismo se remita a esta Dirección, copia simple del documento comprobatorio "Acta".';
+          let text2 =
+            'GENERALIDADES DEL COMPRADOR:\n\n' +
+            'CLIENTE: ' +
+            '\n' +
+            'RFC: ' +
+            '\n' +
+            'Domicilio: ' +
+            '\n' +
+            'Calle: ' +
+            '\n' +
+            'Colonia: ' +
+            '\n' +
+            'Cp: ' +
+            '\n' +
+            'Entidad: ' +
+            '\n' +
+            'Tel: ' +
+            '\n' +
+            'Correo Web: ' +
+            '\n\n' +
+            //falta
+            'CARACTERISTICAS DEL INMUEBLE:\n' +
+            'No. de Bien: ______' +
+            '\n' +
+            'NO. Inv: ______ ' +
+            '\n' +
+            'Estatus: ' +
+            '\n' +
+            'Descripcion: ' +
+            ' BIENES ' +
+            ' ' +
+            ' ' +
+            ' ' +
+            '\n' +
+            'Transferente: ' +
+            '\n' +
+            'Cve. Evento: ' +
+            '\n';
+          let text3 = 'Sin otro particular, reciba un cordial saludo..';
+
+          this.form.patchValue({
+            text1: text1,
+            text2: text2,
+            text3: text3,
           });
         },
       });
-    } else if (recordCommerType == 'bie' && officeTypeCtrl == 'ESC') {
+    }
+
+    if (recordCommerType == 'bie' && officeTypeCtrl == 'ESC') {
+      console.log('entra 3');
       this.M_DES = 'ESC';
       this.V_BANDERA = 1;
       this.showJuridic = true;
@@ -2488,7 +2562,10 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
           });
         },
       });
-    } else if (recordCommerType == 'por' && officeTypeCtrl == 'ESC') {
+    }
+
+    if (recordCommerType == 'por' && officeTypeCtrl == 'ESC') {
+      console.log('Entra 4');
       this.M_DES = 'PESC';
       this.V_BANDERA = 1;
       this.showJuridic = true;
@@ -2788,18 +2865,21 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
               this.PupExtraeDatos(V_OFICIO);
               this.BANDERA = 1;
             }
-
-            if (this.BANDERA == 0) {
-              if ((VAL_TIPOF2 = 'ESCRITURACION')) {
-                TIPO_OF = 'ESC';
-                this.PupAgregaTexto();
-              } else if ((VAL_TIPOF2 = 'ENTREGA')) {
-                TIPO_OF = 'ENT';
-                this.PupAgregaTexto();
-              }
-              this.V_OFICIO = null;
-            }
           });
+        }
+
+        if (this.BANDERA == 0) {
+          console.log('entro a bandera');
+          if ((VAL_TIPOF2 = 'ESCRITURACION')) {
+            console.log('entro a escritura');
+            TIPO_OF = 'ESC';
+            this.PupAgregaTexto();
+          } else if ((VAL_TIPOF2 = 'ENTREGA')) {
+            console.log('entro a entrega');
+            TIPO_OF = 'ENT';
+            this.PupAgregaTexto();
+          }
+          this.V_OFICIO = null;
         }
 
         if (this.V_OFICIO == null) {
@@ -2823,15 +2903,19 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
         console.log('Pup Portafolio ', response);
         this.NO_VOLANTE = response.data[0].no_volante;
         this.NO_EXPEDIENTE = response.data[0].no_expediente;
-        let param = {
-          goodId: response.data[0].no_bien,
-          description: response.data[0].descripcion,
-          amout: response.data[0].cantidad,
-          identifier: response.data[0].identificador,
-        };
-        this.goods.push(param);
+        response.data.forEach(data => {
+          let param = {
+            goodId: data.no_bien,
+            description: data.descripcion,
+            amount: data.cantidad,
+            identifier: data.identificador,
+          };
+          console.log(param);
+          this.goods.push(param);
+        });
+
         this.totalGoods = response.count;
-        this.localGoods.load(this.goodsData);
+        this.localGoods.load(this.goods);
         //FALTA
         /*
         LOOP
