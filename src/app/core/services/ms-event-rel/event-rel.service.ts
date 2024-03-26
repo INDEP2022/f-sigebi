@@ -67,8 +67,9 @@ export class EventRelatedService extends HttpService {
   postCentral(params: any) {
     return this.post(EventRelatedEndpoints.Central, params);
   }
-
-  postSegBien() {}
+  postSegBien(params: any) {
+    return this.post(EventRelatedEndpoints.Segbien, params);
+  }
 
   postBienesEvento(id: any) {
     return this.post(EventRelatedEndpoints.BienesEvento, id);
@@ -79,7 +80,7 @@ export class EventRelatedService extends HttpService {
     return this.get(route, params);
   }
 
-  delElimina(id: string | number) {
-    return this.delete(EventRelatedEndpoints.Elimina, id);
+  delElimina(body: any) {
+    return this.delete(EventRelatedEndpoints.Elimina, body);
   }
 }

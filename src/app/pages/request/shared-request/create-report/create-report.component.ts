@@ -159,7 +159,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
           this.isSigned = this.version.signedReport == 'Y';
         }
       },
-      error: err => { },
+      error: err => {},
     });
   }
 
@@ -200,7 +200,8 @@ export class CreateReportComponent extends BasePage implements OnInit {
       doc.modificationDate = moment(new Date()).format('YYYY-MM-DD');
     }
 
-    let create = !this.template;
+    let create = isNullOrEmpty(this.version.version);
+
     if (this.reVersion != '1') {
       doc.version = this.reVersion;
       create = false;
@@ -209,15 +210,31 @@ export class CreateReportComponent extends BasePage implements OnInit {
     this.reportgoodService.saveReportDynamic(doc, create).subscribe({
       next: resp => {
         this.template = true;
+        if (create) {
+          this.version = resp;
+        }
         if (close) {
           this.onLoadToast('success', 'Documento guardado correctamente', '');
         }
       },
       error: err => {
-
+        this.reportgoodService.saveReportDynamic(doc, !create).subscribe({
+          next: resp => {
+            this.template = true;
+            if (!isNullOrEmpty(resp.version)) {
+              this.version = resp;
+            }
+            if (close) {
+              this.onLoadToast(
+                'success',
+                'Documento guardado correctamente',
+                ''
+              );
+            }
+          },
+        });
       },
     });
-
   }
 
   onContentChanged = (event: any) => {
@@ -402,7 +419,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
                   },
                 });
               },
-              error: error => { },
+              error: error => {},
             });
         },
         error: error => {
@@ -429,7 +446,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   openSignature() {
-
     this.sign.emit(this.version);
     this.close();
 
@@ -445,7 +461,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
   providedIn: 'root',
 })
 export class HtmlConversionService {
-  constructor(private sanitizer: DomSanitizer) { }
+  constructor(private sanitizer: DomSanitizer) {}
 
   convertClassesToAlignAttributes(html: string): string {
     const parser = new DOMParser();

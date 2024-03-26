@@ -112,12 +112,6 @@ export abstract class CompDocTasksComponent extends BasePage {
       if (process == 'IBRevisionOficioRespuesta') {
         this.title = `Revisión del Oficio de Respuesta de Información, No. Solicitud: ${this.requestInfo.id}`;
       }
-    } else if (affair == 27) {
-      this.title = `PROCESO DE ABANDONO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
-    } else if (affair == 98) {
-      this.title = `OFICIO DE INSTRUCCIÓN DE ABANDONO EMITIDO POR LA AUTORIDAD : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
-    } else if (affair == 99) {
-      this.title = ` ACUERDO DE DECLARACIÓN DE ABANDONO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
     } else if (affair == 15) {
       this.title = `DECOMISO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
     } else if (affair == 102) {
@@ -312,8 +306,6 @@ export abstract class CompDocTasksComponent extends BasePage {
           this.saveRequest = true;
           this.turnReq = true;
         }
-
-
 
         break;
       case 'similar-good-register-documentation':
@@ -976,7 +968,7 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         //Configuracion de reporte
         this.reportId = REPORT_DOCUMENTS.DOCUMENTO_VALIDACION_DICTAMEN;
-        this.signedReport = true;
+        this.signedReport = false;
         this.editReport = true;
 
         this.steap1 = true;
@@ -1201,6 +1193,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.finish = true;
         break;
+
       case 'register-abandonment-goods':
         this.regDocForm = true;
         this.searchAssociateFile = true;
@@ -1209,6 +1202,7 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         this.saveRequest = true;
         this.finish = true;
+
         break;
 
       case 'register-abandonment-instruction':
@@ -1216,10 +1210,61 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.searchAssociateFile = true;
         this.selectGoods = true;
         this.expRequest = true;
+        this.turnReq = true;
+        this.searchRequestSimGoods = false;
+        this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
+        this.selectGoodsNot = true;
 
-        this.saveRequest = true;
-        this.finish = true;
+        this.goodType = 'ROP';
+
         break;
+
+      case 'verify-compliance-abandonment':
+        this.regDocView = true;
+        this.verifyCompliance = true; //AGREGAR  VERIFICAR CUMPLIMIENTO DE BIENES (TAB) VALIDAR
+        this.selectGoodForEyeVisit = true;
+        this.expRequest = true;
+        this.btnRequestAprove = true;
+        this.dictumReturn = true;
+
+        this.selectGoodNotForEyeVisit = true;
+
+        this.turnReq = false;
+        this.searchAssociateFile = false;
+        this.searchRequestSimGoods = false;
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DICTAMEN_DE_DEVOLUCION;
+        this.signedReport = false;
+        this.editReport = true;
+
+        break;
+      case 'approve-abandonment':
+        this.regDocView = true;
+        this.expRequest = true;
+        this.verifyCompliance = true;
+        this.selectGoodForEyeVisit = true;
+        this.selectGoodNotForEyeVisit = true;
+
+        this.btnAprove = true;
+        this.dictumReturn = true;
+        this.btnDecline = true;
+        this.signedReport = true;
+
+        this.turnReq = false;
+        this.regDocForm = false;
+        this.searchAssociateFile = false;
+        this.searchRequestSimGoods = false;
+        this.validateGoodForEyeVisit = false;
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DICTAMEN_DE_DEVOLUCION;
+        this.signedReport = true;
+        this.editReport = false;
+
+        break;
+
       case 'register-declaration-abandonment':
         this.regDocForm = true;
         this.searchAssociateFile = true;

@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { FileSaverService } from 'src/app/common/services/file-saver.service';
-import { maxDate } from 'src/app/common/validations/date.validators';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { EventRelatedService } from 'src/app/core/services/ms-event-rel/event-rel.service';
 import { EventAppService } from 'src/app/core/services/ms-event/event-app.service';
@@ -12,8 +14,7 @@ import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-e
 import { ComerLotService } from 'src/app/core/services/ms-prepareevent/comer-lot.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { secondFormatDate } from 'src/app/shared/utils/date';
-
+import { firstFormatDate, secondFormatDate } from 'src/app/shared/utils/date';
 @Component({
   selector: 'app-remittance-exportation',
   templateUrl: './remittance-exportation.component.html',
@@ -27,19 +28,27 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
   today: Date;
   maxDate: Date;
   minDate: Date;
+
   SEM1: number;
   SEM2: number;
   FEC1: Date;
   FEC2: Date;
   ANIO: string;
   FEC3: string;
+
+  DELE: number;
+  RECAL: number;
   USEM: number;
+
   VALIDO: number = 0;
 
   id_tpevento: number;
   descripcion: string;
 
-  aux: number;
+  AUX: number;
+
+  fechaInicio: Date;
+  fechaFinal: Date;
 
   public coordination = new DefaultSelect();
 
@@ -67,38 +76,320 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      rangeDate: [null, [maxDate(new Date())]],
+      //rangeDate: [null, [maxDate(new Date())]],
+      f_ini: [null, []],
+      f_fin: [null, []],
       coordination: [null, []],
       opcion: [null, []],
       goods: [null, []],
-      event: ['', []],
-      check1: [null],
-      check2: [null],
+      universe: [null],
+      event: [null],
+      idEvent: [null],
+      typeEvent: [null],
     });
   }
 
-  /*getCoordinations(params: ListParams) {
-    if (params.text == '') {
-      this.coordinationsItems = new DefaultSelect(
-        this.coordinationsTestData,
-        5
+  getParametersMod() {
+    let token = this.authService.decodeToken();
+    let user = token.preferred_username.toUpperCase();
+    const params = new FilterParams();
+    params.addFilter3('filter.valor', user);
+    params.addFilter(
+      'parameter',
+      'SUPUSUMUE,SUPUSUINMU,SUPUSUCOMER',
+      SearchFilter.IN
+    );
+    this.parameterBrandsService.getSuperUserv2(params.getParams()).subscribe({
+      next: resp => {
+        this.VALIDO = 1;
+      },
+      error: error => {
+        this.VALIDO = 0;
+      },
+    });
+  }
+
+  ajustarFechas() {
+    this.fechaInicio = this.form.controls['f_ini'].value;
+
+    if (this.fechaInicio > new Date()) {
+      this.alert(
+        'warning',
+        'Atención',
+        'La fecha no puede ser mayor a la fecha de esta semana'
       );
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.coordinationsTestData.filter((i: any) => i.id == id)];
-      this.coordinationsItems = new DefaultSelect(item[0], 1);
+      this.fechaInicio = null;
+      this.form.controls['f_ini'].patchValue = null;
+      this.fechaFinal = null;
+      this.form.controls['f_fin'].patchValue = null;
+      return;
     }
-  }*/
+
+    if (this.form.controls['f_ini'].value == undefined) {
+      return;
+    }
+
+    const fechaNuevaInicio = new Date(this.fechaInicio);
+    const diaSemana = fechaNuevaInicio.getDay(); // 0 para domingo, 1 para lunes, etc.
+
+    if (diaSemana !== 1) {
+      // 1 representa lunes
+      const diasFaltantes = 1 - diaSemana;
+      fechaNuevaInicio.setDate(fechaNuevaInicio.getDate() + diasFaltantes);
+    }
+
+    const fechaFin = new Date(fechaNuevaInicio);
+    fechaFin.setDate(fechaFin.getDate() + 6);
+
+    this.fechaInicio = fechaNuevaInicio;
+    this.fechaFinal = fechaFin;
+
+    //Fechas formateadas
+    const fechaNuevaInicioF = firstFormatDate(fechaNuevaInicio);
+    const fechaFinF = firstFormatDate(fechaFin);
+
+    this.ANIO = fechaNuevaInicio.getFullYear().toString();
+  }
 
   selectCoordination(event: any) {
     this.selectedCoordination = event;
   }
 
   exportExcel() {
-    console.log('Universo ', this.form.get('check1').value);
-    console.log('Eventos ', this.form.get('check2').value);
-    console.log("this.form.get('event').value ", this.form.get('event').value);
-    this.procesarFechas();
+    this.SEM1 = this.getWeekNumber(this.form.controls['f_ini'].value);
+    this.SEM2 = this.getWeekNumber(this.form.controls['f_fin'].value);
+    this.FEC1 = this.form.controls['f_ini'].value;
+    this.FEC2 = this.form.controls['f_fin'].value;
+    this.FEC3 = secondFormatDate(this.form.controls['f_fin'].value);
+
+    console.log('ANIO', this.ANIO);
+
+    //USEM := COMER_DATAMART.ULTIMASEM(FEC3);
+    this.eventRelatedService.getLastWeek(this.FEC3).subscribe({
+      next: resp => {
+        console.log('resp', resp);
+        this.USEM = Number(resp.semana);
+
+        this.doValidations();
+      },
+      error: error => {
+        console.log('error', error);
+      },
+    });
+  }
+
+  doValidations() {
+    console.log('Universo ', this.form.controls['universe'].value);
+    console.log('Eventos ', this.form.controls['event'].value);
+
+    const UNIVERSO = this.form.controls['universe'].value;
+    const EVENTO = this.form.controls['event'].value;
+    const idEvento = this.form.get('idEvent').value;
+
+    //Fechas formateadas
+    const psem1 = firstFormatDate(this.form.controls['f_ini'].value);
+    const psem2 = firstFormatDate(this.form.controls['f_fin'].value);
+
+    //IF NVL(:BLK_CTRL.UNIVERSO,'N') = 'S' AND :BLK_CTRL.IDEVENTO IS NULL AND NVL(:BLK_CTRL.EVENTOS,'N') = 'N' THEN
+    // PARA EL UNIVERSO
+    if (UNIVERSO && idEvento == null && !EVENTO) {
+      console.log(
+        'Opción 1 Se cumple -> universo true, id evento nulo, evento false'
+      );
+      this.executeProcess2(this.USEM, 1, idEvento, 1);
+    }
+
+    //ELSIF NVL(:BLK_CTRL.UNIVERSO,'N') = 'S' AND NVL(:BLK_CTRL.EVENTOS,'N') = 'S' AND :BLK_CTRL.IDEVENTO IS NULL THEN
+    // PARA EL TODO
+    if (UNIVERSO && EVENTO && idEvento == null) {
+      console.log(
+        'Opción 2 Se cumple -> universo true, evento true, id evento nulo'
+      );
+      this.executeProcess2(this.USEM, 1, idEvento, 2);
+    }
+
+    //ELSIF NVL(:BLK_CTRL.EVENTOS,'N') = 'S' AND :BLK_CTRL.IDEVENTO IS NOT NULL THEN
+    // PARA UN EVENTO EN PARTICULAR
+    if (EVENTO && idEvento !== null) {
+      console.log(
+        'Opción 3 Se cumple -> evento true, id evento diferente a nulo'
+      );
+      this.executeProcess2(this.USEM, 1, idEvento, 3);
+    }
+
+    //ELSIF NVL(:BLK_CTRL.EVENTOS,'N') = 'S' AND :BLK_CTRL.IDEVENTO IS NULL AND NVL(:BLK_CTRL.UNIVERSO,'N') = 'N' THEN
+    // PARA TODOS LOS EVENTOS
+    if (EVENTO && idEvento === null && !UNIVERSO) {
+      console.log(
+        'Opción 4 Se cumple -> evento true, id evento nulo, universo false'
+      );
+      this.executeProcess2(this.USEM, 1, idEvento, 4);
+    }
+
+    if (
+      this.form.controls['coordination'].value == null ||
+      this.form.controls['coordination'].value == '' ||
+      this.form.controls['coordination'].value == undefined
+    ) {
+      this.DELE = -1;
+      console.log('THIS.DELE', this.DELE);
+    } else {
+      this.DELE = this.form.controls['coordination'].value;
+      console.log('THIS.DELE', this.DELE);
+    }
+
+    const opcion = this.form.controls['opcion'].value;
+    console.log('opcion', opcion);
+
+    switch (Number(opcion)) {
+      case 1:
+        let param1 = {
+          psem1: psem1,
+          psem2: psem2,
+          pdele: Number(this.DELE),
+        };
+        this.Resumen(param1);
+
+        break;
+
+      case 2:
+        let param2 = {
+          psem1: psem1,
+          psem2: psem2,
+          pdele: Number(this.DELE),
+          opcDatos: this.form.get('goods').value,
+        };
+        this.DetResumen(param2);
+
+        break;
+
+      case 3:
+        let param3 = {
+          fechaInicio: psem1,
+          fechaFin: psem2,
+          pSem1: psem1,
+          pSem2: psem2,
+          pDele: this.DELE,
+          /*psem1: psem1,
+          psem2: psem2,
+          eventId: this.form.get('idEvent').value,
+          panio: this.ANIO,
+          pdele: this.DELE,*/
+        };
+        this.ResumenRemesa(param3);
+
+        break;
+
+      case 4:
+        let param4 = {
+          psem1: this.form.controls['f_ini'].value,
+          psem2: this.form.controls['f_fin'].value,
+          eventId: this.form.get('idEvent').value,
+          panio: this.ANIO,
+          pdele: this.DELE,
+        };
+        this.DetRemesa(param4);
+
+        break;
+
+      case 5:
+        let param5 = {
+          psem1: this.form.get('f_ini').value,
+          psem2: this.form.get('f_fin').value,
+          dateFinal: this.form.get('f_fin').value,
+          delegationNumber: this.form.get('coordination').value,
+          typeEventId: this.form.get('typeEvent').value,
+          eventId: this.form.get('idEvent').value,
+        };
+
+        this.ResumenEvento(param5);
+
+        break;
+
+      case 6: //No encontré registros
+        let param6 = {
+          psem1: this.form.get('f_ini').value,
+          psem2: this.form.get('f_fin').value,
+          pDele: this.DELE,
+          ptevento: this.form.get('typeEvent').value,
+          pidevento: this.form.get('idEvent').value,
+          endDate: this.FEC3,
+          //limit: 'Parametro de tipo numerico',
+        };
+        this.DetEvent(param6);
+
+        break;
+
+      case 7: //Excel sin registros
+        let param7 = {
+          psem1: this.form.get('f_ini').value,
+          psem2: this.form.get('f_fin').value,
+          pDele: this.DELE,
+          endDate: this.FEC3,
+        };
+        this.ResumenAdmvxr(param7);
+
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  executeProcess2(
+    PSEMRECAL: number,
+    PRECAL: number,
+    PEVENTO: number,
+    PROCESO: number
+  ) {
+    console.log('PSEMRECAL', PSEMRECAL);
+
+    //let SEM1: number;
+    // let SEM2: number;
+    let AUX: number;
+    let SEMRECAL: number;
+    let VALEJE: number = 0;
+
+    let inicio = firstFormatDate(this.form.controls['f_ini'].value);
+    let final = firstFormatDate(this.form.controls['f_fin'].value);
+    //SEM2 = this.getWeekNumber( this.form.controls['f_fin'].value);
+
+    if (PRECAL == 0) {
+      SEMRECAL = 0;
+    } else {
+      SEMRECAL = PSEMRECAL;
+    }
+
+    if (this.VALIDO == 1) {
+      if (PROCESO == 1) {
+        let param = {
+          psem1: this.SEM1,
+          psem2: this.SEM2,
+          pfec1: inicio,
+          pfec2: final,
+          psemrecal: SEMRECAL,
+          pevent: 0,
+        };
+        this.postCentral(param);
+      } else if (PROCESO == 2) {
+        let param = {
+          psem1: this.SEM1,
+          psem2: this.SEM2,
+          pfec1: inicio,
+          pfec2: final,
+          psemrecal: SEMRECAL,
+          pevent: 0,
+        };
+        this.postCentral(param);
+        this.postSegBien(final);
+      } else if (PROCESO == 3) {
+        this.Eliminar(PEVENTO);
+        this.postBienesEvento(PEVENTO);
+      } else if (PROCESO == 4) {
+        this.postSegBien(final);
+      }
+    }
+    //this.postBienesEvento(PEVENTO);
   }
 
   private getWeekNumber(date: Date): number {
@@ -112,234 +403,6 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
     const weekNumber = Math.ceil(dayOfYear / 7);
 
     return weekNumber;
-  }
-
-  private formtDate(date: Date): string {
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear().toString();
-
-    return `${year}-${month}-${day}`;
-  }
-
-  procesarFechas(): void {
-    let DELE: number;
-    const rangeDate = this.form.get('rangeDate').value;
-    if (rangeDate != null) {
-      const inicio = secondFormatDate(rangeDate[0]);
-      const final = secondFormatDate(rangeDate[1]);
-      console.log('fechaI', inicio);
-      console.log('fechaF', final);
-
-      this.SEM1 = this.getWeekNumber(new Date(inicio));
-      this.SEM2 = this.getWeekNumber(new Date(final));
-      this.ANIO = new Date(inicio).getFullYear().toString();
-      console.log('sem1 ', this.SEM1);
-      console.log('sem2 ', this.SEM2);
-      console.log('anio ', this.ANIO);
-
-      if (final != null) {
-        this.FEC3 = this.formtDate(new Date(final));
-        console.log('fecha antes ', this.formatDate(new Date(this.FEC3)));
-        this.getLastWeek(this.formatDate(new Date(final)));
-      } else {
-        this.FEC3 = 'NADA';
-      }
-      console.log('fecha 3 ', this.FEC3);
-      //PARA EL UNIVERSO
-      if (
-        this.form.get('check1').value &&
-        this.form.get('event').value == null &&
-        this.form.get('check2').value == null
-      ) {
-        this.executeProcess(this.USEM, 1, this.form.get('event').value, 1);
-      } else if (
-        //-- PARA EL TODO
-        this.form.get('check1').value &&
-        this.form.get('check2').value &&
-        this.form.get('event').value == null
-      ) {
-        this.executeProcess(this.USEM, 1, this.form.get('event').value, 2);
-      } else if (
-        //PARA UN EVENTO EN PARTICULAR
-        this.form.get('check2').value &&
-        this.form.get('event').value != null
-      ) {
-        this.executeProcess(this.USEM, 1, this.form.get('event').value, 3);
-      } else if (
-        //PARA TODOS LOS EVENTOS
-        this.form.get('check2').value &&
-        this.form.get('event').value == null &&
-        this.form.get('check1').value == null
-      ) {
-        this.executeProcess(this.USEM, 1, this.form.get('event').value, 4);
-      }
-      DELE = this.form.get('coordination').value;
-
-      console.log(
-        "this.form.get('opcion').value ",
-        this.form.get('opcion').value
-      );
-
-      if (this.form.get('opcion').value == 1) {
-        let param = {
-          psem1: inicio,
-          psem2: final,
-          pdele: DELE,
-        };
-        this.Resumen(param);
-      } else if (this.form.get('opcion').value == 2) {
-        let param = {
-          psem1: inicio,
-          psem2: final,
-          pdele: DELE,
-          opcDatos: this.form.get('goods').value,
-        };
-        this.DetResumen(param);
-      } else if (this.form.get('opcion').value == 3) {
-        let param = {
-          fechaInicio: inicio,
-          fechaFin: final,
-          pSem1: inicio,
-          pSem2: final,
-          pDele: DELE,
-        };
-        this.ResumenRemesa(param);
-      } else if (this.form.get('opcion').value == 4) {
-        let param = {
-          psem1: inicio,
-          psem2: final,
-          eventId: this.form.get('event').value,
-          panio: this.ANIO,
-          pdele: DELE,
-        };
-        this.DetRemesa(param);
-      } else if (this.form.get('opcion').value == 5) {
-        let param = {
-          psem1: inicio,
-          psem2: final,
-          dateFinal: this.FEC3,
-          delegationNumber: this.form.get('coordination').value,
-          typeEventId: this.id_tpevento,
-          eventId: this.form.get('event').value,
-        };
-        console.log('paramResumen', param);
-        this.ResumenEvento(param);
-      } else if (this.form.get('opcion').value == 6) {
-        let param = {
-          psem1: inicio,
-          psem2: final,
-          pDele: DELE,
-          ptevento: this.id_tpevento,
-          pidevento: this.form.get('event').value,
-          endDate: this.FEC3,
-          //limit: 'Parametro de tipo numerico',
-        };
-        // let param2 = {
-        //   endDate: '2023-08-16',
-        //   pDele: '5',
-        // };
-        this.DetEvent(param);
-      } else if (this.form.get('opcion').value == 7) {
-        let param = {
-          psem1: inicio,
-          psem2: final,
-          pDele: DELE,
-          endDate: this.FEC3,
-        };
-        this.ResumenAdmvxr(param);
-      }
-    }
-  }
-
-  getParametersMod(): number {
-    let VALIDO: number = 0;
-    let token = this.authService.decodeToken();
-    let user = token.name.toUpperCase();
-    const params = new FilterParams();
-    let cadena = `?filter.parameter=$in:SUPUSUMUE,SUPUSUMUE,SUPUSUCOMER&filter.value=$eq:${user}`;
-    this.parameterBrandsService.getSuperUser(cadena).subscribe(
-      resp => {
-        console.log('user -> ', resp);
-        if (resp.count != null) {
-          VALIDO = 1;
-        } else {
-          VALIDO = 0;
-        }
-      },
-      err => {
-        VALIDO = 0;
-        console.log('error', err);
-      }
-    );
-    return VALIDO;
-  }
-
-  executeProcess(
-    PSEMRECAL: number,
-    PRECAL: number,
-    PEVENTO: number,
-    PROCESO: number
-  ) {
-    let SEM2: number;
-    let SEM1: number;
-    let AUX: number;
-    let SEMRECAL: number;
-    let VALEJE: number = 0;
-    const rangeDate = this.form.get('rangeDate').value;
-    const inicio = secondFormatDate(rangeDate[0]);
-    const final = secondFormatDate(rangeDate[1]);
-    if (inicio != null) {
-      SEM1 = this.getWeekNumber(new Date(inicio));
-    } else {
-      SEM1 = this.getWeekNumber(new Date());
-    }
-
-    if (final != null) {
-      SEM2 = this.getWeekNumber(new Date(final));
-    } else {
-      SEM2 = this.getWeekNumber(new Date());
-    }
-
-    if (PRECAL == 0) {
-      SEMRECAL = 0;
-    } else {
-      SEMRECAL = PSEMRECAL;
-    }
-    this.VALIDO = this.getParametersMod();
-    console.log('valido ', this.VALIDO);
-
-    if (this.VALIDO == 1) {
-      if (PROCESO == 1) {
-        let param = {
-          psem1: SEM1,
-          psem2: SEM2,
-          pfec1: inicio,
-          pfec2: final,
-          psemrecal: SEMRECAL,
-          pevent: 0,
-        };
-        this.postCentral(param);
-      } else if (PROCESO == 2) {
-        let param = {
-          psem1: SEM1,
-          psem2: SEM2,
-          pfec1: inicio,
-          pfec2: final,
-          psemrecal: SEMRECAL,
-          pevent: 0,
-        };
-        this.postCentral(param);
-        //Por integrar Service SEGBIEN
-      } else if (PROCESO == 3) {
-        this.Eliminar(PEVENTO);
-        this.postBienesEvento(PEVENTO);
-      } else if (PROCESO == 4) {
-        //por integrar Servicio SEGBIEN
-      }
-    }
-    this.postBienesEvento(PEVENTO);
-    //VALEJE = this.getLastWeek;
   }
 
   getLastWeek(date: string) {
@@ -357,10 +420,40 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
   }
 
   postCentral(params: any) {
-    this.eventRelatedService.postCentral(params).subscribe(resp => {
-      if (resp != null && resp != undefined) {
-        this.aux = resp.data;
-      }
+    this.eventRelatedService.postCentral(params).subscribe({
+      next: resp => {
+        console.log('resp postCentral', resp);
+        this.AUX = resp.data;
+      },
+      error: error => {
+        console.log('error postCentral', error);
+      },
+    });
+  }
+
+  postSegBien(params: any) {
+    this.eventRelatedService.postSegBien(params).subscribe({
+      next: resp => {
+        console.log('resp postSegBien', resp);
+      },
+      error: error => {
+        console.log('error postSegBien', error);
+      },
+    });
+  }
+
+  Eliminar(id: number) {
+    let body = {
+      event: id,
+    };
+
+    this.eventRelatedService.delElimina(body).subscribe({
+      next: resp => {
+        console.log('Se ha eliminado', resp);
+      },
+      error: error => {
+        console.log('No se ha eliminado', error);
+      },
     });
   }
 
@@ -368,122 +461,97 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
     let params = {
       pEvent: id,
     };
-    this.eventRelatedService.postBienesEvento(params).subscribe(resp => {
-      if (resp != null && resp != undefined) {
-        console.log('resp', resp);
-      }
+    this.eventRelatedService.postBienesEvento(params).subscribe({
+      next: resp => {
+        console.log('respuesta postBienesEvento', resp);
+      },
+      error: error => {
+        console.log('error postBienesEvento', error);
+      },
     });
   }
 
-  formatDate(fecha: Date): string {
+  /*formatDate(fecha: Date): string { //Metodo para formatear fecha
     const year = fecha.getFullYear();
     const month = String(fecha.getMonth() + 1).padStart(2, '0');
     const day = String(fecha.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
-  }
+  }*/
 
   Resumen(params: any) {
-    this.eventAppService.postResumen(params).subscribe(
-      resp => {
-        if (resp != null && resp != undefined) {
-          console.log('Resp Resumen-> ', resp);
-          this.convertBase64ToCsv(resp, 'Resumen');
-        }
+    this.eventAppService.postResumen(params).subscribe({
+      next: resp => {
+        this.convertBase64ToCsv(resp, 'Resumen');
       },
-      err => {
+      error: error => {
         this.alert('error', 'Error', 'No se encontraron registros');
-      }
-    );
+      },
+    });
   }
 
   DetResumen(params: any) {
-    this.eventAppService.postDetResumer(params).subscribe(
-      resp => {
-        if (resp != null && resp != undefined) {
-          this.convertBase64ToCsv(resp, 'Bienes del Resumen');
-        }
+    this.eventAppService.postDetResumer(params).subscribe({
+      next: resp => {
+        this.convertBase64ToCsv(resp, 'Bienes del Resumen');
       },
-      err => {
-        this.alert('error', 'Error', 'NNo se encontraron registros');
-      }
-    );
+      error: error => {
+        this.alert('error', 'Error', 'No se encontraron registros');
+      },
+    });
   }
 
   DetRemesa(params: any) {
-    this.eventAppService.postDetRemesa(params).subscribe(
-      resp => {
-        if (resp != null && resp != undefined) {
-          this.convertBase64ToCsv(resp, 'Bienes en Remesa');
-        }
+    this.eventAppService.postDetRemesa(params).subscribe({
+      next: resp => {
+        this.convertBase64ToCsv(resp, 'Bienes en Remesa');
       },
-      err => {
+      error: error => {
         this.alert('error', 'Error', 'No se encontraron registros');
-      }
-    );
+      },
+    });
   }
 
   DetEvent(params: any) {
-    this.comerEventService.postDetEvento(params).subscribe(
-      resp => {
-        if (resp != null && resp != undefined) {
-          console.log('Resp DetEvent->', resp);
-          this.convertBase64ToExcel(resp.base64, 'Bienes por Tipo de Evento');
-        }
+    this.comerEventService.postDetEvento(params).subscribe({
+      next: resp => {
+        this.convertBase64ToExcel(resp.base64, 'Bienes por Tipo de Evento');
       },
-      err => {
+      error: error => {
         this.alert('error', 'Error', 'No se encontraron registros');
-      }
-    );
+      },
+    });
   }
 
   ResumenAdmvxr(params: any) {
-    this.comerEventService.postResumenAdmvxr(params).subscribe(
-      resp => {
-        if (resp != null && resp != undefined) {
-          let base64 = resp.base64;
-          this.convertBase64ToExcel(resp.base64, 'Resumen ADM y VXR');
-        }
+    this.comerEventService.postResumenAdmvxr(params).subscribe({
+      next: resp => {
+        this.convertBase64ToExcel(resp.base64, 'Resumen ADM y VXR');
       },
-      err => {
+      error: error => {
         this.alert('error', 'Error', 'No se encontraron registros');
-      }
-    );
+      },
+    });
   }
 
   ResumenRemesa(params: any) {
-    this.eventAppService.postResumenRemesa(params).subscribe(
-      resp => {
-        if (resp != null && resp != undefined) {
-          this.convertBase64ToCsv(resp, 'Resumen Remesa');
-        }
+    this.eventAppService.postResumenRemesa(params).subscribe({
+      next: resp => {
+        this.convertBase64ToCsv(resp, 'Resumen Remesa');
       },
-      err => {
+      error: error => {
         this.alert('error', 'Error', 'No se encontraron registros');
-      }
-    );
+      },
+    });
   }
 
   ResumenEvento(params: any) {
-    this.comerLotService.PostResumenEven(params).subscribe(
-      resp => {
-        console.log('Respuesta Base64->', resp.base64);
-        if (resp != null && resp != undefined) {
-          let base64 = resp.base64;
-          //this.convertBase64ToCsv(resp.base64, 'ResumenEvento');
-          this.convertBase64ToExcel(resp.base64, 'Resumen por Tipo de Evento');
-        }
+    this.comerLotService.PostResumenEven(params).subscribe({
+      next: resp => {
+        this.convertBase64ToExcel(resp.base64, 'Resumen por Tipo de Evento');
       },
-      err => {
+      error: error => {
         this.alert('error', 'Error', 'No se encontraron registros');
-      }
-    );
-  }
-
-  Eliminar(id: number) {
-    this.eventRelatedService.delElimina(id).subscribe(resp => {
-      if (resp != null && resp != undefined) {
-        console.log('Resp Delete->', resp);
-      }
+      },
     });
   }
 

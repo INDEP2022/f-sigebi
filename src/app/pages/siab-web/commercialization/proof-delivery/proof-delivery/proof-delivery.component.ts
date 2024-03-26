@@ -1,13 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ButtonColumnComponent } from 'src/app/shared/components/button-column/button-column.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PROOF_DELIVERY_COLUMNS } from './proof-delivery-columns';
 
@@ -49,15 +54,32 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private serviceInvoice: ComerInvoiceService
+    private serviceInvoice: ComerInvoiceService,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService
   ) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: { ...PROOF_DELIVERY_COLUMNS },
-      selectMode: 'multi',
       hideSubHeader: false,
+      columns: {
+        officeMail: {
+          title: 'PDF',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          filter: false,
+          renderComponent: ButtonColumnComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              this.generatePdf(row);
+            });
+          },
+        },
+        ...PROOF_DELIVERY_COLUMNS,
+      },
     };
   }
 
@@ -104,6 +126,9 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
           this.loadDataEventSelected();
         }
       });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.loadDataEventSelected());
     setTimeout(() => {
       this.getEvents(new ListParams());
     }, 1000);
@@ -131,23 +156,17 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
     };
     this.serviceInvoice.getInvoiceByEvent(params).subscribe({
       next: response => {
-        // this.getRrcs(this.array('rfc', response.data));
-        // this.getPublic(this.array('publicLot', response.data));
-        // this.getDelegations(this.array('delegationNumber', response.data));
-        // this.fillGridInvoces(response.data);
         this.dataFilter = response.data;
         this.data.load(this.dataFilter);
         this.totalItems = response.count;
         this.data.refresh();
         this.loading = false;
-        // this.filterInvoices();
       },
       error: () => {
         this.data.load([]);
         this.totalItems = 0;
         this.data.refresh();
         this.loading = false;
-        this.alert('warning', 'Advertencia', `No se encontraron registros`);
       },
     });
   }
@@ -272,6 +291,41 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
     this.data.refresh();
     this.columnFilters = [];
     this.params = new BehaviorSubject<ListParams>(new ListParams());
+  }
+  generatePdf(data: any) {
+    this.loader.load = true;
+    let params = {
+      ID_EVENTO: data.eventId,
+      ID_FACTURA: data.voucherId,
+    };
+    this.siabService.fetchReport('RCOMERConstanciaEntrega', params).subscribe({
+      next: res => {
+        const blob = new Blob([res], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+        this.loader.load = false;
+      },
+      error: (error: any) => {
+        console.log('error', error);
+        this.alert(
+          'warning',
+          'Se produjo un error en el PDF volver a intentar.',
+          ''
+        );
+        this.loader.load = false;
+      },
+    });
   }
 
   //

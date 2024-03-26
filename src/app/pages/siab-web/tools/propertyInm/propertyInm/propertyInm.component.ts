@@ -1,23 +1,23 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
-import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ButtonColumnDocComponent } from 'src/app/shared/components/button-column-doc/button-column-doc.component';
 import { ButtonColumnScanComponent } from 'src/app/shared/components/button-column-scan/button-column-scan/button-column-scan.component';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { OutsideTradesComponent } from '../../outside-trades/outside-trades/outside-trades.component';
 import { ScannedDocumentsComponent } from '../../scanned-documents/scanned-documents/scanned-documents.component';
 import { REAL_STATE_COLUMNS, REPORT_COLUMNS } from './propertyInm-columns';
 
@@ -44,8 +44,8 @@ export class PropertyInmComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   array: any = [];
   constructor(
-    private goodSssubtypeService: GoodSssubtypeService,
-    private goodServices: GoodService,
+    private sanitizer: DomSanitizer,
+    private siabService: SiabService,
     private goodprocessService: GoodprocessService,
     private affairService: AffairService,
     private massiveGoodService: MassiveGoodService,
@@ -146,7 +146,7 @@ export class PropertyInmComponent extends BasePage implements OnInit {
       ...this.params1.getValue(),
       ...this.columnFilters1,
     };
-
+    console.log(this.array);
     params['filter.clasif'] = `$in:${this.array}`;
     console.log(params);
 
@@ -163,10 +163,6 @@ export class PropertyInmComponent extends BasePage implements OnInit {
         this.totalItems1 = 0;
         this.good.load([]);
         this.good.refresh();
-
-        // En caso de error, restaura this.array a su estado anterior
-        this.array = [...this.tempArray];
-
         this.loading1 = false;
       },
     });
@@ -191,20 +187,34 @@ export class PropertyInmComponent extends BasePage implements OnInit {
   onSelectOffice(event: any) {
     console.log(event);
     if (event.no_of_gestion != null) {
-      const noGes = event.no_of_gestion;
-      const valid1: boolean = true;
-      const modalConfig = MODAL_CONFIG;
-      modalConfig.initialState = {
-        noGes,
-        valid1,
-        callback: (next: boolean) => {
-          if (next)
-            this.params1
-              .pipe(takeUntil(this.$unSubscribe))
-              .subscribe(() => this.performQuery());
-        },
+      this.loader.load = true;
+      let params = {
+        NO_OF_GESTION: event.no_of_gestion,
+        TIPO_OFICIO: 'EXTERNO',
       };
-      this.modalService.show(OutsideTradesComponent, modalConfig);
+      this.siabService.fetchReport('RGEROFGESTION_EXT', params).subscribe({
+        next: res => {
+          const blob = new Blob([res], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            },
+            class: 'modal-lg modal-dialog-centered',
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+          this.loader.load = false;
+        },
+        error: (error: any) => {
+          console.log('error', error);
+          this.loader.load = false;
+        },
+      });
     } else {
       this.alert(
         'warning',
@@ -291,6 +301,18 @@ export class PropertyInmComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'no_of_gestion':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fecha_desahogo':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fecha_dictamen_procedencia':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fecha_captura_acta_recepcion':
+                filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
                 break;
               default:

@@ -39,6 +39,10 @@ import { BillingCommunicationService } from './communication/communication.servi
 import { DatCancComponent } from './dat-canc/dat-canc.component';
 import { UpdateDetfacturaComponent } from './update-detfactura/update-detfactura.component';
 import { UpdateFacturaComponent } from './update-factura/update-factura.component';
+export interface IFields {
+  field: string;
+  search: number | string;
+}
 @Component({
   selector: 'app-billing-screen',
   templateUrl: './billing-screen.component.html',
@@ -790,37 +794,60 @@ export class BillingScreenComponent extends BasePage implements OnInit {
   insertFilterColumns(): boolean | any {
     const objeto = this.params.getValue();
     const entries = Object.entries(objeto);
+    let arr: IFields[] = [];
     let result = entries.map(async item => {
       console.log(item[0]);
       console.log(item[1]);
       if (item[0] == 'filter.eventId') {
         console.log(item[0]);
         let a = item[1].toString().split(':');
-        await this.forArrayFilters('eventId', a[1]);
+        arr.push({
+          field: 'eventId',
+          search: a[1],
+        });
+        // await this.forArrayFilters('eventId', a[1]);
       }
       if (item[0] == 'filter.batchId') {
         console.log(item[0]);
         let a = item[1].toString().split(':');
-        await this.forArrayFilters('batchId', a[1]);
+        arr.push({
+          field: 'batchId',
+          search: a[1],
+        });
+        // await this.forArrayFilters('batchId', a[1]);
       }
       if (item[0] == 'filter.delegationNumber') {
         console.log(item[0]);
         let a = item[1].toString().split(':');
-        await this.forArrayFilters('delegationNumber', a[1]);
+        arr.push({
+          field: 'delegationNumber',
+          search: a[1],
+        });
+        // await this.forArrayFilters('delegationNumber', a[1]);
       }
       if (item[0] == 'filter.cvman') {
         console.log(item[0]);
         let a = item[1].toString().split(':');
-        await this.forArrayFilters('cvman', a[1]);
+        arr.push({
+          field: 'cvman',
+          search: a[1],
+        });
+        // await this.forArrayFilters('cvman', a[1]);
       }
       if (item[0] == 'filter.vouchertype') {
         console.log(item[0]);
         let a = item[1].toString().split(':');
-        await this.forArrayFilters('vouchertype', a[1]);
+        arr.push({
+          field: 'vouchertype',
+          search: a[1],
+        });
+        // await this.forArrayFilters('vouchertype', a[1]);
       }
     });
 
     Promise.all(result).then(async res => {
+      console.log(arr);
+      await this.forArrayFiltersNew(arr);
       return true;
     });
   }
@@ -1141,10 +1168,10 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     console.log('res', res);
     if (
       res &&
-      !this.params.getValue()['filter.impressionDate'] &&
-      !this.fecBlkCtrl.value &&
-      !this.fec2BlkCtrl.value &&
-      !this.dateBlkCtrl.value
+      !this.params.getValue()['filter.impressionDate']
+      // && !this.fecBlkCtrl.value &&
+      // !this.fec2BlkCtrl.value &&
+      // !this.dateBlkCtrl.value
     ) {
       // this.params = new BehaviorSubject<ListParams>(new ListParams());
       // this.params2 = new BehaviorSubject<ListParams>(new ListParams());
@@ -1765,7 +1792,13 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           this.params.getValue()[
             'filter.eventId'
           ] = `$eq:${this.idEventBlkCtrl.value}`;
-          await this.forArrayFilters('eventId', this.idEventBlkCtrl.value);
+
+          await this.forArrayFiltersNew([
+            {
+              field: 'eventId',
+              search: this.idEventBlkCtrl.value,
+            },
+          ]);
           await this.getBillings('si'); // GO_BLOCK('COMER_FACTURAS');
           await this.visualProcess(0, 1); // VISUALIZA_PROCESO(0, 1);
           this.btnLoading = false;
@@ -3065,15 +3098,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           if (resp.base64 == '') {
             return this.alert('warning', 'No hay datos por exportar', '');
           }
-          const linkSource = `data:application/xlsx;base64,${resp.base64}`;
-          const downloadLink = document.createElement('a');
-          downloadLink.href = linkSource;
-          downloadLink.download = 'FACTURAS_FCOMER086_I' + '.csv';
-          downloadLink.target = '_blank';
-          downloadLink.click();
-          downloadLink.remove();
-          this.btnLoading7 = false;
-          this.alert('success', 'Archivo descargado correctamente', '');
+          this.downloadExcel(resp.base64);
         },
         error: error => {
           this.btnLoading7 = false;
@@ -3082,7 +3107,17 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       });
     });
   }
-
+  async downloadExcel(base64String: any) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = 'FACTURAS_FCOMER086_I.csv';
+    link.click();
+    link.remove();
+    this.btnLoading7 = false;
+    this.alert('success', 'Archivo descargado correctamente', '');
+  }
   async typeBilling(type: any) {
     const item = this.typesBillings.find(item => item.tpinvoiceId == type);
     if (item) {
@@ -3166,12 +3201,20 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           ''
         )
       );
-
+    // console.log(this.columnFilters)
+    await this.clearSubheaderFields();
+    let arr: IFields[] = [];
     if (this.idEventBlkCtrl.value) {
       this.params.getValue()[
         'filter.eventId'
       ] = `$eq:${this.idEventBlkCtrl.value}`;
-      await this.forArrayFilters('eventId', this.idEventBlkCtrl.value);
+      let obj = {
+        field: 'eventId',
+        search: this.idEventBlkCtrl.value,
+      };
+      arr.push(obj);
+
+      // await this.forArrayFilters('eventId', this.idEventBlkCtrl.value);
     } else {
       delete this.params.getValue()['filter.eventId'];
     }
@@ -3180,7 +3223,13 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       this.params.getValue()[
         'filter.batchId'
       ] = `$eq:${this.idLotPublicBlkCtrl.value}`;
-      await this.forArrayFilters('batchId', this.idLotPublicBlkCtrl.value);
+      let obj = {
+        field: 'batchId',
+        search: this.idLotPublicBlkCtrl.value,
+      };
+
+      arr.push(obj);
+      // await this.forArrayFilters('batchId', this.idLotPublicBlkCtrl.value);
     } else {
       delete this.params.getValue()['filter.batchId'];
     }
@@ -3193,20 +3242,14 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       var fecha1 = new Date(this.fecBlkCtrl.value);
       var fecha2 = new Date(this.fec2BlkCtrl.value);
 
-      // var fecha1 = new Date(this.fecBlkCtrl.value);
-      // var fecha2 = new Date(this.fec2BlkCtrl.value);
-
-      // Obtener los componentes de la fecha (año, mes y día)
       var ano1 = fecha1.getFullYear();
-      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2);
       var dia1 = ('0' + fecha1.getDate()).slice(-2);
 
-      // Obtener los componentes de la fecha (año, mes y día)
       var ano2 = fecha2.getFullYear();
-      var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2);
       var dia2 = ('0' + fecha2.getDate()).slice(-2);
 
-      // Crear la cadena de fecha en el formato yyyy-mm-dd
       var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
       var fechaFormateada2 = ano2 + '-' + mes2 + '-' + dia2;
       this.params.getValue()[
@@ -3281,8 +3324,11 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     ) {
       delete this.params.getValue()['filter.impressionDate'];
     }
+    if (arr.length > 0) {
+      this.forArrayFiltersNew(arr);
+    }
     // await this.clearSubheaderFields();
-    this.columnFilters = [];
+    // this.columnFilters = [];
     await this.getBillings('si');
 
     setTimeout(() => {
@@ -3291,7 +3337,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
   }
   async forArrayFilters(field: any, value: any, opt?: boolean) {
     const subheaderFields: any = this.table.grid.source;
-
     const filterConf = this.data.getFilter();
     if (filterConf.filters.length > 0) {
       filterConf.filters.forEach((item: any) => {
@@ -3487,11 +3532,18 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
   async resetTable() {
     // this.params = new BehaviorSubject<ListParams>(new ListParams());
-    this.loading = true;
+    delete this.params.getValue()['filter.impressionDate'];
+    delete this.params.getValue()['filter.delegationNumber'];
+    delete this.params.getValue()['filter.cvman'];
+    delete this.params.getValue()['filter.eventId'];
+    delete this.params.getValue()['filter.batchId'];
+    delete this.params.getValue()['filter.vouchertype'];
+    delete this.params.getValue()['filter.factstatusId'];
 
+    // this.params.getValue()['filter.address']
+    this.loading = true;
     this.params.getValue().limit = 500;
     this.params.getValue().pageSize = 500;
-    this.params.getValue().take = 500;
     this.data.getFilter().filters = [];
     this.data.refresh();
 
@@ -3511,5 +3563,18 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     this.resetInput();
 
     this.loading = false;
+    this.getBillings('no');
+  }
+
+  async forArrayFiltersNew(fields: IFields[]) {
+    const filterConf = await this.data.getFilter();
+    let result = fields.map(field => {
+      filterConf.filters.push(field);
+    });
+    Promise.all(result).then(resp => {
+      console.log(filterConf);
+      this.data.refresh();
+      return true;
+    });
   }
 }

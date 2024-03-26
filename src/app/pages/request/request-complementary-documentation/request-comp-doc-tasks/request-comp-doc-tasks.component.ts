@@ -30,7 +30,6 @@ import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/samp
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
-import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 import { DELEGATION_COLUMNS_REPORT } from '../../../../../app/pages/siab-web/commercialization/report-unsold-goods/report-unsold-goods/columns';
 import { SendRequestEmailComponent } from '../../destination-information-request/send-request-email/send-request-email.component';
@@ -182,6 +181,7 @@ export class RequestCompDocTasksComponent
     regdoc: false, //REGISTRAR DOCUMENTACIÓN
     goods: false, //SELECCIONAR BIENES
     files: false, //EXPEDIENTE
+    docs: [],
     guidelines: false, //LINEAMINEOTS
     valvisits: false, //VALIDAR VISITA OCULAR
     vercom: false, //VERIFICAR CUMPLIMIENTO
@@ -1359,7 +1359,6 @@ export class RequestCompDocTasksComponent
 
       case 'register-abandonment-goods':
       case 'register-declaration-abandonment':
-      case 'register-abandonment-instruction':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
           return false;
@@ -1376,6 +1375,51 @@ export class RequestCompDocTasksComponent
           this.showWarning('Suba la documentación correspondiente');
           return false;
         }
+        break;
+
+      case 'register-abandonment-instruction':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación correspondiente');
+          return false;
+        }
+
+        break;
+      case 'verify-compliance-abandonment':
+        if (!this.validate.vercom) {
+          this.showWarning('Verifique el cumplimiento de los artículos');
+          return false;
+        }
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning('Genere el Dictamen de Devolución');
+          return false;
+        }
+
+        break;
+      case 'approve-abandonment':
+        reportLoad = await this.getStatusReport();
+
+        if (!reportLoad.isSigned) {
+          this.showWarning('Firme el dictamen de resarcimiento');
+          return false;
+        }
+
         break;
 
       case 'register-protections-goods':
@@ -1447,7 +1491,7 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'review-result-protection':
-        if (this.requestInfo.detail.dataSheet != 'OCSJ') {
+        if (this.requestInfo.detail.dataSheet == 'OCSJ') {
           this.showWarning('Firme el reporte de oficio jurídico');
           return false;
         }
@@ -1501,6 +1545,7 @@ export class RequestCompDocTasksComponent
   onSelectFiles(event) {
     if (!this.validate.files) {
       this.validate.files = event.isValid;
+      this.validate.docs = event.object;
     }
     //Agreagar validaciones en especifico
   }
@@ -1643,8 +1688,8 @@ export class RequestCompDocTasksComponent
     });
     modalRef.content.refresh.subscribe(next => {
       if (next) {
-        //this.requestInfo.detail.reportSheet = 'OCSJ';
-        //this.updateRequest(false);
+        this.requestInfo.detail.reportSheet = 'OCSJ';
+        this.updateRequest(false);
       }
     });
   }
@@ -1656,7 +1701,6 @@ export class RequestCompDocTasksComponent
     report = report.isValid ? report.data[0] : report;
 
     if (isNullOrEmpty(report.ucmDocumentName)) {
-
       this.wContentService
         .downloadDinamycReport(
           'sae.rptdesign',
@@ -1675,7 +1719,6 @@ export class RequestCompDocTasksComponent
             this.showError('Vista previa no dipoonible');
           },
         });
-
     } else {
       this.wContentService.obtainFile(report.ucmDocumentName).subscribe({
         next: response => {
@@ -1774,7 +1817,7 @@ export class RequestCompDocTasksComponent
   ): Promise<void> {
     let report = await this.getStatusReport();
     report = report.isValid ? report.data[0] : report;
-    let docId = report.isValid ? report.documentTypeId : this.reportId;
+    let docId = isNullOrEmpty(report.isValid) ? report.documentTypeId : this.reportId;
 
     const formOnly = true;
     const nameSignatoryRuling = this.requestInfo.detail.nameSignatoryRuling;
@@ -1798,19 +1841,11 @@ export class RequestCompDocTasksComponent
           this.requestInfo.detail.postSignatoryRuling = saePosition;
           this.requestInfo.detail.nameRecipientRuling = typeSign;
           this.updateRequest(false, () => {
-
             if (typeSign == 'electronica') {
               this.openFirma(true);
             } else {
-              this.showReportInfo(
-                idSample,
-                docId,
-                typeSign,
-                typeAnnex,
-                null
-              );
+              this.showReportInfo(idSample, docId, typeSign, typeAnnex, null);
             }
-
           });
         },
       },
@@ -1818,7 +1853,6 @@ export class RequestCompDocTasksComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(component, config);
-
   }
 
   showReportInfo(
@@ -1873,6 +1907,8 @@ export class RequestCompDocTasksComponent
     config.initialState = {
       typeDoc: typeDocument,
       idSample: id,
+      requestId: this.requestId,
+
       callback: async (check, contentId) => {
         if (check) {
           //this.getInfoSample();
@@ -1881,7 +1917,6 @@ export class RequestCompDocTasksComponent
         }
       },
     };
-
     this.modalService.show(UploadReportReceiptComponent, config);
   }
 
@@ -1889,7 +1924,6 @@ export class RequestCompDocTasksComponent
   //Firma de reportes
 
   async firmarReporte(contentId = null) {
-
     console.log('Firmar reporte content', contentId);
 
     const user: any = this.authService.decodeToken();
@@ -1935,7 +1969,7 @@ export class RequestCompDocTasksComponent
       idTypeDoc = report.documentTypeId;
       readOnly = report.signedReport == 'Y';
     } else {
-      readOnly = (this.requestInfo.detail.reportSheet == 'OCSJ')
+      readOnly = this.requestInfo.detail.reportSheet != 'OCSJ';
     }
 
     const typeAnnex = 'approval-request';
@@ -1976,12 +2010,12 @@ export class RequestCompDocTasksComponent
       let content = getXMLNode(xml, 'strXmlFirmado')?.textContent;
 
       if (!isNullOrEmpty(content)) {
-
         let report = await this.getStatusReport();
 
         if (report.isValid) {
           report = report.data[0];
-          report.content += '<br/><br/><br/><b>Firma Electrónica:</b><br/>' + content;
+          report.content +=
+            '<br/><br/><br/><b>Firma Electrónica:</b><br/>' + content;
           report.signedReport = 'Y';
           report.modificationUser = token.username;
           report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
@@ -1990,16 +2024,12 @@ export class RequestCompDocTasksComponent
             error: err => { },
           });
         } else {
-          this.requestInfo.detail.reportSheet = 'OCSJ'
+          this.requestInfo.detail.reportSheet = 'OCSJ_SIGN';
           this.updateRequest(false);
         }
-
       }
-
     }
-
   }
-
 
   //Crear un sample para el tipo de firma
 }

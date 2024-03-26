@@ -19,6 +19,7 @@ import { NoTransferService } from 'src/app/core/services/no-transfer/no-transfer
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 import { ModalNotTransferredComponent } from './modal-not-transferred/modal-not-transferred.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-goods-not-transferred',
@@ -29,6 +30,7 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
   @Input() goodsList: any;
 
   @Input() requestId: number;
+  title = 'Bienes no transferidos';
 
   @Input() readonly: boolean = false;
   private tranferService = inject(NoTransferService);
@@ -42,11 +44,13 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
 
   typeRelevant: any[] = [];
   unitMessure: any[] = [];
+  process = null;
 
   constructor(
     private modalService: BsModalService,
     private typeRelevantService: TypeRelevantService,
-    private unitMessureService: StrategyServiceService
+    private unitMessureService: StrategyServiceService,
+    private route: ActivatedRoute,
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -62,6 +66,13 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
     } else {
       this.settings.actions.delete = true;
     }
+
+    this.process = this.route.snapshot.paramMap.get('process');
+    if (this.process != 'register-abandonment-instruction' ||
+      this.process != 'approve-abandonment') {
+      this.title = 'Bienes transferentes faltantes';
+    }
+
   }
 
   openModal(context?: Partial<ModalNotTransferredComponent>) {
@@ -110,7 +121,7 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
         });
         this.getData();
       },
-      error: error => {},
+      error: error => { },
     });
   }
 

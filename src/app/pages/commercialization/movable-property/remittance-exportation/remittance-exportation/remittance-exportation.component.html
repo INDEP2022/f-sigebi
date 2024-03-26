@@ -8,19 +8,28 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-2">
-          <form-field
-            [control]="form.get('rangeDate')"
-            label="Fecha Inicial y Final">
+          <form-field [control]="form.get('f_ini')" label="Fecha Inicio">
             <input
               class="form-control"
-              formControlName="rangeDate"
-              ngModel
-              bsDaterangepicker
-              [maxDate]="today"
+              formControlName="f_ini"
+              bsDatepicker
               [bsConfig]="{
-                dateInputFormat: 'DD-MM-YYYY',
-                displayOneMonthRange: true
-              }" />
+                dateInputFormat: 'DD/MM/YYYY'
+              }"
+              [(ngModel)]="fechaInicio"
+              (ngModelChange)="ajustarFechas()" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('f_fin')" label="Fecha Final">
+            <input
+              class="form-control"
+              formControlName="f_fin"
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }"
+              [(ngModel)]="fechaFinal" />
           </form-field>
         </div>
         <div class="col-md-3" style="margin-top: -4px">
@@ -52,13 +61,7 @@
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-2">
-          <app-event-type-shared
-            [form]="form"
-            formControlName="event"
-            (onEventsChange)="event()"
-            [bindLabel]="'id'"></app-event-type-shared>
-        </div>
+
         <div class="col-md-2">
           <form-field [control]="form.get('goods')" label="Bienes">
             <ng-select
@@ -76,20 +79,45 @@
         </div>
       </div>
 
-      <br />
-
+      <div class="row pt-3">
+        <div class="col-md-2">
+          <ng-custom-select-loading
+            [form]="form"
+            formControlName="typeEvent"
+            [multiple]="false"
+            label="Tipo de Evento"
+            value="id"
+            bindLabel="description"
+            paramSearch="search"
+            path="event/api/v1/comer-tevents">
+          </ng-custom-select-loading>
+          <!-- <app-event-type-shared
+            [form]="form"
+            formControlName="event"
+            (onEventsChange)="event()"
+            [bindLabel]="'id'"></app-event-type-shared> -->
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('idEvent')" label="ID Evento">
+            <input
+              class="form-control"
+              type="number"
+              formControlName="idEvent" />
+          </form-field>
+        </div>
+      </div>
       <div class="row justify-content-center">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-check label="Revalidar Bienes Universo" for="label1">
-            <input id="label1" type="checkbox" formControlName="check1" />
+            <input id="label1" type="checkbox" formControlName="universe" />
           </form-check>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-check label="Revalidar Bienes Evento" for="label2">
-            <input id="label2" type="checkbox" formControlName="check2" />
+            <input id="label2" type="checkbox" formControlName="event" />
           </form-check>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <button
             type="button"
             class="btn btn-sm btn-success active"
