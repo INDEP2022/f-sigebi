@@ -2097,7 +2097,6 @@ export class SchedulingDeliveriesFormComponent
             .createGoodProgrammingDevilery(goodForm)
             .subscribe({
               next: async response => {
-                // Agrega el bien a la lista
                 this.addedGoods.push(goodForm);
                 this.params
                   .pipe(takeUntil(this.$unSubscribe))
@@ -2107,6 +2106,11 @@ export class SchedulingDeliveriesFormComponent
               error: error => {},
             });
         });
+        this.alert(
+          'success',
+          'Acción Exitosa',
+          'Bienes agregados correctamente'
+        );
       }
     } else {
       this.alert(
@@ -2135,8 +2139,12 @@ export class SchedulingDeliveriesFormComponent
             this.addedGoods = this.addedGoods.filter(
               good => good.goodId !== this.selectedRow.goodId
             );
-
             this.showInfoProgrammingDelivery();
+            this.alert(
+              'success',
+              'Acción Exitosa',
+              `El bien con el ID ${this.selectedRow.goodId} ha sido eliminado correctamente`
+            );
           },
           error: error => {},
         });
