@@ -20,6 +20,7 @@
           label="Expediente">
           <input
             type="text"
+            [readOnly]="canNew"
             class="form-control"
             formControlName="noExpedient" />
         </form-field>
@@ -27,6 +28,8 @@
           <button
             type="button"
             class="btn btn-primary active btn-sm mr-3"
+            containerClass="tooltip-style"
+            tooltip="Buscar"
             (click)="search()">
             <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
@@ -34,6 +37,7 @@
             type="button"
             class="btn btn-primary btn-sm active mr-3"
             containerClass="tooltip-style"
+            (click)="listAllExpedients()"
             tooltip="Lista general de expedientes">
             <i class="bx bx-list-plus bx-sm float-icon"></i>
           </button>
@@ -41,8 +45,35 @@
             type="button"
             class="btn btn-primary btn-sm active mr-3"
             containerClass="tooltip-style"
+            (click)="listProceedingByExpedient()"
             tooltip="Lista general de actas">
             <i class="bx bx-list-plus bx-sm float-icon"></i>
+          </button>
+          <button
+            *ngIf="canNew"
+            (click)="clearAll()"
+            class="btn btn-danger btn-sm active mr-3">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+          <button
+            *ngIf="canNew && !canSave"
+            type="button"
+            tooltip="Nuevo"
+            (click)="newProceeding()"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+          <button
+            *ngIf="canSave"
+            type="button"
+            (click)="saveNewProceeding()"
+            class="btn btn-primary btn-sm active mr-3">
+            Guardar
+            <i aria-hidden="true" class="fa fa-save"></i>
+          </button>
+          <button *ngIf="canSave" class="btn btn-danger btn-sm active">
+            Cancelar
           </button>
         </div>
       </div>
@@ -74,8 +105,7 @@
             <ng-select
               class="form-control"
               formControlName="actSelect"
-              [class]="form.get('statusAct').value != null ? 'disabled' : ''"
-              (change)="manejarTipoActa($event)">
+              [class]="form.get('statusAct').value != null ? 'disabled' : ''">
               <ng-option [value]="'C/DON'">C/DON</ng-option>
               <ng-option [value]="'S/DON'">S/DON</ng-option>
               <ng-option [value]="'C/DEV'">C/DEV</ng-option>
@@ -97,12 +127,15 @@
           </form-field>
         </div>
         <div class="col">
-          <form-field [control]="form.get('ident')" label="Ident">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="ident"
-              [readOnly]="form.get('statusAct').value != null" />
+          <form-field [control]="form.get('ident')">
+            <ngx-select
+              [data]="dataIdent"
+              [form]="form"
+              [class]="form.get('statusAct').value != null ? 'disabled' : ''"
+              [searchable]="false"
+              label="Ident"
+              control="ident">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col">
@@ -156,9 +189,21 @@
         <div class="col-md-3">
           <form-field [control]="form.get('elabDate')" label="Fecha Elab.">
             <input
+              (ngModelChange)="validElaborationDate()"
               type="text"
+              [class]="
+                ['CERRADO', 'CERRADA'].includes(form.get('statusAct').value)
+                  ? 'disabled'
+                  : ''
+              "
               class="form-control"
               bsDatepicker
+              [maxDate]="maxDate"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY hh:mm',
+                displayOneMonthRange: true,
+                withTimepicker: true
+              }"
               formControlName="elabDate" />
           </form-field>
         </div>
@@ -166,6 +211,7 @@
           <form-field [control]="form.get('closingDate')" label="Fecha Cierre">
             <input
               type="text"
+              [class]="'disabled'"
               class="form-control"
               bsDatepicker
               formControlName="closingDate" />
@@ -175,6 +221,11 @@
           <form-field [control]="form.get('captureDate')" label="Fecha Captura">
             <input
               type="text"
+              [class]="
+                ['CERRADO', 'CERRADA'].includes(form.get('statusAct').value)
+                  ? 'disabled'
+                  : ''
+              "
               class="form-control"
               bsDatepicker
               formControlName="captureDate" />
@@ -184,6 +235,11 @@
           <form-field [control]="form.get('statusAct')" label="Estatus Acta">
             <input
               type="text"
+              [class]="
+                ['CERRADO', 'CERRADA'].includes(form.get('statusAct').value)
+                  ? 'disabled'
+                  : ''
+              "
               class="form-control"
               formControlName="statusAct"
               readonly />
@@ -203,7 +259,15 @@
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('address')" label="Direcci&oacute;n">
-            <input type="text" class="form-control" formControlName="address" />
+            <input
+              type="text"
+              [class]="
+                ['CERRADO', 'CERRADA'].includes(form.get('statusAct').value)
+                  ? 'disabled'
+                  : ''
+              "
+              class="form-control"
+              formControlName="address" />
           </form-field>
         </div>
       </div>
@@ -214,6 +278,11 @@
             [control]="form.get('observations')"
             label="Observaciones">
             <textarea
+              [class]="
+                ['CERRADO', 'CERRADA'].includes(form.get('statusAct').value)
+                  ? 'disabled'
+                  : ''
+              "
               class="form-control"
               formControlName="observations"></textarea>
           </form-field>
@@ -223,6 +292,11 @@
             [control]="form.get('autorithyCS')"
             label="Autoridad Cancela/Suspende">
             <input
+              [class]="
+                ['CERRADO', 'CERRADA'].includes(form.get('statusAct').value)
+                  ? 'disabled'
+                  : ''
+              "
               type="text"
               class="form-control"
               formControlName="autorithyCS" />
@@ -235,6 +309,11 @@
           <form-field [control]="form.get('elaboration')" label="Elabora C/S">
             <input
               type="text"
+              [class]="
+                ['CERRADO', 'CERRADA'].includes(form.get('statusAct').value)
+                  ? 'disabled'
+                  : ''
+              "
               class="form-control"
               formControlName="elaboration" />
           </form-field>
@@ -245,6 +324,11 @@
             label="Testigo de la Contr.">
             <input
               type="text"
+              [class]="
+                ['CERRADO', 'CERRADA'].includes(form.get('statusAct').value)
+                  ? 'disabled'
+                  : ''
+              "
               class="form-control"
               formControlName="witnessContr" />
           </form-field>
@@ -407,7 +491,13 @@
           </div>
         </div>
         <div class="col-6">
-          <h5 class="text-right text-danger">En Tiempo</h5>
+          <h5
+            class="text-right"
+            [class]="
+              status_time == 'EN TIEMPO' ? 'text-success' : 'text-danger'
+            ">
+            {{ status_time }}
+          </h5>
         </div>
       </div>
     </div>

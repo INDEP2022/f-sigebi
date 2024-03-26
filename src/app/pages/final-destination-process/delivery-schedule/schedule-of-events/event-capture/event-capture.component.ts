@@ -684,7 +684,7 @@ export class EventCaptureComponent
     const formValue = this.form.getRawValue();
     const { numFile, keysProceedings, captureDate, responsible } = formValue;
     if (!responsible) {
-      this.alert('error', 'Error', 'Eliga un responsable');
+      this.alert('error', 'Error', 'Elija un responsable');
       return;
     }
     if (!numFile) {
@@ -950,9 +950,9 @@ export class EventCaptureComponent
     const nullFilters = filters.filter(filter => !filter);
     if (nullFilters.length == totalFilters.length) {
       this.alert(
-        'error',
+        'warning',
         'Error',
-        'Debe ingresar almenos 1 parametro de busqueda'
+        'Debe ingresar como mínimo 1 parámetro de búsqueda'
       );
       return;
     }
