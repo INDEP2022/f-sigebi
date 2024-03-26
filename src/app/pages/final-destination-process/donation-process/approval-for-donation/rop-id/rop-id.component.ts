@@ -59,7 +59,7 @@ export class RopIdComponent extends BasePage implements OnInit {
       hideSubHeader: false,
       actions: false,
       columns: {
-        goodId: {
+        goodid: {
           title: 'No. Bien',
           sort: false,
           visible: true,
@@ -67,10 +67,10 @@ export class RopIdComponent extends BasePage implements OnInit {
         description: {
           title: 'Descripción',
           sort: false,
-          visible: true,
+          visible: true /*
           valuePrepareFunction: (cell: any, row: any) => {
             return row.good?.description;
-          },
+          },*/,
         },
         RIC: {
           filter: false,
@@ -132,11 +132,11 @@ export class RopIdComponent extends BasePage implements OnInit {
             // this.cve = filter.field == 'cveAct';
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'goodId':
+              case 'goodid':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'description':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -175,8 +175,8 @@ export class RopIdComponent extends BasePage implements OnInit {
     this.params.getValue()['filter.recordId'] = `$eq:${localStorage.getItem(
       'actaId'
     )}`;
-    this.params.getValue()['filter.good.noClasifGood'] = `$eq:${778}`;
-    this.params.getValue()['filter.good.unit'] = `$eq:PIEZA`;
+    this.params.getValue()['filter.noclasifbien'] = `$eq:${778}`;
+    this.params.getValue()['filter.unit'] = `$eq:PIEZA`;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -190,7 +190,7 @@ export class RopIdComponent extends BasePage implements OnInit {
         this.totalItemsRopa = resp.count;
       },
       error: err => {
-        this.loadingRop = true;
+        this.loadingRop = false;
         this.dataDetail.load([]);
         this.dataDetail.refresh();
         this.totalItemsRopa = 0;

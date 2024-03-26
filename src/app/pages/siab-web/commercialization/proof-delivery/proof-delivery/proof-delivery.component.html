@@ -17,7 +17,7 @@
     <div class="mt-5">
       <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-6">
             <form-field [control]="form.get('event')">
               <ngx-select
                 [searchOnInit]="true"
@@ -27,75 +27,60 @@
                 bindLabel="eventProcess"
                 label="Evento"
                 control="event"
+                value="eventId"
                 (change)="loadDataEventSelected($event)">
               </ngx-select>
             </form-field>
           </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="form.get('delegation')"
-              label="Delegaci&oacute;n">
-              <!-- <ngx-select [searchOnInit]="true" (fetchItems)="getDelegations($event)" [data]="delegations" [form]="form"
-                bindLabel="cveJob" label="Delegaci&oacute;n" control="delegation">
-              </ngx-select> -->
-              <select
-                class="form-control"
-                formControlName="delegation"
-                (change)="delegationChangeIndex()">
-                <option></option>
-                <option *ngFor="let item of delegations">
-                  {{ item.no_delegacion }}
-                </option>
-              </select>
+          <!-- <div class="col-md-6">
+            <form-field [control]="form.get('delegation')">
+              <ngx-select
+                (fetchItems)="filterInvoices()"
+                [searchOnInit]="true"
+                [data]="delegationsDe"
+                [form]="form"
+                control="delegation"
+                bindLabel="descDescription"
+                label="Delegaci&oacute;n"
+                value="descDescription"
+                (change)="filterInvoices()">
+              </ngx-select>
             </form-field>
           </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="form.get('allotment')"
-              label="Lote P&uacute;blico">
-              <!-- <ngx-select [searchOnInit]="true" (fetchItems)="getPublic($event)" [data]="public" [form]="form"
-                bindLabel="cveJob" label="Lote P&uacute;blico" control="allotment">
-              </ngx-select> --><select
-                class="form-control"
-                formControlName="allotment"
-                (change)="publicChangeIndex()">
-                <option></option>
-                <option *ngFor="let item of public">
-                  {{ item.lote_publico }}
-                </option>
-              </select>
+          <div class="col-md-6 pt-3">
+            <form-field [control]="form.get('allotment')">
+              <ngx-select
+                [searchOnInit]="true"
+                [data]="publicDe"
+                [form]="form"
+                control="allotment"
+                bindLabel="publicLot"
+                label="Lote P&uacute;blico"
+                (change)="publicChangeIndex($event)">
+              </ngx-select>
             </form-field>
           </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="form.get('rfc')"
-              label="RFC"
-              (change)="rfcChangeIndex()">
-              <!-- <ngx-select [searchOnInit]="true" (fetchItems)="getRrcs($event)" [data]="rfcs" [form]="form"
-                bindLabel="cveJob" label="RFC" control="rfc">
-              </ngx-select> --><select
-                class="form-control"
-                formControlName="rfc">
-                <option></option>
-                <option *ngFor="let item of rfcs">{{ item.rfc }}</option>
-              </select>
+          <div class="col-md-6 pt-3">
+            <form-field [control]="form.get('rfc')">
+              <ngx-select
+                [searchOnInit]="true"
+                [data]="rfcsDe"
+                [form]="form"
+                control="rfc"
+                bindLabel="rfc"
+                label="RFC"
+                (change)="rfcChangeIndex($event)">
+              </ngx-select>
             </form-field>
-          </div>
+          </div> -->
         </div>
       </form>
     </div>
     <!--  -->
     <div class="d-flex mb-3">
       <div class="ml-auto">
-        <button class="btn btn-danger btn-sm active mr-3">
+        <button class="btn btn-danger btn-sm active mr-3" (click)="clear()">
           Limpiar Filtros <i class="fas fa-eraser"> </i>
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary active btn-sm"
-          [disabled]="!form.valid">
-          Generar Constancia(s) de Entrega
-          <i class="bx bx-search-alt bx-sm float-icon"></i>
         </button>
       </div>
     </div>
@@ -106,11 +91,17 @@
           <app-columns-select [(settings)]="settings"></app-columns-select>
         </div>
       </div>
-      <div>
-        <ng2-smart-table
-          [settings]="settings"
-          [source]="data"></ng2-smart-table>
+      <div class="table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            #table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="data"></ng2-smart-table>
+        </div>
       </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
     </div>
   </div>
 </app-card>

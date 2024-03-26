@@ -16,8 +16,12 @@
             class="form-control"
             formControlName="startDate"
             bsDatepicker
+            [minDate]="minDate"
             [bsConfig]="{ isAnimated: true }"
-            [bsConfig]="{ dateInputFormat: 'MM/DD/YYYY, h:mm:ss a' }" />
+            [bsConfig]="{
+              withTimepicker: true,
+              dateInputFormat: 'MM/DD/YYYY, h:mm:ss a'
+            }" />
         </form-field>
       </div>
       <div class="col-md-6">
@@ -27,9 +31,13 @@
             placeholder=""
             class="form-control"
             formControlName="endDate"
+            [minDate]="minDate"
             bsDatepicker
             [bsConfig]="{ isAnimated: true }"
-            [bsConfig]="{ dateInputFormat: 'MM/DD/YYYY, h:mm:ss a' }" />
+            [bsConfig]="{
+              withTimepicker: true,
+              dateInputFormat: 'MM/DD/YYYY, h:mm:ss a'
+            }" />
         </form-field>
       </div>
     </form>

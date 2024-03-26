@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   ListParams,
   SearchFilter,
@@ -12,25 +11,14 @@ import {
   IComerLayouts,
   IComerLayoutsH,
   IL,
-  ILay,
 } from 'src/app/core/models/ms-parametercomer/parameter';
 import { LayoutsConfigService } from 'src/app/core/services/ms-parametercomer/layouts-config.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { LayoutsConfigurationModalComponent } from './layouts-configuration-modal/layouts-configuration-modal.component';
 
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import {
-  EXAMPLE_DAT2,
-  EXAMPLE_DAT3,
-  EXAMPLE_DAT4,
-  EXAMPLE_DATA,
-  LAYOUTS_COLUMNS1,
-  LAYOUTS_COLUMNS2,
-  LAYOUTS_COLUMNS3,
-  LAYOUTS_COLUMNS4,
-  LAYOUTS_COLUMNS5,
-  LAYOUTS_COLUMNS6,
-} from './layouts-config-columns';
+import { LAYOUTS_COLUMNS6 } from './layouts-config-columns';
 import { LayoutsStructureConfigurationModalComponent } from './layouts-structure-configuration-modal/layouts-structure-configuration-modal.component';
 
 @Component({
@@ -80,23 +68,131 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   columnFiltersLayoutsStructure: any = [];
   // Cantidades de sumatorias
   lengthTotal: number = 0;
-
+  origin: string;
+  settings5 = {
+    ...this.settings,
+  };
+  settings6 = {
+    ...this.settings,
+  };
   constructor(
     private fb: FormBuilder,
     private layoutsConfigService: LayoutsConfigService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private readonly router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
+    this.settings5 = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        position: 'right',
+        add: false,
+        edit: true,
+        delete: true,
+      },
+      columns: {
+        id: {
+          title: 'Id',
+          type: 'string',
+          width: '10%',
+          sort: false,
+        },
+        descLayout: {
+          title: 'Descripción',
+          type: 'string',
+          width: '20%',
+          sort: false,
+        },
+        screenKey: {
+          title: 'Pantalla',
+          type: 'string',
+          width: '20%',
+          sort: false,
+        },
+        table_: {
+          title: 'Tabla o Vista',
+          type: 'string',
+          width: '30%',
+          sort: false,
+        },
+        status_active: {
+          title: 'Activo',
+          sort: false,
+          width: '10%',
+          type: 'html',
+          filter: {
+            type: 'list',
+            config: {
+              selectText: 'Todos',
+              list: [
+                { value: '1', title: 'Activo' },
+                { value: '0', title: 'Inactivo' },
+              ],
+            },
+          },
+          valuePrepareFunction: (value: any) => {
+            if (value !== null) {
+              switch (value) {
+                case true:
+                  value = `<div class="badge badge-pill bg-success text-wrap ml-3 mr-2">Activo</div>`;
+                  return value;
+                default:
+                  value = `<div class="badge badge-pill bg-danger text-wrap ml-2 mr-2">Inactivo</div>`;
+                  return value;
+              }
+            }
+          },
+          filterFunction: () => {
+            return true;
+          },
+        },
+        criterion: {
+          title: 'Filtro de Selección',
+          type: 'string',
+          width: '20%',
+          sort: false,
+        },
+      },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 ml-3"></i>',
+      },
+    };
+
+    this.settings6 = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: true,
+        add: false,
+        position: 'right',
+      },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 ml-3"></i>',
+      },
+      columns: { ...LAYOUTS_COLUMNS6 },
+    };
   }
 
   ngOnInit(): void {
     this.selectedRow = null;
     this.getLayoutH();
     this.prepareForm();
-    // this.params
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(() => this.getLayouts());
+
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params: any) => {
+        this.origin = params.origin ?? '';
+      });
+
     this.loadingDataTableLayouts();
+    this.loadingDataTableLayoutsStructure();
   }
 
   prepareForm() {
@@ -129,60 +225,12 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       this.idLayout = event.data.id;
       this.selectedRow = event.data;
       this.valid = true;
-      this.loadingDataTableLayoutsStructure();
+      this.getLayoutsStructureData();
     } else {
       this.idLayout = null;
       this.selectedRow = null;
       this.valid = false;
     }
-    // let params: ILay = {
-    //   idLayout: event.data.idLayout.id,
-    //   idConsec: event.data.idConsec,
-    // };
-    // let paramsId: IL = {
-    //   idLayout: event.data.idLayout.id,
-    // };
-    // let paramsUpdate: IComerLayouts = {
-    //   idLayout: event.data.idLayout.id,
-    //   idConsec: event.data.idConsec,
-    //   position: event.data.position,
-    //   column: event.data.column,
-    //   indActive: event.data.column,
-    //   type: event.data.type,
-    //   length: event.data.length,
-    //   constant: event.data.constant,
-    //   carFilling: event.data.carFilling,
-    //   justification: event.data.justification,
-    //   decimal: event.data.decimal,
-    //   dateFormat: event.data.dateFormat,
-    //   registryNumber: event.data.registryNumber,
-    // };
-    // this.layoutsConfigService.findOne(params).subscribe({
-    //   next: data => {
-    //     this.layout = paramsId;
-    //     this.structureLayout = paramsUpdate;
-    //     console.log(this.structureLayout);
-    //     this.valid = true;
-    //     this.layoutsConfigService.getByIdH(this.idLayout).subscribe({
-    //       next: data => {
-    //         this.layoutDuplicated = data;
-    //         console.log(this.layoutDuplicated);
-    //         this.valid = true;
-    //         this.rowSelected = true;
-    //       },
-    //       error: error => {
-    //         this.loading = false;
-    //         this.onLoadToast('error', 'Layout no existe!!', '');
-    //         return;
-    //       },
-    //     });
-    //   },
-    //   error: error => {
-    //     this.loading = false;
-    //     this.onLoadToast('error', 'Layout no existe!!', '');
-    //     return;
-    //   },
-    // });
   }
 
   userRowLayoutSelect(event: any) {
@@ -218,52 +266,34 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     }
     console.log('DUPLICAR ', this.selectedRow);
     this.alertQuestion(
-      'warning',
-      'Duplicar Diseño',
-      '¿Está seguro(a) en duplicar el diseño ' +
+      'question',
+      'Se duplicará el diseño' +
         this.selectedRow.id +
         '.' +
-        this.selectedRow.descLayout +
-        '?'
+        this.selectedRow.descLayout,
+      '¿Desea continuar?'
     ).then(question => {
       if (question.isConfirmed) {
         this.loading = true;
         this.layoutsConfigService.createH(this.selectedRow).subscribe({
           next: data => {
             console.log('creado' + data);
-            // this.valid = true;
-            // this.rowSelected = true;
-            // this.duplicaLayout();
             this.handleSuccess();
           },
           error: error => {
             this.loading = false;
-            this.onLoadToast('error', 'No se puede duplicar el diseño', '');
-            // return;
+            this.alert('warning', 'No se puede duplicar el diseño', '');
           },
         });
       }
     });
   }
-  // duplicaLayout() {
-  //   this.layoutsConfigService.createH(this.layoutDuplicated).subscribe({
-  //     next: data1 => {
-  //       console.log('creado' + data1);
-  //     },
-  //     error: error => {
-  //       this.loading = false;
-  //       this.onLoadToast('error', 'No se puede duplicar layout!!', '');
-  //       return;
-  //     },
-  //   });
-  // }
 
   handleSuccess() {
     const message: string = 'Duplicado';
-    this.onLoadToast('success', `${message} Correctamente`, '');
+    this.alert('success', `Diseño ${message} Correctamente`, '');
     this.loading = false;
-    this.loadingDataTableLayouts();
-    this.loadingDataTableLayoutsStructure();
+    this.getLayoutsData();
   }
 
   getLayouts() {
@@ -313,32 +343,6 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     );
   }
 
-  showDeleteAlert(event: any) {
-    let del: ILay = {
-      idLayout: event.data.idLayout.id,
-      idConsec: event.data.idConsec,
-    };
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      '¿Desea eliminar este registro?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.layoutsConfigService.remove(del).subscribe({
-          next: data => {
-            this.loading = false;
-            this.onLoadToast('success', 'Diseño Eliminado', '');
-            this.getLayouts();
-          },
-          error: error => {
-            this.onLoadToast('error', 'No se puede eliminar el registro', '');
-            this.loading = false;
-          },
-        });
-      }
-    });
-  }
-
   /**
    * FILTROS DE TABLAS Y FUNCIONES PARA CARGAR DATA
    */
@@ -353,14 +357,18 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = '';
-            //Default busqueda SearchFilter.ILIKE
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
 
-            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
               length: () => (searchFilter = SearchFilter.EQ),
               justification: () => (searchFilter = SearchFilter.ILIKE),
+              id: () => (searchFilter = SearchFilter.EQ),
+              descLayout: () => (searchFilter = SearchFilter.ILIKE),
+              screenKey: () => (searchFilter = SearchFilter.ILIKE),
+              table_: () => (searchFilter = SearchFilter.ILIKE),
+              criterion: () => (searchFilter = SearchFilter.ILIKE),
+              status_active: () => (searchFilter = SearchFilter.EQ),
             };
             search[filter.field]();
 
@@ -375,13 +383,9 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
           this.dataTableParamsLayouts = this.pageFilter(
             this.dataTableParamsLayouts
           );
-          //Su respectivo metodo de busqueda de datos
           this.getLayoutsData();
         }
       });
-
-    // this.columnFiltersLayouts['filter.originId'] = `$eq:${this.originId}`;
-    //observador para el paginado
     this.dataTableParamsLayouts
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getLayoutsData());
@@ -394,21 +398,32 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       ...this.columnFiltersLayouts,
     };
     console.log('PARAMS ', params);
+    if (params['filter.status_active']) {
+      params['filter.indActive'] = params['filter.status_active'] + '';
+      delete params['filter.status_active'];
+    }
+    if (params['filter.table_']) {
+      params['filter.table'] = params['filter.table_'] + '';
+      delete params['filter.table_'];
+    }
     this.layoutsConfigService.getAllLayoutsH(params).subscribe({
       next: res => {
         console.log('DATA Layouts', res);
-        this.testDataLayouts = res.data.map((i: any) => {
+        let result = res.data.map((i: any) => {
           i['status_active'] = i.indActive == '1' ? true : false;
+          i['table_'] = i.table;
           return i;
         });
-        this.dataTableLayouts.load(this.testDataLayouts);
-        this.totalLayouts = res.count;
-        this.loadingLayouts = false;
+        Promise.all(result).then(resp => {
+          this.dataTableLayouts.load(res.data);
+          this.dataTableLayouts.refresh();
+          this.totalLayouts = res.count;
+          this.loadingLayouts = false;
+        });
       },
       error: error => {
-        console.log(error);
-        this.testDataLayouts = [];
         this.dataTableLayouts.load([]);
+        this.dataTableLayouts.refresh();
         this.totalLayouts = 0;
         this.loadingLayouts = false;
       },
@@ -435,32 +450,50 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   }
 
   deleteLayouts(event: any) {
-    console.log('ELIMINAR ', event);
     this.alertQuestion(
-      'warning',
-      'Eliminar Diseño',
-      '¿Desea eliminar este diseño?'
+      'question',
+      'Se eliminará el Diseño',
+      '¿Desea continuar?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.loadingLayouts = true;
         this.layoutsConfigService
           .deletelayoutSH(event.data.id, event.data)
           .subscribe({
             next: data => {
-              this.loadingLayouts = false;
-              this.alert('success', 'Eliminado correctamente', ``);
-              this.loadingDataTableLayouts();
+              this.alert('success', 'Diseño eliminado correctamente', ``);
+              this.getLayoutsData();
             },
-            error: error => {
-              this.loadingLayouts = false;
-              this.alert(
-                'error',
-                'Error al Actualizar',
-                'Ocurrió un error al actualizar el diseño'
-              );
+            error: async error => {
+              let res = await this.getValDelete(event.data.id);
+              if (res)
+                this.alert(
+                  'warning',
+                  'No se puede eliminar el registro maestro',
+                  'Ya que existen registros de detalle coincidentes.'
+                );
+              else
+                this.alert(
+                  'error',
+                  'Error al Eliminar',
+                  'Ocurrió un error al eliminar el diseño'
+                );
             },
           });
       }
+    });
+  }
+  getValDelete(id: string | number) {
+    let params = new ListParams();
+    params['filter.idLayout'] = `$eq:${id}`;
+    return new Promise((resolve, reject) => {
+      this.layoutsConfigService.getAllLayouts_TotalT(params).subscribe({
+        next: res => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
     });
   }
 
@@ -474,8 +507,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       }
     );
     modalRef.content.onConfirm.subscribe(data => {
-      console.log(data);
-      this.loadingDataTableLayouts();
+      this.getLayoutsData();
     });
   }
 
@@ -484,7 +516,6 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
    */
 
   loadingDataTableLayoutsStructure() {
-    //Filtrado por columnas
     this.dataTableLayoutsStructure
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -493,12 +524,17 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = '';
-            //Default busqueda SearchFilter.ILIKE
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
 
-            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
+              position: () => (searchFilter = SearchFilter.EQ),
+              length: () => (searchFilter = SearchFilter.EQ),
+              constant: () => (searchFilter = SearchFilter.ILIKE),
+              carFilling: () => (searchFilter = SearchFilter.ILIKE),
+              justification: () => (searchFilter = SearchFilter.EQ),
+              decimal: () => (searchFilter = SearchFilter.EQ),
+              dateFormat: () => (searchFilter = SearchFilter.ILIKE),
               column: () => (searchFilter = SearchFilter.ILIKE),
               type: () => (searchFilter = SearchFilter.ILIKE),
             };
@@ -515,39 +551,38 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
           this.dataTableParamsLayoutsStructure = this.pageFilter(
             this.dataTableParamsLayoutsStructure
           );
-          //Su respectivo metodo de busqueda de datos
           this.getLayoutsStructureData();
         }
       });
-    //observador para el paginado
     this.dataTableParamsLayoutsStructure
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getLayoutsStructureData());
+      .subscribe(() => {
+        if (this.totalLayoutsStructure > 0) this.getLayoutsStructureData();
+      });
   }
 
   getLayoutsStructureData() {
+    if (!this.idLayout) return;
     this.loadingLayoutsStructure = true;
-    this.columnFiltersLayoutsStructure[
-      'filter.idLayout'
-    ] = `$eq:${this.idLayout}`;
     let params = {
       ...this.dataTableParamsLayoutsStructure.getValue(),
       ...this.columnFiltersLayoutsStructure,
     };
-    console.log('PARAMS ', params);
+    params['filter.idLayout'] = `$eq:${this.idLayout}`;
     this.layoutsConfigService.getAllLayouts_TotalT(params).subscribe({
       next: res => {
         console.log('DATA LayoutsStructure', res);
-        this.testDataLayoutsStructure = res.data;
-        this.dataTableLayoutsStructure.load(this.testDataLayoutsStructure);
+        this.dataTableLayoutsStructure.load(res.data);
+        this.dataTableLayoutsStructure.refresh();
         this.totalLayoutsStructure = res.count;
         this.loadingLayoutsStructure = false;
-        this.lengthTotal = res.totalLength;
+        this.lengthTotal = !res.totalLength ? 0 : res.totalLength;
       },
       error: error => {
         console.log(error);
         this.testDataLayoutsStructure = [];
         this.dataTableLayoutsStructure.load([]);
+        this.dataTableLayoutsStructure.refresh();
         this.totalLayoutsStructure = 0;
         this.lengthTotal = 0;
         this.loadingLayoutsStructure = false;
@@ -567,16 +602,19 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       );
       return;
     }
-    console.log('CREAR ', this.selectedRow);
-    this.openModalLayoutsStructure({ id: this.selectedRow.id });
+    this.openModalLayoutsStructure({
+      id: this.selectedRow.id,
+      dataLayout: this.selectedRow,
+    });
   }
 
   editLayoutsStructure(event: any) {
-    console.log('EDITAR ', event);
     if (event) {
       this.openModalLayoutsStructure({
         provider: event.data,
         edit: true,
+        id: this.selectedRow.id,
+        dataLayout: this.selectedRow,
       });
     }
   }
@@ -594,77 +632,47 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     );
     modalRef.content.onConfirm.subscribe(data => {
       console.log(data);
-      this.loadingDataTableLayoutsStructure();
+      this.getLayoutsStructureData();
     });
   }
 
-  settings1 = {
-    ...TABLE_SETTINGS,
-    actions: false,
-    columns: {
-      ...LAYOUTS_COLUMNS1,
-    },
-    noDataMessage: 'No se encontraron registros',
-  };
+  back() {
+    if (this.origin == 'FCOMERCTLDPAG') {
+      this.router.navigate(['pages/commercialization/payment-refund']);
+    }
+  }
 
-  data = EXAMPLE_DATA;
-
-  settings2 = {
-    ...TABLE_SETTINGS,
-    actions: false,
-    columns: { ...LAYOUTS_COLUMNS2 },
-    noDataMessage: 'No se encontraron registros',
-  };
-
-  data2 = EXAMPLE_DAT2;
-
-  settings3 = {
-    ...TABLE_SETTINGS,
-    actions: false,
-    columns: { ...LAYOUTS_COLUMNS3 },
-    noDataMessage: 'No se encontraron registros',
-  };
-
-  data3 = EXAMPLE_DAT3;
-
-  settings4 = {
-    ...TABLE_SETTINGS,
-    actions: false,
-    columns: { ...LAYOUTS_COLUMNS4 },
-    noDataMessage: 'No se encontrarón registros',
-  };
-
-  data4 = EXAMPLE_DAT4;
-
-  settings5 = {
-    ...TABLE_SETTINGS,
-    editable: true,
-    actions: {
-      columnTitle: 'Acciones',
-      position: 'right',
-      add: false,
-      edit: true,
-      delete: true,
-    },
-    columns: { ...LAYOUTS_COLUMNS5 },
-    noDataMessage: 'No se encontrarón registros',
-  };
-
-  data5 = this.layoutsList;
-
-  settings6 = {
-    ...TABLE_SETTINGS,
-    actions: {
-      columnTitle: 'Acciones',
-      edit: true,
-      delete: false,
-      add: false,
-      position: 'right',
-    },
-    columns: { ...LAYOUTS_COLUMNS6 },
-
-    noDataMessage: 'No se encontrarón registros',
-  };
-
-  data6 = this.layoutsList;
+  deleteLayoutsStructure(event: any) {
+    console.log(event.data);
+    this.alertQuestion(
+      'question',
+      'Se eliminará la Estructura de Diseño',
+      '¿Desea continuar?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.layoutsConfigService
+          .remove({
+            idLayout: event.data.idLayout.id,
+            idConsec: event.data.idConsec,
+          })
+          .subscribe({
+            next: data => {
+              this.alert(
+                'success',
+                'Estructura de Diseño eliminada correctamente',
+                ``
+              );
+              this.getLayoutsStructureData();
+            },
+            error: async error => {
+              this.alert(
+                'error',
+                'Error al Eliminar',
+                'Ocurrió un error al eliminar el diseño'
+              );
+            },
+          });
+      }
+    });
+  }
 }

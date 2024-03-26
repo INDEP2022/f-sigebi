@@ -1,0 +1,50 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Contratos</h5>
+  </div>
+  <div body>
+    <div class="d-flex justify-content-end p-0">
+      <app-columns-select
+        [leftList]="true"
+        (settingsChange)="settingsChange($event)"
+        [settings]="settings"
+        class="row justify-content-end ml-2"></app-columns-select>
+    </div>
+    <form-loader *ngIf="loading"></form-loader>
+    <div class="pt-4">
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{ height: loading ? '0px' : '300px' }">
+        <ng2-smart-table
+          [attr.class]="'table-responsive table-bordered'"
+          [settings]="settings"
+          [source]="dataPaginated"
+          (userRowSelect)="selectRow($event.data)">
+        </ng2-smart-table>
+      </ng-scrollbar>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center pb-2">
+      <div class="">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm"
+          (click)="close()">
+          Cerrar
+        </button>
+      </div>
+      <div class="ml-3">
+        <button
+          (click)="confirm()"
+          type="button"
+          class="btn btn-primary active btn-sm"
+          [disabled]="!selected">
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

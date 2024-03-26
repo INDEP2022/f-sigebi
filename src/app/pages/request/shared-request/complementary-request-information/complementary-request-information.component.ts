@@ -156,7 +156,6 @@ export class ComplementaryRequestInformationComponent
       });
       modalRef.content.refresh.subscribe(next => {
         if (next) {
-          console.log(next);
         } //this.getCities();
       });
     } else {

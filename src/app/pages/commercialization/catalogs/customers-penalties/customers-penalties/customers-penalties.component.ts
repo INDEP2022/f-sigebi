@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -10,8 +11,10 @@ import {
 import { ICustomersPenalties } from 'src/app/core/models/catalogs/customer.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
+import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { CustomersPenaltiesExportAllComponent } from '../customer-penalties-export-all/customer-penalties-export-all.component';
 import { CustomerPenaltiesModalComponent } from '../customer-penalties-modal/customer-penalties-modal.component';
 import { COLUMNS, COLUMNS2 } from './columns';
@@ -37,9 +40,13 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
   penalties: ICustomersPenalties;
   user: any;
   eventPenalities: any;
-
+  form: FormGroup = new FormGroup({});
   permission: boolean = false;
   selectRow: boolean = false;
+  selectClient = new DefaultSelect();
+  result: any;
+  today: Date;
+  minDate: Date;
 
   settings2 = { ...this.settings };
 
@@ -47,7 +54,9 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private clientPenaltyService: ClientPenaltyService,
     private authService: AuthService,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private fb: FormBuilder,
+    private comerClientsService: ComerClientsService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -74,8 +83,11 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            console.log('Hola');
+            console.log(filter.field);
             switch (filter.field) {
+              case 'clientId':
+                searchFilter = SearchFilter.EQ;
+                break;
               case 'typeProcess':
                 searchFilter = SearchFilter.EQ;
                 break;
@@ -83,33 +95,28 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
                 field = `filter.${filter.field}.id`;
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'publicLot':
+              case 'lotId':
                 searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}.publicLot`;
                 break;
 
-              /*case 'startDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
-                break;*/
               case 'startDate':
-                filter.search = this.returnParseDate(filter.search);
-                searchFilter = SearchFilter.EQ;
-                break;
-              /*case 'endDate':
                 if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
+                  console.log(filter.search);
+                  filter.search = this.checkType(filter.search)
+                    ? this.formatDate(filter.search)
+                    : filter.search;
                   searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
                 }
-                break;*/
+                break;
               case 'endDate':
-                filter.search = this.returnParseDate(filter.search);
-                searchFilter = SearchFilter.EQ;
+                if (filter.search != null) {
+                  console.log(filter.search);
+                  filter.search = this.checkType(filter.search)
+                    ? this.formatDate(filter.search)
+                    : filter.search;
+                  searchFilter = SearchFilter.EQ;
+                }
                 break;
               case 'refeOfficeOther':
                 searchFilter = SearchFilter.ILIKE;
@@ -125,7 +132,9 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
                   filter.search = '';
                 }*/
               case 'penaltiDate':
-                filter.search = this.returnParseDate(filter.search);
+                filter.search = this.checkType(filter.search)
+                  ? this.formatDate(filter.search)
+                  : filter.search;
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -134,9 +143,6 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
             }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log(
-                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
-              );
             } else {
               delete this.columnFilters[field];
             }
@@ -156,39 +162,33 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
+            console.log(filter.field);
             switch (filter.field) {
               case 'processType':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'eventId':
-                //field = `filter.${filter.field}.id`;
+                field = `filter.${filter.field}.id`;
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'batchPublic':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              /*case 'initialDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
-                break;*/
-              case 'initialDate':
-                filter.search = this.returnParseDate(filter.search);
+              case 'customerId':
                 searchFilter = SearchFilter.EQ;
                 break;
-              /*case 'finalDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
-                break;*/
+              case 'initialDate':
+                console.log(filter.search);
+                filter.search = this.checkType(filter.search)
+                  ? this.formatDate(filter.search)
+                  : filter.search;
+                searchFilter = SearchFilter.EQ;
+                break;
               case 'finalDate':
-                filter.search = this.returnParseDate(filter.search);
+                console.log(filter.search);
+                filter.search = this.checkType(filter.search)
+                  ? this.formatDate(filter.search)
+                  : filter.search;
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'referenceJobOther':
@@ -203,28 +203,16 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
               case 'usrfree':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              /*case 'penalizesDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
-                break;*/
               case 'penalizesDate':
-                filter.search = this.returnParseDate(filter.search);
+                filter.search = this.checkType(filter.search)
+                  ? this.formatDate(filter.search)
+                  : filter.search;
                 searchFilter = SearchFilter.EQ;
                 break;
-              /*case 'releasesDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
-                break;*/
               case 'releasesDate':
-                filter.search = this.returnParseDate(filter.search);
+                filter.search = this.checkType(filter.search)
+                  ? this.formatDate(filter.search)
+                  : filter.search;
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -241,24 +229,25 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
           this.getData();
         }
       });
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDeductives());
-
-    this.params2
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
 
     const user: any = this.authService.decodeToken() as any;
     this.user = user.username;
     console.log(this.user);
     this.validateUser();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDeductives());
   }
-
+  validateDate(date: Date) {
+    if (date) {
+      this.minDate = date;
+      this.form.get('endDate').enable();
+    }
+  }
   getData(id?: string | number) {
-    /*if (id) {
+    if (id) {
       this.params2.getValue()['filter.customerId'] = `$eq:${id}`;
-    }*/
+    }
     let params = {
       ...this.params2.getValue(),
       ...this.columnFilters2,
@@ -318,34 +307,51 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
   }
 
   formatDate(dateString: string): string {
-    if (dateString === '') {
+    console.log(dateString);
+    if (dateString == null) {
       return '';
+    } else {
+      const date = new Date(dateString);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear().toString();
+      return `${year}-${month}-${day}`;
     }
-
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear().toString();
-    return `${year}-${month}-${day}`;
   }
-
+  checkType(valor: Date | string): boolean {
+    if (typeof valor === 'string') {
+      return false;
+    } else if (valor instanceof Date) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   rowsSelected(event: any) {
     if (event) {
+      console.log(event);
       this.selectRow = true;
       this.eventPenalities = event.data;
       this.penalties = event.data;
+      this.params2
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getData(this.penalties.clientId.id));
       console.log(this.penalties);
     } else {
       this.eventPenalities = null;
     }
   }
 
-  getDeductives() {
+  getDeductives(id?: string) {
     this.loading = true;
+    if (id) {
+      this.params.getValue()['filter.clientId.id'] = `$eq:${id}`;
+    }
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+
     console.log(params);
     this.clientPenaltyService.getAllV2(params).subscribe({
       next: response => {
@@ -420,46 +426,62 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
   }
 
   openFormUpdate(customersPenalties?: any) {
-    this.alertQuestion('warning', 'Liberar', '¿Desea Liberar al Cliente?').then(
-      question => {
-        if (question.isConfirmed) {
-          if (this.user) {
-            this.params1.getValue()['filter.user'] = `$eq:${this.user}`;
-            let params = {
-              ...this.params1.getValue(),
-            };
-            this.securityService.getFilterAllUsersTrackerV2(params).subscribe({
-              next: resp => {
-                const modalConfig = MODAL_CONFIG;
-                const userLog = this.user;
-                modalConfig.initialState = {
-                  customersPenalties,
-                  userLog,
-                  callback: (next: boolean) => {
-                    if (next) {
-                      this.getDeductives();
-                      this.getData();
-                      //this.penalties;
-                    }
-                  },
-                };
-                this.modalService.show(
-                  CustomersPenalitiesFormComponent,
-                  modalConfig
-                );
-              },
-              error: err => {
-                this.alert(
-                  'warning',
-                  'Usuario no Autorizado',
-                  'No tiene los permisos'
-                );
-              },
-            });
-          }
+    console.log(customersPenalties);
+    if (customersPenalties.penaltiDate == null) {
+      this.alert(
+        'warning',
+        'Penalización',
+        'No tiene fecha penaliza, penalización erronea.'
+      );
+      return;
+    }
+
+    this.alertQuestion(
+      'warning',
+      'Liberar',
+      '¿Desea Liberar al Cliente ' +
+        (this.penalties.clientId.user == null
+          ? this.penalties.clientId.id
+          : this.penalties.clientId.user) +
+        '?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        if (this.user) {
+          this.params1.getValue()['filter.user'] = `$eq:${this.user}`;
+          let params = {
+            ...this.params1.getValue(),
+          };
+          this.securityService.getFilterAllUsersTrackerV2(params).subscribe({
+            next: resp => {
+              const modalConfig = MODAL_CONFIG;
+              const userLog = this.user;
+              modalConfig.initialState = {
+                customersPenalties,
+                userLog,
+                callback: (next: boolean) => {
+                  if (next) {
+                    this.getDeductives();
+                    this.getData();
+                    //this.penalties;
+                  }
+                },
+              };
+              this.modalService.show(
+                CustomersPenalitiesFormComponent,
+                modalConfig
+              );
+            },
+            error: err => {
+              this.alert(
+                'warning',
+                'Usuario no Autorizado',
+                'No tiene los permisos'
+              );
+            },
+          });
         }
       }
-    );
+    });
   }
 
   //Abrir modal de todos los penalizados
@@ -492,5 +514,14 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
         this.alert('success', 'Penalizacion', 'Borrado Correctamente');
       },
     });
+  }
+  changeClient(event: any) {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDeductives(event.id));
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getData(event.id));
+    console.log(event);
   }
 }

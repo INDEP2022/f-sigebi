@@ -12,6 +12,7 @@ import {
   ISendSirsaeLot,
   ISendSirsaeOIScrapDTO,
   ISirsaeDTO,
+  ISirsaeDTOI,
   ISirsaeScrapDTO,
   IValidPaymentsDTO,
 } from './interfacesirsae-model';
@@ -78,7 +79,10 @@ export class InterfacesirsaeService extends HttpService {
   }
 
   sendSirsaeScrapSp(body: ISirsaeScrapDTO) {
-    return this.post(`sirsae/sendSirsaeScrapSp`, body);
+    return this.post<{
+      COMER_GASTOS_ID_SOLICITUDPAGO: number;
+      COMER_GASTOS_FECHA_SP: string;
+    }>(`sirsae/sendSirsaeScrapSp`, body);
   }
 
   sendSirsaeScrapOi(body: ISendSirsaeOIScrapDTO) {
@@ -97,9 +101,41 @@ export class InterfacesirsaeService extends HttpService {
     }>('sirsae/sendSirsae3', body);
   }
 
+  sendSirsae4(body: ISirsaeDTOI) {
+    return this.post<{
+      COMER_GASTOS_ID_SOLICITUDPAGO: any;
+      BLK_TEMP_CADENA: any;
+      COMER_GASTOS_FECHA_SP: any;
+    }>('sirsae/sendSirsae4', body);
+  }
+
   getProviderId(id: string) {
     return this.get<IListResponseMessage<any>>(
-      'interfaceesirsae/api/v1/supplier?filter.clkPv=$eq:' + id
+      'supplier?filter.clkPv=$eq:' + id
     );
+  }
+
+  imprimeAny(idSolicitud: number, idGastos: number) {
+    return this.post('sirsae/InsertSolService', { idSolicitud, idGastos });
+  }
+
+  viewPreview(pIdPay: number) {
+    return this.post('sirsae/viewPreview', { pIdPay });
+  }
+
+  deleteSol(id: number) {
+    return this.delete('sirsae/deleteSolService/' + id);
+  }
+
+  deleteSolServceGast(id: number) {
+    return this.delete('sirsae/deleteSolServceGast/' + id);
+  }
+
+  deleteModuleCont(id: number) {
+    return this.delete('deleteModuleCont/' + id);
+  }
+
+  insertModuleCont(id: number) {
+    return this.get('sirsae/insertModuleCont/' + id);
   }
 }

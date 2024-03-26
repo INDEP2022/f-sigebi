@@ -1,5 +1,4 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -26,8 +25,6 @@ export class ParamsConcepsListComponent
   @Input() conceptId: string;
   toggleInformation = true;
   // concepto = '';
-  pageSizeOptions = [5, 10, 20, 25];
-  limit: FormControl = new FormControl(5);
   disabled = false;
   constructor(
     private modalService: BsModalService,
@@ -36,7 +33,6 @@ export class ParamsConcepsListComponent
     private securityService: SecurityService
   ) {
     super();
-    this.params.value.limit = 5;
     this.service = this.parameterService;
     this.ilikeFilters = [
       'parameter',
@@ -315,7 +311,7 @@ export class ParamsConcepsListComponent
   }
 
   override getParams() {
-    // debugger;
+    // //
     let newColumnFilters = this.columnFilters;
     if (this.conceptId) {
       newColumnFilters['filter.conceptId'] = '$eq:' + this.conceptId;

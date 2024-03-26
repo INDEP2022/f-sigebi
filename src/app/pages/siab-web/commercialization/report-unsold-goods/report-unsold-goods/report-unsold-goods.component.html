@@ -49,8 +49,9 @@
                 label="Tipo de Bien"
                 [data]="fullGoods"
                 [form]="form"
-                bindLabel="nombre_tipo_bien"
+                bindLabel="goodTypeName"
                 control="typeGood"
+                value="typeNumber"
                 (change)="querySubtypeGoods()">
               </ngx-select>
             </form-field>
@@ -106,11 +107,16 @@
         <div class="d-flex mb-5">
           <div class="ml-auto">
             <div>
-              <button class="btn btn-danger btn-sm active ml-3 mr-3">
+              <button
+                class="btn btn-danger btn-sm active ml-3 mr-3"
+                (click)="clean()">
                 Limpiar <i class="fas fa-eraser"> </i>
               </button>
               <!--  -->
-              <button class="btn btn-primary btn-sm active">
+              <button
+                class="btn btn-primary btn-sm active"
+                (click)="consult()"
+                [disabled]="!form.valid">
                 Consultar
                 <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
@@ -122,34 +128,62 @@
       <div>
         <div>
           <form class="form-material" [formGroup]="formTwo">
-            <!-- <div class="row">
+            <div class="row">
               <div class="col-md-6">
-                <form-radio label="Oficio de Respuesta">
+                <form-radio label="Por bien">
                   <input
                     type="radio"
-                    [value]="true"
-                    formControlName="radioOne" />
+                    value="radioTwo"
+                    formControlName="radioOne"
+                    (click)="viewRadio('radioTwo')" />
                 </form-radio>
               </div>
               <div class="col-md-6">
-                <form-radio label="Oficio de Cancelación">
+                <form-radio label="Con Archivo de texto">
                   <input
                     type="radio"
-                    formControlName="radioTwo"
-                    [value]="true" />
+                    value="radioOne"
+                    formControlName="radioOne"
+                    (click)="viewRadio('radioOne')" />
                 </form-radio>
               </div>
-            </div> -->
-
-            <div class="mb-5">
+            </div>
+            <div class="row" *ngIf="bienTxt">
               <div class="col-md-6">
-                <input
-                  ngModel
-                  type="file"
-                  (change)="chargeFile($event.target)" />
+                <form-field [control]="formTwo.get('txtBien')" label="No.Bien">
+                  <input
+                    type="number"
+                    placeholder=""
+                    class="form-control"
+                    formControlName="txtBien" />
+                </form-field>
               </div>
               <div class="col-md-6">
-                <button type="button" class="btn btn-primary btn-sm active">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active"
+                  (click)="searchBien()"
+                  [disabled]="!form.valid">
+                  Buscar bienes
+                </button>
+              </div>
+            </div>
+            <div class="row" *ngIf="bienExcel">
+              <div class="col-md-6">
+                <form-field [control]="formTwo.get('file')">
+                  <input
+                    type="file"
+                    accept=".xls, .xlsx, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    formControlName="file"
+                    (change)="chargeFile($event)" />
+                </form-field>
+              </div>
+              <div class="col-md-6">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active"
+                  (click)="searchBienExcel()"
+                  [disabled]="!form.valid">
                   Buscar bienes
                 </button>
               </div>
@@ -160,25 +194,30 @@
       <!--  -->
     </form>
     <div>
-      <div>
-        <!--  -->
-      </div>
       <div class="d-flex">
         <div>
           <h5 class="title">Bienes</h5>
         </div>
-        <div class="ml-auto mb-3">
-          <button class="btn btn-sm btn-success active mr-3">
-            Exportar a Excel
-            <i class="bx bx-download float-icon"></i>
-          </button>
-          <app-columns-select
-            [(settings)]="settings"
-            [leftList]="true"></app-columns-select>
-          <!--  -->
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div class="row mt-12">
+            <div class="col-md-6 mb-1"></div>
+            <div
+              class="col-md-6"
+              style="display: flex; justify-content: flex-end">
+              <button class="btn btn-sm btn-success active mr-3">
+                Exportar a Excel
+                <i class="bx bx-download float-icon"></i>
+              </button>
+              <app-columns-select
+                [(settings)]="settings"
+                [leftList]="true"></app-columns-select>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="table-responsive">
+      <div class="table-responsive pt-4">
         <ng2-smart-table
           [settings]="settings"
           [source]="data"></ng2-smart-table>
@@ -211,7 +250,9 @@
                       Cerrar
                     </button>
                     <!--  -->
-                    <button class="btn btn-primary btn-sm active">
+                    <button
+                      class="btn btn-primary btn-sm active"
+                      (click)="closeModalSubtype()">
                       Aceptar
                     </button>
                   </div>
@@ -242,7 +283,9 @@
                       Cerrar
                     </button>
                     <!--  -->
-                    <button class="btn btn-primary btn-sm active">
+                    <button
+                      class="btn btn-primary btn-sm active"
+                      (click)="closeModalSubtype()">
                       Aceptar
                     </button>
                   </div>
@@ -274,7 +317,9 @@
                       Cerrar
                     </button>
                     <!--  -->
-                    <button class="btn btn-primary btn-sm active">
+                    <button
+                      class="btn btn-primary btn-sm active"
+                      (click)="closeModalSubtype()">
                       Aceptar
                     </button>
                   </div>
@@ -307,22 +352,34 @@
                   <div>
                     <h5 class="title">Histórico Estatus del Bien</h5>
                   </div>
-                  <div class="ml-auto mb-3">
-                    <button class="btn btn-sm btn-success active mr-3">
-                      Exportar a Excel
-                      <i class="bx bx-download float-icon"></i>
-                    </button>
-                    <app-columns-select
-                      [(settings)]="settingsFour"
-                      [leftList]="true"></app-columns-select>
-                    <!--  -->
+                </div>
+                <div class="row pt-4">
+                  <div class="col-md-12">
+                    <div class="row mt-12">
+                      <div class="col-md-6 mb-1"></div>
+                      <div
+                        class="col-md-6"
+                        style="display: flex; justify-content: flex-end">
+                        <button class="btn btn-sm btn-success active mr-3">
+                          Exportar a Excel
+                          <i class="bx bx-download float-icon"></i>
+                        </button>
+                        <app-columns-select
+                          [(settings)]="settingsFour"
+                          [leftList]="true"></app-columns-select>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
                 <div class="table-responsive">
                   <ng2-smart-table
                     [settings]="settingsFour"
                     [source]="dataFive"></ng2-smart-table>
                 </div>
+                <app-pagination
+                  [params]="params"
+                  [totalItems]="totalItems"></app-pagination>
                 <div class="d-flex mb-1 mt-2">
                   <div class="ml-auto">
                     <div>
@@ -349,17 +406,26 @@
                   <div>
                     <h5 class="title">Histórico Eventos del Bien</h5>
                   </div>
-                  <div class="ml-auto mb-3">
-                    <button class="btn btn-sm btn-success active mr-3">
-                      Exportar a Excel
-                      <i class="bx bx-download float-icon"></i>
-                    </button>
-                    <app-columns-select
-                      [(settings)]="settingsFive"
-                      [leftList]="true"></app-columns-select>
-                    <!--  -->
+                </div>
+                <div class="row pt-4">
+                  <div class="col-md-12">
+                    <div class="row mt-12">
+                      <div class="col-md-6 mb-1"></div>
+                      <div
+                        class="col-md-6"
+                        style="display: flex; justify-content: flex-end">
+                        <button class="btn btn-sm btn-success active mr-3">
+                          Exportar a Excel
+                          <i class="bx bx-download float-icon"></i>
+                        </button>
+                        <app-columns-select
+                          [(settings)]="settingsFive"
+                          [leftList]="true"></app-columns-select>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
                 <div class="table-responsive">
                   <ng2-smart-table
                     [settings]="settingsFive"

@@ -15,11 +15,13 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { isNullOrEmpty } from 'src/app/pages/request/request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GOOD_DOCUMENTES_COLUMNS } from './good-doc-columns';
 import { ShowDocumentsGoodComponent } from './show-documents-good/show-documents-good.component';
@@ -39,8 +41,10 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
   @Input() typeDoc = '';
   @Input() screen = 'doc-goods';
   @Input() requestId: number = null;
+  @Input() updateInfo: boolean;
+
   goodSelect: IGood[] = [];
-  allGooods: IGood[] = [];
+  allGooods: any[] = [];
   showSearchForm: boolean = false;
   searchForm: FormGroup = new FormGroup({});
   goodTypes = new DefaultSelect();
@@ -50,6 +54,8 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
     private goodService: GoodService,
+    private rejectedGoodService: RejectedGoodService,
+
     private typeRelevantService: TypeRelevantService,
     private fb: FormBuilder
   ) {
@@ -57,12 +63,13 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
     this.idRequest = this.idRequest
       ? this.idRequest
       : (this.activatedRoute.snapshot.paramMap.get('id') as unknown as number);
-    this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
+    this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = GOOD_DOCUMENTES_COLUMNS;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.idRequest = this.idRequest || this.requestId;
+
     if (
       this.typeModule != '' &&
       this.typeModule == 'doc-complementary' &&
@@ -76,6 +83,8 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getGoodsRequest());
     }
+
+    this.getGoodsRequest();
   }
 
   ngOnInit(): void {
@@ -107,38 +116,49 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
     });
   }
   getGoodsRequest() {
+    this.idRequest = this.idRequest
+      ? this.idRequest
+      : (this.activatedRoute.snapshot.paramMap.get('id') as unknown as number);
+
     if (this.idRequest) {
       this.loading = true;
       this.params.getValue()['search'] = this.params.getValue().text;
       this.params.getValue()['filter.requestId'] = this.idRequest;
+      this.params.getValue()['filter.applicationId'] = this.idRequest;
+
       //this.searchForm.get('requestId').setValue(this.idRequest);
       this.goodService.getAll(this.params.getValue()).subscribe({
         next: async (data: any) => {
-          const filterGoodType = data.data.map(async (item: any) => {
-            const goodType = await this.getGoodType(item.goodTypeId);
-            item['goodTypeName'] = goodType;
-            item['requestId'] = this.idRequest;
+          if (data.data.length > 0) {
+            const filterGoodType = data.data.map(async (item: any) => {
+              const goodType = await this.getGoodType(item.goodTypeId);
+              item['goodTypeName'] = goodType;
+              item['requestId'] = this.idRequest;
 
-            if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
-            if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
-            if (item['stateConservation'] == 1)
-              item['stateConservation'] = 'BUENO';
-            if (item['stateConservation'] == 2)
-              item['stateConservation'] = 'MALO';
-            if (item['destiny'] == 1) item['destiny'] = 'VENTA';
-            const fraction = item['fraccion'];
-            item['fractionId'] = fraction?.code + ' ' + fraction?.description;
-          });
+              if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
+              if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
+              if (item['stateConservation'] == 1)
+                item['stateConservation'] = 'BUENO';
+              if (item['stateConservation'] == 2)
+                item['stateConservation'] = 'MALO';
+              if (item['destiny'] == 1) item['destiny'] = 'VENTA';
+              const fraction = item['fraccion'];
+              item['fractionId'] = fraction?.code + ' ' + fraction?.description;
+            });
 
-          Promise.all(filterGoodType).then(x => {
-            this.allGooods = data.data;
-            this.paragraphs.load(data.data);
-            this.totalItems = data.count;
-            this.loading = false;
-          });
+            Promise.all(filterGoodType).then(x => {
+              this.allGooods = data.data;
+              this.paragraphs.load(data.data);
+              this.totalItems = data.count;
+              this.loading = false;
+            });
+          } else {
+            this.getGoodRes();
+          }
         },
         error: error => {
           this.loading = false;
+          this.getGoodRes();
         },
       });
     }
@@ -166,35 +186,51 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
   }
 
   getData() {
+    const good = this.searchForm.get('goodId').value;
+    const goodTypeId = this.searchForm.get('goodTypeId').value;
+    const requestId = this.searchForm.get('requestId').value;
+    const goodDescription = this.searchForm.get('goodDescription').value;
+
+    this.params.getValue()['good'] = good;
+    this.params.getValue()['good.goodTypeId'] = goodTypeId;
+    this.params.getValue()['requestId'] = requestId;
+    this.params.getValue()['goodDescription'] = goodDescription;
+
     this.paramsSearch.getValue()['filter.requestId'] = this.idRequest;
     this.searchForm.get('requestId').setValue(this.idRequest);
+
     this.goodService.getAll(this.paramsSearch.getValue()).subscribe({
       next: async (data: any) => {
-        const filterGoodType = data.data.map(async (item: any) => {
-          const goodType = await this.getGoodType(item.goodTypeId);
-          item['goodTypeName'] = goodType;
-          item['requestId'] = this.idRequest;
+        if (data.data.length > 0) {
+          const filterGoodType = data.data.map(async (item: any) => {
+            const goodType = await this.getGoodType(item.goodTypeId);
+            item['goodTypeName'] = goodType;
+            item['requestId'] = this.idRequest;
 
-          if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
-          if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
-          if (item['stateConservation'] == 1)
-            item['stateConservation'] = 'BUENO';
-          if (item['stateConservation'] == 2)
-            item['stateConservation'] = 'MALO';
-          if (item['destiny'] == 1) item['destiny'] = 'VENTA';
+            if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
+            if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
+            if (item['stateConservation'] == 1)
+              item['stateConservation'] = 'BUENO';
+            if (item['stateConservation'] == 2)
+              item['stateConservation'] = 'MALO';
+            if (item['destiny'] == 1) item['destiny'] = 'VENTA';
 
-          const fraction = item['fraccion'];
-          item['fractionId'] = fraction?.code + ' ' + fraction?.description;
-        });
+            const fraction = item['fraccion'];
+            item['fractionId'] = fraction?.code + ' ' + fraction?.description;
+          });
 
-        Promise.all(filterGoodType).then(x => {
-          this.paragraphs.load(data.data);
-          this.totalItems = data.count;
-          this.loading = false;
-        });
+          Promise.all(filterGoodType).then(x => {
+            this.paragraphs.load(data.data);
+            this.totalItems = data.count;
+            this.loading = false;
+          });
+        } else {
+          this.getGoodRes();
+        }
       },
       error: error => {
         this.loading = false;
+        this.getGoodRes();
       },
     });
   }
@@ -228,11 +264,14 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
 
   clean() {
     this.searchForm.reset();
+    this.searchForm.get('requestId').setValue(this.idRequest);
     this.paramsSearch = new BehaviorSubject<ListParams>(new ListParams());
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoodsRequest());
   }
+
+  respGooods = [];
 
   search() {
     const good = this.searchForm.get('goodId').value;
@@ -240,26 +279,41 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
     const requestId = this.searchForm.get('requestId').value;
     const goodDescription = this.searchForm.get('goodDescription').value;
 
+    if (this.respGooods.length == 0) {
+      this.respGooods = [...this.allGooods];
+    }
+
+    let filter = this.respGooods;
+
+    if (!isNullOrEmpty(good)) {
+      filter = filter.filter(x => x.goodId == good);
+    }
+
+    if (!isNullOrEmpty(goodTypeId)) {
+      filter = filter.filter(
+        x => parseInt(x.goodTypeId) == parseInt(goodTypeId)
+      );
+    }
+
+    if (!isNullOrEmpty(goodDescription)) {
+      filter = filter.filter(x => x.goodDescription.includes(goodDescription));
+    }
+
     if (!good && !goodTypeId && requestId && !goodDescription) {
+      this.respGooods = [];
       this.params
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getGoodsRequest());
     } else {
-      this.paramsSearch
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() =>
-          this.getGoodsSearchRequest(good, goodTypeId, goodDescription)
-        );
+      this.allGooods = filter;
+      this.paragraphs.load(filter);
+      this.totalItems = filter.length;
+      this.loading = false;
     }
   }
 
   showDocuments(): void {
     if (this.goodSelect.length == 0 || this.goodSelect.length >= 2) {
-      this.onLoadToast(
-        'warning',
-        'Debes de tener mínimo un Bien seleccionado',
-        ''
-      );
     } else {
       const idGood = this.goodSelect[0].id;
       const idRequest = this.idRequest;
@@ -279,5 +333,45 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
       };
       this.modalService.show(ShowDocumentsGoodComponent, config);
     }
+  }
+
+  getGoodRes() {
+    this.params.getValue()['take'] = 25;
+    this.params.getValue()['limit'] = 25;
+
+    this.rejectedGoodService.getAll(this.params.getValue()).subscribe({
+      next: async (data: any) => {
+        data.data = data.data.map(x => x.good);
+
+        const filterGoodType = data.data.map(async (item: any) => {
+          const goodType = await this.getGoodType(item.goodTypeId);
+          item['goodTypeName'] = goodType;
+          item['requestId'] = this.idRequest;
+
+          if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
+          if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
+          if (item['stateConservation'] == 1)
+            item['stateConservation'] = 'BUENO';
+          if (item['stateConservation'] == 2)
+            item['stateConservation'] = 'MALO';
+          if (item['destiny'] == 1) item['destiny'] = 'VENTA';
+          const fraction = item['fraccion'];
+          if (!isNullOrEmpty(fraction)) {
+            item['fractionId'] = fraction?.code + ' ' + fraction?.description;
+          }
+        });
+
+        Promise.all(filterGoodType).then(x => {
+          this.params.getValue()['take'] = 10;
+          this.allGooods = data.data;
+          this.paragraphs.load(data.data);
+          this.totalItems = data.count;
+          this.loading = false;
+        });
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
   }
 }

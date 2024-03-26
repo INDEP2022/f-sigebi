@@ -47,7 +47,6 @@ export class RejectedReportImplementFormComponent
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
           this.ShowReport();
         }
       },
@@ -82,7 +81,6 @@ export class RejectedReportImplementFormComponent
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
           this.electronicSignture();
         }
       },
@@ -97,7 +95,6 @@ export class RejectedReportImplementFormComponent
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
           this.showSignProg();
         }
       },
@@ -115,7 +112,6 @@ export class RejectedReportImplementFormComponent
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
         }
       },
     };
@@ -166,7 +162,6 @@ export class RejectedReportImplementFormComponent
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
         }
       },
     };
@@ -183,7 +178,6 @@ export class RejectedReportImplementFormComponent
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
         }
       },
     };
@@ -197,7 +191,7 @@ export class RejectedReportImplementFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que desea eliminar el servicio?'
+      '¿Está seguro que desea eliminar el servicio?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

@@ -17,6 +17,20 @@
             <form-field [control]="form.get('idOI')" class="col" label="OI">
               <input type="text" formControlName="idOI" class="form-control" />
             </form-field>
+            <form-field
+              *ngIf="searched"
+              [control]="form.get('idIdentifier')"
+              class="col">
+              <ngx-select
+                (fetchItems)="getIdentifiers($event)"
+                [data]="identifiers"
+                [form]="form"
+                bindLabel="idIdentifier"
+                label="Identificador"
+                control="idIdentifier"
+                (change)="onIdentifierChange($event)">
+              </ngx-select>
+            </form-field>
             <form-field [control]="form.get('idArea')" label="Área" class="col">
               <input
                 type="text"
@@ -194,7 +208,6 @@
           <div [class]="loading ? 'table-loading' : 'row pt-2'">
             <ng2-smart-table
               class="col-md-12"
-              [attr.class]="'table-responsive table-bordered '"
               [settings]="settings"
               (userRowSelect)="selectRow()"
               [source]="dataComerDetails"></ng2-smart-table>
@@ -203,7 +216,6 @@
             [params]="params"
             [limit]="limit"
             [totalItems]="totalItems"></app-pagination>
-          <hr class="row mt-5 mb-5" />
         </div>
       </app-card>
     </form>

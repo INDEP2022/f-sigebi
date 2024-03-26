@@ -170,11 +170,23 @@ export class EventGoodsLotsListComponent
     if (dataSource.action == 'filter') {
       const filters = dataSource.filter.filters;
       filters.forEach((filter: any) => {
+        console.log(filter);
+
         const columns = this.settings.columns as any;
-        const operator = columns[filter.field]?.operator;
+        let operator = columns[filter.field]?.operator;
         if (!filter.search) {
+          params.removeAllFilters();
           return;
         }
+
+        if (filter.field == 'bienes') {
+          filter.field = 'goodNumber';
+        }
+
+        if (filter.field == 'goodNumber.description') {
+          operator = SearchFilter.ILIKE;
+        }
+
         params.addFilter(
           filter.field,
           filter.search,

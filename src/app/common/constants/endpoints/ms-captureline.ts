@@ -12,4 +12,5 @@ export enum CapturelineEndpoints {
   PaConsultLc = 'application/paConsultLc',
   SpGenLc2 = 'pk-comer-lc/sp-gen-lc2',
   getPaUpdateUniqueKey = 'application/pa-update-unique-key',
+  PkComerLcObtainPostDateSkilled = 'pk-comer-lc/obtainPostDateSkilled',
 }

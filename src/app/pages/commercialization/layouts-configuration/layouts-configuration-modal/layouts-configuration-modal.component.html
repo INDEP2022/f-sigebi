@@ -1,6 +1,9 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar' : 'Agregar' }} {{ title }}
+      {{ edit ? ' No: ' + provider.id : '' }}
+    </h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="providerForm">
@@ -19,34 +22,38 @@
             [control]="providerForm.get('descLayout')"
             label="Descripción de Dise&#241;o">
             <textarea
+              [readonly]="edit"
               class="form-control"
               formControlName="descLayout"
-              rows="3"
+              rows="2"
+              cols="2"
               maxlength="100">
             </textarea>
           </form-field>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-5 mt-2">
           <form-field
             [control]="providerForm.get('screenKey')"
             label="Pantalla">
             <input
+              [readonly]="edit"
               type="text"
               class="form-control"
               formControlName="screenKey"
               maxlength="32" />
           </form-field>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-5 mt-2">
           <form-field [control]="providerForm.get('table')" label="Tabla">
             <input
+              [readonly]="edit"
               type="text"
               class="form-control"
               formControlName="table"
               maxlength="32" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2 mt-2">
           <form-check label="Activo" for="activeCheck">
             <input
               id="activeCheck"
@@ -54,129 +61,39 @@
               formControlName="indActive" />
           </form-check>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12 mt-3">
           <form-field
             [control]="providerForm.get('criterion')"
             label="Criterio">
             <textarea
               class="form-control"
               formControlName="criterion"
-              rows="4"
+              rows="3"
+              cols="3"
               maxlength="500">
             </textarea>
           </form-field>
         </div>
-
-        <!-- <div class="col-md-3">
-          <form-field [control]="providerForm.get('idConsec')" label="idConsec">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="idConsec"
-              readonly />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="providerForm.get('position')" label="Posición">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="position" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="providerForm.get('column')" label="Column">
-            <input type="text" class="form-control" formControlName="column" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="providerForm.get('type')" label="Type">
-            <input type="text" class="form-control" formControlName="type" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="providerForm.get('length')" label="Longitud">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="length" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="providerForm.get('constant')"
-            label="Constante">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="constant" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="providerForm.get('carFilling')"
-            label="Caracter de Relleno">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="carFilling" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="providerForm.get('justification')"
-            label="Justificación">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="justification" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="providerForm.get('decimal')" label="Decimales">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="decimal" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="providerForm.get('dateFormat')"
-            label="Formato de Fecha">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="dateFormat" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="providerForm.get('registryNumber')"
-            label="Número de Registro">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="registryNumber" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row"></div> -->
       </div>
     </form>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
+        <button
           [disabled]="providerForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()"
-          >Agregar estructura</confirm-button
-        >
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          Guardar
+          <i class="fa fa-save"></i>
+        </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="close()">
           Cancelar
         </button>
       </div>

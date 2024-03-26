@@ -16,4 +16,16 @@ export class ReportgoodService extends HttpService {
   getReportGood(params: ListParams) {
     return this.get(ReportGoodEndpoints.ReportRegCant, params);
   }
+
+  getReportDynamic(params: ListParams) {
+    return this.get(ReportGoodEndpoints.ReportDynamic, params);
+  }
+
+  saveReportDynamic(object: any, create = true) {
+    if (create) {
+      return this.post(ReportGoodEndpoints.ReportDynamic, object);
+    } else {
+      return this.put(ReportGoodEndpoints.ReportDynamic, object);
+    }
+  }
 }

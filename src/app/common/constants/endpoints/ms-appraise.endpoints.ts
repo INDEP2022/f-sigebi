@@ -8,4 +8,7 @@ export enum AppraiseEndpoints {
   ComerAvaluo = 'eat-appraisal',
   ComerDetAvaluo = 'eat-det-appraisal',
   ComerAvaluoWhere = 'application/get-comer-avaluo-where',
+  PaTriggerOAppraise = 'application/paTriggerOAppraise',
+  PupInseertAppraisal = 'application/pupInseertAppraisal',
+  PcValEvent = 'application/pcValEvent',
 }

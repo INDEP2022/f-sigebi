@@ -155,4 +155,21 @@ export class SecurityService extends HttpService {
       `${SecurityEndpoints.ApplicationAux}?puser=${user}&pdelega=${delegation}`
     );
   }
+  getViewDelegationUser_(user: string, delegation: string) {
+    return this.get(
+      `${SecurityEndpoints.ApplicationAux}?p_user=${user}&pdelega=${delegation}`
+    );
+  }
+  getApplicationGetUserTvaltable(params: _Params) {
+    return this.get<IListResponse<any>>(
+      `${SecurityEndpoints.ApplicationGetUserTvaltable}`,
+      params
+    );
+  }
+  getScreensAplicationTracking(params: _Params) {
+    return this.get<IListResponse<any>>(
+      `${SecurityEndpoints.ScreensAplicationTracking}`,
+      params
+    );
+  }
 }

@@ -38,8 +38,8 @@ export const CAPTURE_LINES = {
     title: 'Monto',
     sort: false,
   },
-  penalty: {
-    title: 'Personalización',
+  monto_pena: {
+    title: 'Penalización',
     sort: false,
   },
   monto_pagar: {
@@ -70,7 +70,7 @@ export const CAPTURE_LINES_CLIENTS = {
     sort: false,
   },
   lote_publico: {
-    title: 'Lote Publico',
+    title: 'Lote Público',
     sort: false,
   },
   descripcion: {

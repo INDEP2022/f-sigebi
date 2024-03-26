@@ -57,7 +57,10 @@ export class WContentService extends HttpWContentService {
   }
 
   getDocumentTypes(params: ListParams): Observable<IListResponse<IDocTypes>> {
-    return this.get<IListResponse<IDocTypes>>(WContentEndpoint.DocumentTypes);
+    return this.get<IListResponse<IDocTypes>>(
+      WContentEndpoint.DocumentTypes,
+      params
+    );
   }
 
   getDocumentos(
@@ -66,10 +69,10 @@ export class WContentService extends HttpWContentService {
   ): Observable<IListResponse<IWContent>> {
     return params
       ? this.post<IListResponse<IWContent>>(
-          WContentEndpoint.GetDocSol,
-          body,
-          params
-        )
+        WContentEndpoint.GetDocSol,
+        body,
+        params
+      )
       : this.post<IListResponse<IWContent>>(WContentEndpoint.GetDocSol, body);
   }
   findDocumentBySolicitud(idRequest: number) {
@@ -112,4 +115,24 @@ export class WContentService extends HttpWContentService {
 
     return this.http.get(url, { responseType: 'blob' });
   }
+
+  downloadDinamycReport(
+    reportName: string,
+    tableName: string,
+    requestId: string,
+    docId: string
+  ) {
+    const url = `${environment.API_CONTENT}${WContentEndpoint.CallReport}/${WContentEndpoint.ShowReport}?nombreReporte=${reportName}&ID_TABLA=NOMBRE_TABLA,ID_REGISTRO,ID_TIPO_DOCTO&NOM_TABLA=REPORTES_DINAMICOS&NOM_CAMPO=CONTENIDO&ID_REGISTRO=${tableName},${requestId},${docId}`;
+    console.log('URL reporte : ' + url);
+
+    return this.http.get(url, { responseType: 'blob' });
+  }
+
+  downloadFile(url) {
+    console.log('URL reporte : ' + url);
+    return this.http.get(url, { responseType: 'blob' });
+  }
+
 }
+
+

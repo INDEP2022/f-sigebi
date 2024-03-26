@@ -119,7 +119,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         break;
       }
       default: {
-        console.log('No hay ID tipo de documento');
         break;
       }
     }
@@ -130,7 +129,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       .getSignatoriesName(this.id_acta, this.id_programacion)
       .subscribe({
         next: response => {
-          console.log('Existe firmante, proceder a eliminarlo');
           this.signatories = response.data;
           //Ciclo para eliminar todos los posibles firmantes existentes para esa solicitud
           const count = response.count;
@@ -138,20 +136,20 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
             this.signatoriesService
               .deleteFirmante(this.signatories[i].signatoryId)
               .subscribe({
-                next: response => console.log('Firmante borrado'),
+                next: response => {},
               });
           }
         },
         error: error => {
           //Si no hay firmantes, entonces asignar nuevos
-          console.log('Si no hay firmantes, entonces crear nuevo');
+
           this.registerSign();
         },
       });
   }
   deleteSignatories() {
     this.signatoriesService.deleteFirmante(this.id_programacion).subscribe({
-      next: response => console.log('Firmante borrado'),
+      next: response => {},
     });
   }
 
@@ -159,11 +157,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.signatoriesService
       .getSignatoriesName(this.id_acta, this.id_programacion)
       .subscribe({
-        next: response => {
-          console.log('Existe firmante, ya no crear');
-        },
+        next: response => {},
         error: error => {
-          console.log('Si no hay firmantes, entonces crear nuevo');
           let token = this.authService.decodeToken();
           const formData: Object = {
             name: token.name,
@@ -175,9 +170,9 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           //Asigna un firmante según el usuario logeado
           this.signatoriesService.create(formData).subscribe({
             next: response => {
-              this.signParams(), console.log('Firmante creado: ', response);
+              this.signParams();
             },
-            error: error => console.log('No se puede crear: ', error),
+            error: error => {},
           });
         },
       });
@@ -192,7 +187,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     const learnedType = this.id_acta;
     const learnedId = this.id_programacion;
     this.loading = true;
-    console.log('Traer firmantes');
+
     this.signatoriesService
       .getSignatoriesFilter(learnedType, learnedId)
       .subscribe({
@@ -244,7 +239,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           callback: (response: any) => {},
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-        ignoreBackdropClick: true, //ignora el click fuera del modal
+        keyboard: false,
+        ignoreBackdropClick: true,
       };
       this.modalService.show(PreviewDocumentsComponent, config);
     });
@@ -264,6 +260,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         },
       },
       class: 'modal-lg modal-dialog-centered',
+      keyboard: false,
       ignoreBackdropClick: true,
     };
     this.modalService.show(UploadFielsModalComponent, config);
@@ -368,7 +365,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   rowsSelected(event: any) {
     this.valuesSign = event.data;
     const idDoc = this.idSolicitud;
-    console.log('ID solicitud row seleccionado', idDoc);
     const obj: any = {
       actId: 1,
       creationDate: '2023-05-31',
@@ -413,7 +409,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       positionWorkerUvfv: null,
       residentialWorker1: 'test1',
     };
-    console.log(obj);
+
     //Enviar nueva información a Request
     this.requestService.update(idDoc, obj).subscribe({
       next: data => {},
@@ -434,13 +430,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   backStep() {
     if (this.notificationValidate == 'Y') {
-      console.log(
-        'Soy una notificación, no es necesario validar firmante creado'
-      );
     } else {
-      console.log(
-        'Soy un dictamen, es necesario validar firmante para evitar duplicidad'
-      );
       this.verificateFirm();
     }
     this.listSigns = false;
@@ -474,14 +464,12 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   reader = new FileReader();
 
   validAttachDoc() {
-    console.log('this.idSolicitud:', this.idSolicitud);
     let token = this.authService.decodeToken();
     const extension = '.pdf';
     const nombreDoc = `DOC_${this.date}${extension}`;
     const contentType: string = '.pdf';
     const file: any = '';
     if (this.idSolicitud === undefined) {
-      console.log('soy reporte de dictaminación');
       const formData = {
         dDocTitle: nombreDoc, //Título del documento
         dDocAuthor: token.name, //Autor del documento
@@ -495,7 +483,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       };
       this.attachDoc(formData);
     } else {
-      console.log('soy reporte de notificaciones');
       const formData = {
         dDocTitle: nombreDoc, //Título del documento
         dDocAuthor: token.name, //Autor del documento
@@ -538,9 +525,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
             this.modalRef.content.callback(true);
             this.close();
           },
-          error: error => {
-            console.log('Error', error);
-          },
+          error: error => {},
         });
     });
   }
@@ -553,7 +538,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         if (question.isConfirmed) {
           this.loadingButton = true;
           this.firm();
-          console.log('enviar a firmar');
         }
       }
     );
@@ -563,14 +547,13 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     //Firmar reporte Dictamen Procedencia
     if (this.id_acta == 106) {
       const requestInfo = this.requestInfo; //ID solicitud
-      console.log('ID de solicitud', this.requestInfo);
+
       const nameTypeReport = 'ActaAseguradosBook';
       const formData: Object = {
         id: this.id_programacion,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
-      console.log(formData);
 
       this.firmReport(requestInfo.id, nameTypeReport, formData);
     }
@@ -582,7 +565,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         firma: true,
         tipoDocumento: nameTypeReport,
       };
-      console.log(formData);
+
       this.firmReport(this.id_programacion, nameTypeReport, formData);
     }
     if (this.id_acta == 210) {
@@ -592,7 +575,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         firma: true,
         tipoDocumento: nameTypeReport,
       };
-      console.log(formData);
+
       this.firmReport(this.id_programacion, nameTypeReport, formData);
     }
   }
@@ -602,16 +585,12 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.gelectronicFirmService
       .firmDocument(requestInfo, nameTypeReport, formData)
       .subscribe({
-        next: data => (
-          (this.loadingButton = false),
-          console.log('correcto', data),
-          this.handleSuccess()
-        ),
+        next: data => ((this.loadingButton = false), this.handleSuccess()),
         error: error => {
           if (error.status == 200) {
             this.loadingButton = false;
             this.msjCheck = true;
-            console.log('correcto');
+
             this.alert('success', 'Firmado correctamente', '');
             this.updateStatusclarifications();
           } else {
@@ -628,7 +607,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   updateStatusclarifications() {
-    console.log('Información de la notificacion: ', this.dataClarifications2);
     const formData: Object = {
       id: this.dataClarifications2.id,
       clarificationStatus: 'A_ACLARACION',
@@ -639,7 +617,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       .subscribe({
         next: data => {
           //this.onLoadToast('success', 'Aclaración guardada correctamente', '');
-          console.log('Data guardada', data);
+
           this.loading = false;
         },
         error: error => {
@@ -665,7 +643,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       .update(this.valuesSign.signatoryId, formData)
       .subscribe({
         next: data => {
-          console.log('data', data), this.getSignatories();
+          this.getSignatories();
         },
         error: error => {
           this.alert('info', 'No se pudo actualizar', error.data);
@@ -679,7 +657,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         if (question.isConfirmed) {
           this.validAttachDoc();
           //this. attachDoc();
-          console.log('Adjuntar documento:');
         }
       }
     );

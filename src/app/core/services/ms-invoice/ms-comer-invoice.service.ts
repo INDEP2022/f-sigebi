@@ -21,8 +21,8 @@ export class ComerInvoiceService extends HttpService {
     return this.get(`${ENDPOINT_INVOICE.GetInvoiceForniture}`, params);
   }
 
-  getInvoiceByEvent(event: number) {
-    return this.get(`${ENDPOINT_INVOICE.GetInvoiceEvent}${event}`);
+  getInvoiceByEvent(params: ListParams) {
+    return this.get(`${ENDPOINT_INVOICE.GetInvoiceEvent}`, params);
   }
 
   getAllInvoicePag(params: ListParams) {
@@ -61,7 +61,7 @@ export class ComerInvoiceService extends HttpService {
   }
 
   updateByEvent(eventId: number) {
-    return this.get(`${ENDPOINT_INVOICE.UpdateByEvemt}/${eventId}`);
+    return this.put(`${ENDPOINT_INVOICE.UpdateByEvemt}/${eventId}`);
   }
 
   copyInvoice(data: {
@@ -143,7 +143,7 @@ export class ComerInvoiceService extends HttpService {
     return this.post(ENDPOINT_INVOICE.Fcomer112ICountHeader, params);
   }
 
-  generateFolio(data: { pEvent: string; ptpevento: string }) {
+  generateFolio(data: any) {
     return this.post(ENDPOINT_INVOICE.GenerateFolio, data);
   }
 
@@ -244,7 +244,7 @@ export class ComerInvoiceService extends HttpService {
     eventId: number;
     process: string;
   }) {
-    return this.put(ENDPOINT_INVOICE.UpdateProcess, data);
+    return this.post(ENDPOINT_INVOICE.UpdateProcess, data);
   }
 
   checkFolSubTotal(data: { eventId: number; batchId: number }) {
@@ -355,5 +355,41 @@ export class ComerInvoiceService extends HttpService {
     toolbarUser: string;
   }) {
     return this.post(ENDPOINT_INVOICE.ProcedureSera, data);
+  }
+
+  getCtrlInvoiceCopyBillVtaBases(data: any) {
+    return this.post(ENDPOINT_INVOICE.CtrlInvoiceCopyBillVtaBases, data);
+  }
+
+  getApplicationGetComerPagorefExists(pEvent: any, pEventId: any) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ApplicationGetComerPagorefExists}/${pEvent}/${pEventId}`
+    );
+  }
+
+  getApplicationGeneratePreInvoices(data: any) {
+    return this.post(ENDPOINT_INVOICE.ApplicationGeneratePreInvoices, data);
+  }
+
+  getEats_(event: number, expend: number, params: _Params) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ApplicationEats}?eventId=${event}&expenseId=${expend}`,
+      params
+    );
+  }
+
+  getApplicationPufVerifyAmounts(data: any) {
+    return this.post(ENDPOINT_INVOICE.ApplicationPufVerifyAmounts, data);
+  }
+
+  getApplicationPupStatusCan(data: any) {
+    return this.post(ENDPOINT_INVOICE.ApplicationPupStatusCan, data);
+  }
+
+  putApplicationPutProcess(data: any) {
+    return this.put(ENDPOINT_INVOICE.ApplicationPutProcess, data);
+  }
+  postApplicationPupExportaNva(data: any) {
+    return this.post(ENDPOINT_INVOICE.ApplicationPupExportaNva, data);
   }
 }

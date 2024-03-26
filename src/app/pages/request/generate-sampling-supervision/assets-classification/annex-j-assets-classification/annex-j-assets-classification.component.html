@@ -1,94 +1,109 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title pull-left">Capturar datos para el firmante</h5>
+    <h5 class="modal-title pull-left">Capturar datos firmante</h5>
   </div>
   <div body class="body">
-    <form [formGroup]="signForm" class="form-material" style="margin-top: 2rem">
-      <div class="row">
-        <div class="col-md-6">
-          <form-field [control]="signForm.get('nameSignatore')" label="Nombre">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="nameSignatore" />
-          </form-field>
-        </div>
-
-        <div class="col-md-6">
-          <form-field [control]="signForm.get('chargeSignatore')" label="Cargo">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="chargeSignatore" />
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row pt-3">
-        <div class="col-md-6">
-          <form-field
-            [control]="signForm.get('thirdSpecialized')"
-            label="Tercero Especializado">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="thirdSpecialized" />
-          </form-field>
-        </div>
-
-        <div class="col-md-6">
-          <form-field
-            [control]="signForm.get('relevantFacts')"
-            label="Hechos Relevantes">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="relevantFacts" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-3">
-        <div class="col-md-6">
-          <form-field
-            [control]="signForm.get('dateBreak')"
-            label="Fecha Incumplimiento">
-            <input
-              class="form-control"
-              formControlName="dateBreak"
-              [minDate]="minDate"
-              bsDatepicker />
-          </form-field>
-        </div>
-
-        <div class="col-md-6">
-          <form-field
-            [control]="signForm.get('dateRepServices')"
-            label="Fecha Reposición Servicios">
-            <input
-              class="form-control"
-              formControlName="dateRepServices"
-              [minDate]="minDate"
-              bsDatepicker />
-          </form-field>
-        </div>
-      </div>
-    </form>
-    <!--<div>
-      <form
-        [formGroup]="signForm"
-        class="form-material"
-        style="margin-top: 2rem">
+    <div *ngIf="typeAnnex == 'annexJ-assets-classification'">
+      <form [formGroup]="form" class="form-material">
         <div class="row pt-4">
           <div class="col-md-6">
-            <form-field [control]="signForm.get('name')" label="&#42;Nombre">
-              <input type="text" class="form-control" formControlName="name" />
+            <form-field [control]="form.get('responsibleSae')" label="Nombre">
+              <input
+                type="text"
+                maxlength="100"
+                class="form-control"
+                formControlName="responsibleSae" />
             </form-field>
           </div>
+
           <div class="col-md-6">
-            <form-field [control]="signForm.get('inCharge')" label="&#42;Cargo">
+            <form-field [control]="form.get('saePosition')" label="Cargo">
               <input
                 type="text"
                 class="form-control"
+                maxlength="100"
+                formControlName="saePosition" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('thirdSpecialized')"
+              label="Tercero Especializado">
+              <input
+                type="text"
+                maxlength="100"
+                class="form-control"
+                formControlName="thirdSpecialized" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('relevantFacts')"
+              label="Hechos Relevantes">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="100"
+                formControlName="relevantFacts" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('dateBreak')"
+              label="Fecha Incumplimiento">
+              <input
+                bsDatepicker
+                maxlength="100"
+                class="form-control"
+                [minDate]="minDate"
+                formControlName="dateBreak" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('dateRepServices')"
+              label="Fecha Reposición de Servicios">
+              <input
+                bsDatepicker
+                class="form-control"
+                maxlength="100"
+                [minDate]="minDate"
+                formControlName="dateRepServices" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div
+      *ngIf="
+        typeAnnex == 'sign-annexJ-assets-classification' ||
+        typeAnnex == 'sign-tasks-report'
+      ">
+      <form [formGroup]="signForm" class="form-material">
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <form-field [control]="signForm.get('name')" label="Nombre">
+              <input type="text" class="form-control" formControlName="name" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <form-field [control]="signForm.get('inCharge')" label="Cargo">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="100"
                 formControlName="inCharge" />
             </form-field>
           </div>
@@ -97,47 +112,61 @@
         <div class="row pt-4">
           <div class="col-md-12" style="display: flex">
             <div style="line-height: 3">
-              <label for="electronica">&#42;Tipo de firma</label>
+              <label for="electronica">Tipo de firma:</label>
             </div>
-            <div style="padding-left: 7px">
-              <div>
+            <div style="padding-left: 7px" class="form-check form-check-inline">
+              <form-radio label="Electr&oacute;nica">
                 <input
                   type="radio"
+                  formControlName="tipeSign"
+                  value="electronica"
                   id="electronica"
-                  style="height: 1.5rem !important"
-                  formControlName="tipeSign"
-                  value="electronica" />
-                <label class="label-annexk" for="electronica"
-                  >Electr&oacute;nica</label
-                >
-              </div>
+                  style="height: 3.5px !important" />
+              </form-radio>
+
               <div>
-                <input
-                  type="radio"
-                  id="autograma"
-                  style="height: 1.5rem !important"
-                  formControlName="tipeSign"
-                  value="autograma" />
-                <label class="label-annexk" for="autograma"
-                  >Aut&oacute;grama</label
-                >
+                <form-radio label="Autografa">
+                  <input
+                    type="radio"
+                    formControlName="tipeSign"
+                    style="height: 1.5rem !important"
+                    value="autografa"
+                    id="autografa" />
+                </form-radio>
               </div>
             </div>
           </div>
         </div>
       </form>
-    </div> -->
+    </div>
     <div footer>
       <div class="d-flex justify-content-center">
-        <div class="m-3">
+        <div class="m-3" *ngIf="typeAnnex == 'annexJ-assets-classification'">
+          <confirm-button
+            [disabled]="!form.valid"
+            [loading]="loading"
+            [btnSmall]="true"
+            class="mr-2"
+            (confirm)="signAnnexJ()"></confirm-button>
+        </div>
+        <div
+          class="m-3"
+          *ngIf="
+            typeAnnex == 'sign-annexJ-assets-classification' ||
+            typeAnnex == 'sign-tasks-report'
+          ">
           <confirm-button
             [disabled]="!signForm.valid"
             [loading]="loading"
+            [btnSmall]="true"
             class="mr-2"
-            (confirm)="signAnnex()"></confirm-button>
+            (confirm)="signAnnexJ()"></confirm-button>
         </div>
         <div class="m-3">
-          <button type="button" class="btn btn-danger active" (click)="close()">
+          <button
+            type="button"
+            class="btn btn-danger btn-sm active"
+            (click)="close()">
             Cancelar
           </button>
         </div>

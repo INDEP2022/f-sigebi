@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import {
   FilterParams,
   ListParams,
+  ListParamsFather,
 } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared';
 
@@ -14,8 +15,8 @@ import { BasePage } from 'src/app/core/shared';
   styleUrls: ['./pagination.component.scss'],
 })
 export class PaginationComponent extends BasePage implements OnInit {
-  @Input() params: BehaviorSubject<ListParams> = new BehaviorSubject(
-    new ListParams()
+  @Input() params: BehaviorSubject<ListParamsFather> = new BehaviorSubject(
+    new ListParamsFather()
   );
   @Input() filterParams: BehaviorSubject<FilterParams> = new BehaviorSubject(
     new FilterParams()
@@ -82,7 +83,7 @@ export class PaginationComponent extends BasePage implements OnInit {
   }
 
   pageSizeChange() {
-    // debugger;
+    // //
     const params = this.params.getValue();
     if (
       +(this.limit.value + '') > params.limit &&

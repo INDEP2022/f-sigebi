@@ -99,9 +99,7 @@ export class GenerateReceiptGuardFormComponent
           this.modalRef.hide();
           //this.openReport(response);
         },
-        error: error => {
-          console.log();
-        },
+        error: error => {},
       });
   }
 
@@ -124,6 +122,7 @@ export class GenerateReceiptGuardFormComponent
           },
         },
         class: 'modal-lg modal-dialog-centered',
+        keyboard: false,
         ignoreBackdropClick: true,
       };
       this.modalService.show(PrintReportModalComponent, config);

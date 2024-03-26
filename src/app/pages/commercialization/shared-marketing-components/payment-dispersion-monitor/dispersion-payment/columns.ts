@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 //Arrays
@@ -27,7 +28,14 @@ export const COLUMNSCUSTOMER = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (isSelected: any, row: any) => {
-      return format(new Date(row.ExecutionDate), 'dd/MM/yyyy');
+      return format(correctDate(row.ExecutionDate), 'dd/MM/yyyy');
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction(): boolean {
+      return true;
     },
   },
   BlackListed: {
@@ -40,6 +48,7 @@ export const COLUMNSCUSTOMER = {
     type: 'custom',
     sort: false,
     hide: false,
+    filter: false,
     renderComponent: CheckboxElementComponent,
     valuePrepareFunction: (isSelected: any, row: any) => {
       return goodCheckCustomer.find((e: any) => e.row.ClientId == row.ClientId)
@@ -104,6 +113,7 @@ export const COLUMNS_LOT_EVENT_TRUE = {
     title: 'Procesar',
     type: 'custom',
     sort: false,
+    filter: false,
     hide: false,
     renderComponent: CheckboxElementComponent,
     valuePrepareFunction: (isSelected: any, row: any) => {
@@ -165,7 +175,14 @@ export const COLUMNS_CUSTOMER_BANKS = {
     type: 'text',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return format(correctDate(cell), 'dd/MM/yyyy');
+      return format(correctDate(row.date), 'dd/MM/yyyy');
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction(): boolean {
+      return true;
     },
   },
   bankCode: {
@@ -205,8 +222,15 @@ export const COLUMNS_LOTS_BANKS = {
     title: 'Fecha',
     type: 'text',
     sort: false,
-    valuePrepareFunction: (isSelected: any, row: any) => {
-      return format(new Date(row.date), 'dd/MM/yyyy');
+    valuePrepareFunction: (cell: any, row: any) => {
+      return format(correctDate(row.date), 'dd/MM/yyyy');
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction(): boolean {
+      return true;
     },
   },
   bankKey: {
@@ -264,10 +288,24 @@ export const COLUMNS_PAYMENT_LOT = {
     valuePrepareFunction: (isSelected: any, row: any) => {
       return row.transferent.nameTransferent;
     },
+    filterFunction(): boolean {
+      return true;
+    },
   },
-  desc_tipo: {
+  type: {
     title: 'Pago Origen',
     type: 'text',
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Todos',
+        list: [
+          { value: 'N', title: 'NORMAL' },
+          { value: 'P', title: 'PENALIZACIÓN' },
+          { value: 'D', title: 'DEVOLUCIÓN' },
+        ],
+      },
+    },
     sort: false,
     valuePrepareFunction: (isSelected: any, row: any) => {
       switch (row.type) {
@@ -283,6 +321,9 @@ export const COLUMNS_PAYMENT_LOT = {
         default:
           return null;
       }
+    },
+    filterFunction(): boolean {
+      return true;
     },
   },
 };

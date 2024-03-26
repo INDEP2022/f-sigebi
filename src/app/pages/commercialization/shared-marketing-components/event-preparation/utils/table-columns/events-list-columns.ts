@@ -17,9 +17,11 @@ export const PREPARE_EVENT_EVENTS_LIST_COLUMNS = {
   comerTpevents: {
     title: 'Tipo',
     sort: false,
-    filter: false,
     valuePrepareFunction: (value: any) => {
       return value?.description ?? '';
+    },
+    filterFunction: (cell?: any, search?: string) => {
+      return true;
     },
   },
   place: {
@@ -42,12 +44,18 @@ export const PREPARE_EVENT_EVENTS_LIST_COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value?.description ?? '';
     },
+    filterFunction: (cell?: any, search?: string) => {
+      return true;
+    },
   },
   comerStatusvta: {
     title: 'Estatus',
     sort: false,
     valuePrepareFunction: (value: any) => {
       return value?.description ?? '';
+    },
+    filterFunction: (cell?: any, search?: string) => {
+      return true;
     },
   },
 };

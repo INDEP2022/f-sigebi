@@ -1,10 +1,10 @@
 export const COLUMNS = {
-  numberGood: {
+  goodNumbertransferredId: {
     title: 'No. Bien no Transferido',
     type: 'string',
     sort: false,
   },
-  typeRelevant: {
+  strRelevant: {
     title: 'Tipo Relevante',
     type: 'string',
     sort: false,
@@ -16,12 +16,12 @@ export const COLUMNS = {
     sort: false,
   },
 
-  unitOfMeasure: {
+  strUnit: {
     title: 'Unidad de Medida',
     type: 'string',
     sort: false,
   },
-  quantity: {
+  amount: {
     title: 'Cantidad',
     type: 'string',
     sort: false,

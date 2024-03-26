@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
 export const PENDING_COLUMNS = {
@@ -6,22 +6,53 @@ export const PENDING_COLUMNS = {
     title: 'Referencia',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (text: string, data: any) => {
+      if (data?.screenkey) {
+        return ['FCOMEREPINGXMAND_I', 'FCOMEREPINGXMAND'].includes(
+          data.screenkey
+        ) == true
+          ? 'Evento ' + data.referenceid
+          : data.referenceid;
+      } else {
+        return `${text}`;
+      }
+    },
+    filterFunction: () => {
+      return true;
+    },
   },
   document: {
-    title: 'Reporte',
+    title: 'Documento',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (text: string, data: any) => {
+      if (data?.screenkey) {
+        return ['FCOMEREPINGXMAND_I', 'FCOMEREPINGXMAND'].includes(
+          data.screenkey
+        ) == true
+          ? 'Reporte ' + data.documentid
+          : data.documentid;
+      } else {
+        return `${text}`;
+      }
+    },
+    filterFunction: (text: string, data: any) => {
+      return true;
+    },
   },
   creationdate: {
     title: 'Fecha',
-    type: 'string',
+    // type: 'string',
     sort: false,
-    filter: false,
-    valuePrepareFunction: (value: string) => {
-      if (!value) {
-        return '';
-      }
-      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction(): boolean {
+      return true;
     },
   },
   description: {
@@ -49,38 +80,76 @@ export const HISTORY_COLUMNS = {
     title: 'Usuario',
     type: 'string',
     sort: false,
+    filterFunction: () => {
+      return true;
+    },
   },
   reference: {
     title: 'Referencia',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (text: string, data: any) => {
+      if (data?.screenkey) {
+        return ['FCOMEREPINGXMAND_I', 'FCOMEREPINGXMAND'].includes(
+          data.screenkey
+        ) == true
+          ? 'Evento ' + data.referenceid
+          : data.referenceid;
+      } else {
+        return `${text}`;
+      }
+    },
+    filterFunction: () => {
+      return true;
+    },
   },
   document: {
     title: 'Documento',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (text: string, data: any) => {
+      if (data?.screenkey) {
+        return ['FCOMEREPINGXMAND_I', 'FCOMEREPINGXMAND'].includes(
+          data.screenkey
+        ) == true
+          ? 'Reporte ' + data.documentid
+          : data.documentid;
+      } else {
+        return `${text}`;
+      }
+    },
+    filterFunction: (text: string, data: any) => {
+      return true;
+    },
   },
   creationdate: {
     title: 'Fecha',
-    type: 'string',
+    // type: 'string',
     sort: false,
-    filter: false,
-    valuePrepareFunction: (value: string) => {
-      if (!value) {
-        return '';
-      }
-      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction(): boolean {
+      return true;
     },
   },
   firmdate: {
     title: 'Fecha Firma',
-    type: 'string',
+    // type: 'string',
     sort: false,
-    valuePrepareFunction: (value: string) => {
-      if (!value) {
-        return '';
-      }
-      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction(): boolean {
+      return true;
     },
   },
   description: {

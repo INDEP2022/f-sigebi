@@ -40,7 +40,7 @@ export class ValuedTableComponent
   }
 
   onUserRowSelect(event: any) {
-    this.dataService.selectedRowsValueds = event.selected;
+    this.dataService.selectedRowsValues = event.selected;
   }
 
   override getData() {
@@ -55,6 +55,7 @@ export class ValuedTableComponent
       .pipe(take(1))
       .subscribe({
         next: response => {
+          console.log(response);
           if (response && response.data && response.data.length > 0) {
             this.data = response.data.map((row: any) => {
               return { ...row };
@@ -71,11 +72,11 @@ export class ValuedTableComponent
         },
         error: error => {
           if (error.status == 400) {
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para realizar el oficio de respuesta'
-            );
+            // this.alert(
+            //   'warning',
+            //   'Advertencia',
+            //   'No hay bienes para realizar el oficio de respuesta'
+            // );
           }
           this.notGetData();
         },

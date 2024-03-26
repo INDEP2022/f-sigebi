@@ -32,7 +32,7 @@ export class ExpedientService extends HttpService {
     return this.get(route);
   }
 
-  getAllFilter(search: any) {
+  getAllFilter(search?: any) {
     return this.get<IListResponse<IExpedient>>('expedient', search);
   }
 

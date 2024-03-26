@@ -24,7 +24,7 @@ export const APPRAISAL_COLUMNS = {
     sort: false,
   },
   insertDate: {
-    title: 'Fecha captura',
+    title: 'Fecha Captura',
     sort: false,
     valuePrepareFunction: (value: string) =>
       value ? format(new Date(value), 'dd/MM/yyyy') : '',
@@ -107,13 +107,13 @@ export const APPRAISAL_COLUMNS = {
     valuePrepareFunction: (value: string) =>
       new DecimalPipe('en-US').transform(value),
   },
-  valor_ref_inmediata_iva: {
+  valueRefInmediateIva: {
     title: 'Valor Referencia Inmediata IVA',
     sort: false,
     valuePrepareFunction: (value: string) =>
       new DecimalPipe('en-US').transform(value),
   },
-  valor_ref_inmediata_redondeado: {
+  valueRefInmediataRounded: {
     title: 'Valor Referencia Inmediata Redondeado',
     sort: false,
     valuePrepareFunction: (value: string) =>

@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -10,6 +10,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { InterfacesirsaeService as InterfaceSirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CONSULT_SIRSAE_COLUMNS } from './sirsae-payment-consultation-columns';
@@ -17,20 +18,14 @@ import { CONSULT_SIRSAE_COLUMNS } from './sirsae-payment-consultation-columns';
 @Component({
   selector: 'app-sirsae-payment-consultation-list',
   templateUrl: './sirsae-payment-consultation-list.component.html',
-  styles: [],
+  styleUrls: ['./sirsae-payment-consultation.css'],
 })
 export class SirsaePaymentConsultationListComponent
   extends BasePage
   implements OnInit, AfterViewInit
 {
   params = new BehaviorSubject<ListParams>(new ListParams());
-  form: FormGroup = new FormGroup({
-    reference: new FormControl(null),
-    startDate: new FormControl(null),
-    endDate: new FormControl(null),
-    bank: new FormControl(null),
-    status: new FormControl(null),
-  });
+  form: ModelForm<any>;
 
   totalItems: number = 0;
   maxDate: Date = new Date();
@@ -39,22 +34,49 @@ export class SirsaePaymentConsultationListComponent
   consultSettings = {
     ...TABLE_SETTINGS,
     actions: false,
-    hideSubHeader: false,
+    hideSubHeader: true,
     columns: CONSULT_SIRSAE_COLUMNS,
   };
-  tableSource = new LocalDataSource();
+  tableSource: LocalDataSource = new LocalDataSource();
+
   statusesMov: { id: number; statusDescription: string }[] = [];
-  constructor(private interfaceSirsaeService: InterfaceSirsaeService) {
+
+  buttonSearch: boolean = false;
+
+  constructor(
+    private interfaceSirsaeService: InterfaceSirsaeService,
+    private fb: FormBuilder
+  ) {
     super();
   }
 
   ngOnInit(): void {
+    this.prepareForm();
     // this.params
     //   .pipe(takeUntil(this.$unSubscribe))
     //   .subscribe(event => this.search(event));
-    this.filter();
+    //this.filter();
     this.dataload = false;
     this.resetFilter();
+  }
+
+  prepareForm() {
+    this.form = this.fb.group({
+      reference: [null, []],
+      startDate: [null, []],
+      endDate: [null, []],
+      bank: [null, []],
+      status: [null, []],
+    });
+  }
+
+  searchpre() {
+    this.buttonSearch = true;
+    this.search();
+  }
+
+  changeValue(event: any) {
+    console.log(event);
   }
 
   AfterViewInit() {}
@@ -81,14 +103,14 @@ export class SirsaePaymentConsultationListComponent
     }
   }
 
-  validsearch() {
+  /*validsearch() {
     if (!this.formValid()) {
       return;
     } else {
       this.search();
       this.dataload = true;
     }
-  }
+  }*/
 
   search(listParams?: ListParams): void {
     console.log('Lista de Parametros: ', listParams);
@@ -111,13 +133,14 @@ export class SirsaePaymentConsultationListComponent
     this.interfaceSirsaeService.getAccountDetail(paramsEn).subscribe({
       next: res => {
         console.log(res);
-        this.totalItems = res.count;
+        this.totalItems = res.count || 0;
         this.tableSource.load(res.data);
+        this.tableSource.refresh();
         this.loading = false;
       },
       error: () => {
         this.loading = false;
-        this.onLoadToast('error', 'Error', 'No se Encontraron Registros');
+        this.onLoadToast('warning', 'Atención', 'No se encontraron registros');
         this.totalItems = 0;
       },
     });
@@ -125,10 +148,18 @@ export class SirsaePaymentConsultationListComponent
 
   generateParams(listParams?: ListParams): FilterParams {
     const filters = new FilterParams();
-    const { reference, startDate, endDate, bank, status } = this.form.value;
+    console.log('reference', this.form.value.reference);
+    console.log('this.form.value.status;', this.form.value.status);
+    console.log('Search botón', this.buttonSearch);
+    //const { reference, startDate, endDate, bank, status } = this.form.value;
+    const reference = this.form.value.reference;
+    const startDate = this.form.value.startDate;
+    const endDate = this.form.value.endDate;
+    const bank = this.form.value.bank;
+    const status = this.form.value.status;
 
     if (reference) {
-      filters.addFilter('reference', reference, SearchFilter.LIKE);
+      filters.addFilter('reference', reference, SearchFilter.ILIKE);
     }
     if (startDate || endDate) {
       const initDate = startDate || endDate;
@@ -140,10 +171,16 @@ export class SirsaePaymentConsultationListComponent
       );
     }
     if (bank) {
-      filters.addFilter('ifdsc', bank, SearchFilter.LIKE);
+      filters.addFilter('accountbank.name_bank', bank, SearchFilter.ILIKE);
     }
-    if (status) {
-      filters.addFilter('statusMov', status);
+
+    if (this.buttonSearch == true) {
+      if (status == null) {
+        console.log('status', status);
+        filters.addFilter('statusMov', 0);
+      } else {
+        filters.addFilter('statusMov', status);
+      }
     }
 
     if (listParams) {
@@ -155,14 +192,14 @@ export class SirsaePaymentConsultationListComponent
     return filters;
   }
 
-  formValid(): boolean {
+  /*formValid(): boolean {
     const values = this.form.value;
     const isValid = Object.keys(values).some(key => Boolean(values[key]));
     if (!isValid) {
       this.onLoadToast('warning', 'Alerta', 'Llenar un Campo para Continuar');
     }
     return isValid;
-  }
+  }*/
 
   filter() {
     this.tableSource
@@ -178,11 +215,11 @@ export class SirsaePaymentConsultationListComponent
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'accountbank':
-                field = `filter.accountbank.name_bank`;
-                searchFilter = SearchFilter.ILIKE;
+                field = `filter.accountbank.id`;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'ifdsc':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.LIKE2;
                 break;
               case 'reference':
                 searchFilter = SearchFilter.ILIKE;
@@ -199,7 +236,7 @@ export class SirsaePaymentConsultationListComponent
                 break;
               case 'statusMov':
                 field = `filter.statusMov.statusDescription`;
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'statusMovDescription':
                 searchFilter = SearchFilter.ILIKE;

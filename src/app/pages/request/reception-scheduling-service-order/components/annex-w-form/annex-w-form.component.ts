@@ -76,7 +76,6 @@ export class AnnexWFormComponent extends BasePage implements OnInit {
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
           this.electronicSignture();
         }
       },
@@ -91,7 +90,6 @@ export class AnnexWFormComponent extends BasePage implements OnInit {
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
           this.showSignProg();
         }
       },
@@ -109,7 +107,6 @@ export class AnnexWFormComponent extends BasePage implements OnInit {
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
         }
       },
     };

@@ -53,5 +53,35 @@ export interface ICancelVtaDTO {
   p_prueba: string;
   user: string;
   comer_detgastos: IComerDetGastosDTO[];
-  cat_motivos_rev: string[];
+  cat_motivos_rev: { motiveDescription: string; selection: number }[];
+}
+
+export interface ILoadLotResponse {
+  cvman: string;
+  no_bien: string;
+  valGoodSteal: {
+    SELECT_CAMBIA_CLASIF_UPDATE: boolean;
+    SELECT_CAMBIA_CLASIF_ENABLED: boolean;
+    V_BIEN_REP_ROBO: number;
+    SELECT_CAMBIA_CLASIF: string;
+  };
+}
+
+export interface IFillDatosRevDTO {
+  pEvent: number;
+  pGood: number;
+  pScreen: string;
+  reasons: string;
+  reason1: string;
+  reason2: string;
+  reason3: string;
+  reason4: string;
+  reason5: string;
+  reason6: string;
+  reason7: string;
+  reason8: string;
+  reason9: string;
+  reason10: string;
+  cgEvent: number;
+  address: string;
 }

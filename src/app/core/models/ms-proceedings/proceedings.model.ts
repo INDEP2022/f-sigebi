@@ -128,3 +128,83 @@ export interface IDetailProceedingsDevollutionDelete {
   numberGood: string | number;
   numberProceedings: string | number;
 }
+
+export interface IPufValidTerm {
+  delegationNumber: number;
+  elaborationDate: string;
+}
+
+export interface IPbSelPaq {
+  noPaquete: number;
+  screen: string;
+}
+
+export interface IPupMovDestruction {
+  proceeding: string;
+  screen: string;
+  proceedingType: string;
+  user: string;
+  date: string;
+}
+
+export interface IQueryRegAdminGood {
+  selPaq: string;
+  statusRecord: string;
+  blockStatus: string;
+  user: string;
+  packageNumber: string;
+  proceedingNumber: string;
+  minutesNumber: string;
+  typeMinutes: string;
+}
+
+export interface IAvailableFestatus {
+  goodId: string;
+  status: string;
+  screenkey: string;
+}
+
+export interface ITmpUpdateMassive {
+  user: string;
+  proceedingKey: string;
+  date: string;
+}
+
+export interface ITmpCreateAuthoDestroy {
+  user: string;
+  proceeding: number;
+}
+
+export interface ITmpUpdateOneReg {
+  user: string;
+  good: number;
+  approved: string;
+}
+
+export interface IFactconst {
+  captureDate: string;
+  delegation: number;
+  subdelegation: number;
+  good: number;
+  status: string;
+  screen: string;
+  proceesExtDom: string;
+  expedient: number;
+}
+
+export interface IBtnAddGood {
+  good: number;
+  processExtDom: string;
+  screen: string;
+  identifier: string;
+  proceeding: number;
+  quantity: number;
+}
+
+export interface IPaConstDelivery {
+  pCreationDate: Date;
+  pScreen: string;
+  pActNum: number;
+  pProc: number;
+  pAction: string;
+}

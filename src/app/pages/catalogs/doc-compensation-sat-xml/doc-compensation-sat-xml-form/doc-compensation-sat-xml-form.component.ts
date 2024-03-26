@@ -24,7 +24,7 @@ export class DocCompensationSatXmlFormComponent
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private compensationService: DocCompensationSatXmlService
+    private CompensationService: DocCompensationSatXmlService
   ) {
     super();
   }
@@ -76,12 +76,12 @@ export class DocCompensationSatXmlFormComponent
       return;
     } else {
       this.loading = true;
-      this.compensationService
-        .create(this.compensationForm.getRawValue())
-        .subscribe({
-          next: data => this.handleSuccess(),
-          error: error => (this.loading = false),
-        });
+      this.CompensationService.create(
+        this.compensationForm.getRawValue()
+      ).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
     }
   }
 
@@ -91,12 +91,13 @@ export class DocCompensationSatXmlFormComponent
       return;
     } else {
       this.loading = true;
-      this.compensationService
-        .update(this.compensationSatXml.id, this.compensationForm.getRawValue())
-        .subscribe({
-          next: data => this.handleSuccess(),
-          error: error => (this.loading = false),
-        });
+      this.CompensationService.update(
+        this.compensationSatXml.id,
+        this.compensationForm.getRawValue()
+      ).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
     }
   }
 

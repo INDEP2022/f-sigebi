@@ -4,7 +4,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -65,18 +64,18 @@ export class MandateIncomeReportsIComponent extends BasePage implements OnInit {
       batch: [null, []],
       event: [null, [Validators.required]],
       startDate: [null, []],
-      //endDate: [null, [Validators.required]],
-      capturingUser: [null, [Validators.required]],
-      capturingUserName: [null, [Validators.required]],
-      capturingUserPost: [null, [Validators.required]],
-      authorizingUser: [null, [Validators.required]],
-      authorizingUserName: [null, [Validators.required]],
-      authorizingUserPost: [null, [Validators.required]],
-      requestingUser: [null, [Validators.required]],
-      requestingUserName: [null, [Validators.required]],
-      requestingUserPost: [null, [Validators.required]],
+      //endDate: [null, []],
+      capturingUser: [null, []],
+      capturingUserName: [null, []],
+      capturingUserPost: [null, []],
+      authorizingUser: [null, []],
+      authorizingUserName: [null, []],
+      authorizingUserPost: [null, []],
+      requestingUser: [null, []],
+      requestingUserName: [null, []],
+      requestingUserPost: [null, []],
       incomeOrder: [null, []],
-      //reportNumber: [null, [Validators.required]],
+      //reportNumber: [null, []],
     });
     setTimeout(() => {
       this.getEvent(new ListParams());
@@ -107,13 +106,14 @@ export class MandateIncomeReportsIComponent extends BasePage implements OnInit {
 
   getEvent(params: ListParams) {
     if (params.text) {
-      params['search'] = `${params.text}`;
+      params['filter.id'] = `$eq:${params.text}`;
       //params['filter.status'] = `$ilike:${params.text}`;
     }
     this.comerEventService.getAllEvent(params).subscribe({
       next: resp => {
         this.result1 = resp.data.map(async (item: any) => {
-          item['keyObservation'] = item.processKey + ' - ' + item.observations;
+          item['keyObservation'] =
+            item.id + ' - ' + item.processKey + ' - ' + item.observations;
         });
         this.eventSelect = new DefaultSelect(resp.data, resp.count);
       },
@@ -127,7 +127,13 @@ export class MandateIncomeReportsIComponent extends BasePage implements OnInit {
   }
 
   report() {
-    let params = {
+    this.alertInfo(
+      'warning',
+      'Atención',
+      'Reporte no disponible. Por favor contactar a la DETI'
+    );
+
+    /*let params = {
       //PN_DEVOLUCION: this.data,
       IDEVENTO: this.form.get('event').value,
       P_CONSEC: 0,
@@ -170,7 +176,7 @@ export class MandateIncomeReportsIComponent extends BasePage implements OnInit {
           };
           this.modalService.show(PreviewDocumentsComponent, config);
         }
-      });
+      });*/
   }
 
   getAllSegUser1(params: ListParams) {

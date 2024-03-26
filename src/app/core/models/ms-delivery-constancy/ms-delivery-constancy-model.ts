@@ -77,3 +77,9 @@ export interface CertificatesGoodsEndpoints {
   siabGoodNum?: number;
   goodsDeliveryScheduleId?: number;
 }
+
+export interface IQueryGoodTracker {
+  vcsScreen: string;
+  typeMinutes: string;
+  relGood: string;
+}

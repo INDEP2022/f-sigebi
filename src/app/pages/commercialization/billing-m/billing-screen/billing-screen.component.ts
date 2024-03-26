@@ -20,16 +20,17 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IPupRepBillMoreI } from 'src/app/core/models/ms-ldocument/pgr-file.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ComerDetailInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-dinvocie.service';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
+import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
-import { CustomDateFilterComponent_ } from 'src/app/pages/administrative-processes/numerary/deposit-tokens/deposit-tokens/searchDate';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BillingsService } from '../services/services';
@@ -38,6 +39,10 @@ import { BillingCommunicationService } from './communication/communication.servi
 import { DatCancComponent } from './dat-canc/dat-canc.component';
 import { UpdateDetfacturaComponent } from './update-detfactura/update-detfactura.component';
 import { UpdateFacturaComponent } from './update-factura/update-factura.component';
+export interface IFields {
+  field: string;
+  search: number | string;
+}
 @Component({
   selector: 'app-billing-screen',
   templateUrl: './billing-screen.component.html',
@@ -201,7 +206,8 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     private datePipe: DatePipe,
     private excelService: ExcelService,
     private comerInvoiceService: ComerInvoiceService,
-    private comerDetInvoice: ComerDetailInvoiceService
+    private comerDetInvoice: ComerDetailInvoiceService,
+    private fileBrowserService: FileBrowserService
   ) {
     super();
 
@@ -271,6 +277,15 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           sort: false,
           width: '10%',
         },
+        Invoice: {
+          title: 'Folio',
+          type: 'string',
+          sort: false,
+          width: '10%',
+          filterFunction: () => {
+            return true;
+          },
+        },
         series: {
           title: 'Serie',
           type: 'string',
@@ -279,22 +294,22 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         },
         impressionDate_: {
           title: 'Fecha',
-          // type: 'string',
           width: '20%',
+          filter: false,
           sort: false,
           valuePrepareFunction: (text: string) => {
             return `${
-              text ? text.split('T')[0].split('-').reverse().join('/') : ''
+              text
+                ? text.split('T')[0].split('-').reverse().join('/') +
+                  ' 00:00:00'
+                : ''
             }`;
           },
-          filter: {
-            type: 'custom',
-            component: CustomDateFilterComponent_,
-            // component: CustomDateFilterComponent,
-          },
-          filterFunction(cell?: any, search?: string): boolean {
-            let column = cell;
-            // console.log(column, '==', search);
+          // filter: {
+          //   type: 'custom',
+          //   component: CustomDateFilterComponent_,
+          // },
+          filterFunction(): boolean {
             return true;
           },
         },
@@ -322,7 +337,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           title: 'No.',
           type: 'string',
           sort: false,
-          width: '10%',
+          width: '15%',
         },
         desDelegation: {
           title: 'Delegación',
@@ -347,36 +362,46 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           sort: false,
           filter: false,
         },
-        Invoice: {
-          title: 'Folio',
-          type: 'string',
-          sort: false,
-          width: '10%',
-        },
         payId: {
           title: 'Id. Pago',
           type: 'string',
           sort: false,
+          filterFunction: () => {
+            return true;
+          },
         },
         relationshipSatType: {
           title: 'Tipo Rel.',
           type: 'string',
           sort: false,
+          filterFunction: () => {
+            return true;
+          },
         },
         usecompSat: {
           title: 'Uso comp.',
           type: 'string',
           sort: false,
+          filter: false,
+          filterFunction: () => {
+            return true;
+          },
         },
         paymentformBsat: {
           title: 'F. Pago',
           type: 'string',
           sort: false,
+          filterFunction: () => {
+            return true;
+          },
         },
         numBiasSat: {
           title: 'Parc.',
           type: 'string',
           sort: false,
+          filterFunction: () => {
+            return true;
+          },
         },
       },
     };
@@ -740,14 +765,22 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.params.getValue().limit = 500;
+    this.params.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
     this.params2.getValue().limit = 500;
     this.prepareForm();
     this.billingCommunicationService.ejecutarFuncion$.subscribe(
       async (next: any) => {
         this.params = next;
-        console.log('SI WILM', next);
-        this.valSelects = true;
-        await this.getBillings('no');
+        let insertFilterColumns: boolean = this.insertFilterColumns();
+        if (insertFilterColumns) {
+          this.data.refresh();
+          this.valSelects = true;
+          await this.getBillings('no');
+        } else {
+          this.data.refresh();
+          this.valSelects = true;
+          await this.getBillings('no');
+        }
       }
     );
     // ------------- PREPARAMOS FILTRADOS DE LAS TABLAS ------------- //
@@ -758,6 +791,66 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     this.filterTable5(); // Actualización de Eventos - COMER_EST_LOTES
   }
 
+  insertFilterColumns(): boolean | any {
+    const objeto = this.params.getValue();
+    const entries = Object.entries(objeto);
+    let arr: IFields[] = [];
+    let result = entries.map(async item => {
+      console.log(item[0]);
+      console.log(item[1]);
+      if (item[0] == 'filter.eventId') {
+        console.log(item[0]);
+        let a = item[1].toString().split(':');
+        arr.push({
+          field: 'eventId',
+          search: a[1],
+        });
+        // await this.forArrayFilters('eventId', a[1]);
+      }
+      if (item[0] == 'filter.batchId') {
+        console.log(item[0]);
+        let a = item[1].toString().split(':');
+        arr.push({
+          field: 'batchId',
+          search: a[1],
+        });
+        // await this.forArrayFilters('batchId', a[1]);
+      }
+      if (item[0] == 'filter.delegationNumber') {
+        console.log(item[0]);
+        let a = item[1].toString().split(':');
+        arr.push({
+          field: 'delegationNumber',
+          search: a[1],
+        });
+        // await this.forArrayFilters('delegationNumber', a[1]);
+      }
+      if (item[0] == 'filter.cvman') {
+        console.log(item[0]);
+        let a = item[1].toString().split(':');
+        arr.push({
+          field: 'cvman',
+          search: a[1],
+        });
+        // await this.forArrayFilters('cvman', a[1]);
+      }
+      if (item[0] == 'filter.vouchertype') {
+        console.log(item[0]);
+        let a = item[1].toString().split(':');
+        arr.push({
+          field: 'vouchertype',
+          search: a[1],
+        });
+        // await this.forArrayFilters('vouchertype', a[1]);
+      }
+    });
+
+    Promise.all(result).then(async res => {
+      console.log(arr);
+      await this.forArrayFiltersNew(arr);
+      return true;
+    });
+  }
   async cambiarTab(numberTab: any) {
     this.tabset.tabs[numberTab].active = true;
   }
@@ -775,13 +868,12 @@ export class BillingScreenComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
 
-            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
               eventId: () => (searchFilter = SearchFilter.EQ),
               batchId: () => (searchFilter = SearchFilter.EQ),
               vouchertype: () => (searchFilter = SearchFilter.ILIKE),
               series: () => (searchFilter = SearchFilter.EQ),
-              Invoice: () => (searchFilter = SearchFilter.ILIKE),
+              Invoice: () => (searchFilter = SearchFilter.EQ),
               factstatusId: () => (searchFilter = SearchFilter.ILIKE),
               customer: () => (searchFilter = SearchFilter.EQ),
               delegationNumber: () => (searchFilter = SearchFilter.EQ),
@@ -799,28 +891,28 @@ export class BillingScreenComponent extends BasePage implements OnInit {
             search[filter.field]();
 
             if (filter.search !== '') {
-              // this.columnFilters[field] = `${filter.search}`;
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
           this.params = this.pageFilter(this.params);
-          //Su respectivo metodo de busqueda de datos
           this.getBillings('no');
         }
       });
 
-    this.params
-      .pipe(
-        skip(1),
-        tap(() => {
-          this.getBillings('no');
-        }),
-        takeUntil(this.$unSubscribe)
-      )
-      .subscribe(() => {});
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      if (this.totalItems > 0) this.getBillings('no');
+    });
+    // this.params
+    //   .pipe(
+    //     skip(1),
+    //     tap(() => {
+    //       this.getBillings('no');
+    //     }),
+    //     takeUntil(this.$unSubscribe)
+    //   )
+    //   .subscribe(() => {});
     // this.params
     //   .pipe(takeUntil(this.$unSubscribe))
     //   .subscribe(() => this.getBillings('no'));
@@ -863,7 +955,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
             }
           });
           this.params2 = this.pageFilter(this.params2);
-          //Su respectivo metodo de busqueda de datos
           this.getDetailsFacturas();
         }
       });
@@ -871,15 +962,11 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       .pipe(
         skip(1),
         tap(() => {
-          // aquí colocas la función que deseas ejecutar
           this.getDetailsFacturas();
         }),
         takeUntil(this.$unSubscribe)
       )
       .subscribe(() => {});
-    // this.params2
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(() => this.getDetailsFacturas());
   }
   filterTable3() {
     this.data3
@@ -1036,12 +1123,12 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(NUMBERS_PATTERN), Validators.required],
       ],
-      idLotPublic: [null, Validators.required],
-      date: [null, Validators.required],
+      idLotPublic: [null],
+      date: [null],
       cause: [null],
       descause: [null],
-      fec: [null, Validators.required],
-      fec2: [null, Validators.required],
+      fec: [null],
+      fec2: [null],
     });
     this.form2 = this.fb.group({
       counter: [null],
@@ -1077,119 +1164,134 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    let res = await this.forArrayFilters_();
+    console.log('res', res);
+    if (
+      res &&
+      !this.params.getValue()['filter.impressionDate']
+      // && !this.fecBlkCtrl.value &&
+      // !this.fec2BlkCtrl.value &&
+      // !this.dateBlkCtrl.value
+    ) {
+      // this.params = new BehaviorSubject<ListParams>(new ListParams());
+      // this.params2 = new BehaviorSubject<ListParams>(new ListParams());
+      this.data.load([]);
+      this.data.refresh();
+      this.totalItems = 0;
+      this.loading = false;
+      this.data2.load([]);
+      this.data2.refresh();
+      this.totalItems2 = 0;
+      this.selectedbillings = [];
+      this.selectedbillingsDet = [];
+      this.resetInput();
+    } else {
+      this.loading = true;
+      this.totalItems = 0;
 
-    // if (!params['filter.eventId'])
-    //   return this.alert('warning', 'Debe especificar un evento', '')
+      if (params['filter.impressionDate_']) {
+        const fechas = params['filter.impressionDate_'].split(',');
+        var fecha1 = new Date(fechas[0]);
+        var fecha2 = new Date(fechas[1]);
 
-    this.loading = true;
-    this.totalItems = 0;
+        // Obtener los componentes de la fecha (año, mes y día)
+        var ano1 = fecha1.getFullYear();
+        var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+        var dia1 = ('0' + fecha1.getDate()).slice(-2);
 
-    if (params['filter.impressionDate_']) {
-      const fechas = params['filter.impressionDate_'].split(',');
-      console.log('fechas', fechas);
-      var fecha1 = new Date(fechas[0]);
-      var fecha2 = new Date(fechas[1]);
+        // Obtener los componentes de la fecha (año, mes y día)
+        var ano2 = fecha2.getFullYear();
+        var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+        var dia2 = ('0' + fecha2.getDate()).slice(-2);
 
-      // Obtener los componentes de la fecha (año, mes y día)
-      var ano1 = fecha1.getFullYear();
-      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
-      var dia1 = ('0' + fecha1.getDate()).slice(-2);
+        // Crear la cadena de fecha en el formato yyyy-mm-dd
+        var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+        var fechaFormateada2 = ano2 + '-' + mes2 + '-' + dia2;
+        params[
+          'filter.impressionDate'
+        ] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
+        delete params['filter.impressionDate_'];
+      }
 
-      // Obtener los componentes de la fecha (año, mes y día)
-      var ano2 = fecha2.getFullYear();
-      var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
-      var dia2 = ('0' + fecha2.getDate()).slice(-2);
+      params['filter.address'] = `$eq:I`;
+      if (!this.valSortBy) params['sortBy'] = `eventId:DESC`;
+      // this.msInvoiceService.getAllBillings
+      this.comerInvoiceService.getAllSumInvoice(params).subscribe({
+        next: response => {
+          console.log('response ', response);
 
-      // Crear la cadena de fecha en el formato yyyy-mm-dd
-      var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
-      var fechaFormateada2 = ano2 + '-' + mes2 + '-' + dia2;
-      params[
-        'filter.impressionDate'
-      ] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
-      delete params['filter.impressionDate_'];
-    }
+          let result = response.data.map(async (item: any) => {
+            item['impressionDate_'] = item.impressionDate;
+            const params = new ListParams();
+            // params['filter.id'] = `$eq:${item.delegationNumber}`;
+            // const delegationDes: any = await this.billingsService.getDelegation(
+            //   params
+            // );
+            item['desDelegation'] = item.delegation
+              ? item.delegation.description
+              : 'INVÁLIDA';
 
-    // if (this.valDefaultWhere)
-    //   params['filter.eventId'] = `$eq:${this.idEventBlkCtrl.value}`;
+            // const params_ = new ListParams();
+            // params['filter.tpinvoiceId'] = `$eq:${item.Type}`;
+            // const comerTpinvoice: any = await this.billingsService.getComerTpinvoices(params_);
+            item['txtDescTipo'] = await this.typeBilling(item.Type);
 
-    params['filter.address'] = `$eq:I`;
-    if (!this.valSortBy) params['sortBy'] = `eventId:DESC`;
-    // this.msInvoiceService.getAllBillings
-    this.comerInvoiceService.getAllSumInvoice(params).subscribe({
-      next: response => {
-        console.log('response ', response);
+            // comerTpinvoice
+            // ? comerTpinvoice.description
+            // : 'NO IDENTIFICADA';
+            let obj = {
+              type: 'RFC',
+              data: item.rfc,
+            };
+            const FaValidCurpRfc: any = 'M';
+            // await this.billingsService.getApplicationFaValidCurpRfc(obj);
+            item['valRFC'] = 'M';
+            // FaValidCurpRfc ? FaValidCurpRfc : null;
 
-        let result = response.data.map(async (item: any) => {
-          item['impressionDate_'] = item.impressionDate;
-          const params = new ListParams();
-          // params['filter.id'] = `$eq:${item.delegationNumber}`;
-          // const delegationDes: any = await this.billingsService.getDelegation(
-          //   params
-          // );
-          item['desDelegation'] = item.delegation
-            ? item.delegation.description
-            : 'INVÁLIDA';
-
-          // const params_ = new ListParams();
-          // params['filter.tpinvoiceId'] = `$eq:${item.Type}`;
-          // const comerTpinvoice: any = await this.billingsService.getComerTpinvoices(params_);
-          item['txtDescTipo'] = await this.typeBilling(item.Type);
-
-          // comerTpinvoice
-          // ? comerTpinvoice.description
-          // : 'NO IDENTIFICADA';
-          let obj = {
-            type: 'RFC',
-            data: item.rfc,
-          };
-          const FaValidCurpRfc: any = 'M';
-          // await this.billingsService.getApplicationFaValidCurpRfc(obj);
-          item['valRFC'] = 'M';
-          // FaValidCurpRfc ? FaValidCurpRfc : null;
-
-          // let obj_ = {
-          //   idEvent: item.eventId,
-          //   idBill: item.billId,
-          // };
-          // const total = await this.getBillsTotal(item, obj_);
-          // item['totaling'] = total.totaling;
-          // item['totaleg'] = total.totaleg;
-          // const vat = await this.getBillsIva(item, obj_);
-          // item['ivaing'] = vat.ivaing;
-          // item['ivaeg'] = vat.ivaeg;
-          // const price = await this.getBillsPrice(item, obj_);
-          // item['priceing'] = price.priceing;
-          // item['priceeg'] = price.priceeg;
-        });
-        Promise.all(result).then(async resp => {
-          if (response.count > 0) {
-            await this.funcPriceVatTotal(response.data[0]);
-            this.billingSelected = response.data[0];
-          } else {
-            if (filter == 'si')
-              this.alert('warning', 'No se encontraron facturas', '');
-            this.resetInput();
-          }
-          this.form2.get('counter').patchValue(response.count);
-          this.getSum(); // OBTENER SUMAS TOTALES
-          this.data.load(response.data);
+            // let obj_ = {
+            //   idEvent: item.eventId,
+            //   idBill: item.billId,
+            // };
+            // const total = await this.getBillsTotal(item, obj_);
+            // item['totaling'] = total.totaling;
+            // item['totaleg'] = total.totaleg;
+            // const vat = await this.getBillsIva(item, obj_);
+            // item['ivaing'] = vat.ivaing;
+            // item['ivaeg'] = vat.ivaeg;
+            // const price = await this.getBillsPrice(item, obj_);
+            // item['priceing'] = price.priceing;
+            // item['priceeg'] = price.priceeg;
+          });
+          Promise.all(result).then(async resp => {
+            if (response.count > 0) {
+              await this.funcPriceVatTotal(response.data[0]);
+              this.billingSelected = response.data[0];
+            } else {
+              if (filter == 'si')
+                this.alert('warning', 'No se encontraron facturas', '');
+              this.resetInput();
+            }
+            this.form2.get('counter').patchValue(response.count);
+            this.getSum(); // OBTENER SUMAS TOTALES
+            this.data.load(response.data);
+            this.data.refresh();
+            this.totalItems = response.count;
+            this.loading = false;
+            if (this.valSelects) this.selectAllFromModal();
+          });
+        },
+        error: error => {
+          this.data.load([]);
           this.data.refresh();
-          this.totalItems = response.count;
+          this.totalItems = 0;
           this.loading = false;
-          if (this.valSelects) this.selectAllFromModal();
-        });
-      },
-      error: error => {
-        this.data.load([]);
-        this.data.refresh();
-        this.totalItems = 0;
-        this.loading = false;
-        if (filter == 'si')
-          this.alert('warning', 'No se encontraron facturas', '');
+          if (filter == 'si')
+            this.alert('warning', 'No se encontraron facturas', '');
 
-        this.resetInput();
-      },
-    });
+          this.resetInput();
+        },
+      });
+    }
   }
   resetInput() {
     this.form2.get('amountPay').setValue(null);
@@ -1246,34 +1348,41 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
     this.loading2 = true;
     this.totalItems2 = 0;
+    if (!params['filter.billId'] && !params['filter.eventId']) {
+      this.loading2 = false;
+      this.totalItems2 = 0;
+      this.data2.load([]);
+      this.data2.refresh();
+      this.selectedbillingsDet = [];
+    } else {
+      // this.msInvoiceService.getComerCetinvoices(params)
+      this.comerDetInvoice.getAllCustom(params).subscribe({
+        next: response => {
+          console.log(response);
+          // let result = response.data.map(async (item: any) => {
+          //   // item['rfc'] = item.customers ? item.customers.rfc : null;
+          // });
+          // Promise.all(result).then(resp => {
+          this.form2.get('counter2').patchValue(response.count);
+          this.form2.get('total8').patchValue(response.data[0].sum.importe);
+          this.form2.get('total7').patchValue(response.data[0].sum.iva);
+          this.form2.get('total3').patchValue(response.data[0].sum.total);
+          // this.form2.get('countTotal').patchValue(response.data[0].sum.amount);
 
-    // this.msInvoiceService.getComerCetinvoices(params)
-    this.comerDetInvoice.getAllCustom(params).subscribe({
-      next: response => {
-        console.log(response);
-        // let result = response.data.map(async (item: any) => {
-        //   // item['rfc'] = item.customers ? item.customers.rfc : null;
-        // });
-        // Promise.all(result).then(resp => {
-        this.form2.get('counter2').patchValue(response.count);
-        this.form2.get('total8').patchValue(response.data[0].sum.importe);
-        this.form2.get('total7').patchValue(response.data[0].sum.iva);
-        this.form2.get('total3').patchValue(response.data[0].sum.total);
-        // this.form2.get('countTotal').patchValue(response.data[0].sum.amount);
-
-        this.data2.load(response.data[0].result);
-        this.data2.refresh();
-        this.totalItems2 = response.count;
-        this.loading2 = false;
-        // });
-      },
-      error: error => {
-        this.data2.load([]);
-        this.data2.refresh();
-        this.totalItems2 = 0;
-        this.loading2 = false;
-      },
-    });
+          this.data2.load(response.data[0].result);
+          this.data2.refresh();
+          this.totalItems2 = response.count;
+          this.loading2 = false;
+          // });
+        },
+        error: error => {
+          this.data2.load([]);
+          this.data2.refresh();
+          this.totalItems2 = 0;
+          this.loading2 = false;
+        },
+      });
+    }
   }
 
   async getInconsistencies_() {
@@ -1683,6 +1792,13 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           this.params.getValue()[
             'filter.eventId'
           ] = `$eq:${this.idEventBlkCtrl.value}`;
+
+          await this.forArrayFiltersNew([
+            {
+              field: 'eventId',
+              search: this.idEventBlkCtrl.value,
+            },
+          ]);
           await this.getBillings('si'); // GO_BLOCK('COMER_FACTURAS');
           await this.visualProcess(0, 1); // VISUALIZA_PROCESO(0, 1);
           this.btnLoading = false;
@@ -1756,7 +1872,12 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       value: this.token.decodeToken().preferred_username,
       address: 'I',
     };
-    const c_Reg: any = await this.billingsService.pufUsuReg(obj___); // PUF_USU_REG;
+    let c_Reg: any = await this.billingsService.getParamterModSab(
+      'SUPUSUFACTR',
+      'I',
+      this.token.decodeToken().preferred_username.toUpperCase()
+    );
+    c_Reg = !c_Reg ? 'N' : 'S'; // PUF_USU_REG;
 
     if (this.selectedbillings.length == 0)
       return (
@@ -1838,7 +1959,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
               let obj: any = {
                 p_id_evento: item.eventId,
                 p_opcion: n_OPCION,
-                p_lote_publico: item.lotId,
+                p_lote_publico: item.batchId,
                 p_cve_pantalla: 'FCOMER086_I',
                 p_id_factura: item.billId,
                 p_id_pago: item.paymentId,
@@ -1909,6 +2030,8 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     if (!this.billingSelected)
       return this.alert('warning', 'No se tiene una factura seleccionada.', '');
 
+    window.open('http://facturacionelec.sae.gob.mx/Log.aspx', '_blank');
+    return;
     //  THEN-- VA AL LINK DE PARA GENERAR LOS XML Y SELLO
     const url: any = await this.billingsService.getApplicationGetFaUrlwebFac(
       this.billingSelected.eventId
@@ -1944,7 +2067,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     if (countFacturas.count == 0) {
       this.alertQuestion(
         'question',
-        'Se realiza la actualización de todos los lotes en estatus PAG, PAGE a estatus VEN',
+        'Se realizará la actualización de todos los lotes en estatus PAG, PAGE a estatus VEN',
         '¿Se ejecuta el proceso?'
       ).then(async question => {
         if (question.isConfirmed) {
@@ -2020,7 +2143,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
       this.alertQuestion(
         'question',
-        'Se realiza la actualización de todos los lotes en estatus PAG, PAGE a estatus VEN',
+        'Se realizará la actualización de todos los lotes en estatus PAG, PAGE a estatus VEN',
         '¿Se ejecuta el proceso?'
       ).then(async question => {
         if (question.isConfirmed) {
@@ -2108,7 +2231,12 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       value: this.token.decodeToken().preferred_username,
       address: 'I',
     };
-    const c_Reg: any = await this.billingsService.pufUsuReg(obj_); // PUF_USU_REG;
+    let c_Reg: any = await this.billingsService.getParamterModSab(
+      'SUPUSUFACTR',
+      'I',
+      this.token.decodeToken().preferred_username.toUpperCase()
+    );
+    c_Reg = !c_Reg ? 'N' : 'S'; // PUF_USU_REG;
     let cont = 0;
     let result = this.selectedbillings.map(async item => {
       if (item.factstatusId == 'PREF' && item.vouchertype == 'FAC') {
@@ -2157,7 +2285,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           let result_ = this.selectedbillings.map(async (item: any) => {
             let obj_1 = {
               eventId: item.eventId,
-              lotId: item.lotId,
+              lotId: item.batchId,
             };
             await this.billingsService.comerCtrFacRegxBatch(obj_1);
 
@@ -2174,7 +2302,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
               this.alert(
                 'warning',
                 c_RESUL,
-                `Para Evento: ${item.eventId}, Lote: ${item.lotId}, Del.: ${item.delegationNumber}, Mandato.:${item.cvman}`
+                `Para Evento: ${item.eventId}, Lote: ${item.batchId}, Del.: ${item.delegationNumber}, Mandato.:${item.cvman}`
               );
             }
           });
@@ -2373,13 +2501,19 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       dataSeleccionada: this.selectedbillings,
       cause: this.causeBlkCtrl.value,
       data,
-      callback: (next: boolean) => {
+      callback: async (next: boolean) => {
         this.valSelects = false;
         if (!next) {
           this.visualCancelYesNot(0);
         } else {
+          let insertFilterColumns: boolean = this.insertFilterColumns();
+          if (insertFilterColumns) {
+            this.data.refresh();
+            this.valSelects = true;
+            await this.getBillings('no');
+          }
           // this.valDefaultWhere = true;
-          this.getBillings('no');
+          // this.getBillings('no');
         }
 
         console.log('AQUI', next);
@@ -2390,6 +2524,8 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
   attentionCustomer() {
     // ATENCION - Atención a Clientes
+    if (this.selectedbillings.length == 0)
+      return this.alert('warning', 'Debe seleccionar una factura', '');
     this.alertQuestion(
       'question',
       `Se enviará el nuevo CFDI para Atención a Clientes`,
@@ -2397,10 +2533,8 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     ).then(async question => {
       if (question.isConfirmed) {
         this.btnLoading3 = true;
-        await this.pupGenerateRoute3(); // PUP_GENERA_RUTA3
+        // await this.pupGenerateRoute3(); // PUP_GENERA_RUTA3
         await this.printerPackage(); // IMPRIME_PAQUETE
-
-        this.alert('success', 'El CFDI nuevo fue enviado', '');
       }
     });
   }
@@ -2433,24 +2567,8 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     }
 
     let V_ARCHOSAL = L_PATH + V_PATH_TIPO;
-    //   V_RUTA2:= 'MD ' || V_ARCHOSAL || 'PDF\'||TO_CHAR(:COMER_FACTURAS.FECHA_IMPRESION,'YYYY')||'\'||TO_CHAR(:COMER_FACTURAS.FECHA_IMPRESION,'MM')||'\';
-    //   LFIARCHIVO:= TEXT_IO.FOPEN('C:\SIABTMP\'||:GLOBAL.VG_DIRUSR||'\CREARUTA3.BAT', 'W');
-    //   TEXT_IO.PUT_LINE(LFIARCHIVO, V_RUTA2);
-    //   TEXT_IO.FCLOSE(LFIARCHIVO);
-    //   HOST('C:\SIABTMP\'||:GLOBAL.VG_DIRUSR||'\CREARUTA3.BAT',NO_SCREEN);
-    //   PUP_LIMPIA_ARCHIVO;
-    //   V_ARCHOSAL:= L_PATH || V_PATH_TIPO;
-    //   V_RUTA3:= 'MD ' || V_ARCHOSAL || 'XML\'||TO_CHAR(:COMER_FACTURAS.FECHA_IMPRESION,'YYYY')||'\'||TO_CHAR(:COMER_FACTURAS.FECHA_IMPRESION,'MM')||'\';
-    //   LFIARCHIVO:= TEXT_IO.FOPEN('C:\SIABTMP\'||:GLOBAL.VG_DIRUSR||'\CREARUTA3.BAT', 'W');
-    //   TEXT_IO.PUT_LINE(LFIARCHIVO, V_RUTA3);
-    //   TEXT_IO.FCLOSE(LFIARCHIVO);
-    //   HOST('C:\SIABTMP\'||:GLOBAL.VG_DIRUSR||'\CREARUTA3.BAT',NO_SCREEN);
   }
-  async pupCleanArchive() {
-    // PUP_LIMPIA_ARCHIVO
-    // LFIARCHIVO:= TEXT_IO.FOPEN('C:\SIABTMP\'||:GLOBAL.VG_DIRUSR||'\COPIACFISERV.BAT', 'W');
-    // TEXT_IO.FCLOSE(LFIARCHIVO);
-  }
+  async pupCleanArchive() {}
   async printerPackage() {
     // IMPRIME_PAQUETE
     if (!this.billingSelected)
@@ -2458,51 +2576,61 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         (this.btnLoading3 = false),
         this.alert('warning', 'Debe seleccionar una factura', '')
       );
-    const params = new ListParams();
-    params['filter.id'] = `$eq:PATHANEXOS`;
-    const parameter: any = await this.billingsService.getParamaters(params);
-    if (!parameter)
-      return (
-        (this.btnLoading3 = false),
-        this.alert('warning', 'No se obtuvo el parámetro del PATH', '')
-      );
+    // const params = new ListParams();
+    // params['filter.id'] = `$eq:PATHANEXOS`;
+    // const parameter: any = await this.billingsService.getParamaters(params);
+    // if (!parameter)
+    //   return (
+    //     (this.btnLoading3 = false),
+    //     this.alert('warning', 'No se obtuvo el parámetro del PATH', '')
+    //   );
 
     let result = this.selectedbillings.map(async item => {
-      await this.pupRepBillingMore(11, item.Type);
+      await this.pupRepBillingMore(11, item.Type, item);
+    });
+    Promise.all(result).then(resp => {
+      this.alert('success', 'El CFDI nuevo fue enviado', '');
+      this.btnLoading3 = false;
+      this.selectedbillings = [];
+      this.data.refresh();
     });
   }
 
-  async pupRepBillingMore(pType: number, item: any) {
+  async pupRepBillingMore(P_TIPOA: number, psubtipo: number, invoice: any) {
     // PUP_REP_FACTURA_MAS
-    let PTIPO = item.Type;
-    if (pType == 10) {
-      PTIPO = pType;
-    } else if (pType == 11) {
-      PTIPO = pType;
-    }
-    const impressionDate = new Date(item.impressionDate);
-    var mes: any = impressionDate.getMonth(); // Obtener el mes (0-11)
-    var anio = impressionDate.getFullYear(); // Obtener el año (yyyy)
-    if (mes < 9) {
-      mes = '0' + (mes + 1);
-    } else {
-      mes = mes + 1;
-    }
+    let data_: IPupRepBillMoreI = {
+      pTypeA: P_TIPOA,
+      pSubType: psubtipo,
+      type: invoice.Type,
+      eventId: invoice.eventId,
+      lotId: invoice.batchId,
+      billId: invoice.billId,
+      statusFactId: invoice.factstatusId,
+      impressionDate: invoice.impressionDate,
+      typeVoucher: invoice.vouchertype,
+      series: invoice.series,
+      invoice: invoice.Invoice,
+      tpEvent: invoice.tpevent,
+    };
 
-    let V_PATH_TIPO = `ANEXOS\\${anio}\\${mes}\\`;
-    let V_PATH_TIPO1 = `XML\\${anio}\\${mes}\\`;
-
-    if (item.vouchertype == 'FAC' && item.series.startsWith('INGRG')) {
-      V_PATH_TIPO = 'INGRG\\' + V_PATH_TIPO;
-      V_PATH_TIPO1 = 'INGRG\\' + V_PATH_TIPO1;
-    } else if (item.vouchertype == 'FAC' && item.series.startsWith('EGRG')) {
-      V_PATH_TIPO1 = 'EGRG\\' + V_PATH_TIPO1;
-    } else if (item.vouchertype == 'NCR' && item.series.startsWith('EGRG')) {
-      V_PATH_TIPO = 'EGRG\\' + V_PATH_TIPO;
-    }
-    // PROGRAMACIÓN DETENIDA PARA CHECAR FUNCIONALIDAD //
+    let result = await this.servicePupRepBillMore(data_);
+    return result;
   }
 
+  async servicePupRepBillMore(data: IPupRepBillMoreI) {
+    return new Promise((resolve, reject) => {
+      this.fileBrowserService
+        .pupRepBillFurtherFurnitureImmovables(data)
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+          error: err => {
+            resolve(null);
+          },
+        });
+    });
+  }
   async prefPaysParc() {
     // Pref Pagos Parciales - GEN_XPAGOS
     const eventId = this.idEventBlkCtrl.value;
@@ -2684,7 +2812,12 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       value: this.token.decodeToken().preferred_username,
       address: 'I',
     };
-    const c_Reg: any = await this.billingsService.pufUsuReg(obj); // PUF_USU_REG;
+    let c_Reg: any = await this.billingsService.getParamterModSab(
+      'SUPUSUFACTR',
+      'I',
+      this.token.decodeToken().preferred_username.toUpperCase()
+    );
+    c_Reg = !c_Reg ? 'N' : 'S';
     let cont = 0;
     this.data.getElements().then(async item => {
       let result_ = item.map(async (item_: any) => {
@@ -2703,12 +2836,10 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           if (c_Reg == 'S') {
             if (item_.delegationNumber == this.token.decodeToken().department) {
               const updateDateImp = this.billingsService.updateBillings(obj);
-              // : COMER_FACTURAS.FECHA_IMPRESION := : BLK_CTRL.fecha;
               cont = cont + 1;
             }
           } else {
             const updateDateImp = this.billingsService.updateBillings(obj);
-            // : COMER_FACTURAS.FECHA_IMPRESION := : BLK_CTRL.fecha;
             cont = cont + 1;
           }
         }
@@ -2717,6 +2848,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       Promise.all(result_).then(resp => {
         this.form.get('date').setValue(null);
         this.btnLoading13 = false;
+        this.getBillings('no');
         this.alert('success', `Se actualizó la fecha a ${cont} facturas.`, '');
         // LIP_MENSAJE('Se actualizó la fecha a ' || TO_CHAR(n_CONT) || ' facturas.', 'A');
       });
@@ -2726,10 +2858,17 @@ export class BillingScreenComponent extends BasePage implements OnInit {
   async pupNewSelecAll() {
     const obj: any = {
       parameter: 'SUPUSUFACTR',
-      value: this.token.decodeToken().preferred_username,
+      value: this.token.decodeToken().preferred_username.toUpperCase(),
       address: 'I',
     };
-    const c_Reg: any = await this.billingsService.pufUsuReg(obj); // PUF_USU_REG;
+    let c_Reg: any = await this.billingsService.getParamterModSab(
+      'SUPUSUFACTR',
+      'I',
+      this.token.decodeToken().preferred_username.toUpperCase()
+    );
+    c_Reg = !c_Reg ? 'N' : 'S';
+    console.log(c_Reg);
+    //await this.billingsService.pufUsuReg(obj); // PUF_USU_REG;
     // const c_Reg = 'S';
 
     if (!(await this.valBillingsSelects()))
@@ -2739,27 +2878,46 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       );
 
     let cont = 0;
+    let contN = 0;
     this.data.getElements().then(async item => {
       let arr: any[] = [];
       let result_ = item.map(async (item_: any) => {
         // if (!item_.impressionDate && !['CFDI', 'IMP', 'CAN'].includes(item_.factstatusId)) {
         if (c_Reg == 'S') {
-          if (item_.delegationNumber == this.token.decodeToken().department) {
-            arr.push(item_);
-            cont = cont + 1;
+          if (item_.delegationNumber === this.token.decodeToken().department) {
+            const index = this.selectedbillings.findIndex(
+              comer =>
+                comer.eventId == item_.eventId && comer.billId == item_.billId
+            );
+            if (index == -1)
+              this.selectedbillings.push(item_), (cont = cont + 1);
+            if (index > -1)
+              this.selectedbillings.splice(index, 1), (contN = contN + 1);
+            // arr.push(item_);
           }
         } else {
-          arr.push(item_);
-          cont = cont + 1;
+          const index = this.selectedbillings.findIndex(
+            comer =>
+              comer.eventId == item_.eventId && comer.billId == item_.billId
+          );
+          if (index == -1) this.selectedbillings.push(item_), (cont = cont + 1);
+          if (index > -1)
+            this.selectedbillings.splice(index, 1), (contN = contN + 1);
+          // arr.push(item_);
+          // cont = cont + 1;
         }
         // }
       });
 
       Promise.all(result_).then(resp => {
-        this.selectedbillings = arr;
+        // this.selectedbillings = arr;
         this.data.refresh();
         this.btnLoading13 = false;
-        this.alert('success', `Se seleccionaron ${cont} documentos.`, '');
+        this.alert(
+          'success',
+          `Se seleccionaron ${cont} documentos.`,
+          `Y se deseleccionaron ${contN} documentos`
+        );
       });
     });
   }
@@ -2898,7 +3056,14 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       );
     this.btnLoading7 = true;
     let arr: any = [];
+    let arr1 = { invoices: [] };
     let result = this.selectedbillings.map(async item => {
+      let obj = {
+        eventId: item.eventId,
+        batchId: item.batchId,
+        billId: item.billId,
+      };
+      arr1.invoices.push(obj);
       let obj2 = {
         EVENTO: item.eventId,
         ID_LOTE: item.batchId,
@@ -2927,14 +3092,32 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     });
 
     Promise.all(result).then(resp => {
-      setTimeout(() => {
-        const filename: string = 'FCOMER086_I_CSV';
-        this.excelService.export(arr, { type: 'csv', filename });
-        this.btnLoading7 = false;
-      }, 1000);
+      this.comerInvoiceService.postApplicationPupExportaNva(arr1).subscribe({
+        next: resp => {
+          console.log(resp);
+          if (resp.base64 == '') {
+            return this.alert('warning', 'No hay datos por exportar', '');
+          }
+          this.downloadExcel(resp.base64);
+        },
+        error: error => {
+          this.btnLoading7 = false;
+          this.alert('warning', error.error.message, '');
+        },
+      });
     });
   }
-
+  async downloadExcel(base64String: any) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = 'FACTURAS_FCOMER086_I.csv';
+    link.click();
+    link.remove();
+    this.btnLoading7 = false;
+    this.alert('success', 'Archivo descargado correctamente', '');
+  }
   async typeBilling(type: any) {
     const item = this.typesBillings.find(item => item.tpinvoiceId == type);
     if (item) {
@@ -2945,7 +3128,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
   }
   generateInvoices() {
     // Genera Folios - FOLIOS
-    // EN ESPERA DEL ENDPOINT DE EDWIN
 
     if (this.selectedbillings.length == 0)
       return this.alert(
@@ -2991,12 +3173,13 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Ocurrió un error al intentar generar folios',
-            ''
+            foliosGenerated.message
           );
         }
         this.btnLoading8 = false;
       } else {
         this.btnLoading8 = false;
+        this.getBillings('no');
         this.alert('success', 'Proceso terminado correctamente', '');
       }
     });
@@ -3018,12 +3201,20 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           ''
         )
       );
-
+    // console.log(this.columnFilters)
+    await this.clearSubheaderFields();
+    let arr: IFields[] = [];
     if (this.idEventBlkCtrl.value) {
       this.params.getValue()[
         'filter.eventId'
       ] = `$eq:${this.idEventBlkCtrl.value}`;
-      await this.forArrayFilters('eventId', this.idEventBlkCtrl.value);
+      let obj = {
+        field: 'eventId',
+        search: this.idEventBlkCtrl.value,
+      };
+      arr.push(obj);
+
+      // await this.forArrayFilters('eventId', this.idEventBlkCtrl.value);
     } else {
       delete this.params.getValue()['filter.eventId'];
     }
@@ -3032,7 +3223,13 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       this.params.getValue()[
         'filter.batchId'
       ] = `$eq:${this.idLotPublicBlkCtrl.value}`;
-      await this.forArrayFilters('batchId', this.idLotPublicBlkCtrl.value);
+      let obj = {
+        field: 'batchId',
+        search: this.idLotPublicBlkCtrl.value,
+      };
+
+      arr.push(obj);
+      // await this.forArrayFilters('batchId', this.idLotPublicBlkCtrl.value);
     } else {
       delete this.params.getValue()['filter.batchId'];
     }
@@ -3045,20 +3242,14 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       var fecha1 = new Date(this.fecBlkCtrl.value);
       var fecha2 = new Date(this.fec2BlkCtrl.value);
 
-      // var fecha1 = new Date(this.fecBlkCtrl.value);
-      // var fecha2 = new Date(this.fec2BlkCtrl.value);
-
-      // Obtener los componentes de la fecha (año, mes y día)
       var ano1 = fecha1.getFullYear();
-      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2);
       var dia1 = ('0' + fecha1.getDate()).slice(-2);
 
-      // Obtener los componentes de la fecha (año, mes y día)
       var ano2 = fecha2.getFullYear();
-      var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2);
       var dia2 = ('0' + fecha2.getDate()).slice(-2);
 
-      // Crear la cadena de fecha en el formato yyyy-mm-dd
       var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
       var fechaFormateada2 = ano2 + '-' + mes2 + '-' + dia2;
       this.params.getValue()[
@@ -3133,25 +3324,31 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     ) {
       delete this.params.getValue()['filter.impressionDate'];
     }
+    if (arr.length > 0) {
+      this.forArrayFiltersNew(arr);
+    }
     // await this.clearSubheaderFields();
-    this.columnFilters = [];
+    // this.columnFilters = [];
     await this.getBillings('si');
 
     setTimeout(() => {
       this.performScroll();
     }, 500);
   }
-  async forArrayFilters(field: any, value: any) {
+  async forArrayFilters(field: any, value: any, opt?: boolean) {
     const subheaderFields: any = this.table.grid.source;
-
-    const filterConf = subheaderFields.filterConf;
+    const filterConf = this.data.getFilter();
     if (filterConf.filters.length > 0) {
       filterConf.filters.forEach((item: any) => {
         if (item.field == field) {
           item.search = value;
         }
       });
+    } else if (filterConf.filters.length == 0 && value) {
+      console.log('SI');
+      filterConf.filters.push({ field: field, search: value });
     }
+    this.data.refresh();
     return true;
   }
 
@@ -3181,7 +3378,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     if (!event) this.valSortBy = false;
 
     this.optXLote = this.params.getValue()['filter.batchId'];
-    console.log('this.xLote.value', this.xLote.value);
+    // console.log('this.xLote.value', this.xLote.value);
     if (!this.xLote.value) {
       if (this.params.getValue()['filter.batchId'])
         delete this.params.getValue()['filter.batchId'];
@@ -3292,6 +3489,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     Promise.all(result).then(resp => {
       this.btnLoading17 = false;
       this.getDetailsFacturas();
+      this.getBillings('no');
       this.alert('success', 'Proceso terminado correctamente', '');
     });
   }
@@ -3314,5 +3512,69 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         block: 'start',
       });
     }
+  }
+
+  async forArrayFilters_() {
+    const subheaderFields: any = this.table.grid.source;
+
+    const filterConf = subheaderFields.filterConf;
+    let val = true;
+    if (filterConf.filters.length > 0) {
+      filterConf.filters.forEach((item: any) => {
+        if (item.search != '') {
+          val = false;
+        }
+      });
+    }
+    this.data.refresh();
+    return val;
+  }
+
+  async resetTable() {
+    // this.params = new BehaviorSubject<ListParams>(new ListParams());
+    delete this.params.getValue()['filter.impressionDate'];
+    delete this.params.getValue()['filter.delegationNumber'];
+    delete this.params.getValue()['filter.cvman'];
+    delete this.params.getValue()['filter.eventId'];
+    delete this.params.getValue()['filter.batchId'];
+    delete this.params.getValue()['filter.vouchertype'];
+    delete this.params.getValue()['filter.factstatusId'];
+
+    // this.params.getValue()['filter.address']
+    this.loading = true;
+    this.params.getValue().limit = 500;
+    this.params.getValue().pageSize = 500;
+    this.data.getFilter().filters = [];
+    this.data.refresh();
+
+    this.data.load([]);
+    this.data.refresh();
+
+    this.totalItems = 0;
+
+    this.data2.getFilter().filters = [];
+    this.data2.refresh();
+
+    this.data2.load([]);
+    this.data2.refresh();
+    this.totalItems2 = 0;
+    this.selectedbillings = [];
+    this.selectedbillingsDet = [];
+    this.resetInput();
+
+    this.loading = false;
+    this.getBillings('no');
+  }
+
+  async forArrayFiltersNew(fields: IFields[]) {
+    const filterConf = await this.data.getFilter();
+    let result = fields.map(field => {
+      filterConf.filters.push(field);
+    });
+    Promise.all(result).then(resp => {
+      console.log(filterConf);
+      this.data.refresh();
+      return true;
+    });
   }
 }

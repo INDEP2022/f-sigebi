@@ -42,6 +42,10 @@ export class OfficeManagementService extends HttpService {
     );
   }
 
+  pupGenOficio(body: any) {
+    return this.post(OfficeManagementEndpoint.PupGenOficio, body);
+  }
+
   customPostTmpClasifGood(body: any) {
     const route = OfficeManagementEndpoint.TmpClasifBienCustomPost;
     return this.post(`${route}`, body);
@@ -50,6 +54,10 @@ export class OfficeManagementService extends HttpService {
   //Elimina tablas de Bien_Oficio_Gestion, Docum_Oficio_Gestion,M_Oficio_Gestion,Copias_Gestion,
   deleteJobGestion(body: any): Observable<any> {
     const route = OfficeManagementEndpoint.DeleteJobGestion;
+    return this.post(`${route}`, body);
+  }
+  getPaTriggerOAppraise(body: any): Observable<any> {
+    const route = OfficeManagementEndpoint.paTriggerOAppraise;
     return this.post(`${route}`, body);
   }
 

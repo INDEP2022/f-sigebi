@@ -296,26 +296,23 @@ export class NotifyAssetsImproprietyFormComponent
     });
 
     this.clarificationForm = this.fb.group({
-      addresseeName: [
-        this.infoRequest?.nameOfOwner || null,
-        [Validators.pattern(STRING_PATTERN)],
-      ],
+      addresseeName: [null, [Validators.pattern(STRING_PATTERN)]],
 
       positionAddressee: [
         //Cargo Destinatario - Titular de la solicitud
-        this.infoRequest?.holderCharge || null,
+        null,
         [Validators.pattern(STRING_PATTERN)],
       ],
 
       senderName: [
         //Nombre Remitente - DELEGADO
-        null,
+        this.infoRequest?.nameOfOwner || null,
         [Validators.pattern(STRING_PATTERN)],
       ],
 
       senderCharge: [
         //Cargo Remitente - DELEGADO
-        null,
+        this.infoRequest?.holderCharge || null,
         [Validators.pattern(STRING_PATTERN)],
       ],
 
@@ -1508,6 +1505,7 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
           },
         },
         class: 'modal-lg modal-dialog-centered',
+        keyboard: false,
         ignoreBackdropClick: true,
       };
       this.modalService.show(PrintReportModalComponent, config);

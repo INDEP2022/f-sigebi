@@ -153,6 +153,10 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   dataBatch: any = null;
 
+  eventClientId: any = null;
+  eventClientEventId: any = null;
+  idDataLotEvent: any = null;
+
   private clie_procesar: boolean = false;
   private lot_procesar: boolean = false;
   private clie_solo_pend: boolean = false;
@@ -193,6 +197,11 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.initialize();
     //Navegador
     this.navigateCustomerXClient();
+    this.navigateClientEvet();
+    this.navigateLotBanks();
+    this.navigatePaymentLots();
+    // this.navigateDataLotEvent();
+    this.filterDataLotEvent();
     //Settings
     this.prepareSettings();
     //Verificar si hay idEvento
@@ -213,6 +222,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
+            console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -254,6 +264,65 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.getDataComerCustomer();
       }
     });
+  }
+
+  //FILTRO DE COLUMNA
+  filterDataLotEvent() {
+    this.dataLotEvent
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        console.log(change);
+        if (change.action === 'filter') {
+          console.log('FILTRO DE COLUMNA');
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'publicLot':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'rfc':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'vtaStatusId':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'guaranteePrice':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'advancePayment':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFiltersLotsEvent[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersLotsEvent[field];
+            }
+            console.log(this.columnFiltersLotsEvent);
+          });
+          // this.paramsLotEvent = this.pageFilter(this.paramsLotEvent);
+          console.log('Se está llamadno 323');
+          this.getDataLotes(this.idDataLotEvent, true);
+        }
+      });
   }
 
   //Preparar Settings
@@ -542,58 +611,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.eventTpId = resp.eventTpId;
         this.eventManagement = resp.address == 'M' ? 'MUEBLES' : 'INMUEBLES';
         this.getDataComerCustomer();
+        this.idDataLotEvent = resp.id;
 
-        this.dataLotEvent
-          .onChanged()
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(change => {
-            if (change.action === 'filter') {
-              let filters = change.filter.filters;
-              filters.map((filter: any) => {
-                let field = ``;
-                let searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}`;
-                switch (filter.field) {
-                  case 'publicLot':
-                    searchFilter = SearchFilter.EQ;
-                    field = `filter.${filter.field}`;
-                    break;
-                  case 'rfc':
-                    searchFilter = SearchFilter.EQ;
-                    field = `filter.${filter.field}`;
-                    break;
-                  case 'vtaStatusId':
-                    searchFilter = SearchFilter.ILIKE;
-                    field = `filter.${filter.field}`;
-                    break;
-                  case 'guaranteePrice':
-                    searchFilter = SearchFilter.EQ;
-                    field = `filter.${filter.field}`;
-                    break;
-                  case 'advancePayment':
-                    searchFilter = SearchFilter.EQ;
-                    field = `filter.${filter.field}`;
-                    break;
-                  case 'description':
-                    searchFilter = SearchFilter.ILIKE;
-                    field = `filter.${filter.field}`;
-                    break;
-                  default:
-                    searchFilter = SearchFilter.ILIKE;
-                    break;
-                }
-                if (filter.search !== '') {
-                  this.columnFiltersLotsEvent[
-                    field
-                  ] = `${searchFilter}:${filter.search}`;
-                } else {
-                  delete this.columnFiltersLotsEvent[field];
-                }
-              });
-              this.paramsLotEvent = this.pageFilter(this.paramsLotEvent);
-              this.getDataLotes(resp.id);
-            }
-          });
         this.paramsLotEvent
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(params => {
@@ -652,6 +671,60 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.loadingPaymentLots = false;
       }
     );
+  }
+
+  navigateDataLotEvent() {
+    this.dataLotEvent
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'publicLot':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'rfc':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'vtaStatusId':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'guaranteePrice':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'advancePayment':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFiltersLotsEvent[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersLotsEvent[field];
+            }
+          });
+          this.paramsLotEvent = this.pageFilter(this.paramsLotEvent);
+          this.getDataLotes(this.idDataLotEvent, true);
+        }
+      });
   }
 
   //POSTQUERY del Evento
@@ -790,7 +863,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.loadingCustomer = true;
     const paramsF = new FilterParams();
     paramsF.addFilter('EventId', this.event.value);
-
+    console.log('Evento: ', this.event.value);
     let params = {
       ...this.paramsCustomer.getValue(),
       ...this.ColumnFilterCustomer,
@@ -869,7 +942,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   }
 
   //LOTES
-  getDataLotes(eventId: string | number) {
+  getDataLotes(eventId: string | number, filter?: boolean) {
+    this.loadingLotEvent = true;
     //&filter.clientId=$not:null
     let params = {
       ...this.paramsLotEvent.getValue(),
@@ -908,6 +982,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         const newData = await Promise.all(
           res.data.map(async (e: any) => {
             let disponible: boolean;
+            if (!filter) {
+              await this.restructureDataLotes(e);
+            }
             const validate = await this.postQueryLots(e);
             disponible = JSON.parse(JSON.stringify(validate)).available;
             return {
@@ -939,26 +1016,30 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
           let n_cont: number = 0;
           let n_coni: number = 0;
           let n_sum_pag: number = 0;
-          //TODO
-          // BEGIN
-          //       SELECT SUM(IVA+MONTO_APP_IVA+MONTO_NOAPP_IVA)
-          //         INTO n_SUM_PAG
-          //         FROM COMER_PAGOSREFGENS
-          //        WHERE ID_LOTE = :COMER_LOTES.ID_LOTE
-          //          AND TIPO = 'N';
-          //    EXCEPTION
-          //       WHEN OTHERS THEN
-          //          n_SUM_PAG := 0;
-          //    END;
-          //TODO
-          // SELECT COUNT(0), COUNT(IDORDENINGRESO)
-          //      INTO n_CONT, n_CONI
-          //      FROM COMER_PAGOREF CP
-          //     WHERE EXISTS (SELECT 1
-          //                     FROM COMER_PAGOREF_VIRT VI
-          //                    WHERE VI.ID_PAGO = CP.ID_PAGO
-          //                      AND ID_LOTE = :COMER_LOTES.ID_LOTE)
-          //       AND VALIDO_SISTEMA = 'S';
+          if (
+            (n_cont > 0 && n_cont == n_coni && n_sum_pag >= e.finalPrice) ||
+            (e.vtaStatusId == 'CAN' && n_cont == n_coni)
+          ) {
+            resolve({ available: false });
+          } else {
+            resolve({ available: true });
+          }
+        } else {
+          resolve({ available: true });
+        }
+      } else {
+        resolve({ available: true });
+      }
+    });
+  }
+
+  restructureDataLotes(e: any) {
+    return new Promise((resolve, reject) => {
+      if (this.id_tipo_disp == 2) {
+        if (['PAG', 'PAGE', 'CAN', 'GARA', 'DES'].includes(e.vtaStatusId)) {
+          let n_cont: number = 0;
+          let n_coni: number = 0;
+          let n_sum_pag: number = 0;
           if (
             (n_cont > 0 && n_cont == n_coni && n_sum_pag >= e.finalPrice) ||
             (e.vtaStatusId == 'CAN' && n_cont == n_coni)
@@ -1044,6 +1125,16 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.idClientCustomer = e.data.ClientId;
     this.rfcClientCustomer = e.data.RFC;
 
+    this.eventClientId = e.data.ClientId;
+    this.eventClientEventId = e.data.EventId;
+
+    this.getPaymentByCustomer(e.data.ClientId, e.data.EventId);
+    this.getPaymentByCustomer(e.data.ClientId, e.data.EventId);
+    this.getTotalSums(e);
+  }
+
+  //NAVEGAR CLIENTES PARTICIPANTES EN EL EVENTO
+  navigateClientEvet() {
     this.dataCustomerBanks
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -1051,6 +1142,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
+            console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -1064,7 +1156,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
                 field = `filter.${filter.field}`;
                 break;
               case 'date':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 field = `filter.${filter.field}`;
                 break;
               case 'bankCode':
@@ -1092,23 +1184,33 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
                 break;
             }
             if (filter.search !== '') {
-              this.ColumnFilterCustomerBank[
-                field
-              ] = `${searchFilter}:${filter.search}`;
+              filter.field == 'date'
+                ? (this.ColumnFilterCustomerBank[
+                    field
+                  ] = `${searchFilter}:${format(
+                    new Date(filter.search),
+                    'yyyy-MM-dd'
+                  )}`)
+                : (this.ColumnFilterCustomerBank[
+                    field
+                  ] = `${searchFilter}:${filter.search}`);
             } else {
               delete this.ColumnFilterCustomerBank[field];
             }
           });
           this.paramsCustomerBanks = this.pageFilter(this.paramsCustomerBanks);
-          this.getPaymentByCustomer(e.data.ClientId, e.data.EventId);
+
+          this.getPaymentByCustomer(
+            this.eventClientId,
+            this.eventClientEventId
+          );
         }
       });
     this.paramsCustomerBanks
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        this.getPaymentByCustomer(e.data.ClientId, e.data.EventId);
+        this.getPaymentByCustomer(this.eventClientId, this.eventClientEventId);
       });
-    this.getTotalSums(e);
   }
 
   //TOTALES DE CLIENTES PARTICIPANTES EN EL EVENTO
@@ -1143,67 +1245,12 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.formLotEvent.get('txtCancel').setValue(e.data.txtCan);
     this.lotId = e.data.lotId;
 
-    this.dataLotsBanks
-      .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(change => {
-        if (change.action === 'filter') {
-          let filters = change.filter.filters;
-          filters.map((filter: any) => {
-            let field = ``;
-            let searchFilter = SearchFilter.ILIKE;
-            field = `filter.${filter.field}`;
-            switch (filter.field) {
-              case 'movementNumber':
-                searchFilter = SearchFilter.EQ;
-                field = `filter.${filter.field}`;
-                break;
-              case 'date':
-                searchFilter = SearchFilter.EQ;
-                field = `filter.${filter.field}`;
-                break;
-              case 'bankKey':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}`;
-                break;
-              case 'reference':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}`;
-                break;
-              case 'amount':
-                searchFilter = SearchFilter.EQ;
-                field = `filter.${filter.field}`;
-                break;
-              case 'entryOrderId':
-                searchFilter = SearchFilter.EQ;
-                field = `filter.${filter.field}`;
-                break;
-              case 'paymentId':
-                searchFilter = SearchFilter.EQ;
-                field = `filter.${filter.field}`;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
-            if (filter.search !== '') {
-              this.columnFiltersLotsBank[
-                field
-              ] = `${searchFilter}:${filter.search}`;
-            } else {
-              delete this.columnFiltersLotsBank[field];
-            }
-          });
-          this.paramsLotsBanks = this.pageFilter(this.paramsLotsBanks);
-          this.getLotsBanks(e.data.lotId);
-        }
-      });
-    this.paramsLotsBanks
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(params => {
-        this.getLotsBanks(e.data.lotId);
-      });
+    this.getLotsBanks(this.lotId);
+    this.getPaymentLots(this.lotId);
+  }
 
+  //NAVEGAR PAGOS POR LOTE
+  navigatePaymentLots() {
     this.dataPaymentLots
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -1252,14 +1299,85 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
             }
           });
           this.paramsPaymentLots = this.pageFilter(this.paramsPaymentLots);
-          this.getPaymentLots(e.data.lotId);
+          this.getPaymentLots(this.lotId);
         }
       });
 
     this.paramsPaymentLots
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        this.getPaymentLots(e.data.lotId);
+        this.getPaymentLots(this.lotId);
+      });
+  }
+
+  //NAVEGAR REGISTRO LOTES ASIGNADOS EN EL EVENTO
+  navigateLotBanks() {
+    this.dataLotsBanks
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'movementNumber':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'date':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'bankKey':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'reference':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'amount':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'entryOrderId':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'paymentId':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              filter.field == 'date'
+                ? (this.columnFiltersLotsBank[
+                    field
+                  ] = `${searchFilter}:${format(
+                    new Date(filter.search),
+                    'yyyy-MM-dd'
+                  )}`)
+                : (this.columnFiltersLotsBank[
+                    field
+                  ] = `${searchFilter}:${filter.search}`);
+            } else {
+              delete this.columnFiltersLotsBank[field];
+            }
+          });
+          this.paramsLotsBanks = this.pageFilter(this.paramsLotsBanks);
+          this.getLotsBanks(this.lotId);
+        }
+      });
+    this.paramsLotsBanks
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.getLotsBanks(this.lotId);
       });
   }
 
@@ -1355,7 +1473,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       ...this.columnFiltersLotsBank,
     };
 
-    params['filter.BatchID'] = `$eq:${idLote}`;
+    params['filter.lotId'] = `$eq:${idLote}`;
 
     this.paymentService.getComerPaymentRef2(params).subscribe(
       res => {

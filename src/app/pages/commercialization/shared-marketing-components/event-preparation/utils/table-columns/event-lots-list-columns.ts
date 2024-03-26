@@ -11,25 +11,34 @@ export const EVENT_LOT_LIST_COLUMNS = {
     title: 'Valor Base',
     sort: false,
   },
-  clientId: {
+  'client.id': {
     title: 'ID Cliente',
     sort: false,
     valuePrepareFunction: (value: any, row: any) => row?.client?.id ?? null,
+    filterFunction: (cell?: any, search?: string) => {
+      return true;
+    },
   },
   no_clasificacion_alterna: {
     title: 'No. Clasificación Alterna',
     sort: false,
   },
-  rfc: {
+  'client.rfc': {
     title: 'RFC.',
     sort: false,
     valuePrepareFunction: (value: any, row: any) => row?.client?.rfc ?? null,
+    filterFunction: (cell?: any, search?: string) => {
+      return true;
+    },
   },
-  razonSocial: {
+  'client.reasonName': {
     title: 'Razón Social',
     sort: false,
     valuePrepareFunction: (value: any, row: any) =>
       row?.client?.reasonName ?? null,
+    filterFunction: (cell?: any, search?: string) => {
+      return true;
+    },
   },
   warrantyPrice: {
     title: 'Precio Garantía',
@@ -41,9 +50,11 @@ export const EVENT_LOT_LIST_COLUMNS = {
     valuePrepareFunction: (value: any) =>
       value?.cvman ? `${value?.cvman} - ${value?.nameTransferent}` : null,
   },
-  mandato: {
+  cvman: {
     title: 'Mandato',
     sort: false,
+    valuePrepareFunction: (value: any, row: any) =>
+      row?.transferent?.cvman ?? null,
   },
   finalPrice: {
     title: 'Precio Final',

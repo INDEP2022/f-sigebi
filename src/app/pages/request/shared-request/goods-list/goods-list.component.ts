@@ -1,11 +1,14 @@
 import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ShowDocumentsGoodComponent } from '../expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
+import { ViewDetailGoodsComponent } from '../select-goods/view-detail-goods/view-detail-goods.component';
 import { ViewFileButtonComponent } from '../select-goods/view-file-button/view-file-button.component';
 import { SELECT_GOODS_LIST_COLUMNS } from './select-good-list-columns';
 
@@ -47,7 +50,10 @@ export class GoodsListComponent extends BasePage implements OnInit {
   private rejectedGoodService = inject(RejectedGoodService);
   private typeRelevantService = inject(TypeRelevantService);
 
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private requestService: RequestService
+  ) {
     super();
     this.selectedGoodSettings.columns = SELECT_GOODS_LIST_COLUMNS;
   }
@@ -62,7 +68,7 @@ export class GoodsListComponent extends BasePage implements OnInit {
         renderComponent: ViewFileButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
-            component.viewFile(row);
+            component.showDocuments(row.goodId);
           });
         },
       },
@@ -78,6 +84,25 @@ export class GoodsListComponent extends BasePage implements OnInit {
       });
   }
 
+  showDocuments(goodId: any): void {
+    const idGood = goodId;
+    const idRequest = this.requestId;
+    let config: ModalOptions = {
+      initialState: {
+        idGood,
+        idRequest,
+        parameter: '',
+        typeDoc: 'request-assets',
+        callback: (next: boolean) => {
+          //if(next) this.getExample();
+        },
+      },
+      class: `modalSizeXL modal-dialog-centered`,
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowDocumentsGoodComponent, config);
+  }
+
   getData(params: ListParams) {
     //const good: any = Object.assign({ viewFile: '' }, this.goodTestData[0]);
     /*const good: any = Object.assign(this.goodTestData[0]);
@@ -87,16 +112,20 @@ export class GoodsListComponent extends BasePage implements OnInit {
     this.rejectedGoodService.getAll(params).subscribe({
       next: resp => {
         const result = resp.data.map(async (item: any) => {
+          this.loading = false;
+
           item['typeRelevantDescrip'] = await this.getTypeRelevant(
             item.relevantTypeId
           );
         });
+        this.loading = true;
 
         Promise.all(result).then(data => {
           this.selectedGoodColumns = resp.data;
           this.selectedGoodTotalItems = resp.count;
           setTimeout(() => {
             this.displayGrouperName();
+            this.loading = false;
           }, 300);
         });
       },
@@ -118,15 +147,39 @@ export class GoodsListComponent extends BasePage implements OnInit {
     });
   }
 
-  viewFile(file: any) {
-    console.log(file);
+  getFormSeach(recordId: any) {
+    this.requestService.getById(recordId).subscribe({
+      next: resp => {
+        console.log('Respuesta del servidor:', resp); // Imprime la respuesta completa
+        this.viewFile(resp);
+      },
+      error: error => {
+        this.loading = false;
+        this.alert('warning', 'No se encontraron registros', '');
+      },
+    });
+  }
+
+  viewFile(data: any) {
+    this.openModalInformation(data, 'detail');
+  }
+
+  private openModalInformation(data: any, typeInfo: string) {
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        typeInfo,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ViewDetailGoodsComponent, config);
   }
 
   displayGrouperName() {
-    console.log(this.processDetonate);
     if (this.processDetonate == 'RES_NUMERARIO') {
       const columns = this.table.grid.getColumns();
-      console.log(columns);
       const grouperName = columns.find((x: any) => x.id == 'goodGrouper');
       grouperName.hide = true;
     }

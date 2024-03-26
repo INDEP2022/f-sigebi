@@ -63,11 +63,10 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       'Confirmación',
-      '¿Estás seguro que desea agregar un nuevo servicio?'
+      '¿Está seguro que desea agregar un nuevo servicio?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        console.log(this.selectServices);
         const user = this.authService.decodeToken();
         this.loader.load = true;
         this.servicesSelected.map(async (item: any, _i: number) => {
@@ -121,10 +120,9 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
         next: resp => {
           resolve(resp);
         },
-        error: error => {
+        error: () => {
           this.loader.load = false;
           reject('no se guardaron las ordenes de servicio');
-          console.log('error', error);
           this.onLoadToast('error', 'No se pudo guardar los servicios');
         },
       });

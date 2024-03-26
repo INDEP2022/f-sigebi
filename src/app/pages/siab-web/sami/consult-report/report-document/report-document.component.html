@@ -25,20 +25,20 @@
       </p>
     </div>
 
-    <div *ngIf="showSearchForm">
+    <div *ngIf="showSearchForm" class="pt-5">
       <form [formGroup]="docRequestForm" class="form-material">
         <div class="row pt-2">
-          <div class="col-md-6">
-            <form-field [control]="docRequestForm.get('text')" label="Texto">
-              <textarea
-                class="form-control"
+          <div class="col-md-4">
+            <form-field
+              [control]="docRequestForm.get('noRequest')"
+              label="No&#46; Expediente">
+              <input
                 type="text"
-                row
-                pt-5s="2"
-                formControlName="text"></textarea>
+                class="form-control"
+                formControlName="noRequest" />
             </form-field>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-4">
             <div
               [formGroup]="docRequestForm"
               class="form-group form-secondary form-static-label">
@@ -60,6 +60,18 @@
               <span class="form-bar"></span>
               <label class="float-label">Tipo de documento</label>
             </div>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="docRequestForm.get('responsible')"
+              label="Responsable">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="70"
+                formControlName="responsible" />
+            </form-field>
           </div>
         </div>
 
@@ -155,13 +167,13 @@
         </div>
         <div class="row pt-4">
           <div class="col-md-3">
-            <form-field
-              [control]="docRequestForm.get('noRequest')"
-              label="No&#46; Expediente">
-              <input
-                type="text"
+            <form-field [control]="docRequestForm.get('text')" label="Texto">
+              <textarea
                 class="form-control"
-                formControlName="noRequest" />
+                type="text"
+                row
+                pt-5s="2"
+                formControlName="text"></textarea>
             </form-field>
           </div>
           <div class="col-md-3">
@@ -175,17 +187,6 @@
                 pt-5s="2"
                 maxlength="100"
                 formControlName="comment"></textarea>
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="docRequestForm.get('responsible')"
-              label="Responsable">
-              <input
-                type="text"
-                class="form-control"
-                maxlength="70"
-                formControlName="responsible" />
             </form-field>
           </div>
         </div>
@@ -229,7 +230,7 @@
           <button
             class="btn btn-primary btn-sm active"
             (click)="getRequestData()">
-            Recargar <i class="fas fa-sync-alt"> </i>
+            Recargar<i class="fas fa-sync-alt"> </i>
           </button>
         </div>
         <div class="p-2">

@@ -2,9 +2,9 @@ import { Component, Input, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { GuidelinesService } from 'src/app/core/services/guidelines/guideline.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { GUIDELINES_COLUMNS } from '../guidelines/guidelines-columns';
-import { IGuideline } from './../../../../core/models/requests/guidelines.model';
 
 @Component({
   selector: 'app-guidelines-view',
@@ -13,7 +13,7 @@ import { IGuideline } from './../../../../core/models/requests/guidelines.model'
 })
 export class GuidelinesViewComponent extends BasePage implements OnInit {
   @Input() requestId: number;
-  guidelinesInfo: IGuideline;
+  guidelinesInfo: any = {};
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   guidelinesColumns: any[] = [];
@@ -22,54 +22,105 @@ export class GuidelinesViewComponent extends BasePage implements OnInit {
     actions: false,
   };
 
-  guidelinesTestData = [
+  firstRevisionDate: String = '';
+  secondRevisionDate: String = '';
+
+  loadGuidelines = [];
+
+  guidelinesData = [
     {
-      guideline: 'ACTA DE TRANSFERENCIA SAE',
-      firstRevision: 'SI',
-      firstRevisionObserv: 'EJEMPLO OBSERVACION 1',
-      secondRevision: 'N/A',
-      secondRevisionObserv: 'EJEMPLO OBSERVACION 2',
-    },
-    {
-      guideline: 'SOLICITUD DE PAGO RESARCIMIENTO (INSTRUCCIÓN DE PAGO ANCEA)',
-      firstRevision: '',
+      id: 1,
+      guideline: 'ACTA DE TRANSFERENCIA INDEP',
+      firstRevision: 'N/A',
       firstRevisionObserv: '',
-      secondRevision: '',
+      secondRevision: 'N/A',
       secondRevisionObserv: '',
     },
     {
+      id: 2,
+      guideline: 'SOLICITUD DE PAGO RESARCIMIENTO (INSTRUCCIÓN DE PAGO ANCEA)',
+      firstRevision: 'N/A',
+      firstRevisionObserv: '',
+      secondRevision: 'N/A',
+      secondRevisionObserv: '',
+    },
+    {
+      id: 3,
       guideline:
         'COPIA CERTIFICADA DE LA RESOLUCIÓN EMITIDA POR LA AUTORIDAD QUE ORDENE EL PAGO DE RESARCMIENTO',
-      firstRevision: '',
+      firstRevision: 'N/A',
       firstRevisionObserv: '',
-      secondRevision: '',
+      secondRevision: 'N/A',
       secondRevisionObserv: '',
     },
     {
+      id: 4,
       guideline: 'DOCUMENTO EN EL CUAL SE INDICA EL MONTO A PAGAR',
-      firstRevision: '',
+      firstRevision: 'N/A',
       firstRevisionObserv: '',
-      secondRevision: '',
+      secondRevision: 'N/A',
       secondRevisionObserv: '',
     },
   ];
 
-  constructor() {
+  constructor(private guidelinesService: GuidelinesService) {
     super();
     this.guidelinesSettings.columns = GUIDELINES_COLUMNS;
   }
 
   ngOnInit(): void {
-    this.getData();
+    this.getGuidelines();
   }
 
-  getData() {
-    this.guidelinesColumns = this.guidelinesTestData;
+  getData(data) {
+    this.guidelinesColumns = data;
     this.totalItems = this.guidelinesColumns.length;
-    this.guidelinesInfo = {
-      firstRevisionDate: '14/07/2018',
-      secondRevisionDate: '16/11/2018',
-      observations: 'EJEMPLO OBSERVACIONES',
-    };
+  }
+
+  getGuidelines() {
+    const params = new ListParams();
+    params['filter.applicationId'] = `$eq:${this.requestId}`;
+    this.guidelinesService.getGuidelines(params).subscribe({
+      next: resp => {
+        this.loadGuidelines = resp.data;
+
+        if (this.loadGuidelines.length > 0) {
+          this.guidelinesData.forEach(element => {
+            let item = this.loadGuidelines.find(
+              x => x.lineamentId == element.id
+            );
+
+            element.firstRevision = item.meetsRevision1;
+            element.secondRevision = item.meetsRevision2;
+            element.firstRevisionObserv = item.missingActionsRev1;
+            element.secondRevisionObserv = item.missingActionsRev2;
+          });
+
+          this.guidelinesInfo = this.loadGuidelines.find(x => x.lineamentId == "5");
+          console.log(this.guidelinesInfo);
+          this.firstRevisionDate = this.guidelinesInfo.meetsRevision1;
+          this.secondRevisionDate = this.guidelinesInfo.meetsRevision2;
+          this.guidelinesInfo.observations = this.guidelinesInfo.missingActionsRev1;
+        }
+
+        this.getData(this.guidelinesData);
+      },
+      error: err => {
+        this.getData([]);
+      },
+    });
+  }
+
+  formatDateTime(dateTime: string): string {
+    let date = new Date(dateTime);
+
+    let day: string = date.getDate().toString().padStart(2, '0');
+    let month: string = (date.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JavaScript empiezan en 0
+    let year: string = date.getFullYear().toString();
+    let hour: string = date.getHours().toString().padStart(2, '0');
+    let minute: string = date.getMinutes().toString().padStart(2, '0');
+
+    return `${day}/${month}/${year} `;
+    //${hour}:${minute}
   }
 }

@@ -1,13 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IParameterConcept } from 'src/app/core/models/ms-comer-concepts/parameter-concept';
-import { IParameterMod } from 'src/app/core/models/ms-comer-concepts/parameter-mod.model';
+import { IParameterMod2 } from 'src/app/core/models/ms-comer-concepts/parameter-mod.model';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -20,7 +15,7 @@ import { COLUMNS } from './columns';
   styleUrls: ['./params-concepts-modal.component.scss'],
 })
 export class ParamsConceptsModalComponent
-  extends BasePageWidhtDinamicFiltersExtra<IParameterMod>
+  extends BasePageWidhtDinamicFiltersExtra<IParameterMod2>
   implements OnInit
 {
   form: FormGroup;
@@ -28,8 +23,6 @@ export class ParamsConceptsModalComponent
   conceptId: string;
   title: string = 'Parámetro del concepto';
   parameterValue: IParameterConcept = null;
-  pageSizeOptions = [5, 10, 20, 25];
-  limit: FormControl = new FormControl(5);
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -38,7 +31,6 @@ export class ParamsConceptsModalComponent
   ) {
     super();
     this.service = this.parametersModService;
-    this.params.value.limit = 5;
     this.ilikeFilters = ['parameter', 'value', 'address'];
     this.settings = {
       ...this.settings,
@@ -76,7 +68,7 @@ export class ParamsConceptsModalComponent
     this.searchParams();
   }
 
-  selectParamsMod(event: IParameterMod) {
+  selectParamsMod(event: IParameterMod2) {
     console.log(event);
     this.parameter.setValue(event.parameter);
     this.value.setValue(event.value);
@@ -88,7 +80,7 @@ export class ParamsConceptsModalComponent
   }
 
   override getParams() {
-    // debugger;
+    // //
     let newColumnFilters = this.columnFilters;
     if (newColumnFilters['filter.address']) {
       let filterAddress = this.getAddressCode(
@@ -144,7 +136,7 @@ export class ParamsConceptsModalComponent
   }
 
   private prepareForm() {
-    // debugger;
+    // //
     this.form = this.fb.group({
       parameter: [null, [Validators.required]],
       value: [null, [Validators.required]],

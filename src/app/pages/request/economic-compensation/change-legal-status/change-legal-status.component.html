@@ -1,0 +1,191 @@
+<app-modal>
+  <div header>
+    <h5 *ngIf="isDelegationsVisible" class="modal-title">
+      Selecciona la Delegación
+    </h5>
+    <h5 *ngIf="isJuridicVisible" class="modal-title">
+      Oficio de Cambio de Situación Jurídica
+    </h5>
+  </div>
+  <div body *ngIf="isJuridicVisible">
+    <div class="row">
+      <div class="col-md-6"><strong>Transferente: </strong>{{ trans }}</div>
+      <div class="col-md-6">
+        <strong>Contribuyente y/o Indicado: </strong>{{ taxPayer }}
+      </div>
+      <div class="col-md-6 mt-5">
+        <strong>Proceso Detona: </strong> {{ detona }}
+      </div>
+    </div>
+    <form class="form-material mt-5" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('dirCorporateLegal')"
+            label="Dirección Corporativa Jurídica">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dirCorporateLegal" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('dirExecutiveLegal')"
+            label="Dirección Ejecutiva Jurídica">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dirExecutiveLegal" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('nameAddressee')"
+            label="Nombre Destinatario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameAddressee" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('postAddressee')"
+            label="Cargo Destinatario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="postAddressee" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <form-field [control]="form.get('affair')">
+            <ngx-select
+              (fetchItems)="getAffair($event)"
+              [data]="affairs"
+              [form]="form"
+              value="id"
+              label="Asunto"
+              bindLabel="legalAffair"
+              control="affair"
+              (change)="onAffairChange($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12"><strong>No. Amparo:</strong> {{ numAparo }}</div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('fundamentals')"
+            label="Justificación">
+            <textarea
+              class="form-control"
+              formControlName="fundamentals"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('providedDate')"
+            label="Fecha Proveido">
+            <input
+              class="form-control"
+              type="text"
+              formControlName="providedDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('inchargeProvided')"
+            label="Encargado Proveido">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="inchargeProvided" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <strong>Resolución:</strong> {{ 'CONCEDE' }}
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('statusSuspension')"
+            label="Estatus Suspensión">
+            <select class="form-control" formControlName="statusSuspension">
+              <option [value]="null">Seleccione un valor</option>
+              <option [value]="1">SUSPENSIÓN DEFINITIVA</option>
+              <option [value]="2">SUSPENSIÓN PROVICIONAL</option>
+              <option [value]="3">EL AMPARO</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('signatureBySubstitution')">
+            <div class="form-check">
+              <label
+                class="form-check-label"
+                style="margin-right: 20px"
+                for="signatureBySubstitution">
+                Firma por Suplencia
+              </label>
+              <input
+                class="form-check-input"
+                type="checkbox"
+                formControlName="signatureBySubstitution"
+                id="signatureBySubstitution" />
+            </div>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div body *ngIf="isDelegationsVisible">
+    <div class="row">
+      <div class="m-3">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settingsTwo"
+          [source]="dataThree"
+          (userRowSelect)="checkAcceptDelegations($event)"></ng2-smart-table>
+        <!--  -->
+        <app-pagination
+          [params]="paramsDelegation"
+          [totalItems]="totalItemsDelegation"></app-pagination>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          *ngIf="isJuridicVisible"
+          [type]="'button'"
+          [disabled]="!form.valid"
+          (click)="save()"></confirm-button>
+        <confirm-button
+          *ngIf="isDelegationsVisible"
+          [type]="'button'"
+          (click)="save()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

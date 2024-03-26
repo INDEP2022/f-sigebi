@@ -1,78 +1,15 @@
 <app-card [header]="true">
-  <div class="ch-content" header>
-    <h5 class="title">devolución de pagos</h5>
+  <div #scrollContainer class="ch-content" header>
+    <h5 class="title">Devolución de Pagos</h5>
   </div>
   <div body>
     <div *ngIf="layout == 'MAIN'" @OnInOut>
-      <!-- <div class="row d-flex">
-        <div class="col-sm-8 col-md-9">
-          <div class="d-flex align-items-center">
-            <h6 class="d-inline ms-3">Control de Devoluciones</h6>
-          </div>
-        </div>
-        <div class="col-sm-4 col-md-3">
-          <div class="d-flex flex-row-reverse">
-            <div>
-              <div
-                class="btn-group mt-0 me-2"
-                placement="bottom right"
-                dropdown
-                [isDisabled]="">
-                <button
-                  #actionsBtn
-                  dropdownToggle
-                  type="button"
-                  class="btn btn-sm btn-success btn-block active me-2 font-size-14 dropdown-toggle"
-                  aria-controls="dropdown-actions">
-                  Archivos CSV <span class="caret"></span>
-                </button>
-                <ul
-                  id="dropdown-csv"
-                  *dropdownMenu
-                  class="dropdown-menu dropdown-menu-right"
-                  role="menu"
-                  aria-labelledby="processBtn">
-                  <li role="menuitem">
-                    <a
-                      class="dropdown-item bg-success text-light"
-                      (click)="(true)"
-                      >Relaci&oacute;n de Devoluciones de Garant&iacute;a de
-                      Seguridad</a
-                    >
-                  </li>
-                  <li role="menuitem">
-                    <a
-                      class="dropdown-item bg-success text-light"
-                      (click)="(true)"
-                      >Archivos de Pagos y Transferencias</a
-                    >
-                  </li>
-                  <li role="menuitem">
-                    <a
-                      class="dropdown-item bg-success text-light"
-                      (click)="(true)"
-                      >Referencias de Solicitudes de Gastos y Pagos</a
-                    >
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
-      <!-- <hr class="mw-98 mt-n2" /> -->
-
-      <!-- <div class="table-padding"></div> -->
-      <!-- </ng-scrollbar> -->
       <div class="row mt-5">
         <div class="col-md-12 d-flex flex-row-reverse mb-3">
           <div>
-            <div
-              class="btn-group mt-0 me-2"
-              placement="bottom right"
-              dropdown
-              [isDisabled]="">
+            <div class="btn-group mt-0 me-2" placement="bottom right" dropdown>
               <button
+                [disabled]="btnLoadingCSV"
                 #actionsBtn
                 dropdownToggle
                 type="button"
@@ -89,7 +26,7 @@
                 <li role="menuitem">
                   <a
                     class="dropdown-item bg-success text-light"
-                    (click)="(true)"
+                    (click)="generateFile1()"
                     >Archivo CSV de Relaci&oacute;n de Devoluciones de
                     Garant&iacute;a de Seriedad</a
                   >
@@ -97,7 +34,7 @@
                 <li role="menuitem">
                   <a
                     class="dropdown-item bg-success text-light"
-                    (click)="(true)"
+                    (click)="generateFile2()"
                     >Genera Archivos de Pagos y Transferencias</a
                   >
                 </li>
@@ -119,9 +56,6 @@
               <div class="row mt-3">
                 <div class="col-sm-12 col-md-8">
                   <h5 class="title">Control de Devoluciones</h5>
-                  <!-- <div class="form-material">
-            <search-bar [params]="controlParams"></search-bar>
-          </div> -->
                 </div>
                 <div class="col-sm-12 col-md-4">
                   <div class="d-flex flex-row-reverse">
@@ -131,40 +65,36 @@
                     </div>
                   </div>
                 </div>
-                <!-- <ng-scrollbar
-        [track]="'horizontal'"
-        [autoHeightDisabled]="false"
-        class="table-scrollbar mt-1"> -->
-                <div
-                  class="col-sm-12 col-12 col-md-12 table-responsive p-5"
-                  style="max-height: 500px; overflow-y: scroll">
-                  <div [class]="loadingControl ? 'table-loading' : ''">
+                <div class="col-12" name="COMER_CTLDEVPAG_H">
+                  <form-loader *ngIf="loadingControl"></form-loader>
+                  <ng-scrollbar
+                    [track]="'all'"
+                    [ngStyle]="{ height: loadingControl ? '0px' : '400px' }">
                     <ng2-smart-table
                       id="controlTable"
                       [settings]="controlSettings"
                       [source]="dataTableControl"
                       (userRowSelect)="selectControl($event)">
                     </ng2-smart-table>
-                  </div>
+                  </ng-scrollbar>
+                  <app-pagination
+                    [params]="dataTableParamsControl"
+                    [totalItems]="totalControl">
+                  </app-pagination>
                 </div>
-                <app-pagination
-                  [params]="dataTableParamsControl"
-                  [totalItems]="totalControl">
-                </app-pagination>
               </div>
-
               <div class="row mt-4">
                 <form class="form-material" [formGroup]="controlForm">
                   <div class="row d-flex justify-content-center">
-                    <div class="col-md-3">
-                      <div class="d-flex justify-content-center">
-                        <div>
-                          <label><strong>Visualizar:</strong></label>
-                        </div>
+                    <div class="col-md-2">
+                      <div class="d-flex justify-content-end pt-3">
+                        <!-- <div> -->
+                        <label><strong>Visualizar:</strong></label>
+                        <!-- </div> -->
                       </div>
                     </div>
-                    <div class="col-md-3">
-                      <div class="d-flex justify-content-center">
+                    <div class="col-md-2">
+                      <div class="d-flex justify-content-beetwen">
                         <div>
                           <form-radio label="En Proceso">
                             <input
@@ -177,8 +107,8 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-md-3">
-                      <div class="d-flex justify-content-center">
+                    <div class="col-md-2">
+                      <div class="d-flex justify-content-beetwen">
                         <div>
                           <form-radio label="Concluidos">
                             <input
@@ -191,8 +121,8 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-md-3">
-                      <div class="d-flex justify-content-center">
+                    <div class="col-md-2">
+                      <div class="d-flex justify-content-beetwen">
                         <div>
                           <form-radio label="Todos">
                             <input
@@ -214,28 +144,26 @@
                 <div class="col-sm-12 col-md-12">
                   <h5 class="title">Eventos Relacionados</h5>
                 </div>
-                <div class="col-md-12" *ngIf="!devolutionCtlDevPagId">
-                  <div class="alert alert-info">
-                    Selecciona un registro de la tabla "Control de Devoluciones"
-                  </div>
-                </div>
-                <div
-                  class="col-sm-12 col-12 col-md-12 table-responsive p-5"
-                  style="max-height: 500px; overflow-y: scroll">
-                  <div [class]="loadingRelationEvent ? 'table-loading' : ''">
+                <div class="col-12" name="COMER_CTLDEVPAG_E">
+                  <form-loader *ngIf="loadingRelationEvent"></form-loader>
+                  <ng-scrollbar
+                    [track]="'all'"
+                    [ngStyle]="{
+                      height: loadingRelationEvent ? '0px' : '400px'
+                    }">
                     <ng2-smart-table
                       id="eventTable"
                       [settings]="eventSettings"
                       [source]="dataTableRelationEvent"
                       (userRowSelect)="selectRelatedEvent($event.selected)">
                     </ng2-smart-table>
-                  </div>
-                </div>
-                <div class="col-md-12">
+                  </ng-scrollbar>
                   <app-pagination
                     [params]="dataTableParamsRelationEvent"
                     [totalItems]="totalRelationEvent">
                   </app-pagination>
+                </div>
+                <div class="col-md-12">
                   <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                       <strong>DESCRIPCIÓN</strong>
@@ -271,33 +199,40 @@
                       <app-columns-select
                         [(settings)]="accountSettings"></app-columns-select>
                     </div>
-                    <!-- <div>
-                      <button
-                        class="btn btn-sm btn-primary active me-2 font-size-13"
-                        (click)="refreshAccountsPayments()"
-                        [disabled]="selectedAccounts.length == 0">
-                        Verificar Pagos SIRSAE
-                      </button>
-                    </div> -->
                   </div>
                 </div>
-                <div
-                  class="col-sm-12 col-12 col-md-12 table-responsive p-5"
-                  style="max-height: 500px; overflow-y: scroll">
-                  <div [class]="loading ? 'table-loading' : ''">
+                <div class="col-12" name="COMER_CTLDEVPAG_B">
+                  <form-loader *ngIf="loadingBank"></form-loader>
+                  <ng-scrollbar
+                    [track]="'all'"
+                    [ngStyle]="{ height: loadingBank ? '0px' : '400px' }">
                     <ng2-smart-table
                       id="accountTable"
                       [settings]="accountSettings"
                       [source]="dataTableBank"
-                      (userRowSelect)="selectAccounts($event.selected)">
+                      (userRowSelect)="selectAccounts($event.data)">
                     </ng2-smart-table>
-                  </div>
-                </div>
-                <div class="col-md-12">
+                  </ng-scrollbar>
                   <app-pagination
                     [params]="dataTableParamsBank"
                     [totalItems]="accountTotalItems">
                   </app-pagination>
+                </div>
+                <div class="col-md-12">
+                  <div class="row mt-2">
+                    <form class="form-material" [formGroup]="controlForm2">
+                      <div class="col-sm-9">
+                        <form-field [control]="controlForm2.get('txtMsg')">
+                          <input
+                            readonly
+                            type="text"
+                            maxlenght="100"
+                            class="form-control"
+                            formControlName="txtMsg" />
+                        </form-field>
+                      </div>
+                    </form>
+                  </div>
                   <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                       <strong>DESCRIPCIÓN</strong>
@@ -335,31 +270,34 @@
                     </div>
                     <div>
                       <button
-                        class="btn btn-sm btn-success active me-2 font-size-13"
+                        class="btn btn-sm btn-primary active me-2 font-size-13"
                         (click)="openTransferDateModal()">
                         Fecha de Transferencia
+                        <i class="fa fa-calendar" aria-hidden="true"></i>
                       </button>
                     </div>
                   </div>
                 </div>
-                <div
-                  class="col-sm-12 col-12 col-md-12 table-responsive p-5"
-                  style="max-height: 500px; overflow-y: scroll">
-                  <div [class]="loading ? 'table-loading' : ''">
+                <div class="col-12" name="COMER_CTLDEVPAG_P">
+                  <form-loader *ngIf="loadingBankAccount"></form-loader>
+                  <ng-scrollbar
+                    [track]="'all'"
+                    [ngStyle]="{
+                      height: loadingBankAccount ? '0px' : '400px'
+                    }">
                     <ng2-smart-table
                       id="paymentTable"
                       [settings]="paymentSettings"
                       [source]="dataTableBankAccount"
-                      (userRowSelect)="selectPayment($event.selected)">
+                      (userRowSelect)="selectPayment($event.data)">
                     </ng2-smart-table>
-                    <div class="table-padding"></div>
-                  </div>
-                </div>
-                <div class="col-md-12">
+                  </ng-scrollbar>
                   <app-pagination
                     [params]="dataTableParamsBankAccount"
-                    [totalItems]="accountTotalItems">
+                    [totalItems]="accountTotalItemsP">
                   </app-pagination>
+                </div>
+                <div class="col-md-12">
                   <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                       <strong>DESCRIPCIÓN</strong>
@@ -386,48 +324,65 @@
               class="row row-cols-sm-1 row row-cols-1 row-cols-md-2 row row-cols-lg-3 row-cols-xl-4 g-3">
               <div class="col">
                 <button
+                  [ngClass]="{ loading: btnLoading }"
+                  [disabled]="btnLoading"
                   class="btn btn-sm btn-info btn-block active me-2 font-size-13"
                   (click)="getComerCreationData()">
                   Crear Control
+                  <i
+                    *ngIf="!btnLoading"
+                    class="bx bx-plus bx-sm float-icon"></i>
                 </button>
               </div>
               <div class="col">
                 <button
+                  [ngClass]="{ loading: btnLoading2 }"
+                  [disabled]="btnLoading2"
                   class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
                   (click)="requestSpentGenerator()"
-                  [disabled]="">
+                  [disabled]="!disabledBtn">
                   Generar Solicitudes Gastos
+                  <i *ngIf="!btnLoading2" class="bi bi-cash"></i>
                 </button>
                 <!-- (click)="changeLayout('EXPENSE REQUEST')" -->
               </div>
               <div class="col">
                 <button
-                  class="btn btn-sm btn-success btn-block active me-2 font-size-13"
+                  [ngClass]="{ loading: btnLoading3 }"
+                  [disabled]="btnLoading3"
+                  class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
                   (click)="sendRequests()"
-                  [disabled]="">
+                  [disabled]="!disabledBtn">
                   Enviar Solicitudes a SIRSAE
+                  <i *ngIf="!btnLoading3" class="bx bx-send"></i>
                 </button>
               </div>
               <div class="col">
                 <button
-                  class="btn btn-sm btn-success btn-block active me-2 font-size-13"
+                  [ngClass]="{ loading: btnLoading4 }"
+                  [disabled]="btnLoading4"
+                  class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
                   (click)="verifyPaysSirsae()"
-                  [disabled]="">
+                  [disabled]="!disabledBtn">
                   Verificar pagos SIRSAE
                 </button>
               </div>
               <div class="col">
                 <button
-                  class="btn btn-sm btn-secondary btn-block active me-2 font-size-13"
-                  (click)="changeLayout('MAINTENANCE')">
+                  [disabled]="!valBtns"
+                  class="btn btn-sm btn-danger btn-block active me-2 font-size-13"
+                  (click)="changeLayout()">
                   Mantenimiento de Layouts
+                  <i class="fas fa-wrench"></i>
                 </button>
               </div>
               <div class="col">
                 <button
+                  [disabled]="!valBtns"
                   class="btn btn-sm btn-danger btn-block active me-2 font-size-13"
                   (click)="openCreationModal()">
                   Permisos de Creaci&oacute;n
+                  <i class="bx bxs-file"></i>
                 </button>
               </div>
             </div>

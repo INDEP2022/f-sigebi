@@ -1,10 +1,12 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { firstValueFrom, takeUntil } from 'rxjs';
 
-import { FormControl } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IConcept } from 'src/app/core/models/ms-comer-concepts/concepts';
 import { ConceptsService } from 'src/app/core/services/ms-commer-concepts/concepts.service';
 import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
@@ -27,8 +29,6 @@ export class ExpenseConceptsListComponent
 {
   @Input() address: string;
   toggleInformation = true;
-  pageSizeOptions = [5, 10, 20, 25];
-  limit: FormControl = new FormControl(5);
   disabled = false;
   constructor(
     private modalService: BsModalService,
@@ -38,7 +38,6 @@ export class ExpenseConceptsListComponent
     private securityService: SecurityService
   ) {
     super();
-    this.params.value.limit = 5;
     this.service = this.conceptsService;
     this.ilikeFilters = ['description'];
     // if (localStorage.getItem('username') !== 'sigebiadmon') {
@@ -154,6 +153,7 @@ export class ExpenseConceptsListComponent
     let config: ModalOptions = {
       initialState: {
         concept: newConcept,
+        address: this.address,
         callback: (next: boolean) => {
           if (next) {
             this.getData();
@@ -166,12 +166,54 @@ export class ExpenseConceptsListComponent
     this.modalService.show(ExpenseConceptsListModalComponent, config);
   }
 
+  override fillColumnFilters(
+    haveFilter: boolean,
+    field: string,
+    filter: any,
+    searchFilter: SearchFilter
+  ) {
+    if (filter.search !== '') {
+      if (
+        filter.search === 'N' &&
+        ['automatic', 'numerary'].includes(filter.field)
+      ) {
+        this.columnFilters[field] = `${searchFilter}:S`;
+      } else {
+        this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+      }
+
+      haveFilter = true;
+    } else {
+      delete this.columnFilters[field];
+    }
+    if (haveFilter) {
+      this.params.value.page = 1;
+    }
+  }
+
+  override getSearchFilter(filter: any) {
+    let searchFilter = SearchFilter.ILIKE;
+    if (this.ilikeFilters.includes(filter.field)) {
+      searchFilter = SearchFilter.ILIKE;
+    } else {
+      if (
+        filter.search === 'N' &&
+        ['automatic', 'numerary'].includes(filter.field)
+      ) {
+        searchFilter = SearchFilter.NEQ;
+      } else {
+        searchFilter = SearchFilter.EQ;
+      }
+    }
+    return searchFilter;
+  }
+
   async showCopyModal() {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       conceptId: this.conceptId,
       address: this.address,
-      callback: (body: { id: string }) => {
+      callback: (body: { id: string; address: string }) => {
         if (body) {
           let listParams = new ListParams();
           listParams.limit = 10000;
@@ -180,7 +222,7 @@ export class ExpenseConceptsListComponent
               {
                 ...body,
                 concept: this.conceptId,
-                address: this.selectedConcept.address,
+                address: this.address,
               },
               listParams
             )
@@ -261,7 +303,7 @@ export class ExpenseConceptsListComponent
   }
 
   override getParams() {
-    // debugger;
+    // //
     let newColumnFilters = this.columnFilters;
 
     if (newColumnFilters['filter.address']) {

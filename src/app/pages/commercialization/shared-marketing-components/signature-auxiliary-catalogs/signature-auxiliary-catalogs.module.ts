@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgScrollbarModule } from 'ngx-scrollbar';
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CommercializationDestinationModalComponent } from './commercialization-destination-modal/commercialization-destination-modal.component';
 import { CommercializationEventModalComponent } from './commercialization-event-modal/commercialization-event-modal.component';
@@ -13,7 +14,6 @@ import { CBROimCReportsModalComponent } from './reports-modal/reports-modal.comp
 import { SignatureAuxiliaryCatalogsMainComponent } from './signature-auxiliary-catalogs-main/signature-auxiliary-catalogs-main.component';
 import { SignatureAuxiliaryCatalogsRoutingModule } from './signature-auxiliary-catalogs-routing.module';
 import { TypesModalComponent } from './types-modal/types-modal.component';
-
 @NgModule({
   declarations: [
     SignatureAuxiliaryCatalogsMainComponent,
@@ -26,6 +26,7 @@ import { TypesModalComponent } from './types-modal/types-modal.component';
   ],
   imports: [
     CommonModule,
+    FormLoaderComponent,
     SignatureAuxiliaryCatalogsRoutingModule,
     SharedModule,
     NgScrollbarModule,

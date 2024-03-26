@@ -4,9 +4,10 @@ import { BasePage } from 'src/app/core/shared/base-page';
 
 import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { SocketService } from 'src/app/common/socket/socket.service';
 import { IGoodSpent } from 'src/app/core/models/ms-spent/good-spent.model';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
@@ -18,6 +19,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { isEmpty } from 'src/app/utils/validations/is-empty';
 import { CommercialSpentForm } from '../../consultation-goods-commercial-process-tabs/utils/commercial-spents.form';
 import { CONSULTATION_GOODS_BILLS_COLUMNS } from './consultation-goods-commercial-bills-columns';
+
 @Component({
   selector: 'app-consultation-goods-commercial-bills',
   templateUrl: './consultation-goods-commercial-bills.component.html',
@@ -44,7 +46,8 @@ export class ConsultationGoodsCommercialBillsComponent
     private goodSpentService: GoodSpentService,
     private transferentService: TransferenteService,
     private spentService: SpentService,
-    private stationService: StationService
+    private stationService: StationService,
+    private socketService: SocketService
   ) {
     super();
     this.settings = {
@@ -83,8 +86,10 @@ export class ConsultationGoodsCommercialBillsComponent
 
   selectRow(row: IGoodSpent, selected: boolean) {
     if (selected) {
+      console.log(row);
       this.selectedRows.push(row);
     } else {
+      console.log(row);
       this.selectedRows = this.selectedRows.filter(
         _row => JSON.stringify(row) != JSON.stringify(_row)
       );
@@ -95,7 +100,7 @@ export class ConsultationGoodsCommercialBillsComponent
     this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: () => {
         if (this.isValid()) {
-          this.getData();
+          this.executeConsult();
         }
       },
     });
@@ -107,11 +112,6 @@ export class ConsultationGoodsCommercialBillsComponent
   }
 
   getData() {
-    if (!this.isValid()) {
-      this.alert('warning', '', 'Debe completar al menos un campo de búsqueda');
-      return;
-    }
-
     this.goodSpentService
       .getGoodSpents(this.form.value, this.params2.getValue())
       .subscribe({
@@ -159,12 +159,34 @@ export class ConsultationGoodsCommercialBillsComponent
     }
   }
 
+  subscribeExcel(token: any) {
+    console.log(token);
+
+    return this.socketService.goodsTrackerExcel(token.channel).pipe(
+      catchError(error => {
+        this.loader.load = false;
+        return throwError(() => error);
+      }),
+      tap(res => {
+        console.warn('RESPUESTA DEL SOCKET');
+        console.log(res);
+        /* if (res.path != null) {
+          this.getExcel(res.path);
+        } */
+      })
+      // switchMap(() => )
+    );
+  }
+
   exportAll() {
     this.loading = true;
     console.log(this.modelSave2);
     if (this.modelSave2 != null) {
       this.spentService.getChargeSpentsExcel(this.modelSave2).subscribe(
         res => {
+          console.log(res);
+
+          // switchMap(() => )
           this.downloadDocument('TODO_GASTOS', 'excel', res.base64File);
         },
         err => {
@@ -174,6 +196,7 @@ export class ConsultationGoodsCommercialBillsComponent
       );
     } else {
       this.loading = false;
+      console.log('Llamo 178');
       this.alert('warning', 'Debe completar al menos un campo de búsqueda', '');
     }
   }
@@ -225,21 +248,21 @@ export class ConsultationGoodsCommercialBillsComponent
 
   private transFormColums(row: any) {
     return {
-      'No. Bien': row.no_bien,
-      Descripción: row.bien_descripcion,
       Expediente: row.no_expediente,
-      Estatus: row.estatus,
+      'No. Siab': row.no_bien,
+      // Descripción: row.bien_descripcion,
       Cantidad: row.cantidad,
+      Estatus: row.estatus,
       Mandato: row.cvman,
-      'Clave Transferente': row.no_transferente,
+      // 'Clave Transferente': row.no_transferente,
       'Sol. Pago': row.id_solicitudpago,
       Beneficiario: row.nombreprov,
       'Importe Gasto': row['?column?'],
       'No. Factura': row.no_factura_rec,
-      'Fecha Factura': row.to_char,
-      Solicita: row.nom_empl_solicita,
-      Autorizó: row.nom_empl_autoriza,
-      Capturó: row.nom_empl_captura,
+      // 'Fecha Factura': row.to_char,
+      // Solicita: row.nom_empl_solicita,
+      // Autorizó: row.nom_empl_autoriza,
+      // Capturó: row.nom_empl_captura,
     };
   }
 
@@ -332,6 +355,7 @@ export class ConsultationGoodsCommercialBillsComponent
     this.modelSave2 = model;
 
     if (Object.keys(model).length === 0) {
+      console.log('Llamo 337');
       this.alert('warning', 'Debe completar al menos un campo de búsqueda', '');
       this.loading = false;
     } else {
@@ -343,12 +367,23 @@ export class ConsultationGoodsCommercialBillsComponent
           this.loading = false;
         },
         err => {
-          this.alert(
-            'error',
-            'Se presentó un error inesperado al obtener los Bienes',
-            ''
-          );
           console.log(err);
+          console.log(err.status);
+
+          if (err.status === 400) {
+            this.alert(
+              'warning',
+              'No se encontraron resultados con los filtros seleccionados',
+              ''
+            );
+          } else {
+            this.alert(
+              'error',
+              'Se presentó un error inesperado al obtener los Bienes',
+              ''
+            );
+          }
+
           this.data.load([]);
           this.totalItems2 = 0;
           this.loading = false;

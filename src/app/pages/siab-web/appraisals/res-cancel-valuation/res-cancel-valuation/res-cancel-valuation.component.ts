@@ -1,9 +1,12 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { DomSanitizer } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
+  BehaviorSubject,
   catchError,
   debounceTime,
   firstValueFrom,
@@ -14,16 +17,26 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
+import { IModComerOffice } from 'src/app/core/models/ms-officemanagement/mod-comer-office';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { AppraiseService } from 'src/app/core/services/ms-appraise/appraise.service';
+import { ClarificationsService } from 'src/app/core/services/ms-office-management/clarifications.service';
+import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
-import { GenerateCveService } from 'src/app/core/services/ms-security/application-generate-clave';
+import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ButtonColumnAddComponent } from 'src/app/shared/components/button-column/button-column-add.component';
+import { ButtonColumnDeleteComponent } from 'src/app/shared/components/button-column/button-column-delete.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AppraisalsDataService } from '../../appraisals-data.service';
+import { CancelTableComponent } from './cancel-table/cancel-table.component';
 import {
   MyBody,
   OfficesSend,
@@ -31,14 +44,39 @@ import {
   ValidationResponseFile,
 } from './res-cancel-valuation-class/class-service';
 import {
+  goodCheck,
   VALUATION_REQUEST_COLUMNS,
-  VALUATION_REQUEST_COLUMNS_VALIDATED,
+  VALUATION_REQUEST_COLUMNS_VALIDATED_TWO,
 } from './res-cancel-valuation-columns';
 
+interface IExcelToJson {
+  ID_BIENES: number;
+  ID_MOTIVOS1: number;
+  MOTIVOS1: string;
+  ID_MOTIVOS2: number;
+  MOTIVOS2: string;
+  ID_MOTIVOS3: number;
+  MOTIVOS3: string;
+  ID_MOTIVOS4: number;
+  MOTIVOS4: string;
+}
 @Component({
   selector: 'app-res-cancel-valuation',
   templateUrl: './res-cancel-valuation.component.html',
-  styles: [],
+  styles: [
+    `
+      input[type='file']::file-selector-button {
+        margin-right: 20px;
+        border: none;
+        background: #9d2449;
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        /* transition: background.2s ease-in-out; */
+      }
+    `,
+  ],
 })
 export class resCancelValuationComponent extends BasePage implements OnInit {
   //
@@ -89,6 +127,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   lbltipOficio: any = '-';
   lblDireccion: any = '-';
   lblCvlOfocio: any = '-';
+  statusOffice: any = '-';
   idOffice: number;
   countCopy: number = 0;
 
@@ -111,6 +150,28 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   // Modal #1
   formDialogOne: FormGroup;
 
+  dataGood: LocalDataSource = new LocalDataSource();
+  dataGoodList: any = [];
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  settings2 = {
+    ...this.settings,
+    hideSubHeader: false,
+    actions: false,
+    columns: VALUATION_REQUEST_COLUMNS_VALIDATED_TWO,
+  };
+  dataGood2: LocalDataSource = new LocalDataSource();
+  totalItems2: number = 0;
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+
+  tipoOficio: number = 0;
+
+  numOne: number;
+  numTwo: number;
+  m_comer: IModComerOffice;
+  dataExcel: any = [];
+  fileName: string;
+
   //#endregion
 
   //
@@ -123,24 +184,20 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     private datePipe: DatePipe,
     private dataService: AppraisalsDataService,
     private serviceAppraise: AppraiseService,
-    private generateCveService: GenerateCveService,
     private route: ActivatedRoute,
-    private router: Router,
-    private serviceUser: GenerateCveService,
+    private usersService: UsersService,
     private serviceDelegations: DelegationService,
     private serviceDepartments: DepartamentService,
+    private jobDictumTextsService: JobDictumTextsService,
     private modalService: BsModalService,
-    private cdr: ChangeDetectorRef
+    private excelService: ExcelService,
+    private clarificationsService: ClarificationsService,
+    private parameterModService: ParameterModService,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer
   ) {
     super();
-    this.settings = {
-      ...this.settings,
-      selectMode: 'multi',
-      actions: false,
-      hideSubHeader: false,
-      columns: { ...VALUATION_REQUEST_COLUMNS },
-    };
-
+    this.columnsTable();
     this.prepareForm();
     this.form
       .get('event')
@@ -149,6 +206,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         next: response => {
           console.log(response);
           if (response && this.form.get('radio').value) {
+            this.tipoOficio = response;
             this.changeRatio(this.form.get('radio').value);
           }
         },
@@ -159,15 +217,17 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           console.log(response);
-
           if (response && this.form.get('event').value) {
+            this.tipoOficio = response;
             this.changeRatio(response);
           }
         },
       });
+    this.m_comer = new IModComerOffice();
   }
 
   private changeRatio(radioValue: any) {
+    console.log(this.event);
     if (this.event != '' && this.event != null) {
       this.btnMotCan = false;
       // this.resetVariables();
@@ -185,10 +245,19 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
   ngOnInit() {
     this.byUser = true;
+    this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.obtainsCancelAssets();
+    });
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.obtainsValuedAssets();
+    });
 
     this.updateHour();
     this.intervalId = setInterval(() => {
       this.updateHour();
+      let good = goodCheck.map(item => item.no_bien).join(',');
+      console.log(good);
+      this.formTwo.controls['selectedGood'].setValue(good);
     }, 1000);
 
     this.setButtons(3);
@@ -233,25 +302,34 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     // } else {
     //   this.alert('warning', 'Debe seleccionar un usuario', '');
     // }
-    this.alertQuestion(
-      'question',
-      'Agregar Usuario',
-      '¿Desea agregar un usuario?'
-    ).then(x => {
-      if (x.isConfirmed) {
-        let countCopyLocal = this.countCopy + 1;
-        this.countCopy = countCopyLocal;
-        if (this.radioValueThree == false) {
-          this.arrayCopy.push(
-            `${countCopyLocal}/${this.formThree.controls['user'].value}`
-          );
-        } else {
-          this.arrayCopy.push(
-            `${countCopyLocal}/EXTERNO-${this.formThree.controls['depar'].value?.descripcion}`
-          );
+    console.log(this.formThree.controls['user'].value);
+    if (
+      this.formThree.controls['user'].value == null &&
+      this.formThree.controls['depar'].value == null
+    ) {
+      this.alert('warning', 'Debe seleccionar un usuario', '');
+      return;
+    } else {
+      this.alertQuestion(
+        'question',
+        'Agregar Usuario',
+        '¿Desea agregar un usuario?'
+      ).then(x => {
+        if (x.isConfirmed) {
+          let countCopyLocal = this.countCopy + 1;
+          this.countCopy = countCopyLocal;
+          if (this.radioValueThree == false) {
+            this.arrayCopy.push(
+              `${countCopyLocal}/${this.formThree.controls['user'].value}`
+            );
+          } else {
+            this.arrayCopy.push(
+              `${countCopyLocal}/EXTERNO-${this.formThree.controls['depar'].value?.descripcion}`
+            );
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   removeUserCopy() {
@@ -447,7 +525,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   async findOfficeService(data: any) {
-    // debugger;
+    // //
     let valorObjeto: any;
     valorObjeto = data;
     console.log(data);
@@ -468,6 +546,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     let body: OfficesSend = new OfficesSend();
     body.eventId = event;
     body.officeType = num ? num : 0;
+    this.columnsTable();
     this.getOfficeResponse(body, num, arrayLength);
   }
 
@@ -484,7 +563,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   validateBienesSelect() {
     let tpOfi = this.officeType;
     if (tpOfi === 2) {
-      if (this.dataService.selectedRowsValueds.length === 0) {
+      if (goodCheck.length === 0) {
         this.alert(
           'warning',
           'Para continuar es necesario seleccionar bienes Valuados',
@@ -494,7 +573,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       }
     }
     if (tpOfi === 3) {
-      if (this.dataService.selectedRowsCancel.length === 0) {
+      if (goodCheck.length === 0) {
         this.alert(
           'warning',
           'Para continuar es necesario seleccionar bienes Cancelados',
@@ -502,10 +581,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         );
         return false;
       }
-      let widthMotives = this.dataService.selectedRowsCancel.filter(
-        x => x.motivos
-      );
-      if (widthMotives.length != this.dataService.selectedRowsCancel.length) {
+      let widthMotives = this.dataGoodList.filter(x => x.motivos);
+      if (widthMotives.length != goodCheck.length.length) {
         this.alert(
           'warning',
           'Para continuar es necesario que seleccione los motivos por los que se enviara a Rev el bien',
@@ -517,27 +594,212 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     return true;
   }
 
-  modifyOffice() {
-    if (!this.validateBienesSelect()) {
-      return;
+  async modifyOffice() {
+    try {
+      if (!this.validateBienesSelect()) {
+        return;
+      }
+      let tpOfi = this.officeType;
+      console.log(tpOfi);
+      let idOficio = 0;
+      let dtidOfi: any = await this.insertaOficio();
+      idOficio = dtidOfi.ID_OFICIO;
+      let mensaje = dtidOfi.MSJ;
+      if (idOficio == 0 && mensaje != null) {
+        throw new Error(mensaje);
+      }
+      if (tpOfi == 2) {
+        await this.insertaBien(idOficio, 0, 'D');
+        for (let i = 0; i < goodCheck.length; i++) {
+          await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+        }
+      } else if (tpOfi == 3) {
+        await this.insertaBien(idOficio, 0, 'D');
+        for (let i = 0; i < this.dataGoodList.length; i++) {
+          await this.insertaMotRev(
+            this.dataGoodList[i].no_bien,
+            this.form.controls['event'].value,
+            'NADA',
+            'NADA',
+            'D'
+          );
+        }
+        for (let i = 0; i < goodCheck.length; i++) {
+          this.dataGoodList.forEach(async element => {
+            if (element.no_bien == goodCheck[i].no_bien) {
+              await this.insertaMotRev(
+                goodCheck[i].no_bien,
+                this.form.controls['event'].value,
+                this.changeChar(element.motivos.toString()),
+                element.idMotivos.toString(),
+                'I'
+              );
+              await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+            }
+          });
+        }
+      }
+      this.arrayCopy.forEach(element => {
+        this.postInsertUsuCopia('I', idOficio, element);
+      });
+      this.setButtons(4);
+      this.alert('success', '', 'El oficio se actualizó correctamente');
+    } catch (error) {
+      this.alert('warning', '', 'Problema para actualizar el oficio');
     }
-    let tpOfi = this.officeType();
-    let body = {
-      officeId: this.form.get('office').value,
-      eventId: this.event,
-      officeType: tpOfi,
-      userInsert: this.formThree.controls['user'].value,
-      remi: this.form.get('remi').value,
-      dest: this.form.get('dest').value,
-      city: this.form.get('cityCi').value,
-      ref: this.form.get('ref').value,
-      aten: this.form.get('aten').value,
-      espe: this.form.get('espe').value,
-      key: this.form.get('key').value,
-    };
+  }
+  async postInsertUsuCopia(acction: string, mComer: any, value: any) {
+    return new Promise(async (res, rej) => {
+      let user = await this.obtenerTextoDespuesDelGuion(value);
+      let data = {
+        user: user,
+        jobId: mComer,
+        action: acction,
+        userType: 'INTERNO',
+      };
+
+      this.usersService.postSpInsertWithcopyOfficia(data).subscribe({
+        next: resp => {
+          console.log(resp);
+          res(resp);
+        },
+        error: eror => {
+          this.loader.load = false;
+          res(eror);
+        },
+      });
+      // res(0);
+    });
+  }
+  obtenerTextoDespuesDelGuion(texto): string {
+    const partes = texto.split('-'); // Dividir el string en partes utilizando el guion como separador
+    return partes.length > 1 ? partes[1].trim() : ''; // Seleccionar la segunda parte y eliminar espacios en blanco al principio y al final
+  }
+  private changeChar(chain: string): string {
+    console.log(chain);
+    let replacements = [
+      { from: '&nbsp;', to: '' },
+      { from: 'nbsp;', to: '' },
+      { from: 'amp;NBSP;', to: '' },
+      { from: '&amp;nbsp;', to: '' },
+      { from: '&amp;amp;nbsp;', to: '' },
+      { from: '&AMP;AMP;NBSP;', to: '' },
+      { from: '&amp;', to: '' },
+      { from: '&AMP;', to: '' },
+      { from: '&#193;', to: 'Á' },
+      { from: '#193;', to: 'Á' },
+      { from: '&#225;', to: 'á' },
+      { from: '#225;', to: 'á' },
+      { from: '&#201;', to: 'É' },
+      { from: '#201;', to: 'É' },
+      { from: '&#233;', to: 'é' },
+      { from: '#233;', to: 'é' },
+      { from: '&#205;', to: 'Í' },
+      { from: '&#237;', to: 'í' },
+      { from: '&#211;', to: 'Ó' },
+      { from: '#211;', to: 'Ó' },
+      { from: '&#243;', to: 'ó' },
+      { from: '#243;', to: 'ó' },
+      { from: '&#218;', to: 'Ú' },
+      { from: '#218;', to: 'Ú' },
+      { from: '&#250;', to: 'ú' },
+      { from: '#250;', to: 'ú' },
+      { from: '&amp;amp;#225;', to: 'á' },
+      { from: '&amp;amp;#233;', to: 'é' },
+      { from: '&amp;amp;#237;', to: 'í' },
+      { from: '&amp;amp;#243;', to: 'ó' },
+      { from: '&amp;amp;#250;', to: 'ú' },
+      { from: '&#241;', to: 'ñ' },
+      { from: '&#209;', to: 'Ñ' },
+      { from: '&amp;#209;', to: 'Ñ' },
+      { from: '&#220;', to: 'Ü' },
+      { from: '&#252;', to: 'ü' },
+      { from: '&quot;', to: '' },
+      { from: "'", to: '' },
+    ];
+
+    for (let replacement of replacements) {
+      chain = chain.split(replacement.from).join(replacement.to);
+    }
+
+    return chain;
+  }
+
+  async insertaOficio() {
+    return new Promise((resolve, reject) => {
+      let body = {
+        TIPO_OFICIO_IN: this.m_comer.tipo_oficio,
+        USUARIO_INSERT_IN: this.m_comer.usuario_insert,
+        REMITENTE_IN: this.m_comer.remitente,
+        DESTINATARIO_IN: this.m_comer.destinatario,
+        CIUDAD_IN: this.m_comer.ciudad,
+        TEXTO1_IN: this.m_comer.texto1,
+        TEXTO2_IN: this.m_comer.texto2,
+        TEXTO3_IN: this.m_comer.texto3,
+        ID_OFICIO_IN: this.m_comer.id_oficio,
+        ID_EVENTO_IN: this.m_comer.id_evento,
+        ID_OFICIO_RES_IN: '',
+        NUM_CV_ARMADA_IN: this.m_comer.num_cv_armada,
+        ID_PROGRAMACION_IN:
+          this.m_comer.id_programacion != null
+            ? this.m_comer.id_programacion
+            : null,
+      };
+      this.clarificationsService.postSpInsertaOficioRespuesta(body).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          reject(null);
+        },
+      });
+    });
+  }
+  async insertaBien(idOficio: number, noBien: number, accion: string) {
+    return new Promise((resolve, reject) => {
+      let body = {
+        jobId: idOficio,
+        goodNumber: noBien,
+        action: accion,
+      };
+      this.parameterModService.postSpInsertGoodRes(body).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          reject(error);
+        },
+      });
+    });
+  }
+  async insertaMotRev(
+    noBien: number,
+    idEvento: number,
+    motivos: string,
+    noMotivos: string,
+    accion: string
+  ) {
+    return new Promise((resolve, reject) => {
+      let body = {
+        goodInNumber: noBien,
+        eventInId: idEvento,
+        reasonsInNumber: noMotivos,
+        reasonsIn: motivos,
+        actionIn: accion,
+      };
+      this.clarificationsService.postInsertReasonsRev(body).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          reject(error);
+        },
+      });
+    });
   }
   async viewOffice() {
     try {
+      this.loader.load = true;
       let dataOffice: any[] = [];
       let type: ValidationResponseFile = new ValidationResponseFile();
       let body: OfficesSend = new OfficesSend();
@@ -553,8 +815,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         type.typeOffice = x.id_tpsolaval;
         type.address = x.direccion;
       }
-
+      console.log(type.typeOffice);
       if (type.typeOffice == 2) {
+        console.log(this.form.get('radio').value);
         if (this.form.get('radio').value == 2) {
           tituloOficio = this.getDescriptionParameters('OFI_RES_V');
           myBody = await this.getDataByOffice();
@@ -566,7 +829,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           myBody.subject = tituloOficio;
           this.generateReport(myBody, type.address);
         }
-      } else if (type.typeOffice == 3) {
+      } else if (type.typeOffice == 1) {
         if (this.form.get('radio').value == 2) {
           tituloOficio = this.getDescriptionParameters('OFI_RES_A');
           myBody = await this.getDataByOffice();
@@ -613,25 +876,107 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       myBody.senderPosition = x.cargo_rem;
     }
 
-    let noGood: any[] = [];
-    noGood = this.getGoodsWithOffice(this.returnIdOffice());
-    for (const x of noGood) {
-      listGoods = listGoods + x.no_bien + ', ';
-    }
+    let noGood: any;
+    noGood = await this.getGoodsWithOffice(this.returnIdOffice());
+    console.log(noGood);
+    let noGood2: any;
+    noGood2 = await this.getGoodsWithOfficeAll(
+      this.returnIdOffice(),
+      noGood.count
+    );
 
+    for (const x of noGood2) {
+      listGoods = listGoods + x.goodNumber.goodId + ', ';
+    }
+    console.log(listGoods);
     myBody.goodsList = listGoods;
 
     return myBody;
   }
 
-  //No hay servicio en la documentacion
-  getGoodsWithOffice(idOffice: number) {
-    let arrayNumGoods: [] = [];
-
-    return arrayNumGoods;
+  async getGoodsWithOffice(idOffice: number) {
+    return new Promise((resolve, reject) => {
+      let params = new ListParams();
+      params['filter.jobId'] = idOffice;
+      this.jobDictumTextsService.getcomerJobsDet(params).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          reject(error);
+        },
+      });
+    });
   }
+  async getGoodsWithOfficeAll(idOffice: number, count: number) {
+    return new Promise((resolve, reject) => {
+      let params = new ListParams();
+      params['filter.jobId'] = idOffice;
+      params.limit = count;
+      this.jobDictumTextsService.getcomerJobsDet(params).subscribe({
+        next: response => {
+          resolve(response.data);
+        },
+        error: error => {
+          reject(error);
+        },
+      });
+    });
+  }
+  //No hay servicio en la documentacion
+  // getGoodsWithOffice(idOffice: number) {
+  //   let arrayNumGoods: any[] = [];
+  //   let params = new ListParams();
+  //   params['filter.jobId'] = idOffice;
+  //   this.jobDictumTextsService.getcomerJobsDet(params).subscribe({
+  //     next: response => {
+  //       console.log(response);
+  //       arrayNumGoods = response.data;
+  //       console.log(arrayNumGoods);
+  //       return arrayNumGoods;
+  //     },
+  //     error: error => {
+  //       arrayNumGoods = [];
+  //       return arrayNumGoods;
+  //     },
+  //   });
+  // }
 
-  generateReport(myBody: MyBody, address: any) {}
+  generateReport(myBody: MyBody, address: any) {
+    console.log(myBody);
+    console.log(address);
+    this.loader.load = false;
+    let params = {};
+    this.siabService.fetchReport('blank', params).subscribe(response => {
+      //  response= null;
+      if (response !== null) {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {
+              if (data) {
+                data.map((item: any) => {
+                  return item;
+                });
+              }
+            },
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+        this.loader.load = false;
+      } else {
+        this.onLoadToast('warning', 'advertencia', '');
+        this.loader.load = false;
+      }
+    });
+  }
 
   returnIdOffice(): number {
     let num: number = 0;
@@ -650,9 +995,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   async getOfficeResponse(body: any, type?: number, arrayLength?: number) {
-    // debugger;
+    console.log(type);
     let array = [];
     array = await this.getOfficeRequest(body);
+    console.log(array);
     if (array.length > 0) {
       for (const i of array) {
         this.lblTipoAccOficio = i
@@ -673,6 +1019,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           this.lblDireccion = ' ACTIVOS FINANCIEROS ';
         }
         this.lblCvlOfocio = i?.cve_oficio;
+
         this.form
           .get('event')
           .setValue(i?.id_evento, { onlySelf: true, emitEvent: false });
@@ -681,18 +1028,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           this.dateFormat(i?.fecha_insert)
         );
         this.form.controls['ref'].setValue(
-          this.form.controls['ref'].value +
-            '\n' +
-            i?.referen +
-            ' ' +
-            this.lblDireccion
+          i?.referen + ' ' + this.lblDireccion
         );
         this.form.controls['aten'].setValue(
-          this.form.controls['aten'].value +
-            '\n' +
-            i?.atencion +
-            ' ' +
-            this.lblCvlOfocio
+          i?.atencion + ' ' + this.lblCvlOfocio
         );
         if (i.fol) {
           this.form.controls['fol'].setValue(i.fol);
@@ -701,11 +1040,23 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       if (type == 2) {
         this.obtainsValuedAssets(2, 0);
         // this.radioValueOne = true;
-        this.btnMotCan = false;
-      } else if (type == 3) {
-        this.obtainsValuedAssets(3, 0);
-        // this.redioValueTwo = true;
+        this.form
+          .get('radio')
+          .setValue('2', { onlySelf: true, emitEvent: false });
         this.btnMotCan = true;
+      } else if (type == 3) {
+        this.obtainsCancelAssets(3, 0);
+        this.form
+          .get('radio')
+          .setValue('3', { onlySelf: true, emitEvent: false });
+        // this.redioValueTwo = true;
+        this.settings = {
+          ...this.settings,
+          hideSubHeader: false,
+          actions: false,
+          columns: VALUATION_REQUEST_COLUMNS_VALIDATED_TWO,
+        };
+        this.btnMotCan = false;
       }
     } else {
       this.alert(
@@ -717,6 +1068,12 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   async findOffice(body: any) {
+    this.dataGood.load([]);
+    this.dataGood.refresh();
+    this.totalItems = 0;
+    this.dataGood2.load([]);
+    this.dataGood2.refresh;
+    this.totalItems2 = 0;
     this.idOficio = this.form.controls['office'].value?.jobId;
     this.form.patchValue({
       dest: null,
@@ -727,15 +1084,18 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       aten: null,
       espe: null,
       fol: null,
+      radio: null,
     });
     console.log(this.idOficio);
 
-    // debugger;
+    // //
     if (this.idOficio > 0) {
       let array = await this.getOfficeResponseTwo(body);
+      console.log(array);
       let statusOffice: string;
       for (const [index, i] of array.entries()) {
         await firstValueFrom(this.getCityById(i?.ciudad));
+        console.log(this.city);
         if (this.city) {
           if (i?.tipo_oficio == 2) {
             this.form
@@ -761,49 +1121,58 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
             fol: i?.num_cv_armada,
           });
         }
+        this.tipoOficio = i?.tipo_oficio;
         statusOffice = i?.estatus_of;
+        this.statusOffice = i?.estatus_of;
+        this.m_comer = i;
       }
       this.validateFindOfficeOne(statusOffice);
     } else {
       this.setButtons(3);
       this.resetVariables();
       this.pnlControles = true;
+      console.log(this.pnlControles);
       this.pnlControles2 = true;
+
       if (this.form.get('radio').value == 2) {
-        this.settings = {
-          ...this.settings,
-          actions: false,
-          columns: { ...VALUATION_REQUEST_COLUMNS },
-        };
+        this.obtainsValuedAssets(4, this.idOficio);
+        this.btnMotCan = true;
       } else if (this.form.get('radio').value == 3) {
+        this.obtainsCancelAssets(5, this.idOficio);
+        this.btnMotCan = false;
       }
     }
+    //Marca Bienes
   }
 
   validateFindOfficeOne(status: any) {
-    // debugger;
+    // //
     if (status == 'ENVIADO') {
-      this.pnlControles = false;
+      // this.pnlControles = false;
+      console.log(this.pnlControles);
       this.pnlControles2 = false;
       this.setButtons(1);
       if (this.form.get('radio').value == 2) {
         this.settings = {
           ...this.settings,
+          hideSubHeader: false,
           actions: false,
-          columns: { ...VALUATION_REQUEST_COLUMNS_VALIDATED },
+          columns: VALUATION_REQUEST_COLUMNS_VALIDATED_TWO,
         };
       } else if (this.form.get('radio').value == 3) {
+        this.settings = {
+          ...this.settings,
+          hideSubHeader: false,
+          actions: false,
+          columns: VALUATION_REQUEST_COLUMNS_VALIDATED_TWO,
+        };
       }
     } else {
       this.pnlControles = true;
+
       this.pnlControles2 = true;
       this.setButtons(2);
       if (this.form.get('radio').value == 2) {
-        this.settings = {
-          ...this.settings,
-          actions: false,
-          columns: { ...VALUATION_REQUEST_COLUMNS },
-        };
       } else if (this.form.get('radio').value == 3) {
       }
     }
@@ -812,11 +1181,39 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.idOficio = this.form.controls['office'].value?.jobId;
     if (this.form.get('radio').value == 2) {
       this.obtainsValuedAssets(4, this.idOficio);
+      this.btnMotCan = true;
     } else if (this.form.get('radio').value == 3) {
       this.obtainsCancelAssets(5, this.idOficio);
+      this.btnMotCan = false;
+    }
+    setTimeout(() => {
+      // this.marcaBienes(this.idOficio);
+    }, 3000);
+  }
+  async marcaBienes(idOficio: number) {
+    console.log(idOficio);
+    var goodOficio;
+    goodOficio = await this.getGoodsWithOffice(idOficio);
+
+    for (const row of goodOficio.data) {
+      console.log(row.goodNumber.id);
+      var no_bien = row.goodNumber.id;
+      console.log(this.dataGoodList);
+      if (this.form.get('radio').value == 2) {
+        for (let i = 0; i < this.dataGoodList.length; i++) {
+          if (this.dataGoodList[0].no_bien == no_bien) {
+            console.log(this.dataGoodList[0]);
+          }
+        }
+      } else if (this.form.get('radio').value == 3) {
+        for (let i = 0; i < this.dataGoodList.length; i++) {
+          if (this.dataGoodList[0].no_bien == no_bien) {
+            console.log(this.dataGoodList[0]);
+          }
+        }
+      }
     }
   }
-
   setButtons(ac: number) {
     if (ac == 1) {
       this.btnVerOficio = true;
@@ -864,8 +1261,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       radio: [null],
     });
     this.formTwo = this.fb.group({
-      allGood: [null],
-      selectedGood: [null],
+      allGood: [0],
+      selectedGood: [0],
+      file: [null],
     });
     this.formDialogOne = this.fb.group({
       noti: [null],
@@ -877,19 +1275,234 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       copy: [null],
       radioThree: [null],
     });
+    this.formTwo.get('allGood').disable();
+    this.formTwo.get('selectedGood').disable();
     this.subscribeDelete = this.form
       .get('office')
       .valueChanges.subscribe(value => {
         this.findOfficeService(value);
       });
   }
+  columnsTable() {
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      hideSubHeader: false,
+      columns: {
+        ...VALUATION_REQUEST_COLUMNS,
+        agregarMotivos: {
+          title: 'Agregar Motivo(s)',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          renderComponent: ButtonColumnAddComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              console.log(row);
+              let event = row.id_evento;
+              let officeType = this.officeType;
+              let config: ModalOptions = {
+                initialState: {
+                  event,
+                  officeType,
+                  callback: (next: any) => {
+                    if (next) {
+                      console.log(next);
 
-  obtainsValuedAssets(numOne: number, numTwo: number) {
-    this.body1 = { idEventIn: this.event, tpJobIn: numOne, idJobIn: numTwo };
+                      let motive = next
+                        .map(item => item.descripcion_motivo)
+                        .join(',');
+                      let idMotive = next.map(item => item.id_motivo).join(',');
+                      this.dataGood2.getElements().then(_item => {
+                        let result = _item.map(item => {
+                          if (item.no_bien == row.no_bien) {
+                            item.motivos = motive;
+                            item.idMotivos = idMotive;
+                          }
+                        });
+                        Promise.all(result).then(resp => {
+                          this.dataGood2.refresh();
+                        });
+                      });
+                      this.dataGood.getElements().then(_item => {
+                        let result = _item.map(item => {
+                          if (item.no_bien == row.no_bien) {
+                            item.motivos = motive;
+                            item.idMotivos = idMotive;
+                          }
+                        });
+                        Promise.all(result).then(resp => {
+                          this.dataGood.refresh();
+                        });
+                      });
+                      this.dataGoodList.forEach(item => {
+                        if (item.no_bien == row.no_bien) {
+                          item.motivos = motive;
+                          item.idMotivos = idMotive;
+                        }
+                      });
+                    }
+                  },
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(CancelTableComponent, config);
+            });
+          },
+        },
+        motivosQ: {
+          title: 'Quitar Motivo(s)',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          renderComponent: ButtonColumnDeleteComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              console.log(row);
+              this.dataGood2.getElements().then(_item => {
+                let result = _item.map(item => {
+                  if (item.no_bien == row.no_bien) {
+                    item.motivos = '';
+                    item.idMotivos = '';
+                  }
+                });
+                Promise.all(result).then(resp => {
+                  this.dataGood2.refresh();
+                });
+              });
+              this.dataGood.getElements().then(_item => {
+                let result = _item.map(item => {
+                  if (item.no_bien == row.no_bien) {
+                    item.motivos = '';
+                    item.idMotivos = '';
+                  }
+                });
+                Promise.all(result).then(resp => {
+                  this.dataGood.refresh();
+                });
+              });
+              this.dataGoodList.forEach(item => {
+                if (item.no_bien == row.no_bien) {
+                  item.motivos = '';
+                  item.idMotivos = '';
+                }
+              });
+            });
+          },
+        },
+      },
+    };
+  }
+  obtainsValuedAssets(numOne?: number, numTwo?: number) {
+    let data;
+
+    if (numOne != null && numTwo != null) {
+      this.numOne = numOne;
+      this.numTwo = numTwo;
+      this.body2 = { idEventIn: this.event, tpJobIn: numOne, idJobIn: numTwo };
+      console.log(this.body2);
+      this.loading = true;
+      data = {
+        idEventIn: this.event,
+        tpJobIn: numOne,
+        idJobIn: numTwo,
+      };
+    } else {
+      this.loading = true;
+      data = {
+        idEventIn: this.event,
+        tpJobIn: this.numOne,
+        idJobIn: this.numTwo,
+      };
+    }
+    this.params.getValue()['sortBy'] = 'descripcion:ASC';
+    let params = {
+      ...this.params.getValue(),
+    };
+    this.dataGood.load([]);
+    this.dataGood.refresh();
+    this.totalItems = 0;
+    this.dataGoodList = [];
+    this.serviceAppraise.postGetAppraise(data, params).subscribe({
+      next: response => {
+        console.log(response);
+        if (this.dataGoodList.length > 9) {
+          this.dataGoodList.push(response.data);
+        } else if (this.dataGoodList.length == 0) {
+          this.dataGoodList = response.data;
+        }
+
+        this.dataGood.load(response.data);
+        this.dataGood.refresh();
+        this.totalItems = response.count;
+        this.formTwo.controls['allGood'].setValue(response.count);
+        this.loading = false;
+      },
+      error: error => {
+        console.log(error);
+        this.dataGood.load([]);
+        this.dataGood.refresh();
+        this.totalItems = 0;
+        this.formTwo.controls['allGood'].setValue(0);
+        this.loading = false;
+      },
+    });
   }
 
-  obtainsCancelAssets(numOne: number, numTwo: number) {
-    this.body2 = { idEventIn: this.event, tpJobIn: numOne, idJobIn: numTwo };
+  obtainsCancelAssets(numOne?: number, numTwo?: number) {
+    let data;
+    if (numOne != null && numTwo != null) {
+      this.numOne = numOne;
+      this.numTwo = numTwo;
+      this.body2 = { idEventIn: this.event, tpJobIn: numOne, idJobIn: numTwo };
+      console.log(this.body2);
+      this.loading = true;
+      data = {
+        idEventIn: this.event,
+        tpJobIn: numOne,
+        idJobIn: numTwo,
+      };
+    } else {
+      this.loading = true;
+      data = {
+        idEventIn: this.event,
+        tpJobIn: this.numOne,
+        idJobIn: this.numTwo,
+      };
+    }
+    this.params.getValue()['sortBy'] = 'descripcion:ASC';
+    let params = {
+      ...this.params2.getValue(),
+    };
+    this.dataGood.load([]);
+    this.dataGood.refresh();
+    this.totalItems = 0;
+    this.dataGoodList = [];
+    this.serviceAppraise.postGetAppraise(data, params).subscribe({
+      next: response => {
+        console.log(response);
+        if (params.page > 2) {
+          this.dataGoodList.push(response.data);
+        } else {
+          this.dataGoodList = response.data;
+        }
+        console.log(this.dataGoodList);
+        this.dataGood2.load(response.data);
+        this.dataGood2.refresh();
+        this.totalItems2 = response.count;
+        this.formTwo.controls['allGood'].setValue(response.count);
+        this.loading = false;
+      },
+      error: error => {
+        console.log(error);
+        this.dataGood2.load([]);
+        this.dataGood2.refresh();
+        this.totalItems2 = 0;
+        this.formTwo.controls['allGood'].setValue(0);
+        this.loading = false;
+      },
+    });
   }
 
   updateHour(): void {
@@ -915,70 +1528,99 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   get selectedRowsValueds() {
-    return this.dataService.selectedRowsValueds;
+    return this.dataService.selectedRowsValues;
   }
 
   //#region Excel
   //Export and Import Excel
   exportExcel() {
-    // debugger;
-    this.loadingExcel = true;
-    if (this.officeType + '' === '3') {
-      if (this.cancelData.length > 0) {
-        let haveMotives = false;
-        this.nameExcel = 'Bienes Cancelación';
-        if (haveMotives) {
-          this.nameExcel += ' Motivos de AVA a REV';
-        }
-        this.nameExcel += '.xlsx';
-        this.elementsToExport = this.cancelData.map((x: any) => {
-          let motives = x.motivos;
-          let motivesArray = [];
-          if (motives.includes('/')) {
-            motivesArray = motives
-              .split('/')
-              .filter((x: string) => x.trim().length > 0);
-          } else if (motives.trim().length > 0) {
-            motivesArray.push(motives);
+    // //
+
+    let params = {
+      ...this.params2.getValue(),
+    };
+    this.loader.load = true;
+    this.serviceAppraise
+      .postGetAppraise(this.body2, { ...params, limit: 100000000 })
+      .subscribe({
+        next: resp => {
+          console.log(resp);
+          if (resp && resp.data && resp.data.length > 0) {
+            let bienesArray = [];
+            bienesArray = resp.data.map((row: any) => {
+              return { ...row };
+            });
+
+            let params = new ListParams();
+            this.serviceJobs
+              .getMoCanById(this.event, {
+                ...params,
+                limit: 100000000,
+                sortBy: 'descripcion:ASC',
+              })
+              .subscribe({
+                next: response => {
+                  console.log(response);
+                  this.nameExcel = 'Motivos REV';
+                  this.elementsToExport = response.data[0].map((x: any) => {
+                    let newRow1: any = {
+                      ID_MOTIVOS: x.id_motivo,
+                      MOTIVOS: x.descripcion_motivo,
+                    };
+                    return newRow1;
+                  });
+                  const filename: string = this.nameExcel;
+
+                  bienesArray = resp.data.map((x: any) => {
+                    let newRow: any = {
+                      ID_BIENES: x.no_bien,
+                      ID_MOTIVO1: '',
+                      MOTIVOS1: '',
+                      ID_MOTIVO2: '',
+                      MOTIVOS2: '',
+                      ID_MOTIVO3: '',
+                      MOTIVOS3: '',
+                      ID_MOTIVO4: '',
+                      MOTIVOS4: '',
+                    };
+                    return newRow;
+                  });
+                  const filename1: string = 'Bienes';
+                  const filename2: string = 'RespuestaAvaluo';
+                  this.excelService.exportTwo(
+                    bienesArray,
+                    this.elementsToExport,
+                    {
+                      type: 'xlsx',
+                      filename1,
+                      filename,
+                      filename2,
+                    }
+                  );
+                  this.loader.load = false;
+                },
+                error: error => {
+                  this.loader.load = false;
+                },
+              });
+          } else {
+            this.loader.load = false;
+            this.alert('warning', 'Sin bienes para descargar', '');
           }
-          let newRow: any = { ID_EVENTO: x.id_evento };
-          motivesArray.forEach((motive: string, index: number) => {
-            let title = 'MOTIVO_' + (index + 1);
-            newRow[title] = motive;
-            haveMotives = true;
-          });
-          return newRow;
-        });
-        console.log(this.elementsToExport);
-
-        console.log(this.nameExcel);
-        this.flagDownload = !this.flagDownload;
-        this.loadingExcel = false;
-      } else {
-        this.loadingExcel = false;
-        this.alert('warning', 'Sin bienes para descargar', '');
-      }
-    } else if (this.officeType + '' === '2') {
-      if (this.valuedData.length > 0) {
-        this.nameExcel = 'Bienes Respuesta.xlsx';
-        this.elementsToExport = this.valuedData.map((x: any) => {
-          let newRow: any = { ID_EVENTO: x.eventId, MOTIVOS: x.motivos };
-          return newRow;
-        });
-        this.flagDownload = !this.flagDownload;
-        this.loadingExcel = false;
-      } else {
-        this.loadingExcel = false;
-        this.alert('warning', 'Sin bienes para descargar', '');
-      }
-    }
+        },
+        error: error => {
+          if (error.status == 400) {
+            this.loader.load = false;
+            this.alert('warning', 'Sin bienes para descargar', '');
+            // this.alert(
+            //   'warning',
+            //   'Advertencia',
+            //   'No hay bienes para realizar el oficio de respuesta'
+            // );
+          }
+        },
+      });
   }
-  //#endregion
-
-  // Metodo del modal #2
-  // selectedRowsCancel: Array<any> = [];
-
-  updateOffice() {}
 
   private validateSelectes(array: any[]) {
     if (array.length === 0) {
@@ -1012,21 +1654,73 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     return true;
   }
 
-  save() {
-    if (this.fol.value === null) {
-      this.alert('warning', 'Es necesario capturar el folio', '');
-      return;
+  async save() {
+    try {
+      if (this.fol.value == null) {
+        console.log(this.fol.value);
+        this.alert('warning', 'Es necesario capturar el folio', '');
+        return;
+      }
+      let tpOfi = this.officeType;
+      console.log(tpOfi);
+
+      let idOficio = 0;
+      let bienesTotales = 0;
+      if (
+        (tpOfi === 3 || tpOfi === 2) &&
+        !this.validateSelectes(
+          tpOfi === 3 ? this.selectedRowsCancel : this.selectedRowsValueds
+        )
+      ) {
+        return;
+      }
+      let dtidOfi: any = await this.insertaOficio();
+      console.log(dtidOfi);
+      // dtidOfi.forEach(element => {
+      idOficio = dtidOfi.ID_OFICIO;
+      let mensaje = dtidOfi.MSJ;
+      if (idOficio == 0 && mensaje != null) {
+        throw new Error(mensaje);
+      }
+      // });
+      if (tpOfi == 2) {
+        await this.insertaBien(idOficio, 0, 'D');
+        for (let i = 0; i < goodCheck.length; i++) {
+          await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+        }
+      } else if (tpOfi == 3) {
+        console.log(this.dataGoodList);
+        console.log(goodCheck);
+        for (let i = 0; i < goodCheck.length; i++) {
+          this.dataGoodList.forEach(async element => {
+            console.log(element.no_bien);
+            console.log(goodCheck[i].no_bien);
+
+            if (element.no_bien == goodCheck[i].no_bien) {
+              console.log(element.motivos);
+              await this.insertaMotRev(
+                goodCheck[i].no_bien,
+                this.form.controls['event'].value,
+                this.changeChar(element.motivos),
+                element.idMotivos.toString(),
+                'I'
+              );
+              await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+              bienesTotales++;
+            }
+          });
+        }
+      }
+
+      this.arrayCopy.forEach(element => {
+        this.postInsertUsuCopia('I', idOficio, element);
+      });
+      this.setButtons(2);
+      this.alert('success', '', 'El oficio se guardó correctamente');
+      // add setButtons(2) edit setButtons(4)
+    } catch (error) {
+      this.alert('warning', '', 'Problema para guardar el oficio' + error);
     }
-    let tpOfi = this.officeType();
-    if (
-      (tpOfi === 3 || tpOfi === 2) &&
-      !this.validateSelectes(
-        tpOfi === 3 ? this.selectedRowsCancel : this.selectedRowsValueds
-      )
-    ) {
-      return;
-    }
-    // add setButtons(2) edit setButtons(4)
   }
 
   get fol() {
@@ -1036,7 +1730,44 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   showModal() {
     this.showModalCambioRev++;
   }
-
+  senders() {
+    this.alertQuestion(
+      'question',
+      'Una vez que el oficio sea enviado no se podrá realizar ninguna modificación.',
+      '¿Está seguro que desea continuar?'
+    ).then(async x => {
+      if (x.isConfirmed) {
+        if (this.event && this.event != null) {
+          await this.actualizarEstatus(
+            this.event,
+            this.returnIdOffice(),
+            this.formThree.controls['user'].value
+          );
+          this.reset();
+          this.setButtons(5);
+          this.alert('success', '', 'El oficio fue enviado exitosamente');
+        }
+      }
+    });
+  }
+  async actualizarEstatus(idEvento: number, oficio: number, usuario: string) {
+    return new Promise((resolve, reject) => {
+      let body = {
+        id_evento_in: idEvento,
+        id_oficio_in: oficio,
+        usuario_envia_in: usuario,
+        pc_no_bien: 0,
+      };
+      this.clarificationsService.postGetSpEnviaRespuestaOficio(body).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          reject(error);
+        },
+      });
+    });
+  }
   reset() {
     this.form.reset({}, { onlySelf: true, emitEvent: false });
     this.formTwo.reset({}, { onlySelf: true, emitEvent: false });
@@ -1048,6 +1779,13 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.pnlControles = true;
     this.body1 = null;
     this.body2 = null;
+    this.dataGood.load([]);
+    this.dataGood.refresh();
+    this.dataGood2.load([]);
+    this.dataGood2.refresh();
+    this.totalItems = 0;
+    this.totalItems2 = 0;
+    this.setButtons(3);
   }
 
   //
@@ -1058,5 +1796,86 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       clearInterval(this.intervalId);
     }
     this.subscribeDelete.unsubscribe();
+  }
+
+  chargeFile(event: Event) {
+    try {
+      const files = (event.target as HTMLInputElement).files;
+
+      if (!files || files.length !== 1)
+        throw new Error('Please select one file.');
+      this.fileName = files[0].name;
+      console.log(this.fileName);
+      const fileReader = new FileReader();
+      fileReader.readAsBinaryString(files[0]);
+      fileReader.onload = () => this.readExcel(fileReader.result);
+
+      // Lee el contenido binario del archivo
+    } catch (error) {
+      console.error('Error:', error);
+      // Maneja el error de acuerdo a tus necesidades
+    }
+  }
+
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      this.dataExcel = this.excelService.getData<IExcelToJson>(binaryExcel);
+      this.dataExcel.forEach(element => {
+        this.dataGood2.getElements().then(_item => {
+          let result = _item.map(item => {
+            if (item.no_bien == element.ID_BIENES) {
+              item.motivos =
+                (element.MOTIVOS1 ? `${element.MOTIVOS1},` : '') +
+                (element.MOTIVOS2 ? `${element.MOTIVOS2},` : '') +
+                (element.MOTIVOS3 ? `${element.MOTIVOS3},` : '') +
+                `${element.MOTIVOS4}`;
+              item.idMotivos =
+                (element.ID_MOTIVO1 ? `${element.ID_MOTIVO2},` : '') +
+                (element.ID_MOTIVO2 ? `${element.ID_MOTIVO2},` : '') +
+                (element.ID_MOTIVO3 ? `${element.ID_MOTIVO3},` : '') +
+                `${element.ID_MOTIVO4}`;
+            }
+          });
+          Promise.all(result).then(resp => {
+            this.dataGood2.refresh();
+          });
+        });
+        this.dataGood.getElements().then(_item => {
+          let result = _item.map(item => {
+            if (item.no_bien == element.ID_BIENES) {
+              item.motivos =
+                (element.MOTIVOS1 ? `${element.MOTIVOS1},` : '') +
+                (element.MOTIVOS2 ? `${element.MOTIVOS2},` : '') +
+                (element.MOTIVOS3 ? `${element.MOTIVOS3},` : '') +
+                `${element.MOTIVOS4}`;
+              item.idMotivos =
+                (element.ID_MOTIVO1 ? `${element.ID_MOTIVO2},` : '') +
+                (element.ID_MOTIVO2 ? `${element.ID_MOTIVO2},` : '') +
+                (element.ID_MOTIVO3 ? `${element.ID_MOTIVO3},` : '') +
+                `${element.ID_MOTIVO4}`;
+            }
+          });
+          Promise.all(result).then(resp => {
+            this.dataGood.refresh();
+          });
+        });
+        this.dataGoodList.forEach(item => {
+          if (item.no_bien == element.ID_BIENES) {
+            item.motivos =
+              (element.MOTIVOS1 ? `${element.MOTIVOS1},` : '') +
+              (element.MOTIVOS2 ? `${element.MOTIVOS2},` : '') +
+              (element.MOTIVOS3 ? `${element.MOTIVOS3},` : '') +
+              `${element.MOTIVOS4}`;
+            item.idMotivos =
+              (element.ID_MOTIVO1 ? `${element.ID_MOTIVO2},` : '') +
+              (element.ID_MOTIVO2 ? `${element.ID_MOTIVO2},` : '') +
+              (element.ID_MOTIVO3 ? `${element.ID_MOTIVO3},` : '') +
+              `${element.ID_MOTIVO4}`;
+          }
+        });
+      });
+    } catch (error) {
+      this.onLoadToast('error', 'Ocurrio un error al leer el archivo' + error);
+    }
   }
 }

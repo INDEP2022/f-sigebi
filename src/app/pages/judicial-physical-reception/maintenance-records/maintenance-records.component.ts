@@ -224,7 +224,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
       this.loadingGoods = true;
       this.proceedingService.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
-          // debugger;
+          // //
           if (response.data && response.data.length > 0) {
             this.infoForm = response.data[0];
             this.service.formValue = deliveryReceptionToInfo(this.infoForm);
@@ -255,7 +255,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
   }
 
   async getGoods() {
-    // debugger;
+    // //
     this.loadingGoods = true;
     this.rowsSelectedNotLocal = [];
     if (this.infoForm && this.infoForm.id) {
@@ -265,7 +265,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
       filterParams.addFilter('numberProceedings', this.infoForm.id);
 
       try {
-        // debugger;
+        // //
         const response = await firstValueFrom(
           this.detailService.getAll(filterParams.getParams())
         );
@@ -353,7 +353,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
   // }
 
   private fillParams(form: IProceedingInfo) {
-    // debugger;
+    // //
     if (!form) return false;
     this.service.formValue = form;
     if (this.registro === false) {

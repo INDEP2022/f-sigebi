@@ -29,7 +29,7 @@
       </div>
       <div class="p-2">
         <button
-          [disabled]="requestForm.invalid"
+          [disabled]="requestForm.invalid || !requestId || !isUserNameValid"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="turnRequest()">
@@ -43,35 +43,29 @@
     <form [formGroup]="requestForm" class="form-material">
       <app-card [header]="false">
         <div body>
-          <div class="row">
-            <h5 class="title">
-              <p>
-                <a
-                  class="text-color"
-                  (click)="showSearchForm = true"
-                  *ngIf="!showSearchForm">
-                  <i class="fa fa-angle-right" aria-hidden="true"></i>
-                  Información de la Solicitud</a
-                >
-              </p>
-
-              <p>
-                <a
-                  class="text-color"
-                  (click)="showSearchForm = false"
-                  *ngIf="showSearchForm">
-                  <i class="fa fa-angle-down" aria-hidden="true"></i>
-                  Informaci&oacute;n de la solicitud</a
-                >
-              </p>
-            </h5>
+          <div
+            class="ms-n2 mb-2 pointer"
+            (click)="showSearchForm = !showSearchForm"
+            [attr.aria-expanded]="!showSearchForm"
+            aria-controls="collapseInfo">
+            <i
+              class="bx bx-chevron-down bx-md float-icon-md"
+              [ngClass]="{
+                'rotate-down': showSearchForm,
+                'rotate-up': !showSearchForm
+              }"></i>
+            <h6 class="d-inline">Informaci&oacute;n de la Solicitud</h6>
           </div>
-          <div *ngIf="showSearchForm">
+
+          <div
+            id="collapseInfo"
+            [isAnimated]="true"
+            [collapse]="!showSearchForm">
             <div class="row pt-5">
               <div class="col-md-2">
                 <form-field
                   [control]="requestForm.get('applicationDate')"
-                  label="Fecha de solicitud">
+                  label="Fecha de Solicitud">
                   <input
                     class="form-control"
                     #dp="bsDatepicker"
@@ -197,7 +191,7 @@
               Tipo de Usuario&#58;
             </div>
             <div class="row ml-5">
-              <div class="col-md-3 d-flex" *ngIf="displayOfficeCenter == false">
+              <div class="col-md-3 d-flex" *ngIf="!displayOfficeCenter && !displayOfficeCenterED">
                 <div>
                   <form-radio label="T.E">
                     <input
@@ -219,7 +213,7 @@
                 </div>
               </div>
               <!-- se habilita las oficinas centrales -->
-              <div class="col-md-3" *ngIf="displayOfficeCenter == true">
+              <div class="col-md-3" *ngIf="displayOfficeCenter && !displayOfficeCenterED">
                 <div class="col-sm-2">
                   <form-radio label="Ofinas Centrales">
                     <input
@@ -231,6 +225,19 @@
                   </form-radio>
                 </div>
               </div>
+<div class="col-md-3 d-flex" *ngIf="displayOfficeCenterED">
+  <div>
+    <form-radio label="T.E">
+      <input type="radio" formControlName="targetUserType" value="TE" id="te" />
+    </form-radio>
+  </div>
+  <div>
+    <form-radio label="INDEP">
+      <input type="radio" formControlName="targetUserType" value="SAE" id="sae" [checked]="checked" />
+    </form-radio>
+  </div>
+</div>
+
               <div class="col-md-3">
                 <button
                   type="button"
@@ -252,7 +259,8 @@
                 class="form-control"
                 [ngModelOptions]="{ standalone: true }"
                 [(ngModel)]="userName"
-                [readOnly]="true" />
+                [readOnly]="true"
+                value="userName" />
             </div>
           </div>
         </div>

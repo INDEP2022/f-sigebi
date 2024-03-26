@@ -5,97 +5,80 @@
   <div body class="body" style="margin-top: -30px">
     <div class="see-detail">
       <form [formGroup]="infoForm" class="form-material">
-        <div class="row pt-1">
-          <div class="col-md-6">
+        <div class="row">
+          <div class="col-md-6 mt-3" *ngIf="data.xtipoDocumento">
             <label style="word-spacing: -0.1em" for=""
               ><strong>Tipo de Documento&#58;</strong>
               <span>{{ data?.xtipoDocumento }}</span>
             </label>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-6 mt-3" *ngIf="data.dDocAuthor">
             <label for=""
               ><strong>Autor&#58;</strong>
               <span>{{ data?.dDocAuthor }}</span></label
             >
           </div>
-        </div>
-        <div class="row pt-4">
-          <div class="col-md-6">
+          <div class="col-md-6 mt-3" *ngIf="data.xidSolicitud > 0">
             <label for="">
               <strong>No&#46; Solicitud&#58;</strong>
               <span>{{ data?.xidSolicitud }}</span>
             </label>
           </div>
-          <div class="col-md-6">
-            <label for="">
-              <strong>No&#46; Bien&#58;</strong>
-              <span>{{ data?.xidBien }}</span>
-            </label>
-          </div>
-        </div>
-        <div class="row pt-4">
-          <div class="col-md-6">
+
+          <div class="col-md-6 mt-3" *ngIf="nameRegDelegation">
             <label for="">
               <strong>Delegaci&oacute;n Regional&#58;</strong>
               <span>{{ nameRegDelegation }}</span>
             </label>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-6 mt-3" *ngIf="nameState">
             <label for="">
               <strong>Estado&#58;</strong>
               <span>{{ nameState }}</span>
             </label>
           </div>
-        </div>
-        <div class="row pt-4">
-          <div class="col-md-6">
+          <div class="col-md-6 mt-3" *ngIf="nameTrans">
             <label for="">
               <strong>Transferente&#58;</strong> <span>{{ nameTrans }}</span>
             </label>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-6 mt-3" *ngIf="data.xtipoTransferencia">
             <label for="">
               <strong>Tipo Transferente&#58;</strong>
               <span>{{ data?.xtipoTransferencia }}</span>
             </label>
           </div>
-        </div>
-        <div class="row pt-4">
-          <div class="col-md-6">
+          <div class="col-md-6 mt-3" *ngIf="data.xremitente">
             <label for="">
               <strong>Remitente&#58;</strong>
               <span>{{ data?.xremitente }}</span>
             </label>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-6 mt-3" *ngIf="data.xcargoRemitente">
             <label for="">
               <strong>Cargo Remitente&#58;</strong>
               <span>{{ data?.xcargoRemitente }}</span>
             </label>
           </div>
-        </div>
-        <div class="row pt-4">
-          <div class="col-md-6">
+          <div class="col-md-6 mt-3" *ngIf="data.xresponsable">
             <label for="">
               <strong>Responsable&#58;</strong>
               <span>{{ data?.xresponsable }}</span>
             </label>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-6 mt-3" *ngIf="data.xfecha">
             <label for="">
               <strong>Fecha Creaci&oacute;n&#58;</strong>
-              <span>{{ data?.dInDate | date : 'dd/MM/yyyy' }}</span>
+              <span>{{ data?.xfecha | date : 'dd/MM/yyyy' }}</span>
             </label>
           </div>
-        </div>
-        <div class="row pt-4">
-          <div class="col-md-6">
+          <div class="col-md-6 mt-3" *ngIf="data.xnoOficio">
             <label for="">
-              <strong>No&#46; Oficina&#58;</strong>
+              <strong>No&#46; Oficio&#58;</strong>
               <span>{{ data?.xnoOficio }}</span>
             </label>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-6 mt-3" *ngIf="data.xcomments">
             <label for="">
               <strong>Comentarios&#58;</strong>
               <span>{{ data?.xcomments }}</span>

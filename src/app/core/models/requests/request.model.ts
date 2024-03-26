@@ -18,6 +18,8 @@ export interface IRequest {
   emisora?: IStation;
   authorityId?: number | string;
   state?: any;
+  amountToPay?: number | null;
+  payOrderNo?: number | null;
   regionalDelegationId?: number | string;
   regionalDelegation?: IRegionalDelegation;
   sender?: string;

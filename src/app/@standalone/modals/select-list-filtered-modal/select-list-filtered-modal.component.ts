@@ -25,29 +25,19 @@ import {
 import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { firstFormatDateToSecondFormatDate } from 'src/app/shared/utils/date';
+import {
+  firstFormatDateToSecondFormatDate,
+  secondFormatDate,
+} from 'src/app/shared/utils/date';
 import { IUserRowSelectEvent } from '../../../core/interfaces/ng2-smart-table.interface';
+import { FormLoaderComponent } from '../../form-loader/form-loader.component';
 
 @Component({
   selector: 'app-select-list-filtered-modal',
   standalone: true,
-  imports: [CommonModule, SharedModule, NgScrollbarModule],
+  imports: [CommonModule, SharedModule, NgScrollbarModule, FormLoaderComponent],
   templateUrl: './select-list-filtered-modal.component.html',
-  styles: [
-    `
-      /* .heigth-limit {
-        height: 52rem;
-      } */
-
-      ng-scrollbar {
-        ::ng-deep {
-          .ng-scroll-viewport {
-            padding-right: 1em;
-          }
-        }
-      }
-    `,
-  ],
+  styleUrls: ['./select-list-filtered-modal.component.scss'],
 })
 export class SelectListFilteredModalComponent
   extends BasePage
@@ -60,6 +50,7 @@ export class SelectListFilteredModalComponent
   selectedRow: any = null;
   columns: any[] = [];
   totalItems: number = 0;
+  idScss: string = '';
   selecteds: { column: string; data: any[] }; // Input para marcar seleccionados en el modal
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -80,6 +71,7 @@ export class SelectListFilteredModalComponent
   showError: boolean = false;
   widthButton = false;
   multi = '';
+  hideFilterPlaceholder = false;
   permitSelect = true;
   searchFilter: SearchBarFilter; // Input requerido al llamar el modal
   filters: DynamicFilterLike[] = []; // Input opcional para agregar varios filtros dinamicos
@@ -131,8 +123,11 @@ export class SelectListFilteredModalComponent
             // }
             if (filter.search !== '') {
               let newSearch = filter.search;
+              console.log(newSearch);
               if (this.dateFilters.includes(filter.field)) {
-                if ((newSearch + '').includes('/')) {
+                if (newSearch instanceof Date) {
+                  newSearch = secondFormatDate(newSearch);
+                } else if ((newSearch + '').includes('/')) {
                   newSearch = firstFormatDateToSecondFormatDate(newSearch);
                 }
               }
@@ -284,6 +279,7 @@ export class SelectListFilteredModalComponent
         error: err => {
           console.log(err);
           this.totalItems = 0;
+          this.data.load([]);
           if (err.status == 400) {
             if (this.showError) {
               this.alert('error', 'Error', 'No se encontrarón registros');
@@ -351,7 +347,7 @@ export class SelectListFilteredModalComponent
     data: any;
   }) {
     console.log(event);
-    // debugger;
+    // //
     const selecteds = event.selected;
 
     if (selecteds.length === 0) {

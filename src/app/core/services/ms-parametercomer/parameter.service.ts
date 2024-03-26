@@ -11,6 +11,7 @@ import { IParameterMod } from '../../models/ms-comer-concepts/parameter-mod.mode
 import { IComerEventApp } from '../../models/ms-parametercomer/comer-event-pq.model';
 import {
   IParameter,
+  IParameter_,
   ITypeEvent,
 } from '../../models/ms-parametercomer/parameter';
 
@@ -223,5 +224,17 @@ export class ParameterModService
   //COMER_PARAMETROSMOD
   getParamterMod_(params?: any) {
     return this.get<IListResponse>(`parameters-mod`, params);
+  }
+
+  getAll_(params?: ListParams): Observable<IListResponse<IParameter_>> {
+    return this.get(this.route, params);
+  }
+
+  aplicationVwColumnsBd(params: _Params) {
+    return this.get(ParameterComerEndpoints.AplicationVwColumnsBd, params);
+  }
+  postSpInsertGoodRes(body: any): Observable<any> {
+    const route = ParameterComerEndpoints.SpInsertGoodRes;
+    return this.post(`${route}`, body);
   }
 }

@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { catchError, of } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -59,8 +60,15 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   ) {
     super();
   }
+  @ViewChildren(BsDatepickerDirective) datepicker: BsDatepickerDirective;
+  scrollListener: any;
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.scrollListener = () => {
+      //this.datepicker.hide();
+    };
+    document.addEventListener('scroll', this.scrollListener, true); // Capturing event
+
     this.prepareForm();
     if (this.parameter.value != null || this.parameter.value != undefined) {
       this.request = this.parameter.getRawValue() as IRequest;
@@ -275,6 +283,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
           }
         }
       } else {
+        this.loader.load = false;
         this.onLoadToast('error', 'Error', 'No se pudo carga la caratula');
       }
     }
@@ -363,6 +372,9 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   saveExpedientSami() {
     return new Promise((resolve, reject) => {
       let expedient = this.associateFileForm.getRawValue();
+      if (expedient.reserveDateInai == '') {
+        delete expedient.reserveDateInai;
+      }
       expedient.adminUnit = this.DscUnidad;
       this.expedientSamiService.create(expedient).subscribe({
         next: resp => {
@@ -452,15 +464,12 @@ export class AssociateFileComponent extends BasePage implements OnInit {
       .getUsers(params)
       .pipe(
         catchError(e => {
-          if (e.status == 400) {
-            return of({ ObtenUsuarioResult: {} });
-          }
-          this.onLoadToast(
+          /*this.onLoadToast(
             'error',
             'Ocurrió un error al cargar los datos',
             'Inténtelo más tarde'
-          );
-          throw e;
+          );*/
+          return of({ ObtenUsuarioResult: {} });
         })
       )
       .subscribe({
@@ -571,6 +580,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
       },
       class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
+      keyboard: false,
     };
     this.modalService.show(component, config);
 

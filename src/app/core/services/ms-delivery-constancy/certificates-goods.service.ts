@@ -5,7 +5,10 @@ import { DeliveryConstancy } from 'src/app/common/constants/endpoints/ms-deliver
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { CertificatesGoodsEndpoints } from '../../models/ms-delivery-constancy/ms-delivery-constancy-model';
+import {
+  CertificatesGoodsEndpoints,
+  IQueryGoodTracker,
+} from '../../models/ms-delivery-constancy/ms-delivery-constancy-model';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +30,10 @@ export class CertificatesGoodsService extends HttpService {
 
   create(body: CertificatesGoodsEndpoints) {
     return this.post(DeliveryConstancy.CertificatesGood, body);
+  }
+
+  queryGoodTracker(body: IQueryGoodTracker) {
+    return this.post('application/query-good-tracker', body);
   }
 
   /* update(good: IGood | any) {

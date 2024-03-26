@@ -44,6 +44,7 @@ export class CanPagosCabComponent extends BasePage implements OnInit {
   };
 
   idEvent: any = null;
+  selectData = null;
 
   constructor(
     private comerInvoiceService: ComerInvoiceService,
@@ -55,6 +56,7 @@ export class CanPagosCabComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.getComers();
+    this.navigateToDetail();
 
     this.data
       .onChanged()
@@ -63,6 +65,7 @@ export class CanPagosCabComponent extends BasePage implements OnInit {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
+            console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -165,6 +168,7 @@ export class CanPagosCabComponent extends BasePage implements OnInit {
           this.getComers();
         }
       });
+
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       this.getComers();
     });
@@ -200,9 +204,20 @@ export class CanPagosCabComponent extends BasePage implements OnInit {
 
   selectComer(e: any) {
     console.log(e.data);
+    this.selectData = e.data;
 
+    this.getDetailPayment(e.data.idIdentifier, e.data.idEvent);
+  }
+
+  navigateToDetail() {
     this.paramsDetail.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
-      this.getDetailPayment(e.data.idIdentifier, e.data.idEvent);
+      console.log(params);
+      if (this.selectData != null) {
+        this.getDetailPayment(
+          this.selectData.idIdentifier,
+          this.selectData.idEvent
+        );
+      }
     });
   }
 

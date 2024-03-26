@@ -142,6 +142,11 @@ export class RecipientsEmailComponent extends BasePage implements OnInit {
       //report: ["http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=SolicitudTransferencia.jasper&ID_SOLICITUD=56901&NOM_CIUDAD=" ]
     };
     console.log('Objeto que se envia', data);
+    //console.log('Documentos', data.wcontent[0]);
+
+    // if(data.wcontent){
+    //   return
+    // }
 
     //Llamar a método
     this.emailService.createEmailDocs(data).subscribe({

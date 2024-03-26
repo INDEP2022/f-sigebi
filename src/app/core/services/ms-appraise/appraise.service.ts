@@ -30,22 +30,11 @@ export class AppraiseService extends HttpService {
   }
 
   exportAppraiseExcel(params: _Params) {
-    return this.get<{ base64: string }>(
-      AppraiseEndpoints.EatAppraisalViewExcel,
-      params
-    );
+    return this.get<any>(AppraiseEndpoints.EatAppraisalViewExcel, params);
   }
 
   exportAppraiseSum(params: _Params) {
-    return this.get<{
-      total_vri: string;
-      total_vri_iva: string;
-      total_vri_redondeado: string;
-      total_vc: string;
-      tot_vc_iva: string;
-      tot_vri_con_desc: string;
-      tot_iva_vri_desc: string;
-    }>(AppraiseEndpoints.EatAppraisalViewSum, params);
+    return this.get<any>(AppraiseEndpoints.EatAppraisalViewSum, params);
   }
 
   getAll(params?: ListParams | string): Observable<IListResponse<IAppraisers>> {
@@ -70,6 +59,14 @@ export class AppraiseService extends HttpService {
 
   postGetAppraise(body: any, params?: _Params) {
     return this.post(AppraiseEndpoints.PostAppraise, body, params);
+  }
+
+  postPcValEvent(body: any, params?: _Params) {
+    return this.post(AppraiseEndpoints.PcValEvent, body, params);
+  }
+
+  postPupInseertAppraisal(body: any) {
+    return this.post(AppraiseEndpoints.PupInseertAppraisal, body);
   }
 
   getDelegation(coordination: number) {

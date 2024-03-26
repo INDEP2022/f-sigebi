@@ -238,7 +238,7 @@ export class SelectFormComponent implements OnInit {
     this.subscription = this.getListObservable.subscribe({
       next: data => {
         // console.log(data, this.form);
-        // debugger;
+        // //
         // this.loadingData.emit(false);
         if (data.data && data.data.length > 0) {
           this.typeToSearchText = oldTypeSearchText;

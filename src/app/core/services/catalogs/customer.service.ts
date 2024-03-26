@@ -36,7 +36,6 @@ export class CustomerService extends HttpService {
   //http://sigebimstest.indep.gob.mx/customers/api/v1/comer-clients/filterExcel
   //http://sigebimstest.indep.gob.mx/customers/api/v1/comer-clients/filterExcel?filter.blackList=$eq:S
   getAllClientsExport() {
-    console.log('Hola');
     return this.get<any>(`${this.endpointClients}/filterExcel`);
   }
 
@@ -120,7 +119,9 @@ export class CustomerService extends HttpService {
       params
     );
   }
-
+  getGuaranteeExcel(data: any) {
+    return this.post('application/get-guaranteeExcel', data);
+  }
   //http://sigebimstest.indep.gob.mx/customers/api/v1/comer-clients-representative/filterExcel?filter.id=$eq:302
   getRepresentativeByClientsExport(id: string | number) {
     const route = `comer-clients-representative/filterExcel?filter.id=$eq:${id}`;

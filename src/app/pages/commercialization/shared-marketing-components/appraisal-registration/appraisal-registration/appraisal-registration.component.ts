@@ -45,12 +45,15 @@ export class AppraisalRegistrationComponent
         return throwError(() => error);
       }),
       tap((response: any) => {
+        console.log(response);
         const parameter = response as IParameters;
-        if (!parameter) {
-          this.alert('error', 'Error', NO_PARAMETERS_ERROR);
+        console.log(parameter);
+        if (parameter) {
+          this.global.vColumnNum = Number(parameter.initialValue);
+        } else {
+          this.alert('warning', 'Error', NO_PARAMETERS_ERROR);
           return;
         }
-        this.global.vIva = Number(parameter.initialValue);
       })
     );
   }
@@ -64,9 +67,9 @@ export class AppraisalRegistrationComponent
         return throwError(() => error);
       }),
       tap(response => {
-        const iva = response?.data[0]?.value;
+        const iva = response?.data[0]?.valor;
         if (!iva) {
-          this.alert('error', 'Error', NO_PARAMETERS_ERROR);
+          this.alert('warning', 'Error', NO_PARAMETERS_ERROR);
           return;
         }
         this.global.vIva = Number(`.${iva}`);

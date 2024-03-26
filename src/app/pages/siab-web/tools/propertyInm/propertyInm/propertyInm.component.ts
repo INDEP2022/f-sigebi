@@ -1,18 +1,24 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
-import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ButtonColumnDocComponent } from 'src/app/shared/components/button-column-doc/button-column-doc.component';
+import { ButtonColumnScanComponent } from 'src/app/shared/components/button-column-scan/button-column-scan/button-column-scan.component';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { ScannedDocumentsComponent } from '../../scanned-documents/scanned-documents/scanned-documents.component';
 import { REAL_STATE_COLUMNS, REPORT_COLUMNS } from './propertyInm-columns';
 
 //import { Component, OnInit } from '@angular/core';
@@ -38,11 +44,12 @@ export class PropertyInmComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   array: any = [];
   constructor(
-    private goodSssubtypeService: GoodSssubtypeService,
-    private goodServices: GoodService,
+    private sanitizer: DomSanitizer,
+    private siabService: SiabService,
     private goodprocessService: GoodprocessService,
     private affairService: AffairService,
-    private massiveGoodService: MassiveGoodService
+    private massiveGoodService: MassiveGoodService,
+    private modalService: BsModalService
   ) {
     super();
     this.settings = {
@@ -63,10 +70,38 @@ export class PropertyInmComponent extends BasePage implements OnInit {
       },
     };
     this.settings1 = {
-      ...this.settings1,
+      ...this.settings,
       actions: false,
       hideSubHeader: false,
       columns: {
+        scan: {
+          title: 'Doc. Escaneados',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          filter: false,
+          renderComponent: ButtonColumnScanComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              //console.log(row);
+              this.onSelectScanner(row);
+            });
+          },
+        },
+        office: {
+          title: 'Oficio',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          filter: false,
+          renderComponent: ButtonColumnDocComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              //console.log(row);
+              this.onSelectOffice(row);
+            });
+          },
+        },
         ...REPORT_COLUMNS,
       },
     };
@@ -95,7 +130,9 @@ export class PropertyInmComponent extends BasePage implements OnInit {
         console.log(this.array);
 
         // Ahora puedes realizar la consulta, teniendo en cuenta los cambios en this.array
-        this.performQuery();
+        this.params1
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.performQuery());
       },
     });
   }
@@ -109,7 +146,7 @@ export class PropertyInmComponent extends BasePage implements OnInit {
       ...this.params1.getValue(),
       ...this.columnFilters1,
     };
-
+    console.log(this.array);
     params['filter.clasif'] = `$in:${this.array}`;
     console.log(params);
 
@@ -126,15 +163,66 @@ export class PropertyInmComponent extends BasePage implements OnInit {
         this.totalItems1 = 0;
         this.good.load([]);
         this.good.refresh();
-
-        // En caso de error, restaura this.array a su estado anterior
-        this.array = [...this.tempArray];
-
         this.loading1 = false;
       },
     });
   }
-
+  onSelectScanner(event: any) {
+    console.log(event.expediente);
+    const proceedings = event.expediente;
+    const valid: boolean = true;
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      proceedings,
+      valid,
+      callback: (next: boolean) => {
+        if (next)
+          this.params1
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.performQuery());
+      },
+    };
+    this.modalService.show(ScannedDocumentsComponent, modalConfig);
+  }
+  onSelectOffice(event: any) {
+    console.log(event);
+    if (event.no_of_gestion != null) {
+      this.loader.load = true;
+      let params = {
+        NO_OF_GESTION: event.no_of_gestion,
+        TIPO_OFICIO: 'EXTERNO',
+      };
+      this.siabService.fetchReport('RGEROFGESTION_EXT', params).subscribe({
+        next: res => {
+          const blob = new Blob([res], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            },
+            class: 'modal-lg modal-dialog-centered',
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+          this.loader.load = false;
+        },
+        error: (error: any) => {
+          console.log('error', error);
+          this.loader.load = false;
+        },
+      });
+    } else {
+      this.alert(
+        'warning',
+        'advertencia',
+        'Lo sentimos el Bien no tiene No. Gestión'
+      );
+    }
+  }
   ngOnInit(): void {
     this.data
       .onChanged()
@@ -151,6 +239,7 @@ export class PropertyInmComponent extends BasePage implements OnInit {
               case 'clasifGoodNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
+
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -169,6 +258,77 @@ export class PropertyInmComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getDataAll());
 
+    this.good
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'numClasifGoods':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'expediente':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'bien':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'cantidad':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'unidad_medida':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'clasif':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'no_trasferente':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'volante':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'no_almacen':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'num_fotos':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'no_of_gestion':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fecha_desahogo':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fecha_dictamen_procedencia':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fecha_captura_acta_recepcion':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters1[field];
+            }
+          });
+          this.params1 = this.pageFilter(this.params1);
+          this.performQuery();
+        }
+      });
     this.params1
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.performQuery());

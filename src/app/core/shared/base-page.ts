@@ -243,12 +243,41 @@ export abstract class BasePage
     let fechaString = '';
     // Obtener los componentes de la fecha
     if (data !== '') {
+      console.log(data);
       const año = data.getFullYear().toString();
       const mes = (data.getMonth() + 1).toString().padStart(2, '0');
       const dia = data.getDate().toString().padStart(2, '0');
 
       // Crear la cadena de texto en formato "año mes día"
       fechaString = `${año}-${mes}-${dia}`;
+    }
+    return fechaString;
+  }
+
+  protected returnParseDate2(data: any) {
+    let fechaString = '';
+    // Obtener los componentes de la fecha
+    if (data !== '') {
+      console.log(data);
+      const año = data.getFullYear().toString();
+      const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+      const dia = data.getDate().toString().padStart(2, '0');
+
+      // Crear la cadena de texto en formato "año mes día"
+      fechaString = `${año}-${mes}-${dia}`;
+    }
+    return fechaString;
+  }
+  protected returnParseDateFormat(data: any) {
+    let fechaString = '';
+    // Obtener los componentes de la fecha
+    if (data !== '') {
+      const año = data.getFullYear().toString();
+      const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+      const dia = data.getDate().toString().padStart(2, '0');
+
+      // Crear la cadena de texto en formato "año mes día"
+      fechaString = `${dia}/${mes}/${año}`;
     }
     return fechaString;
   }
@@ -294,12 +323,17 @@ export abstract class BasePage
     }
   }
 
-  protected _downloadExcelFromBase64(base64String: string, filename: string) {
+  protected _downloadExcelFromBase64(
+    base64String: string,
+    filename: string,
+    extension?: string
+  ) {
+    const _extension = extension ?? 'xlsx';
     const mediaType =
       'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
     const link = document.createElement('a');
     link.href = mediaType + base64String;
-    link.download = `${filename ?? 'Descarga'}.xlsx`;
+    link.download = `${filename ?? 'Descarga'}.${_extension}`;
     link.click();
     link.remove();
     this.alert('success', 'Archivo descargado correctamente', '');

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {
   FilterParams,
+  ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
@@ -533,6 +534,26 @@ export class BillingsService {
     });
   }
 
+  async getParamterModSab(parametro: any, direccion: any, user?: any) {
+    const params = new ListParams();
+    params.page = 1;
+    params.limit = 1;
+    params['filter.parametro'] = parametro;
+    params['filter.direccion'] = direccion;
+    if (user) params['filter.valor'] = user;
+
+    return new Promise((resolve, reject) => {
+      this.parameterModService.getParamterMod_(params).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
   // ============================================================================== //
 
   async getKeyTable(params: any, name: string) {
@@ -559,7 +580,7 @@ export class BillingsService {
       this.msInvoiceService.getApplicationGenerateFolio(body).subscribe({
         next: response => {
           let obj = {
-            msg: response.data[0],
+            msg: response,
             status: 200,
           };
           resolve(obj);

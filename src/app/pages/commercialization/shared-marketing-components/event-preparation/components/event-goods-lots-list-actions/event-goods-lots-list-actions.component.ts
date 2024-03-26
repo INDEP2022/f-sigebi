@@ -245,7 +245,8 @@ export class EventGoodsLotsListActionsComponent
    */
   thirdFile() {
     // TODO: IMPLEMENTAR CUANDO SE TENGA
-    console.log('ARCHIVO_TERCERO');
+    // TODO: ES EL ARCHIVO QUE GENERA DEMORA, PABLO ESTA REVISANDO
+    console.log('ARCHIVO_TERCERO Demora - Pablo');
   }
 
   /**
@@ -262,7 +263,11 @@ export class EventGoodsLotsListActionsComponent
       }),
       tap(res => {
         this.loader.load = false;
-        this._downloadExcelFromBase64(res.base64File, `Evento-${id.value}`);
+        this._downloadExcelFromBase64(
+          res.base64File,
+          `Evento-${id.value}`,
+          'csv'
+        );
       })
     );
   }
@@ -281,7 +286,11 @@ export class EventGoodsLotsListActionsComponent
       }),
       tap(res => {
         this.loader.load = false;
-        this._downloadExcelFromBase64(res.base64File, `Evento-${id.value}`);
+        this._downloadExcelFromBase64(
+          res.base64File,
+          `Evento-${id.value}`,
+          'csv'
+        );
       })
     );
   }
@@ -432,7 +441,7 @@ export class EventGoodsLotsListActionsComponent
   /**ACT_TMP_COMER */
   updateComerTmp() {
     const { id, address } = this.controls;
-    // TODO: IMPLEMENTAR CUANDO SE TENGA
+    //* Esta implementado el endpoint
     console.log('ACT_TMP_COMER');
     return this.lotService
       .updateTmpComer({
@@ -883,6 +892,7 @@ export class EventGoodsLotsListActionsComponent
 
   // ? --------------- Generar Oficio Avalúo
   onGenerateOffice() {
+    console.log('Generar Oficio Avalúo del evento');
     const { eventTpId, tpsolavalId } = this.controls;
     if (Number(eventTpId.value) != 10) {
       this.alert(
@@ -896,7 +906,13 @@ export class EventGoodsLotsListActionsComponent
       this.alert('error', 'Error', 'No ha seleccionado un tipo de solicitud');
       return;
     }
-    // TODO: PREGUNTAR POR EL LLAMADO A ESTO: "http://172.20.230.57/Pantallas/Avaluos/SolicitudAvaluo.aspx?"
+    console.log('Generar Oficio Avalúo del evento ' + this.controls.id.value);
+    this.router.navigate(['/pages/siab-web/appraisals/valuation-request'], {
+      queryParams: {
+        origin: 'FCOMEREVENTOS',
+        event: this.controls.id.value,
+      },
+    });
   }
 
   // ?------------------------- Verifica Mandato
@@ -965,7 +981,11 @@ export class EventGoodsLotsListActionsComponent
         this.loader.load = false;
         console.log(res);
 
-        this._downloadExcelFromBase64(res.base64File, `Evento-${id.value}`);
+        this._downloadExcelFromBase64(
+          res.base64File,
+          `Evento-${id.value}`,
+          'csv'
+        );
       })
     );
   }
@@ -1028,8 +1048,18 @@ export class EventGoodsLotsListActionsComponent
           this.alert('error', ' Error', UNEXPECTED_ERROR);
           return throwError(() => error);
         }),
-        tap(() => {
+        tap(response => {
           this.loader.load = false;
+          console.log(response);
+
+          if (response.updatedLots == 0 && response.insertLots == 0) {
+            this.alert(
+              'warning',
+              'No se procesaron servicios',
+              `Se intentaron cargar ${response.verifiedRows}`
+            );
+            throw new Error('No se procesaron servicios');
+          }
         })
       );
   }
@@ -1048,7 +1078,7 @@ export class EventGoodsLotsListActionsComponent
         }),
         tap(() => {
           this.loader.load = false;
-          this.alert('success', 'Proceso Terminado', '');
+          this.alert('success', 'Proceso Terminado', 'Se carga de aquí');
         })
       );
   }

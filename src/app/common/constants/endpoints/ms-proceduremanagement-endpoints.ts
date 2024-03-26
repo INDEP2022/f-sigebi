@@ -8,7 +8,7 @@ export enum ProcedureManagementEndPoints {
   ReportTranferenciaViews = `views/file-transference-sat`,
   ReportViewsPgr = `views/file-procedure-mng`,
   ReportTranferenciaPgrViews = `views/file-transference`,
-  FolioMax = `proceduremanagement/FolioMax`,
+  FolioMax = `proceduremanagement/folioMax`,
   AreaTramite = 'proceduremanagement/getAreaTramite',
   UpdateGestionTramite = 'proceduremanagement/put-gestion-tramite',
   updateStatus = 'proceduremanagement/update-status-procedure',

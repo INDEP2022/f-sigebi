@@ -259,8 +259,8 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
   newDocument() {
     if (this.rowSelected == null) {
       this.onLoadToast(
-        'info',
-        '',
+        'warning',
+        'Atención',
         'Seleccione una registro para poder adjuntar documentos'
       );
       return;

@@ -6,6 +6,9 @@ export const SERIES_FOLIOS_CONTROL_TYPE_EVENT_COLUMNS = {
     type: 'number',
     sort: false,
     valuePrepareFunction: (val: IdTpevent) => (val ? val.description : ''),
+    filterFunction: () => {
+      return true;
+    },
   },
   commentary: {
     title: 'Comentario',

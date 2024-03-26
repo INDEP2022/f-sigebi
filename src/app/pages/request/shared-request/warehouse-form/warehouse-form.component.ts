@@ -94,7 +94,6 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('programmingData', this.programmingData);
     this.storeData = this.authService.decodeToken();
     this.deleRegionalId = this.storeData.delegacionreg;
     this.prepareForm();
@@ -179,7 +178,6 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   }
 
   userSelect(user: IUserTurn) {
-    console.log('user', user);
     this.userNameSelect = user.username;
     this.userFirstName = user.firstName;
     this.userEmail = user.email;
@@ -220,9 +218,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     };
 
     this.transferGoodService.sendEmail(infoEmail).subscribe({
-      next: response => {
-        console.log('correo enviado', response);
-      },
+      next: response => {},
     });
   }
 
@@ -336,7 +332,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
         resp.data.sort(function (a: any, b: any) {
           return a.fullName - b.fullName;
         });
-        console.log('resp.data', resp.data);
+
         this.users = new DefaultSelect(resp.data, resp.count);
       },
       error: error => {

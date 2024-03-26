@@ -19,6 +19,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class SearchRequestsComponent extends BasePage implements OnInit {
   @Output() onSearch = new EventEmitter<any>();
+  @Output() onReset = new EventEmitter<void>();
   toggleSearch: boolean = true;
   searchForm: FormGroup = new FormGroup({});
   delegationItems = new DefaultSelect();
@@ -371,5 +372,14 @@ export class SearchRequestsComponent extends BasePage implements OnInit {
     this.getRegionalDelegationId();
     this.getRegionalDeleg(new ListParams(), this.deleRegionalId);
     this.getStates(new ListParams());
+    this.onReset.emit();
+  }
+
+  numericOnly(event): boolean {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
   }
 }

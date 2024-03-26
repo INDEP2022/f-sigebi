@@ -46,7 +46,7 @@ export class RestitutionGoodsFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que desea enviar la aprobación de bienes en especie para la programación con folio 54569?'
+      '¿Está seguro que desea enviar la aprobación de bienes en especie para la programación con folio 54569?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -63,7 +63,7 @@ export class RestitutionGoodsFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que desea guardar la aprobación de bienes en especie para la programación con folio 54569?'
+      '¿Está seguro que desea guardar la aprobación de bienes en especie para la programación con folio 54569?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -85,7 +85,7 @@ export class RestitutionGoodsFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que desea enviar los bienes seleccionados a aprobación?'
+      '¿Está seguro que desea enviar los bienes seleccionados a aprobación?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -125,7 +125,7 @@ export class RestitutionGoodsFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que desea restituir numerariamente?'
+      '¿Está seguro que desea restituir numerariamente?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

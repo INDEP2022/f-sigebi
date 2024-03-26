@@ -1054,6 +1054,10 @@ $background-checkbox-bg-color: $primary, $secondary, $success, $info, $warning,
     .ng-select .ng-select-container {
       border: none !important;
     }
+
+    .ng-select.ng-select-disabled > .ng-select-container {
+      background-color: #eee;
+    }
   }
 
   .form-control {

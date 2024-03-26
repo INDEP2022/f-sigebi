@@ -52,6 +52,7 @@
               [params]="comerEventsListParams"
               [parameters]="parameters"
               (onOpenEvent)="onOpenEvent()"
+              (fillStadistics)="fillStadistics()"
               [(globalEvent)]="globalEvent"
               [eventForm]="eventForm"></commer-events-list>
           </tab>
@@ -132,11 +133,7 @@
         </tabset>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-12">
-        <event-preparation-stadistics
-          [stadisticsForm]="stadisticsForm"></event-preparation-stadistics>
-      </div>
-    </div>
+    <event-preparation-stadistics
+      [stadisticsForm]="stadisticsForm"></event-preparation-stadistics>
   </div>
 </app-card>

@@ -43,13 +43,10 @@ export const DETAIL_PROCEEDINGS_DELIVERY_RECEPTION = {
     title: 'No. Bien',
     sort: false,
   },
-  good: {
+  description: {
     title: 'Descripción',
     sort: false,
     type: 'custom',
-    valuePrepareFunction: (value: any) => {
-      return value.description ?? '';
-    },
     renderComponent: SeeMoreComponent,
   },
   amount: {
@@ -61,7 +58,6 @@ export const DETAIL_PROCEEDINGS_DELIVERY_RECEPTION = {
 export const GOODS_COLUMNS = {
   id: {
     title: 'No. Bien',
-    width: '25px',
     type: 'string',
     sort: false,
   },
@@ -79,10 +75,11 @@ export const GOODS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  requestFolio: {
+  di_acta: {
     title: 'Of. Sol.',
     type: 'string',
     sort: false,
+    filter: false,
   },
 };
 

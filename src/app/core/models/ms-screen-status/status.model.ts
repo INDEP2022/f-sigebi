@@ -5,6 +5,8 @@ export interface IStatus {
 export interface IStatusXScreen {
   statusfinal: string;
   action: string;
+  screenKey: string;
+  statusFinal: any;
 }
 
 export interface IDynamicStatusXScreen {

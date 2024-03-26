@@ -1,6 +1,6 @@
 export const REBILLING_CAUSES_COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'Id. Causa',
     width: '100px',
     type: 'string',
     sort: false,
@@ -33,7 +33,7 @@ export const REBILLING_CAUSES_COLUMNS = {
     filter: {
       type: 'list',
       config: {
-        selectText: 'Seleccionar',
+        selectText: 'Todos',
         list: [
           { value: 'R', title: 'REFACTURA' },
           { value: 'C', title: 'CANCELA' },
@@ -65,7 +65,7 @@ export const REBILLING_CAUSES_COLUMNS = {
     filter: {
       type: 'list',
       config: {
-        selectText: 'Seleccionar',
+        selectText: 'Todos',
         list: [
           { value: 'F', title: 'FACTURA' },
           { value: 'D', title: 'DEVOLUCION' },

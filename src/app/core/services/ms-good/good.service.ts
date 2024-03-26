@@ -23,6 +23,7 @@ import {
   IGood,
   IGoodCharge,
   IGoodSami,
+  IGoodsTransAva,
   IValidaCambioEstatus,
   IVban,
 } from '../../models/ms-good/good';
@@ -147,7 +148,9 @@ export class GoodService extends HttpService {
     return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));
   }
 
-  getAllFilterDetail(params?: string): Observable<IListResponse<IGood>> {
+  getAllFilterDetail(
+    params?: ListParams | string
+  ): Observable<IListResponse<IGood>> {
     return this.get<IListResponse<IGood>>(
       `${GoodEndpoints.Good}/getAllGoodWDetail?${params}`
     );
@@ -538,5 +541,25 @@ export class GoodService extends HttpService {
   getByGoodAllQuery(params: _Params) {
     const route = `${GoodEndpoints.GetAllGoodQuery}`;
     return this.get(route, params);
+  }
+
+  getTransAva(params?: string) {
+    const route = `${GoodEndpoints.GoodsTransAva}?${params}`;
+    return this.get(route);
+  }
+
+  getTransAvaFilter(params?: string) {
+    const route = `${GoodEndpoints.GoodsTransAva}/filter?${params}`;
+    return this.get(route);
+  }
+
+  postTransAva(body: IGoodsTransAva) {
+    const route = `${GoodEndpoints.GoodsTransAva}`;
+    return this.post(route, body);
+  }
+
+  deleteTransAva(body: IGoodsTransAva) {
+    const route = `${GoodEndpoints.GoodsTransAva}`;
+    return this.delete(route, body);
   }
 }

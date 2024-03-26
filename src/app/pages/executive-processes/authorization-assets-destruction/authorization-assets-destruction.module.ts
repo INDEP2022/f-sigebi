@@ -6,11 +6,16 @@ import { SharedModule } from 'src/app/shared/shared.module';
 
 import { AuthorizationAssetsDestructionRoutingModule } from './authorization-assets-destruction-routing.module';
 import { AuthorizationAssetsDestructionComponent } from './authorization-assets-destruction/authorization-assets-destruction.component';
+import { ListKeyProceedingsComponent } from './list-key-proceedings/list-key-proceedings.component';
 import { ModalCorreoComponent } from './utils/modal-correo/modal-correo.component';
 import { ScanFileAuthorizationComponent } from './utils/scan-file-shared/scan-file-authorization.component';
 
 @NgModule({
-  declarations: [AuthorizationAssetsDestructionComponent, ModalCorreoComponent],
+  declarations: [
+    AuthorizationAssetsDestructionComponent,
+    ModalCorreoComponent,
+    ListKeyProceedingsComponent,
+  ],
   imports: [
     CommonModule,
     AuthorizationAssetsDestructionRoutingModule,

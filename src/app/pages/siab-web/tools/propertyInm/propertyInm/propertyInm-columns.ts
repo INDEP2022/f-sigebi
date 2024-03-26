@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const REAL_STATE_COLUMNS = {
   clasifGoodNumber: {
@@ -135,19 +136,26 @@ export const REPORT_COLUMNS = {
       var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
       return formatted;
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   no_almacen: {
-    title: 'No. Almacen',
+    title: 'No. Almacén',
     type: 'string',
     sort: false,
   },
   descripcion_almacen: {
-    title: 'Descripción Almacen',
+    title: 'Descripción Almacén',
     type: 'string',
     sort: false,
   },
   ubicacion_almacen: {
-    title: 'Ubicación Almacen',
+    title: 'Ubicación Almacén',
     type: 'string',
     sort: false,
   },
@@ -165,6 +173,13 @@ export const REPORT_COLUMNS = {
       var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
       return formatted;
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   fecha_captura_acta_recepcion: {
     title: 'Fec. Captura Acta Recepción',
@@ -174,6 +189,13 @@ export const REPORT_COLUMNS = {
       var raw = new Date(date);
       var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
       return formatted;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
     },
   },
   clave_acta_recepcion: {
@@ -302,7 +324,7 @@ export const REPORT_COLUMNS = {
     sort: false,
   },
   no_of_gestion: {
-    title: 'No. Oficio Gestion',
+    title: 'No. Oficio Gestión',
     type: 'string',
     sort: false,
   },

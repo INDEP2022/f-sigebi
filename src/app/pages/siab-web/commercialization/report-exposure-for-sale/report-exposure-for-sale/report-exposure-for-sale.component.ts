@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -228,7 +228,7 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
     this.settings7 = {
       ...this.settings,
       actions: false,
-      hideSubHeader: false,
+      hideSubHeader: true,
       columns: {
         office: {
           title: 'Detalle',
@@ -349,14 +349,26 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filter.field) {
-              case 'id_estatusvta':
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'transfDesc':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'goodDate':
+                filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'no_bien':
+              case 'failedDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'eventDate':
+                filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
             }
             if (filter.search !== '') {
@@ -401,7 +413,7 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
 
   private prepareForm3() {
     this.form3 = this.fb.group({
-      typeGood: [null, []],
+      typeGood: [null, [Validators.required]],
     });
   }
 
@@ -413,6 +425,10 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
       if (this.form.valid) {
         this.form.reset();
       }
+      this.data5.load([]);
+      this.data5.refresh();
+      this.totalItems5 = 0;
+      // this.showGood = false;
     } else if (filtertxt == 0) {
       this.txtSearch = false;
       this.goodSearch = true;
@@ -666,15 +682,10 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
         this.data7.refresh();
         this.totalItems7 = resp.count;
         this.loading = false;
-        this.validate3 = true;
+        if (resp.count > 0) this.validate3 = true;
         this.typeProccess = 'Good';
       },
       error: err => {
-        this.alert(
-          'warning',
-          'No se encontraron registros',
-          `Con el criterio de búsqueda seleccionado`
-        );
         this.loading = false;
         this.data7.load([]);
         this.data7.refresh();
@@ -730,15 +741,10 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.totalItems = resp.count;
         this.loading = false;
-        this.validate = true;
+        if (resp.count > 0) this.validate = true;
         this.typeProccess = 'NoAttempt';
       },
       error: err => {
-        this.alert(
-          'warning',
-          'No se encontraron registros',
-          `Con el criterio de búsqueda seleccionado`
-        );
         this.loading = false;
         this.data.load([]);
         this.data.refresh();
@@ -799,15 +805,10 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
         this.data1.refresh();
         this.totalItems1 = resp.count;
         this.loading = false;
-        this.validate1 = true;
+        if (resp.count > 0) this.validate1 = true;
         this.typeProccess = 'TwoMonths';
       },
       error: err => {
-        this.alert(
-          'warning',
-          'No se encontraron registros',
-          `Con el criterio de búsqueda seleccionado`
-        );
         this.loading = false;
         this.data1.load([]);
         this.data1.refresh();
@@ -829,12 +830,7 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
   }
 
   consult() {
-    if (
-      this.form3.get('typeGood').value &&
-      this.form.get('subtype').value &&
-      this.form.get('delegation').value &&
-      this.form.get('status').value
-    ) {
+    if (this.form3.get('typeGood').value) {
       this.data1.load([]);
       this.data1.refresh();
       this.totalItems1 = 0;
@@ -863,7 +859,7 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
           )
         );
     } else {
-      this.alert('warning', 'Debe llenar todos los campos', '');
+      this.alert('warning', 'Debe llenar el campo Tipo Bien', '');
     }
   }
 
@@ -876,12 +872,13 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
     //LLamar al endpoint
     //this.totalAssets = count
     this.loading = true;
-    if (typeGood && subType && delegation && status) {
+    if (typeGood)
       this.params5.getValue()['filter.TypeNumber'] = `$eq:${typeGood}`;
+    if (subType)
       this.params5.getValue()['filter.subTypeNumber'] = `$eq:${subType}`;
+    if (delegation)
       this.params5.getValue()['filter.coordAdminNumber'] = `$eq:${delegation}`;
-      this.params5.getValue()['filter.status'] = `$eq:${status}`;
-    }
+    if (delegation) this.params5.getValue()['filter.status'] = `$eq:${status}`;
     let param = {
       ...this.params5.getValue(),
       ...this.columnFilters5,
@@ -892,15 +889,10 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
         this.data5.refresh();
         this.totalItems5 = resp.count;
         this.loading = false;
-        this.validate2 = true;
+        if (resp.count > 0) this.validate2 = true;
         this.typeProccess = 'ConsultGood';
       },
       error: err => {
-        this.alert(
-          'warning',
-          'No se encontraron registros',
-          `Con el criterio de búsqueda seleccionado`
-        );
         this.loading = false;
         this.data5.load([]);
         this.data5.refresh();
@@ -923,6 +915,7 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
   rowsSelected1(event: any) {}
 
   onExportExcelGood() {
+    this.loader.load = true;
     if (this.records) {
       this.params8.getValue()['filter.no_bien'] = `$in:${this.records}`;
     }
@@ -940,21 +933,27 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
           'excel',
           resp.base64File
         );
+        this.loader.load = false;
       },
       error: err => {
         console.log(err);
+        this.loader.load = false;
       },
     });
   }
 
   onExportExcelConsult() {
+    this.loader.load = true;
     if (this.idTypeGood) {
       this.params6.getValue()['filter.no_tipo'] = `$eq:${this.type}`;
-      this.params6.getValue()['filter.no_subtipo'] = `$eq:${this.subtype}`;
-      this.params6.getValue()[
-        'filter.no_coord_admin'
-      ] = `$eq:${this.delegation1}`;
-      this.params6.getValue()['filter.estatus'] = `$ilike:${this.state1}`;
+      if (this.subtype)
+        this.params6.getValue()['filter.no_subtipo'] = `$eq:${this.subtype}`;
+      if (this.delegation1)
+        this.params6.getValue()[
+          'filter.no_coord_admin'
+        ] = `$eq:${this.delegation1}`;
+      if (this.state1)
+        this.params6.getValue()['filter.estatus'] = `$ilike:${this.state1}`;
     }
     let param = {
       ...this.params6.getValue(),
@@ -970,14 +969,17 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
           'excel',
           resp.base64File
         );
+        this.loader.load = false;
       },
       error: err => {
         console.log(err);
+        this.loader.load = false;
       },
     });
   }
 
   onExportExcel() {
+    this.loader.load = true;
     if (this.idTypeGood) {
       this.params3.getValue()['filter.no_tipo'] = `$eq:${this.idTypeGood}`;
     }
@@ -995,14 +997,17 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
           'excel',
           resp.base64File
         );
+        this.loader.load = false;
       },
       error: err => {
         console.log(err);
+        this.loader.load = false;
       },
     });
   }
 
   onExportExcelMonth() {
+    this.loader.load = true;
     if (this.idTypeGood) {
       this.params4.getValue()['filter.no_tipo'] = `$eq:${this.idTypeGood}`;
     }
@@ -1020,9 +1025,11 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
           'excel',
           resp.base64File
         );
+        this.loader.load = false;
       },
       error: err => {
         console.log(err);
+        this.loader.load = false;
       },
     });
   }

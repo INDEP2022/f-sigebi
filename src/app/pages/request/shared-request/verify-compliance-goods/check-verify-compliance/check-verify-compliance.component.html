@@ -5,11 +5,11 @@
         [id]="checkId"
         type="checkbox"
         formControlName="type"
-        (click)="change($event)" />
+        (change)="change($event)" />
     </form-check>
   </form>
 </ng-container>
 <ng-container *ngIf="!checkStateEditForm">
   <i *ngIf="value" class="bx bxs-check-square fs-1 check-icon"></i>
-  <i *ngIf="!value" class="bx bxs-x-circle fs-1 check-icon"></i>
+  <i *ngIf="!value" class="bx bx-square fs-1 check-icon"></i>
 </ng-container>

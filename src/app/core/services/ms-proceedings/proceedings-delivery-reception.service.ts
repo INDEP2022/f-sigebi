@@ -13,7 +13,10 @@ import {
   IResponse,
 } from '../../interfaces/list-response.interface';
 import { IDetailProceedingsDeliveryReception } from '../../models/ms-proceedings/detail-proceeding-delivery-reception';
-import { IProceedingDeliveryReception } from '../../models/ms-proceedings/proceeding-delivery-reception';
+import {
+  IFestatus,
+  IProceedingDeliveryReception,
+} from '../../models/ms-proceedings/proceeding-delivery-reception';
 import { IProccedingsDeliveryReception } from '../../models/ms-proceedings/proceedings-delivery-reception-model';
 import { IProceedings } from '../../models/ms-proceedings/proceedings.model';
 import { ProceedingsDetailDeliveryReceptionService } from './proceedings-detail-delivery-reception.service';
@@ -280,7 +283,7 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     );
   }
 
-  ProceedingsDetailActa(id: string | number, params: ListParams) {
+  ProceedingsDetailActa(id: string | number, params: ListParams | string) {
     return this.get<IListResponse<any>>(
       'aplication/get-detail-acta-ent-recep-closed/' + id,
       params
@@ -399,5 +402,13 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
       `${this.endpoint}?&filter.typeProceedings=$ilike:AXD`,
       params //  &filter.typeProceedings='DESTINO'`
     );
+  }
+
+  pupFillDist(minutesNumber: string) {
+    return this.get(`aplication/pup-full-dist/${minutesNumber}`);
+  }
+
+  festatus(body: IFestatus) {
+    return this.post('aplication/process-festatusrga', body);
   }
 }

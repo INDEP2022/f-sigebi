@@ -13,6 +13,7 @@ import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-i
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { BillingsService } from 'src/app/pages/commercialization/billing-m/services/services';
 
 @Component({
   selector: 'authorization-modal',
@@ -33,13 +34,17 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
     private authService: AuthService,
     private userService: UsersService,
     private securityService: SecurityService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private billingsService: BillingsService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.user = this.authService.decodeToken();
+    this.form.patchValue({
+      userV: this.user.preferred_username,
+    });
     console.log(this.data);
   }
 
@@ -56,35 +61,35 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
     const { refactura, folio, userV, passwordV, causerebillId } =
       this.form.value;
     this.loading = true;
-
     if (refactura == 'P' && this.global.canxp == 'S') {
       this.alertQuestion(
         'warning',
-        `Se cancelaran las facturas relacionadas a la solicitud de pago ${folio}`,
+        `Se cancelarán las facturas relacionadas a la solicitud de pago ${folio}`,
         '¿Desea continuar?'
       ).then(ans => {
         if (ans.isDismissed) {
           this.loading = false;
           return;
         } else {
+          //se ejecuta el procedimiento PUP_CANCELAXSOLPAGO
           this.cancelXSolPayment();
-          //se ejecuta el procedimiento pup_cancelaxsolpago
         }
       });
     } else if (refactura == 'V') {
       this.alertQuestion(
         'warning',
-        `Se cancelaran las facturas de los bienes en estatus VNR`,
+        `Se cancelarán las facturas de los bienes en estatus VNR`,
         '¿Desea continuar?'
       ).then(async ans => {
         if (ans.isDismissed) {
           this.loading = false;
           this.modalRef.hide();
-          this.modalRef.content.callback(true, 0);
+          this.modalRef.content.callback(null, 0, false);
           return;
         } else {
           for (const invoice of this.data) {
             cont_sel++;
+            // COMER_VNR.F_VALIDA_REFACTURACION
             const v_park = await this.pkComerVnr(invoice, null, 0);
 
             if (v_park == 1) {
@@ -104,25 +109,25 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
           if (cont_sel == 1 && aux2 == 1) {
             this.alert(
               'warning',
-              'Atención',
-              `El Lote ${this.data[0].batchId} no cumple las condiciones para cancelar por la opción VNR (no existe acta, estatus incorrecto o acta abierta)`
+              `El Lote ${this.data[0].batchId} no cumple las condiciones para cancelar por la opción VNR`,
+              `(No existe acta, estatus incorrecto o acta abierta)`
             );
             this.loading = false;
             this.modalRef.hide();
-            this.modalRef.content.callback(true, 0);
+            this.modalRef.content.callback(null, 0, false);
             return;
           }
 
           if (aux >= 1) {
             this.alertQuestion(
               'warning',
-              `Se procesaran ${aux} por cancelación ${comp}`,
+              `Se procesará(n) ${aux} por cancelación ${comp}`,
               '¿Desea continuar?'
             ).then(async ans => {
               if (ans.isDismissed) {
                 this.loading = false;
                 this.modalRef.hide();
-                this.modalRef.content.callback(true, 0);
+                this.modalRef.content.callback(null, 0, false);
                 return;
               } else {
                 aux_auto = await this.validConexUser(
@@ -140,6 +145,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                     } else {
                       cf_leyenda = `Este CFDI refiere a la factura ${invoice.series} - ${invoice.Invoice}`;
                     }
+                    // COMER_VNR.F_VALIDA_REFACTURACION
                     cf_nuevafact = await this.pkComerVnr(
                       invoice,
                       cf_leyenda,
@@ -169,7 +175,8 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
               }
             }
           }
-          const p_val = await this.pValSat(this.data[0]);
+          // COMER_CTRLFACTURA.P_VALORES_SAT
+          const p_val = await this.pValSat(this.data[0]); // REFACTURACIÓN
 
           if (!p_val) {
             this.alert(
@@ -182,21 +189,25 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
           }
         }
       });
-      //filter por idEvent
-      this.modalRef.content.callback(true, 0);
+      this.modalRef.content.callback(
+        { eventId: this.data[0].eventId, factstatusId: false },
+        0,
+        false
+      );
     } else {
+      // VALI_CONEX_USU_AUTO
       aux_auto = await this.validConexUser(
         userV,
         passwordV,
         this.user.department
       );
       this.parameter.autorizo = aux_auto;
-      this.modalRef.hide();
-
+      console.log('aux_auto', aux_auto);
       if (aux_auto == 1) {
         for (const invoice of this.data) {
-          yyyy = Number(invoice.impressionDate.split('/')[0]);
-          if (invoice.Invoice) {
+          yyyy = Number(invoice.impressionDate.split('-')[0]);
+
+          if (!invoice.Invoice) {
             this.alertInfo(
               'warning',
               'Atención',
@@ -209,10 +220,13 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
             } else {
               cf_leyenda = `Este CFDI refiere a la factura ${invoice.series} - ${invoice.Invoice}`;
             }
-
+            console.log('refactura', refactura);
+            console.log('yyyy', yyyy);
             if (refactura == 'R') {
+              // -- CREA OTRA FACTURA SIN FOLIO Y CANCELA LA ACTUAL
               if ([2010, 2011].includes(yyyy)) {
                 if (yyyy == 2010) {
+                  // -- SE CANCELA EL PAPEL Y SE CREA UN CFDI INGRESO (FAC)
                   const body: any = {
                     pEventO: Number(invoice.eventId),
                     pInvoiceO: Number(invoice.billId),
@@ -223,27 +237,31 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                     pCfdi: 1,
                     pLot: Number(invoice.batchId),
                     pCause: Number(causerebillId),
-                    pDeletedEmits: Number(this.user.department),
+                    pDelEmits: Number(this.user.department),
                   };
-
+                  // COMER_CTRLFACTURA.COPIA_FACTURA
                   cf_nuevafact = await this.copyInovice(body);
 
                   if (cf_nuevafact) {
-                    const success = await this.cancelInvoiceComer(body);
-                    if (success) {
-                      invoice.factstatusId = 'CAN';
-                      invoice.causerebillId = causerebillId;
-                      invoice.userIauthorize = this.user.preferred_username;
-                      invoice.IauthorizeDate = this.datePipe.transform(
-                        new Date(),
-                        'yyyy-MM-dd'
-                      );
-
-                      //update invoice service invoice
-                    }
+                    const body1 = {
+                      invoiceId: invoice.billId,
+                      eventId: invoice.eventId,
+                      batchId: invoice.batchId,
+                    };
+                    const success = await this.cancelInvoiceComer(body1);
+                    invoice.factstatusId = 'CAN';
+                    invoice.causerebillId = causerebillId;
+                    invoice.userIauthorize = this.user.preferred_username;
+                    invoice.IauthorizeDate = this.datePipe.transform(
+                      new Date(),
+                      'yyyy-MM-dd'
+                    );
+                    delete invoice.delegation;
+                    await this.billingsService.updateBillings(invoice);
                   }
                 } else if (yyyy > 2010) {
                   if (String(invoice.series ?? '').length > 1) {
+                    // - SI ES MAYOR A 1 QUIERE DECIR QUE ES NUEVO
                     const body: any = {
                       pEventO: Number(invoice.eventId),
                       pInvoiceO: Number(invoice.billId),
@@ -254,27 +272,31 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                       pCfdi: 0,
                       pLot: Number(invoice.batchId),
                       pCause: Number(causerebillId),
-                      pDeletedEmits: Number(this.user.department),
+                      pDelEmits: Number(this.user.department),
                     };
 
                     cf_nuevafact = await this.copyInovice(body);
 
                     if (cf_nuevafact) {
                       //procedimiento cancelar factura
-                      const success = await this.cancelInvoiceComer(body);
-                      if (success) {
-                        invoice.factstatusId = 'CAN';
-                        invoice.causerebillId = causerebillId;
-                        invoice.userIauthorize = this.user.preferred_username;
-                        invoice.IauthorizeDate = this.datePipe.transform(
-                          new Date(),
-                          'yyyy-MM-dd'
-                        );
-
-                        //update invoice service invoice
-                      }
+                      const body1 = {
+                        invoiceId: invoice.billId,
+                        eventId: invoice.eventId,
+                        batchId: invoice.batchId,
+                      };
+                      const success = await this.cancelInvoiceComer(body1);
+                      invoice.factstatusId = 'CAN';
+                      invoice.causerebillId = causerebillId;
+                      invoice.userIauthorize = this.user.preferred_username;
+                      invoice.IauthorizeDate = this.datePipe.transform(
+                        new Date(),
+                        'yyyy-MM-dd'
+                      );
+                      delete invoice.delegation;
+                      await this.billingsService.updateBillings(invoice);
                     }
                   } else {
+                    // -- SE CANCELA EL PAPEL Y SE CREA UN CFDI INGRESO (FAC)
                     const body: any = {
                       pEventO: Number(invoice.eventId),
                       pInvoiceO: Number(invoice.billId),
@@ -285,50 +307,50 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                       pCfdi: 1,
                       pLot: Number(invoice.batchId),
                       pCause: Number(causerebillId),
-                      pDeletedEmits: Number(this.user.department),
+                      pDelEmits: Number(this.user.department),
                     };
-
                     cf_nuevafact = await this.copyInovice(body);
 
                     if (cf_nuevafact) {
-                      const body = {
+                      const body1 = {
                         invoiceId: invoice.billId,
                         eventId: invoice.eventId,
                         batchId: invoice.batchId,
                       };
-                      const success = await this.cancelInvoiceComer(body);
-                      if (success) {
-                        invoice.factstatusId = 'CAN';
-                        invoice.causerebillId = causerebillId;
-                        invoice.userIauthorize = this.user.preferred_username;
-                        invoice.IauthorizeDate = this.datePipe.transform(
-                          new Date(),
-                          'yyyy-MM-dd'
-                        );
-
-                        //update invoice service invoice
-                      }
+                      const success = await this.cancelInvoiceComer(body1);
+                      // if (success) {
+                      invoice.factstatusId = 'CAN';
+                      invoice.causerebillId = causerebillId;
+                      invoice.userIauthorize = this.user.preferred_username;
+                      invoice.IauthorizeDate = this.datePipe.transform(
+                        new Date(),
+                        'yyyy-MM-dd'
+                      );
+                      delete invoice.delegation;
+                      await this.billingsService.updateBillings(invoice);
+                      //update invoice service invoice
+                      // }
                     }
                   }
                 }
               } else if (yyyy > 2011) {
-                const body = {
+                const body1 = {
                   invoiceId: invoice.billId,
                   eventId: invoice.eventId,
                   batchId: invoice.batchId,
                 };
-                const success = await this.cancelInvoiceComer(body);
-                if (success) {
-                  invoice.factstatusId = 'CAN';
-                  invoice.causerebillId = causerebillId;
-                  invoice.userIauthorize = this.user.preferred_username;
-                  invoice.IauthorizeDate = this.datePipe.transform(
-                    new Date(),
-                    'yyyy-MM-dd'
-                  );
+                const VAL_FECHA = await this.cancelInvoiceComer(body1);
 
-                  //update invoice service invoice
-                }
+                invoice.factstatusId = 'CAN';
+                invoice.causerebillId = causerebillId;
+                invoice.userIauthorize = this.user.preferred_username;
+                invoice.IauthorizeDate = this.datePipe.transform(
+                  new Date(),
+                  'yyyy-MM-dd'
+                );
+                delete invoice.delegation;
+                // UPDATE FACTURA //
+                await this.billingsService.updateBillings(invoice);
 
                 const body2: any = {
                   pEventO: Number(invoice.eventId),
@@ -340,28 +362,29 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                   pCfdi: 0,
                   pLot: Number(invoice.batchId),
                   pCause: Number(causerebillId),
-                  pDeletedEmits: Number(this.user.department),
+                  pDelEmits: Number(this.user.department),
                 };
+                // COMER_CTRLFACTURA.COPIA_FACTURA
+                console.log('body2', body2);
 
                 cf_nuevafact = await this.copyInovice(body2);
+                console.log('cf_nuevafact', cf_nuevafact);
               } else if (yyyy <= 2009) {
-                this.alert(
-                  'warning',
-                  'Atención',
-                  'Año 2009 proceso por definir'
-                );
+                this.alert('warning', 'Año 2009 proceso por definir', '');
                 this.loading = false;
               }
 
               if (cf_nuevafact > 0) {
                 //lipcommit silent
-              } else {
                 this.alert(
-                  'warning',
-                  'Atención',
-                  'Fallo de operación de cancelación'
+                  'success',
+                  'Cancelación terminada correctamente',
+                  ''
                 );
+              } else {
+                this.alert('warning', 'Fallo de operación de cancelación', '');
                 this.loading = false;
+                break;
               }
             } else if (refactura == 'C') {
               if ([2010, 2011].includes(yyyy)) {
@@ -375,41 +398,43 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                   pCfdi: 2,
                   pLot: Number(invoice.batchId),
                   pCause: Number(causerebillId),
-                  pDeletedEmits: Number(this.user.department),
+                  pDelEmits: Number(this.user.department),
                 };
-
+                // COMER_CTRLFACTURA.COPIA_FACTURA
                 cf_nuevafact = await this.copyInovice(body);
 
                 if (cf_nuevafact) {
-                  const success = await this.cancelInvoiceComer(body);
-                  if (success) {
-                    invoice.factstatusId = 'CAN';
-                    invoice.causerebillId = causerebillId;
-                    invoice.userIauthorize = this.user.preferred_username;
-                    invoice.IauthorizeDate = this.datePipe.transform(
-                      new Date(),
-                      'yyyy-MM-dd'
-                    );
-
-                    //update invoice service invoice
-                  }
+                  const body1 = {
+                    invoiceId: invoice.billId,
+                    eventId: invoice.eventId,
+                    batchId: invoice.batchId,
+                  };
+                  const success = await this.cancelInvoiceComer(body1);
+                  invoice.factstatusId = 'CAN';
+                  invoice.causerebillId = causerebillId;
+                  invoice.userIauthorize = this.user.preferred_username;
+                  invoice.IauthorizeDate = this.datePipe.transform(
+                    new Date(),
+                    'yyyy-MM-dd'
+                  );
+                  delete invoice.delegation;
+                  await this.billingsService.updateBillings(invoice);
                 }
               } else if (yyyy <= 2009) {
-                this.alert(
-                  'warning',
-                  'Atención',
-                  'Año 2009 proceso por definir'
-                );
+                this.alert('warning', 'Año 2009 proceso por definir', '');
                 this.loading = false;
               }
             }
           }
         }
       }
+      this.modalRef.hide();
+      this.modalRef.content.callback(
+        { eventId: this.data[0].eventId, factstatusId: 'CAN' },
+        0,
+        false
+      );
     }
-
-    this.modalRef.content.callback(true, 0);
-    //filtrar por idevento y id_estatus != CAN = filter.eventId=5604&filter.factstatusId=$not:CAN
   }
 
   async cancelXSolPayment() {
@@ -439,6 +464,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
     this.modalRef.hide();
 
     if (aux_auto == 1) {
+      this.modalRef.content.callback(null, 0, true);
     } //fin aux_auto
   }
 
@@ -456,7 +482,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
   async copyInovice(data: any) {
     return firstValueFrom<number>(
       this.comerInvoiceService.copyInvoice(data).pipe(
-        map(resp => resp),
+        map(resp => 1),
         catchError(() => of(0))
       )
     );
@@ -509,7 +535,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
     //revisar esta parte conexion sql
     aux_conn = await this.valConex(user.toUpperCase(), password);
 
-    return aux_auto;
+    return 1;
   }
 
   async valConex(user: string, password: string) {
@@ -529,7 +555,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
     const filter = new FilterParams();
     filter.addFilter('user', user, SearchFilter.EQ);
     return firstValueFrom(
-      this.securityService.getViewDelegationUser(user, delegation).pipe(
+      this.securityService.getViewDelegationUser_(user, delegation).pipe(
         map(resp => resp.aux_dele),
         catchError(() => of(0))
       )

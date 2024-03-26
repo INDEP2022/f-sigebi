@@ -1,39 +1,179 @@
-<form [formGroup]="validateForm" class="form-material pb-0 mb-0">
+<form [formGroup]="dictumForm" class="form-material pb-0 mb-0">
   <div class="mt-3 d-flex flex-row-reverse">
     <div class="mx-1">
       <button
         class="btn btn-primary btn-sm active"
         (click)="save()"
-        [disabled]="!validateForm.touched || validateForm.invalid">
+        [disabled]="dictumForm.invalid">
         <i class="bx bx-save mr-1 float-icon"></i>Guardar
       </button>
     </div>
   </div>
   <br />
-  <div class="row mt-3">
+  <div *ngIf="steap3" class="row mt-3">
     <div class="col-md-4">
       <form-field
-        [control]="validateForm.get('dictumNo')"
-        label="N&uacute;mero Dictamen">
-        <input type="number" formControlName="dictumNo" class="form-control" />
-      </form-field>
-    </div>
-    <div class="col-md-4">
-      <form-field
-        [control]="validateForm.get('courtroom')"
-        label="Juzgado &#47; Sala">
-        <input type="number" formControlName="courtroom" class="form-control" />
-      </form-field>
-    </div>
-    <div class="col-md-4">
-      <form-field
-        [control]="validateForm.get('judmentNullity')"
-        label="Juicio Nulidad">
+        [control]="dictumForm.get('appoitmentDate')"
+        label="Fecha y Hora de Cita">
         <input
-          type="number"
-          formControlName="judmentNullity"
+          type="text"
+          formControlName="appoitmentDate"
+          class="form-control"
+          [minDate]="minDate"
+          (keydown)="(false)"
+          [bsConfig]="{
+            withTimepicker: true,
+            dateInputFormat: 'DD/MM/YYYY, h:mm:ss a',
+            minDate: minDate,
+            maxDate: null
+          }"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-md-6">
+      <form-field [control]="dictumForm.get('appoitmentPlace')" label="Lugar">
+        <textarea
+          rows="2"
+          formControlName="appoitmentPlace"
+          class="form-control"></textarea>
+      </form-field>
+    </div>
+  </div>
+
+  <div *ngIf="steap1 || steap2" class="row mt-3">
+    <div class="col-md-4">
+      <form-field
+        [control]="dictumForm.get('opinionNumber')"
+        label="N&uacute;mero Dictamen">
+        <input
+          type="text"
+          maxlength="100"
+          formControlName="opinionNumber"
           class="form-control" />
       </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="dictumForm.get('veredict')"
+        label="Juzgado &#47; Sala">
+        <input
+          type="text"
+          maxlength="100"
+          formControlName="veredict"
+          class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="dictumForm.get('nullityTrial')"
+        label="Juicio Nulidad">
+        <input
+          type="text"
+          maxlength="100"
+          formControlName="nullityTrial"
+          class="form-control" />
+      </form-field>
+    </div>
+  </div>
+
+  <div *ngIf="steap2" class="row mt-5">
+    <div class="col-md-4">
+      <form-field
+        [control]="dictumForm.get('modificationUser')"
+        label="Contribuyente">
+        <input
+          type="text"
+          formControlName="modificationUser"
+          class="form-control" />
+      </form-field>
+    </div>
+    <div *ngIf="visible" class="col-md-4">
+      <form-field
+        [control]="dictumForm.get('amountToPay')"
+        label="Cantidad a Pagar">
+        <input
+          type="number"
+          formControlName="amountToPay"
+          class="form-control"
+          enabled="false"
+          (keypress)="numericOnly($event)" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="dictumForm.get('opinionDate')"
+        label="Fecha Dictamen">
+        <input
+          type="text"
+          formControlName="opinionDate"
+          class="form-control"
+          [maxDate]="maxDate"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div *ngIf="visible" class="mt-5"></div>
+    <div class="col-md-4">
+      <form-field
+        [control]="dictumForm.get('adminResolutionNo')"
+        label="N&uacute;mero Resoluci&oacute;n Administrativa">
+        <input
+          type="number"
+          formControlName="adminResolutionNo"
+          class="form-control"
+          (keypress)="numericOnly($event)" />
+      </form-field>
+    </div>
+    <div *ngIf="!visible" class="mt-5"></div>
+    <div class="col-md-4">
+      <form-field
+        [control]="dictumForm.get('taxpayerDomicile')"
+        label="Domicilio 1">
+        <input
+          type="text"
+          formControlName="taxpayerDomicile"
+          class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="dictumForm.get('fiscalDomicile')"
+        label="Domicilio 2">
+        <input
+          type="text"
+          formControlName="fiscalDomicile"
+          class="form-control" />
+      </form-field>
+    </div>
+    <div *ngIf="visible" class="mt-5"></div>
+    <div *ngIf="visible" class="col-md-4">
+      <form-field
+        [control]="dictumForm.get('payOrderNo')"
+        label="N&uacute;mero Orden de Pago">
+        <input
+          type="number"
+          formControlName="payOrderNo"
+          class="form-control"
+          (keypress)="numericOnly($event)" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="dictumForm.get('legalRepresentative')"
+        label="Representante Legal">
+        <input
+          type="text"
+          formControlName="legalRepresentative"
+          class="form-control" />
+      </form-field>
+    </div>
+    <div *ngIf="!visible" class="mt-5"></div>
+    <div class="col-md-4">
+      <div class="form-group align-items-bottom">
+        <label for="satCopy" class="font-size-13 mr-3"
+          ><strong>Copia SAT:</strong></label
+        >
+        <input type="checkbox" id="satCopy" formControlName="satCopy" />
+      </div>
     </div>
   </div>
 </form>

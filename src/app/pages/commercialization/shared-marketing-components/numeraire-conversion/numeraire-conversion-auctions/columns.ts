@@ -1,9 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+import { CustomDateFilter2Component } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter2';
 
 export const COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'Id Evento',
     type: 'string',
     sort: false,
   },
@@ -42,7 +42,7 @@ export const COLUMNS = {
     },
     filter: {
       type: 'custom',
-      component: CustomDateFilterComponent,
+      component: CustomDateFilter2Component,
     },
   },
   failureDate: {
@@ -55,7 +55,7 @@ export const COLUMNS = {
     },
     filter: {
       type: 'custom',
-      component: CustomDateFilterComponent,
+      component: CustomDateFilter2Component,
     },
   },
   user: {

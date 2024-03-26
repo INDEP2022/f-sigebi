@@ -1,4 +1,4 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Carga Avaluos</h5>
   </div>
@@ -68,16 +68,20 @@
                 </form-field>
               </div>
               <div class="col-sm-12 col-md-6">
-                <form-field [control]="form.get('Tipo')">
-                  <ngx-select
+                <form-field [control]="form.get('Tipo')" label="Tipo">
+                  <!--<ngx-select
                     [form]="form"
                     [data]="selectedTipo"
-                    value="descripcion"
+                    value="valor"
                     bindLabel="descripcion"
                     label="Tipo"
                     (fetchItems)="CargaDDLDrop()"
                     control="Tipo">
-                  </ngx-select>
+                  </ngx-select>-->
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="Tipo" />
                 </form-field>
               </div>
               <div class="col-sm-12 col-md-6">
@@ -100,16 +104,33 @@
               </div>
             </div>
           </form>
+          <form class="form-material" [formGroup]="form1">
+            <div class="row mt-5">
+              <div class="col-sm-12 col-md-6">
+                <form-field [control]="form1.get('TipoOficio')">
+                  <ngx-select
+                    [form]="form1"
+                    [data]="selectedTipo"
+                    value="valor"
+                    bindLabel="valueDescription"
+                    label="Tipo Oficio"
+                    (fetchItems)="CargaDDLDrop()"
+                    control="TipoOficio">
+                  </ngx-select>
+                </form-field>
+              </div>
+            </div>
+          </form>
         </div>
         <div class="d-flex justify-content-center">
           <button class="btn-primary btn-sm active ml-2" (click)="search()">
-            Consultar
+            Buscar
             <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
       </div>
     </div>
-    <div class="row mt-3">
+    <div class="row margin-input">
       <div class="col-sm-12 col-md-6 col-lg-6">
         <div class="col-md-6 ch-content">
           <h5 class="title">AVALÚOS</h5>
@@ -121,22 +142,22 @@
             [(settings)]="apraisalsSettings"></app-columns-select>
         </div>
       </div>
-    </div>
-    <br />
-    <ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
-      <div [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table
-          id="applicantTable"
-          [settings]="apraisalsSettings"
-          [source]="dataApraisals"
-          (userRowSelect)="btnGenoficio_Click($event.data.id_avaluo)">
-        </ng2-smart-table>
-        <div class="table-padding"></div>
+      <div class="col-sm-12 pt-3">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            id="applicantTable"
+            [settings]="apraisalsSettings"
+            [source]="dataApraisals"
+            (userRowSelect)="avaluosRowSelect($event)">
+          </ng2-smart-table>
+          <app-pagination [params]="params1" [totalItems]="totalItems1">
+          </app-pagination>
+          <div class="table-padding"></div>
+        </div>
       </div>
-    </ng-scrollbar>
-    <app-pagination [params]="params2" [totalItems]="totalItems">
-    </app-pagination>
-    <div class="row mt-3">
+    </div>
+    <div class="row margin-input">
       <div class="col-sm-12 col-md-6 col-lg-6">
         <div class="col-md-6 ch-content">
           <h5 class="title">BIENES</h5>
@@ -147,21 +168,23 @@
           <app-columns-select [(settings)]="goodSettings"></app-columns-select>
         </div>
       </div>
-    </div>
-    <br />
-    <ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
-      <div [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table
-          id="applicantTable"
-          [settings]="goodSettings"
-          [source]="dataGood">
-        </ng2-smart-table>
-        <div class="table-padding"></div>
+      <div class="col-sm-12 pt-3">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            id="applicantTable"
+            [settings]="goodSettings"
+            [source]="dataGood">
+          </ng2-smart-table>
+          <div class="table-padding"></div>
+        </div>
+        <app-pagination [params]="params2" [totalItems]="totalItems">
+        </app-pagination>
       </div>
-    </ng-scrollbar>
-    <app-pagination [params]="params2" [totalItems]="totalItems">
-    </app-pagination>
-    <div class="row mt-3">
+    </div>
+
+    <!-- *ngIf="Divreg" -->
+    <div class="row margin-input">
       <div class="col-sm-12 col-md-6 col-lg-6">
         <div class="col-md-6 ch-content">
           <h5 class="title">DETALLE AVALÚOS</h5>
@@ -191,23 +214,31 @@
                 <li role="menuitem">
                   <a
                     class="dropdown-item"
-                    style="color: blue"
+                    [ngStyle]="{ color: lnkDesFormato ? 'blue' : 'grey' }"
                     (click)="downloadDocument()">
                     <i class="bx bx-layer"></i> Descargar Formato
                   </a>
                 </li>
                 <li role="menuitem">
+                  <!--(click)="validateDocument()"-->
                   <a
                     class="dropdown-item"
-                    style="color: blue"
-                    (click)="validateDocument()">
+                    [ngStyle]="{ color: lnkValArchivo ? 'blue' : 'grey' }"
+                    (click)="lnkValArchivo ? file1.click() : null">
                     <i class="bx bx-layer"></i> Validar Archivo
                   </a>
+                  <input
+                    type="file"
+                    name="file1"
+                    #file1
+                    class="d-none"
+                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                    (change)="onFileChange($event, 'V')" />
                 </li>
                 <li role="menuitem">
                   <a
                     class="dropdown-item"
-                    style="color: blue"
+                    [ngStyle]="{ color: lnkAvaRechazados ? 'blue' : 'grey' }"
                     (click)="apraisalReyect()">
                     <i class="bx bx-layer"></i> Avalúo Rechazados
                   </a>
@@ -215,32 +246,24 @@
                 <li role="menuitem">
                   <a
                     class="dropdown-item"
-                    style="color: blue"
-                    (click)="file.click()">
+                    [ngStyle]="{ color: lnkInsAvaluos ? 'blue' : 'grey' }"
+                    (click)="lnkInsAvaluos_Click()">
                     <i class="bx bx-layer"></i> Insertar Avalúo
                   </a>
-                  <input
-                    type="file"
-                    name="file"
-                    #file
-                    class="d-none"
-                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                    (change)="onFileChange($event)" />
                 </li>
                 <li role="menuitem">
                   <a
                     class="dropdown-item"
-                    style="color: blue"
-                    (click)="addAvaluo()">
+                    [ngStyle]="{ color: lnkAddAvaluo ? 'blue' : 'grey' }"
+                    (click)="lnkAddAvaluo_Click()">
                     <i class="bx bx-layer"></i> Agregar Avalúo
                   </a>
                 </li>
-
                 <li role="menuitem">
                   <a
                     class="dropdown-item"
-                    style="color: blue"
-                    (click)="updateAvaluo()">
+                    [ngStyle]="{ color: lnkUpdAvaluo ? 'blue' : 'grey' }"
+                    (click)="lnkUpdAvaluo_Click()">
                     <i class="bx bx-layer"></i> Actualizar Avalúo
                   </a>
                 </li>
@@ -249,21 +272,32 @@
           </div>
         </div>
       </div>
-    </div>
-    <br />
-    <ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
-      <div [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table
-          id="applicantTable"
-          [settings]="detailApraisalsSettings"
-          [source]="dataDetailApraisal"
-          (edit)="editDetailApraisal($event.data)"
-          (delete)="deleteDetailApraisal($event.data)">
-        </ng2-smart-table>
-        <div class="table-padding"></div>
+      <div class="col-sm-12 pt-3" *ngIf="Divreg">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            id="applicantTable"
+            [settings]="detailApraisalsSettings"
+            [source]="dataDetailApraisal">
+          </ng2-smart-table>
+          <div class="table-padding"></div>
+          <app-pagination [params]="params2" [totalItems]="totalItems2">
+          </app-pagination>
+        </div>
       </div>
-    </ng-scrollbar>
-    <app-pagination [params]="params2" [totalItems]="totalItems">
-    </app-pagination>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          (click)="btnGenoficio_Click()"
+          class="btn btn-primary btn-sm active"
+          [disabled]="!form1.valid || !form.valid">
+          Generar Oficio
+        </button>
+      </div>
+    </div>
   </div>
 </app-card>

@@ -121,7 +121,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   @Output() onSave = new EventEmitter<any>();
   @ViewChild('file') file: any;
   @Input() set files(files: any[]) {
-    // debugger;
+    // //
     if (files.length === 0) return;
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);
@@ -556,6 +556,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   }
 
   getGoodsByStatus() {
+    console.log('....iniciando getGoodsByStatus');
     this.loading = true;
     this.dataTableGood_ = [];
     this.dataTableGood.load(this.dataTableGood_);
@@ -570,6 +571,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       params[
         'filter.transference.nameTransferent'
       ] = `$ilike:${localStorage.getItem('nameT')}`;
+    console.log('....iniciando getGoodsByStatus..llamando..');
     this.donationService.getTempDon(params).subscribe({
       next: data => {
         this.goods = data.data;

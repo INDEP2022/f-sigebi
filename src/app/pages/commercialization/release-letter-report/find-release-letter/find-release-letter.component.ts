@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -30,17 +31,30 @@ export class FindReleaseLetterComponent extends BasePage implements OnInit {
   P_DIRECCION: string = 'M';
   loteId: number = null;
   @Output() onSave = new EventEmitter<any>();
-
+  @Output() onDelete = new EventEmitter<any>();
+  dataVal: any;
   constructor(
     private modalRef: BsModalRef,
     private comerLetterService: ComerLetterService,
-    private comerEventService: ComerEventService
+    private comerEventService: ComerEventService,
+    private datePipe: DatePipe
   ) {
     super();
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
-      actions: false,
+      actions: {
+        columnTitle: 'Acciones',
+        position: 'right',
+        add: false,
+        edit: false,
+        delete: true,
+      },
+      delete: {
+        deleteButtonContent:
+          '<i class="fa fa-trash text-danger mx-2 ml-5"></i>',
+        confirmDelete: true,
+      },
       columns: {
         ...RELEASE_REPORT_COLUMNS,
       },
@@ -64,18 +78,20 @@ export class FindReleaseLetterComponent extends BasePage implements OnInit {
             // filter.field == 'lotsId' ||
             filter.field == 'addressedTo' ||
             filter.field == 'position' ||
-            filter.field == 'paragraph1' ||
             filter.field == 'invoiceNumber' ||
             filter.field == 'invoiceDate' ||
-            filter.field == 'signatory' ||
-            filter.field == 'ccp1' ||
-            filter.field == 'ccp2' ||
             filter.field == 'ccp3' ||
             filter.field == 'ccp4' ||
             filter.field == 'ccp5'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
+              if (filter.field == 'invoiceDate') {
+                filter.search = this.datePipe.transform(
+                  filter.search,
+                  'yyyy-MM-dd'
+                );
+              }
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -131,6 +147,7 @@ export class FindReleaseLetterComponent extends BasePage implements OnInit {
   return() {
     this.modalRef.hide();
   }
+
   handleSuccess(): void {
     if (!this.selectedRow) {
       this.alert('warning', 'Selecciona un registro para continuar', '');
@@ -140,5 +157,31 @@ export class FindReleaseLetterComponent extends BasePage implements OnInit {
     this.onSave.emit(this.selectedRow);
     this.loading = false;
     this.modalRef.hide();
+  }
+
+  remove(event: any) {
+    this.alertQuestion(
+      'question',
+      'Se eliminará el registro',
+      '¿Desea Continuar?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.comerLetterService.removeLib(event.id).subscribe({
+          next: value => {
+            this.getAllComerLetter();
+            if (this.dataVal)
+              if (this.dataVal.id == event.id) {
+                this.onDelete.emit(true);
+              }
+
+            this.selectedRow = null;
+            this.alert('success', 'Registro eliminado correctamente', '');
+          },
+          error: err => {
+            this.alert('warning', 'No se pudo eliminado el registro', '');
+          },
+        });
+      }
+    });
   }
 }

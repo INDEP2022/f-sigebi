@@ -71,6 +71,8 @@ export abstract class BasePageTableNotServerPagination<
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
+          console.log(response);
+
           if (response && response.data && response.data.length > 0) {
             this.data = response.data.map((row: any) => {
               return { ...row };
@@ -106,7 +108,7 @@ export abstract class BasePageTableNotServerPagination<
       .subscribe(change => {
         if (change.action === 'filter') {
           // this.data = this.dataOld;
-          // debugger;
+          // //
           let filters = change.filter.filters;
           filters.map((filter: any, index: number) => {
             // console.log(filter, index);
@@ -131,10 +133,11 @@ export abstract class BasePageTableNotServerPagination<
   }
 
   getPaginated(params: ListParams) {
-    const cantidad = params.page * params.pageSize;
+    console.log(params);
+    const cantidad = params.page * params.limit;
     this.dataPaginated.load([
       ...this.dataTemp.slice(
-        (params.page - 1) * params.pageSize,
+        (params.page - 1) * params.limit,
         cantidad > this.dataTemp.length ? this.dataTemp.length : cantidad
       ),
     ]);

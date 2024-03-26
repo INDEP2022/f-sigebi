@@ -660,7 +660,7 @@ export class RelatedDocumentsRelationComponent
     // this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;
     // this.paramsGestionDictamen.sale = params['sale'] ?? null;
     // this.paramsGestionDictamen.pGestOk = params['P_GEST_OK'] ?? null;
-    // this.paramsGestionDictamen.pllamo = params['PLLAMO'] ?? null; // Se agrego
+    // this.paramsGestionDictamen.pllamo = params['PLLAMO'] ?? null; // Se agregó
     // });
     const pantallaActual = this.route.snapshot.paramMap.get('id');
     if (!pantallaActual) {
@@ -2450,7 +2450,7 @@ export class RelatedDocumentsRelationComponent
   //   if (filter != 'Todos') {
   //     params['filter.goodClassNumber'] = `$eq:${filter}`;
   //   }
-  //   debugger;
+  //   //
   //   //this.filtroTipos(this.paramsGestionDictamen.expediente);
   //   this.goodServices.getByExpedientAndParams(params).subscribe({
   //     next: response => {
@@ -2799,7 +2799,7 @@ export class RelatedDocumentsRelationComponent
         const count = await this.getDocJobManagementCount(params);
         console.log('COUNT DOCUMENTS', count);
         if (count > 0) {
-          // debugger;
+          // //
           this.isDisabledBtnDocs = true;
         }
       }

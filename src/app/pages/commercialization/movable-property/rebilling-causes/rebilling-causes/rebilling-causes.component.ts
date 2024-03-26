@@ -120,14 +120,14 @@ export class RebillingCausesComponent extends BasePage implements OnInit {
         this.dataFilter.load([]);
         this.dataFilter.refresh();
         this.loading = false;
-        this.alert('error', 'Error', err.error.message);
+        // this.alert('error', 'Error', err.error.message);
       },
     });
   }
 
   remove(data: any) {
     this.alertQuestion(
-      'warning',
+      'question',
       'Eliminar',
       '¿Desea Eliminar este registro?'
     ).then(answ => {

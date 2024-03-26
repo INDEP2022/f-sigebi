@@ -54,12 +54,14 @@ export const CONSUL_GOODS_COMMER_SALES_COLUMNS = {
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         if (data.toggle) {
-          console.log(goodCheck);
+          console.log(data);
           goodCheck.push(data.row);
         } else {
-          goodCheck = goodCheck.filter(
-            valor => valor.row.idordeningreso != data.row.idordeningreso
-          );
+          console.log(data.row.idordeningreso);
+          goodCheck = goodCheck.filter(valor => {
+            console.log(valor);
+            return valor.idordeningreso !== data.row.idordeningreso;
+          });
         }
       });
     },

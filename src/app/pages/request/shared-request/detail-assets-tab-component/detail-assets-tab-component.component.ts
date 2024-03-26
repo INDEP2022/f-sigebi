@@ -69,8 +69,7 @@ import { SelectAddressComponent } from '../../transfer-request/tabs/records-of-r
 })
 export class DetailAssetsTabComponentComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   // private _detailAssets: ModelForm<any>;
   //usado para cargar los adatos de los bienes en el caso de cumplimientos de bienes y clasificacion de bienes
   @Input() requestObject: any; //solicitud
@@ -198,9 +197,8 @@ export class DetailAssetsTabComponentComponent
     private relevantTypeService: TypeRelevantService,
     private goodDomicilieService: GoodDomiciliesService,
     private goodProcessService: GoodProcessService,
-    private strategyService: StrategyServiceService
-  ) //private goodService2: GoodService2,
-  {
+    private strategyService: StrategyServiceService //private goodService2: GoodService2,
+  ) {
     super();
     this.atributActSettings = {
       ...this.settings,
@@ -221,7 +219,7 @@ export class DetailAssetsTabComponentComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     const address: IAddress = this.detailAssets.controls['addressId'].value;
-    // console.log(this.detailAssets.value);
+
     for (const campo in this.detailAssets.controls) {
       if (this.detailAssets.controls.hasOwnProperty(campo)) {
         const control = this.detailAssets.get(campo);
@@ -371,7 +369,7 @@ export class DetailAssetsTabComponentComponent
         next: response => {
           this.nameGoodType = response.description;
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -383,7 +381,7 @@ export class DetailAssetsTabComponentComponent
         next: data => {
           this.nameTypeRelevant = data.description;
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -755,7 +753,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   setDomiciliesFieldRequired() {
-    console.log('TIPO DE TRANSFERENCIA ', this.typeOfRequest);
     const transferent = this.requestObject.transferenceId;
 
     /*if (this.typeOfRequest === 'MANUAL') {
@@ -838,8 +835,6 @@ export class DetailAssetsTabComponentComponent
 
           switch (transferente) {
             case 'SAT_SAE':
-              console.log('SAT_SAE');
-
               if (
                 this.detailAssets.controls['transferentDestiny'].value === null
               ) {
@@ -854,8 +849,6 @@ export class DetailAssetsTabComponentComponent
 
               break;
             case 'PGR_SAE':
-              console.log('PGR_SAE');
-
               if (
                 this.detailAssets.controls['transferentDestiny'].value === null
               ) {
@@ -918,11 +911,11 @@ export class DetailAssetsTabComponentComponent
         },
       });
   }
-  getTansferUnitMeasure(event: any) {}
+  getTansferUnitMeasure(event: any) { }
 
-  getDestintSae(event: any) {}
+  getDestintSae(event: any) { }
 
-  getState(event: any) {}
+  getState(event: any) { }
 
   getMunicipaly(params: ListParams, municipalyId?: number | string) {
     params['filter.stateKey'] = `$eq:${this.stateOfRepId}`;
@@ -974,7 +967,7 @@ export class DetailAssetsTabComponentComponent
             this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
           }
         },
-        error: error => {},
+        error: error => { },
       });
     /* this.municipeSeraService.getAll(params).subscribe({
       next: data => {
@@ -1039,7 +1032,7 @@ export class DetailAssetsTabComponentComponent
             this.selectLocality = new DefaultSelect(resp.data);
           }
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -1743,7 +1736,7 @@ export class DetailAssetsTabComponentComponent
           this.message(
             'error',
             'Error',
-            `El registro del inmueble no se guardo\n. ${error.error.message}`
+            `El registro del inmueble no se guardó\n. ${error.error.message}`
           );
         },
       });

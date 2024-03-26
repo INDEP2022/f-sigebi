@@ -8,9 +8,20 @@ import {
   IResponse,
 } from '../../interfaces/list-response.interface';
 import {
+  IAvailableFestatus,
+  IBtnAddGood,
   IDetailProceedingsDevollution,
   IDetailProceedingsDevollutionDelete,
+  IFactconst,
+  IPaConstDelivery,
+  IPbSelPaq,
   IProceedings,
+  IPufValidTerm,
+  IPupMovDestruction,
+  IQueryRegAdminGood,
+  ITmpCreateAuthoDestroy,
+  ITmpUpdateMassive,
+  ITmpUpdateOneReg,
   IUpdateActasEntregaRecepcion,
 } from '../../models/ms-proceedings/proceedings.model';
 import {
@@ -35,7 +46,6 @@ export class ProceedingsService extends HttpService {
   constructor() {
     super();
     this.microservice = ProceedingsEndpoints.BasePath;
-    console.log(' PROCEEDINGS SERVICE CONSTRUCTOR');
   }
 
   // getAll(params?: ListParams): Observable<IListResponse<IProceedings>> {
@@ -55,6 +65,9 @@ export class ProceedingsService extends HttpService {
       body,
       params
     );
+  }
+  getProceedingsDeliveryReception(params: ListParams) {
+    return this.get(ProceedingsEndpoints.ProceedingsDeliveryReception, params);
   }
 
   updateVaultByProceedingNumber(model: IUpdateVault) {
@@ -323,8 +336,82 @@ export class ProceedingsService extends HttpService {
     return this.delete(route, params);
   }
 
-  consultPaValMasive() {
+  consultPaValMasive(body: { screen: string; user: string }) {
     const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}/FACTCONST_0001`;
-    return this.get(route);
+    return this.post(`aplication/pa-val-const-masive`, body);
+  }
+
+  pufValidTerm(body: IPufValidTerm) {
+    return this.post<{ vban: boolean }>('aplication/puf-valid-term', body);
+  }
+
+  pbSelPaq(body: IPbSelPaq) {
+    return this.post('aplication/pb-sel-paq', body);
+  }
+
+  pupMovementDestruction(body: IPupMovDestruction) {
+    return this.post('aplication/cursor-pup-movement-act-destructuion', body);
+  }
+
+  queryRegAdminGood(body: IQueryRegAdminGood) {
+    return this.post('aplication/query-reg-del-admin-good', body);
+  }
+
+  getAvailableFestatus(body: IAvailableFestatus) {
+    return this.post('aplication/getAvailable', body);
+  }
+
+  tmpAuthorizationsDestruction(
+    user: string,
+    proceeding?: string,
+    params?: string
+  ) {
+    return this.get(
+      proceeding != null
+        ? `detail-proceedings-delivery-reception/tmp/?user=${user}&proceeding=${proceeding}`
+        : `detail-proceedings-delivery-reception/tmp/?user=${user}`,
+      params
+    );
+  }
+
+  tmpUpdateMassive(body: ITmpUpdateMassive) {
+    return this.post(
+      'detail-proceedings-delivery-reception/update-massive',
+      body
+    );
+  }
+
+  tmpCreateAuthorization(body: ITmpCreateAuthoDestroy) {
+    return this.post(
+      'detail-proceedings-delivery-reception/create-massive',
+      body
+    );
+  }
+
+  tmpUpdateOneReg(body: ITmpUpdateOneReg) {
+    return this.post(
+      'detail-proceedings-delivery-reception/update-status',
+      body
+    );
+  }
+
+  pupFillDist(acta: string) {
+    return this.get(`aplication/pup-full-dist/${acta}`);
+  }
+
+  postqueryFactConst(body: IFactconst) {
+    return this.post('aplication/blk-bie-post-query', body);
+  }
+
+  btnAddGood(body: IBtnAddGood) {
+    return this.post('aplication/btn-add-good', body);
+  }
+
+  paConstDelivery(body: IPaConstDelivery) {
+    return this.post('aplication/pa-const-delivery', body);
+  }
+
+  getAplicationValidaClave(body: any) {
+    return this.post(`${ProceedingsEndpoints.AplicationValidaClave}`, body);
   }
 }

@@ -206,7 +206,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
           },
           error: error => {
             this.loading = false;
-            this.onLoadToast('error', 'No se pudo guardar', '');
+            //this.onLoadToast('error', 'No se pudo guardar', '');
           },
         });
     }
@@ -384,6 +384,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
           },
         },
         class: 'modal-lg modal-dialog-centered',
+        keyboard: false,
         ignoreBackdropClick: true,
       };
       this.modalService.show(PrintReportModalComponent, config);

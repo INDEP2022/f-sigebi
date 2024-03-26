@@ -11,6 +11,15 @@
           }
         }
       }
+
+      ng2-smart-table {
+        thead {
+          th.address {
+            min-width: 130px;
+          }
+        }
+      }
+
       .notAdd {
         ng2-smart-table {
           .ng2-smart-actions-title-add {
@@ -20,6 +29,24 @@
           }
         }
       }
+      app-columns-select {
+        display: none;
+        @media screen and (max-width: 576px) {
+          display: block;
+        }
+      }
     }
   }
+}
+
+:host
+  ::ng-deep
+  tr.ng2-smart-filters
+  th.ng2-smart-th
+  ng2-smart-table-filter
+  div.ng2-smart-filter
+  default-table-filter
+  input-filter
+  input::placeholder {
+  color: transparent !important;
 }

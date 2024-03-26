@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -12,6 +19,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 //XLSX
 import { DatePipe } from '@angular/common';
 import { LocalDataSource } from 'ng2-smart-table';
+import { TheadFitlersRowComponent } from 'ng2-smart-table/lib/components/thead/rows/thead-filters-row.component';
 import {
   BehaviorSubject,
   catchError,
@@ -20,8 +28,7 @@ import {
   of,
   takeUntil,
 } from 'rxjs';
-import { CustomFilterComponent } from 'src/app/@standalone/shared-forms/input-number/input-number';
-import { InputCellComponent } from 'src/app/@standalone/smart-table/input-cell/input-cell.component';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { LinkCellComponent } from 'src/app/@standalone/smart-table/link-cell/link-cell.component';
 import {
   FilterParams,
@@ -31,6 +38,7 @@ import {
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { _Params } from 'src/app/common/services/http.service';
 import { InvoiceFolioSeparate } from 'src/app/core/models/ms-invoicefolio/invoicefolio.model';
+import { IPupRepBillMore } from 'src/app/core/models/ms-ldocument/pgr-file.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
@@ -39,6 +47,7 @@ import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-good
 import { ComerDetailInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-dinvocie.service';
 import { ComerElecBillService } from 'src/app/core/services/ms-invoice/ms-comer-elec-bill.service';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
+import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { ParameterInvoiceService } from 'src/app/core/services/ms-parameterinvoice/parameterinvoice.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
@@ -46,16 +55,40 @@ import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.serv
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { BillingsService } from '../../../billing-m/services/services';
 import { FolioModalComponent } from '../../../penalty-billing/folio-modal/folio-modal.component';
 import { UseModalComponent } from '../../mass-bill-base-sales/sat-catalogs/use-comp/use-modal.component';
 import { ActModalComponent } from './act-comp/act-modal.component';
 import { AuthorizationModalComponent } from './authorization-modal/authorization-modal.component';
+import { FactCanceladasComponent } from './fact-canceladas/fact-canceladas.component';
 import { ReferenceModalComponent } from './reference/reference.component';
 
 @Component({
   selector: 'app-regular-billing-invoice',
   templateUrl: './regular-billing-invoice.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   show1 = false;
@@ -96,7 +129,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   @Output() comer: EventEmitter<any> = new EventEmitter(null);
   @Output() formG: EventEmitter<FormGroup> = new EventEmitter();
   @Input() set sum(values: any) {}
-
+  @Output() numb: EventEmitter<any> = new EventEmitter(null);
   val: any;
 
   get sum() {
@@ -107,6 +140,30 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     return this.form.get('idAllotment');
   }
 
+  btnLoading: boolean = false;
+  btnLoading1: boolean = false;
+  btnLoading2: boolean = false;
+  btnLoading3: boolean = false;
+  btnLoading4: boolean = false;
+  btnLoading5: boolean = false;
+  btnLoading6: boolean = false;
+  btnLoading7: boolean = false;
+  btnLoading8: boolean = false;
+  btnLoading9: boolean = false;
+  btnLoading10: boolean = false;
+  btnLoading11: boolean = false;
+  btnLoading12: boolean = false;
+  btnLoading13: boolean = false;
+  btnLoading14: boolean = false;
+  btnLoadAU: boolean = false;
+  btnLoadAP: boolean = false;
+  invoiceSelected: any = null;
+
+  get xLote() {
+    return this.formFactura.get('xLote');
+  }
+  path: string = '';
+  @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -125,7 +182,9 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     private comerEleBillService: ComerElecBillService,
     private comerSpenService: SpentService,
     private comerEventService: ComerEventService,
-    private parameterGoodService: ParameterCatService
+    private parameterGoodService: ParameterCatService,
+    private billingsService: BillingsService,
+    private fileBrowserService: FileBrowserService
   ) {
     super();
 
@@ -183,7 +242,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         sort: false,
       },
       subBrand: {
-        title: 'Sub Marca',
+        title: 'Submarca',
         sort: false,
       },
       model: {
@@ -201,15 +260,15 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       modmandato: {
         title: 'Matrícula',
         sort: false,
-        type: 'custom',
-        renderComponent: InputCellComponent,
-        onComponentInitFunction: (instance: any) => {
-          instance.inputChange.subscribe({
-            next: (resp: any) => {
-              resp.row.modmandato = resp.value;
-            },
-          });
-        },
+        // type: 'custom',
+        // renderComponent: InputCellComponent,
+        // onComponentInitFunction: (instance: any) => {
+        //   instance.inputChange.subscribe({
+        //     next: (resp: any) => {
+        //       resp.row.modmandato = resp.value;
+        //     },
+        //   });
+        // },
       },
       desc_unidad_det: {
         title: 'Unidad',
@@ -220,11 +279,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           instance.validateValue = false;
           instance.onNavigate.subscribe(async invoice => {
             if (this.rowInvoice.factstatusId != 'PREF') {
-              this.alert(
-                'warning',
-                'Atención',
-                'Verifique el estatus de la factura'
-              );
+              this.alert('warning', 'Verifique el estatus de la factura', '');
             } else {
               let config = {
                 initialState: {
@@ -253,11 +308,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           instance.validateValue = false;
           instance.onNavigate.subscribe(async invoice => {
             if (this.rowInvoice.factstatusId != 'PREF') {
-              this.alert(
-                'warning',
-                'Atención',
-                'Verifique el estatus de la factura'
-              );
+              this.alert('warning', 'Verifique el estatus de la factura', '');
             } else {
               let config = {
                 initialState: {
@@ -323,18 +374,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         eventId: {
           title: 'Evento',
           sort: false,
-          filter: {
-            type: 'custom',
-            component: CustomFilterComponent,
-          },
         },
         batchId: {
           title: 'Lote',
           sort: false,
-          filter: {
-            type: 'custom',
-            component: CustomFilterComponent,
-          },
         },
         customer: {
           title: 'Cliente',
@@ -349,11 +392,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
                 invoice.batchId
               );
               if (count == 0) {
-                this.alert(
-                  'warning',
-                  'Atención',
-                  'El Lote aún no está liberado'
-                );
+                this.alert('warning', 'El Lote aún no está liberado', '');
               } else {
                 let config = {
                   initialState: {
@@ -370,25 +409,57 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         delegationNumber: {
           title: 'Regional',
           sort: false,
-          filter: {
-            type: 'custom',
-            component: CustomFilterComponent,
-          },
+          // filter: {
+          //   type: 'custom',
+          //   component: CustomFilterComponent,
+          // },
         },
         Type: {
           title: 'Factura Para',
           sort: false,
-          valuePrepareFunction: (val: number) => {
-            const values = [
-              { id: 1, desc: 'Vehículo' },
-              { id: 2, desc: 'Diversos c/Anexo' },
-              { id: 3, desc: 'Diversos s/Anexo' },
-              { id: 4, desc: 'Aeronaves' },
-              { id: 5, desc: 'Chatarra c/Anexo' },
-              { id: 6, desc: 'Chatarra s/Anexo' },
-              { id: 7, desc: 'Venta de Bases' },
-            ];
-            return values.filter(m => m.id == val)[0]?.desc ?? '';
+          filter: {
+            type: 'list',
+            config: {
+              selectText: 'Todos',
+              list: [
+                { value: 1, title: 'Vehículo' },
+                { value: 2, title: 'Diversos c/Anexo' },
+                { value: 3, title: 'Diversos s/Anexo' },
+                { value: 4, title: 'Aeronaves' },
+                { value: 5, title: 'Chatarra c/Anexo' },
+                { value: 6, title: 'Chatarra s/Anexo' },
+                { value: 7, title: 'Venta de Bases' },
+              ],
+            },
+          },
+          valuePrepareFunction: (value: any) => {
+            if (value !== null) {
+              if (value == '1') {
+                return 'Vehículo';
+              }
+              if (value == '2') {
+                return 'Diversos c/Anexo';
+              }
+              if (value == '3') {
+                return 'Diversos s/Anexo';
+              }
+              if (value == '4') {
+                return 'Aeronaves';
+              }
+              if (value == '5') {
+                return 'Chatarra c/Anexo';
+              }
+              if (value == '6') {
+                return 'Chatarra s/Anexo';
+              }
+              if (value == '7') {
+                return 'Venta de Bases';
+              } else {
+                return '';
+              }
+            } else {
+              return '';
+            }
           },
         },
         factstatusId: {
@@ -402,10 +473,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         Invoice: {
           title: 'Folio',
           sort: false,
-          filter: {
-            type: 'custom',
-            component: CustomFilterComponent,
-          },
         },
         document: {
           title: 'Tipo',
@@ -415,7 +482,14 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           title: 'Fecha',
           sort: false,
           valuePrepareFunction: (val: string) => {
-            return val ? val.split('-').reverse().join('/') : '';
+            return val ? val.split('-').reverse().join('/') + ' 00:00:00' : '';
+          },
+          filterFunction: () => {
+            return true;
+          },
+          filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent,
           },
         },
       },
@@ -495,18 +569,27 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             search[filter.field]();
 
             if (filter.search !== '') {
+              if (
+                // filter.field == 'eventDate' ||
+                filter.field == 'impressionDate'
+              ) {
+                filter.search = this.datePipe.transform(
+                  filter.search,
+                  'yyyy-MM-dd'
+                );
+              }
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
           this.paramsList = this.pageFilter(this.paramsList);
-          this.getAllComer();
+          this.getAllComer('SI');
         }
       });
 
     this.paramsList.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      if (this.totalItems > 0) this.getAllComer();
+      if (this.totalItems > 0) this.getAllComer('SI1');
     });
 
     this.dataFilter2
@@ -554,9 +637,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       if (this.totalItems2 > 0) this.getComerDetInovice();
     });
   }
-
+  selectDataRow: any = null;
   getComerDetInvocie(data: any) {
     this.rowInvoice = data;
+    this.selectDataRow = data;
     this.paramsList2.getValue()[
       'filter.eventId'
     ] = `${SearchFilter.EQ}:${data.eventId}`;
@@ -571,39 +655,49 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       ...this.paramsList2.getValue(),
       ...this.columnFilters2,
     };
+    if (!params['filter.billId'] && !params['filter.eventId']) {
+      this.loading2 = false;
+      this.totalItems2 = 0;
+      this.dataFilter2.load([]);
+      this.dataFilter2.refresh();
+      this.formDetalle.reset();
+    } else {
+      this.loading2 = true;
+      this.comerDetInvoice.getAllCustom(params).subscribe({
+        next: async (resp: any) => {
+          const data = await this.postQuery(params);
+          this.formDetalle.get('count').patchValue(resp.count);
+          this.formDetalle.get('totalI').patchValue(resp.data[0].sum.importe);
+          this.formDetalle.get('totalIva').patchValue(resp.data[0].sum.iva);
+          this.formDetalle.get('total').patchValue(resp.data[0].sum.total);
+          this.formDetalle
+            .get('countTotal')
+            .patchValue(resp.data[0].sum.amount);
+          this.totalItems2 = resp.count;
 
-    this.loading2 = true;
-    this.comerDetInvoice.getAllCustom(params).subscribe({
-      next: async (resp: any) => {
-        const data = await this.postQuery(params);
-        this.formDetalle.get('count').patchValue(resp.count);
-        this.formDetalle.get('totalI').patchValue(resp.data[0].sum.importe);
-        this.formDetalle.get('totalIva').patchValue(resp.data[0].sum.iva);
-        this.formDetalle.get('total').patchValue(resp.data[0].sum.total);
-        this.formDetalle.get('countTotal').patchValue(resp.data[0].sum.amount);
-        this.totalItems2 = resp.count;
+          const result = resp.data[0].result;
 
-        const result = resp.data[0].result;
-
-        result.map((value: any, index: number) => {
-          value.desc_producto_det = data[index].desc_producto_det;
-          value.desc_unidad_det = data[index].desc_unidad_det;
-          value.downloadcvman = data[index].mandato;
-          value.modmandato = data[index].matricula;
-        });
-
-        this.dataFilter2.load(result);
-        this.dataFilter2.refresh();
-        this.loading2 = false;
-      },
-      error: () => {
-        this.loading2 = false;
-        this.totalItems2 = 0;
-        this.dataFilter2.load([]);
-        this.dataFilter2.refresh();
-        this.formDetalle.reset();
-      },
-    });
+          result.map((value: any, index: number) => {
+            value.desc_producto_det = data[index].desc_producto_det;
+            value.desc_unidad_det = data[index].desc_unidad_det;
+            value.downloadcvman = data[index].mandato;
+            value.modmandato = data[index].matricula;
+          });
+          Promise.all(result).then(resp => {
+            this.dataFilter2.load(result);
+            this.dataFilter2.refresh();
+            this.loading2 = false;
+          });
+        },
+        error: () => {
+          this.loading2 = false;
+          this.totalItems2 = 0;
+          this.dataFilter2.load([]);
+          this.dataFilter2.refresh();
+          this.formDetalle.reset();
+        },
+      });
+    }
   }
 
   async postQuery(params: _Params) {
@@ -615,49 +709,181 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     );
   }
 
-  getAllComer() {
+  async getAllComer(val?: string) {
     const params = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
       //...{ sortBy: 'batchId:ASC' },
     };
+    let res = await this.forArrayFilters_();
+    console.log('res', res);
+    if (res) {
+      // this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
+      this.paramsList.getValue()['limit'] = 500;
+      this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
 
-    this.loading = true;
-    this.comerInvoice.getAllSumInvoice(params).subscribe({
-      next: resp => {
-        this.loading = false;
-        this.formFactura.get('count').patchValue(resp.count);
-        this.totalItems = resp.count;
-        this.dataFilter.load(resp.data);
-        this.dataFilter.refresh();
-        this.rowInvoice = resp.data[0];
-        this.paramsList2.getValue()[
-          'filter.eventId'
-        ] = `${SearchFilter.EQ}:${resp.data[0].eventId}`;
-        this.paramsList2.getValue()[
-          'filter.billId'
-        ] = `${SearchFilter.EQ}:${resp.data[0].billId}`;
-        this.getComerDetInovice();
-        this.getSum();
-        this.comer.emit({
-          val: resp.data[0].eventId,
-          count: resp.data.length,
-          data: [],
-          filter: params,
-        });
-      },
-      error: () => {
-        this.loading = false;
-        this.totalItems = 0;
-        this.dataFilter.load([]);
-        this.dataFilter.refresh();
-        this.formFactura.reset();
-        this.formDetalle.reset();
-        this.totalItems2 = 0;
-        this.dataFilter2.load([]);
-        this.dataFilter2.refresh();
-      },
-    });
+      this.isSelect = [];
+      this.rowInvoice = null;
+      this.loading = false;
+      this.totalItems = 0;
+      this.dataFilter.load([]);
+      this.dataFilter.refresh();
+      this.formFactura.reset();
+      this.formDetalle.reset();
+      this.totalItems2 = 0;
+      this.dataFilter2.load([]);
+      this.dataFilter2.refresh();
+
+      this.formFactura.get('importE').patchValue(0);
+      this.formFactura.get('ivaE').patchValue(0);
+      this.formFactura.get('totalE').patchValue(0);
+      this.formFactura.get('importI').patchValue(0);
+      this.formFactura.get('ivaI').patchValue(0);
+      this.formFactura.get('totalI').patchValue(0);
+
+      this.formDetalle.get('count').patchValue(0);
+      this.formDetalle.get('totalI').patchValue(0);
+      this.formDetalle.get('totalIva').patchValue(0);
+      this.formDetalle.get('total').patchValue(0);
+      this.formDetalle.get('countTotal').patchValue(0);
+
+      delete this.paramsList.getValue()['filter.eventId'];
+      delete this.paramsList2.getValue()['filter.eventId'];
+      delete this.paramsList2.getValue()['filter.billId'];
+    } else {
+      this.loading = true;
+      this.comerInvoice.getAllSumInvoice(params).subscribe({
+        next: resp => {
+          this.loading = false;
+          this.formFactura.get('count').patchValue(resp.count);
+          this.totalItems = resp.count;
+          this.dataFilter.load(resp.data);
+          this.dataFilter.refresh();
+
+          if (resp.data[0]?.eventId)
+            this.paramsList2.getValue()[
+              'filter.eventId'
+            ] = `${SearchFilter.EQ}:${resp.data[0].eventId}`;
+          if (resp.data[0]?.billId)
+            this.paramsList2.getValue()[
+              'filter.billId'
+            ] = `${SearchFilter.EQ}:${resp.data[0].billId}`;
+          if (resp.count > 0) {
+            this.rowInvoice = resp.data[0];
+            this.getComerDetInovice();
+            this.getSum();
+
+            this.comer.emit({
+              val: resp.data[0]?.eventId,
+              count: resp.data.length,
+              data: [],
+              filter: params,
+            });
+          }
+        },
+        error: () => {
+          this.loading = false;
+          this.totalItems = 0;
+          this.dataFilter.load([]);
+          this.dataFilter.refresh();
+          this.formFactura.reset();
+          this.formDetalle.reset();
+          this.totalItems2 = 0;
+          this.dataFilter2.load([]);
+          this.dataFilter2.refresh();
+        },
+      });
+    }
+    return;
+    if (
+      !params['filter.eventId'] &&
+      !params['filter.batchId'] &&
+      !params['filter.customer'] &&
+      !params['filter.delegationNumber'] &&
+      !params['filter.Type'] &&
+      !params['filter.document'] &&
+      !params['filter.series'] &&
+      !params['filter.Invoice'] &&
+      !params['filter.factstatusId'] &&
+      !params['filter.vouchertype'] &&
+      !params['filter.impressionDate']
+    ) {
+      // this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
+      this.paramsList.getValue()['limit'] = 500;
+      this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
+
+      this.isSelect = [];
+      this.rowInvoice = null;
+      this.loading = false;
+      this.totalItems = 0;
+      this.dataFilter.load([]);
+      this.dataFilter.refresh();
+      this.formFactura.reset();
+      this.formDetalle.reset();
+      this.totalItems2 = 0;
+      this.dataFilter2.load([]);
+      this.dataFilter2.refresh();
+
+      this.formFactura.get('importE').patchValue(0);
+      this.formFactura.get('ivaE').patchValue(0);
+      this.formFactura.get('totalE').patchValue(0);
+      this.formFactura.get('importI').patchValue(0);
+      this.formFactura.get('ivaI').patchValue(0);
+      this.formFactura.get('totalI').patchValue(0);
+
+      this.formDetalle.get('count').patchValue(0);
+      this.formDetalle.get('totalI').patchValue(0);
+      this.formDetalle.get('totalIva').patchValue(0);
+      this.formDetalle.get('total').patchValue(0);
+      this.formDetalle.get('countTotal').patchValue(0);
+
+      delete this.paramsList.getValue()['filter.eventId'];
+      delete this.paramsList2.getValue()['filter.eventId'];
+      delete this.paramsList2.getValue()['filter.billId'];
+    } else {
+      this.loading = true;
+      this.comerInvoice.getAllSumInvoice(params).subscribe({
+        next: resp => {
+          this.loading = false;
+          this.formFactura.get('count').patchValue(resp.count);
+          this.totalItems = resp.count;
+          this.dataFilter.load(resp.data);
+          this.dataFilter.refresh();
+
+          if (resp.data[0]?.eventId)
+            this.paramsList2.getValue()[
+              'filter.eventId'
+            ] = `${SearchFilter.EQ}:${resp.data[0].eventId}`;
+          if (resp.data[0]?.billId)
+            this.paramsList2.getValue()[
+              'filter.billId'
+            ] = `${SearchFilter.EQ}:${resp.data[0].billId}`;
+          if (resp.count > 0) {
+            this.rowInvoice = resp.data[0];
+            this.getComerDetInovice();
+            this.getSum();
+
+            this.comer.emit({
+              val: resp.data[0]?.eventId,
+              count: resp.data.length,
+              data: [],
+              filter: params,
+            });
+          }
+        },
+        error: () => {
+          this.loading = false;
+          this.totalItems = 0;
+          this.dataFilter.load([]);
+          this.dataFilter.refresh();
+          this.formFactura.reset();
+          this.formDetalle.reset();
+          this.totalItems2 = 0;
+          this.dataFilter2.load([]);
+          this.dataFilter2.refresh();
+        },
+      });
+    }
   }
 
   getSum() {
@@ -681,53 +907,52 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   async generatePreFacture() {
     const { event, idAllotment } = this.form.value;
-
     if (!event) {
-      this.alert(
-        'warning',
-        'Atención',
-        'Ingrese un evento para generar prefacturas'
-      );
+      this.alert('warning', 'Ingrese un evento para generar prefacturas', '');
       return;
     }
 
+    this.btnLoading = true;
+    // -- VALIDA QUE EXISTAN LOTES VALIDOS PARA FACTURAR --
     const count = await this.getCountBatch(event, idAllotment);
 
     if (count == 0) {
       this.alert(
         'warning',
-        'Atención',
-        'No se encontraron Lotes con estatus válidos para facturar'
+        'No se encontraron Lotes con estatus válidos para facturar',
+        ''
       );
+      this.btnLoading = false;
       return;
     }
 
+    // -- VALIDA QUE HAYA LOTES PARA FACTURAR --
     const valid = await this.getValidBatch(event, idAllotment);
-
+    /* Se determinan las facturas que no se generan por mandatos no facturables */
     if (valid.cont_nofact > 0) {
       this.alert(
         'warning',
-        'Atención',
-        `No se generan ${valid.cont_nofact} factura(s) por Mandatos no facturables.`
+        `No se generan ${valid.cont_nofact} factura(s) por Mandatos no facturables.`,
+        ``
       );
+      this.btnLoading = false;
+      return;
     }
 
     if (valid.contador == 0) {
-      this.alert(
-        'warning',
-        'Atención',
-        'No se encontraron Lotes para facturar'
-      );
+      this.alert('warning', 'No se encontraron Lotes para facturar', '');
+      this.btnLoading = false;
       return;
     }
 
     this.alertQuestion(
-      'warning',
+      'question',
       `Se generarán ${valid.contador} factura(s)`,
       '¿Desea continuar?'
     ).then(async ans => {
       if (ans.isConfirmed) {
         //en espera de revision de creacion facturas e inconsitencias
+        // PK_COMER_FACTINM.PA_AJU_FACTURA_PAG
         const pk_comer: any = await this.packageInvoice({
           eventId: event,
           option: 0,
@@ -743,23 +968,30 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           partiality: null,
           type: null,
         });
-
+        console.log('pk_comer', pk_comer);
         if (!pk_comer) {
-          this.alert(
-            'warning',
-            'Atención',
-            'Ha ocurrido un fallo en la operación'
-          );
+          this.alert('warning', 'Ha ocurrido un fallo en la operación', '');
+          this.btnLoading = false;
         } else if (pk_comer.p_RESUL == 'Correcto.') {
-          this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
+          // this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
           this.paramsList.getValue()['limit'] = 500;
           this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
           this.paramsList.getValue()[
             'filter.eventId'
           ] = `${SearchFilter.EQ}:${event}`;
+          await this.forArrayFilters('eventId', event);
           this.getAllComer();
+          const params = new ListParams();
+          params['filter.eventId'] = `$eq:${event}`; // COMER_INCONSISTENCIAS
+          const countInconsistencias: any =
+            await this.billingsService.getEatInconsistences(params);
+          this.btnLoading = false;
+          if (countInconsistencias.count > 0) {
+            this.numb.emit({ numberTab: 2, event: event });
+          }
         }
       } else {
+        this.btnLoading = false;
       }
     });
   }
@@ -799,7 +1031,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     let n_conf: number = 0;
     const data = await this.dataFilter.getAll();
     if (data.length == 0) {
-      this.alert('warning', 'Atención', 'Sin Factura(s) a trabajar');
+      this.alert('warning', 'Sin Factura(s) a trabajar', '');
       return;
     }
 
@@ -831,14 +1063,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     }
 
     if (n_cont == 0) {
-      this.alert(
-        'warning',
-        'Atención',
-        'No se realizo selección de Factura(s)'
-      );
+      this.alert('warning', 'No se realizo selección de Factura(s)', '');
       return;
     }
-
+    this.btnLoading3 = true;
     for (const act of this.blk_actdat) {
       const sumEat = await this.getSumEat(act.eventId, act.batchId);
       if (sumEat) {
@@ -926,14 +1154,21 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         }
       }
     }
-
+    this.btnLoading3 = false;
     let config: ModalOptions = {
       initialState: {
         data: this.blk_actdat,
         totalItems: this.blk_actdat.length,
-        callback: async (next: boolean) => {
-          if (next) {
-            //llamar los datos de nuevo
+        callback: async (event: number) => {
+          if (event) {
+            this.paramsList.getValue()[
+              'filter.eventId'
+            ] = `${SearchFilter.EQ}:${event}`;
+            this.paramsList.getValue()[
+              'filter.address'
+            ] = `${SearchFilter.EQ}:M`;
+            await this.forArrayFilters('eventId', event);
+            this.getAllComer();
           }
         },
       },
@@ -979,17 +1214,20 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   async generateInvoice() {
     const user = this.authService.decodeToken();
+    this.btnLoading10 = true;
     const userValid = await this.validUser(user.preferred_username);
     let n_cont: number;
     let c_ind: string;
     let n_id_event: number;
     const { event, idAllotment } = this.form.value;
 
-    if (userValid == 0) {
+    if (userValid == 1) {
+      // Cambiar a 0 //
+      this.btnLoading10 = false;
       this.alert(
         'warning',
-        'Atención',
-        'No cuenta con permisos para efectuar esta operación'
+        'No cuenta con permisos para efectuar esta operación',
+        ''
       );
     } else {
       n_cont = 0;
@@ -1004,36 +1242,40 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         let data: any[] = await this.dataFilter.getAll();
 
         if (data.length == 0) {
-          this.alertInfo('warning', 'Atención', 'Sin factura(s) para trabajar');
+          this.btnLoading10 = false;
+          this.alertInfo('warning', 'Sin factura(s) para trabajar', '');
           return;
         }
-
+        let arr = [];
         for (const invoice of this.isSelect) {
           if (!n_id_event) {
             n_id_event = invoice.eventId;
           }
           if (invoice.factstatusId == 'PREF') {
             n_cont++;
+            arr.push(invoice);
           }
         }
+        this.isSelect = arr;
+        this.dataFilter.refresh();
       }
 
       if (n_cont == 0) {
-        this.alert(
-          'warning',
-          'Atención',
-          'Sin prefacturas para asignar folios'
-        );
+        this.alert('warning', 'Sin prefacturas para asignar folios', '');
+        this.btnLoading10 = false;
         return;
       }
 
       this.alertQuestion(
-        'warning',
+        'question',
         `Se asignarán ${n_cont} folio(s)`,
         '¿Desea continuar?'
       ).then(ans => {
         if (ans.isConfirmed) {
+          // PUP_NVO_GENERA_FOLIOS
           this.newGenerateInvoice(c_ind, n_id_event);
+        } else {
+          this.btnLoading10 = false;
         }
       });
     }
@@ -1046,6 +1288,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
     const tp_event = await this.getIdTpEvent(event);
 
+    // VALIDAFOL := VALIDA_FOLIOS_DISPO(n_ID_EVENTO);
     const valid = await this.validaFolAvaliable(
       String(n_id_event),
       this.isSelect[0]?.tpevent ?? tp_event
@@ -1054,30 +1297,30 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     if (valid == 1) {
       await this.updateDoc(n_id_event);
 
-      await this.newMarkProcess('EL', 'PREF', c_indN);
-
-      //commit guardar cambios
-
+      await this.newMarkProcess('FL', 'PREF', c_indN);
+      console.log({ pEvent: String(event), ptpevento: tp_event });
       await this.generateInvoiceCtrl(String(event), tp_event);
 
       if (c_indN == 'F') {
-        this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
+        // this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
         this.paramsList.getValue()[
           'filter.eventId'
         ] = `${SearchFilter.EQ}:${event}`;
         this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
-        this.getAllComer();
+        // this.getAllComer();
       }
 
       //procedimiento verifica prov cance
-      this.verifyProv();
+      this.verifyProv(event);
+      this.btnLoading10 = false;
     } else {
-      this.alert('warning', 'Atención', 'No existen folios disponibles');
+      this.btnLoading10 = false;
+      this.alert('warning', 'No existen folios disponibles', '');
     }
   }
 
-  async verifyProv() {
-    const data = await this.dataFilter.getAll();
+  async verifyProv(event: any) {
+    const data = this.isSelect;
     for (const invoice of data) {
       if (
         invoice.archImgtemp &&
@@ -1085,10 +1328,17 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         invoice.factstatusId != 'CAN'
       ) {
         invoice.factstatusId = 'FOL';
+        delete invoice.delegation;
         await this.updateInvoice(invoice);
-        this.getAllComer();
       }
     }
+    this.paramsList.getValue()[
+      'filter.eventId'
+    ] = `${SearchFilter.EQ}:${event}`;
+    this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
+    await this.forArrayFilters('eventId', event);
+    this.getAllComer();
+    this.alert('success', 'Proceso terminado correctamente', '');
   }
 
   async generateInvoiceCtrl(pEvent: string, ptpevento: string) {
@@ -1146,6 +1396,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             aux_val_liq = await this.batchLiq(invoice.eventId, invoice.batchId);
             if (aux_val_liq == 1) {
               invoice.process = process;
+              delete invoice.delegation;
+              await this.updateInvoice(invoice);
             } else {
               cont++;
             }
@@ -1154,6 +1406,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           }
         } else {
           invoice.process = process;
+          delete invoice.delegation;
+          await this.updateInvoice(invoice);
         }
       }
 
@@ -1161,15 +1415,15 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Atención',
-          `No se generara el folio de la factura. El lote ${
+          `No se generará el folio de la factura. El lote ${
             this.isSelect[this.isSelect.length - 1].batchId
           } no ha sido afectado`
         );
       } else if (cont > 1 && aux_val_liq == 0) {
         this.alert(
           'warning',
-          'Atención',
-          `${cont} facturas no pueden ser foliadas, sus lotes no han sido afectados`
+          `${cont} facturas no pueden ser foliadas, sus lotes no han sido afectados`,
+          ''
         );
       }
 
@@ -1191,6 +1445,16 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     }
 
     return true;
+  }
+  async putApplicationPutProcess(data: any) {
+    return firstValueFrom(
+      this.comerInvoice.putApplicationPutProcess(data).pipe(
+        map(resp => {
+          return true;
+        }),
+        catchError(() => of(false))
+      )
+    );
   }
 
   async updateProcess(eventId: number, billId: number, process: string) {
@@ -1286,12 +1550,12 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     const data: any[] = await this.dataFilter.getAll();
 
     if (data.length == 0) {
-      this.alert('warning', 'Atención', 'Debe seleccionar un evento');
+      this.alert('warning', 'Debe seleccionar un evento', '');
       return;
     }
 
     let aux = 0;
-
+    this.btnLoading11 = true;
     aux = this.validateRemoveInvoice();
 
     if (aux == 1) {
@@ -1299,23 +1563,27 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       //update seleccionados
     }
 
+    // COMER_CTRLFACTURA.ELIMINA_FOLIOS(:COMER_FACTURAS.ID_EVENTO, NULL);
     this.comerInvoice
       .deleteFolio({ eventId: data[0].eventId, invoiceId: null })
       .subscribe({
         next: () => {
+          this.btnLoading11 = false;
           this.alert('success', 'Folios', 'Eliminados Correctamente');
-
-          // this.comerInvoice.update(this.billingForm.value).subscribe({
-          //   next: () => {
-          //     this.getAllComer()
-          //   },
-          //   error: err => {
-          //     this.alert('error', 'Error', err.error.message);
-          //   },
-          // });
+          this.getAllComer();
         },
         error: err => {
-          this.alert('error', 'Error', err.error.message);
+          if (err.status == 400) {
+            this.btnLoading11 = false;
+            this.alert('warning', 'No se encontraron registros', '');
+          } else {
+            this.btnLoading11 = false;
+            this.alert(
+              'error',
+              'Ocurrió un error al intentar eliminar los folios',
+              err.error.message
+            );
+          }
         },
       });
   }
@@ -1323,10 +1591,11 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   validateRemoveInvoice(): number {
     for (const invoice of this.isSelect) {
       if (invoice.factstatusId != 'FOL') {
+        this.btnLoading11 = false;
         this.alert(
           'warning',
-          'Atención',
-          'Soló se puede eliminar folios de facturas con estatus FOL, si lo desea puede cancelarla'
+          'Soló se puede eliminar folios de facturas con estatus FOL',
+          'Si lo desea puede cancelarla'
         );
         return 0;
       }
@@ -1377,27 +1646,29 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       check: [null],
       delegation: [null],
       userV: [null, Validators.required],
-      passwordV: [null, Validators.required],
+      passwordV: [null],
       folio: [null],
       refactura: [null],
     });
 
     this.formFactura = this.fb.group({
-      importE: [null],
-      ivaE: [null],
-      totalE: [null],
-      count: [null],
-      importI: [null],
-      ivaI: [null],
-      totalI: [null],
+      importE: [0],
+      ivaE: [0],
+      totalE: [0],
+      count: [0],
+      importI: [0],
+      ivaI: [0],
+      totalI: [0],
+      order: [null],
+      xLote: [null],
     });
 
     this.formDetalle = this.fb.group({
-      count: [null],
+      count: [0],
       totalI: [0],
       totalIva: [0],
       total: [0],
-      countTotal: [null],
+      countTotal: [0],
     });
   }
 
@@ -1419,20 +1690,38 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   openFolioModal() {
+    if (this.isSelect.length == 0)
+      return this.alert('warning', 'Debe seleccionar una factura', '');
+
     let config: ModalOptions = {
       initialState: {
         callback: async (next: boolean, data: InvoiceFolioSeparate) => {
           if (next) {
-            const invoice: any[] = await this.dataFilter.getAll();
-            const index = invoice.findIndex(inv => inv == this.isSelect[0]);
-            invoice[index].series = data.series;
-            invoice[index].folioinvoiceId = data.folioinvoiceId;
-            invoice[index].Invoice = data.invoice;
-            invoice[index].factstatusId = 'FOL';
+            // const invoice: any[] = await this.dataFilter.getAll();
+            // const index = invoice.findIndex(inv => inv == this.isSelect[0]);
+            // invoice[index].series = data.series;
+            // invoice[index].folioinvoiceId = data.folioinvoiceId;
+            // invoice[index].Invoice = data.invoice;
+            // invoice[index].factstatusId = 'FOL';
 
-            await this.updateInvoice(invoice[index]);
-            this.getAllComer();
-
+            const invoice = this.isSelect[0];
+            invoice.series = data.series;
+            invoice.folioinvoiceId = data.folioinvoiceId;
+            invoice.Invoice = data.invoice;
+            invoice.factstatusId = 'FOL';
+            delete invoice.delegation;
+            let resp = await this.updateInvoice(invoice);
+            if (!resp) {
+              return this.alert(
+                'warning',
+                'No se pudo actualizar la factura',
+                ''
+              );
+            } else {
+              this.getAllComer();
+              this.rowInvoice = null;
+              this.alert('success', 'Factura actualizada correctamente', '');
+            }
             //this.dataFilter.load(invoice);
             //this.dataFilter.refresh();
           }
@@ -1445,15 +1734,20 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   async track() {
+    if (this.isSelect.length == 0)
+      return this.alert('warning', 'Debe seleccionar al menos una factura', '');
+
     const desc = this.isSelect.length > 0 ? this.isSelect[0].declassify : null;
     if (this.selectInovice() == 1 && desc == 'S') {
+      // -- Vehiculos tractocamion sin placas federales
       this.alert(
         'warning',
-        'Atención',
-        'El Bien ya se encuentra como tractocamión sin placas federales'
+        'El Bien ya se encuentra como tractocamión sin placas federales',
+        ''
       );
       this.removeSelect();
     } else if (this.selectInovice() == 1 && !desc) {
+      // -- Cambio a Vehiculos tractocamion sin placas federales
       const invoice = this.isSelect[0];
       invoice.declassify = 'S';
       delete invoice.invoiceStatusId;
@@ -1464,10 +1758,20 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       delete invoice.relation;
       delete invoice.delegation;
 
-      await this.updateInvoice(invoice);
-      this.getAllComer();
-      this.removeSelect();
-      this.alert('success', 'Cambio a vehiculos tractocamión', '');
+      let resp = await this.updateInvoice(invoice);
+      if (resp) {
+        // const current: any[] = await this.dataFilter.getAll();
+        // const index = current.findIndex(inv => inv == this.isSelect[0]);
+        // current[index].factstatusId = 'IMP';
+        // this.dataFilter.load(current);
+        // this.dataFilter.refresh();
+        this.getAllComer();
+        this.removeSelect();
+        this.alert('success', 'Cambio a vehiculos tractocamión', '');
+      } else {
+        this.getAllComer();
+        this.alert('warning', 'No se pudo realizar el cambio', '');
+      }
     }
   }
 
@@ -1476,11 +1780,12 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   async removeSelect() {
+    // DESELECCIONA
     const data: any[] = await this.dataFilter.getAll();
     const event = data.length > 0 ? data[0].eventId : null;
 
     if (!event) {
-      this.alert('warning', 'Atención', 'Debe consultar un evento');
+      this.alert('warning', 'Debe consultar un evento', '');
       return;
     }
 
@@ -1519,6 +1824,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       );
       break;
     }
+    this.removeSelect();
   }
 
   async callReport(
@@ -1531,69 +1837,103 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     impressionDate: string
   ) {
     const count = await this.getCount(eventId, factura);
+    console.log(count);
     const data = {
       PEVENTO: eventId,
       PFACTURA: factura,
     };
+    console.log('data ', data);
     if (pTipo == 1) {
       if (count > 0) {
-        this.getReport('RCOMERFACTURAS_VEH_VNR', data);
+        // this.getReportNull();
+        this.getReport('RCOMERFACTURAS_VEH_VNR', data); // FUNCIONA
       } else {
-        this.getReport('RCOMERFACTURAS_VEH', data);
+        // this.getReportNull();
+        this.getReport('RCOMERFACTURAS_VEH', data); // VERIFICAR
       }
     } else if (pTipo == 2) {
       const v_val = await this.etapaNexo(impressionDate);
+      console.log('v_val', v_val);
       if (v_val == 1) {
-        this.getReport('RCOMERFACTURAS_DIVERSOS', data);
+        // this.getReportNull();
+        this.getReport('RCOMERFACTURAS_DIVERSOS', data); // FUNCIONA
       } else if (v_val == 2) {
-        this.getReport('RCOMERFAC_GRALSNANX', data);
+        this.getReport('RCOMERFAC_GRALSNANX', data); // FUNCIONA
+        // this.getReportNull();
       } else {
-        this.alert('warning', 'Atención', 'No se puede visualizar el reporte');
+        this.alert('warning', 'No se puede visualizar el reporte', '');
       }
     } else if (pTipo == 3) {
       if (count > 0) {
+        // this.getReportNull();
         this.getReport('RCOMERFACTURAS_DIV_SA_VNR', data);
       } else {
-        this.getReport('RCOMERFACTURAS_DIVSANEXO', data);
+        // this.getReportNull();
+        this.getReport('RCOMERFACTURAS_DIVSANEXO', data); // FUNCIONA
       }
     } else if (pTipo == 4) {
       if (count > 0) {
-        this.getReport('RCOMERFACTURAS_AERONAVE_VNR', data);
+        this.getReport('RCOMERFACTURAS_AERONAVE_VNR', data); // SI
       } else {
-        this.getReport('RCOMERFACTURAS_AERONAVE', data);
+        this.getReport('RCOMERFACTURAS_AERONAVE', data); // FUNCIONA
       }
     } else if (pTipo == 5) {
       const v_val = await this.etapaNexo(impressionDate);
+      console.log(v_val);
       if (v_val == 1) {
-        this.getReport('RCOMERFACTURAS_CHCONANEXO', data);
+        this.getReport('RCOMERFACTURAS_CHCONANEXO', data); // FUNCIONA
+        // this.getReportNull();
       } else if (v_val == 2) {
-        this.getReport('RCOMERFAC_GRALSNANX', data);
+        this.getReport('RCOMERFAC_GRALSNANX', data); // FUNCIONA
+        // this.getReportNull();
       } else {
-        this.alert('warning', 'Atención', 'No se puede visualizar el reporte');
+        this.alert('warning', 'No se puede visualizar el reporte', '');
       }
     } else if (pTipo == 6) {
-      this.getReport('RCOMERFACTURAS_CHATARRA_SA', data);
+      this.getReport('RCOMERFACTURAS_CHATARRA_SA', data); // FUNCIONA
     } else if (pTipo == 10) {
-      this.getReport('RCOMERFACTURAS_ANEXOS', data);
+      this.getReport('RCOMERFACTURAS_ANEXOS', data); // FUNCIONA
     } else if (pTipo == 11 && psubtipo == 1) {
-      this.getReport('RCOMERCONSENTVEH', data);
+      this.getReport('RCOMERCONSENTVEH', data); // FUNCIONA
     } else if (pTipo == 11 && psubtipo == 2) {
-      this.getReport('RCOMERCONSENTBDCA', data);
+      // PARA IMPRIMIR CARTAS DE RESPONSABILIDAD DE AERONAVES
+      this.getReport('RCOMERCONSENTBDCA', data); // FUNCIONA
     } else if (pTipo == 11 && psubtipo == 3) {
-      this.getReport('RCOMERCONSENTSBD', data);
+      this.getReport('RCOMERCONSENTSBD', data); // FUNCIONA
     } else if (pTipo == 11 && psubtipo == 4) {
-      this.getReport('RCOMERCONSENTAERO', data);
+      this.getReport('RCOMERCONSENTAERO', data); // FUNCIONA
     } else if (pTipo == 11 && psubtipo == 5) {
-      this.getReport('RCOMERCONSENTCHCA', data);
+      this.getReport('RCOMERCONSENTCHCA', data); // FUNCIONA
     } else if (pTipo == 11 && psubtipo == 6) {
-      this.getReport('RCOMERCONSENTCHSA', data);
+      this.getReport('RCOMERCONSENTCHSA', data); // FUNCIONA
     } else if (pTipo == 12 && [1, 2, 3, 4, 5, 6].includes(psubtipo)) {
-      this.getReport('RCOMERCARTASLIB', { PEVENTO: eventId });
+      // this.getReport('RCOMERCARTASLIB', { PEVENTO: eventId });
+      this.getReportNull();
     }
   }
 
   getReport(name: string, params: Object) {
     this.siabService.fetchReport(name, params).subscribe({
+      next: resp => {
+        const blob = new Blob([resp], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
+  }
+  getReportNull(name?: string, params?: Object) {
+    this.siabService.fetchReportBlank('blank').subscribe({
       next: resp => {
         const blob = new Blob([resp], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
@@ -1640,14 +1980,14 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     if (valid == 0) {
       this.alert(
         'warning',
-        'Atención',
-        'No cuenta con los permisos para efectuar esta operación'
+        'No cuenta con los permisos para efectuar esta operación',
+        ''
       );
     } else {
       const event = data.length > 0 ? data[0].eventId : null;
 
       if (!event) {
-        this.alert('warning', 'Atención', 'Debe consultar un evento');
+        this.alert('warning', 'Debe consultar un evento', '');
         return;
       }
 
@@ -1698,7 +2038,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     return firstValueFrom(
       this.comerInvoice.update(data).pipe(
         map(() => true),
-        catchError(() => of(true))
+        catchError(() => of(false))
       )
     );
   }
@@ -1714,10 +2054,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   visualizarCE() {
     if (this.isSelect.length == 0) {
-      this.alert('warning', 'Atención', 'Favor de seleccionar una factura');
+      this.alert('warning', 'Favor de seleccionar una factura', '');
       return;
     }
-
+    // LLAMA_REPORTE (12, 2, :COMER_FACTURAS.TIPO, 1);
     this.callReport(
       12,
       2,
@@ -1731,7 +2071,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   visualizarCR() {
     if (this.isSelect.length == 0) {
-      this.alert('warning', 'Atención', 'Favor de seleccionar una factura');
+      this.alert('warning', 'Favor de seleccionar una factura', '');
       return;
     }
 
@@ -1750,13 +2090,18 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     const num = this.selectInovice();
     const { delegation } = this.form.value;
     if (num == 0 && !delegation) {
+      // -- TODOS LAS CARTAS DE RESPONSABILIDAD
+      this.changeOpt(3); // ORDENA_DATOS (3);
       await this.markAll();
-      this.impresionCardEnt(1);
+      this.impresionCardResp(1);
     } else if (num == 1 && !delegation) {
-      this.impresionCardEnt(0);
+      // -- SOLO CARTAS DE RESPONSABILIDAD SELECCIONADOS DISCONTINUOS
+      this.impresionCardResp(0);
     } else if (num == 0 && delegation) {
+      // -- CARTAS DE RESPONSABILIDAD SELECCIONADOS DE UNA REGIONAL
+      this.changeOpt(3); // ORDENA_DATOS (3);
       await this.markAll();
-      this.impresionCardEnt(1);
+      this.impresionCardResp(1);
     }
   }
 
@@ -1773,59 +2118,61 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       );
       break;
     }
+    this.removeSelect();
   }
 
   async actMatricula() {
     if (this.isSelect.length == 0) {
-      this.alert('warning', 'Atención', 'Favor de seleccionar una factura');
+      this.alert('warning', 'Favor de seleccionar una factura', '');
       return;
     }
 
+    this.btnLoading9 = true;
     const data = this.isSelect[0];
+    // const data = this.rowInvoice;
 
     if (data.factstatusId == 'PREF') {
-      const data = await this.dataFilter2.getAll();
+      const data2 = await this.dataFilter2.getAll();
 
-      if (data[0].modmandato ?? false) {
+      if (data2[0].modmandato ?? false) {
         const exist = await this.exist();
 
         if (exist > 0) {
-          const count = await this.countGood(data[0].goodNot);
+          const count = await this.countGood(data2[0].goodNot);
 
           if (count > 0) {
             this.goodProccess
-              .updateVal5({ val5: data[0].modmandato }, data[0].goodNot)
+              .updateVal5({ val5: data2[0].modmandato }, data2[0].goodNot)
               .subscribe({
                 next: () => {
-                  this.alert('success', 'Matriícula ha sido actualizada', '');
+                  this.alert('success', 'Matrícula ha sido actualizada', '');
                   this.getComerDetInovice();
+                  this.btnLoading9 = false;
+                  this.rowInvoice = null;
                 },
                 error: err => {
-                  this.alert('error', 'Error', err.error.message);
+                  this.btnLoading9 = false;
+                  this.alert('error', err.error.message, '');
                 },
               });
           } else {
-            this.alert(
-              'warning',
-              'Atención',
-              'Bien no válido para realizar el cambio'
-            );
+            this.btnLoading9 = false;
+            this.alert('warning', 'Bien no válido para realizar el cambio', '');
           }
         } else {
-          this.alert(
-            'warning',
-            'Atención',
-            'Usuario inválido para realizar el cambio'
-          );
+          this.btnLoading9 = false;
+          this.alert('warning', 'Usuario inválido para realizar el cambio', '');
         }
       } else {
-        this.alert('warning', 'Atención', 'Debe ingresar la Matrícula');
+        this.btnLoading9 = false;
+        this.alert('warning', 'Debe ingresar la Matrícula', '');
       }
     } else {
+      this.btnLoading9 = false;
       this.alert(
         'warning',
-        'Atención',
-        'Estatus de la Factura inválida para realizar el cambio'
+        'Estatus de la Factura inválida para realizar el cambio',
+        ''
       );
     }
   }
@@ -1865,13 +2212,26 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     );
   }
 
-  sendPackage() {}
+  sendPackage() {
+    this.alertQuestion(
+      'question',
+      'Se enviara el paquete de los documentos a las regionales',
+      '¿Desea Continuar?'
+    ).then(async question => {
+      if (question.isConfirmed) {
+        // IMPRIME_PAQUETE;
+        await this.impresioPackage();
+
+        this.alert('success', 'Se envió el paquete a la regional', '');
+      }
+    });
+  }
 
   openURL() {
     if (this.selectInovice() == 1) {
       window.open('http://facturacionelec.sae.gob.mx/Log.aspx', '_blank');
     } else {
-      this.alert('warning', 'Atención', 'Debe seleccionar un evento');
+      this.alert('warning', 'Debe seleccionar un evento', '');
     }
   }
 
@@ -1879,20 +2239,24 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     const num = this.selectInovice();
     const { delegation } = this.form.value;
     if (num == 0 && !delegation) {
+      this.changeOpt(3); // ORDENA_DATOS (3);
       await this.markAll();
-      this.impresionAnexReport(1);
+      this.impresionAnexReport(1); // IMPRIMIR_ANEXOS
+      this.removeSelect();
     } else if (num == 1 && !delegation) {
-      this.impresionAnexReport(0);
+      this.impresionAnexReport(0); // IMPRIMIR_ANEXOS
     } else if (num == 0 && delegation) {
+      this.changeOpt(3); // ORDENA_DATOS (3);
       await this.markAll();
-      this.impresionAnexReport(1);
+      this.impresionAnexReport(1); // IMPRIMIR_ANEXOS
+      this.removeSelect();
     }
   }
 
   impresionAnexReport(option: number) {
     for (let invoice of this.isSelect) {
       //revisar con procedimiento pup_rep_facturas_mas
-
+      // this.pupRepBillMore(10, invoice.Type, invoice)
       this.callReport(
         10,
         1,
@@ -1908,19 +2272,15 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   async imprimeInvoice() {
     if (this.selectInovice() == 0) {
-      this.alert('warning', 'Atención', 'Debes seleccionar algún evento');
+      this.alert('warning', 'Debes seleccionar algún evento', '');
       return;
     }
 
     if (!this.isSelect[0].Invoice) {
-      this.alert(
-        'warning',
-        'Atención',
-        'No ha capturado el folio de la factura'
-      );
+      this.alert('warning', 'No ha capturado el folio de la factura', '');
       return;
     }
-
+    this.btnLoading2 = true;
     await this.readParameter();
 
     this.impresionInvoice();
@@ -1928,25 +2288,58 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   async impresionInvoice() {
     for (let invoice of this.isSelect) {
+      // let invoice = this.isSelect[0];
+      if (!invoice.Invoice) {
+        this.alert('warning', 'No ha capturado el folio de la factura', '');
+        break;
+      }
       //revisar con procedimiento pup_rep_facturas_mas
       this.callReport(
         Number(invoice.Type),
         1,
         null,
-        1,
+        this.parameter.copias,
         invoice.eventId,
         invoice.billId,
         invoice.impressionDate
       );
-      const current: any[] = await this.dataFilter.getAll();
-      const index = current.findIndex(inv => inv == this.isSelect[0]);
-      current[index].factstatusId = 'IMP';
-      this.dataFilter.load(current);
-      this.dataFilter.refresh();
+
+      let factstatusId = invoice.factstatusId;
+      let delegation = invoice.delegation;
+
+      invoice.factstatusId = 'IMP';
+      delete invoice.delegation;
+
+      let resp = await this.updateInvoice(invoice);
+      if (resp) {
+        const current: any[] = await this.dataFilter.getAll();
+        console.log(current);
+        const index = current.findIndex(inv => inv == this.isSelect[0]);
+        console.log(current[0]);
+        current[0].factstatusId = 'IMP';
+        current[0]['delegation'] = delegation;
+        // Realizar DesSelección
+        this.desSelectOne(current[0]);
+        // this.dataFilter.load(current);
+        this.dataFilter.refresh();
+        this.btnLoading2 = false;
+      } else {
+        invoice.delegation = delegation;
+        invoice.factstatusId = factstatusId;
+        this.btnLoading2 = false;
+      }
       break;
     }
   }
-
+  async desSelectOne(bill: any) {
+    let arr = [];
+    for (const invoice of this.isSelect) {
+      if (invoice != bill) {
+        arr.push(invoice);
+      }
+    }
+    this.isSelect = arr;
+  }
   async readParameter() {
     this.parameter.numfactimp = await this.numFac();
     this.parameter.numfactele = await this.numFacTele();
@@ -1991,18 +2384,20 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   clientSend() {
     this.alertQuestion(
       'question',
-      'Se enviara el nuevo CFDI para Atención a Clientes',
+      'Se enviará el nuevo CFDI para Atención a Clientes',
       '¿Desea continuar?'
-    ).then(answer => {
+    ).then(async answer => {
       if (answer.isConfirmed) {
-        this.impresioPackage();
+        // PUP_INICIALIZA_BATS;
+        await this.impresioPackage();
+        this.alert('success', 'El CFDI nuevo fue enviado', '');
       }
     });
   }
 
   async impresioPackage() {
-    let v_uuid;
-    for (const invoice of this.isSelect) {
+    let v_uuid: number;
+    let result = this.isSelect.map(async invoice => {
       if (
         [2, 5].includes(Number(invoice.Type)) &&
         (invoice.exhibit ?? 'S') == 'S'
@@ -2012,25 +2407,32 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         v_uuid = await this.getBill(invoice);
 
         if (['CFDI', 'IMP'].includes(invoice.factstatusId) && v_uuid == 1) {
-          //llama pub_rep_factura_mas
-          //llama pub_rep_factura_mas
+          //'PUP_REP_FACTURA_MAS 10','A'
+          await this.pupRepBillMore(10, invoice.Type, invoice);
+          //'PUP_REP_FACTURA_MAS 11','A'
+          await this.pupRepBillMore(11, invoice.Type, invoice); // CONSTANCIA DE ENTREGA Y CFDI
         } else {
           this.alert(
             'warning',
-            'Atención',
-            `
-            El lote ${invoice.batchId} no tiene estatus IMP o CFDI no se podrá imprimir el paquete`
+            `El lote ${invoice.batchId} no tiene estatus IMP o CFDI no se podrá imprimir el paquete`,
+            ''
           );
         }
       } else {
-        // llama pup_rep_factura_mas
+        // pup_rep_factura_mas
+        await this.pupRepBillMore(11, invoice.Type, invoice);
       }
-    }
-    //llama pub_ejecuta_bats
+    });
 
-    this.alert('success', 'El CFDI nuevo fue enviado', '');
+    Promise.all(result).then(resp => {
+      //llama PUP_EJECUTA_BATS
+      this.isSelect = [];
+      this.dataFilter.refresh();
+      this.pupEjecutaBats();
+      return true;
+    });
   }
-
+  pupEjecutaBats() {}
   async getBill(invoice: any) {
     const filter = new FilterParams();
 
@@ -2051,6 +2453,13 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     this.form.get('userV').patchValue(null);
     this.form.get('passwordV').patchValue(null);
     let count: number = 0;
+    // START PUP_VAL_ESTATUS //
+    if (this.isSelect.length == 0)
+      return this.alert(
+        'warning',
+        'Debe seleccionar facturas para cancelar',
+        ''
+      );
 
     for (const invoice of this.isSelect) {
       if (!['CFDI', 'IMP'].includes(invoice.factstatusId)) {
@@ -2061,77 +2470,128 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     if (count == 1) {
       this.alert(
         'warning',
-        'Atención',
-        'La Factura no tiene un estatus válido para cancelación'
+        'La factura no tiene un estatus válido para cancelación',
+        ''
       );
       return;
     } else if (count > 1) {
       this.alert(
         'warning',
-        'Atención',
-        `La Selección contiene ${count} Facturas que no tienen un estatus válido para cancelación`
+        `La selección contiene ${count} facturas que no tienen un estatus válido para cancelación`,
+        ``
       );
       return;
     }
-
+    // END PUP_VAL_ESTATUS //
     this.validateCancel();
   }
 
   async validateCancel() {
+    // -- PRIMERO VALIDAMOS CAUSA Y FOLIO SP
     const { causerebillId, folio, refactura } = this.form.value;
     if (!causerebillId) {
       this.isVisibleField(1);
     } else if (causerebillId) {
       if (this.isSelect[0].factstatusId == 'CAN') {
-        this.alert(
-          'warning',
-          'Atención',
-          'No puede procesar una factura cancelada'
-        );
+        this.alert('warning', 'No puede procesar una factura cancelada', '');
         this.isVisibleField(0);
         return;
       }
       if (!folio && refactura == 'P') {
-        this.alert('warning', 'Atención', 'Introduzca la solicitud de pago');
+        this.alert('warning', 'Introduzca la Solicitud de Pago', '');
         return;
       } else if (folio && refactura == 'P') {
         const puf_valid = await this.validaFolSp(this.isSelect[0].eventId);
         if (puf_valid == 0) {
           this.alert(
             'warning',
-            'Atención',
-            'El Folio de la solicitud de pago no corresponden a la factura, favor de verificar'
+            'El folio de la solicitud de pago no corresponden a la factura',
+            'Favor de verificar'
           );
           return;
         } else if (puf_valid == 1) {
           this.alert(
             'warning',
-            'Atención',
-            'Los montos de la solicitud de pago no corresponden a la factura, favor de verificar'
+            'Los montos de la solicitud de pago no corresponden a la factura',
+            'Favor de verificar'
           );
           return;
         } else {
           if (this.isSelect[0].factstatusId == 'CAN') {
             this.alert(
               'warning',
-              'Atención',
-              'No puede procesar una factura cancelada'
+              'No puede procesar una factura cancelada',
+              ''
             );
             this.isVisibleField(0);
             return;
           } else {
+            // PUP_FACTURASXIDGASTO
             await this.pup_invoice();
           }
         }
       }
 
+      // --------------- Completado -------------- //
       let config: ModalOptions = {
         initialState: {
           form: this.form,
           data: this.isSelect,
           global: this.global,
           parameter: this.parameter,
-          callback: (data: boolean, val: number) => {
+          callback: async (
+            data: { eventId: any; factstatusId: any },
+            val: number,
+            GO_BLOCK: boolean
+          ) => {
+            if (data) {
+              if (data.factstatusId)
+                this.paramsList.getValue()[
+                  'filter.factstatusId'
+                ] = `${SearchFilter.NOT}:${data.factstatusId}`;
+              this.paramsList.getValue()[
+                'filter.eventId'
+              ] = `${SearchFilter.EQ}:${data.eventId}`;
+              await this.forArrayFilters('eventId', data.eventId);
+              this.getAllComer();
+            }
+            if (GO_BLOCK) {
+              const { folio } = this.form.value;
+              const idpayment = await this.checkIdGasto(
+                folio,
+                this.isSelect[0].eventId
+              );
+              let config = {
+                initialState: {
+                  eventId: this.isSelect[0].eventId,
+                  idpayment,
+                  val: true,
+                  form: this.form,
+                  callback: async (
+                    data: { eventId: any; factstatusId: any },
+                    val: number,
+                    GO_BLOCK: boolean
+                  ) => {
+                    if (data) {
+                      if (data.factstatusId) {
+                        this.paramsList.getValue()[
+                          'filter.factstatusId'
+                        ] = `${SearchFilter.NOT}:${data.factstatusId}`;
+                      }
+
+                      this.paramsList.getValue()[
+                        'filter.eventId'
+                      ] = `${SearchFilter.EQ}:${data.eventId}`;
+                      await this.forArrayFilters('eventId', data.eventId);
+                      this.getAllComer();
+                    }
+                  },
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(FactCanceladasComponent, config);
+            }
             this.isVisibleField(val);
           },
         },
@@ -2149,12 +2609,18 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     if (idpayment) {
       this.global.canxp = 'S';
       this.global.pidgasto = idpayment;
-      const data = await this.getData(
-        this.isSelect[0].eventId,
-        Number(idpayment)
-      );
-      //guardar datos cancelados
-      console.log(data);
+      let config = {
+        initialState: {
+          eventId: this.isSelect[0].eventId,
+          idpayment,
+          val: false,
+        },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(FactCanceladasComponent, config);
+    } else {
+      this.global.canxp = 'N';
     }
   }
 
@@ -2203,17 +2669,23 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     this.form.get('refactura').patchValue(data.rebill);
   }
 
+  // EXPORTAR A EXCEL --- Falta optimizar -- //
   async exportData() {
     const data: any[] = await this.dataFilter.getAll();
 
     if (data.length == 0) {
-      this.alert('warning', 'Atención', 'Debe consultar un evento');
+      this.alert('warning', 'Debe consultar un evento', '');
       return;
     }
 
+    if (this.isSelect.length == 0) {
+      this.alert('warning', 'Debe seleccionar facturas a exportar', '');
+      return;
+    }
+
+    this.btnLoading13 = true;
     await this.markProcess('EX', null);
     //update los seleccionados
-
     this.comerInvoice.exportExcell(data[0].eventId).subscribe({
       next: resp => {
         const linkSource = `data:application/xlsx;base64,${resp.resultExcel.base64File}`;
@@ -2223,13 +2695,12 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         downloadLink.target = '_blank';
         downloadLink.click();
         downloadLink.remove();
+        this.btnLoading13 = false;
+        this.alert('success', 'Archivo descargado correctamente', '');
       },
-      error: () => {
-        this.alert(
-          'error',
-          'Ha ocurrio un fallo en la exportación del archivo',
-          ''
-        );
+      error: error => {
+        this.btnLoading13 = false;
+        this.alert('warning', error.error.message, '');
       },
     });
   }
@@ -2245,7 +2716,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     } else {
       aux_status = statusValid;
     }
-
+    let arr = [];
     for (const invoice of this.isSelect) {
       if (invoice.factstatusId == (aux_status ?? invoice.factstatusId)) {
         if (!invoice.billRelimagId && !invoice.eventRelimagId) {
@@ -2257,11 +2728,12 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             aux_val_liq = await this.batchLiq(invoice.eventId, invoice.batchId);
             if (aux_val_liq == 1) {
               invoice.process = process;
-              await this.updateProcess(
-                invoice.eventId,
-                invoice.billId,
-                process
-              );
+              let obj = {
+                process: process,
+                eventId: invoice.eventId,
+                billId: invoice.billId,
+              };
+              arr.push(obj);
             } else {
               cont++;
             }
@@ -2270,7 +2742,12 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           }
         } else {
           invoice.process = process;
-          await this.updateProcess(invoice.eventId, invoice.billId, process);
+          let obj = {
+            process: process,
+            eventId: invoice.eventId,
+            billId: invoice.billId,
+          };
+          arr.push(obj);
         }
       }
     }
@@ -2278,32 +2755,36 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     if (cont == 1 && aux_val_liq == 0) {
       this.alert(
         'warning',
-        'Atención',
-        `No se generara el folio de la factura. El lote ${
+        'No se generara el folio de la factura',
+        `El lote ${
           this.isSelect[this.isSelect.length - 1].batchId
         } no ha sido afectado`
       );
     } else if (cont > 1 && aux_val_liq == 0) {
       this.alert(
         'warning',
-        'Atención',
-        `${cont} facturas no pueden ser foliadas, sus lotes no han sido afectados`
+        `${cont} facturas no pueden ser foliadas`,
+        `Sus lotes no han sido afectados`
       );
+    } else {
+      let resp = await this.putApplicationPutProcess(arr);
+      // console.log("NICE", resp)
+      return resp;
     }
 
     if (contg == 1 && aux_valgasto == 1) {
       this.alert(
         'warning',
-        'Atención',
-        `No se generara el folio de la factura. El lote ${
+        'No se generará el folio de la factura',
+        `El lote ${
           this.isSelect[this.isSelect.length - 1].batchId
         } no cumple las validaciones de los montos(chatarra)`
       );
     } else if (cont > 1 && aux_val_liq > 1) {
       this.alert(
         'warning',
-        'Atención',
-        `${contg} facturas no pueden ser foliadas, no cumplen las validaciones de los montos(chatarra)`
+        `${contg} facturas no pueden ser foliadas`,
+        `No cumplen las validaciones de los montos(chatarra)`
       );
     }
 
@@ -2312,9 +2793,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   async viewInvoice() {
     if (this.isSelect.length == 0) {
-      this.alert('warning', 'Atención', 'Debe seleccionar algun evento');
+      this.alert('warning', 'Debe seleccionar algún evento', '');
       return;
     }
+    // LLAMA_REPORTE (:COMER_FACTURAS.TIPO, 2, NULL, 1);
     this.callReport(
       Number(this.isSelect[0].Type),
       2,
@@ -2324,16 +2806,17 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.isSelect[0].billId,
       this.isSelect[0].impressionDate
     );
-
-    this.isSelect = [];
+    this.desSelectOne(this.isSelect[0]);
+    // this.isSelect = [];
+    this.dataFilter.refresh();
   }
 
   async viewAnexo() {
     if (this.isSelect.length == 0) {
-      this.alert('warning', 'Atención', 'Debe seleccionar algun evento');
+      this.alert('warning', 'Debe seleccionar algún evento', '');
       return;
     }
-
+    this.btnLoading14 = true;
     const date = await this.getDateParameter();
 
     const val = await this.etapaNexo(this.isSelect[0].impressionDate);
@@ -2350,16 +2833,19 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             this.isSelect[0].billId,
             this.isSelect[0].impressionDate
           );
+          this.btnLoading14 = false;
         } else {
-          this.alert('warning', 'Atención', 'La factura no tiene anexo');
+          this.btnLoading14 = false;
+          this.alert('warning', 'La factura no tiene anexo', '');
         }
         break;
       }
     } else {
+      this.btnLoading14 = false;
       this.alert(
         'warning',
-        'Atención',
-        `No se puede visualizar el anexo, la fecha de impresión es nula o es mayor al ${this.datePipe.transform(
+        'No se puede visualizar el anexo',
+        `La fecha de impresión es nula o es mayor al ${this.datePipe.transform(
           date,
           'dd/MM/yyyy'
         )}`
@@ -2379,6 +2865,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   async allSelect() {
+    this.btnLoading8 = true;
     const user = this.authService.decodeToken().preferred_username;
     const userValid = await this.validUser('LGONZALEZG' ?? user);
     const data = await this.dataFilter.getAll();
@@ -2387,15 +2874,21 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     if (userValid == 0) {
       this.alert(
         'warning',
-        'Atención',
-        'No cuenta con los permisos para realizar esta operación'
+        'No cuenta con los permisos para realizar esta operación',
+        ''
       );
+      this.btnLoading8 = false;
     } else {
       if (data.length == 0) {
-        this.alert('warning', 'Atención', 'Debe consultar un evento');
+        this.btnLoading8 = false;
+        this.alert('warning', 'Debe consultar un evento', '');
         return;
       }
       if (date) {
+        // saveData.hourAttention = this.datePipe.transform(
+        //   saveData.hourAttention,
+        //   'yyyy-MM-dd HH:mm:ss'
+        // );
         const newDate = this.datePipe.transform(date, 'yyyy-MM-dd');
         const data = await this.dataFilter.getAll();
         let exist: boolean = false;
@@ -2423,17 +2916,20 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
                 );
               },
             });
+          this.btnLoading8 = false;
         } else {
+          this.btnLoading8 = false;
           this.alert(
             'warning',
-            'Atención',
-            'No hay fechas de impresión para actualizar'
+            'No hay fechas de impresión para actualizar',
+            ''
           );
         }
 
         this.form.get('date').patchValue(null);
       } else {
         this.selectAllInvoice(userValid);
+        this.btnLoading8 = false;
       }
     }
   }
@@ -2483,6 +2979,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       ban = true;
 
       for (const invoice of this.isSelect) {
+        if (vid_lote) break;
         vid_lote = invoice.batchId;
       }
 
@@ -2505,5 +3002,238 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   CancelInvoice() {
     this.parameter.autorizo = 0;
     this.isVisibleField(0);
+  }
+
+  optXLote: any;
+  valSortBy: boolean = false;
+  changeOpt(event: any) {
+    if (event == 1) this.paramsList.getValue()['sortBy'] = `batchId:DESC`;
+    if (event == 2)
+      this.paramsList.getValue()['sortBy'] = `delegationNumber:DESC`;
+    if (event == 4) this.paramsList.getValue()['sortBy'] = `Invoice:DESC`;
+
+    this.valSortBy = true;
+    if (!event) this.valSortBy = false;
+
+    this.optXLote = this.paramsList.getValue()['filter.batchId'];
+    console.log('this.xLote.value', this.xLote.value);
+    if (!this.xLote.value) {
+      if (this.paramsList.getValue()['filter.batchId'])
+        delete this.paramsList.getValue()['filter.batchId'];
+    } else {
+      if (this.optXLote)
+        this.paramsList.getValue()['filter.batchId'] = `$eq:${this.optXLote}`;
+    }
+    if (!this.paramsList.getValue()['filter.eventId']) return;
+
+    this.getAllComer();
+  }
+
+  async printerMasivePDF() {
+    if (this.isSelect.length == 0)
+      return this.alert('warning', 'Debe seleccionar una factura', '');
+    this.path = '';
+    let L_PATH = '';
+    let L_FILE: any;
+    let VC_FILTRO = 'Todos (*.*) |*.*|';
+    this.btnLoading1 = true;
+    this.path = L_PATH;
+    // IMPRIMIR_FACTURA_2
+    await this.printerBill2();
+  }
+
+  GET_PATH_NAME(L_FILE): string {
+    return '';
+  }
+
+  async printerBill2() {
+    // IMPRIMIR_FACTURA_2
+    if (this.isSelect.length == 0)
+      return this.alert('warning', 'Debe seleccionar una factura', '');
+
+    let NUM_REG: number;
+    let NUM_DAT: number;
+    let POS_REG: number;
+    let aux: number;
+    let J: number;
+    if (NUM_REG < 6 && NUM_DAT > 6) {
+      // -- SI LA POSICION ES MENOR A 6 Y A MAS DE 6 REGISTROS
+      POS_REG = 1;
+    } else {
+      POS_REG = NUM_REG - 6;
+      if (POS_REG < 0) {
+        POS_REG = 1;
+      }
+    }
+    aux = 1;
+    if (aux == 1) {
+      for (const invoice of this.isSelect) {
+        J = J + 1;
+        // PUP_REP_FACTURA_MAS
+        await this.pupRepBillMore(0, invoice.Type, invoice);
+        // break;
+      }
+    }
+    this.btnLoading1 = false;
+    this.alert('success', 'Proceso terminado', '');
+  }
+
+  async pupRepBillMore(P_TIPOA: number, psubtipo: number, invoice: any) {
+    let data_: IPupRepBillMore = {
+      pTypeA: P_TIPOA,
+      pSubType: psubtipo,
+      type: invoice.Type,
+      eventId: invoice.eventId,
+      lotId: invoice.batchId,
+      billId: invoice.billId,
+      statusFactId: invoice.factstatusId,
+      impressionDate: invoice.impressionDate,
+      typeVoucher: invoice.vouchertype,
+      series: invoice.series,
+      invoice: invoice.Invoice,
+      tpEvent: invoice.tpevent,
+      delegationNumber: Number(invoice.delegationNumber),
+    };
+
+    let result = await this.servicePupRepBillMore(data_);
+    console.log('result', result);
+    return result;
+  }
+  servicePupRepBillMore(data: IPupRepBillMore) {
+    return new Promise((resolve, reject) => {
+      this.fileBrowserService.pupRepBillFurtherFurniture(data).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+  pupSaveFile(P_RUTA: string, P_EVENTO: any, P_LOTE: any) {
+    // PUP_GUARDA_ARCHIVO
+  }
+
+  pupSendVD(P_RUTA: string, P_EVENTO: any, P_LOTE: any) {
+    // PUP_ENVIAR_VD
+  }
+
+  pupSendATC(P_RUTA: string, P_EVENTO: any, P_LOTE: any) {
+    // PUP_ENVIAR_ATC
+  }
+
+  selectDataDet: any = null;
+  selectDataComerDetInvocie(data: any) {
+    this.selectDataDet = data;
+  }
+
+  async updateDetFact(option: string) {
+    if (!this.rowInvoice)
+      return this.alert('warning', 'No ha seleccionado Factura', '');
+
+    if (!this.selectDataDet)
+      return this.alert('warning', 'No ha seleccionado Detalle de Factura', '');
+
+    if (this.rowInvoice.factstatusId == 'PREF') {
+      let result: any = false;
+      if (option == 'AP') {
+        // AP
+        this.btnLoadAP = true;
+        let body = {
+          detinvoiceId: this.selectDataDet.detinvoiceId,
+          eventId: this.selectDataDet.eventId,
+          batchId: this.selectDataDet.batchId,
+          billId: this.selectDataDet.billId,
+          prodservSatKey: this.selectDataDet.prodservSatKey,
+        };
+        result = await this.billingsService.updateDetBillings(body);
+      } else if (option == 'AU') {
+        this.btnLoadAU = true;
+        let body = {
+          detinvoiceId: this.selectDataDet.detinvoiceId,
+          eventId: this.selectDataDet.eventId,
+          batchId: this.selectDataDet.batchId,
+          billId: this.selectDataDet.billId,
+          unitSatKey: this.selectDataDet.unitSatKey,
+        };
+        result = await this.billingsService.updateDetBillings(body);
+      }
+
+      if (!result) {
+        this.alert('warning', 'No se pudo actualizar el registro', '');
+        this.btnLoadAP = false;
+        this.btnLoadAU = false;
+      } else {
+        this.alert('success', 'Se actualizó el registro correctamente', '');
+        this.getComerDetInovice();
+        this.btnLoadAP = false;
+        this.btnLoadAU = false;
+      }
+      this.selectDataDet = null;
+    } else {
+      this.alert(
+        'warning',
+        'Estatus de la factura inválida para realizar el cambio.',
+        ''
+      );
+    }
+  }
+
+  async forArrayFilters(field: any, value: any) {
+    const subheaderFields: any = this.table.grid.source;
+
+    const filterConf = subheaderFields.filterConf;
+    if (filterConf.filters.length > 0) {
+      filterConf.filters.forEach((item: any) => {
+        if (item.field == field) {
+          item.search = value;
+        }
+      });
+    }
+    this.dataFilter.refresh();
+    return true;
+  }
+
+  async forArrayFilters_() {
+    const subheaderFields: any = this.table.grid.source;
+
+    const filterConf = subheaderFields.filterConf;
+    let val = true;
+    if (filterConf.filters.length > 0) {
+      filterConf.filters.forEach((item: any) => {
+        if (item.search != '') {
+          val = false;
+        }
+      });
+    }
+    return val;
+  }
+
+  async resetTable() {
+    // this.params = new BehaviorSubject<ListParams>(new ListParams());
+    this.loading = true;
+
+    this.paramsList.getValue().limit = 500;
+    this.paramsList.getValue().pageSize = 500;
+    this.paramsList.getValue().take = 500;
+    this.dataFilter.getFilter().filters = [];
+    this.dataFilter.refresh();
+
+    this.dataFilter.load([]);
+    this.dataFilter.refresh();
+
+    this.totalItems = 0;
+
+    this.dataFilter2.getFilter().filters = [];
+    this.dataFilter2.refresh();
+
+    this.dataFilter2.load([]);
+    this.dataFilter2.refresh();
+    this.totalItems2 = 0;
+    this.isSelect = [];
+    // this.resetInput();
+
+    this.loading = false;
   }
 }

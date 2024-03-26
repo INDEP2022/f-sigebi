@@ -1,3 +1,4 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { CustomFilterComponent } from 'src/app/@standalone/shared-forms/input-number/input-number';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
@@ -49,9 +50,22 @@ export const PRE_INVOICING_COLUMNS = {
   Type: {
     title: 'Tipo',
     sort: false,
-    valuePrepareFunction: (val: number) => {
-      return val == 7 ? 'Venta de Bases' : '';
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Todos',
+        list: [{ value: 7, title: 'Venta de Bases' }],
+      },
     },
+    valuePrepareFunction: (val: number) => {
+      if (val == 7) {
+        return 'Venta de Bases';
+      }
+      return '';
+    },
+    // valuePrepareFunction: (val: number) => {
+    //   return val == 7 ? 'Venta de Bases' : '';
+    // },
   },
   series: {
     title: 'Serie',
@@ -78,6 +92,10 @@ export const PRE_INVOICING_COLUMNS = {
     sort: false,
     valuePrepareFunction: (val: string) => {
       return val ? val.split('-').reverse().join('/') : '';
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
     },
   },
   price: {

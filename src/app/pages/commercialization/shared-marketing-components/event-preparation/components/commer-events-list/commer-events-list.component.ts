@@ -61,7 +61,10 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
-        tap(params => this.getEvents(params).subscribe())
+        tap(params => {
+          console.log(params);
+          this.getEvents(params).subscribe();
+        })
       )
       .subscribe();
   }
@@ -80,11 +83,28 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
     if (dataSource.action == 'filter') {
       const filters = dataSource.filter.filters;
       filters.forEach((filter: any) => {
+        console.log(filter.field, filter.search, filter);
         const columns = this.settings.columns as any;
         const operator = columns[filter.field]?.operator;
+
         if (!filter.search) {
+          params.removeAllFilters();
           return;
         }
+
+        if (
+          filter.field == 'comerStatusvta' &&
+          ![null, ''].includes(filter.search)
+        ) {
+          filter.field = 'comerStatusvta.description';
+        }
+        if (
+          filter.field == 'comerTpevents' &&
+          ![null, ''].includes(filter.search)
+        ) {
+          filter.field = 'comerTpevents.description';
+        }
+
         params.addFilter(
           filter.field,
           filter.search,
@@ -104,6 +124,16 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
     this.resetEventSelected();
     this.loading = true;
     params.addFilter('address', this.parameters.pDirection);
+
+    for (const key in params.filters) {
+      const str = params.filters[key];
+      const subStr = 'filter.catDelegation';
+      const newSubStr = 'filter.catDelegation.description';
+      if (str.includes(subStr)) {
+        params.filters[key] = str.replace(subStr, newSubStr);
+      }
+    }
+
     // params.sortBy = 'id:DESC';
     return this.comerEventService.getEatEvents(params.getParams()).pipe(
       catchError(error => {
@@ -128,6 +158,8 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
     if (event.isSelected) {
       this.globalEventChange.emit(event.data);
       this.eventSelected = event.data;
+      console.log(event);
+      console.log(event.data);
     } else {
       this.globalEventChange.emit(null);
       this.eventSelected = null;
@@ -135,24 +167,37 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
     }
   }
 
+  correctDate(date: string) {
+    const dateUtc = new Date(date);
+    return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
+  }
+
   openEvent() {
     if (!this.eventSelected) {
       this.alert('error', 'Error', 'Selecciona un Evento');
       return;
     }
-
+    console.log(this.eventSelected);
     this.eventForm.patchValue({
       ...this.eventSelected,
       eventDate: this.eventSelected?.eventDate
-        ? new Date(this.eventSelected?.eventDate)
+        ? this.correctDate(
+            new Date(this.eventSelected?.eventDate).toISOString()
+          )
         : null,
       eventClosingDate: this.eventSelected?.eventClosingDate
-        ? new Date(this.eventSelected?.eventClosingDate)
+        ? this.correctDate(
+            new Date(this.eventSelected?.eventClosingDate).toISOString()
+          )
         : null,
       failureDate: this.eventSelected?.failureDate
-        ? new Date(this.eventSelected?.failureDate)
+        ? this.correctDate(
+            new Date(this.eventSelected?.failureDate).toISOString()
+          )
         : null,
     });
+
+    console.log(this.eventForm.value);
     this.onOpenEvent.emit();
   }
 

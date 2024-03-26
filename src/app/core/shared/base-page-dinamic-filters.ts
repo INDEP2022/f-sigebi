@@ -5,9 +5,13 @@ import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs/internal/Observable';
 import { takeUntil } from 'rxjs/operators';
 import {
-  ListParams,
+  ListParamsFather,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import {
+  firstFormatDateToSecondFormatDate,
+  secondFormatDate,
+} from 'src/app/shared/utils/date';
 import { BasePage } from './base-page';
 
 export interface ServiceGetAll<T = any> {
@@ -23,9 +27,10 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
   columnFilters: any = [];
   // equalFilters: string[] = ['id'];
   ilikeFilters: string[] = ['description'];
+  dateFilters: string[] = [];
   haveInitialCharge = true;
   contador = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<ListParamsFather>(new ListParamsFather());
   service: ServiceGetAll<T>;
   subscription: Subscription = new Subscription();
   constructor() {
@@ -43,7 +48,7 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
   }
 
   ngOnInit(): void {
-    // debugger;
+    // //
     this.dinamicFilterUpdate();
     this.searchParams();
   }
@@ -68,18 +73,49 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
     return `filter.${filter.field}`;
   }
 
+  getSearchFilter(filter: any): SearchFilter {
+    let searchFilter = SearchFilter.ILIKE;
+    if (this.ilikeFilters.includes(filter.field)) {
+      searchFilter = SearchFilter.ILIKE;
+    } else {
+      searchFilter = SearchFilter.EQ;
+    }
+    return searchFilter;
+  }
+
+  fillColumnFilters(
+    haveFilter: boolean,
+    field: string,
+    filter: any,
+    searchFilter: SearchFilter
+  ) {
+    if (filter.search !== '') {
+      let newSearch = filter.search;
+      console.log(newSearch);
+      if (this.dateFilters.includes(filter.field)) {
+        if (newSearch instanceof Date) {
+          newSearch = secondFormatDate(newSearch);
+        } else if ((newSearch + '').includes('/')) {
+          newSearch = firstFormatDateToSecondFormatDate(newSearch);
+        }
+      }
+      this.columnFilters[field] = `${searchFilter}:${newSearch}`;
+      haveFilter = true;
+    } else {
+      delete this.columnFilters[field];
+    }
+    if (haveFilter) {
+      this.params.value.page = 1;
+    }
+  }
+
   setFilters(change: any) {
     let haveFilter = false;
 
     let filters = change.filter.filters;
     filters.map((filter: any) => {
       let field = ``;
-      let searchFilter = SearchFilter.ILIKE;
-      if (this.ilikeFilters.includes(filter.field)) {
-        searchFilter = SearchFilter.ILIKE;
-      } else {
-        searchFilter = SearchFilter.EQ;
-      }
+      let searchFilter = this.getSearchFilter(filter);
       // if (this.ilikeFilters.includes(filter.field)) {
       //   searchFilter = SearchFilter.ILIKE;
       // }
@@ -88,15 +124,7 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
       // if (isNaN(+search)) {
       //   search = search + ''.toUpperCase();
       // }
-      if (filter.search !== '') {
-        this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-        haveFilter = true;
-      } else {
-        delete this.columnFilters[field];
-      }
-      if (haveFilter) {
-        this.params.value.page = 1;
-      }
+      this.fillColumnFilters(haveFilter, field, filter, searchFilter);
       console.log(this.columnFilters);
     });
   }

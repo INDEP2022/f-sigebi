@@ -50,7 +50,9 @@ export class CustomersPenalitiesFormComponent
         'dd/MM/yyyy',
         'UTC'
       );
-      this.form.get('releaseDate').setValue(formatted);
+      this.form
+        .get('releaseDate')
+        .setValue(this.customersPenalties.penaltiDate);
       this.form.get('clientId').disable();
       this.form.get('userRelease').disable();
       this.form.get('releaseDate').disable();

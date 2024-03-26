@@ -129,7 +129,6 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
       params.getValue()['filter.id'] = `$eq:${task.id}`;
       this.taskService.getAll(params.getValue()).subscribe({
         next: response => {
-          console.log('response', response);
           this.taskService
             .update(response.data[0].taskDefinitionId, taskForm)
             .subscribe({
@@ -137,7 +136,6 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
                 resolve(true);
               },
               error: error => {
-                console.log('error', error);
                 resolve(false);
               },
             });

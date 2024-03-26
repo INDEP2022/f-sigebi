@@ -5,7 +5,7 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-2" *ngIf="edit">
           <form-field [control]="form.get('folioinvoiceId')" label="Id Folio">
             <input
               [readOnly]="true"
@@ -18,7 +18,7 @@
           <form-field [control]="form.get('delegationNumber')">
             <ngx-select
               [data]="delegations"
-              [searchOnInit]="true"
+              [searchOnInit]="false"
               (fetchItems)="getDelegation($event)"
               [form]="form"
               value="id"
@@ -42,6 +42,7 @@
         <div class="col-md-3">
           <form-field [control]="form.get('recordDate')" label="Fecha Registro">
             <input
+              [ngClass]="{ 'not-press bg-gray': true }"
               formControlName="recordDate"
               class="form-control"
               bsDatepicker
@@ -89,13 +90,13 @@
               [form]="form"
               value="value"
               bindLabel="label"
-              label="Coordinación"
+              label="Tipo"
               [control]="'type'"
               [searchable]="false">
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3" *ngIf="edit">
           <form-field [control]="form.get('statusfactId')" label="Estatus">
             <input
               [readOnly]="true"
@@ -104,18 +105,19 @@
               formControlName="statusfactId" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3" *ngIf="edit">
           <form-field
             [control]="form.get('totalFolios')"
             label="Total de Folios">
             <input
+              readonly
               type="number"
               min="0"
               class="form-control"
               formControlName="totalFolios" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3" *ngIf="edit">
           <form-field
             [control]="form.get('availableFolios')"
             label="Folios Disponibles">
@@ -126,7 +128,7 @@
               formControlName="availableFolios" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3" *ngIf="edit">
           <form-field
             [control]="form.get('usedFolios')"
             label="Folio Utilizados">
@@ -137,7 +139,7 @@
               formControlName="usedFolios" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4" *ngIf="edit">
           <form-field
             [control]="form.get('recordUser')"
             label="Usuario Registra">

@@ -148,7 +148,7 @@ export class EventPreparationComponent
     return await firstValueFrom(
       this.parametersModService.getAllFilter(params.getParams()).pipe(
         catchError(() => of({ data: [{ value: defaultBank }] })),
-        map(response => response.data[0]?.value ?? defaultBank)
+        map(response => response.data[0]?.valor ?? defaultBank)
       )
     );
   }
@@ -223,8 +223,9 @@ export class EventPreparationComponent
   taskOpenEvent() {
     this.hideCanvas();
     this.cleanStadistics();
-    const params = new FilterParams();
-    this.comerEventsListParams.next(params);
+    // const params = new FilterParams();
+    console.log('taskOpenEvent: ', this.comerEventsListParams);
+    // this.comerEventsListParams.next(params);
   }
 
   /**
@@ -247,6 +248,7 @@ export class EventPreparationComponent
       this.parameters.pDirection
     );
     console.log({ pass });
+    console.log('desde controller: ', this.eventForm.getRawValue());
 
     if (['NDIS', 'CONC'].includes(statusVtaId.value)) {
       if (pass == 0) {
@@ -255,6 +257,7 @@ export class EventPreparationComponent
         this.validPermissions(true);
       }
     } else if ([7, 8].includes(Number(eventTpId.value))) {
+      //7,6
       const currentDate = new Date();
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth() + 1;
@@ -302,8 +305,9 @@ export class EventPreparationComponent
   openEvent() {
     const { id } = this.eventControls;
     if (!id.value) {
-      const params = new FilterParams();
-      this.comerEventsListParams.next(params);
+      // const params = new FilterParams();
+      console.log('open event:  ', this.comerEventsListParams);
+      // this.comerEventsListParams.next(params);
       return;
     }
     this.hideCanvas();

@@ -10,7 +10,6 @@ import {
   BsLocaleService,
 } from 'ngx-bootstrap/datepicker';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { esLocale } from 'ngx-bootstrap/locale';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { CardComponent } from './components/card/card.component';
@@ -39,13 +38,17 @@ import { PermissionsDirective } from './directives/permissions.directive';
 import { NgxCurrencyModule } from 'ngx-currency';
 import { CustomSelectWidthLoading } from '../@standalone/shared-forms/custom-select-loading/custom-select-loading.component';
 import { CustomDateFilterComponent } from '../@standalone/shared-forms/filter-date-custom/custom-date-filter';
+import { CustomDateFilter2Component } from '../@standalone/shared-forms/filter-date-custom/custom-date-filter2';
+import { CustomHourFilterComponent } from '../@standalone/shared-forms/filter-date-custom/custom-hour-filter';
 import { CustomDateDayFilterComponent } from '../@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
 import { CustomDateMounthFilterComponent } from '../@standalone/shared-forms/filter-date-mounth-custom/custom-date-mounth-filter';
 import { CustomFilterComponent } from '../@standalone/shared-forms/input-number/input-number';
+import { ButtonColumnDeleteComponent } from './components/button-column/button-column-delete.component';
 import { ButtonColumnComponent } from './components/button-column/button-column.component';
 import { DatePickerDirective } from './directives/date-picker.directive';
 import { UppercaseDirective } from './directives/uppercase.directive';
 import { GlobalVarsModule } from './global-vars/global-vars.module';
+import { CustomDatepickerEs } from './utils/CustomDatepickerEs';
 
 export const customCurrencyMaskConfig = {
   align: 'right',
@@ -86,10 +89,13 @@ export const customCurrencyMaskConfig = {
     UppercaseDirective,
     DatePickerDirective,
     CustomDateFilterComponent,
+    CustomDateFilter2Component,
     CustomDateMounthFilterComponent,
     CustomDateDayFilterComponent,
     ButtonColumnComponent,
+    ButtonColumnDeleteComponent,
     CustomFilterComponent,
+    CustomHourFilterComponent,
   ],
   imports: [
     CommonModule,
@@ -139,9 +145,11 @@ export const customCurrencyMaskConfig = {
     UppercaseDirective,
     DatePickerDirective,
     CustomDateFilterComponent,
+    CustomDateFilter2Component,
     CustomDateMounthFilterComponent,
     CustomDateDayFilterComponent,
     ButtonColumnComponent,
+    ButtonColumnDeleteComponent,
     CustomFilterComponent,
     NgxCurrencyModule,
   ],
@@ -149,7 +157,7 @@ export const customCurrencyMaskConfig = {
 })
 export class SharedModule {
   constructor(private localeService: BsLocaleService) {
-    defineLocale('es', esLocale);
+    defineLocale('es', CustomDatepickerEs);
     this.localeService.use('es');
   }
 }

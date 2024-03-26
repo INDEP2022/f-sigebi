@@ -52,14 +52,17 @@ export class SelectModalTableSharedComponent
   @Input() override ilikeFilters: string[] = ['description'];
   @Input() override dateFilters: string[] = [];
   @Input() widthDescription = true;
+  @Input() onlyButton = false;
   @Input() label: string;
   @Input() labelName: string;
   @Input() formField: string;
   @Input() formFieldName: string;
   @Input() id: string;
+  @Input() idScss: string;
   @Input() description: string;
   @Input() service: any;
   @Input() title: string;
+  @Input() hideFilterPlaceholder = false;
   @Input() operator: SearchFilter = SearchFilter.LIKE;
   @Input() searchField: string; // Debe pertenecer a una de las columnas
   @Input() columnsType: {
@@ -82,6 +85,8 @@ export class SelectModalTableSharedComponent
       title: this.title,
       columnsType: this.columnsType,
       service: this.service,
+      idScss: this.idScss,
+      hideFilterPlaceholder: this.hideFilterPlaceholder,
       settings: { ...TABLE_SETTINGS },
       dataObservableListParamsFn: this.service[this.functionFilterName],
     };

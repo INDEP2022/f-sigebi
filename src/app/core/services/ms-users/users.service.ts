@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { UserEndpoints } from 'src/app/common/constants/endpoints/ms-users-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
@@ -261,5 +261,25 @@ export class UsersService extends HttpService {
 
   consultationQuery2(params: ListParams) {
     return this.get<IListResponse>(UserEndpoints.consultationQuery2, params);
+  }
+  getOffice(proceso: number, folio: number) {
+    const route = `${UserEndpoints.getOffice}/${proceso}/${folio}`;
+    return this.get<IListResponse>(route);
+  }
+
+  getCantUsusAutxCanc(user: string) {
+    return this.get<{ data: { count: number }[] }>(
+      'application/value-user/' + user.toUpperCase()
+    ).pipe(
+      catchError(x => of({ data: [{ count: 0 }] })),
+      map(x => {
+        return x.data[0].count;
+      })
+    );
+  }
+
+  getApplicationPhysicalNonexistence(id: string | number, params: _Params) {
+    const route = `${UserEndpoints.ApplicationPhysicalNonexistence}/${id}/`;
+    return this.get<IListResponse>(route, params);
   }
 }

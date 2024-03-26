@@ -1,0 +1,38 @@
+<app-modal>
+  <div header class="d-flex justify-content-between">
+    <div>
+      <h5 class="modal-title">BIENES INVÁLIDOS PARA CARGAR</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="justify-content-end d-flex mb-3 ml-2">
+      <app-columns-select
+        [defaultColumns]="5"
+        [(settings)]="settings"></app-columns-select>
+    </div>
+    <form-loader *ngIf="loading"></form-loader>
+    <div>
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{ height: loading ? '0px' : '300px' }">
+        <ng2-smart-table
+          [attr.class]="'table-responsive table-bordered'"
+          [settings]="settings"
+          [source]="data">
+        </ng2-smart-table>
+      </ng-scrollbar>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="return()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

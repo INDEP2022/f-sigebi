@@ -33,6 +33,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
+          [disabled]="!selectedRow"
           type="button"
           class="btn btn-primary active btn-sm"
           (click)="handleSuccess()">

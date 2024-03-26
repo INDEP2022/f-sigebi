@@ -391,7 +391,7 @@ export class PerformanceIndicatorComponent extends BasePage implements OnInit {
       reportImp.value != undefined &&
       reportImp2.value != undefined
     ) {
-      //debugger;
+      ////
       if (strategyAdmin2.value === 0 || strategyAdmin2.value === null) {
         if (Number(strategyAdmin.value) + Number(reportImp.value) === 0) {
           this.compliance = 100;
@@ -680,7 +680,7 @@ export class PerformanceIndicatorComponent extends BasePage implements OnInit {
           undefined &&
         this.performanceIndicatorFormE_I.get('reportImp2').value != undefined
       ) {
-        //debugger;
+        ////
         if (
           Number(
             this.performanceIndicatorFormE_I.get('strategyAdmin').value

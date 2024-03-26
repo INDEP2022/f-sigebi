@@ -6,9 +6,10 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EXPEDIENTS_REQUEST_COLUMNS } from './expedients-request-columns';
@@ -20,22 +21,27 @@ import { EXPEDIENTS_REQUEST_COLUMNS } from './expedients-request-columns';
 })
 export class ExpedientsRequestTabComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   @Input() typeDoc: string = '';
   @Input() typeModule?: string = '';
+  @Input() updateInfo: boolean;
+
   title: string = 'Solicitudes del Expediente';
+
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsRequest = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   paragraphs: any[] = [];
+
   requestId: number = 0;
+  allDocumentExpedient: any[] = [];
   screen: 'expedient-tab';
   task: any;
   statusTask: any;
   constructor(
     private activatedRoute: ActivatedRoute,
-    private requestService: RequestService
+    private requestService: RequestService,
+    private wContentService: WContentService
   ) {
     super();
     this.settings = {
@@ -57,6 +63,9 @@ export class ExpedientsRequestTabComponent
       console.log('statustask', this.statusTask);
     }
 
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      this.getData(data);
+    });
     this.getIdExpediente();
   }
 
@@ -81,8 +90,11 @@ export class ExpedientsRequestTabComponent
           });
           this.paragraphs = filterInfo;
           this.totalItems = data.count;
+          this.loading = false;
         },
-        error: error => {},
+        error: error => {
+          this.loading = false;
+        },
       });
     }
   }
@@ -95,10 +107,13 @@ export class ExpedientsRequestTabComponent
     }
     let onChangeCurrentValue = changes['typeDoc'].currentValue;
     this.typeDoc = onChangeCurrentValue;
+    this.getIdExpediente();
   }
 
   requestSelected(event: any) {
     this.typeDocumentMethod(event);
+    console.log('event', event, this.typeDoc);
+
   }
 
   typeDocumentMethod(type: number) {
@@ -118,5 +133,51 @@ export class ExpedientsRequestTabComponent
       default:
         break;
     }
+  }
+
+  getRequestData() {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      this.getData(data);
+    });
+  }
+
+  /*getData() {
+    if (this.requestId && this.getIdExpediente) {
+      this.loading = true;
+      const body = {
+        //xidSolicitud: this.idRequest,
+        xidExpediente: this.getIdExpediente,
+      };
+
+      this.wContentService.getDocumentos(body).subscribe({
+        next: async (data: any) => {
+          this.paragraphs = data.data;
+          this.allDocumentExpedient = this.paragraphs;
+          this.totalItems = data.count;
+          this.loading = false;
+        },
+      });
+    }
+  }*/
+
+  getData(params: ListParams) {
+    this.requestService.getAll(this.params.getValue()).subscribe({
+      next: async data => {
+        const filterInfo = data.data.map(items => {
+          items.authorityId = items.authority.authorityName;
+          items.regionalDelegationId = items.regionalDelegation.description;
+          items.transferenceId = items.transferent.name;
+          items.stationId = items.emisora.stationName;
+          items.state = items.state.descCondition;
+          return items;
+        });
+        this.paragraphs = data.data;
+        this.totalItems = data.count;
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
   }
 }

@@ -16,7 +16,7 @@
           <h5 class="mr-auto p-2">{{ btnSubTitle }}</h5>
           <div class="p-2">
             <button
-              *ngIf="!process"
+              *ngIf="!process && !readOnly"
               class="btn btn-primary btn-sm active"
               (click)="signReport()">
               <i class="bx bx-edit-alt"></i>{{ btnTitle }}
@@ -72,12 +72,13 @@
           <div
             class="p-2"
             *ngIf="
+              !msjCheck &&
               selectedRow?.post != null &&
               selectedRow?.rfcUser != null &&
               selectedRow?.validationocsp == 'true'
             ">
             <confirm-button
-              [text]="'Enviar a firmar'"
+              [text]="'Enviar a Firmar'"
               [loadingText]="'Firmando'"
               [loading]="loadingButton"
               [btnSmall]="true"
@@ -89,11 +90,11 @@
             </button> -->
           </div>
           <div class="p-2">
-            <button class="btn btn-primary btn-sm active" (click)="backStep()">
+            <button *ngIf="!msjCheck" class="btn btn-primary btn-sm active" (click)="backStep()">
               <i class="bx bx-left-arrow-alt"></i> Paso Anterior
             </button>
           </div>
-          <div class="p-2" *ngIf="msjCheck == true">
+          <div class="p-2" *ngIf="msjCheck">
             <button class="btn btn-primary btn-sm active" (click)="nextStep()">
               Paso Siguiente <i class="bx bx-right-arrow-alt"></i>
             </button>

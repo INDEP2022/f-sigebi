@@ -2,6 +2,7 @@ import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GoodProcessPoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
+import { GoodprocessEndpoints } from 'src/app/common/constants/endpoints/ms-goodprocess-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
@@ -17,7 +18,11 @@ import {
   IValNumeOtro,
 } from '../../models/ms-good/good';
 import { IGoodsResDev } from '../../models/ms-rejectedgood/goods-res-dev-model';
-import { IFmComDanc, IProcedureFmCom } from './good-process-model';
+import {
+  IFmComDanc,
+  IProcedureFmCom,
+  IPupValidGood,
+} from './good-process-model';
 
 @Injectable({
   providedIn: 'root',
@@ -374,7 +379,55 @@ export class GoodProcessService extends HttpService {
     return this.post('application/procdure-fmcomdonac1', body);
   }
 
+  procedureFmcomtmp(body: IProcedureFmCom) {
+    return this.post('application/procdure-fmcomdonac1-tmp', body);
+  }
+
   fmComDonac(body: IFmComDanc) {
     return this.post('application/fm-com-donac-1-good', body);
+  }
+
+  pupValidGood(body: IPupValidGood) {
+    return this.post('application/pupValidGood', body);
+  }
+
+  queryDonationGoods(body: any) {
+    return this.post('application/pup-consultation-estate', body);
+  }
+
+  detailProcessClean(body: any) {
+    return this.post('application/detail-process-clean', body);
+  }
+
+  validateDonationGoods(body: any) {
+    return this.post('application/pupValidGood', body);
+  }
+
+  deleteTempDetailEvent(data: any) {
+    return this.post('application/deleteDatailTmp', data);
+  }
+
+  createDatailTmp(data: any) {
+    return this.post('application/createDatailTmp', data);
+  }
+  //detail-process-clean-tmp
+  detailProcessCleanTmp(body: any) {
+    return this.post('application/detail-process-clean-tmp', body);
+  }
+
+  GetTypeMinuteDetailDelivery(body: any, params: _Params) {
+    return this.post(
+      `${GoodprocessEndpoints.GetTypeMinuteDetailDelivery}`,
+      body,
+      params
+    );
+  }
+
+  postCloneProcess(body: { process: string }) {
+    return this.post('application/copy-process', body);
+  }
+
+  validInitiationLabel(body: any) {
+    return this.post(GoodprocessEndpoints.InitiationLabel, body);
   }
 }

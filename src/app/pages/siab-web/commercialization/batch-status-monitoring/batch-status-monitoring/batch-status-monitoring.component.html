@@ -10,52 +10,62 @@
     </div>
     <form class="form-material" [formGroup]="form">
       <div class="row pt-4">
-        <div class="row pt-3">
-          <div class="col-md-2">
-            <form-field [control]="form.get('typeGood')" label="Tipo Bien">
-              <ng-select
-                formControlName="typeGood"
-                [searchable]="false"
-                class="form-control"
-                [clearable]="false">
-                <ng-option value="A">Seleccione el Tipo de Bien</ng-option>
-                <ng-option value="M">Bienes Muebles</ng-option>
-                <ng-option value="I">Bienes Inmuebles</ng-option>
-              </ng-select>
-            </form-field>
-          </div>
-        </div>
-        <div class="col-md-2 pt-3">
-          <form-field [control]="form.get('event')" label="No. Evento">
-            <input type="text" class="form-control" formControlName="event" />
+        <div class="col-md-4">
+          <form-field [control]="form.get('typeGood')" label="Tipo Bien">
+            <ng-select
+              formControlName="typeGood"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false"
+              (change)="seleccEvent($event)">
+              <ng-option value="A">Seleccione el Tipo de Bien</ng-option>
+              <ng-option value="M">Bienes Muebles</ng-option>
+              <ng-option value="I">Bienes Inmuebles</ng-option>
+            </ng-select>
           </form-field>
         </div>
-        <div class="col-md-2 pt-3">
-          <form-field
-            [control]="form.get('transferee')"
-            label="No. Transferente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="transferee" />
+        <div class="col-md-4">
+          <form-field [control]="form.get('event')">
+            <ngx-select
+              [form]="form"
+              control="event"
+              (fetchItems)="getEvent($event)"
+              label="Evento"
+              [data]="event"
+              bindLabel="?column?"
+              value="id_evento"
+              [searchOnInit]="false"
+              (change)="eventDesc($event)">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-2 pt-3">
-          <form-field [control]="form.get('allotment')" label="No. Lote">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="allotment" />
+        <div class="col-md-4">
+          <form-field [control]="form.get('transferee')">
+            <ngx-select
+              [form]="form"
+              control="transferee"
+              (fetchItems)="getTransferee($event)"
+              label="Transferente"
+              [data]="transfer"
+              bindLabel="transferentes"
+              [searchOnInit]="true"
+              value="no_transferente"
+              (change)="selecctAllotment($event)">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-2 pt-3">
-          <form-field
-            [control]="form.get('DescEvent')"
-            label="Descripción Evento">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="DescEvent" />
+        <div class="col-md-4 pt-3">
+          <form-field [control]="form.get('allotment')">
+            <ngx-select
+              [form]="form"
+              control="allotment"
+              (fetchItems)="getAllotment($event)"
+              label="Lote"
+              [data]="allotment"
+              bindLabel="id_lote"
+              [searchOnInit]="true"
+              value="id_lote">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-4 pt-3">
@@ -63,7 +73,7 @@
             <button
               class="btn btn-primary btn-sm active m-2"
               [disabled]="!form.valid"
-              (click)="source()">
+              (click)="consult()">
               Consultar
               <i class="bx bx-search-alt bx-sm float-icon"></i>
             </button>
@@ -79,114 +89,114 @@
     </div>
     <form class="form-material" [formGroup]="form2">
       <div class="row">
-        <div class="col-md-2">
-          <form-radio label="Numero de Bien">
+        <div class="col-md-3">
+          <form-radio label="N&uacute;mero de Bien">
             <input type="radio" formControlName="radio" value="1" />
           </form-radio>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-radio label="Archivo Excel">
             <input type="radio" formControlName="radio" value="2" />
           </form-radio>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-radio label="Exportar Cambios de Estatus">
             <input type="radio" formControlName="radio" value="3" />
           </form-radio>
         </div>
-        <div class="row" *ngIf="form2.controls['radio'].value === '2'">
+      </div>
+      <div class="row" *ngIf="form2.controls['radio'].value === '2'">
+        <div class="ch-content">
+          <h5 class="title">B&uacute;squeda por Excel</h5>
+        </div>
+        <div class="row pt-3">
+          <div class="col-md-12">
+            <div class="justify-content-center">
+              <button
+                class="btn btn-success btn-sm ml-2"
+                type="button"
+                (click)="file.click()">
+                Abrir archivo Excel / CSV
+              </button>
+              <input
+                type="file"
+                name="file"
+                #file
+                class="d-none"
+                (change)="onFileChange($event)"
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+              <button
+                tooltip="Formato de Ejemplo"
+                containerClass="tooltip-style"
+                type="button"
+                (click)="exportCsv()"
+                class="btn btn-info btn-sm active m-2 pointer">
+                <i class="bi bi-question-circle"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm m-2"
+                (click)="searchGoodExcel()">
+                Buscar Bienes
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button
+                class="btn btn-danger btn-sm active m-2"
+                (click)="cleanExcel()">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="row" *ngIf="form2.controls['radio'].value === '1'">
           <div class="ch-content">
-            <h5 class="title">B&uacute;squeda por Excel</h5>
+            <h5 class="title">B&uacute;squeda por bien&#58;</h5>
           </div>
-          <div class="row pt-3">
-            <div class="col-md-12">
-              <div class="justify-content-center">
-                <button
-                  class="btn btn-success btn-sm ml-2"
-                  type="button"
-                  (click)="file.click()">
-                  Abrir archivo Excel / CSV
-                </button>
+          <div class="row pt-4">
+            <div class="col-md-2">
+              <form-field [control]="form2.get('onlyOne')" label="No. Bien">
                 <input
-                  type="file"
-                  name="file"
-                  #file
-                  class="d-none"
-                  (change)="onFileChange($event)"
-                  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
-                <button
-                  tooltip="Formato de Ejemplo"
-                  containerClass="tooltip-style"
-                  type="button"
-                  (click)="exportCsv()"
-                  class="btn btn-info btn-sm active m-2 pointer">
-                  <i class="bi bi-question-circle"></i>
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-primary active btn-sm m-2"
-                  (click)="searchGoodExcel()">
-                  Buscar Bienes
-                  <i class="bx bx-search-alt bx-sm float-icon"></i>
-                </button>
-                <button
-                  class="btn btn-danger btn-sm active m-2"
-                  (click)="cleanExcel()">
-                  Limpiar <i class="fas fa-eraser"> </i>
-                </button>
-              </div>
+                  type="text"
+                  class="form-control"
+                  formControlName="onlyOne" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm"
+                [disabled]="!form2.valid"
+                (click)="sourceOnly()">
+                Buscar
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button
+                class="btn btn-danger btn-sm active m-2"
+                [disabled]="!form2.valid"
+                (click)="cleanOnlyGodd()">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
             </div>
           </div>
         </div>
-        <div>
-          <div class="row" *ngIf="form2.controls['radio'].value === '1'">
-            <div class="ch-content">
-              <h5 class="title">B&uacute;squeda por bien&#58;</h5>
-            </div>
-            <div class="row pt-4">
-              <div class="col-md-2">
-                <form-field [control]="form2.get('onlyOne')" label="No. Bien">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="onlyOne" />
-                </form-field>
-              </div>
-              <div class="col-md-4">
-                <button
-                  type="button"
-                  class="btn btn-primary active btn-sm"
-                  [disabled]="!form2.valid"
-                  (click)="sourceOnly()">
-                  Buscar
-                  <i class="bx bx-search-alt bx-sm float-icon"></i>
-                </button>
-                <button
-                  class="btn btn-danger btn-sm active m-2"
-                  [disabled]="!form2.valid"
-                  (click)="cleanOnlyGodd()">
-                  Limpiar <i class="fas fa-eraser"> </i>
-                </button>
-              </div>
-            </div>
+      </div>
+      <div>
+        <div class="row" *ngIf="form2.controls['radio'].value === '3'">
+          <div class="ch-content">
+            <h5 class="title">
+              Total de cambios de estatus por tipo de evento:
+            </h5>
           </div>
-        </div>
-        <div>
-          <div class="row" *ngIf="form2.controls['radio'].value === '3'">
-            <div class="ch-content">
-              <h5 class="title">
-                Total de cambios de estatus por tipo de evento:
-              </h5>
-            </div>
-            <div class="row pt-4">
-              <div class="col-md-4">
-                <button
-                  class="btn btn-sm btn-success active"
-                  (click)="exportChangeLot()">
-                  Exportar a Excel
-                  <i class="bx bx-download float-icon"></i>
-                </button>
-              </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <button
+                class="btn btn-sm btn-success active"
+                (click)="exportChangeLot()">
+                Exportar a Excel
+                <i class="bx bx-download float-icon"></i>
+              </button>
             </div>
           </div>
         </div>
@@ -205,15 +215,11 @@
         <div class="col-md-12">
           <div [class]="loading3 ? 'table-loading' : ''">
             <div class="table-responsive">
-              <ng-scrollbar
-                [track]="'all'"
-                [ngStyle]="{ height: loading ? '0px' : '220px' }">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered'"
-                  [settings]="settings3"
-                  [source]="data2">
-                </ng2-smart-table>
-              </ng-scrollbar>
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings3"
+                [source]="data2">
+              </ng2-smart-table>
               <app-pagination [params]="params2" [totalItems]="totalItems2">
               </app-pagination>
             </div>
@@ -225,15 +231,12 @@
       <div class="col-md-12">
         <div [class]="loading2 ? 'table-loading' : ''">
           <div class="table-responsive">
-            <ng-scrollbar
-              [track]="'all'"
-              [ngStyle]="{ height: loading ? '0px' : '220px' }">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings"
-                [source]="data1">
-              </ng2-smart-table>
-            </ng-scrollbar>
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="data1"
+              (rowSelect)="lnkView($event)">
+            </ng2-smart-table>
             <app-pagination [params]="params1" [totalItems]="totalItems1">
             </app-pagination>
           </div>
@@ -263,7 +266,7 @@
                 [track]="'all'"
                 [ngStyle]="{ height: loading ? '0px' : '340px' }">
                 <ng2-smart-table
-                  [attr.class]="'table-bordered'"
+                  [attr.class]="'table-bordered table-responsive'"
                   [settings]="settings2"
                   [source]="data"
                   (edit)="showReceipt($event.data)">
@@ -294,17 +297,13 @@
             <app-columns-select [(settings)]="settings3"></app-columns-select>
           </div>
           <div class="table-responsive">
-            <ng-scrollbar
-              [track]="'all'"
-              [ngStyle]="{ height: loading ? '0px' : '340px' }">
-              <div [class]="loading ? 'table-loading' : ''">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered'"
-                  [settings]="settings3"
-                  [source]="data3">
-                </ng2-smart-table>
-              </div>
-            </ng-scrollbar>
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings3"
+                [source]="data3">
+              </ng2-smart-table>
+            </div>
             <app-pagination [params]="params3" [totalItems]="totalItems3">
             </app-pagination>
           </div>

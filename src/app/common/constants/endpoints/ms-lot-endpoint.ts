@@ -21,4 +21,6 @@ export enum LotEndpoints {
   GetCursor = 'apps/get-cursor',
   EatEstLot = 'eat-est-lot',
   pupRemiEntLote = 'apps/pupRemiEntLote',
+  AppsExportExcelComerFacturas = 'apps/export-excel-comer-facturas',
+  QueryPaGarantByLot = 'apps/query-pa-garant-by-lot',
 }

@@ -158,6 +158,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
               callback: (next: boolean) => {},
             },
             class: 'modal-lg modal-dialog-centered',
+            keyboard: false,
             ignoreBackdropClick: true,
           };
           this.modalService.show(PrintReportModalComponent, config);

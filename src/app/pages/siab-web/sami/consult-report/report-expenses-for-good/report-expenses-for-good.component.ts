@@ -4,12 +4,15 @@ import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGood } from 'src/app/core/models/good/good.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { BasePage } from 'src/app/core/shared';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   GOODS_COLUMNS,
   GOODS_MANUAL_COLUMNS,
@@ -43,6 +46,8 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
   paramsWarehouse = new BehaviorSubject<ListParams>(new ListParams());
   paramsMan = new BehaviorSubject<ListParams>(new ListParams());
   paramsReubGood = new BehaviorSubject<ListParams>(new ListParams());
+  typeRelevant = new DefaultSelect();
+  formLoading: boolean = false;
   totalItems: number = 0;
   totalItemsValReq: number = 0;
   totalItemsRecDoc: number = 0;
@@ -51,6 +56,16 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
   totalItemsMan: number = 0;
   totalItemsWarehouse: number = 0;
   totalItemsReubGood: number = 0;
+  goodSelect: number = 0;
+  costValReq: number = 0;
+  costRecDoc: number = 0;
+  costProg: number = 0;
+  costProgEnt: number = 0;
+  costWarehouse: number = 0;
+  costManual: number = 0;
+  costReub: number = 0;
+  total: number = 0;
+  pageSizeOptions: number[] = [10, 25, 50, 100];
   form: FormGroup = new FormGroup({});
   settingsValReq = {
     ...this.settings,
@@ -123,7 +138,8 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
     private authService: AuthService,
     private regionalDelegationService: RegionalDelegationService,
     private orderServiceService: OrderServiceService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private typeRelevantService: TypeRelevantService
   ) {
     super();
 
@@ -138,7 +154,95 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getTypeRelevantSelect(new ListParams());
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getInfoGoods());
+  }
 
+  prepareForm() {
+    this.form = this.fb.group({
+      idGood: [null, [Validators.maxLength(100)]],
+      idTypeRelevant: [null, [Validators.maxLength(100)]],
+      descriptionGood: [null, [Validators.maxLength(100)]],
+      uniqueKey: [null, [Validators.maxLength(100)]],
+    });
+  }
+
+  showListGoods() {
+    const idGood = this.form.get('idGood').value;
+    const idTypeRelevant = this.form.get('idTypeRelevant').value;
+    const descriptionGood = this.form.get('descriptionGood').value;
+    const uniqueKey = this.form.get('uniqueKey').value;
+
+    if (idGood) this.params.getValue()['filter.goodId'] = `$eq:${idGood}`;
+    if (idTypeRelevant)
+      this.params.getValue()['filter.relevantTypeId'] = idTypeRelevant;
+    if (descriptionGood)
+      this.params.getValue()['filter.description'] = descriptionGood;
+    if (uniqueKey) {
+      this.params.getValue()['filter.uniqueKey'] = uniqueKey;
+    }
+
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getInfoGoods());
+  }
+
+  getInfoGoods() {
+    this.loading = true;
+    const user: any = this.authService.decodeToken();
+    this.params.getValue()['filter.delegationNumber'] = user.department;
+
+    this.params.getValue()['filter.fractionId'] = '$not:$null';
+    this.params.getValue()['filter.fraction'] = '$not:$null';
+
+    this.goodService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        const info = response.data.map(item => {
+          if (item.fraccion) item.relevantTypeId = item.fraccion.relevantTypeId;
+          return item;
+        });
+
+        const data = info.map(async item => {
+          const typeRelName: any = await this.getTypeRelevantName(
+            item.relevantTypeId
+          );
+
+          item.relevantTypeName = typeRelName;
+          return item;
+        });
+
+        Promise.all(data).then(goods => {
+          this.infoGoods.load(goods);
+          this.totalItems = response.count;
+          this.loading = false;
+        });
+      },
+      error: () => {
+        this.loading = false;
+        this.infoGoods = new LocalDataSource();
+        this.totalItems = 0;
+        this.alert('warning', 'Acción Invalida', 'No se encontraron registros');
+      },
+    });
+  }
+
+  getTypeRelevantName(id: string) {
+    return new Promise((resolve, reject) => {
+      this.typeRelevantService.getById(id).subscribe({
+        next: response => {
+          resolve(response.description);
+        },
+        error: () => {
+          resolve('SIN TIPO RELEVANTE');
+        },
+      });
+    });
+  }
+
+  showGoodSelect(good: IGood) {
+    this.goodSelect = Number(good.goodId);
     this.paramsValReq
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getInfoValReq());
@@ -168,87 +272,67 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
       .subscribe(() => this.getInfoReubGood());
   }
 
-  prepareForm() {
-    this.form = this.fb.group({
-      idGood: [null, [Validators.maxLength(100)]],
-      idTypeRelevant: [null, [Validators.maxLength(100)]],
-      fileNumber: [null, [Validators.maxLength(100)]],
-      descriptionGood: [null, [Validators.maxLength(100)]],
-      quantity: [null, [Validators.maxLength(100)]],
-      unit: [null, [Validators.maxLength(100)]],
-      uniqueKey: [null, [Validators.maxLength(100)]],
-    });
-  }
-
-  showListGoods() {
-    const idGood = this.form.get('idGood').value;
-    const idTypeRelevant = this.form.get('idTypeRelevant').value;
-    const fileNumber = this.form.get('fileNumber').value;
-    const descriptionGood = this.form.get('descriptionGood').value;
-    const quantity = this.form.get('quantity').value;
-    const unit = this.form.get('unit').value;
-    const uniqueKey = this.form.get('uniqueKey').value;
-
-    if (idGood) this.params.getValue()['filter.goodId'] = idGood;
-    if (idTypeRelevant)
-      this.params.getValue()['filter.relevantTypeId'] = idTypeRelevant;
-    if (fileNumber) this.params.getValue()['filter.fileNumber'] = fileNumber;
-    if (descriptionGood)
-      this.params.getValue()['filter.description'] = descriptionGood;
-    if (quantity) this.params.getValue()['filter.quantity'] = quantity;
-    if (unit) this.params.getValue()['filter.unitMeasure'] = unit;
-    if (uniqueKey) this.params.getValue()['filter.uniqueKey'] = uniqueKey;
-
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getInfoGoods());
-  }
-
-  getInfoGoods() {
-    this.loading = true;
-    const user: any = this.authService.decodeToken();
-    this.params.getValue()['filter.delegationNumber'] = user.department;
-    this.goodService.getAll(this.params.getValue()).subscribe({
-      next: response => {
-        this.infoGoods.load(response.data);
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: error => {
-        this.loading = false;
-      },
-    });
-  }
-
   getInfoValReq() {
     this.loadingValReq = true;
     const user: any = this.authService.decodeToken();
     this.paramsValReq.getValue()[
       'filter.regionalDelegation'
     ] = `$eq:${user.department}`;
+
+    this.paramsValReq.getValue()['filter.goodId'] = `$eq:${this.goodSelect}`;
     this.orderServiceService
       .getOrderServiceRecepReq(this.paramsValReq.getValue())
       .subscribe({
         next: async response => {
-          const infoValReq = response.data.map(async item => {
+          const infoValReq = response.data.map(async (item: any) => {
             const showDelegation: any = await this.showDelegation(
               item.regionalDelegation
             );
             if (showDelegation) item.regionalDelegationName = showDelegation;
-
-            return item;
+            if (item.costService != null && item.goodNumber != null) {
+              item.prorrateo = item.costService * item.goodNumber;
+              return item;
+            } else {
+              return item;
+            }
           });
 
           Promise.all(infoValReq).then(ValReqData => {
             this.infoValReq.load(ValReqData);
             this.totalItemsValReq = response.count;
             this.loadingValReq = false;
+            this.sumAllProValReq();
           });
         },
         error: error => {
           this.loadingValReq = false;
         },
       });
+  }
+
+  sumAllProValReq() {
+    this.infoValReq.getElements().then(data => {
+      if (data.length > 1) {
+        data.map(item => {
+          this.costValReq += item.prorrateo;
+        });
+      } else if (data.length == 1) {
+        this.costValReq = data[0].prorrateo;
+      }
+    });
+  }
+
+  getTypeRelevantSelect(params: ListParams) {
+    params['sortBy'] = 'description:ASC';
+    this.typeRelevantService.getAll(params).subscribe({
+      next: data => {
+        this.typeRelevant = new DefaultSelect(data.data, data.count);
+        this.formLoading = false;
+      },
+      error: error => {
+        this.typeRelevant = new DefaultSelect();
+      },
+    });
   }
 
   showDelegation(delegationId: number) {
@@ -268,23 +352,31 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
     this.paramsRecDoc.getValue()[
       'filter.regionalDelegation'
     ] = `$eq:${user.department}`;
+
+    this.paramsRecDoc.getValue()['filter.goodId'] = `$eq:${this.goodSelect}`;
     this.orderServiceService
       .getOrderServiceRecepDoc(this.paramsRecDoc.getValue())
       .subscribe({
         next: async response => {
-          const infoRecDoc = response.data.map(async item => {
+          const infoRecDoc = response.data.map(async (item: any) => {
             const showDelegation: any = await this.showDelegation(
               item.regionalDelegation
             );
             if (showDelegation) item.regionalDelegationName = showDelegation;
 
-            return item;
+            if (item.costService != null && item.goodNumber != null) {
+              item.prorrateo = item.costService * item.goodNumber;
+              return item;
+            } else {
+              return item;
+            }
           });
 
           Promise.all(infoRecDoc).then(infoRecDoc => {
             this.infoRecDoc.load(infoRecDoc);
             this.totalItemsRecDoc = response.count;
             this.loadingRecDoc = false;
+            this.sumAllProRecDoc();
           });
         },
         error: error => {
@@ -293,58 +385,98 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
       });
   }
 
+  sumAllProRecDoc() {
+    this.infoRecDoc.getElements().then(data => {
+      if (data.length > 1) {
+        data.map(item => {
+          this.costRecDoc += item.prorrateo;
+          this.getSumTotal();
+        });
+      } else if (data.length == 1) {
+        this.costRecDoc = data[0].prorrateo;
+        this.getSumTotal();
+      }
+    });
+  }
+
   getInfoProg() {
     this.loadingProg = true;
     const user: any = this.authService.decodeToken();
     this.paramsProg.getValue()[
       'filter.regionalDelegation'
     ] = `$eq:${user.department}`;
+
+    this.paramsProg.getValue()['filter.goodId'] = `$eq:${this.goodSelect}`;
     this.orderServiceService
       .getOrderServiceCancelled(this.paramsProg.getValue())
       .subscribe({
         next: async response => {
-          const infoProg = response.data.map(async item => {
+          const infoProg = response.data.map(async (item: any) => {
             const showDelegation: any = await this.showDelegation(
               item.regionalDelegation
             );
             if (showDelegation) item.regionalDelegationName = showDelegation;
-
-            return item;
+            if (item.costService != null && item.goodNumber != null) {
+              item.prorrateo = item.costService * item.goodNumber;
+              return item;
+            } else {
+              return item;
+            }
           });
 
           Promise.all(infoProg).then(infoProg => {
             this.infoProg.load(infoProg);
             this.totalItemsProg = response.count;
             this.loadingProg = false;
+            this.sumAllProg();
           });
         },
         error: error => {
           this.loadingProg = false;
+          this.getSumTotal();
         },
       });
+  }
+
+  sumAllProg() {
+    this.infoProg.getElements().then(data => {
+      if (data.length > 1) {
+        data.map(item => {
+          this.costProg += item.prorrateo;
+        });
+      } else if (data.length == 1) {
+        this.costProg = data[0].prorrateo;
+      }
+    });
   }
 
   getInfoProgEnt() {
     this.loadingProgEnt = true;
     const user: any = this.authService.decodeToken();
-
+    this.paramsProgEnt.getValue()['filter.goodId'] = `$eq:${this.goodSelect}`;
     this.orderServiceService
       .getOrderServiceDateEndAt(this.paramsProgEnt.getValue())
       .subscribe({
         next: async response => {
-          const infoProgEnt = response.data.map(async item => {
+          const infoProgEnt = response.data.map(async (item: any) => {
             const showDelegation: any = await this.showDelegation(
               item.regionalDelegation
             );
             if (showDelegation) item.regionalDelegationName = showDelegation;
 
-            return item;
+            if (item.costService != null && item.goodNumber != null) {
+              item.prorrateo = item.costService * item.goodNumber;
+              return item;
+            } else {
+              return item;
+            }
           });
 
           Promise.all(infoProgEnt).then(infoProgEnt => {
             this.infoProgEnt.load(infoProgEnt);
             this.totalItemsProgEnt = response.count;
             this.loadingProgEnt = false;
+            this.sumAllProgEnt();
           });
         },
         error: error => {
@@ -353,29 +485,48 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
       });
   }
 
+  sumAllProgEnt() {
+    this.infoProgEnt.getElements().then(data => {
+      if (data.length > 1) {
+        data.map(item => {
+          this.costProgEnt += item.prorrateo;
+        });
+      } else if (data.length == 1) {
+        this.costProgEnt = data[0].prorrateo;
+      }
+    });
+  }
+
   getInfoWarehouse() {
     this.loadingWarehouse = true;
     const user: any = this.authService.decodeToken();
     /*this.paramsWarehouse.getValue()[
       'filter.ORD_delegacion_regional'
     ] = `$eq:${user.department}`; */
+    this.paramsWarehouse.getValue()['filter.goodId'] = `$eq:${this.goodSelect}`;
     this.orderServiceService
       .getOrderServiceTypeOrder(this.paramsWarehouse.getValue())
       .subscribe({
         next: async response => {
-          const infoWarehouse = response.data.map(async item => {
+          const infoWarehouse = response.data.map(async (item: any) => {
             const showDelegation: any = await this.showDelegation(
               item.regionalDelegation
             );
             if (showDelegation) item.regionalDelegationName = showDelegation;
 
-            return item;
+            if (item.costService != null && item.goodNumber != null) {
+              item.prorrateo = item.costService * item.goodNumber;
+              return item;
+            } else {
+              return item;
+            }
           });
 
           Promise.all(infoWarehouse).then(infoWarehouse => {
             this.infoWarehouse.load(infoWarehouse);
             this.totalItemsWarehouse = response.count;
             this.loadingWarehouse = false;
+            this.sumAllWarehouse();
           });
         },
         error: error => {
@@ -384,29 +535,48 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
       });
   }
 
+  sumAllWarehouse() {
+    this.infoWarehouse.getElements().then(data => {
+      if (data.length > 1) {
+        data.map(item => {
+          this.costWarehouse += item.prorrateo;
+        });
+      } else if (data.length == 1) {
+        this.costWarehouse = data[0].prorrateo;
+      }
+    });
+  }
+
   getInfoManual() {
     this.loadingMan = true;
     const user: any = this.authService.decodeToken();
     /*this.paramsMan.getValue()[
       'filter.regionalDelegation'
     ] = `$eq:${user.department}`; */
+    this.paramsMan.getValue()['filter.goodId'] = `$eq:${this.goodSelect}`;
     this.orderServiceService
       .getOrderServiceTypeMan(this.paramsMan.getValue())
       .subscribe({
         next: async response => {
-          const infoManual = response.data.map(async item => {
+          const infoManual = response.data.map(async (item: any) => {
             const showDelegation: any = await this.showDelegation(
               item.regionalDelegation
             );
             if (showDelegation) item.regionalDelegationName = showDelegation;
 
-            return item;
+            if (item.costService != null && item.goodNumber != null) {
+              item.prorrateo = item.costService * item.goodNumber;
+              return item;
+            } else {
+              return item;
+            }
           });
 
           Promise.all(infoManual).then(infoManual => {
             this.infoManual.load(infoManual);
             this.totalItemsMan = response.count;
             this.loadingMan = false;
+            this.sumAllManual();
           });
         },
         error: () => {
@@ -415,43 +585,110 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
       });
   }
 
+  sumAllManual() {
+    this.infoManual.getElements().then(data => {
+      if (data.length > 1) {
+        data.map(item => {
+          this.costManual += item.prorrateo;
+        });
+      } else if (data.length == 1) {
+        this.costManual = data[0].prorrateo;
+      }
+    });
+  }
+
   getInfoReubGood() {
     this.loadingReubGood = true;
     const user: any = this.authService.decodeToken();
     /*this.paramsReubGood.getValue()[
       'filter.regionalDelegation'
     ] = `$eq:${user.department}`; */
+    this.paramsReubGood.getValue()['filter.goodId'] = `$eq:${this.goodSelect}`;
     this.orderServiceService
       .getOrderServiceTypeReb(this.paramsReubGood.getValue())
       .subscribe({
         next: async response => {
-          const infoReubGood = response.data.map(async item => {
+          const infoReubGood = response.data.map(async (item: any) => {
             const showDelegation: any = await this.showDelegation(
               item.regionalDelegation
             );
             if (showDelegation) item.regionalDelegationName = showDelegation;
 
-            return item;
+            if (item.costService != null && item.goodNumber != null) {
+              item.prorrateo = item.costService * item.goodNumber;
+              return item;
+            } else {
+              return item;
+            }
           });
 
           Promise.all(infoReubGood).then(infoReubGood => {
             this.infoReubGood.load(infoReubGood);
             this.totalItemsReubGood = response.count;
             this.loadingReubGood = false;
+            this.sumAllReub();
           });
         },
         error: () => {
           this.loadingReubGood = false;
+          this.getSumTotal();
         },
       });
   }
 
+  sumAllReub() {
+    this.infoReubGood.getElements().then(data => {
+      if (data.length > 1) {
+        data.map(item => {
+          this.costReub += item.prorrateo;
+        });
+      } else if (data.length == 1) {
+        this.costReub = data[0].prorrateo;
+      }
+    });
+  }
+
+  getSumTotal() {
+    this.total = this.costValReq;
+    this.total = this.total + this.costRecDoc;
+    this.total = this.total + this.costProg;
+    this.total = this.total + this.costProgEnt;
+    this.total = this.total + this.costWarehouse;
+    this.total = this.total + this.costManual;
+    this.total = this.total + this.costReub;
+  }
+
   cleanSearch() {
     this.form.reset();
+    this.pageSizeOptions = [10];
     this.params = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsRecDoc = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsValReq = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsProg = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsProgEnt = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsWarehouse = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsMan = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsReubGood = new BehaviorSubject<ListParams>(new ListParams());
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getInfoGoods());
+
+    this.infoValReq = new LocalDataSource();
+    this.infoRecDoc = new LocalDataSource();
+    this.infoProg = new LocalDataSource();
+    this.infoProgEnt = new LocalDataSource();
+    this.infoWarehouse = new LocalDataSource();
+    this.infoManual = new LocalDataSource();
+    this.infoReubGood = new LocalDataSource();
+    this.infoGoods = new LocalDataSource();
+
+    this.totalItemsValReq = 0;
+    this.totalItemsRecDoc = 0;
+    this.totalItemsProg = 0;
+    this.totalItemsProgEnt = 0;
+    this.totalItemsMan = 0;
+    this.totalItemsWarehouse = 0;
+    this.totalItemsReubGood = 0;
   }
 
   close() {

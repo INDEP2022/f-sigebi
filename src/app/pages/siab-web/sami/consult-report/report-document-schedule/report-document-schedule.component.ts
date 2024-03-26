@@ -10,7 +10,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage, TABLE_SETTINGS } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { DOC_REQUEST_TAB_COLUMNS } from 'src/app/pages/request/shared-request/expedients-tabs/sub-tabs/doc-request-tab/doc-request-tab-columns';
+import { DOC_SCHEDULE_TAB_COLUMNS } from 'src/app/pages/request/shared-request/expedients-tabs/sub-tabs/doc-request-tab/doc-request-tab-columns';
 import { SeeInformationComponent } from 'src/app/pages/request/shared-request/expedients-tabs/sub-tabs/doc-request-tab/see-information/see-information.component';
 import { NewDocumentComponent } from 'src/app/pages/request/shared-request/expedients-tabs/sub-tabs/new-document/new-document.component';
 
@@ -32,9 +32,9 @@ export class ReportDocumentScheduleComponent
   docRequest: any[] = [];
   totalItems: number = 0;
   programmingId: number = 0;
-  allDataDocReq: any[] = [];
+  allDataDocProg: any[] = [];
   paragraphs: LocalDataSource = new LocalDataSource();
-
+  pageSizeOptions: number[] = [10, 25, 50, 100];
   private data: any[][] = [];
   constructor(
     private fb: FormBuilder,
@@ -53,17 +53,21 @@ export class ReportDocumentScheduleComponent
       },
 
       edit: {
-        editButtonContent: '<i class="fa fa-file text-primary mx-2" > </i>',
+        editButtonContent:
+          '<i class="fa fa-file text-primary mx-2 ml-4" > </i>',
       },
       delete: {
         deleteButtonContent: '<i  class="fa fa-eye text-info mx-2"> </i>',
       },
-      columns: DOC_REQUEST_TAB_COLUMNS,
+      columns: DOC_SCHEDULE_TAB_COLUMNS,
     };
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => this.getData(params));
   }
 
   prepareForm(): void {
@@ -185,7 +189,7 @@ export class ReportDocumentScheduleComponent
   getData(params: ListParams) {
     this.loading = true;
     const programming: Object = {
-      xnoProgramacion: this.programmingId,
+      xnoProgramacion: this.docRequestForm.get('noSchedule').value,
     };
     this.wContentService
       .getDocumentos(programming, params)
@@ -207,22 +211,7 @@ export class ReportDocumentScheduleComponent
             const filter: any = await this.filterGoodDoc([
               items.xtipoDocumento,
             ]);
-            /*if (items?.xdelegacionRegional) {
-                const regionalDelegation = await this.getRegionalDelegation(
-                  items?.xdelegacionRegional
-                );
-                items['delegationName'] = regionalDelegation;
-              }
-              if (items?.xidTransferente) {
-                const transferent = await this.getTransferent(
-                  items?.xidTransferente
-                );
-                items['transferentName'] = transferent;
-              }
-                if (items?.xestado) {
-                const state = await this.getStateDoc(items?.xestado);
-                items['stateName'] = state;
-              } */
+
             items.xtipoDocumento = filter[0]?.ddescription;
             return items;
           });
@@ -233,7 +222,7 @@ export class ReportDocumentScheduleComponent
               this.totalItems = data.length;
 
               this.loading = false;
-              //this.allDataDocReq = x;
+              this.allDataDocProg = data;
               //this.paragraphs.load(x);
             });
           } else {
@@ -241,13 +230,15 @@ export class ReportDocumentScheduleComponent
             this.loading = false;
           }
         },
-        error: error => {
+        error: () => {
           this.alert(
             'warning',
             'Acción Invalida',
             'La programación no cuenta con documentos'
           );
           this.loading = false;
+          this.docRequest = [];
+          this.totalItems = 0;
         },
       });
   }
@@ -279,7 +270,12 @@ export class ReportDocumentScheduleComponent
   }
 
   openNewDocument() {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modal-lg modal-dialog-centered',
+      keyboard: false,
+      ignoreBackdropClick: true,
+    };
     const idRequest = 0;
     let typeDoc = 'doc-request';
     config.initialState = {
@@ -315,221 +311,290 @@ export class ReportDocumentScheduleComponent
     const regDelega = this.docRequestForm.get('regDelega').value;
     const state = this.docRequestForm.get('state').value;
     const tranfe = this.docRequestForm.get('tranfe').value;
-    if (noSchedule) {
-      this.programmingId = noSchedule;
-      this.params
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(params => this.getData(params));
+
+    if (this.allDataDocProg.length > 0) {
+      this.loading = true;
+      if (titleDocument) {
+        const filter = this.allDataDocProg.filter((items: any) => {
+          if (items.ddocTitle == titleDocument) return items;
+        });
+
+        if (filter.length > 0) {
+          this.docRequest =
+            filter.length > 10 ? this.setPaginate([...filter]) : filter;
+          this.totalItems = filter.length;
+          this.loading = false;
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Advertencia',
+            'Documentos no encontrados'
+          );
+          this.loading = false;
+          this.docRequest = [];
+          this.totalItems = 0;
+          this.pageSizeOptions = [10];
+        }
+      }
+
+      if (dDocName) {
+        const filter = this.allDataDocProg.filter((items: any) => {
+          if (items.dDocName == dDocName) return items;
+        });
+
+        if (filter.length > 0) {
+          this.docRequest =
+            filter.length > 10 ? this.setPaginate([...filter]) : filter;
+          this.totalItems = filter.length;
+          this.loading = false;
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Advertencia',
+            'Documentos no encontrados'
+          );
+          this.loading = false;
+          this.docRequest = [];
+          this.totalItems = 0;
+          this.pageSizeOptions = [10];
+        }
+      }
+
+      if (typeDocument) {
+        const filter = this.allDataDocProg.filter((items: any) => {
+          if (items.xtipoDocumento == typeDocument) return items;
+        });
+
+        if (filter.length > 0) {
+          this.docRequest =
+            filter.length > 10 ? this.setPaginate([...filter]) : filter;
+          this.totalItems = filter.length;
+          this.loading = false;
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Advertencia',
+            'Documentos no encontrados'
+          );
+          this.loading = false;
+          this.docRequest = [];
+          this.totalItems = 0;
+          this.pageSizeOptions = [10];
+        }
+      }
+
+      if (typeTrasf) {
+        const filter = this.allDataDocProg.filter((items: any) => {
+          if (items.xtipoTransferencia == typeTrasf) return items;
+        });
+
+        if (filter.length > 0) {
+          this.docRequest =
+            filter.length > 10 ? this.setPaginate([...filter]) : filter;
+          this.totalItems = filter.length;
+          this.loading = false;
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Advertencia',
+            'Documentos no encontrados'
+          );
+          this.loading = false;
+          this.docRequest = [];
+          this.totalItems = 0;
+          this.pageSizeOptions = [10];
+        }
+      }
+
+      if (contribuyente) {
+        const filter = this.allDataDocProg.filter((items: any) => {
+          if (items.xcontribuyente == contribuyente) return items;
+        });
+
+        if (filter.length > 0) {
+          this.docRequest =
+            filter.length > 10 ? this.setPaginate([...filter]) : filter;
+          this.totalItems = filter.length;
+          this.loading = false;
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Advertencia',
+            'Documentos no encontrados'
+          );
+          this.loading = false;
+          this.docRequest = [];
+          this.totalItems = 0;
+          this.pageSizeOptions = [10];
+        }
+      }
+
+      if (author) {
+        const filter = this.allDataDocProg.filter((items: any) => {
+          if (items.dDocAuthor == author) return items;
+        });
+
+        if (filter.length > 0) {
+          this.docRequest =
+            filter.length > 10 ? this.setPaginate([...filter]) : filter;
+          this.totalItems = filter.length;
+          this.loading = false;
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Advertencia',
+            'Documentos no encontrados'
+          );
+          this.loading = false;
+          this.docRequest = [];
+          this.totalItems = 0;
+          this.pageSizeOptions = [10];
+        }
+      }
+
+      if (remitente) {
+        const filter = this.allDataDocProg.filter((items: any) => {
+          if (items.xremitente == remitente) return items;
+        });
+
+        if (filter.length > 0) {
+          this.docRequest =
+            filter.length > 10 ? this.setPaginate([...filter]) : filter;
+          this.totalItems = filter.length;
+          this.loading = false;
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Advertencia',
+            'Documentos no encontrados'
+          );
+          this.loading = false;
+          this.docRequest = [];
+          this.totalItems = 0;
+          this.pageSizeOptions = [10];
+        }
+      }
+
+      if (noOfice) {
+        const filter = this.allDataDocProg.filter((items: any) => {
+          if (items.xnoOficio == noOfice) return items;
+        });
+
+        if (filter.length > 0) {
+          this.docRequest =
+            filter.length > 10 ? this.setPaginate([...filter]) : filter;
+          this.totalItems = filter.length;
+          this.loading = false;
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Advertencia',
+            'Documentos no encontrados'
+          );
+          this.loading = false;
+          this.docRequest = [];
+          this.totalItems = 0;
+          this.pageSizeOptions = [10];
+        }
+      }
+
+      if (senderCharge) {
+        const filter = this.allDataDocProg.filter((items: any) => {
+          if (items.xcargoRemitente == senderCharge) return items;
+        });
+
+        if (filter.length > 0) {
+          this.docRequest =
+            filter.length > 10 ? this.setPaginate([...filter]) : filter;
+          this.totalItems = filter.length;
+          this.loading = false;
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Advertencia',
+            'Documentos no encontrados'
+          );
+          this.loading = false;
+          this.docRequest = [];
+          this.totalItems = 0;
+          this.pageSizeOptions = [10];
+        }
+      }
+
+      if (comment) {
+        const filter = this.allDataDocProg.filter((items: any) => {
+          if (items.xcomments == comment) return items;
+        });
+
+        if (filter.length > 0) {
+          this.docRequest =
+            filter.length > 10 ? this.setPaginate([...filter]) : filter;
+          this.totalItems = filter.length;
+          this.loading = false;
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Advertencia',
+            'Documentos no encontrados'
+          );
+          this.loading = false;
+          this.docRequest = [];
+          this.totalItems = 0;
+          this.pageSizeOptions = [10];
+        }
+      }
+
+      if (responsible) {
+        const filter = this.allDataDocProg.filter((items: any) => {
+          if (items.xresponsable == responsible) return items;
+        });
+
+        if (filter.length > 0) {
+          this.docRequest =
+            filter.length > 10 ? this.setPaginate([...filter]) : filter;
+          this.totalItems = filter.length;
+          this.loading = false;
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Advertencia',
+            'Documentos no encontrados'
+          );
+          this.loading = false;
+          this.docRequest = [];
+          this.totalItems = 0;
+          this.pageSizeOptions = [10];
+        }
+      }
+
+      if (noSchedule) {
+        const filter = this.allDataDocProg.filter((items: any) => {
+          if (items.xnoProgramacion == noSchedule) return items;
+        });
+
+        if (filter.length > 0) {
+          this.docRequest =
+            filter.length > 10 ? this.setPaginate([...filter]) : filter;
+          this.totalItems = filter.length;
+          this.loading = false;
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Advertencia',
+            'Documentos no encontrados'
+          );
+          this.loading = false;
+          this.docRequest = [];
+          this.totalItems = 0;
+          this.pageSizeOptions = [10];
+        }
+      }
     } else {
       this.alert(
         'warning',
         'Acción Invalida',
-        'Se requiere ingresar un número de programación'
+        'Se requiere visualizar la información en la tabla para filtrar la información'
       );
-    }
-
-    if (typeDocument) {
-      const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xtipoDocumento == typeDocument) return items;
-      });
-
-      if (filter.length > 0) {
-        this.paragraphs.load(filter);
-        this.totalItems = this.paragraphs.count();
-      } else {
-        this.paragraphs.load(filter);
-        this.paragraphs.load(filter);
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
-      }
-    }
-
-    if (titleDocument) {
-      const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.ddocTitle == titleDocument) return items;
-      });
-
-      if (filter.length > 0) {
-        this.paragraphs.load(filter);
-        this.totalItems = this.paragraphs.count();
-      } else {
-        this.paragraphs.load(filter);
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
-      }
-    }
-
-    if (dDocName) {
-      const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.dDocName == dDocName) return items;
-      });
-
-      if (filter.length > 0) {
-        this.paragraphs.load(filter);
-        this.totalItems = this.paragraphs.count();
-      } else {
-        this.paragraphs.load(filter);
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
-      }
-    }
-
-    if (typeTrasf) {
-      const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xtipoTransferencia == typeTrasf) return items;
-      });
-
-      if (filter.length > 0) {
-        this.paragraphs.load(filter);
-        this.totalItems = this.paragraphs.count();
-      } else {
-        this.paragraphs.load(filter);
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
-      }
-    }
-
-    if (contribuyente) {
-      const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xcontribuyente == contribuyente) return items;
-      });
-
-      if (filter.length > 0) {
-        this.paragraphs.load(filter);
-        this.totalItems = this.paragraphs.count();
-      } else {
-        this.paragraphs.load(filter);
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
-      }
-    }
-
-    if (author) {
-      const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.dDocAuthor == author) return items;
-      });
-
-      if (filter.length > 0) {
-        this.paragraphs.load(filter);
-        this.totalItems = this.paragraphs.count();
-      } else {
-        this.paragraphs.load(filter);
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
-      }
-    }
-
-    if (remitente) {
-      const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xremitente == remitente) return items;
-      });
-
-      if (filter.length > 0) {
-        this.paragraphs.load(filter);
-        this.totalItems = this.paragraphs.count();
-      } else {
-        this.paragraphs.load(filter);
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
-      }
-    }
-
-    if (noOfice) {
-      const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xnoOficio == noOfice) return items;
-      });
-
-      if (filter.length > 0) {
-        this.paragraphs.load(filter);
-        this.totalItems = this.paragraphs.count();
-      } else {
-        this.paragraphs.load(filter);
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
-      }
-    }
-
-    if (senderCharge) {
-      const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xcargoRemitente == senderCharge) return items;
-      });
-
-      if (filter.length > 0) {
-        this.paragraphs.load(filter);
-        this.totalItems = this.paragraphs.count();
-      } else {
-        this.paragraphs.load(filter);
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
-      }
-    }
-
-    if (comment) {
-      const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xcomments == comment) return items;
-      });
-
-      if (filter.length > 0) {
-        this.paragraphs.load(filter);
-        this.totalItems = this.paragraphs.count();
-      } else {
-        this.paragraphs.load(filter);
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
-      }
-    }
-
-    if (responsible) {
-      const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xresponsable == responsible) return items;
-      });
-
-      if (filter.length > 0) {
-        this.paragraphs.load(filter);
-        this.totalItems = this.paragraphs.count();
-      } else {
-        this.paragraphs.load(filter);
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
-      }
-    }
-
-    if (regDelega && !state && !tranfe) {
-      const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xdelegacionRegional == regDelega) return items;
-      });
-
-      if (filter.length > 0) {
-        this.paragraphs.load(filter);
-        this.totalItems = this.paragraphs.count();
-      } else {
-        this.paragraphs.load(filter);
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
-      }
-    }
-
-    if (regDelega && state && !tranfe) {
-      const filter = this.allDataDocReq.filter((items: any) => {
-        if (items.xestado == state && items.xdelegacionRegional == regDelega)
-          return items;
-      });
-
-      if (filter.length > 0) {
-        this.paragraphs.load(filter);
-        this.totalItems = this.paragraphs.count();
-      } else {
-        this.paragraphs.load(filter);
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
-      }
-    }
-
-    if (regDelega && state && tranfe) {
-      const filter = this.allDataDocReq.filter((items: any) => {
-        if (
-          items.xestado == state &&
-          items.xdelegacionRegional == regDelega &&
-          items.xdelegacionRegional &&
-          items.xidTransferente == tranfe
-        )
-          return items;
-      });
-
-      if (filter.length > 0) {
-        this.paragraphs.load(filter);
-        this.totalItems = this.paragraphs.count();
-      } else {
-        this.paragraphs.load(filter);
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
-      }
     }
   }
 
@@ -555,11 +620,11 @@ export class ReportDocumentScheduleComponent
 
   cleanForm() {
     this.docRequestForm.reset();
-    //this.docRequestForm.get('noRequest').patchValue(this.idRequest);
-    this.allDataDocReq = [];
-    this.paragraphs.load([]);
+    this.docRequest = [];
     this.totalItems = 0;
-    // this.loading = false;
-    // this.getData(new ListParams());
+    this.pageSizeOptions = [10];
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => this.getData(params));
   }
 }

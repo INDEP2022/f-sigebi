@@ -7,3 +7,11 @@ export interface IBatch {
   status: string;
   numStore?: IWarehouse;
 }
+
+export interface ILegalAffair {
+  numStore?: IWarehouse;
+  id?: number;
+  legalAffair: string;
+  versionv?: number;
+  status?: number;
+}

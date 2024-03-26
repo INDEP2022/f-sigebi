@@ -1,25 +1,26 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
-import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ButtonColumnDocComponent } from 'src/app/shared/components/button-column-doc/button-column-doc.component';
 import { ButtonColumnScanComponent } from 'src/app/shared/components/button-column-scan/button-column-scan/button-column-scan.component';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { OutsideTradesComponent } from '../../outside-trades/outside-trades/outside-trades.component';
 import { ScannedDocumentsComponent } from '../../scanned-documents/scanned-documents/scanned-documents.component';
 import { REAL_STATE_COLUMNS, REPORT_COLUMNS } from './property-columns';
+
 //import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -48,9 +49,9 @@ export class PropertyComponent extends BasePage implements OnInit {
   settings1 = { ...this.settings };
 
   constructor(
-    private goodSssubtypeService: GoodSssubtypeService,
+    private sanitizer: DomSanitizer,
+    private siabService: SiabService,
     private goodProcessService: GoodProcessService,
-    private goodServices: GoodService,
     private affairService: AffairService,
     private massiveGoodService: MassiveGoodService,
     private datePipe: DatePipe,
@@ -134,20 +135,34 @@ export class PropertyComponent extends BasePage implements OnInit {
   onSelectOffice(event: any) {
     console.log(event);
     if (event.no_of_gestion != null) {
-      const noGes = event.no_of_gestion;
-      const valid1: boolean = true;
-      const modalConfig = MODAL_CONFIG;
-      modalConfig.initialState = {
-        noGes,
-        valid1,
-        callback: (next: boolean) => {
-          if (next)
-            this.params1
-              .pipe(takeUntil(this.$unSubscribe))
-              .subscribe(() => this.getDataGood());
-        },
+      this.loader.load = true;
+      let params = {
+        NO_OF_GESTION: event.no_of_gestion,
+        TIPO_OFICIO: 'EXTERNO',
       };
-      this.modalService.show(OutsideTradesComponent, modalConfig);
+      this.siabService.fetchReport('RGEROFGESTION_EXT', params).subscribe({
+        next: res => {
+          const blob = new Blob([res], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            },
+            class: 'modal-lg modal-dialog-centered',
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+          this.loader.load = false;
+        },
+        error: (error: any) => {
+          console.log('error', error);
+          this.loader.load = false;
+        },
+      });
     } else {
       this.alert(
         'warning',
@@ -157,32 +172,60 @@ export class PropertyComponent extends BasePage implements OnInit {
     }
   }
 
+  // onSelectDelegation(instance: CheckboxElementComponent) {
+  //   instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+  //     next: data => {
+  //       console.log(data.row);
+  //       let index;
+  //       let validate = false;
+  //       const existe = this.array.some(
+  //         (numero: number) => numero === data.row.clasifGoodNumber
+  //       );
+  //       console.log(existe);
+  //       if (existe) {
+  //         index = this.array.findIndex(
+  //           (numero: number) => numero === data.row.clasifGoodNumber
+  //         );
+  //         validate = true;
+  //         console.log(index);
+  //         this.array.splice(index, 1);
+  //       } else {
+  //         this.array.push(data.row.clasifGoodNumber);
+  //       }
+  //       console.log(this.array);
+  //       if (this.array.length > 0) {
+  //         this.validator = false;
+  //         console.log(this.array.length);
+  //       } else {
+  //         this.validator = true;
+  //       }
+  //     },
+  //   });
+  // }
   onSelectDelegation(instance: CheckboxElementComponent) {
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: data => {
-        let index;
-        let validate = false;
-        const existe = this.array.some(
-          (numero: number) => numero === data.row.clasifGoodNumber
-        );
-        console.log(existe);
-        if (existe) {
-          index = this.array.findIndex(
-            (numero: number) => numero === data.row.clasifGoodNumber
-          );
-          validate = true;
-          console.log(index);
-          this.array.splice(index, 1);
+        // Haz una copia del array antes de la acción de selección o deselección
+        this.array = [...this.array];
+        console.log(data.toggle, data.row.clasifGoodNumber);
+        if (data.toggle) {
+          // Si el checkbox se selecciona, agregar el elemento al array
+          if (!this.array.includes(data.row.clasifGoodNumber)) {
+            this.array.push(data.row.clasifGoodNumber);
+          }
         } else {
-          this.array.push(data.row.clasifGoodNumber);
+          // Si el checkbox se deselecciona, eliminar el elemento del array
+          const index = this.array.indexOf(data.row.clasifGoodNumber);
+          if (index !== -1) {
+            this.array.splice(index, 1);
+          }
         }
         console.log(this.array);
-        if (this.array.length > 0) {
-          this.validator = false;
-          console.log(this.array.length);
-        } else {
-          this.validator = true;
-        }
+
+        // Ahora puedes realizar la consulta, teniendo en cuenta los cambios en this.array
+        this.params1
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.generateReport());
       },
     });
   }
@@ -203,6 +246,7 @@ export class PropertyComponent extends BasePage implements OnInit {
               case 'clasifGoodNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
+
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -236,17 +280,59 @@ export class PropertyComponent extends BasePage implements OnInit {
               case 'numClasifGoods':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'bien':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'expediente':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'cantidad':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'unidad_medida':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'clasif':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'no_trasferente':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'volante':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'no_almacen':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'num_fotos':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'no_of_gestion':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fecha_desahogo':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fecha_dictamen_procedencia':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fecha_captura_acta_recepcion':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
             } else {
-              delete this.columnFilters[field];
+              delete this.columnFilters1[field];
             }
           });
-          this.params = this.pageFilter(this.params);
+          this.params1 = this.pageFilter(this.params1);
           this.getDataGood();
         }
       });
@@ -296,8 +382,6 @@ export class PropertyComponent extends BasePage implements OnInit {
         this.totalItems1 = 0;
         this.data1.load([]);
         this.data1.refresh();
-        // En caso de error, restaura this.array a su estado anterior
-        this.array = [];
         this.loading = false;
       },
     });

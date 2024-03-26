@@ -18,48 +18,57 @@ export const APPRAISALS_COLUMNS = {
     title: 'Fecha Inscrito',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
   },
 };
 
 export const GOODS_COLUMNS = {
-  estateNumber: {
+  //estateNumber
+  no_bien: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
     width: '15%',
-  },
-  worthappraisal: {
+  }, //worthappraisal
+  estatus: {
     title: 'Status',
     type: 'number',
     sort: false,
-  },
-  appraisalDate: {
+  }, //appraisalDate
+  valor_avaluo: {
     title: 'Valor Avalúo',
     type: 'string',
     sort: false,
-  },
-  sessionNumber: {
+  }, //sessionNumber
+  descripcion: {
     title: 'Descripción',
     type: 'number',
     sort: false,
-  },
-  ranksEstate: {
+  }, //ranksEstate
+  val34: {
     title: 'Situación Juridica',
     type: 'string',
     sort: false,
-  },
+  }, //verificar
   description: {
     title: 'Incidencias',
     type: 'string',
     sort: false,
-  },
-  delegation: {
+  }, //delegation
+  valuado: {
     title: 'Avalúo',
     type: 'string',
     sort: false,
   },
 };
 export const DETAIL_APPRAISALS_COLUMNS = {
+  num: {
+    title: 'No.',
+    type: 'number',
+    sort: false,
+  },
   no_bien: {
     title: 'No. Bien',
     type: 'number',
@@ -70,13 +79,13 @@ export const DETAIL_APPRAISALS_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  estatus_bien: {
+  estatus: {
     title: 'Estatus',
     type: 'string',
     sort: false,
   },
-  clasificacion_bien: {
-    title: 'Clasificación',
+  no_clasif_bien: {
+    title: 'Clasificador',
     type: 'number',
     sort: false,
   },
@@ -101,27 +110,33 @@ export const DETAIL_APPRAISALS_COLUMNS = {
     sort: false,
   },
   fecha_avaluo: {
-    title: 'Fecha Avaluo',
+    title: 'Fecha',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
   },
   fecha_vig_avaluo: {
-    title: 'echa Avaluo',
+    title: 'Fecha Vigencia',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
   },
   nombre_valuador: {
     title: 'Nombre Valuador',
     type: 'string',
     sort: false,
   },
-  no_bien_referencia: {
+  ref_avaluo: {
     title: 'Referencia',
     type: 'string',
     sort: false,
   },
   apto: {
-    title: 'APTO',
+    title: 'Apto',
     type: 'string',
     sort: false,
   },
@@ -130,8 +145,28 @@ export const DETAIL_APPRAISALS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  ref_avaluo: {
+  vri: {
     title: 'Valor de Referencia Inmediata',
+    type: 'string',
+    sort: false,
+  },
+  vri_iva: {
+    title: 'Valor de Referencia Inmediata IVA',
+    type: 'string',
+    sort: false,
+  },
+  vri_iva_redondeado: {
+    title: 'VRI IVA Redondeado',
+    type: 'string',
+    sort: false,
+  },
+  vc: {
+    title: 'Valor Comercial',
+    type: 'string',
+    sort: false,
+  },
+  vc_iva: {
+    title: 'Valor Comercial IVA',
     type: 'string',
     sort: false,
   },
@@ -140,8 +175,52 @@ export const DETAIL_APPRAISALS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  fec_dictamen: {
+  fecha_dictamen: {
     title: 'Fecha Dictamen',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+  },
+  fecha_vig_dictamen: {
+    title: 'Fecha Vigencia Dictamen',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+  },
+  descuento_vri: {
+    title: 'VRI con Descuento',
+    type: 'string',
+    sort: false,
+  },
+  descuento_iva: {
+    title: 'VRI IVA con Descuento',
+    type: 'string',
+    sort: false,
+  },
+};
+
+export const DT_RECHAZADOS_COLUMNS = {
+  NO_BIEN: {
+    title: 'No.Bien',
+    type: 'string',
+    sort: false,
+  },
+  DESCRIPCION: {
+    title: 'Descripcion',
+    type: 'string',
+    sort: false,
+  },
+  ESTATUS: {
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
+  },
+  CAUSA: {
+    title: 'Causa',
     type: 'string',
     sort: false,
   },

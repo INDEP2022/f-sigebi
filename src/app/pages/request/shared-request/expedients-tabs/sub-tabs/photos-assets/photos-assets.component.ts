@@ -25,6 +25,8 @@ import { DefaultSelect } from '../../../../../../shared/components/select/defaul
 import { LIST_ASSETS_COLUMNS_GOODFINDER } from './columns/list-assets-columns';
 import { OpenPhotosComponent } from './open-photos/open-photos.component';
 import { UploadFileComponent } from './upload-file/upload-file.component';
+import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
+import { da } from 'date-fns/locale';
 
 @Component({
   selector: 'app-photos-assets',
@@ -33,8 +35,7 @@ import { UploadFileComponent } from './upload-file/upload-file.component';
 })
 export class PhotosAssetsComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   @Input() requestId: number = null;
   parentRef: BsModalRef;
   showSearchFilter: boolean = true;
@@ -61,7 +62,8 @@ export class PhotosAssetsComponent
     private typeRelevantService: TypeRelevantService,
     private requestservice: RequestService,
     private showHideErrorInterceptorService: showHideErrorInterceptorService,
-    private readonly goodFinderService: GoodFinderService
+    private readonly goodFinderService: GoodFinderService,
+    private rejectedGoodService: RejectedGoodService,
   ) {
     super();
     this.idRequest = this.activatedRoute.snapshot.paramMap.get(
@@ -71,6 +73,7 @@ export class PhotosAssetsComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     this.idRequest = this.idRequest ? this.idRequest : this.requestId;
+    console.log(this.idRequest);
     if (this.requestId) {
       this.getGoodsRequest();
     }
@@ -106,7 +109,7 @@ export class PhotosAssetsComponent
     };
     this.getInfoRequest();
     this.initFilterForm();
-    //this.getTypeRelevant(new ListParams());
+    this.getTypeRelevant(new ListParams());
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -125,34 +128,43 @@ export class PhotosAssetsComponent
     this.loading = true;
     if (this.idRequest) {
       this.params.getValue()['filter.requestId'] = this.idRequest;
+      this.params.getValue()['filter.applicationId'] = null;
       this.goodFinderService.goodFinder(this.params.getValue()).subscribe({
         next: async (data: any) => {
-          const filterGoodType = data.data.map(async (item: any) => {
-            //const goodType = await this.getGoodType(item.goodTypeId);
-            //item['goodTypeId'] = goodType;
-            item['requestId'] = this.idRequest;
 
-            /*if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
-            if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
-            if (item['stateConservation'] == 1)
-              item['stateConservation'] = 'BUENO';
-            if (item['stateConservation'] == 2)
-              item['stateConservation'] = 'MALO';
-            if (item['destiny'] == 1) item['destiny'] = 'VENTA';
+          if (data.data.length > 0) {
+            const filterGoodType = data.data.map(async (item: any) => {
+              const goodType = await this.getGoodType(item.goodTypeId);
+              item['goodTypeId'] = goodType;
+              item['requestId'] = this.idRequest;
 
-            const fraction = item['fractionId'];
-            item['fractionId'] = fraction?.description;*/
-          });
+              /*if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
+              if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
+              if (item['stateConservation'] == 1)
+                item['stateConservation'] = 'BUENO';
+              if (item['stateConservation'] == 2)
+                item['stateConservation'] = 'MALO';
+              if (item['destiny'] == 1) item['destiny'] = 'VENTA';
+  
+              const fraction = item['fractionId'];
+              item['fractionId'] = fraction?.description;*/
+            });
 
-          Promise.all(filterGoodType).then(x => {
-            this.paragraphs = data.data;
-            this.allDataGood = this.paragraphs;
-            this.totalItems = data.count;
-            this.loading = false;
-          });
+            Promise.all(filterGoodType).then(x => {
+              this.paragraphs = data.data;
+              this.allDataGood = this.paragraphs;
+              this.totalItems = data.count;
+              this.loading = false;
+            });
+          } else {
+            this.getGoodRes()
+          }
+
+
         },
         error: error => {
           this.loading = false;
+          this.getGoodRes()
         },
       });
     } else {
@@ -176,10 +188,10 @@ export class PhotosAssetsComponent
   initFilterForm() {
     this.filterForm = this.fb.group({
       management: [
-        '',
+        null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      typeGood: ['', [Validators.pattern(STRING_PATTERN)]],
+      typeGood: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -187,6 +199,7 @@ export class PhotosAssetsComponent
     params['sortBy'] = 'description:ASC';
     this.typeRelevantService.getAll(params).subscribe({
       next: data => {
+        console.log(data);
         this.typeGoods = new DefaultSelect(data.data, data.count);
       },
     });
@@ -209,7 +222,8 @@ export class PhotosAssetsComponent
         this.totalItems = filter.length;
       } else {
         this.paragraphs = filter;
-        this.onLoadToast('warning', 'No se encontró ningún bien', '');
+        //this.onLoadToast('warning', 'No se encontró ningún bien', '');
+        return;
       }
     }
 
@@ -224,6 +238,7 @@ export class PhotosAssetsComponent
       } else {
         this.paragraphs = filter;
         this.onLoadToast('warning', 'No se encontró ningún bien', '');
+        return;
       }
     }
 
@@ -237,6 +252,7 @@ export class PhotosAssetsComponent
         this.totalItems = filter.length;
       } else {
         this.onLoadToast('warning', 'No se encontró ningún bien', '');
+        return;
       }
     }
   }
@@ -296,4 +312,42 @@ export class PhotosAssetsComponent
     };
     this.modalService.show(component, config);
   }
+
+  getGoodRes() {
+    this.params.getValue()['filter.applicationId'] = this.idRequest;
+    this.rejectedGoodService.getAll(this.params.getValue()).subscribe({
+      next: async (data: any) => {
+
+        data.data = data.data.map(x => x.good);
+
+        const filterGoodType = data.data.map(async (item: any) => {
+          const goodType = await this.getGoodType(item.goodTypeId);
+          item['goodTypeName'] = goodType;
+          item['requestId'] = this.idRequest;
+
+          // if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
+          // if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
+          // if (item['stateConservation'] == 1)
+          //   item['stateConservation'] = 'BUENO';
+          // if (item['stateConservation'] == 2)
+          //   item['stateConservation'] = 'MALO';
+          // if (item['destiny'] == 1) item['destiny'] = 'VENTA';
+          // const fraction = item['fraccion'];
+          // item['fractionId'] = fraction?.code + ' ' + fraction?.description;
+        });
+
+        Promise.all(filterGoodType).then(x => {
+          this.paragraphs = data.data;
+          this.allDataGood = this.paragraphs;
+          this.totalItems = data.count;
+          this.loading = false;
+        });
+
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
+  }
+
 }

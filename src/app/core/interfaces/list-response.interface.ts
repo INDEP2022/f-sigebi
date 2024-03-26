@@ -24,3 +24,21 @@ export interface IListResponseMessage<T = any> {
   message: string[];
   statusCode?: number;
 }
+
+export interface IBlkBie {
+  status: string;
+  proceedingsNumber: number;
+  goodNumber: number;
+  screen: string;
+}
+
+export interface IQueryRegAdmin {
+  allGst: string;
+  delegatioGnu: number;
+  recAdmGst: string;
+}
+
+export interface ICountDelivery {
+  good: number | string;
+  proceedingKey?: string;
+}

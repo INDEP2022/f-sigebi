@@ -5,6 +5,8 @@ import { OrderServiceEndpoint } from 'src/app/common/constants/endpoints/ms-orde
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IOrderIncoming } from '../../models/ms-order-service/order-incoming.model';
+import { IOrderPayment } from '../../models/ms-order-service/order-payment.model';
 import { IServiceVehicle } from '../../models/ms-order-service/order-service-vehicle.model';
 import {
   IOrderService,
@@ -71,8 +73,9 @@ export class OrderServiceService extends HttpService {
     return this.put(route, formVehicle);
   }
 
-  getSamplingOrderView(body: Object, page: number, limit: number) {
-    const route = `${OrderServiceEndpoint.SamplingOrderView}?limit=${limit}&page=${page}`;
+  getSamplingOrderView(body: Object, _params: ListParams) {
+    const params = this.makeParams(_params);
+    const route = `${OrderServiceEndpoint.SamplingOrderView}?${params}`;
     return this.post(route, body);
   }
 
@@ -186,6 +189,31 @@ export class OrderServiceService extends HttpService {
     const params = this.makeParams(_params);
     return this.get<IListResponse<IRecepReqModel>>(
       `${OrderServiceEndpoint.OrderServiceCacelled}?${params}`
+    );
+  }
+
+  getOrderPayment(
+    _params: ListParams
+  ): Observable<IListResponse<IOrderPayment>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IOrderPayment>>(
+      `${OrderServiceEndpoint.OrderPayment}?${params}`
+    );
+  }
+
+  getOrderInService(
+    _params: ListParams
+  ): Observable<IListResponse<IOrderIncoming>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IOrderIncoming>>(
+      `${OrderServiceEndpoint.OrderIncomingService}?${params}`
+    );
+  }
+
+  generateReportOrder(_params: ListParams) {
+    const params = this.makeParams(_params);
+    return this.get(
+      `${OrderServiceEndpoint.OrderServiceSampleReport}?${params}`
     );
   }
 

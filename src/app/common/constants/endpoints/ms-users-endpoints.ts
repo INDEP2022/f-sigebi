@@ -28,4 +28,6 @@ export enum UserEndpoints {
   viewPrev = 'application/btnViewPrev',
   consultationQuery1 = 'application/consultationQuery1',
   consultationQuery2 = 'application/consultationQuery2',
+  getOffice = 'seg-users/getOffice',
+  ApplicationPhysicalNonexistence = 'application/physical-nonexistence',
 }

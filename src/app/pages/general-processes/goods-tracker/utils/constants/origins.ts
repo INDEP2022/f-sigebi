@@ -4,6 +4,7 @@ export enum GOOD_TRACKER_ORIGINS {
   DetailProceedings = 'FMENTREC_0002',
   MaintenanceProceedings = 'FACTREFACTAERCIER',
   DestructionManagement = 'FESTATUSRGA',
+  AuthorizationAssetsDestruction = 'FACTDIRAPROBDESTR',
   EventosCapture = 'FINDICA_0035_1',
   MassiveChangeStatus = 'FACTADBCAMBIOESTAT',
   EventPreparation = 'FCOMEREVENTOS',
@@ -13,6 +14,8 @@ export enum GOOD_TRACKER_ORIGINS {
   DirectDonationInventoryRecord = 'FDONAC_DIRECT',
   DonationGood = 'FMCOMDONAC_1',
   DonationAuthorization = 'FDONSOLAUTORIZA',
+  OutstandingAssetsValidation = 'FCOMERBIENEX',
+  ChangesGoodsDestinationIndicators = 'FACTADBCAMBIOETIQ',
 }
 
 export enum GOOD_TRACKER_ORIGINS_TITLES {
@@ -20,6 +23,7 @@ export enum GOOD_TRACKER_ORIGINS_TITLES {
   'FMENTREC_0002' = 'Mantenimiento de Programaciones',
   'FACTREFACTAERCIER' = 'Mantenimiento de Actas',
   'FESTATUSRGA' = 'Gestión de Autorización de Destrucción',
+  'FACTDIRAPROBDESTR' = 'Autorización de Destrucción',
   'FINDICA_0035_1' = 'Capura de Eventos',
   'FACTADBCAMBIOESTAT' = 'Cambio masivo de estatus bienes',
   'FCOMEREVENTOS' = 'Prepración del Evento',
@@ -29,4 +33,6 @@ export enum GOOD_TRACKER_ORIGINS_TITLES {
   'FDONAC_DIRECT' = 'Registro para inventarios y donacion directa',
   'FMCOMDONAC_1' = 'Captura de Eventos por Donación',
   'FDONSOLAUTORIZA' = 'Solicitud y Autorización de Donaciones',
+  'FCOMERBIENEX' = 'Bienes exentos de validación',
+  'FACTADBCAMBIOETIQ' = 'Cambio de Indicadores de Destino de Bienes',
 }

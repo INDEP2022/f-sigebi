@@ -48,7 +48,7 @@ export class CreateManualServiceFormComponent
     this.alertQuestion(
       'question',
       'Confirmación',
-      '¿Estás seguro que desea crear el servicio manual?'
+      '¿Está seguro que desea crear el servicio manual?'
     ).then(question => {
       if (question.isConfirmed) {
         const form = this.form.getRawValue();
@@ -66,7 +66,6 @@ export class CreateManualServiceFormComponent
   }
 
   createOrderServiceProvided(body: IOrderServiceProvider) {
-    console.log('body', body);
     this.orderEntryService.createServiceProvided(body).subscribe({
       next: resp => {
         this.onLoadToast('success', 'Servicio manual creado correctamente');

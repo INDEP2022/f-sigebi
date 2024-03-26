@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -7,7 +12,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 @Component({
   selector: 'app-donation-destruction-destination',
   templateUrl: './donation-destruction-destination.component.html',
@@ -23,6 +28,7 @@ export class DonationDestructionDestinationComponent
   proceduralHistoryForm2: ModelForm<any>;
   dateI: string = '';
   dateF: string = '';
+  minDate: Date;
   constructor(
     private fb: FormBuilder,
     private proceedingsService: ProceedingsService,
@@ -31,6 +37,13 @@ export class DonationDestructionDestinationComponent
     private sanitizer: DomSanitizer
   ) {
     super();
+  }
+  get expedienteF() {
+    return this.flatFileGoodForm.get('expedienteF') as FormControl;
+  }
+
+  get actaF() {
+    return this.flatFileGoodForm.get('actaF') as FormControl;
   }
 
   ngOnInit(): void {
@@ -52,19 +65,109 @@ export class DonationDestructionDestinationComponent
       subdelegation: [null, [Validators.required]],
       expedienteI: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUM_POSITIVE),
+          Validators.maxLength(10),
+        ],
       ],
       expedienteF: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUM_POSITIVE),
+          Validators.maxLength(10),
+        ],
       ],
-      actaI: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      actaF: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      initialDate: [null, Validators.required],
-      finalDate: [null, Validators.required],
-      statusActa: [null, Validators.required],
-      tipoActa: [null, Validators.required],
+      actaI: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUM_POSITIVE),
+          Validators.maxLength(10),
+        ],
+      ],
+      actaF: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUM_POSITIVE),
+          Validators.maxLength(10),
+        ],
+      ],
+      initialDate: [null, [Validators.required]],
+      finalDate: [null, [Validators.required]],
+      statusActa: [null, [Validators.required]],
+      tipoActa: [null, [Validators.required]],
     });
+    this.flatFileGoodForm.get('expedienteF').disable();
+    this.flatFileGoodForm.get('actaF').disable();
+    this.flatFileGoodForm.get('finalDate').disable();
+  }
+
+  validateExp(event: any) {
+    console.log(event.data);
+    if (event) {
+      if (this.flatFileGoodForm.get('expedienteI').value) {
+        this.flatFileGoodForm.get('expedienteF').enable();
+        let value = this.flatFileGoodForm.get('expedienteI').value;
+        this.updateValidate(value);
+      } else {
+        this.flatFileGoodForm.get('expedienteF').setValue('');
+        this.flatFileGoodForm.get('expedienteF').disable();
+      }
+    }
+  }
+
+  updateValidate(minValue: number) {
+    console.log(minValue);
+    this.expedienteF.setValidators([
+      Validators.required,
+      Validators.pattern(NUM_POSITIVE),
+      Validators.maxLength(10),
+      Validators.min(minValue),
+      //Validators.max(maxValue),
+    ]);
+
+    // Validar con los nuevos validadores
+    this.expedienteF.updateValueAndValidity();
+  }
+
+  validateAct(event: any) {
+    console.log(event.data);
+    if (event) {
+      if (this.flatFileGoodForm.get('actaI').value) {
+        this.flatFileGoodForm.get('actaF').enable();
+        let value = this.flatFileGoodForm.get('actaI').value;
+        this.updateValidateAct(value);
+      } else {
+        this.flatFileGoodForm.get('actaF').setValue('');
+        this.flatFileGoodForm.get('actaF').disable();
+      }
+    }
+  }
+  updateValidateAct(minValue: number) {
+    console.log(minValue);
+    this.actaF.setValidators([
+      Validators.required,
+      Validators.pattern(NUM_POSITIVE),
+      Validators.maxLength(10),
+      Validators.min(minValue),
+      //Validators.max(maxValue),
+    ]);
+
+    // Validar con los nuevos validadores
+    this.actaF.updateValueAndValidity();
+  }
+
+  validateDate(event: Date) {
+    if (event) {
+      this.flatFileGoodForm.get('finalDate').enable();
+      this.minDate = event;
+    } else {
+      this.flatFileGoodForm.get('finalDate').setValue('');
+      this.flatFileGoodForm.get('finalDate').disable();
+    }
   }
 
   validateVolant(): boolean {
@@ -122,15 +225,19 @@ export class DonationDestructionDestinationComponent
       PN_EXPEDI_FINAL: this.flatFileGoodForm.get('expedienteF').value,
       PN_DELEG: this.flatFileGoodForm.get('delegation').value,
       PN_SUBDEL: this.flatFileGoodForm.get('subdelegation').value,
-      PC_ESTATUS_ACTA1: this.flatFileGoodForm.get('statusActa').value,
-      PF_ELAB_INI: this.formatDate2(new Date(this.dateI)),
-      PF_ELAB_FIN: this.formatDate2(new Date(this.dateF)),
-      PC_TIPO_ACTA: 'DEVOLUCION',
+      PC_ESTATUS_ACTA1: null,
+      PF_ELAB_INI: this.formatDate2(
+        this.flatFileGoodForm.get('initialDate').value
+      ),
+      PF_ELAB_FIN: this.formatDate2(
+        this.flatFileGoodForm.get('finalDate').value
+      ),
+      PC_TIPO_ACTA: null,
       PN_ACTA: this.flatFileGoodForm.get('tipoActa').value,
       PN_ACTA_INICIAL: this.flatFileGoodForm.get('actaI').value,
       PN_ACTA_FINAL: this.flatFileGoodForm.get('actaF').value,
     };
-
+    console.log(params);
     this.siabService.fetchReport('blank', params).subscribe(response => {
       //  response= null;
       if (response !== null) {
@@ -162,15 +269,24 @@ export class DonationDestructionDestinationComponent
         );
       }
     });
+    this.clearForm();
   }
 
   onSubmit() {
-    if (!this.validateVolant()) {
+    /*if (!this.validateVolant()) {
       if (!this.validateActa()) {
         if (!this.validarFechas()) {
           this.Generar();
         }
       }
-    }
+    }*/
+    this.Generar();
+  }
+
+  clearForm() {
+    this.flatFileGoodForm.reset();
+    this.flatFileGoodForm.get('expedienteF').disable();
+    this.flatFileGoodForm.get('actaF').disable();
+    this.flatFileGoodForm.get('finalDate').disable();
   }
 }

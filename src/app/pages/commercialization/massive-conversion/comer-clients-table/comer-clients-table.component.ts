@@ -1,0 +1,383 @@
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { GuarantyService } from 'src/app/core/services/ms-guaranty/guaranty.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
+import { BasePage } from 'src/app/core/shared';
+import { COLUMNS_COMER_CLIENTS } from './columns-comer-clients';
+import { cliente } from './object-clients';
+
+@Component({
+  selector: 'app-comer-clients-table',
+  templateUrl: './comer-clients-table.html',
+  styleUrls: ['./comer-clients-table.component.css'],
+})
+export class ComerClientsTableComponent extends BasePage implements OnInit {
+  source: LocalDataSource = new LocalDataSource();
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+
+  ID_TIPO_FALLO: string;
+  idEventTMP: number;
+
+  listObjects: any[] = [];
+  @ViewChild('table', { static: false }) table: any;
+
+  object: any;
+
+  c_RESUL: string;
+  c_TIPO: string;
+  t_CLIENTES: string;
+  n_CONT: number = 0;
+  n_CONL: number = 0;
+  n_CONP: number = 0;
+  n_CONE: number = 0;
+  n_CONK: number = 0;
+  c_RELL: string = '';
+
+  clientes: cliente[] = [];
+
+  idEvent: number = 0;
+
+  columnFilters: any = [];
+
+  constructor(
+    private modalRef: BsModalRef,
+    private guarantyService: GuarantyService,
+    private lotService: LotService,
+    private goodprocessService: GoodprocessService
+  ) {
+    super();
+
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: true,
+      actions: false,
+      selectMode: 'multi',
+      /*actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: true,
+        add: false,
+        position: 'right',
+      },*/
+      columns: { ...COLUMNS_COMER_CLIENTS },
+    };
+  }
+
+  ngOnInit(): void {
+    //Tabla de Datos
+    this.source
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'idEvent':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'idClient':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'rfc':
+                searchFilter = SearchFilter.LIKE;
+                break;
+              case 'client':
+                searchFilter = SearchFilter.LIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.LIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getData());
+        }
+      });
+
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getData());
+
+    this.c_TIPO = 'M' + this.ID_TIPO_FALLO;
+    console.log('c_TIPO', this.c_TIPO);
+  }
+
+  getData() {
+    this.loading = true;
+
+    // this.params = this.pageFilter(this.params);
+    this.params.getValue()['sortBy'] = `rfc:DESC`;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+
+    this.guarantyService.idEventXClient(params).subscribe({
+      next: resp => {
+        this.source.load(resp.data);
+        this.source.refresh();
+        this.totalItems = resp.count;
+        this.loading = false;
+      },
+      error: error => {
+        this.source.load([]);
+        this.source.refresh();
+        this.totalItems = 0;
+        this.loading = false;
+      },
+    });
+  }
+
+  reProcess() {
+    this.c_RESUL = '';
+    this.c_TIPO = '';
+    this.t_CLIENTES = '';
+    this.n_CONT = 0;
+    this.n_CONL = 0;
+    this.n_CONP = 0;
+    this.n_CONE = 0;
+    this.n_CONK = 0;
+    this.c_RELL = '';
+    this.clientes = [];
+
+    if (this.listObjects.length == 0) {
+      this.alertInfo('warning', 'No ha seleccionado ningún registro', '');
+    }
+
+    if (this.listObjects.length >= 2) {
+      console.log('Mayor a 1');
+
+      for (let i = 0; i < this.listObjects.length; i++) {
+        this.clientes.push(
+          new cliente(
+            this.object[i].idEvent,
+            'S',
+            this.object[i].rfc,
+            this.object[i].idClient
+          )
+        );
+      }
+
+      console.log('Objeto construido: ', this.clientes);
+
+      const body = {
+        clientsEvent: this.clientes,
+
+        C_RELL: null,
+      };
+
+      console.log('Body construido: ', body);
+
+      this.goodprocessService.postTbClientsEvent(body).subscribe({
+        next: resp => {
+          console.log('respuesta de postTbClientsEvent', resp);
+
+          this.n_CONL = resp.n_CONL;
+          this.n_CONK = resp.n_CONK;
+          this.n_CONT = resp.n_CONT;
+
+          const registerResponse = resp.t_CLIENTES.length;
+          let uniqueValues = new Set();
+
+          for (let i = 1; i < registerResponse; i++) {
+            uniqueValues.add(resp.t_CLIENTES[i].RFC);
+
+            // this.c_RELL = `${this.c_RELL}, ${resp.t_CLIENTES[i].RFC}`;
+          }
+
+          this.c_RELL = Array.from(uniqueValues).join(', ');
+
+          this.executeValids(
+            this.n_CONL,
+            this.n_CONK,
+            this.n_CONT,
+            this.c_RELL
+          );
+        },
+        error: error => {
+          console.log('Error de postTbClientsEvent', error);
+        },
+      });
+    } else if (this.listObjects.length == 1) {
+      console.log('Igual a 1');
+      this.allEvent();
+    }
+  }
+
+  executeValids(n_CONL: number, n_CONK: number, n_CONT: number, rfc: string) {
+    console.log(
+      'Método executeValids, n_CONL: ',
+      n_CONL,
+      'n_CONK: ',
+      n_CONK,
+      'n_CONT:',
+      n_CONT
+    );
+
+    if (n_CONL == 0) {
+      this.alert('warning', 'No se seleccionó algún Cliente', '');
+    } else if (n_CONK >= 1) {
+      this.alertInfo(
+        'success',
+        'Ejecución Correcta',
+        `Clientes con dispersión definitiva:${rfc}`
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.deselectRows();
+        }
+      });
+    } else if (n_CONT == n_CONL) {
+      //const id_evento = this.idEventTMP;
+      const id_evento = this.idEvent;
+
+      this.alertQuestion(
+        'question',
+        'Se reprocesará todo el Evento',
+        '¿Continuar?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.lotService.paGarantXLote(id_evento).subscribe({
+            next: resp => {
+              console.log('respuesta de paGarantXLote', resp);
+              this.alert(
+                'success',
+                'El Reproceso se realizó satisfactoriamente',
+                ''
+              );
+              this.c_RESUL = 'OK';
+              this.deselectRows();
+            },
+            error: error => {
+              console.log('Error respuesta de paGarantXLote', error);
+              this.alert('warning', 'El Reproceso no se realizó', '');
+              this.c_RESUL = 'ERROR';
+              this.deselectRows();
+            },
+          });
+        }
+      });
+    } else {
+      this.alertQuestion(
+        'question',
+        `Se reprocesará(n) ${n_CONL} Cliente(s) del Evento. `,
+        '¿Continuar?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          //const id_evento = this.idEventTMP;
+          const id_evento = this.idEvent;
+
+          for (let i = 1; i <= n_CONL; i++) {
+            this.lotService.paGarantXLote(id_evento).subscribe({
+              next: resp => {
+                console.log('respuesta de paGarantXLote', resp);
+                this.alert('success', `Cliente: ${rfc}, ${this.c_RESUL}`, '');
+                this.c_RESUL = 'OK';
+                this.deselectRows();
+              },
+              error: error => {
+                console.log('Error respuesta de paGarantXLote', error);
+                this.alert('warning', 'El Reproceso no se realizó', '');
+                this.c_RESUL = 'ERROR';
+                this.deselectRows();
+              },
+            });
+          }
+
+          this.alert('success', 'Ejecución realizada', '');
+        }
+      });
+    }
+  }
+
+  deselectRows() {
+    this.listObjects.splice(0, this.listObjects.length);
+    this.table.grid.dataSet['willSelect'] = [];
+    this.table.grid.dataSet.deselectAll();
+  }
+
+  allEvent() {
+    this.c_RESUL = '';
+    this.c_TIPO = '';
+    this.t_CLIENTES = '';
+    this.n_CONT = 0;
+    this.n_CONL = 0;
+    this.n_CONP = 0;
+    this.n_CONE = 0;
+    this.n_CONK = 0;
+    this.c_RELL = '';
+    //const id_evento = this.idEvent;
+    const id_evento = this.idEventTMP;
+
+    this.alertQuestion(
+      'question',
+      `Se reprocesará todo el Evento ${this.idEventTMP}`,
+      '¿Continuar?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.lotService.paGarantXLote(id_evento).subscribe({
+          next: resp => {
+            console.log('respuesta de paGarantXLote', resp);
+            this.alert(
+              'success',
+              'El Reproceso se realizó satisfactoriamente',
+              ''
+            );
+            this.c_RESUL = 'OK';
+          },
+          error: error => {
+            console.log('Error respuesta de paGarantXLote', error);
+            this.alert('warning', 'El Reproceso no se realizó', '');
+            this.c_RESUL = 'ERROR';
+          },
+        });
+      }
+    });
+  }
+
+  selectRows(event: any) {
+    console.log('event.selected', event);
+    this.idEvent = Number(event.data.idEvent);
+    console.log('ID del primer Evento seleccionado', this.idEvent);
+    this.c_RELL = event.data.rfc;
+
+    if (event.isSelected == false) {
+      this.table.isAllSelected = false;
+    }
+    this.listObjects = event.selected;
+
+    if (this.listObjects.length <= 1) {
+      if (event.isSelected === true) {
+        this.object = this.listObjects[0];
+      } else {
+        this.object = null;
+      }
+    } else {
+      this.object = this.listObjects;
+      console.log('Objetos seleccionados: ', this.object);
+    }
+  }
+
+  close() {
+    this.modalRef.hide();
+  }
+}

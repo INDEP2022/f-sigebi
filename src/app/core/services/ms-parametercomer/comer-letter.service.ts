@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ComerLetterEndpoints } from 'src/app/common/constants/endpoints/comer-letter-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import {
   IComerLetter,
@@ -28,5 +28,37 @@ export class ComerLetterService extends HttpService {
   }
   getByIdResponsability(id: string | number): Observable<IComerLetterResp> {
     return this.get(`${ComerLetterEndpoints.CartasResp}/${id}`);
+  }
+
+  getAll_(params?: ListParams): Observable<IListResponse<IComerLetter>> {
+    return this.get<IListResponse<IComerLetter>>(this.endpint1, params);
+  }
+  createLib(params: any) {
+    return this.post<IListResponse<IComerLetter>>(this.endpint1, params);
+  }
+  removeLib(id: any) {
+    return this.delete<IListResponse<IComerLetter>>(`${this.endpint1}/${id}`);
+  }
+  updateLib(params: any, id: string | number) {
+    return this.put<IListResponse<IComerLetter>>(
+      `${this.endpint1}/${id}`,
+      params
+    );
+  }
+  getAllResp(params?: _Params): Observable<IListResponse<IComerLetterResp>> {
+    return this.get<IListResponse<IComerLetterResp>>(
+      `${ComerLetterEndpoints.CartasResp}`,
+      params
+    );
+  }
+  createComerLetterResp(body: any): Observable<IComerLetterResp> {
+    return this.post(`${ComerLetterEndpoints.CartasResp}`, body);
+  }
+
+  updateComerLetterResp(
+    body: any,
+    id: number | string
+  ): Observable<IComerLetterResp> {
+    return this.put(`${ComerLetterEndpoints.CartasResp}/${id}`, body);
   }
 }

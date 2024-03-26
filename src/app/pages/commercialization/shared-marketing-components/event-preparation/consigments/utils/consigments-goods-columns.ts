@@ -1,26 +1,28 @@
 import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
 export const CONSIGMENTS_GOODS_COLUMNS = {
-  goodNumber: {
+  'goodNumber.id': {
     title: 'No. Bien',
     sort: false,
+    valuePrepareFunction: (empty: any, row: any) => row.goodNumber?.id ?? '',
   },
   description: {
     title: 'Descripción',
     sort: false,
     valuePrepareFunction: (empty: any, row: any) =>
-      row.bienes?.description ?? '',
+      row.goodNumber?.description ?? '',
   },
   estatus: {
     title: 'Estatus',
     sort: false,
-    valuePrepareFunction: (empty: any, row: any) => row.bienes?.status ?? '',
+    valuePrepareFunction: (empty: any, row: any) =>
+      row.goodNumber?.status ?? '',
   },
   label_good: {
     title: 'Destino',
     sort: false,
     valuePrepareFunction: (value: any, row: any) =>
-      GOOD_LABELS[row?.bienes?.labelNumber] ?? 'INDEFINIDO',
+      GOOD_LABELS[row?.goodNumber?.labelNumber] ?? 'INDEFINIDO',
   },
   transferente: {
     title: 'Mandato',

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ParameterComerEndpoints } from 'src/app/common/constants/endpoints/ms-parametercomer-endpoints';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -69,5 +69,9 @@ export class ParameterBrandsService extends HttpService {
 
   getSuperUserFilterV2(params: ListParams) {
     return this.get(ParameterComerEndpoints.ParameterModGetAllV2, params);
+  }
+  getSuperUserv2(params: _Params) {
+    console.log(params);
+    return this.get(ParameterComerEndpoints.ParameterMod, params);
   }
 }

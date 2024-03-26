@@ -45,6 +45,7 @@ export class SearchActasComponent extends BasePage implements OnInit {
   actaActual: any;
   valDelete: boolean = false;
   // @Output() onConfirm = new EventEmitter<any>();
+  valRif: boolean = false;
   constructor(
     private modalRef: BsModalRef,
     private activateRoute: ActivatedRoute,
@@ -69,6 +70,11 @@ export class SearchActasComponent extends BasePage implements OnInit {
       },
       columns: {
         ...ACTAS,
+      },
+      delete: {
+        deleteButtonContent:
+          '<i class="fa fa-trash text-danger mx-2 ml-5"></i>',
+        confirmDelete: true,
       },
     };
   }

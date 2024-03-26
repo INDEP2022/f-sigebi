@@ -15,7 +15,8 @@
         <div class="p-2">
           <button
             [disabled]="statusTask == 'FINALIZADA'"
-            class="btn btn-primary btn-sm active mr-2 float-right">
+            class="btn btn-primary btn-sm active mr-2 float-right"
+            (click)="getRequestData()">
             Recargar <i class="fas fa-sync-alt"> </i>
           </button>
         </div>
@@ -45,11 +46,13 @@
         id="tab1"
         (selectTab)="requestSelected(3)">
         <app-doc-request-tab
-          [typeDoc]="typeDoc"
+          [updateInfo]="updateInfo"
+          [typeDoc]="'doc-request'"
           [typeModule]="typeModule"></app-doc-request-tab>
       </tab>
       <tab heading="Bienes de la Solicitud" (selectTab)="requestSelected(4)">
         <app-good-doc-tab
+          [updateInfo]="updateInfo"
           [typeDoc]="typeDoc"
           [screen]="screen"
           [typeModule]="typeModule"></app-good-doc-tab>

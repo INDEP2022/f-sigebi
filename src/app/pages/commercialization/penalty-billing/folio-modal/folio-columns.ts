@@ -1,4 +1,4 @@
-import { ComerF } from 'src/app/core/models/ms-invoicefolio/invoicefolio.model';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const BILLING_FOLIO_COLUMNS = {
   series: {
@@ -16,15 +16,25 @@ export const BILLING_FOLIO_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  comerF: {
+  recordNumber: {
     title: 'Usuario Registro',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: ComerF) => (value ? value.recordUser : ''),
+    // valuePrepareFunction: (value: ComerF) => (value ? value.recordUser : ''),
   },
   recordDate: {
     title: 'Fecha Registro',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (val: string) => {
+      return val ? val.split('-').reverse().join('/') : '';
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction: () => {
+      return true;
+    },
   },
 };

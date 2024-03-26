@@ -1,13 +1,13 @@
 export interface IComerDetExpense {
   expenseDetailNumber?: string;
   expenseNumber: string;
-  amount: string;
-  vat: string;
-  isrWithholding: string;
-  vatWithholding: string;
-  transferorNumber: string;
+  amount: string | number;
+  vat: string | number;
+  isrWithholding: string | number;
+  vatWithholding: string | number;
+  transferorNumber?: string;
   goodNumber: string;
-  total: string;
+  total?: string | number;
   cvman: string;
   budgetItem: string;
   comerExpenses?: ComerExpenses;
@@ -44,6 +44,9 @@ export interface IComerDetExpense2 {
   parameter: string;
   mandato: string;
   vehiculoCount: string;
+  labelNumber?: number;
+  alternateClassificationNumber?: number;
+  SELECT_CAMBIA_CLASIF_ENABLED?: boolean;
   V_VALCON_ROBO: number;
   changeStatus?: boolean;
   reportDelit?: boolean;
