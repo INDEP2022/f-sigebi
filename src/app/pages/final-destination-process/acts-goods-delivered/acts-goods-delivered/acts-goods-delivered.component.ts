@@ -388,7 +388,7 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'No se puede generar el folio de escaneo en un acta ya cerrada',
+        'No se puede generar el folio de escaneo en un Acta ya cerrada',
         ''
       );
     }
@@ -620,21 +620,21 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
     const { observations, noExpedient, noTransfer } = this.formAct.value;
     const { scanningFoli } = this.form.value;
     let obj: any = {
-      datePhysicalReception: date,
+      datePhysicalReception: new Date(),
       statusProceedings: 'CERRADA',
       numFile: noExpedient,
       observations: observations,
       universalFolio: scanningFoli,
       numTransfer: noTransfer,
-      closeDate: date,
+      closeDate: new Date(),
     };
     this.loadingBtn = true;
     this.proceedingsDeliveryReceptionService
       .editProceeding(this.actaDefault.id, obj)
       .subscribe({
         next: async data => {
-          this.actaDefault.datePhysicalReception = date;
-          this.actaDefault.closeDate = date;
+          this.actaDefault.datePhysicalReception = new Date();
+          this.actaDefault.closeDate = new Date();
           const date1 = this.datePipe.transform(new Date(), 'dd/MM/yyyy');
           this.formAct.patchValue({
             statusRecord: 'CERRADA',
@@ -778,7 +778,7 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
         return this.alert(
           'warning',
           'No hay bienes cargados',
-          'Se necesitan para asociar el expediente'
+          'Se necesitan bienes para asociar el expediente'
         );
       }
       let valDataGood: any = await this.pupCleanBlockCargada();
@@ -804,20 +804,19 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
       }
     }
 
-    const date = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
     let obj: any = {
       keysProceedings: this.formAct.value.cveRecord
         ? this.formAct.value.cveRecord
         : null,
-      elaborationDate: date,
-      datePhysicalReception: date,
+      elaborationDate: new Date(),
+      datePhysicalReception: new Date(),
       statusProceedings: 'ABIERTA',
       elaborate: this.dataUser.preferred_username,
       numFile: this.formAct.get('noExpedient').value,
       typeProceedings: 'ENTEST',
-      dateDeliveryGood: date,
+      dateDeliveryGood: new Date(),
       observations: this.formAct.value.observaciones,
-      captureDate: date,
+      captureDate: new Date(),
       numDelegation1: this.dataUser.department,
       numDelegation2: this.dataUser.department,
       universalFolio: this.form.value.scanningFoli,
@@ -1009,7 +1008,7 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
     } else if (!statusRecord && cveRecord) {
       this.alertQuestion(
         'question',
-        'Se agregarán más bienes al acta',
+        'Se agregarán más bienes al Acta',
         '¿Desea continuar?'
       ).then(async (question: any) => {
         if (question.isConfirmed) {
@@ -1019,7 +1018,7 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
         }
       });
     } else {
-      this.alert('warning', 'El acta se encuentra cerrada', '');
+      this.alert('warning', 'El Acta se encuentra cerrada', '');
     }
   }
 
@@ -1161,7 +1160,7 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
                       if (res == 1) {
                         let obj: IBienErrorSave = {
                           BIEN: item.BIEN,
-                          ERROR: `El Bien ya se encuentra asignado en otra acta`,
+                          ERROR: `El Bien ya se encuentra asignado en otra Acta`,
                         };
                         valNoBienNumber.push(obj);
                         bienesActRecept.push({
@@ -1464,7 +1463,7 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
     // PUP_CARGA_BIENES;
     this.alertQuestion(
       'question',
-      'Se cargarán los bienes al acta',
+      'Se cargarán los bienes al Acta',
       '¿Desea continuar?'
     ).then(async (question: any) => {
       if (question.isConfirmed) {
@@ -1714,7 +1713,7 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
             this.getDetailProceedingsDevollution(this.actaDefault.id);
           },
           error: error => {
-            this.alert('warning', 'No se pudo eliminar el bien del acta', '');
+            this.alert('warning', 'No se pudo eliminar el bien del Acta', '');
           },
         });
       }
