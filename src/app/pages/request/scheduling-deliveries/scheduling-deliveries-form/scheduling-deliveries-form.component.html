@@ -53,7 +53,7 @@
     <form [formGroup]="schedulingDeliverieForm" class="form-material">
       <div class="row pt-3" *ngIf="!showDetailProgramming">
         <div class="col-md-6">
-          <div class="pt-3" *ngIf="disabledTypeEvent == false">
+          <div class="pt-3" *ngIf="isReadOnly == false">
             <ngx-select
               [form]="schedulingDeliverieForm"
               control="typeEvent"
@@ -63,7 +63,7 @@
               bindLabel="nameEvent"
               label="Tipo de Evento"></ngx-select>
           </div>
-          <div class="pt-3" *ngIf="disabledTypeEvent == true">
+          <div class="pt-3" *ngIf="isReadOnly == true">
             <ngx-select
               [form]="schedulingDeliverieForm"
               control="typeEventInfo"
@@ -95,7 +95,7 @@
             </form-field>
           </div>
 
-          <div class="pt-3" *ngIf="disableTransfer == false">
+          <div class="pt-3" *ngIf="isReadOnly== false">
             <form-field [control]="schedulingDeliverieForm.get('transferId')">
               <ngx-select
                 [form]="schedulingDeliverieForm"
@@ -110,7 +110,7 @@
             </form-field>
           </div>
 
-          <div class="pt-3" *ngIf="disableTransfer == true">
+          <div class="pt-3" *ngIf="isReadOnly == true">
             <form-field [control]="schedulingDeliverieForm.get('transferName')">
               <ngx-select
                 [form]="schedulingDeliverieForm"
@@ -128,7 +128,7 @@
         </div>
 
         <div class="col-md-6">
-          <div class="pt-3" *ngIf="disableStore == false">
+          <div class="pt-3" *ngIf="isReadOnly == false">
             <ngx-select
               [form]="schedulingDeliverieForm"
               control="store"
@@ -140,7 +140,7 @@
               (fetchItems)="getWarehouseSelect($event)"></ngx-select>
           </div>
 
-          <div class="pt-3" *ngIf="disableStore == true">
+          <div class="pt-3" *ngIf="isReadOnly == true">
             <ngx-select
               [form]="schedulingDeliverieForm"
               control="storeName"
@@ -736,6 +736,7 @@
 
         <div [class]="loadingGoodsDevolution ? 'table-loading' : ''">
           <ng2-smart-table
+            (userRowSelect)="goodsSelectDest($event.selected)"
             [attr.class]="'table-bordered table-responsive pt-3'"
             [settings]="settingsSearchDevol"
             [source]="infoGoodDevolution">
@@ -853,6 +854,7 @@
         </div>
         <div [class]="loadingGoodsDonation ? 'table-loading' : ''">
           <ng2-smart-table
+            (userRowSelect)="goodsSelectDest($event.selected)"
             [attr.class]="'table-bordered table-responsive pt-3'"
             [settings]="settingsSearchDonation"
             [source]="infoGoodDonation">
@@ -985,7 +987,8 @@
         </div>
         <div [class]="loadingGoodsSales ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered table-responsive pt-3'"
+          (userRowSelect)="goodsSelectDest($event.selected)"  
+          [attr.class]="'table-bordered table-responsive pt-3'"
             [settings]="settingsSearchSales"
             [source]="infoGoodSales">
           </ng2-smart-table>
