@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
@@ -41,6 +42,8 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
   idDelegReg: number = 0;
   columns = EXPEDIENT_DOC_REQ_COLUMNS;
   rowSelected: any = null;
+  idTras: any;
+  requestId: number = 0;
 
   constructor(
     private modalService: BsModalService,
@@ -51,7 +54,8 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
     private requestService: RequestService,
     private goodDomiciliesService: GoodDomiciliesService,
     private municipeService: MunicipalityService,
-    private stationService: StationService
+    private stationService: StationService,
+    private route: ActivatedRoute
   ) {
     super();
     this.settings = {
@@ -66,6 +70,8 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.requestId = Number(this.route.snapshot.paramMap.get('id'));
+    this.getInfoRequest(this.requestId);
     this.columns.associate = {
       ...this.columns.associate,
       onComponentInitFunction: (instance?: any) => {
@@ -118,8 +124,9 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
 
   getStateSelect(params: ListParams, regDelegId?: number) {
     const idDelegReg: any = regDelegId ? regDelegId : this.idDelegReg;
+
     params['filter.regionalDelegation'] = `$eq:${idDelegReg}`;
-    params.limit = 20;
+    params.limit = 100;
     this.delegationStateService.getAll(params).subscribe({
       next: resp => {
         const stateCode = resp.data
@@ -131,13 +138,16 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
           .filter(x => x != undefined);
         this.states = new DefaultSelect(stateCode, stateCode.length);
       },
+      error: error => {
+        this.states = new DefaultSelect([], 0, true);
+      },
     });
   }
 
   resetForm() {
     this.searchForm.reset();
     this.params = new BehaviorSubject<FilterParams>(new FilterParams());
-    this.search();
+    //this.search();
     this.documentsReqData = [];
   }
 
@@ -152,6 +162,11 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
 
   builtFilter(formFilter: any) {
     //this.params.value.addFilter('requestStatus', 'A_TURNAR');
+    if (this.idTras == 1) {
+      this.params.value.addFilter('transferenceId', 1, SearchFilter.EQ);
+    } else {
+      this.params.value.addFilter('transferenceId', 1, SearchFilter.NOT);
+    }
     this.params.value.addFilter('id', 0, SearchFilter.GT);
     this.params.value.addFilter(
       'requestStatus',
@@ -210,7 +225,17 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
         });
       },
       error: error => {
+        this.documentsReqData = [];
+        this.totalItems = 0;
         this.loading = false;
+      },
+    });
+  }
+
+  getInfoRequest(requestId: number) {
+    this.requestService.getById(requestId).subscribe({
+      next: resp => {
+        this.idTras = resp.transferenceId;
       },
     });
   }

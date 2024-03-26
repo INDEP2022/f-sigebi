@@ -70,6 +70,7 @@ export class GeneralDocumentsFormComponent
   rowSelected: any;
 
   private http = inject(HttpClient);
+  idTras: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -101,6 +102,7 @@ export class GeneralDocumentsFormComponent
 
   ngOnInit(): void {
     this.requestId = Number(this.route.snapshot.paramMap.get('id'));
+    this.getInfoRequest(this.requestId);
     if (this.requestId === 0 || !this.requestId) {
       this.router.navigate(['pages/request/list']);
     }
@@ -115,7 +117,7 @@ export class GeneralDocumentsFormComponent
     };
     this.initSearchForm();
     this.getRegionalDelegationSelect(new ListParams());
-    this.getTransferentSelect(new ListParams());
+    //this.getTransferentSelect(new ListParams());
     this.getStateSelect(new ListParams());
     this.reactiveFormCalls();
   }
@@ -219,9 +221,11 @@ export class GeneralDocumentsFormComponent
 
   resetForm() {
     this.searchForm.reset();
+    //this.documentsGenData = [];
     this.documentsGenData = [];
+    this.totalItems = 0;
     this.params = new BehaviorSubject<FilterParams>(new FilterParams());
-    this.search();
+    //this.search();
   }
 
   search() {
@@ -265,6 +269,8 @@ export class GeneralDocumentsFormComponent
         this.loading = false;
       },
       error: error => {
+        this.documentsGenData = [];
+        this.totalItems = 0;
         this.loading = false;
       },
     });
@@ -272,12 +278,28 @@ export class GeneralDocumentsFormComponent
 
   builtFilter(form: any) {
     //this.params.value.addFilter('requestStatus', 'A_TURNAR');
+
+    if (this.idTras == 1) {
+      this.params.value.addFilter('transferenceId', 1, SearchFilter.EQ);
+    } else {
+      this.params.value.addFilter('transferenceId', 1, SearchFilter.NOT);
+    }
+
     this.params.value.addFilter('recordId', 0, SearchFilter.NOT);
+
     for (const key in form) {
       if (form[key] !== null) {
         this.params.value.addFilter(key, form[key]);
       }
     }
+  }
+
+  getInfoRequest(requestId: number) {
+    this.requestService.getById(requestId).subscribe({
+      next: resp => {
+        this.idTras = resp.transferenceId;
+      },
+    });
   }
 
   getAuthoritySelect(params: ListParams) {
@@ -298,6 +320,9 @@ export class GeneralDocumentsFormComponent
       next: resp => {
         this.regionalsDelegations = new DefaultSelect(resp.data, resp.count);
       },
+      error: error => {
+        this.regionalsDelegations = new DefaultSelect([], 0, true);
+      },
     });
   }
 
@@ -315,14 +340,25 @@ export class GeneralDocumentsFormComponent
           .filter(x => x != undefined);*/
         this.states = new DefaultSelect(resp.data, resp.count);
       },
+      error: error => {
+        this.states = new DefaultSelect([], 0, true);
+      },
     });
   }
 
   getTransferentSelect(params: ListParams) {
-    params['filter.nameTransferent'] = `$ilike:${params.text}`;
+    if (this.idTras == 1) {
+      params['filter.id'] = `$eq:1`;
+    } else {
+      params['filter.nameTransferent'] = `$ilike:${params.text}`;
+      params['filter.id'] = `$not:1`;
+    }
     this.transferenteService.getAll(params).subscribe({
       next: (resp: any) => {
         this.transferents = new DefaultSelect(resp.data, resp.count);
+      },
+      error: error => {
+        this.transferents = new DefaultSelect([], 0, true);
       },
     });
   }
@@ -334,6 +370,9 @@ export class GeneralDocumentsFormComponent
     this.stationService.getAll(params).subscribe({
       next: resp => {
         this.stations = new DefaultSelect(resp.data, resp.count);
+      },
+      error: error => {
+        this.stations = new DefaultSelect([], 0, true);
       },
     });
   }

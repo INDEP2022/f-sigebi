@@ -84,6 +84,11 @@ export const DOC_REQUEST_TAB_COLUMNS = {
     type: 'string',
     sort: false,
   },
+  xidSIAB: {
+    title: 'No. SIAB',
+    type: 'string',
+    sort: false,
+  },
 
   /*delegationName: {
     title: 'Delegación Regional',
