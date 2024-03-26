@@ -8,6 +8,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
@@ -44,6 +45,9 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
 
   @ViewChild('table', { static: false }) table: any;
 
+  userName: string = '';
+  validUser: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -52,7 +56,8 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
     private router: Router,
     private goodTrackerService: GoodTrackerService,
     private goodService: GoodService,
-    private goodProcessService: GoodProcessService
+    private goodProcessService: GoodProcessService,
+    private authService: AuthService
   ) {
     super();
 
@@ -73,6 +78,16 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
 
   ngOnInit(): void {
     console.log('rel_bienes', this.rel_bienes);
+
+    const user = this.authService.decodeToken();
+    this.userName = user.username;
+    console.log('user.username', this.userName);
+
+    if (this.userName.startsWith('TLP')) {
+      this.validUser = false;
+    } else {
+      this.validUser = true;
+    }
 
     this.prepareForm();
 
@@ -95,10 +110,25 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
                 searchFilter = SearchFilter.LIKE;
                 break;
               case 'status':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'goodClassNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'transferNumberExpedient':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'labelNumber':
-                searchFilter = SearchFilter.EQ;
+                console.log(field);
+                console.log(filter);
+                console.log(field);
+                console.log(filter.field);
+
+                if (filter.search == 0 || filter.search == null) {
+                  searchFilter = SearchFilter.NULL;
+                } else {
+                  searchFilter = SearchFilter.EQ;
+                }
                 break;
 
               default:
@@ -220,11 +250,7 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
     const label = this.form.controls['labelGood'].value;
 
     if (label == null) {
-      this.alertInfo(
-        'warning',
-        'Atención',
-        'Debe especificar el indicador de destino'
-      );
+      this.alert('warning', 'Atención', 'No se ha seleccionado un indicador');
       return;
     }
 
@@ -236,6 +262,45 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
       if (question.isConfirmed) {
         for (let i = 0; i < this.registerSelected; i++) {
           const goodData = this.selectedRows[i];
+          const statusGood = goodData.status;
+          const noTransferGood = goodData.transferNumberExpedient;
+          const noClasifGood = goodData.goodClassNumber;
+
+          if (
+            this.validUser != true &&
+            !['ROP', 'STA', 'STI', 'VXR', 'VXP'].includes(statusGood)
+          ) {
+            this.alert(
+              'warning',
+              'Atención',
+              'No puede realizar cambio de destino'
+            );
+            return;
+          }
+
+          if ((noTransferGood == 1 || noTransferGood == 3) && label != 3) {
+            this.alert(
+              'warning',
+              'Atención',
+              'Destino erróneo, necesariamente debe ser Resguardo'
+            );
+            return;
+          }
+
+          if (
+            (noTransferGood == 121 ||
+              noTransferGood == 123 ||
+              noTransferGood == 124 ||
+              noTransferGood == 536) &&
+            noClasifGood != 1600
+          ) {
+            this.alert(
+              'warning',
+              'Atención',
+              'Destino erróneo, necesariamente debe ser Venta.'
+            );
+            return;
+          }
 
           this.changeIndicataors(goodData);
         }
