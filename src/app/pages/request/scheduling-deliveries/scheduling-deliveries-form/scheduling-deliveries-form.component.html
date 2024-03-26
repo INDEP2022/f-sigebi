@@ -158,6 +158,7 @@
               label="Fecha Final de Entrega">
               <input
                 class="form-control"
+                [minDate]="date"
                 [daysDisabled]="[6, 0]"
                 [bsConfig]="{
                   withTimepicker: true,

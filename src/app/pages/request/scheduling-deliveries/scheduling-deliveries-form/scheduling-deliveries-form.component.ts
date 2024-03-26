@@ -98,8 +98,11 @@ export class SchedulingDeliveriesFormComponent
   nameUser: string = '';
   clientName: string = '';
   idTypeEvent: number = 0;
+  typeEventname: string = ''
   organizationCode: string = '';
+  organizationName: string = '';
   transferent: number = 0;
+  transferentName: string = '';
   goodsToProgramData = new LocalDataSource();
   date = new Date();
   startDate = new Date();
@@ -162,9 +165,11 @@ export class SchedulingDeliveriesFormComponent
 
     this.settings = {
       ...this.settings,
+      selectMode: 'multi',
       actions: false,
       columns: SCHEDULING_DELIVERIES_COLUMNS,
     };
+    this.date.setDate(this.date.getDate() + 5)
   }
 
   ngOnInit(): void {
@@ -556,18 +561,21 @@ export class SchedulingDeliveriesFormComponent
     if (infoSelect == 'typeEvent') {
       //this.disabledTypeEvent = true;
       this.idTypeEvent = typeEvent.id;
+      this.typeEventname = typeEvent.nameEvent
       //this.schedulingDeliverieForm.get('typeEventInfo').setValue(typeEvent.nameEvent);
     }
 
     if (infoSelect == 'transferent') {
       //this.disableTransfer = true;
       this.transferent = typeEvent.id;
+      this.transferentName = typeEvent.nameAndId
       //this.schedulingDeliverieForm.get('transferName').setValue(typeEvent.nameAndId);
     }
 
     if (infoSelect == 'organization') {
       //this.disableStore = true;
       this.organizationCode = typeEvent.organizationCode;
+      this.organizationName = typeEvent.name
       //this.schedulingDeliverieForm.get('storeName').setValue(typeEvent.name);
     }
 
@@ -2101,7 +2109,6 @@ export class SchedulingDeliveriesFormComponent
                 this.params
                   .pipe(takeUntil(this.$unSubscribe))
                   .subscribe(() => this.showInfoProgrammingDelivery());
-                this.isReadOnly = true;
               },
               error: error => {},
             });
@@ -2274,6 +2281,10 @@ export class SchedulingDeliveriesFormComponent
                   );
                   //this.checkProgrammingDelivery();
                   this.isReadOnlyDes = 'Y';
+                  this.isReadOnly = true;
+                  this.schedulingDeliverieForm.get('storeName').setValue(this.organizationName);
+                  this.schedulingDeliverieForm.get('transferName').setValue(this.transferentName);
+                  this.schedulingDeliverieForm.get('typeEventInfo').setValue(this.typeEventname);
                 },
                 error: error => {},
               });
