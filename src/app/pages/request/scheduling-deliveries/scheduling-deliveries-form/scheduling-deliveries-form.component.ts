@@ -41,6 +41,7 @@ import {
   SEARCH_SALES_TABLE,
 } from './scheduling-deliveries-columns';
 import { IClient, TypeEvent } from './type-events';
+import { Grid } from 'ng2-smart-table/lib/lib/grid';
 
 @Component({
   selector: 'app-scheduling-deliveries-form',
@@ -2121,6 +2122,7 @@ export class SchedulingDeliveriesFormComponent
           'Acción Exitosa',
           'Bienes agregados correctamente'
         );
+        this.deselectAll()
       }
     } else {
       this.alert(
@@ -2132,7 +2134,8 @@ export class SchedulingDeliveriesFormComponent
   }
 
   selectedRows: any[] = [];
-  goodsSelect(data): void {
+  /*goodsSelect3(data): void {
+    console.log(data)
     if (!Array.isArray(data)) {
       data = [data];
     }
@@ -2147,8 +2150,12 @@ export class SchedulingDeliveriesFormComponent
         this.selectedRows.push(row);
       }
     });
+    console.log(this.selectedRows)
+  }*/
+  goodsSelect(goodSelect: IGoodInvAvailableView[]) {
+    this.selectedRows = goodSelect;
+    console.log(this.selectedRows);
   }
-
   async deleteGoodProgrammingDelivery() {
     if (this.selectedRows.length > 0) {
       this.selectedRows.forEach(row => {
@@ -2169,6 +2176,7 @@ export class SchedulingDeliveriesFormComponent
         `Se eliminaron correctamente los bienes seleccionados`
       );
       this.showInfoProgrammingDelivery();
+      this.deselectAll()
     } else {
       this.alert(
         'warning',
@@ -2243,6 +2251,7 @@ export class SchedulingDeliveriesFormComponent
             next: response => {
               this.programmingDeliveryInfo = response;
               resolve(response);
+              this.blockDetail();
             },
             error: error => {
               resolve(false);
@@ -2250,6 +2259,19 @@ export class SchedulingDeliveriesFormComponent
           });
       }
     });
+  }
+
+  blockDetail() {
+    this.isReadOnly = true;
+    this.schedulingDeliverieForm
+      .get('storeName')
+      .setValue(this.organizationName);
+    this.schedulingDeliverieForm
+      .get('transferName')
+      .setValue(this.transferentName);
+    this.schedulingDeliverieForm
+      .get('typeEventInfo')
+      .setValue(this.typeEventname);
   }
 
   showInfoProgrammingDelivery() {
@@ -2261,8 +2283,15 @@ export class SchedulingDeliveriesFormComponent
         next: response => {
           this.goodsToProgramData.load(response.data);
           this.totalItems = response.count;
+          console.log(this.goodsToProgramData)
         },
-        error: error => {},
+        error: error => {
+          if (error.statusCode = 400) {
+            this.goodsToProgramData.empty();
+            this.totalItems = 0;
+            console.log(this.goodsToProgramData)
+          }
+        },
       });
   }
 
@@ -2296,16 +2325,7 @@ export class SchedulingDeliveriesFormComponent
                     'Se crearon los reportes de destrucción correctamente'
                   );
                   this.isReadOnlyDes = 'Y';
-                  this.isReadOnly = true;
-                  this.schedulingDeliverieForm
-                    .get('storeName')
-                    .setValue(this.organizationName);
-                  this.schedulingDeliverieForm
-                    .get('transferName')
-                    .setValue(this.transferentName);
-                  this.schedulingDeliverieForm
-                    .get('typeEventInfo')
-                    .setValue(this.typeEventname);
+
                 },
                 error: error => {},
               });
@@ -2651,6 +2671,15 @@ export class SchedulingDeliveriesFormComponent
         error: error => {
           reject(false);
         },
+      });
+    });
+  }
+
+  deselectAll() {
+    this._tables.forEach(table => {
+      const grid: Grid = table.grid;
+      grid.getSelectedRows().forEach(row => {
+        row.isSelected = false;
       });
     });
   }
