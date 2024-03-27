@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { addDays } from 'date-fns';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
+import { Grid } from 'ng2-smart-table/lib/lib/grid';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -41,7 +42,6 @@ import {
   SEARCH_SALES_TABLE,
 } from './scheduling-deliveries-columns';
 import { IClient, TypeEvent } from './type-events';
-import { Grid } from 'ng2-smart-table/lib/lib/grid';
 
 @Component({
   selector: 'app-scheduling-deliveries-form',
@@ -113,6 +113,7 @@ export class SchedulingDeliveriesFormComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsSearchDest = new BehaviorSubject<ListParams>(new ListParams());
   paramsSearchDevol = new BehaviorSubject<ListParams>(new ListParams());
+  programmingId: number = 0;
 
   paramsSearchDonation = new BehaviorSubject<ListParams>(new ListParams());
   paramsSearchSales = new BehaviorSubject<ListParams>(new ListParams());
@@ -2124,7 +2125,7 @@ export class SchedulingDeliveriesFormComponent
           'Acción Exitosa',
           'Bienes agregados correctamente'
         );
-        this.deselectAll()
+        this.deselectAll();
       }
     } else {
       this.alert(
@@ -2161,25 +2162,25 @@ export class SchedulingDeliveriesFormComponent
   async deleteGoodProgrammingDelivery() {
     if (this.selectedRows.length > 0) {
       if (this.selectedRows.length != this.totalItems) {
-      this.selectedRows.forEach(row => {
-        this.programmingRequestService
-          .deleteGoodProgrammingDevilery(row.id)
-          .subscribe({
-            next: async response => {
-              this.addedGoods = this.addedGoods.filter(
-                good => good.goodId !== row.goodId
-              );
-            },
-            error: error => {},
-          });
-      });
-      this.alert(
-        'success',
-        'Acción Exitosa',
-        `Se eliminaron correctamente los bienes seleccionados`
-      );
-      this.showInfoProgrammingDelivery();
-      this.deselectAll()
+        this.selectedRows.forEach(row => {
+          this.programmingRequestService
+            .deleteGoodProgrammingDevilery(row.id)
+            .subscribe({
+              next: async response => {
+                this.addedGoods = this.addedGoods.filter(
+                  good => good.goodId !== row.goodId
+                );
+              },
+              error: error => {},
+            });
+        });
+        this.alert(
+          'success',
+          'Acción Exitosa',
+          `Se eliminaron correctamente los bienes seleccionados`
+        );
+        this.showInfoProgrammingDelivery();
+        this.deselectAll();
       } else {
         this.alert(
           'warning',
@@ -2294,13 +2295,13 @@ export class SchedulingDeliveriesFormComponent
         next: response => {
           this.goodsToProgramData.load(response.data);
           this.totalItems = response.count;
-          console.log(this.goodsToProgramData)
+          console.log(this.goodsToProgramData);
         },
         error: error => {
-          if (error.statusCode = 400) {
+          if ((error.statusCode = 400)) {
             this.goodsToProgramData.empty();
             this.totalItems = 0;
-            console.log(this.goodsToProgramData)
+            console.log(this.goodsToProgramData);
           }
         },
       });
@@ -2336,7 +2337,6 @@ export class SchedulingDeliveriesFormComponent
                     'Se crearon los reportes de destrucción correctamente'
                   );
                   this.isReadOnlyDes = 'Y';
-
                 },
                 error: error => {},
               });
@@ -2563,7 +2563,8 @@ export class SchedulingDeliveriesFormComponent
             .sendEmailProgrammingDelivery(formData)
             .subscribe({
               next: () => {
-                this.createTaskExecuteProgramming();
+                console.log('sendEmailProgrammingDelivery');
+                this.confirm();
               },
               error: () => {},
             });
@@ -2578,72 +2579,80 @@ export class SchedulingDeliveriesFormComponent
     }
   }
 
-  //Creamos la tarea de ejecutar la recepción//
-  async createTaskExecuteProgramming() {
-    const _task = JSON.parse(localStorage.getItem('Task'));
-    const user: any = this.authService.decodeToken();
-    let body: any = {};
-    body['type'] = 'SOLICITUD_PROGRAMACION';
-    body['subtype'] = 'Aceptar_Programacion';
-    body['ssubtype'] = 'APPROVE_ER';
+  confirm() {
+    this.alertQuestion(
+      'question',
+      'Turnar Solicitud',
+      `¿Desea turnar la solicitud a la siguiente etapa con folio ${this.programmingDeliveryInfo.id}?`
+    ).then(async question => {
+      if (question.isConfirmed) {
+        if (this.programmingDeliveryInfo) {
+          this.loading = true;
+          this.programmingId = this.programmingDeliveryInfo.id;
+          //this.requestForm.get('creationUser').setValue(this.nameUser);
+          const user: any = this.authService.decodeToken();
+          let body: any = {};
 
-    let task: any = {};
-    //task['id'] = this.programmingDeliveryInfo.id;
-    task['assignees'] = _task.assignees;
-    task['assigneesDisplayname'] = _task.assigneesDisplayname;
-    task['creator'] = user.username;
-    task['reviewers'] = user.username;
-    task['taskNumber'] = Number(this.programmingDeliveryInfo.id);
-    task['programmingId'] = this.programmingDeliveryInfo.id;
-    task['idDelegationRegional'] = user.department;
-    task['urlNb'] =
-      '/pages/request/scheduling-deliveries/execute-schelude-delivery';
-    console.log(
-      'task',
-      this.idTypeEvent,
-      this.programmingDeliveryInfo.typeEvent
-    );
-    switch (this.idTypeEvent) {
-      case 5:
-        task[
-          'title'
-        ] = `Ejecutar entrega (Destrucción) para la programación: R-${this.programmingDeliveryInfo.id}`;
-        break;
-      case 4:
-        task[
-          'title'
-        ] = `Ejecutar entrega (Devolución) para la programación: R-${this.programmingDeliveryInfo.id}`;
-        break;
-      case 3:
-        task[
-          'title'
-        ] = `Ejecutar entrega (Resarcimiento) para la programación: R-${this.programmingDeliveryInfo.id}`;
-        break;
-      case 2:
-        task[
-          'title'
-        ] = `Ejecutar entrega (Donación) para la programación: R-${this.programmingDeliveryInfo.id}`;
-        break;
-      case 1:
-        task[
-          'title'
-        ] = `Ejecutar entrega (Ventas) para la programación: R-${this.programmingDeliveryInfo.id}`;
-        break;
-      default:
-        break;
-    }
-    task['urlNb'] =
-      '/pages/request/scheduling-deliveries/execute-schelude-delivery';
-    task['processName'] = 'SolicitudProgramacion';
-    task['requestId'] = this.programmingDeliveryInfo.id;
-    task['idAuthority'] = this.programmingDeliveryInfo.id;
-    task['idStore'] = this.programmingDeliveryInfo.store;
-    task['idTransferee'] = this.programmingDeliveryInfo.transferId;
-    task['nbTransferee'] = this.programmingDeliveryInfo.transferName;
-    body['task'] = task;
+          body['type'] = 'SOLICITUD_PROGRAMACION';
+          body['subtype'] = 'Programar_Recepcion';
+          body['ssubtype'] = 'TURNAR';
 
-    await this.createTaskOrderService(body);
-    this.loading = false;
+          let task: any = {};
+          task['id'] = 0;
+          task['assignees'] = user.username;
+          task['assigneesDisplayname'] = this.nameUser;
+          task['creator'] = user.username;
+          task['reviewers'] = user.username;
+          task['taskNumber'] = Number(this.programmingId);
+          switch (this.idTypeEvent) {
+            case 1:
+              task['title'] =
+                'Ejecutar entrega (Ventas) para la programación R-' +
+                this.programmingId;
+              break;
+            case 2:
+              task['title'] =
+                'Ejecutar entrega (Donación) para la programación R-' +
+                this.programmingId;
+              break;
+            case 3:
+              task['title'] =
+                'Ejecutar entrega (Resarcimiento) para la programación R-' +
+                this.programmingId;
+              break;
+            case 4:
+              task['title'] =
+                'Ejecutar entrega (Devolución) para la programación R-' +
+                this.programmingId;
+              break;
+            case 5:
+              task['title'] =
+                'Ejecutar entrega (Destrucción) para la programación R-' +
+                this.programmingId;
+              break;
+          }
+
+          task['programmingId'] = this.programmingId;
+          task['requestId'] = this.programmingId;
+          task['expedientId'] = 0;
+          task['idDelegationRegional'] = this.regionalDelegationNum;
+          task['urlNb'] =
+            'pages/request/scheduling-deliveries/execute-schelude-delivery';
+          task['processName'] = 'SolicitudProgramacion';
+          body['task'] = task;
+          const taskResult = await this.createTaskOrderService(body);
+          this.loading = false;
+          if (taskResult) {
+            this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+            this.alert(
+              'success',
+              'Creación de Tarea Correcta',
+              `Se creó la tarea Realizar Programación con el folio: ${this.programmingId}`
+            );
+          }
+        }
+      }
+    });
   }
 
   showDocuments(): void {
