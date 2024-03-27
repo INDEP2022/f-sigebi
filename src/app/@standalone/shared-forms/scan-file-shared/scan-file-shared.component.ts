@@ -294,6 +294,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                               .editProceeding(resData.id, modelEdit)
                               .subscribe(
                                 res => {
+                                  console.log(res);
                                   this.downloadReport(
                                     'RGERGENSOLICDIGIT',
                                     params
