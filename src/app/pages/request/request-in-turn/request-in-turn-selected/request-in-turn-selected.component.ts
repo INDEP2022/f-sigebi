@@ -190,6 +190,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
 
   saveRequest(request: any) {
     /* Se crea la solicitud */
+    //delete request.cat
     return new Promise((resolve, reject) => {
       delete request.cat_asunto;
       this.listResquestForTurn.push(request.id);

@@ -90,7 +90,10 @@
             </button> -->
           </div>
           <div class="p-2">
-            <button *ngIf="!msjCheck" class="btn btn-primary btn-sm active" (click)="backStep()">
+            <button
+              *ngIf="!msjCheck"
+              class="btn btn-primary btn-sm active"
+              (click)="backStep()">
               <i class="bx bx-left-arrow-alt"></i> Paso Anterior
             </button>
           </div>
@@ -133,6 +136,8 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
+          [ngClass]="{ loading: loadingButton }"
+          [disabled]="loadingButton"
           type="button"
           class="btn btn-danger btn-sm active"
           (click)="close()">
