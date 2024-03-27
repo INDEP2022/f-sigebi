@@ -104,6 +104,7 @@ export enum GoodProcessPoints {
   ConsultQuery = 'application/consultQuery',
   ApplicationGetData = 'application/getData',
   ApplicationGetDataNoprocedingConsulta = 'application/get-data-noproceding-consulta',
+  ApplicationGetDataNoprocedingConsultaExcel = 'application/get-data-noproceding-consulta/excel',
   InitiationLabel = 'initiation-label',
 }
 
