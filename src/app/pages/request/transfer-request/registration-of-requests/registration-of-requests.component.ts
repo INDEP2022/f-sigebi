@@ -1146,14 +1146,9 @@ export class RegistrationOfRequestsComponent
             idTypeDoc,
             typeAnnex,
             requestData,
-            callback: (next: boolean, confirmDocument?: string) => {
+            callback: (next: boolean) => {
               if (next) {
                 this.loadingBtn = false;
-              }
-              if (confirmDocument == 'ok') {
-                setTimeout(() => {
-                  this.loadingBtn = false;
-                }, 5000);
               }
             },
           },
