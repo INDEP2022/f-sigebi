@@ -2160,6 +2160,7 @@ export class SchedulingDeliveriesFormComponent
   }
   async deleteGoodProgrammingDelivery() {
     if (this.selectedRows.length > 0) {
+      if (this.selectedRows.length != this.totalItems) {
       this.selectedRows.forEach(row => {
         this.programmingRequestService
           .deleteGoodProgrammingDevilery(row.id)
@@ -2179,6 +2180,13 @@ export class SchedulingDeliveriesFormComponent
       );
       this.showInfoProgrammingDelivery();
       this.deselectAll()
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'Se requiere al menos un bien para programación de entrega'
+        );
+      }
     } else {
       this.alert(
         'warning',
@@ -2539,7 +2547,7 @@ export class SchedulingDeliveriesFormComponent
         'Acción Invalida',
         'Se debe ingresar un correo electrónico'
       );
-    } else {
+    } else if (this.idTypeEvent > 0) {
       const typeEvent = this.schedulingDeliverieForm.get('typeEvent').value;
       this.alertQuestion(
         'question',
@@ -2561,6 +2569,12 @@ export class SchedulingDeliveriesFormComponent
             });
         }
       });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se debe Seleccionar un tipo de evento '
+      );
     }
   }
 
