@@ -1,0 +1,114 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Selecciona una opción</h5>
+  </div>
+  <div body>
+    <div class="md-tabs">
+      <tabset>
+        <tab heading="Por Estado">
+          <!-- Ciudad - Entidad Federativa -->
+          <div class="row">
+            <div class="table-container">
+              <div class="form-material col-md-12 table-responsive">
+                <div [class]="loading ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [settings]="settings"
+                    [source]="data"
+                    (rowSelect)="rowSelectState($event)"></ng2-smart-table>
+                </div>
+              </div>
+            </div>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </div>
+
+          <!-- Delegación Municipio -->
+          <div class="row pt-5">
+            <div class="table-container">
+              <div class="form-material col-md-12 table-responsive">
+                <div [class]="loading2 ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [settings]="settingsMunicipality"
+                    [source]="dataMunicipality"
+                    (rowSelect)="rowSelectMunicipality($event)"></ng2-smart-table>
+                </div>
+              </div>
+            </div>
+            <app-pagination
+              [params]="params2"
+              [totalItems]="totalItems2"></app-pagination>
+          </div>
+
+          <!-- Colonia -->
+          <div class="row pt-5">
+            <div class="table-container">
+              <div class="form-material col-md-12 table-responsive">
+                <div [class]="loading3 ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [settings]="settingsSuburb"
+                    [source]="dataSuburb"
+                    (rowSelect)="rowSelectSubUrb($event)"></ng2-smart-table>
+                </div>
+              </div>
+            </div>
+            <app-pagination
+              [params]="params3"
+              [totalItems]="totalItems3"></app-pagination>
+          </div>
+
+          <!-- Código Postal -->
+          <div class="row pt-5">
+            <div class="table-container">
+              <div class="form-material col-md-12 table-responsive">
+                <div [class]="loading4 ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [settings]="settingsZipCode"
+                    [source]="dataZipCode"
+                    (rowSelect)="rowSelectZipCode($event)"></ng2-smart-table>
+                </div>
+              </div>
+            </div>
+            <app-pagination
+              [params]="params4"
+              [totalItems]="totalItems4"></app-pagination>
+          </div>
+        </tab>
+        <tab heading="Por Código Postal">
+          <!-- Código Postal -->
+          <div class="row pt-5">
+            <div class="table-container">
+              <div class="form-material col-md-12 table-responsive">
+                <div [class]="loading5 ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [settings]="settingsZipCode2"
+                    [source]="dataZipCode2"
+                    (rowSelect)="rowSelectZipCode2($event)"></ng2-smart-table>
+                </div>
+              </div>
+            </div>
+            <app-pagination
+              [params]="params5"
+              [totalItems]="totalItems5"></app-pagination>
+          </div>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!buttonConfirm"
+          [text]="'Aceptar'"
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
