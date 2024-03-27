@@ -2151,6 +2151,7 @@ export class SchedulingDeliveriesFormComponent
   async deleteGoodProgrammingDelivery() {
     if (this.selectedRows.length > 0) {
       this.selectedRows.forEach(row => {
+        console.log(row);
         this.programmingRequestService
           .deleteGoodProgrammingDevilery(row.id)
           .subscribe({
@@ -2158,16 +2159,18 @@ export class SchedulingDeliveriesFormComponent
               this.addedGoods = this.addedGoods.filter(
                 good => good.goodId !== row.goodId
               );
-              this.showInfoProgrammingDelivery();
-              this.alert(
-                'success',
-                'Acción Exitosa',
-                `El bien con el ID ${row.goodId} ha sido eliminado correctamente`
-              );
+
+
             },
-            error: error => {},
+            error: error => { },
           });
       });
+      this.alert(
+        'success',
+        'Acción Exitosa',
+        `Se eliminaron correctamente los bienes seleccionados`
+      );
+      this.showInfoProgrammingDelivery();
     } else {
       this.alert(
         'warning',
@@ -2227,6 +2230,7 @@ export class SchedulingDeliveriesFormComponent
           .updateProgrammingDelivery(this.programmingDeliveryInfo.id, infoProg)
           .subscribe({
             next: response => {
+              console.log(response);
               this.programmingDeliveryInfo = response;
               resolve(response);
             },
@@ -2346,6 +2350,7 @@ export class SchedulingDeliveriesFormComponent
   notificationDestruccion() {
     this.goodsToProgramData.getElements().then(async data => {
       if (data.length > 0) {
+        console.log(this.programmingDeliveryInfo.statusNotification)
         if (this.programmingDeliveryInfo.statusNotification == 'Y') {
           const checkExistNotification =
             await this.checkExistNotificationDestruction();
