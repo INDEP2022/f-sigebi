@@ -755,36 +755,42 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   }
   generateReport() {
     //no se contruyo un reporte
-    let params = {};
-    this.siabService.fetchReport('blank', params).subscribe(response => {
-      //  response= null;
-      if (response !== null) {
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        let config = {
-          initialState: {
-            documento: {
-              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-              type: 'pdf',
-            },
-            callback: (data: any) => {
-              if (data) {
-                data.map((item: any) => {
-                  return item;
-                });
-              }
-            },
-          }, //pasar datos por aca
-          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-          ignoreBackdropClick: true,
-        };
-        this.modalService.show(PreviewDocumentsComponent, config);
-        this.loader.load = false;
-      } else {
-        this.onLoadToast('warning', 'advertencia', '');
-        this.loader.load = false;
-      }
-    });
+    let params = {
+      ID_EVENTO: this.m_comer.id_evento,
+      ID_OFICIO: this.m_comer.id_oficio,
+      P_DIRECCION: this.address,
+    };
+    this.siabService
+      .fetchReport('RCOMERSolicitudAvaluo', params)
+      .subscribe(response => {
+        //  response= null;
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {
+                if (data) {
+                  data.map((item: any) => {
+                    return item;
+                  });
+                }
+              },
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+          this.loader.load = false;
+        } else {
+          this.onLoadToast('warning', 'advertencia', '');
+          this.loader.load = false;
+        }
+      });
   }
   seeJob() {
     this.loader.load = true;

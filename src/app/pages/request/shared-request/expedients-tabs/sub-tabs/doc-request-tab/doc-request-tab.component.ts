@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -105,7 +105,7 @@ export class DocRequestTabComponent
     private transferentService: TransferenteService,
     private stateOfRepublicService: StateOfRepublicService,
     private requestService: RequestService,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute
   ) {
     super();
     this.idRequest = this.idRequest
@@ -1094,7 +1094,6 @@ export class DocRequestTabComponent
 
     if (list.length > 0) {
       switch (this.process) {
-
         case 'register-seizures':
         case 'register-consfiscation-sentence':
         case 'register-confiscation-confirmed':

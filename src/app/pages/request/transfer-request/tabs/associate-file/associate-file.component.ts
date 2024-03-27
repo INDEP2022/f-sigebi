@@ -580,6 +580,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
       },
       class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
+      keyboard: false,
     };
     this.modalService.show(component, config);
 
