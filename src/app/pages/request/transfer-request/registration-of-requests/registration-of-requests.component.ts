@@ -1146,7 +1146,7 @@ export class RegistrationOfRequestsComponent
             idTypeDoc,
             typeAnnex,
             requestData,
-            callback: (next: boolean, confirmDocument: string) => {
+            callback: (next: boolean, confirmDocument?: string) => {
               if (next) {
                 this.loadingBtn = false;
               }
