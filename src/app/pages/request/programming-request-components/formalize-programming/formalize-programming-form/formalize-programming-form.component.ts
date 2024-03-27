@@ -785,7 +785,7 @@ export class FormalizeProgrammingFormComponent
   }
 
   async generateMinute(proceeding: IProceedings) {
-    proceeding.programmingId = this.programmingId;
+    //proceeding.programmingId = this.programmingId;
     const receiptCheck = await this.checkReceipt();
     const receiptGuardCheck = await this.checkReceiptGuard();
     const receiptWarehouseCheck = await this.checkReceiptWarehouse();

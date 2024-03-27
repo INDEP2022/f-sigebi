@@ -17,6 +17,7 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -57,7 +58,8 @@ export class EstateDocumentFormComponent
     private goodServices: GoodService,
     private genericService: GenericService,
     private fractionService: FractionService,
-    private requestService: RequestService
+    private requestService: RequestService,
+    private goodFinderService: GoodFinderService
   ) {
     super();
     this.settings = {
@@ -137,6 +139,7 @@ export class EstateDocumentFormComponent
 
   clean() {
     this.documentsEstData = [];
+    this.totalItems = 0;
     this.searchForm.reset();
     this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     this.requestId = null;
@@ -153,7 +156,7 @@ export class EstateDocumentFormComponent
     ) {
       this.paginator();
     } else {
-      this.message('info', 'Error', 'Debe llenar algun filtro.');
+      this.message('warning', 'Atención', 'Debe llenar un filtro');
     }
   }
 
@@ -179,9 +182,12 @@ export class EstateDocumentFormComponent
   getData() {
     this.loading = true;
     const filter = this.params.getValue().getParams();
-    this.goodServices.getAll(filter).subscribe({
+    this.goodFinderService.goodFinder3(filter).subscribe({
       next: resp => {
-        const result = resp.data.map(async (item: any) => {
+        this.documentsEstData = resp.data;
+        this.totalItems = resp.count;
+        this.loading = false;
+        /*const result = resp.data.map(async (item: any) => {
           const physicalStatus = await this.getPhysicalStatus(
             item.physicalStatus
           );
@@ -201,10 +207,12 @@ export class EstateDocumentFormComponent
           this.documentsEstData = resp.data;
           this.totalItems = resp.count;
           this.loading = false;
-        });
+        });*/
       },
       error: error => {
         console.log(error);
+        this.documentsEstData = [];
+        this.totalItems = 0;
         this.loading = false;
       },
     });

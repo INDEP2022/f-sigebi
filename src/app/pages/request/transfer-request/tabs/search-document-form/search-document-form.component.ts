@@ -249,7 +249,9 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
 
   clean() {
     this.searchForm.reset();
+    this.totalItems = 0;
     this.documentsSeaData = [];
+    this.loading = false;
   }
   documentSelect(event: any) {
     this.rowSelected = event.data;
@@ -270,7 +272,7 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'info',
         '',
-        'El registro no cuenta con una delegación regional'
+        'El registro no cuenta con una Delegación Regional'
       );
       return;
     }

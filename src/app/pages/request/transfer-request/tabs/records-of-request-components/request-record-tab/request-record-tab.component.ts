@@ -260,6 +260,26 @@ export class RequestRecordTabComponent
     this.requestForm.get('receptionDate').disable();
   }
 
+  fieldsCount: number = 0;
+  atLeastTwoFieldsRequiredValidator() {
+    const previousInquiryValue =
+      this.requestForm.controls['previousInquiry'].value;
+    const circumstantialRecordValue =
+      this.requestForm.controls['circumstantialRecord'].value;
+    const tocaPenalValue = this.requestForm.controls['tocaPenal'].value;
+    const lawsuitValue = this.requestForm.controls['lawsuit'].value;
+
+    const filledFields = [
+      previousInquiryValue,
+      circumstantialRecordValue,
+      tocaPenalValue,
+      lawsuitValue,
+    ].filter(value => !!value);
+    this.fieldsCount = filledFields.length;
+    console.log('previousInquiryValue', previousInquiryValue);
+    console.log('filledFields', filledFields.length);
+  }
+
   getPublicMinister(params: ListParams) {
     params['filter.description'] = `$ilike:${params.text}`;
     this.minPub.getAll(params).subscribe({
@@ -367,18 +387,25 @@ export class RequestRecordTabComponent
       this.typeOfTransfer === 'PGR_SAE' ||
       this.typeOfTransfer === 'FGR_SAE'
     ) {
+      this.atLeastTwoFieldsRequiredValidator();
+
       if (
         this.requestForm.get('paperDate').value === null ||
-        this.requestForm.get('paperDate').value === '' ||
-        this.requestForm.get('previousInquiry').value === null ||
-        this.requestForm.get('previousInquiry').value === '' ||
-        this.requestForm.get('circumstantialRecord').value === null ||
-        this.requestForm.get('circumstantialRecord').value === ''
+        this.requestForm.get('paperDate').value === ''
       ) {
         this.message(
           'warning',
-          'Campos Requeridos',
-          'Recuerde llenar los campos obligatorios'
+          'Fecha de Oficio',
+          'Es obligatorio ingresar una fecha'
+        );
+        this.requestForm.markAllAsTouched();
+        return;
+      } else if (this.fieldsCount == 0) {
+        console.log('this.fieldsCount', this.fieldsCount);
+        this.message(
+          'warning',
+          'Campos Requeridos para PGR',
+          'Obligatorio al menos uno de los siguientes campos: Averiguación Previa, Acta Circunstanciada, Toca Penal o Causa Penal'
         );
         this.requestForm.markAllAsTouched();
         return;

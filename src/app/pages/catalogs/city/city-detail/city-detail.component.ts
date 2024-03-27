@@ -153,9 +153,6 @@ export class CityDetailComponent extends BasePage implements OnInit {
   getDelegations(params: ListParams) {
     this.delegations = new DefaultSelect([], 0);
     if (this.selectedState.id) params['filter.id'] = this.selectedState.id;
-    console.log(params);
-    console.log((params['filter.id'] = this.selectedState.id));
-
     this.delegationService.getAllPaginated(params).subscribe({
       next: data => {
         this.delegations = new DefaultSelect(data.data, data.count);
@@ -315,7 +312,7 @@ export class CityDetailComponent extends BasePage implements OnInit {
     this.alert('success', this.title, `${message} Correctamente`);
     //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.modalRef.content.callback(true);
+    this.refresh.emit(true);
     this.modalRef.hide();
   }
 }

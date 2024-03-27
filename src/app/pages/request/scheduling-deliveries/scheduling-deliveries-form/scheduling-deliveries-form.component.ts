@@ -39,6 +39,7 @@ import {
   SEARCH_SALES_TABLE,
 } from './scheduling-deliveries-columns';
 import { IClient, TypeEvent } from './type-events';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-scheduling-deliveries-form',
@@ -61,7 +62,7 @@ export class SchedulingDeliveriesFormComponent
   filterSales: boolean = true;
   loadingGoodsDest: boolean = false;
   saveLoading: boolean = false;
-  isReadOnly: boolean = true;
+  isReadOnly: boolean = false;
   isReadOnlyDes: string = 'N';
   loadingGoodsDevolution: boolean = false;
   loadingGoodsDonation: boolean = false;
@@ -183,7 +184,7 @@ export class SchedulingDeliveriesFormComponent
         this.nameUser = response.username;
         this.getWarehouseSelect(new ListParams());
         this.getClientSelect(new ListParams());
-        //this.checkProgrammingDelivery();
+        // this.checkProgrammingDelivery();
         const getClientName = await this.getClientName();
 
         //if (getClientName)
@@ -2039,6 +2040,8 @@ export class SchedulingDeliveriesFormComponent
 
   goodsSelectDest(goodInvSelect: IGoodInvAvailableView[]) {
     this.goodDesSelect = goodInvSelect;
+    console.log("gS", this.goodDesSelect)
+    console.log("goods", this.goodsToProgramData)
   }
 
   async addGoodsProgrammingDelivery() {
@@ -2081,6 +2084,9 @@ export class SchedulingDeliveriesFormComponent
               this.params
                 .pipe(takeUntil(this.$unSubscribe))
                 .subscribe(() => this.showInfoProgrammingDelivery());
+              //this.disabledTypeEvent = true;
+              this.isReadOnly = true;
+              //this.schedulingDeliverieForm.get('typeEvent').setValue(this.programmingDeliveryInfo.transferId['nameEvent'])
             },
             error: error => {},
           });
@@ -2136,7 +2142,38 @@ export class SchedulingDeliveriesFormComponent
       ).value,
       typeUser: this.schedulingDeliverieForm.get('typeUser').value,
     };
-
+    //console.log(this.programmingDeliveryInfo.id)
+    // if (this.programmingDeliveryInfo.id &&
+    //   this.programmingDeliveryInfo.id !== undefined &&
+    //   this.programmingDeliveryInfo.id !== null) {
+    //   return new Promise((resolve, reject) => {
+    //     this.programmingRequestService
+    //       .updateProgrammingDelivery(this.programmingDeliveryInfo.id, infoProg)
+    //       .subscribe({
+    //         next: response => {
+    //           this.programmingDeliveryInfo = response;
+    //           resolve(response);
+    //         },
+    //         error: error => {
+    //           resolve(false);
+    //         },
+    //       });
+    //   });
+    // } else {
+    //   return new Promise((resolve, reject) => {
+    //     this.programmingRequestService
+    //       .createProgrammingDelivery(infoProg)
+    //       .subscribe({
+    //         next: response => {
+    //           this.programmingDeliveryInfo = response;
+    //           resolve(response);
+    //         },
+    //         error: error => {
+    //           resolve(false);
+    //         },
+    //       });
+    //   });
+    // }
     return new Promise((resolve, reject) => {
       this.programmingRequestService
         .createProgrammingDelivery(infoProg)
@@ -2150,7 +2187,9 @@ export class SchedulingDeliveriesFormComponent
           },
         });
     });
+
   }
+
 
   showInfoProgrammingDelivery() {
     this.params.getValue()['filter.programmingDeliveryId'] =
@@ -2194,7 +2233,8 @@ export class SchedulingDeliveriesFormComponent
                     'Correcto',
                     'Se crearon los reportes de destrucción correctamente'
                   );
-                  this.checkProgrammingDelivery();
+                  //this.checkProgrammingDelivery();
+                  this.isReadOnlyDes = 'Y'
                 },
                 error: error => {},
               });

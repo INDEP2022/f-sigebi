@@ -125,6 +125,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
       this.params.getValue()['search'] = this.params.getValue().text;
       this.params.getValue()['filter.requestId'] = this.idRequest;
       this.params.getValue()['filter.applicationId'] = this.idRequest;
+      this.params.getValue()['filter.status'] = '$not:STI';
 
       //this.searchForm.get('requestId').setValue(this.idRequest);
       this.goodService.getAll(this.params.getValue()).subscribe({
