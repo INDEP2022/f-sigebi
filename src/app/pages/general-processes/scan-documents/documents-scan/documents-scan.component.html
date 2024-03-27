@@ -20,7 +20,7 @@
           class="col-md-2">
           <input
             type="number"
-            [max-length]="11"
+            max="99999999999"
             [readonly]="readonly"
             (change)="expedientChange()"
             formControlName="expedient"
@@ -33,7 +33,7 @@
           class="col-md-2">
           <input
             type="number"
-            [max-length]="15"
+            max="999999999999999"
             (change)="folioChange()"
             formControlName="folio"
             [readonly]="readonly"
