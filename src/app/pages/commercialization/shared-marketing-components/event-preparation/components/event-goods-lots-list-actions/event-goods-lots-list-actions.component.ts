@@ -244,9 +244,33 @@ export class EventGoodsLotsListActionsComponent
    * ARCHIVO_TERCERO
    */
   thirdFile() {
+    this.loader.load = true;
+    const { id } = this.controls;
+
     // TODO: IMPLEMENTAR CUANDO SE TENGA
     // TODO: ES EL ARCHIVO QUE GENERA DEMORA, PABLO ESTA REVISANDO
     console.log('ARCHIVO_TERCERO Demora - Pablo');
+    console.log({ controls: this.controls });
+    console.log({ id: id.value });
+
+    this.lotService.thirdFile(id.value).subscribe({
+      next: res => {
+        this.loader.load = false;
+        console.log(res);
+        if (res.base64File == null || res.base64File == '') {
+          this.alert('warning', 'No hay datos para exportar', '');
+          return;
+        }
+        this._downloadExcelFromBase64(
+          res.base64File,
+          `Evento-${id.value}`,
+          'csv'
+        );
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
   }
 
   /**
