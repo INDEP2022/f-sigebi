@@ -22,10 +22,10 @@
 <div *ngIf="showSearchForm">
   <form [formGroup]="searchForm" class="form-material">
     <div class="row pt-3">
-      <div class="col-md-6">
+      <div class="col-md-3">
         <form-field
           [control]="searchForm.get('goodId')"
-          label="N&uacute;mero de Gesti&oacute;n">
+          label="No. Gesti&oacute;n">
           <input
             type="number"
             class="form-control"
@@ -34,7 +34,7 @@
         </form-field>
       </div>
 
-      <div class="col-md-6">
+      <div class="col-md-3">
         <form-field [control]="searchForm.get('goodTypeId')">
           <ngx-select
             [form]="searchForm"
@@ -47,13 +47,10 @@
           </ngx-select>
         </form-field>
       </div>
-    </div>
-
-    <div class="row pt-3">
-      <div class="col-md-6">
+      <div class="col-md-3">
         <form-field
           [control]="searchForm.get('requestId')"
-          label="N&uacute;mero de Solicitud">
+          label="No. Solicitud">
           <input
             type="number"
             class="form-control"
@@ -62,7 +59,7 @@
         </form-field>
       </div>
 
-      <div class="col-md-6">
+      <div class="col-md-3">
         <form-field
           [control]="searchForm.get('goodDescription')"
           label="Descripci&oacute;n de Bien Transferente">
@@ -73,6 +70,8 @@
         </form-field>
       </div>
     </div>
+
+    <div class="row pt-3"></div>
   </form>
 </div>
 

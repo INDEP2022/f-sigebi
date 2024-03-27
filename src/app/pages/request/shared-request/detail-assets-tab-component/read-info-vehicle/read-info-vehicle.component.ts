@@ -10,6 +10,7 @@ export class ReadInfoVehicleComponent implements OnInit {
   fitCircular: string;
   theftReport: string;
   armor: string;
+  showInfoGood: boolean = true;
 
   constructor() {}
 

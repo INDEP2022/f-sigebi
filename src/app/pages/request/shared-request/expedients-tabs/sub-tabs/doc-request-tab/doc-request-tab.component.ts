@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -53,8 +53,7 @@ interface searchTable {
 })
 export class DocRequestTabComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   @ViewChild('myTemplate', { static: true }) template: TemplateRef<any>;
   @ViewChild('myTemplate', { static: true, read: ViewContainerRef })
   container: ViewContainerRef;
@@ -106,7 +105,7 @@ export class DocRequestTabComponent
     private transferentService: TransferenteService,
     private stateOfRepublicService: StateOfRepublicService,
     private requestService: RequestService,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute
   ) {
     super();
     this.idRequest = this.idRequest
@@ -169,7 +168,7 @@ export class DocRequestTabComponent
           this.getData(data);
         });
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -573,7 +572,7 @@ export class DocRequestTabComponent
           next: data => {
             resolve(data?.description);
           },
-          error: error => {},
+          error: error => { },
         });
     });
   }
@@ -980,7 +979,7 @@ export class DocRequestTabComponent
           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl),
           type: 'pdf',
         },
-        callback: (data: any) => {},
+        callback: (data: any) => { },
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -1045,7 +1044,7 @@ export class DocRequestTabComponent
         next: data => {
           this.selectRegDelegation = new DefaultSelect(data.data, data.count);
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -1095,7 +1094,6 @@ export class DocRequestTabComponent
 
     if (list.length > 0) {
       switch (this.process) {
-
         case 'register-seizures':
         case 'register-consfiscation-sentence':
         case 'register-confiscation-confirmed':
@@ -1103,14 +1101,23 @@ export class DocRequestTabComponent
         case 'register-registration-sentence':
         case 'register-freedom-liens':
         case 'register-distribution-resource':
-          if (containDocCom) {
+          let hasType252 = list.some(x => parseInt(x.xtipoDocumentoId) === 252);
+          let hasType253 = list.some(x => parseInt(x.xtipoDocumentoId) === 253);
+          let hasType254 = list.some(x => parseInt(x.xtipoDocumentoId) === 254);
+          let hasType255 = list.some(x => parseInt(x.xtipoDocumentoId) === 255);
+          let hasType256 = list.some(x => parseInt(x.xtipoDocumentoId) === 256);
+          let hasType257 = list.some(x => parseInt(x.xtipoDocumentoId) === 257);
+          if (hasType252 && hasType253 && hasType254 && hasType255 && hasType256 && hasType257 && containDocCom) {
+
             validToks = true;
+
           }
           break;
 
         case 'register-abandonment-goods':
+        case 'verify-compliance-abandonment':
         case 'register-abandonment-instruction':
-        case 'register-declaration-abandonment':  
+        case 'register-declaration-abandonment':
           let hasType51 = list.some(x => parseInt(x.xtipoDocumentoId) === 51);
           let hasType146 = list.some(x => parseInt(x.xtipoDocumentoId) === 146);
 
@@ -1122,8 +1129,10 @@ export class DocRequestTabComponent
         case 'register-domain-extinction':
         case 'register-extinction-sentence':
         case 'register-extinction-agreement':
-          let hasType83 = list.some(x => parseInt(x.xtipoDocumentoId) === 83);
-          if (hasType83 && containDocCom) {
+          //let hasType83 = list.some(x => parseInt(x.xtipoDocumentoId) === 83);
+          let hasType258 = list.some(x => parseInt(x.xtipoDocumentoId) === 258);
+          let hasType259 = list.some(x => parseInt(x.xtipoDocumentoId) === 259);
+          if (hasType258 && hasType259 && containDocCom) {
             validToks = true;
           }
           break;

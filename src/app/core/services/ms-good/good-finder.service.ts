@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 
+import { Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import {
   IListResponse,
@@ -79,5 +80,9 @@ export class GoodFinderService extends HttpService {
   getGoodAclarado(id: number, params?: _Params) {
     const route = `${GoodFinderEndpoint.GoodQuery}?filter.requestId=$eq:${id}&filter.goodStatus=ACLARADO`;
     return this.get(route, params);
+  }
+
+  goodFinder3(params?: ListParams | string): Observable<IListResponse<IGood>> {
+    return this.get<IListResponse<IGood>>(GoodFinderEndpoint.GoodQuery, params);
   }
 }

@@ -3,6 +3,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
+import { IGoodSsubType } from 'src/app/core/models/catalogs/good-ssubtype.model';
+import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
+import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { ISiabClasification } from 'src/app/core/models/catalogs/siab-clasification.model';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
@@ -29,14 +33,10 @@ export class SiabClasificationDetailComponent
   edit: boolean = false;
   siabClasification: ISiabClasification;
   clasification: ISiabClasification;
-  /*types = new DefaultSelect<IGoodType>();
+  types = new DefaultSelect<IGoodType>();
   subTypes = new DefaultSelect<IGoodSubType>();
   ssubTypes = new DefaultSelect<IGoodSsubType>();
-  sssubTypes = new DefaultSelect<IGoodSssubtype>();*/
-  types = new DefaultSelect();
-  subTypes = new DefaultSelect();
-  ssubTypes = new DefaultSelect();
-  sssubTypes = new DefaultSelect();
+  sssubTypes = new DefaultSelect<IGoodSssubtype>();
   idType: string = '';
   idSubType: string = '';
   idSsubType: string = '';
@@ -113,12 +113,10 @@ export class SiabClasificationDetailComponent
     if (this.clasification != null) {
       this.edit = true;
       this.createForm = false;
-      console.log(this.clasification);
-      console.log(
-        this.clasification.subtypeId,
-        this.clasification.typeId,
-        this.clasification.ssubtypeId,
-        this.clasification.sssubtypeId
+      console.log(this.clasification.subtypeId, this.clasification.typeId);
+      //this.siabClasificationform.patchValue(this.clasification);
+      this.siabClasificationform.controls['subtypeDescription'].setValue(
+        this.clasification.subtypeDescription
       );
       this.getTypesUpdate(new ListParams(), this.clasification.typeId);
       this.getSubtypesUpdate(

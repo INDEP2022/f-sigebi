@@ -6,12 +6,11 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-check-verify-compliance',
   templateUrl: './check-verify-compliance.component.html',
-  styles: ['.check-icon { color: #9d2449 !important }'],
+  styleUrls: ['./check-verify-compliance.component.scss'],
 })
 export class CheckVerifyComplianceComponent
   extends BasePage
-  implements OnInit, AfterViewInit
-{
+  implements OnInit, AfterViewInit {
   checkForm: FormGroup = new FormGroup({});
   checkState: boolean = false;
   checkbox: any;
@@ -34,7 +33,7 @@ export class CheckVerifyComplianceComponent
 
     this.field = this.checkId + '';
     this.checkId = this.checkId + this.rowData.good.id.toString();
-    if (this.process != 'approve-return') {
+    if (this.process != 'approve-return' && this.process != 'approve-abandonment') {
       this.checkStateEditForm = true;
       this.prepareForm();
     } else {

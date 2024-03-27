@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -8,8 +8,11 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
@@ -40,13 +43,21 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
 
   ngGlobal: IGlobalVars = null;
 
+  @ViewChild('table', { static: false }) table: any;
+
+  userName: string = '';
+  validUser: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private goodFinderService: GoodFinderService,
     private globalVarsService: GlobalVarsService,
     private router: Router,
-    private goodTrackerService: GoodTrackerService
+    private goodTrackerService: GoodTrackerService,
+    private goodService: GoodService,
+    private goodProcessService: GoodProcessService,
+    private authService: AuthService
   ) {
     super();
 
@@ -67,6 +78,16 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
 
   ngOnInit(): void {
     console.log('rel_bienes', this.rel_bienes);
+
+    const user = this.authService.decodeToken();
+    this.userName = user.username;
+    console.log('user.username', this.userName);
+
+    if (this.userName.startsWith('TLP')) {
+      this.validUser = false;
+    } else {
+      this.validUser = true;
+    }
 
     this.prepareForm();
 
@@ -89,10 +110,25 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
                 searchFilter = SearchFilter.LIKE;
                 break;
               case 'status':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'goodClassNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'transferNumberExpedient':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'labelNumber':
-                searchFilter = SearchFilter.EQ;
+                console.log(field);
+                console.log(filter);
+                console.log(field);
+                console.log(filter.field);
+
+                if (filter.search == 0 || filter.search == null) {
+                  searchFilter = SearchFilter.NULL;
+                } else {
+                  searchFilter = SearchFilter.EQ;
+                }
                 break;
 
               default:
@@ -202,21 +238,6 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
         console.log('respuesta TMPTRAKER', res);
         console.log('tamaño', res.count);
         this.searchData(res.data);
-
-        /*let obj = {
-          goodNumber: [],
-        };
-
-        let result = response.data.map(item => {
-          obj.goodNumber.push(item.goodNumber);
-        });
-
-        Promise.all(result).then(resp => {
-          this.goodsTracker = obj;
-          console.log('this.goodstracker', this.goodsTracker);
-          console.log('this.goodstracker tamaño', this.goodsTracker.length);
-          
-        });*/
       },
       error: err => {},
     });
@@ -229,12 +250,64 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
     const label = this.form.controls['labelGood'].value;
 
     if (label == null) {
-      this.alertInfo(
-        'warning',
-        'Atención',
-        'Debe especificar el indicador de destino'
-      );
+      this.alert('warning', 'Atención', 'No se ha seleccionado un indicador');
+      return;
     }
+
+    this.alertQuestion(
+      'question',
+      'Se cambiará el indicador a los bienes seleccionados',
+      `¿Continuar?`
+    ).then(question => {
+      if (question.isConfirmed) {
+        for (let i = 0; i < this.registerSelected; i++) {
+          const goodData = this.selectedRows[i];
+          const statusGood = goodData.status;
+          const noTransferGood = goodData.transferNumberExpedient;
+          const noClasifGood = goodData.goodClassNumber;
+
+          if (
+            this.validUser != true &&
+            !['ROP', 'STA', 'STI', 'VXR', 'VXP'].includes(statusGood)
+          ) {
+            this.alert(
+              'warning',
+              'Atención',
+              'No puede realizar cambio de destino'
+            );
+            return;
+          }
+
+          if ((noTransferGood == 1 || noTransferGood == 3) && label != 3) {
+            this.alert(
+              'warning',
+              'Atención',
+              'Destino erróneo, necesariamente debe ser Resguardo'
+            );
+            return;
+          }
+
+          if (
+            (noTransferGood == 121 ||
+              noTransferGood == 123 ||
+              noTransferGood == 124 ||
+              noTransferGood == 536) &&
+            noClasifGood != 1600
+          ) {
+            this.alert(
+              'warning',
+              'Atención',
+              'Destino erróneo, necesariamente debe ser Venta.'
+            );
+            return;
+          }
+
+          this.changeIndicataors(goodData);
+        }
+        this.table.isAllSelected = false;
+        this.searchData();
+      }
+    });
   }
 
   openForm(data: any) {
@@ -254,5 +327,79 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(SelectLabelGoodComponent, config);
+  }
+
+  selectedRows: any;
+  activeButton: boolean = false;
+  registerSelected: number = 0;
+  goodsids: string = '';
+
+  onSelectedRows(event) {
+    this.selectedRows = event.selected;
+    console.log(this.selectedRows);
+
+    if (this.selectedRows.length != 0) {
+      this.registerSelected = this.selectedRows.length;
+      this.activeButton = true;
+
+      for (let i = 0; i < this.registerSelected; i++) {
+        this.goodsids = this.goodsids + this.selectedRows[i].goodId + ', ';
+      }
+    } else {
+      this.registerSelected = 0;
+      this.activeButton = false;
+      this.goodsids = '';
+    }
+  }
+
+  changeIndicataors(goodData1: any) {
+    const labelGood = this.form.controls['labelGood'].value;
+
+    console.log('ID de etiqueta seleccionado:_ ', labelGood);
+
+    let objGood1 = {
+      goodNumber: Number(goodData1.id),
+      label: Number(labelGood),
+      classificationOfGoodsNumber: Number(goodData1.goodClassNumber),
+    };
+    console.log('ObjGood', objGood1);
+
+    this.goodProcessService.validInitiationLabel(objGood1).subscribe({
+      next: resp => {
+        console.log('respuesta de validinitiationLabel', resp);
+        //this.alert('warning','Atención',resp.data);
+        this.changeLabel(goodData1);
+      },
+      error: error => {
+        console.log('respuesta de error validinitiationLabel', error);
+        this.alert('warning', `El Bien: ${goodData1.id}`, error.error.message);
+      },
+    });
+  }
+
+  changeLabel(goodData2: any) {
+    const labelGood = this.form.controls['labelGood'].value;
+
+    let objGood2 = {
+      id: goodData2.id,
+      goodId: goodData2.id,
+      labelNumber: labelGood,
+    };
+    console.log('ObjGood', objGood2);
+
+    this.goodService.update(objGood2).subscribe({
+      next: resp => {
+        console.log('Actualizado: ', resp);
+        //this.alert('success', 'Etiqueta Actualizada', '');
+      },
+      error: error => {
+        console.log('No se actualizó: ', error);
+        this.alert(
+          'warning',
+          `No se logró cambiar la etiqueta del Bien: ${goodData2.id}`,
+          'Revisar la información del Bien a modificar'
+        );
+      },
+    });
   }
 }

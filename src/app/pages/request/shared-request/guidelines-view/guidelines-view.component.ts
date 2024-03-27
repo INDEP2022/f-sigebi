@@ -96,11 +96,14 @@ export class GuidelinesViewComponent extends BasePage implements OnInit {
             element.secondRevisionObserv = item.missingActionsRev2;
           });
 
-          this.guidelinesInfo = this.loadGuidelines.find(x => x.lineamentId == "5");
+          this.guidelinesInfo = this.loadGuidelines.find(
+            x => x.lineamentId == '5'
+          );
           console.log(this.guidelinesInfo);
           this.firstRevisionDate = this.guidelinesInfo.meetsRevision1;
           this.secondRevisionDate = this.guidelinesInfo.meetsRevision2;
-          this.guidelinesInfo.observations = this.guidelinesInfo.missingActionsRev1;
+          this.guidelinesInfo.observations =
+            this.guidelinesInfo.missingActionsRev1;
         }
 
         this.getData(this.guidelinesData);

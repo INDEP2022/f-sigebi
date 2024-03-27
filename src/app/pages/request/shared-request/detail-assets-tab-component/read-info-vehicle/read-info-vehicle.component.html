@@ -1,70 +1,72 @@
-<div class="row">
-  <div class="col-md-4">
-    <label>Marca: </label>
-    <span class="fs-4">{{ vehicleObject?.brand }}</span>
+<div *ngIf="!showInfoGood">
+  <div class="row">
+    <div class="col-md-4">
+      <label>Marca: </label>
+      <span class="fs-4">{{ vehicleObject?.brand }}</span>
+    </div>
+    <div class="col-md-4">
+      <label>Matr&iacute;cula: </label>
+      <span class="fs-4">{{ vehicleObject?.tuition }}</span>
+    </div>
   </div>
-  <div class="col-md-4">
-    <label>Matr&iacute;cula: </label>
-    <span class="fs-4">{{ vehicleObject?.tuition }}</span>
+  <div class="row">
+    <div class="col-md-4">
+      <label>Sub Marca: </label>
+      <span class="fs-4">{{ vehicleObject?.subBrand }}</span>
+    </div>
+    <div class="col-md-4">
+      <label>Serie: </label>
+      <span class="fs-4">{{ vehicleObject?.serie }}</span>
+    </div>
   </div>
-</div>
-<div class="row">
-  <div class="col-md-4">
-    <label>Sub Marca: </label>
-    <span class="fs-4">{{ vehicleObject?.subBrand }}</span>
+  <div class="row">
+    <div class="col-md-4">
+      <label>Blindaje: </label>
+      <span class="fs-4">{{ armor }}</span>
+    </div>
+    <div class="col-md-4">
+      <label>Chasis: </label>
+      <span class="fs-4">{{ vehicleObject?.chassis }}</span>
+    </div>
   </div>
-  <div class="col-md-4">
-    <label>Serie: </label>
-    <span class="fs-4">{{ vehicleObject?.serie }}</span>
+  <div class="row">
+    <div class="col-md-4">
+      <label>Modelo: </label>
+      <span class="fs-4">{{ vehicleObject?.model }}</span>
+    </div>
+    <div class="col-md-4">
+      <label>Cabina: </label>
+      <span class="fs-4">{{ vehicleObject?.cabin }}</span>
+    </div>
   </div>
-</div>
-<div class="row">
-  <div class="col-md-4">
-    <label>Blindaje: </label>
-    <span class="fs-4">{{ armor }}</span>
+  <div class="row">
+    <div class="col-md-4">
+      <label>No. Puertas: </label>
+      <span class="fs-4">{{ vehicleObject?.doorsNumber }}</span>
+    </div>
+    <div class="col-md-4">
+      <label>Procedencia :</label>
+      <span class="fs-4">{{ vehicleObject?.origin }}</span>
+    </div>
   </div>
-  <div class="col-md-4">
-    <label>Chasis: </label>
-    <span class="fs-4">{{ vehicleObject?.chassis }}</span>
+  <div class="row">
+    <div class="col-md-4">
+      <label>No. Ejes: </label>
+      <span class="fs-4">{{ vehicleObject?.axesNumber }}</span>
+    </div>
+    <div class="col-md-4">
+      <label>Apto para Circular: </label>
+      <span class="fs-4">{{ fitCircular }}</span>
+    </div>
   </div>
-</div>
-<div class="row">
-  <div class="col-md-4">
-    <label>Modelo: </label>
-    <span class="fs-4">{{ vehicleObject?.model }}</span>
-  </div>
-  <div class="col-md-4">
-    <label>Cabina: </label>
-    <span class="fs-4">{{ vehicleObject?.cabin }}</span>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-4">
-    <label>No. Puertas: </label>
-    <span class="fs-4">{{ vehicleObject?.doorsNumber }}</span>
-  </div>
-  <div class="col-md-4">
-    <label>Procedencia :</label>
-    <span class="fs-4">{{ vehicleObject?.origin }}</span>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-4">
-    <label>No. Ejes: </label>
-    <span class="fs-4">{{ vehicleObject?.axesNumber }}</span>
-  </div>
-  <div class="col-md-4">
-    <label>Apto para Circular: </label>
-    <span class="fs-4">{{ fitCircular }}</span>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-4">
-    <label>No. Motor: </label>
-    <span class="fs-4">{{ vehicleObject?.engineNumber }}</span>
-  </div>
-  <div class="col-md-4">
-    <label>Cuenta con Reporte de Robos: </label>
-    <span class="fs-4">{{ theftReport }}</span>
+  <div class="row">
+    <div class="col-md-4">
+      <label>No. Motor: </label>
+      <span class="fs-4">{{ vehicleObject?.engineNumber }}</span>
+    </div>
+    <div class="col-md-4">
+      <label>Cuenta con Reporte de Robos: </label>
+      <span class="fs-4">{{ theftReport }}</span>
+    </div>
   </div>
 </div>

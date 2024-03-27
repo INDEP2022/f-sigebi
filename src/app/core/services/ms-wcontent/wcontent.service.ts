@@ -69,10 +69,10 @@ export class WContentService extends HttpWContentService {
   ): Observable<IListResponse<IWContent>> {
     return params
       ? this.post<IListResponse<IWContent>>(
-        WContentEndpoint.GetDocSol,
-        body,
-        params
-      )
+          WContentEndpoint.GetDocSol,
+          body,
+          params
+        )
       : this.post<IListResponse<IWContent>>(WContentEndpoint.GetDocSol, body);
   }
   findDocumentBySolicitud(idRequest: number) {
@@ -132,7 +132,4 @@ export class WContentService extends HttpWContentService {
     console.log('URL reporte : ' + url);
     return this.http.get(url, { responseType: 'blob' });
   }
-
 }
-
-

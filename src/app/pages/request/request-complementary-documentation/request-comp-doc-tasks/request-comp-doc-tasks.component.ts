@@ -44,6 +44,7 @@ import { RejectRequestModalComponent } from '../../shared-request/reject-request
 import { PrintReportModalComponent } from '../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
+import { NotificationEmailService } from 'src/app/core/services/ms-notification/notification-emai.service';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -52,8 +53,7 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
   protected override goodType: string;
   protected override signOffice: boolean;
   protected override btnGrouper: boolean;
@@ -182,6 +182,7 @@ export class RequestCompDocTasksComponent
     regdoc: false, //REGISTRAR DOCUMENTACIÓN
     goods: false, //SELECCIONAR BIENES
     files: false, //EXPEDIENTE
+    docs: [],
     guidelines: false, //LINEAMINEOTS
     valvisits: false, //VALIDAR VISITA OCULAR
     vercom: false, //VERIFICAR CUMPLIMIENTO
@@ -203,6 +204,7 @@ export class RequestCompDocTasksComponent
   private wContentService = inject(WContentService);
   private sanitizer = inject(DomSanitizer);
   private samplingGoodService = inject(SamplingGoodService);
+  private emailService = inject(NotificationEmailService);
 
   //private rejectedService = inject(RejectedGoodService)
 
@@ -328,7 +330,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   async openReport(first = true): Promise<void> {
     let doc = this.reportId;
@@ -730,7 +732,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  updateRequest(alert = true, execute = () => {}) {
+  updateRequest(alert = true, execute = () => { }) {
     this.updateInfo = !this.updateInfo;
     let request: any = { ...this.requestInfo.detail };
 
@@ -941,7 +943,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1545,6 +1547,7 @@ export class RequestCompDocTasksComponent
   onSelectFiles(event) {
     if (!this.validate.files) {
       this.validate.files = event.isValid;
+      this.validate.docs = event.object;
     }
     //Agreagar validaciones en especifico
   }
@@ -1576,7 +1579,7 @@ export class RequestCompDocTasksComponent
     this.validate.registerAppointment = event.isValid;
   }
 
-  onSetData(event) {}
+  onSetData(event) { }
 
   onOrder(event) {
     this.validate.orderEntry = event.isValid;
@@ -1596,7 +1599,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1612,7 +1615,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1633,6 +1636,11 @@ export class RequestCompDocTasksComponent
         //Cerrar tarea//
         if (await this.validateTurn()) {
           let response = await this.updateTask(this.taskInfo.id);
+
+          if (this.process == 'approve-abandonment') {
+            await this.sendEmailAprobeAbandono();
+            this.updateGoods("extDomProcess", "ABANDONO");
+          }
 
           if (response) {
             this.msgModal(
@@ -1693,7 +1701,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
 
   async showReport(data) {
     let report = await this.getStatusReport();
@@ -1726,7 +1734,7 @@ export class RequestCompDocTasksComponent
           const fileURL = URL.createObjectURL(file);
           this.openPrevPdf(fileURL);
         },
-        error: error => {},
+        error: error => { },
       });
     }
   }
@@ -1749,7 +1757,7 @@ export class RequestCompDocTasksComponent
           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
           type: 'pdf',
         },
-        callback: (data: any) => {},
+        callback: (data: any) => { },
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -1816,7 +1824,9 @@ export class RequestCompDocTasksComponent
   ): Promise<void> {
     let report = await this.getStatusReport();
     report = report.isValid ? report.data[0] : report;
-    let docId = isNullOrEmpty(report.isValid) ? report.documentTypeId : this.reportId;
+    let docId = isNullOrEmpty(report.isValid)
+      ? report.documentTypeId
+      : this.reportId;
 
     const formOnly = true;
     const nameSignatoryRuling = this.requestInfo.detail.nameSignatoryRuling;
@@ -1933,8 +1943,8 @@ export class RequestCompDocTasksComponent
     report.modificationUser = user.username;
     report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
     this.reportgoodService.saveReportDynamic(report, false).subscribe({
-      next: resp => {},
-      error: err => {},
+      next: resp => { },
+      error: err => { },
     });
   }
 
@@ -2019,8 +2029,8 @@ export class RequestCompDocTasksComponent
           report.modificationUser = token.username;
           report.modificationDate = moment(new Date()).format('YYYY-MM-DD');
           this.reportgoodService.saveReportDynamic(report, false).subscribe({
-            next: resp => {},
-            error: err => {},
+            next: resp => { },
+            error: err => { },
           });
         } else {
           this.requestInfo.detail.reportSheet = 'OCSJ_SIGN';
@@ -2028,6 +2038,59 @@ export class RequestCompDocTasksComponent
         }
       }
     }
+  }
+
+  async sendEmailAprobeAbandono() {
+
+    let dat1 = new Date();
+    let dat2 = dat1.getTime();
+    let dat3 = dat2.toString();
+    let dat4 = dat3.substring(3);
+    let idDon = parseInt(dat4);
+
+    //Confirmar los correos a los que se enviará el mensaje
+    let emails = ["test@gmail.com"];
+
+    await this.sendMail({
+      id: idDon,
+      subject: 'Cambio de Subinventario',
+      body: 'Se realizó la declaratoria de Abandono. “Concatenar nomenclatura de oficio" y es necesario cambiar el bien o bienes al subinventario de acuerdo con las características físicas de los mismos para continuar con los procesos de destino que correspondan de acuerdo con el cambio de subinventario que se realice',
+      recipients: emails.join(','),
+      message: 'Se realizó la declaratoria de Abandono: ',
+      answerTo: 'Cambio de Subinventario',
+    });
+  }
+
+  sendMail(object: any) {
+    return new Promise((resolve, reject) => {
+      this.emailService.createNotificationEmail(object).subscribe({
+        next: resp => {
+          console.log(resp);
+          resolve(resp);
+        },
+        error: e => {
+          this.onLoadToast(
+            'error',
+            'Ocurrio un error al enviar los mensaje',
+            `${e.error?.message}`
+          );
+          console.log(e);
+          reject('error');
+        },
+      });
+    });
+  }
+
+  async updateGoods(param, value) {
+
+    let goods = [];
+
+    goods.forEach(good => {
+      good[param] = value;
+      //actualizar el bien
+
+    });
+
   }
 
   //Crear un sample para el tipo de firma
