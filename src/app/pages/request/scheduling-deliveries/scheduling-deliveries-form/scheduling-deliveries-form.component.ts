@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { addDays } from 'date-fns';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -30,6 +30,7 @@ import { IprogrammingDelivery } from 'src/app/pages/siab-web/sami/receipt-genera
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
+import { ShowDocumentsGoodComponent } from '../../shared-request/expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
 import { NotificationDestructionFormComponent } from '../notification-destruction-form/notification-destruction-form.component';
 import { NotificationDestructionFoundFormComponent } from '../notification-destruction-found-form/notification-destruction-found-form.component';
 import { IGoodDelivery } from './good-delivery.interface';
@@ -2151,7 +2152,6 @@ export class SchedulingDeliveriesFormComponent
   async deleteGoodProgrammingDelivery() {
     if (this.selectedRows.length > 0) {
       this.selectedRows.forEach(row => {
-        console.log(row);
         this.programmingRequestService
           .deleteGoodProgrammingDevilery(row.id)
           .subscribe({
@@ -2159,10 +2159,8 @@ export class SchedulingDeliveriesFormComponent
               this.addedGoods = this.addedGoods.filter(
                 good => good.goodId !== row.goodId
               );
-
-
             },
-            error: error => { },
+            error: error => {},
           });
       });
       this.alert(
@@ -2335,6 +2333,14 @@ export class SchedulingDeliveriesFormComponent
       .get('typeNotification')
       .setValue(typeNotification);
 
+    switch (typeNotification) {
+      case 1:
+        break;
+      case 2:
+        this.notificationDestruccionFond();
+        break;
+    }
+
     this.notificationService
       .createNotificationDestruction(this.schedulingDeliverieForm.value)
       .subscribe({
@@ -2350,7 +2356,7 @@ export class SchedulingDeliveriesFormComponent
   notificationDestruccion() {
     this.goodsToProgramData.getElements().then(async data => {
       if (data.length > 0) {
-        console.log(this.programmingDeliveryInfo.statusNotification)
+        console.log(this.programmingDeliveryInfo.statusNotification);
         if (this.programmingDeliveryInfo.statusNotification == 'Y') {
           const checkExistNotification =
             await this.checkExistNotificationDestruction();
@@ -2566,7 +2572,12 @@ export class SchedulingDeliveriesFormComponent
     task['idDelegationRegional'] = user.department;
     task['urlNb'] =
       '/pages/request/scheduling-deliveries/execute-schelude-delivery';
-    switch (this.programmingDeliveryInfo.typeEvent) {
+    console.log(
+      'task',
+      this.idTypeEvent,
+      this.programmingDeliveryInfo.typeEvent
+    );
+    switch (this.idTypeEvent) {
       case 5:
         task[
           'title'
@@ -2587,7 +2598,7 @@ export class SchedulingDeliveriesFormComponent
           'title'
         ] = `Ejecutar entrega (Donación) para la programación: R-${this.programmingDeliveryInfo.id}`;
         break;
-      case 2:
+      case 1:
         task[
           'title'
         ] = `Ejecutar entrega (Ventas) para la programación: R-${this.programmingDeliveryInfo.id}`;
@@ -2607,6 +2618,28 @@ export class SchedulingDeliveriesFormComponent
 
     await this.createTaskOrderService(body);
     this.loading = false;
+  }
+
+  showDocuments(): void {
+    if (this.selectedRows.length == 0 || this.selectedRows.length >= 2) {
+    } else {
+      const idGood = this.selectedRows[0].id;
+      const idRequest = 0;
+      let config: ModalOptions = {
+        initialState: {
+          idGood,
+          idRequest,
+          parameter: '',
+          typeDoc: 'expedient',
+          callback: (next: boolean) => {
+            //if(next) this.getExample();
+          },
+        },
+        class: `modalSizeXL modal-dialog-centered`,
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(ShowDocumentsGoodComponent, config);
+    }
   }
 
   createTaskOrderService(body: any) {

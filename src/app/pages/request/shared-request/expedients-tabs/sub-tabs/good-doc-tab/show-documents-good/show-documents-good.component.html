@@ -33,8 +33,16 @@
                 formControlName="text"></textarea>
             </form-field>
           </div>
+          <div class="col-md-6" *ngIf="typeDoc === 'expedient'">
+            <div style="display: flex; align-items: center; gap: 10px">
+              <span style="font-weight: bold">Tipo de documento:</span>
+              <span>Constancias de entrega</span>
+            </div>
+          </div>
+          <div *ngIf="typeDoc === 'expedient'" style="margin-top: 1.5rem"></div>
           <div class="col-md-6">
             <div
+              *ngIf="typeDoc != 'expedient'"
               [formGroup]="docRequestForm"
               class="form-group form-secondary form-static-label">
               <ng-select
@@ -57,6 +65,7 @@
             </div>
           </div>
         </div>
+
         <div class="row pt-4">
           <div class="col-md-3">
             <form-field
@@ -150,7 +159,11 @@
         <div class="row pt-4">
           <div
             class="col-md-3"
-            *ngIf="typeDoc === 'good' || typeDoc === 'request-assets'">
+            *ngIf="
+              typeDoc === 'good' ||
+              typeDoc === 'request-assets' ||
+              typeDoc === 'expedient'
+            ">
             <form-field
               [control]="docRequestForm.get('noRequest')"
               label="No&#46; Bien">

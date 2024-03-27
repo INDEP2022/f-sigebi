@@ -190,6 +190,9 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       xidBien: this.idGood,
       //xidSolicitud: this.idRequest,
     };
+    if (this.typeDoc === 'expedient') {
+      filter['xtipoDocumento'] = 19;
+    }
     this.docRequestForm.get('noRequest').setValue(this.idGood);
     this.wContentService.getDocumentos(filter).subscribe(data => {
       this.loading = true;
