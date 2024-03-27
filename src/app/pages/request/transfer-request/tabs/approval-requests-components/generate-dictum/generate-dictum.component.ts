@@ -155,9 +155,9 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
               requestInfo,
               nameTypeDoc,
               nomenglatura,
-              callback: (next: boolean, confirmDocument: string) => {
-                if (confirmDocument === 'ok') {
-                  this.modalRef.content.callback(confirmDocument);
+              callback: (next: boolean) => {
+                if (next) {
+                  this.modalRef.content.callback(true);
                   this.modalRef.hide();
                 }
               },
