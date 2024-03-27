@@ -652,11 +652,11 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           next: resp => {
             if (this.isDynamic) {
               this.modalRef.content.callback(false, null);
+              this.close();
             } else {
               this.modalRef.content.callback(true);
+              this.close();
             }
-
-            this.close();
           },
           error: error => {},
         });
