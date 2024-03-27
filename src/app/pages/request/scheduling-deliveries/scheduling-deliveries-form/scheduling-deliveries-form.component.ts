@@ -95,6 +95,7 @@ export class SchedulingDeliveriesFormComponent
   regionalDelegationNum: number = 0;
 
   programmingDeliveryInfo: IprogrammingDelivery;
+  statusNotification;
   typeUser: string = '';
   nameUser: string = '';
   clientName: string = '';
@@ -327,6 +328,7 @@ export class SchedulingDeliveriesFormComponent
   prepareForm() {
     const tomorrow = addDays(new Date(), 1);
     this.schedulingDeliverieForm = this.fb.group({
+      notificationId: [null],
       programmingDeliveryId: this.programmingDeliveryInfo?.id,
       typeNotification: [null],
       typeEvent: [null],
@@ -2180,6 +2182,7 @@ export class SchedulingDeliveriesFormComponent
 
   async saveProgrammingDelivery() {
     const infoProg = {
+      statusNotification: 'Y',
       typeEvent: this.schedulingDeliverieForm.get('typeEvent').value,
       startDate: moment(
         this.schedulingDeliverieForm.get('startDate').value
@@ -2333,20 +2336,10 @@ export class SchedulingDeliveriesFormComponent
       .get('typeNotification')
       .setValue(typeNotification);
 
-    switch (typeNotification) {
-      case 1:
-        break;
-      case 2:
-        this.notificationDestruccionFond();
-        break;
-    }
-
     this.notificationService
       .createNotificationDestruction(this.schedulingDeliverieForm.value)
       .subscribe({
-        next: response => {
-          console.log('response', response);
-        },
+        next: response => {},
         error: error => {
           console.log('error', error);
         },
@@ -2356,7 +2349,6 @@ export class SchedulingDeliveriesFormComponent
   notificationDestruccion() {
     this.goodsToProgramData.getElements().then(async data => {
       if (data.length > 0) {
-        console.log(this.programmingDeliveryInfo.statusNotification);
         if (this.programmingDeliveryInfo.statusNotification == 'Y') {
           const checkExistNotification =
             await this.checkExistNotificationDestruction();
