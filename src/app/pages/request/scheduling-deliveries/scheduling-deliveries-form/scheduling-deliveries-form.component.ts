@@ -326,7 +326,8 @@ export class SchedulingDeliveriesFormComponent
   prepareForm() {
     const tomorrow = addDays(new Date(), 1);
     this.schedulingDeliverieForm = this.fb.group({
-      id: [null],
+      programmingDeliveryId: this.programmingDeliveryInfo?.id,
+      typeNotification: [null],
       typeEvent: [null],
       typeEventInfo: [null],
       startDate: [null, [Validators.required]],
@@ -2131,7 +2132,6 @@ export class SchedulingDeliveriesFormComponent
 
   selectedRows: any[] = [];
   goodsSelect(data): void {
-    // Si data no es un array, lo convierte en un array
     if (!Array.isArray(data)) {
       data = [data];
     }
@@ -2141,10 +2141,8 @@ export class SchedulingDeliveriesFormComponent
         selectedRow => selectedRow.id === row.id
       );
       if (index > -1) {
-        // Si la fila ya está seleccionada, la elimina de selectedRows
         this.selectedRows.splice(index, 1);
       } else {
-        // Si la fila no está seleccionada, la agrega a selectedRows
         this.selectedRows.push(row);
       }
     });
@@ -2289,12 +2287,12 @@ export class SchedulingDeliveriesFormComponent
               )
               .subscribe({
                 next: response => {
+                  this.programmingDeliveryInfo = response;
                   this.alert(
                     'success',
                     'Correcto',
                     'Se crearon los reportes de destrucción correctamente'
                   );
-                  //this.checkProgrammingDelivery();
                   this.isReadOnlyDes = 'Y';
                   this.isReadOnly = true;
                   this.schedulingDeliverieForm
@@ -2309,6 +2307,9 @@ export class SchedulingDeliveriesFormComponent
                 },
                 error: error => {},
               });
+
+            this.createNotifyDestruccion(1);
+            this.createNotifyDestruccion(2);
           }
         });
       } else {
@@ -2321,8 +2322,28 @@ export class SchedulingDeliveriesFormComponent
     });
   }
 
+  createNotifyDestruccion(typeNotification) {
+    this.schedulingDeliverieForm
+      .get('programmingDeliveryId')
+      .setValue(this.programmingDeliveryInfo.id);
+
+    this.schedulingDeliverieForm
+      .get('typeNotification')
+      .setValue(typeNotification);
+
+    this.notificationService
+      .createNotificationDestruction(this.schedulingDeliverieForm.value)
+      .subscribe({
+        next: response => {
+          console.log('response', response);
+        },
+        error: error => {
+          console.log('error', error);
+        },
+      });
+  }
+
   notificationDestruccion() {
-    console.log('notificationDestruccion', this.goodsToProgramData);
     this.goodsToProgramData.getElements().then(async data => {
       if (data.length > 0) {
         if (this.programmingDeliveryInfo.statusNotification == 'Y') {
@@ -2363,6 +2384,7 @@ export class SchedulingDeliveriesFormComponent
   checkExistNotificationDestruction() {
     return new Promise((resolve, reject) => {
       const params = new BehaviorSubject<ListParams>(new ListParams());
+      console.log(this.programmingDeliveryInfo.id);
       params.getValue()['filter.programmingDeliveryId'] =
         this.programmingDeliveryInfo.id;
       params.getValue()['filter.​typeNotification'] = 1;
@@ -2370,6 +2392,7 @@ export class SchedulingDeliveriesFormComponent
         .getNotificationDestruction(params.getValue())
         .subscribe({
           next: response => {
+            console.log(response);
             resolve(true);
           },
           error: error => {
@@ -2397,6 +2420,7 @@ export class SchedulingDeliveriesFormComponent
         });
     });
   }
+
   showReportDestruction() {
     let config = {
       ...MODAL_CONFIG,
