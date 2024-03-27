@@ -20,4 +20,12 @@ export class ProceedingSusPcancelService extends HttpService {
   tmpValGoodConst(params: any) {
     return this.get('tmp-val-goodconst', params);
   }
+
+  queryTransferKey(body: { proceedingsNumber: string; typeMinutes: string }) {
+    return this.post('application/query-transfer-key', body);
+  }
+
+  queryRNomencla(delegation: string, params?: any) {
+    return this.get(`application/query-r-nomencla/${delegation}`, params);
+  }
 }
