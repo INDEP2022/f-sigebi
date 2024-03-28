@@ -207,26 +207,26 @@ export class RequestSignatureModalComponent extends BasePage implements OnInit {
 
     this.loadSingnatures = true;
 
-    console.log('Firmantes -----------------');
+    //console.log('Firmantes -----------------');
 
     let signatories = await this.getSignatories();
     console.log('Firmantes: ', signatories);
 
     let deletes = signatories.map(signatory => {
       let item = this.deleteSignatories(signatory.signatoryId);
-      console.log('Firmante eliminado: ', signatory.signatoryId);
+      //console.log('Firmante eliminado: ', signatory.signatoryId);
       return item;
     });
 
     Promise.all(deletes)
       .then(async () => {
         let create: any = await this.createSignatorie();
-        console.log('Firmante creado: ', create.signatoryId);
+        //console.log('Firmante creado: ', create.signatoryId);
         return create;
       }).then(async create => {
         let signatories = await this.getSignatories();
         this.signatories = signatories;
-        console.log('Firmantes: ', this.signatories);
+        //console.log('Firmantes: ', this.signatories);
         this.loadSingnatures = false;
       }).catch(error => {
         // Si algo sale mal, el error se capturará aquí
