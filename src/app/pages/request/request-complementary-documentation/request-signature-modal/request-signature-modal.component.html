@@ -15,12 +15,15 @@
         <div class="d-flex">
           <h5 class="mr-auto p-2">{{ btnSubTitle }}</h5>
           <div class="p-2">
-            <button
-              *ngIf="!process && !readOnly"
-              class="btn btn-primary btn-sm active"
-              (click)="signReport()">
-              <i class="bx bx-edit-alt"></i>{{ btnTitle }}
-            </button>
+      
+              <confirm-button 
+                *ngIf="!process && !readOnly"
+                [text]="btnTitle" 
+                [loadingText]="'Cargando'" 
+                [loading]="loadSingnatures" 
+                [btnSmall]="true"
+                [icon]="'bx bx-edit-alt'" 
+                (confirm)="signReport()"></confirm-button>
 
             <button
               *ngIf="process == 'guard'"

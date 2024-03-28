@@ -178,7 +178,8 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     return result;
   }
 
-  close() {
+  close(cancel = true) {
+    this.finish(cancel);
     this.modalRef.hide();
   }
 
@@ -207,13 +208,16 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
 
           this.loading = false;
         },
-        error => (this.loading = false)
+        error => {
+          this.loading = false;
+          this.finish(true);
+        }
       );
     } else {
       this.update();
     }
 
-    this.close();
+    this.close(false);
   }
 
   update() {
@@ -254,5 +258,11 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
+  }
+
+  finish(result: boolean = false) {
+    if (this.modalRef.content.onClose) {
+      this.modalRef.content.onClose(result);
+    }
   }
 }
