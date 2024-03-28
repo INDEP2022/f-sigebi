@@ -437,4 +437,12 @@ export class GoodProcessService extends HttpService {
   validInitiationLabel(body: any) {
     return this.post(GoodprocessEndpoints.InitiationLabel, body);
   }
+
+  getApplicationGetDataNoprocedingConsultaExcel(body: any, params: _Params) {
+    return this.post(
+      GoodProcessPoints.ApplicationGetDataNoprocedingConsultaExcel,
+      body,
+      params
+    );
+  }
 }

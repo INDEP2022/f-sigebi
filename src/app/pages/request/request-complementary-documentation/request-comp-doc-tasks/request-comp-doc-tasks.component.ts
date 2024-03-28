@@ -41,10 +41,10 @@ import { RequestHelperService } from '../../request-helper-services/request-help
 import { CreateReportComponent } from '../../shared-request/create-report/create-report.component';
 import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/mail-field-modal.component';
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
-import { PrintReportModalComponent } from '../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
 import { NotificationEmailService } from 'src/app/core/services/ms-notification/notification-emai.service';
+import { RequestSignatureModalComponent } from '../request-signature-modal/request-signature-modal.component';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -2010,7 +2010,7 @@ export class RequestCompDocTasksComponent
       keyboard: false,
       ignoreBackdropClick: true,
     };
-    this.modalService.show(PrintReportModalComponent, config);
+    this.modalService.show(RequestSignatureModalComponent, config);
   }
 
   async updateReport(xml) {

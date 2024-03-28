@@ -523,7 +523,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-
+    console.log(params);
     this.goodProcessService
       .getApplicationGetDataNoprocedingConsulta(goods, params)
       .subscribe({
@@ -1116,18 +1116,33 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     };
     params.limit = this.totalItems;
     params.page = 1;
-
-    this.massiveGoodService.getApplicationRegisterCountCsv(params).subscribe({
-      next: async response => {
-        const base64 = response.base64File;
-        const nameFile = response.nameFile;
-        await this.downloadExcel(base64, nameFile);
-      },
-      error: error => {
-        this.loadingExport = false;
-        this.alert('warning', 'No se pudo descargar el excel', '');
-      },
-    });
+    if (this.valRastreador) {
+      this.goodProcessService
+        .getApplicationGetDataNoprocedingConsultaExcel(
+          this.goodsTracker,
+          params
+        )
+        .subscribe({
+          next: async response => {
+            const base64 = response.base64File;
+            const nameFile = response.nameFile;
+            await this.downloadExcel(base64, 'FDONACIONES.csv');
+          },
+          error: err => {},
+        });
+    } else {
+      this.massiveGoodService.getApplicationRegisterCountCsv(params).subscribe({
+        next: async response => {
+          const base64 = response.base64File;
+          const nameFile = response.nameFile;
+          await this.downloadExcel(base64, 'FDONACIONES.csv');
+        },
+        error: error => {
+          this.loadingExport = false;
+          this.alert('warning', 'No se pudo descargar el excel', '');
+        },
+      });
+    }
   }
 
   async downloadExcel(base64String: any, nameFile: string) {
