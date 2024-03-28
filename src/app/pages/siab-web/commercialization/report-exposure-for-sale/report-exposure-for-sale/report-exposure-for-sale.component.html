@@ -79,12 +79,7 @@
               </ngx-select>
             </form-field>
           </div>
-        </div>
-      </form>
-
-      <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-8">
             <form-field [control]="form.get('subtype')">
               <ngx-select
                 [form]="form"
@@ -98,6 +93,11 @@
               </ngx-select>
             </form-field>
           </div>
+        </div>
+      </form>
+
+      <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="row pt-4">
           <div class="col-md-4">
             <form-field [control]="form.get('delegation')">
               <ngx-select
@@ -165,7 +165,7 @@
       </form>
     </div>
 
-    <div *ngIf="showGood" class="pt-5">
+    <div class="pt-5">
       <div class="row">
         <div class="ch-content">
           <h5 class="title">
