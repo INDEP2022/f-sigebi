@@ -342,6 +342,13 @@ export class GoodProcessService extends HttpService {
     const route = `${GoodProcessPoints.VGoodType}`;
     return this.get<any>(route, params);
   }
+  getVgoodTypeObtnTypeGood(body: any, params: ListParams) {
+    return this.post<IListResponse>(
+      GoodProcessPoints.ObtnTypeGood,
+      body,
+      params
+    );
+  }
 
   getVsigLigie(params: ListParams | string): Observable<IListResponse<any>> {
     const route = GoodProcessPoints.GetVsigLigie;
