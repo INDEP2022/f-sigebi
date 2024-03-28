@@ -70,6 +70,7 @@ export class AppraisalDetailActionsComponent
   }
 
   insertAppraisal(file: File) {}
+  onValidationAppraissal() {}
 
   // ? ------------------------- VALIDAR ARCHIVO DESCUENTO
   async onValidDisscountFile() {
