@@ -30,6 +30,7 @@ export class AppraisalRegistrationComponent
     const screen = this.activatedRoute.snapshot.data['screen'];
     this.global.direction = screen == 'FCOMERREGAVALUO' ? 'M' : 'I';
     this.screen = screen;
+    console.log(this.screen);
   }
 
   ngOnInit(): void {
