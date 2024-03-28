@@ -109,19 +109,19 @@ export const SEARCH_SALES_TABLE = {
     sort: false,
   },
 
-  numberInventary: {
+  inventoryNum: {
     title: 'No. Inventario',
     type: 'string',
     sort: false,
   },
 
-  numberGestion: {
+  managementNum: {
     title: 'No. Gestión',
     type: 'number',
     sort: false,
   },
 
-  goodDescription: {
+  descriptionGood: {
     title: 'Descripción Bien',
     type: 'string',
     sort: false,
@@ -157,7 +157,7 @@ export const SEARCH_SALES_TABLE = {
     sort: false,
   },
 
-  facture: {
+  bill: {
     title: 'Factura',
     type: 'string',
     sort: false,
