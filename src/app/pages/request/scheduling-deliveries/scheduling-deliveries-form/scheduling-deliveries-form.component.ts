@@ -96,7 +96,7 @@ export class SchedulingDeliveriesFormComponent
   regionalDelegationNum: number = 0;
 
   programmingDeliveryInfo: IprogrammingDelivery;
-  statusNotification;
+  statusNotification = 'N';
   typeUser: string = '';
   nameUser: string = '';
   clientName: string = '';
@@ -342,6 +342,7 @@ export class SchedulingDeliveriesFormComponent
       transferId: [null],
       transferName: [null],
       client: [null],
+      postAddressee: [null],
       email: [
         null,
         [
@@ -2062,6 +2063,13 @@ export class SchedulingDeliveriesFormComponent
 
   async addGoodsProgrammingDelivery() {
     if (this.goodDesSelect.length > 0) {
+      if (isNullOrEmpty(this.schedulingDeliverieForm.get('email').value)) {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Favor de ingresar al menos un correo electrónico'
+        );
+      } else {
       const saveProgramming = await this.saveProgrammingDelivery();
 
       let alreadyAddedGoods = this.goodDesSelect.filter(good =>
@@ -2126,6 +2134,7 @@ export class SchedulingDeliveriesFormComponent
           'Bienes agregados correctamente'
         );
         this.deselectAll();
+      }
       }
     } else {
       this.alert(
@@ -2198,8 +2207,9 @@ export class SchedulingDeliveriesFormComponent
   }
 
   async saveProgrammingDelivery() {
+
     const infoProg = {
-      statusNotification: 'Y',
+      statusNotification: "Y",
       typeEvent: this.schedulingDeliverieForm.get('typeEvent').value,
       startDate: moment(
         this.schedulingDeliverieForm.get('startDate').value
@@ -2318,12 +2328,13 @@ export class SchedulingDeliveriesFormComponent
           '¿Desea generar los reportes de destrucción?'
         ).then(question => {
           if (question.isConfirmed) {
-            const formData = {
+            /*const formData = {
               id: this.programmingDeliveryInfo.id,
               statusNotification: 'Y',
-            };
-
-            this.programmingRequestService
+            };*/
+            //this.statusNotification = 'Y'
+            this.saveProgrammingDelivery();
+           /* this.programmingRequestService
               .updateProgrammingDelivery(
                 this.programmingDeliveryInfo.id,
                 formData
@@ -2339,8 +2350,9 @@ export class SchedulingDeliveriesFormComponent
                   this.isReadOnlyDes = 'Y';
                 },
                 error: error => {},
-              });
+              });*/
 
+            this.isReadOnlyDes = 'Y';
             this.createNotifyDestruccion(1);
             this.createNotifyDestruccion(2);
           }
@@ -2697,5 +2709,12 @@ export class SchedulingDeliveriesFormComponent
         row.isSelected = false;
       });
     });
+  }
+  numericOnly(event): boolean {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
   }
 }

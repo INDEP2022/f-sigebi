@@ -400,25 +400,39 @@
           <div class="col-md-6">
             <form-field
               *ngIf="isReadOnlyDes == 'N'"
-              [control]="schedulingDeliverieForm.get('addressAddressee')"
-              label="Dirección Destinatario">
+              [control]="schedulingDeliverieForm.get('postAddressee')"
+              label="C.P.">
               <input
                 class="form-control"
                 maxlength="250"
-                formControlName="addressAddressee" />
+                formControlName="postAddressee" 
+                type="number"/>
             </form-field>
             <form-field
               *ngIf="isReadOnlyDes == 'Y'"
-              [control]="schedulingDeliverieForm.get('addressAddressee')"
-              label="Dirección Destinatario">
+              [control]="schedulingDeliverieForm.get('postAddressee')"
+              label="C.P.">
               <input
                 class="form-control"
                 [readOnly]="true"
                 maxlength="250"
-                formControlName="addressAddressee" />
+                formControlName="postAddressee"
+                type="number" />
             </form-field>
           </div>
+          </div>
 
+          <div class="row pt-4">
+            <div class="col-md-6">
+              <form-field *ngIf="isReadOnlyDes == 'N'" [control]="schedulingDeliverieForm.get('addressAddressee')"
+                label="Dirección Destinatario">
+                <input class="form-control" maxlength="250" formControlName="addressAddressee" />
+              </form-field>
+              <form-field *ngIf="isReadOnlyDes == 'Y'" [control]="schedulingDeliverieForm.get('addressAddressee')"
+                label="Dirección Destinatario">
+                <input class="form-control" [readOnly]="true" maxlength="250" formControlName="addressAddressee" />
+              </form-field>
+            </div>
           <div class="col-md-6">
             <form-field
               *ngIf="isReadOnlyDes == 'N'"
@@ -497,7 +511,9 @@
               <input
                 class="form-control"
                 maxlength="20"
-                formControlName="term" />
+                formControlName="term"
+                type="number"
+                (keypress)="numericOnly($event)" />
             </form-field>
             <form-field
               *ngIf="isReadOnlyDes == 'Y'"
