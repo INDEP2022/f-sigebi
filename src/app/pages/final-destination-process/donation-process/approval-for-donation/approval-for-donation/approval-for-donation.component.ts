@@ -487,7 +487,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     }
 
     // await this.clearSubheaderFields();
-
+    this.params.getValue().page = 1;
+    this.params2.getValue().page = 1;
     this.columnFilter = [];
     this.data1.load([]);
     this.data1.refresh();
@@ -957,6 +958,9 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     localStorage.removeItem('estatusAct');
     localStorage.removeItem('area');
     localStorage.removeItem('elaborated');
+
+    this.params.getValue().page = 1;
+    this.params2.getValue().page = 1;
 
     this.data.load([]);
     this.data.refresh();
