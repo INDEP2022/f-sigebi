@@ -1539,6 +1539,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     let params = {
       ...this.params2.getValue(),
     };
+    params['sortBy'] = 'descripcion:ASC';
     this.loader.load = true;
     this.serviceAppraise
       .postGetAppraise(this.body2, { ...params, limit: 100000000 })
@@ -1552,11 +1553,11 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
             });
 
             let params = new ListParams();
+
             this.serviceJobs
               .getMoCanById(this.event, {
                 ...params,
                 limit: 100000000,
-                sortBy: 'descripcion:ASC',
               })
               .subscribe({
                 next: response => {

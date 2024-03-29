@@ -30,6 +30,7 @@ import {
   ProceedingsDeliveryReceptionService,
   ProceedingsService,
 } from 'src/app/core/services/ms-proceedings';
+import { ProceedingSusPcancelService } from 'src/app/core/services/ms-proceedings/proceeding-suspcancel.service';
 import { ProgrammingGoodsService } from 'src/app/core/services/ms-programming-good/programming-good.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -135,6 +136,8 @@ export class CircumstantialActsSuspensionCancellationComponent
     noExpedient: null,
   };
   dataIdent = new DefaultSelect(['DES', 'DEV', 'DON', 'RES', 'VEN', 'SUS']);
+  dataAuthority = new DefaultSelect();
+  dataDelegation = new DefaultSelect();
 
   canNew = false;
   canSave = false;
@@ -165,7 +168,8 @@ export class CircumstantialActsSuspensionCancellationComponent
     private expedientService: ExpedientService,
     private historygoodService: HistoryGoodService,
     private activatedRoute: ActivatedRoute,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private proceedingSusCanService: ProceedingSusPcancelService
   ) {
     super();
     this.settings1 = {
@@ -204,6 +208,8 @@ export class CircumstantialActsSuspensionCancellationComponent
     this.startCalendars();
     this.pupInitForms();
     this.navigateGoods();
+
+    this.form.get('universalFolio').setValue(123);
 
     const localExpdeient = localStorage.getItem('expediente');
     const folio = localStorage.getItem('folio');
@@ -252,18 +258,22 @@ export class CircumstantialActsSuspensionCancellationComponent
           if (['S/DON', 'C/DON'].includes(value)) {
             this.form.get('ident').setValue('DON');
             this.form.get('ident').disable();
+            this.getTransferent();
             //OCULTAR Y DESHABILITAS EL ASUN
           } else if (['S/DES', 'C/DES'].includes(value)) {
             this.form.get('ident').setValue('DES');
             this.form.get('ident').disable();
+            this.getTransferent();
             //OCULTAR Y DESHABILITAS EL ASUN
           } else if (['S/DEV', 'C/DEV'].includes(value)) {
             this.form.get('ident').setValue('DEV');
             this.form.get('ident').disable();
+            this.getTransferent();
             //OCULTAR Y DESHABILITAS EL ASUN
           } else if (value == 'S/VEN') {
             //ACTIVA LA ACTUALIZACIÓN E INSERVIÓN DE BLK_ACT
             this.form.get('ident').enable();
+            this.getTransferent();
             //MUESTRA Y HABILITA EL ASUN
           } else if (value == 'C/VNR') {
             this.alertQuestion(
@@ -275,9 +285,12 @@ export class CircumstantialActsSuspensionCancellationComponent
                 this.form.get('ident').setValue('VEN');
                 this.form.get('ident').disable();
                 //TODO: ABRE MODAL
+                this.getTransferent();
                 //OCULTA Y DESHABILITA EL ASUN
               } else {
                 this.form.get('actSelect').reset();
+                this.form.get('authority').reset();
+                this.dataAuthority = new DefaultSelect();
               }
             });
           } else {
@@ -362,7 +375,7 @@ export class CircumstantialActsSuspensionCancellationComponent
         : '') +
       '/' +
       (this.form.get('authority').value != null
-        ? this.form.get('authority').value
+        ? this.form.get('authority').value.transferKey
         : '') +
       '/' +
       (this.form.get('ident').value != null
@@ -370,11 +383,11 @@ export class CircumstantialActsSuspensionCancellationComponent
         : '') +
       '/' +
       (this.form.get('receive').value != null
-        ? this.form.get('receive').value
+        ? this.form.get('receive').value.delegation
         : '') +
       '/' +
       (this.form.get('admin').value != null
-        ? this.form.get('admin').value
+        ? this.form.get('admin').value.delegation
         : '') +
       '/' +
       (this.form.get('folio').value != null
@@ -1149,6 +1162,7 @@ export class CircumstantialActsSuspensionCancellationComponent
     this.form.get('captureDate').disable();
     this.form.get('year').setValue(new Date().getFullYear());
     this.form.get('month').setValue(new Date().getMonth() + 1);
+    this.getDelegations();
   }
 
   search() {
@@ -1190,7 +1204,7 @@ export class CircumstantialActsSuspensionCancellationComponent
           this.alert('info', this.title, 'No se encontrarón registros', '');
           return;
         }
-
+        console.log('Folio: ' + response.data[0].universalFolio);
         this.response = true;
         //this.idActa = Number(response.data[i].id);
         this.form.controls['noActa'].setValue(response.data[0].id);
@@ -1227,9 +1241,9 @@ export class CircumstantialActsSuspensionCancellationComponent
         this.form.controls['authority'].setValue(
           response.data[0].numTransfer.key
         );
-        this.form.controls['universalFolio'].setValue(
-          response.data[0].universalFolio
-        );
+        this.form
+          .get('universalFolio')
+          .setValue(response.data[0].universalFolio);
         this.form.controls['ident'].setValue(response.data[0].identifier);
         this.form.controls['receive'].setValue(response.data[0].receiptKey);
 
@@ -1557,9 +1571,60 @@ export class CircumstantialActsSuspensionCancellationComponent
       comptrollerWitness: this.form.get('witnessContr').value,
       typeProceedings: this.type_proceeding,
       captureDate: new Date().getTime(),
-      numDelegation1: this.form.get('admin').value.numberDelegation2,
+      numDelegation1: this.form.get('admin').value.delegationNumber2,
       numDelegation2:
-        this.form.get('admin').value.numberDelegation2 == 11 ? '11' : null,
+        this.form.get('admin').value.delegationNumber2 == 11 ? '11' : null,
     };
+
+    console.log(body);
+    this.proceedingsDetailDel.create(body).subscribe(
+      res => {
+        this.alert('success', 'Acta registrada', '');
+        this.form.get('statusAct').setValue('ABIERTA');
+        this.canSave = false;
+        this.unsubscribeAssembleKey();
+        console.log(res);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  getTransferent() {
+    if (this.formBlkExpedient.get('noExpedient').value != null) {
+      this.form.get('authority').reset();
+
+      const body = {
+        proceedingsNumber: this.formBlkExpedient.get('noExpedient').value,
+        typeMinutes: this.form.get('actSelect').value,
+      };
+
+      this.proceedingSusCanService.queryTransferKey(body).subscribe(
+        res => {
+          console.log(res);
+          this.dataAuthority = new DefaultSelect(res.data, res.count);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    }
+  }
+
+  getDelegations() {
+    const delegation = this.authService.decodeToken().department;
+    console.log(delegation);
+
+    this.proceedingSusCanService.queryRNomencla(delegation).subscribe(
+      res => {
+        console.log(res);
+        this.dataDelegation = new DefaultSelect(res.data, res.count);
+      },
+      err => {
+        console.log(err);
+        this.dataDelegation = new DefaultSelect();
+      }
+    );
   }
 }

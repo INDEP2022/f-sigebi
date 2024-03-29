@@ -106,6 +106,7 @@ export enum GoodProcessPoints {
   ApplicationGetDataNoprocedingConsulta = 'application/get-data-noproceding-consulta',
   ApplicationGetDataNoprocedingConsultaExcel = 'application/get-data-noproceding-consulta/excel',
   InitiationLabel = 'initiation-label',
+  ObtnTypeGood = 'v-good-type/obtnTypeGood',
 }
 
 export enum GoodFinderEndpoint {

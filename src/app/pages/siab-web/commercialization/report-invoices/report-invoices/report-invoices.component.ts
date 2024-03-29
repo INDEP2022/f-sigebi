@@ -18,6 +18,10 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { ButtonColumnComponent } from 'src/app/shared/components/button-column/button-column.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import {
   DETAIL_REPORT_COLUMNS,
   REPORT_INVOICE_COLUMNS,
@@ -66,7 +70,10 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private msInvoiceService: MsInvoiceService,
-    private comerEventService: ComerEventService
+    private comerEventService: ComerEventService,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService
   ) {
     super();
     this.settings = {
@@ -133,8 +140,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
           renderComponent: ButtonColumnComponent,
           onComponentInitFunction: (instance: any) => {
             instance.onClick.subscribe((row: any) => {
-              console.log(row);
-              //this.seeOfficialConclusion(row);
+              this.report();
             });
           },
         },
@@ -147,8 +153,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
           renderComponent: ButtonColumnComponent,
           onComponentInitFunction: (instance: any) => {
             instance.onClick.subscribe((row: any) => {
-              console.log(row);
-              //this.seeClaimLetter(row);
+              this.report();
             });
           },
         },
@@ -358,7 +363,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
     let getGrafica = await this.getInvoices();
     console.log(getGrafica);
     this.array = getGrafica;
-    this.totalItems = this.array.count;
+
     this.arrayData = this.array.data;
     console.log(this.arrayData);
     for (let i = 0; i < this.arrayData.length; i++) {
@@ -375,6 +380,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
         this.dataFormat.push(data);
       }
     }
+    this.totalItems = this.dataFormat.length;
     console.log(this.totInvoices);
     this.calculatePercentage(this.dataFormat);
   }
@@ -484,7 +490,8 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
         endDate: endDate,
         goodTp: this.form.get('goods').value,
       };
-      // this.params1.getValue()['limit'] = 20;
+      this.params1.getValue()['limit'] = 20;
+
       let param = {
         ...this.params1.getValue(),
         ...this.columnFilters1,
@@ -648,5 +655,37 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
       bytes[i] = binaryString.charCodeAt(i);
     }
     return bytes.buffer;
+  }
+  report() {
+    let params = {};
+    this.siabService.fetchReport('blank', params).subscribe(response => {
+      //  response= null;
+      if (response !== null) {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {
+              if (data) {
+                data.map((item: any) => {
+                  return item;
+                });
+              }
+            },
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+        this.loader.load = false;
+      } else {
+        this.onLoadToast('warning', 'advertencia', '');
+        this.loader.load = false;
+      }
+    });
   }
 }

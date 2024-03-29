@@ -118,12 +118,16 @@
           </form-field>
         </div>
         <div class="col">
-          <form-field [control]="form.get('authority')" label="Autoridad">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="authority"
-              [readOnly]="form.get('statusAct').value != null" />
+          <form-field [control]="form.get('authority')" label="">
+            <ngx-select
+              [data]="dataAuthority"
+              [form]="form"
+              [class]="form.get('statusAct').value != null ? 'disabled' : ''"
+              [searchable]="false"
+              bindLabel="transferKey"
+              label="Autoridad"
+              control="authority">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col">
@@ -139,21 +143,29 @@
           </form-field>
         </div>
         <div class="col">
-          <form-field [control]="form.get('receive')" label="Recibe">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="receive"
-              [readOnly]="form.get('statusAct').value != null" />
+          <form-field [control]="form.get('receive')">
+            <ngx-select
+              [data]="dataDelegation"
+              [form]="form"
+              [class]="form.get('statusAct').value != null ? 'disabled' : ''"
+              [searchable]="false"
+              bindLabel="delegation"
+              label="Recibe"
+              control="receive">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col">
-          <form-field [control]="form.get('admin')" label="Admin">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="admin"
-              [readOnly]="form.get('statusAct').value != null" />
+          <form-field [control]="form.get('admin')">
+            <ngx-select
+              [data]="dataDelegation"
+              [form]="form"
+              [class]="form.get('statusAct').value != null ? 'disabled' : ''"
+              [searchable]="false"
+              bindLabel="delegation"
+              label="Admin"
+              control="admin">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col">
@@ -338,6 +350,7 @@
         <app-scan-file-shared
           [form]="form"
           [formControlName]="'universalFolio'"
+          [nameActa]="'act'"
           [cveDocument]="form.get('act').value"
           [noExpedient]="expediente"
           [actaSC]="true"
