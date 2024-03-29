@@ -27,6 +27,7 @@ import {
   PROG_DELIVERY_GOOD_NO_DELIVERED,
   PROG_DELIVERY_GOOD_TYPE_REST_COLUMNS,
 } from './columns/good-delivery-columns';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-execute-scheduling-deliveries',
@@ -107,6 +108,7 @@ export class ExecuteSchedulingDeliveriesComponent
   jsonToCsv = JSON_TO_CSV;
   constanceSelected: any = {};
   is: boolean = false;
+  idProgram: string = '';
 
   private programmingService = inject(ProgrammingGoodService);
   private transferenteService = inject(TransferenteService);
@@ -116,11 +118,16 @@ export class ExecuteSchedulingDeliveriesComponent
   private certifiGoodsService = inject(CertificatesGoodsService);
   private requestHelpService = inject(RequestHelperService);
 
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private route: ActivatedRoute,) {
     super();
   }
 
   ngOnInit(): void {
+    const segments = this.route.snapshot.url;
+    this.idProgram = segments[segments.length - 1].path
+    console.log(this.idProgram);
     this.getSchedulingDelivery();
     this.GoodDeliverySettings.columns = GOOD_DELIVERY_COLUMN;
 
@@ -396,7 +403,7 @@ export class ExecuteSchedulingDeliveriesComponent
 
   getSchedulingDelivery() {
     const params = new ListParams();
-    params['filter.id'] = `$eq:${16894}`; //16896
+    params['filter.id'] = `$eq:${this.idProgram}`; //16896
     this.programmingService
       .getProgrammingDelivery(params)
       .pipe(
