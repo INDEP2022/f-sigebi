@@ -177,7 +177,6 @@ export class SchedulingDeliveriesFormComponent
   }
 
   async getFolio() {
-    console.log('getFolio');
     const user: any = this.authService.decodeToken();
     this.generateFolioProgrammingDelivery(user.department);
   }
@@ -710,6 +709,7 @@ export class SchedulingDeliveriesFormComponent
 
       if (showNameDelegation) {
         const folioProgDel = `E-${showNameDelegation}-${this.programmingDeliveryInfo.id}`;
+        this.programmingDeliveryInfo.folio = folioProgDel;
         const infoProgramming: IprogrammingDelivery = {
           id: this.programmingDeliveryInfo.id,
           folio: folioProgDel,
@@ -2570,27 +2570,20 @@ export class SchedulingDeliveriesFormComponent
       );
     } else if (this.idTypeEvent > 0) {
       const typeEvent = this.schedulingDeliverieForm.get('typeEvent').value;
-      this.alertQuestion(
-        'question',
-        'Confirmación',
-        `¿Desea enviar la programación de entrega con folio ${this.programmingDeliveryInfo.id}?`
-      ).then(question => {
-        if (question.isConfirmed) {
-          const formData = {
-            idprogramming: this.programmingDeliveryInfo.id,
-            eventType: typeEvent,
-          };
-          this.programmingRequestService
-            .sendEmailProgrammingDelivery(formData)
-            .subscribe({
-              next: () => {
-                console.log('sendEmailProgrammingDelivery');
-                this.confirm();
-              },
-              error: () => {},
-            });
-        }
-      });
+
+      const formData = {
+        idprogramming: this.programmingDeliveryInfo.id,
+        eventType: typeEvent,
+      };
+      this.programmingRequestService
+        .sendEmailProgrammingDelivery(formData)
+        .subscribe({
+          next: () => {
+            console.log('sendEmailProgrammingDelivery');
+            this.confirm();
+          },
+          error: () => {},
+        });
     } else {
       this.alert(
         'warning',
@@ -2604,7 +2597,7 @@ export class SchedulingDeliveriesFormComponent
     this.alertQuestion(
       'question',
       'Turnar Solicitud',
-      `¿Desea turnar la solicitud a la siguiente etapa con folio ${this.programmingDeliveryInfo.id}?`
+      `¿Desea turnar la solicitud a la siguiente etapa con folio ${this.programmingDeliveryInfo.folio}?`
     ).then(async question => {
       if (question.isConfirmed) {
         if (this.programmingDeliveryInfo) {
@@ -2629,28 +2622,28 @@ export class SchedulingDeliveriesFormComponent
           switch (this.idTypeEvent) {
             case 1:
               task['title'] =
-                'Ejecutar entrega (Ventas) para la programación R-' +
-                this.programmingId;
+                'Ejecutar entrega (Ventas) para la programación ' +
+                this.programmingDeliveryInfo.folio;
               break;
             case 2:
               task['title'] =
-                'Ejecutar entrega (Donación) para la programación R-' +
-                this.programmingId;
+                'Ejecutar entrega (Donación) para la programación ' +
+                this.programmingDeliveryInfo.folio;
               break;
             case 3:
               task['title'] =
-                'Ejecutar entrega (Resarcimiento) para la programación R-' +
-                this.programmingId;
+                'Ejecutar entrega (Resarcimiento) para la programación ' +
+                this.programmingDeliveryInfo.folio;
               break;
             case 4:
               task['title'] =
-                'Ejecutar entrega (Devolución) para la programación R-' +
-                this.programmingId;
+                'Ejecutar entrega (Devolución) para la programación ' +
+                this.programmingDeliveryInfo.folio;
               break;
             case 5:
               task['title'] =
-                'Ejecutar entrega (Destrucción) para la programación R-' +
-                this.programmingId;
+                'Ejecutar entrega (Destrucción) para la programación ' +
+                this.programmingDeliveryInfo.folio;
               break;
           }
 
