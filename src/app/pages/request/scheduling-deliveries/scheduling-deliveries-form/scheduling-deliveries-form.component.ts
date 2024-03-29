@@ -176,6 +176,12 @@ export class SchedulingDeliveriesFormComponent
     this.date.setDate(this.date.getDate() + 5);
   }
 
+  async getFolio() {
+    console.log('getFolio');
+    const user: any = this.authService.decodeToken();
+    this.generateFolioProgrammingDelivery(user.department);
+  }
+
   ngOnInit(): void {
     this.programmingDeliveryInfo = null;
     this.getTransferentSelect(new ListParams());
@@ -697,11 +703,10 @@ export class SchedulingDeliveriesFormComponent
     });
   }
 
-  generateFolioProgrammingDelivery(programmingDelivery: IprogrammingDelivery) {
+  generateFolioProgrammingDelivery(department) {
+    console.log('department', department);
     return new Promise(async (resolve, reject) => {
-      const showNameDelegation: any = await this.showDelegationName(
-        programmingDelivery.delRegId
-      );
+      const showNameDelegation: any = await this.showDelegationName(department);
 
       if (showNameDelegation) {
         const folioProgDel = `E-${showNameDelegation}-${this.programmingDeliveryInfo.id}`;
@@ -717,6 +722,7 @@ export class SchedulingDeliveriesFormComponent
           )
           .subscribe({
             next: response => {
+              console.log('response', response);
               resolve(true);
             },
             error: error => {},
@@ -725,10 +731,11 @@ export class SchedulingDeliveriesFormComponent
     });
   }
 
-  showDelegationName(delegationId: number) {
+  async showDelegationName(delegationId: number) {
     return new Promise((resolve, reject) => {
       this.regionalDelegationService.getById(delegationId).subscribe({
         next: response => {
+          console.log('response', response);
           resolve(response.description);
         },
         error: error => {},
@@ -2070,71 +2077,71 @@ export class SchedulingDeliveriesFormComponent
           'Favor de ingresar al menos un correo electrónico'
         );
       } else {
-      const saveProgramming = await this.saveProgrammingDelivery();
+        const saveProgramming = await this.saveProgrammingDelivery();
 
-      let alreadyAddedGoods = this.goodDesSelect.filter(good =>
-        this.addedGoods.find(
-          addedGood => addedGood.goodId === good.managementNum
-        )
-      );
-
-      if (alreadyAddedGoods.length > 0) {
-        let alreadyAddedGoodsNames = alreadyAddedGoods
-          .map(good => good.managementNum)
-          .join(', ');
-        this.alert(
-          'warning',
-          'Acción Invalida',
-          `Los siguientes bienes ya han sido agregados a la programación de entrega: ${alreadyAddedGoodsNames}`
+        let alreadyAddedGoods = this.goodDesSelect.filter(good =>
+          this.addedGoods.find(
+            addedGood => addedGood.goodId === good.managementNum
+          )
         );
-      } else {
-        this.goodDesSelect.map(good => {
-          const goodForm: IGoodDelivery = {
-            programmingDeliveryId: saveProgramming['id'],
-            goodId: good?.managementNum,
-            client: good?.client,
-            delReg: good?.delRegSol,
-            descriptionGood: good?.descriptionGood,
-            amountGood: good?.quantity,
-            compensationOpinion: good?.dictumCompensation,
-            commercialEvent: good?.commercialEvent,
-            invoice: good?.bill,
-            item: good?.item,
-            commercialLot: good?.commercialLot,
-            inventoryNumber: good?.inventoryNum,
-            resolutionSat: good?.satResolution,
-            unit: good?.uomCode,
-            typeProgrammingId: good?.type,
-            transactionId: good?.transactionId,
-            siabGoodNumber: good?.bienSiabNum,
-            origen: good?.origin,
-            commercialEventDate: good?.commercialEventDate,
-            tranferId: good?.organizationId,
-            typeRelevantId: good?.relevant_type,
-            locatorId: good?.locatorId,
-            inventoryItemId: good?.inventoryItemId,
-            foundInd: 'N',
-          };
 
-          this.programmingRequestService
-            .createGoodProgrammingDevilery(goodForm)
-            .subscribe({
-              next: async response => {
-                this.addedGoods.push(goodForm);
-                this.params
-                  .pipe(takeUntil(this.$unSubscribe))
-                  .subscribe(() => this.showInfoProgrammingDelivery());
-              },
-              error: error => {},
-            });
-        });
-        this.alert(
-          'success',
-          'Acción Exitosa',
-          'Bienes agregados correctamente'
-        );
-        this.deselectAll();
-      }
+        if (alreadyAddedGoods.length > 0) {
+          let alreadyAddedGoodsNames = alreadyAddedGoods
+            .map(good => good.managementNum)
+            .join(', ');
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            `Los siguientes bienes ya han sido agregados a la programación de entrega: ${alreadyAddedGoodsNames}`
+          );
+        } else {
+          this.goodDesSelect.map(good => {
+            const goodForm: IGoodDelivery = {
+              programmingDeliveryId: saveProgramming['id'],
+              goodId: good?.managementNum,
+              client: good?.client,
+              delReg: good?.delRegSol,
+              descriptionGood: good?.descriptionGood,
+              amountGood: good?.quantity,
+              compensationOpinion: good?.dictumCompensation,
+              commercialEvent: good?.commercialEvent,
+              invoice: good?.bill,
+              item: good?.item,
+              commercialLot: good?.commercialLot,
+              inventoryNumber: good?.inventoryNum,
+              resolutionSat: good?.satResolution,
+              unit: good?.uomCode,
+              typeProgrammingId: good?.type,
+              transactionId: good?.transactionId,
+              siabGoodNumber: good?.bienSiabNum,
+              origen: good?.origin,
+              commercialEventDate: good?.commercialEventDate,
+              tranferId: good?.organizationId,
+              typeRelevantId: good?.relevant_type,
+              locatorId: good?.locatorId,
+              inventoryItemId: good?.inventoryItemId,
+              foundInd: 'N',
+            };
+
+            this.programmingRequestService
+              .createGoodProgrammingDevilery(goodForm)
+              .subscribe({
+                next: async response => {
+                  this.addedGoods.push(goodForm);
+                  this.params
+                    .pipe(takeUntil(this.$unSubscribe))
+                    .subscribe(() => this.showInfoProgrammingDelivery());
+                },
+                error: error => {},
+              });
+          });
+          this.alert(
+            'success',
+            'Acción Exitosa',
+            'Bienes agregados correctamente'
+          );
+          this.deselectAll();
+        }
       }
     } else {
       this.alert(
@@ -2207,9 +2214,9 @@ export class SchedulingDeliveriesFormComponent
   }
 
   async saveProgrammingDelivery() {
-
     const infoProg = {
-      statusNotification: "Y",
+      folio: null,
+      statusNotification: 'Y',
       typeEvent: this.schedulingDeliverieForm.get('typeEvent').value,
       startDate: moment(
         this.schedulingDeliverieForm.get('startDate').value
@@ -2334,7 +2341,7 @@ export class SchedulingDeliveriesFormComponent
             };*/
             //this.statusNotification = 'Y'
             this.saveProgrammingDelivery();
-           /* this.programmingRequestService
+            /* this.programmingRequestService
               .updateProgrammingDelivery(
                 this.programmingDeliveryInfo.id,
                 formData
@@ -2547,6 +2554,8 @@ export class SchedulingDeliveriesFormComponent
     const endDate = this.schedulingDeliverieForm.get('endDate').value;
     const email = this.schedulingDeliverieForm.get('email').value;
 
+    this.getFolio();
+
     if (!startDate && !endDate) {
       this.alert(
         'warning',
@@ -2603,6 +2612,7 @@ export class SchedulingDeliveriesFormComponent
           this.programmingId = this.programmingDeliveryInfo.id;
           //this.requestForm.get('creationUser').setValue(this.nameUser);
           const user: any = this.authService.decodeToken();
+
           let body: any = {};
 
           body['type'] = 'SOLICITUD_PROGRAMACION';
