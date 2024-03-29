@@ -55,8 +55,10 @@ export class AppraisalDetailActionsComponent
   // ?-------------------------- INSERTAR AVALUOS
   async onInsertAppraissal() {
     const body = this.getPufValEventBody('I');
+    console.log(body);
     await this.pufValEvent(body);
     const { id_evento, item_desc_tpsolaval } = this.controls;
+    console.log(this.controls);
     const { isConfirmed } = await this.alertQuestion(
       'question',
       `¿Ingresar Avalúos del evento ${id_evento.value}, referencia ${item_desc_tpsolaval.value}?`,
@@ -69,8 +71,50 @@ export class AppraisalDetailActionsComponent
     this.inputFile.nativeElement.click();
   }
 
+  // ?-------------------------- Agregar AVALUOS
+  async onAddAppraissal() {
+    const body = this.getPufValEventBody('A');
+    console.log(body);
+    await this.pufValEvent(body);
+    const { id_evento, item_desc_tpsolaval } = this.controls;
+    console.log(this.controls);
+    const { isConfirmed } = await this.alertQuestion(
+      'question',
+      `¿Agregar Bienes a los Avaluós del evento ${id_evento.value}, referencia ${item_desc_tpsolaval.value}?`,
+      ''
+    );
+    if (!isConfirmed) {
+      return;
+    }
+    this.$file.next(this.AddAppraisal);
+    this.inputFile.nativeElement.click();
+  }
+  AddAppraisal(file: File) {}
   insertAppraisal(file: File) {}
-  onValidationAppraissal() {}
+
+  async onValidationAppraissal() {
+    const { isConfirmed } = await this.alertQuestion(
+      'question',
+      '¿Desea validar el archivo?',
+      ''
+    );
+    if (isConfirmed) {
+      this.$file.next(this.validFile);
+      this.inputFile.nativeElement.click();
+    }
+  }
+  validFile(file: File) {
+    this.parameterComerService
+      .validFile(file)
+      .pipe(
+        catchError(error => {
+          this.alert('error', UNEXPECTED_ERROR, '');
+          return throwError(() => error);
+        }),
+        tap(response => this.handleValidDisscountFileResponse(response.data))
+      )
+      .subscribe();
+  }
 
   // ? ------------------------- VALIDAR ARCHIVO DESCUENTO
   async onValidDisscountFile() {
@@ -117,6 +161,10 @@ export class AppraisalDetailActionsComponent
   onRejectedDiscounts() {
     this.$showRejected.next(true);
     this.$rejectedDisscount.next(true);
+  }
+  onRejected() {
+    this.$showRejected.next(true);
+    this.$rejectedDisscount.next(false);
   }
 
   // ? -----------------------  APLICAR DESCUENTO
