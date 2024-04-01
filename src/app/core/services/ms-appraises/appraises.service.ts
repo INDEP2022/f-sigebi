@@ -56,4 +56,10 @@ export class AppraisesService extends HttpService {
     const route = `appraisal-x-good?filter.noRequest=$eq:${id}`;
     return this.get(route);
   }
+  postInsertAppraisalFcomerreavaluo(body: any) {
+    return this.post(AppraiseEndpoints.pupInsertAppraisalFcomerreavaluo, body);
+  }
+  deleteTmpeatAppraisal(body: any) {
+    return this.delete(AppraiseEndpoints.tmpeatAppraisal, body);
+  }
 }

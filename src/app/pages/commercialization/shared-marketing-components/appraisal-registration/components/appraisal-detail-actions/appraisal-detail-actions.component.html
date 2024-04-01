@@ -12,7 +12,9 @@
   </button>
 </li>
 <li role="menuitem">
-  <button type="button" class="dropdown-item">Avalúos Rechazados</button>
+  <button type="button" class="dropdown-item" (click)="onRejected()">
+    Avalúos Rechazados
+  </button>
 </li>
 <li role="menuitem">
   <button type="button" class="dropdown-item" (click)="onInsertAppraissal()">
@@ -20,10 +22,14 @@
   </button>
 </li>
 <li role="menuitem">
-  <button type="button" class="dropdown-item">Agregar Avalúo</button>
+  <button type="button" class="dropdown-item" (click)="onAddAppraissal()">
+    Agregar Avalúo
+  </button>
 </li>
 <li role="menuitem">
-  <button type="button" class="dropdown-item">Actualizar Avalúo</button>
+  <button type="button" class="dropdown-item" (click)="onUpdateAppraissal()">
+    Actualizar Avalúo
+  </button>
 </li>
 <li class="divider dropdown-divider"></li>
 <li role="menuitem">
