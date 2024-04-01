@@ -345,7 +345,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             this.loading = false;
             this.alertInfo(
               'success',
-              'El Documento ha sido Agregado',
+              'El documento ha sido agregado',
               `ID: ${resp.dDocName}`
             ).then(question => {
               if (question.isConfirmed) {
@@ -441,7 +441,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             this.loading = false;
             this.alertInfo(
               'success',
-              'El Documento ha sido Agregado',
+              'El documento ha sido agregado',
               `ID: ${resp.dDocName}`
             ).then(question => {
               if (question.isConfirmed) {
@@ -530,7 +530,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             this.loading = false;
             this.alertInfo(
               'success',
-              'El Documento ha sido Agregado',
+              'El documento ha sido agregado',
               `ID: ${resp.dDocName}`
             ).then(question => {
               if (question.isConfirmed) {
@@ -618,7 +618,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             this.loading = false;
             this.alertInfo(
               'success',
-              'El Documento ha sido Agregado',
+              'El documento ha sido agregado',
               `ID: ${resp.dDocName}`
             ).then(question => {
               if (question.isConfirmed) {
@@ -707,7 +707,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             this.loading = false;
             this.alertInfo(
               'success',
-              'El Documento ha sido Agregado',
+              'El documento ha sido agregado',
               `ID: ${resp.dDocName}`
             ).then(question => {
               if (question.isConfirmed) {
