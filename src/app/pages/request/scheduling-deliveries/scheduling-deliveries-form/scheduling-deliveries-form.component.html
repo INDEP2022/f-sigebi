@@ -173,25 +173,14 @@
           </div>
 
           <div class="pt-3" *ngIf="idTypeEvent == 1 && !isReadOnly">
-            <ngx-select
-              [form]="schedulingDeliverieForm"
-              control="client"
-              [data]="clients"
-              value="client"
-              bindLabel="client"
-              label="Cliente"
-              (fetchItems)="getClientSelect($event)"></ngx-select>
+            <ngx-select [form]="schedulingDeliverieForm" control="client" [data]="clients" value="id" bindLabel="client"
+              label="Cliente" (change)="typeEventSelect($event, 'client')" (fetchItems)="getClientSelect($event)"></ngx-select>
           </div>
           <div class="pt-3" *ngIf="idTypeEvent == 1 && isReadOnly">
-            <ngx-select
-              [form]="schedulingDeliverieForm"
-              control="client"
-              [data]="clients"
-              value="client"
-              bindLabel="client"
+            <ngx-select [form]="schedulingDeliverieForm" control="client" [data]="clients" value="id" bindLabel="client"
               label="Cliente"
-              [readonly]="true"
-              (fetchItems)="getClientSelect($event)"></ngx-select>
+            [readonly]="true"
+             (fetchItems)="getClientSelect($event)">></ngx-select>
           </div>
         </div>
         <div class="col-md-12">

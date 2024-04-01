@@ -220,7 +220,7 @@ export class SchedulingDeliveriesFormComponent
 
       this.goodsInvService.getClientName(formData).subscribe({
         next: response => {
-          this.clientName = response.data[0].client;
+          //this.clientName = response.data[0].client;
           resolve(true);
         },
         error: () => {},
@@ -600,6 +600,8 @@ export class SchedulingDeliveriesFormComponent
       //this.disableStore = true;
       this.idClient = typeEvent.id;
       this.clientName = typeEvent.client;
+      console.log('name', this.clientName)
+      console.log('id', this.idClient)
       //this.schedulingDeliverieForm.get('storeName').setValue(typeEvent.name);
     }
 
@@ -791,7 +793,7 @@ export class SchedulingDeliveriesFormComponent
         params['filter.bienSiabNum'] = `$eq:${bienSiabNum}`;
       }
 
-      params['filter.orderBy'] = `descriptionGood:ASC`;
+      //params['filter.orderBy'] = `$eq:descriptionGood:ASC`;
 
       params['filter.delRegSol'] = `$eq:${this.regionalDelegationNum}`;
       params['filter.inventoryKey'] = `$eq:${store}`;
@@ -839,12 +841,12 @@ export class SchedulingDeliveriesFormComponent
         params['filter.commercialLot'] = `$eq:${commercialLot}`;
       }
 
-      params['filter.orderBy'] = `descriptionGood:ASC`;
+      // params['filter.orderBy'] = `descriptionGood:ASC`;
 
       params['filter.delRegSol'] = `$eq:${this.regionalDelegationNum}`;
       params['filter.inventoryKey'] = `$eq:${store}`;
       params['filter.entTransfereeId'] = `$eq:${transferent}`;
-      params['filtter.client'] = `$eq:${this.clientName}`;
+      params['filter.client'] = `$eq:${this.clientName}`;
       params['filter.eventType'] = `$eq:Vendidos`;
 
       this.loadingGoodsSales = true;
@@ -966,6 +968,10 @@ export class SchedulingDeliveriesFormComponent
           'Advertencia',
           'No hay bienes para ' + this.nameEvent + ' en el inventario'
         );
+        this.infoGoodDestruction.load([]);
+        this.infoGoodDevolution.load([]);
+        this.infoGoodDonation.load([]);
+        this.infoGoodSales.load([]);
       },
     });
   }
