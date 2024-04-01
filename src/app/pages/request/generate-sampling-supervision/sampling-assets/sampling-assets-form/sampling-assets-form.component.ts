@@ -491,7 +491,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
         error: error => {
           this.alert(
             'warning',
-            'Datos no Encontrados',
+            'Datos no encontrados',
             'No hay bienes relacionados a el almacén seleccionado'
           );
           this.loadingGoodInv = false;
@@ -1020,7 +1020,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
                   this.alert(
                     'success',
                     'Correcto',
-                    'Muestreo Cerrado correctamente'
+                    'Muestreo cerrado correctamente'
                   );
                 }
               });
