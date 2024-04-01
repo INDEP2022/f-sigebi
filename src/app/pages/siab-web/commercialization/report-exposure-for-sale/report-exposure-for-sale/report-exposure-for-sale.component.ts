@@ -454,11 +454,15 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
         params['filter.typeDesc'] = `$ilike:${params.text}`;
       }
     }
-    this.goodProcessService.getVGoodTpye(params).subscribe({
+    let body = {
+      pOnlyType: 1,
+      typeNumber: 0,
+    };
+    this.goodProcessService.getVgoodTypeObtnTypeGood(body, params).subscribe({
       next: resp => {
         console.log(resp.data);
         this.result = resp.data.map(async (item: any) => {
-          item['numDesc'] = item.typeNumber + ' - ' + item.typeDesc;
+          item['numDesc'] = item.typeNumber + ' - ' + item.description;
         });
         this.typeGood = new DefaultSelect(resp.data, resp.count);
       },
@@ -474,6 +478,7 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
       this.idTypeGood = event.typeNumber;
       this.form.get('subtype').setValue(null);
       //this.form.get('subtype').enable();
+      this.subType = new DefaultSelect([], 0, true);
       this.getSubTypeGood(new ListParams(), event.typeNumber);
     } else {
       this.form.get('subtype').setValue(null);
@@ -486,8 +491,10 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
 
   getSubTypeGood(params: ListParams, idType?: number | string) {
     console.log(params.text);
-    if (idType) {
-      params['filter.typeNumber'] = `$eq:${idType}`;
+    console.log(idType);
+
+    if (this.idTypeGood) {
+      params['filter.typeNumber'] = `$eq:${this.idTypeGood}`;
     }
     if (params.text) {
       if (!isNaN(parseInt(params.text))) {
@@ -497,11 +504,15 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
         params['filter.subTypeDesc'] = `$ilike:${params.text}`;
       }
     }
-    this.goodProcessService.getVGoodTpye(params).subscribe({
+    let body = {
+      pOnlyType: 2,
+      typeNumber: this.idTypeGood,
+    };
+    this.goodProcessService.getVgoodTypeObtnTypeGood(body, params).subscribe({
       next: resp => {
         console.log(resp.data);
         this.result2 = resp.data.map(async (item: any) => {
-          item['numSubDesc'] = item.subTypeNumber + ' - ' + item.subTypeDesc;
+          item['numSubDesc'] = item.subtypeNumber + ' - ' + item.description;
         });
         this.subType = new DefaultSelect(resp.data, resp.count);
       },

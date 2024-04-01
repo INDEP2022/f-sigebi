@@ -34,8 +34,9 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { isNullOrEmpty } from 'src/app/pages/request/request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { NewDocumentComponent } from '../new-document/new-document.component';
-import { DOC_REQUEST_TAB_COLUMNS } from './doc-request-tab-columns';
+import { DOC_REQUEST_DOC_COM_TAB_COLUMNS, DOC_REQUEST_TAB_COLUMNS } from './doc-request-tab-columns';
 import { SeeInformationComponent } from './see-information/see-information.component';
+import { Location } from '@angular/common';
 
 interface searchTable {
   noDoc: string;
@@ -105,7 +106,8 @@ export class DocRequestTabComponent
     private transferentService: TransferenteService,
     private stateOfRepublicService: StateOfRepublicService,
     private requestService: RequestService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private location: Location
   ) {
     super();
     this.idRequest = this.idRequest
@@ -124,9 +126,13 @@ export class DocRequestTabComponent
     this.getTransfe(new ListParams());
     this.getDocType(new ListParams());
     this.typeDoc = this.type ? this.type : this.typeDoc;
+
     if (this.typeDoc === 'doc-request' || this.typeDoc === 'doc-expedient') {
       this.container.createEmbeddedView(this.template);
     }
+
+    let doccom = this.excludeSIAB();
+
     this.settings = {
       ...TABLE_SETTINGS,
       actions: {
@@ -142,7 +148,7 @@ export class DocRequestTabComponent
       delete: {
         deleteButtonContent: '<i  class="fa fa-eye text-info mx-2"> </i>',
       },
-      columns: DOC_REQUEST_TAB_COLUMNS,
+      columns: !doccom ? DOC_REQUEST_TAB_COLUMNS : DOC_REQUEST_DOC_COM_TAB_COLUMNS,
     };
 
     /*this.columns.button = {
@@ -156,6 +162,7 @@ export class DocRequestTabComponent
         });
       },
     }; */
+
   }
 
   getInfoRequest() {
@@ -171,6 +178,8 @@ export class DocRequestTabComponent
       error: error => { },
     });
   }
+
+  xidSIAB: any = null;
 
   ngOnChanges(changes: SimpleChanges): void {
     this.idRequest = this.idRequest || this.requestId;
@@ -192,7 +201,30 @@ export class DocRequestTabComponent
       this.setTitle(onChangeCurrentValue);
     }
 
+  }
+
+  excludeSIAB() {
     //let updateInfo = changes['updateInfo']?.currentValue;
+    const url = this.location.path();
+
+    return url.includes('request-comp-doc') &&
+      this.typeDoc != 'request-assets';
+
+    //console.log('url', url);
+
+    /*if (url.includes('request-comp-doc') &&
+      this.typeDoc != 'request-assets') {
+
+      console.log('url', this.typeDoc, this.xidSIAB, this.settings.columns['xidSIAB']);
+
+      if (isNullOrEmpty(this.xidSIAB)) { this.xidSIAB = { ...this.settings.columns['xidSIAB'] }; }
+      delete this.settings.columns['xidSIAB'];
+    } else {
+
+      console.log('url', this.typeDoc, this.xidSIAB, this.settings.columns['xidSIAB']);
+
+      //this.settings.columns['xidSIAB'] = this.xidSIAB;
+    }*/
   }
 
   prepareForm(): void {
