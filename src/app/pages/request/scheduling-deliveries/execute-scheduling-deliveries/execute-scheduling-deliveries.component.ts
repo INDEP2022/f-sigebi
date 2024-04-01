@@ -1,4 +1,5 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, of, takeUntil } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -6,6 +7,7 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IProgrammingDeliveryGood } from 'src/app/core/models/good-programming/programming-delivery-good.model';
+import { IGoodInvAvailableView } from 'src/app/core/models/ms-goodsinv/goodsinv.model';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { CertificatesDeliveryService } from 'src/app/core/services/ms-delivery-constancy/certificates-delivery.service';
 import { CertificatesGoodsService } from 'src/app/core/services/ms-delivery-constancy/certificates-goods.service';
@@ -15,6 +17,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { JSON_TO_CSV } from 'src/app/pages/admin/home/constants/json-to-csv';
 import Swal from 'sweetalert2';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
+import { ShowDocumentsGoodComponent } from '../../shared-request/expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
 import { ClaimFormModalComponent } from '../claim-form-modal/claim-form-modal.component';
 import { DeliveriesConstancyFormComponent } from '../deliveries-constancy-form/deliveries-constancy-form.component';
 import { DocumentConstanceModalComponent } from '../document-constance-modal/document-constance-modal.component';
@@ -27,9 +30,6 @@ import {
   PROG_DELIVERY_GOOD_NO_DELIVERED,
   PROG_DELIVERY_GOOD_TYPE_REST_COLUMNS,
 } from './columns/good-delivery-columns';
-import { ActivatedRoute } from '@angular/router';
-import { ShowDocumentsGoodComponent } from '../../shared-request/expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
-import { IGoodInvAvailableView } from 'src/app/core/models/ms-goodsinv/goodsinv.model';
 
 @Component({
   selector: 'app-execute-scheduling-deliveries',
@@ -122,13 +122,14 @@ export class ExecuteSchedulingDeliveriesComponent
 
   constructor(
     private modalService: BsModalService,
-    private route: ActivatedRoute,) {
+    private route: ActivatedRoute
+  ) {
     super();
   }
 
   ngOnInit(): void {
     const segments = this.route.snapshot.url;
-    this.idProgram = segments[segments.length - 1].path
+    this.idProgram = segments[segments.length - 1].path;
     console.log(this.idProgram);
     this.getSchedulingDelivery();
     this.GoodDeliverySettings.columns = GOOD_DELIVERY_COLUMN;
@@ -416,6 +417,7 @@ export class ExecuteSchedulingDeliveriesComponent
       .subscribe({
         next: (resp: any) => {
           this.programmingDetailPanel = resp;
+          console.log(this.programmingDetailPanel);
           /*this.programmingDetailPanel.id = resp.id;
           this.programmingDetailPanel.typeEvent = resp.typeEvent;
           this.programmingDetailPanel.folio = resp.folio;
@@ -1440,13 +1442,13 @@ export class ExecuteSchedulingDeliveriesComponent
      */
     window.alert('No se implento la funcion');
   }
-  selectedRows
+  selectedRows;
   goodsSelect(goodSelect: IGoodInvAvailableView[]) {
     this.selectedRows = goodSelect;
     console.log(this.selectedRows);
   }
   showDocuments(): void {
-    console.log(this.selectRows)
+    console.log(this.selectRows);
     if (this.selectedRows.length == 0 || this.selectedRows.length >= 2) {
     } else {
       const idGood = this.selectedRows[0].id;

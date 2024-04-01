@@ -638,7 +638,7 @@ export class SchedulingDeliveriesFormComponent
           store: store,
           endDate: endDate,
           transferId: transferent,
-          client: this.schedulingDeliverieForm.get('client').value,
+          client: this.clientName,
           email: this.schedulingDeliverieForm.get('email').value,
           officeDestructionNumber: this.schedulingDeliverieForm.get(
             'officeDestructionNumber'
@@ -1055,11 +1055,11 @@ export class SchedulingDeliveriesFormComponent
 
   async addGoodsProgrammingDelivery() {
     if (this.goodDesSelect.length > 0) {
-      if (isNullOrEmpty(this.schedulingDeliverieForm.get('email').value)) {
+      if (!this.schedulingDeliverieForm.valid) {
         this.alert(
           'warning',
           'Advertencia',
-          'Favor de ingresar al menos un correo electrónico'
+          'Favor de llenar todos los campos requeridos'
         );
       } else {
         const saveProgramming = await this.saveProgrammingDelivery();
@@ -1211,7 +1211,7 @@ export class SchedulingDeliveriesFormComponent
         this.schedulingDeliverieForm.get('endDate').value
       ).format(),
       transferId: this.schedulingDeliverieForm.get('transferId').value,
-      client: this.schedulingDeliverieForm.get('client').value,
+      client: this.clientName,
       email: this.schedulingDeliverieForm.get('email').value,
       officeDestructionNumber: this.schedulingDeliverieForm.get(
         'officeDestructionNumber'
