@@ -288,44 +288,52 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   certificateDelivery(constancy: number) {
-    console.log('aqui', this.selectedRows);
-
-    const typeEvent = this.programmingDetailPanel.typeEvent;
-    const comply = this.validateBeforeOpenModal(constancy);
-    if (comply != true) return;
-
-    const certificateDelivery = this.modalService.show(
-      DeliveriesConstancyFormComponent,
-      {
-        initialState: {
-          goods: this.selectedRows,
-          typeConstancy: constancy,
-          typeEvent: typeEvent,
-          progEntrega: this.programmingDetailPanel,
-        },
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
-    );
-
-    certificateDelivery.content.event.subscribe((data: any) => {
-      console.log(data);
+    console.log(this.selectedRows);
+    if (this.selectedRows.length < 1) {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Se debe seleccionar al menos un bien para generar la constancia de entrega'
+      );
+      return;
+    } else {
       const typeEvent = this.programmingDetailPanel.typeEvent;
-      this.loadingT2 = true;
-      const typeReceptor = data.receiverType;
-      if (typeEvent == 1 && typeReceptor == 'CLIENTE') {
-        this.constancyDeliveryArray['identificator'] = data.clientIden;
-        this.constancyDeliveryArray['IdennNum'] = data.clientIdennNum;
-        this.constancyDeliveryArray['name'] = data.cliente;
-      } else if (typeEvent != 1 && typeReceptor != 'CLIENTE') {
-        this.constancyDeliveryArray['identificator'] = data.repLegalIden;
-        this.constancyDeliveryArray['IdennNum'] = data.repLegalIdenNum;
-        this.constancyDeliveryArray['name'] = data.repLegal;
-      }
+      const comply = this.validateBeforeOpenModal(constancy);
+      if (comply != true) return;
 
-      this.constancyDeliveryArray = [...this.constancyDeliveryArray];
-      this.loadingT2 = false;
-    });
+      const certificateDelivery = this.modalService.show(
+        DeliveriesConstancyFormComponent,
+        {
+          initialState: {
+            goods: this.selectedRows,
+            typeConstancy: constancy,
+            typeEvent: typeEvent,
+            progEntrega: this.programmingDetailPanel,
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        }
+      );
+
+      certificateDelivery.content.event.subscribe((data: any) => {
+        console.log(data);
+        const typeEvent = this.programmingDetailPanel.typeEvent;
+        this.loadingT2 = true;
+        const typeReceptor = data.receiverType;
+        if (typeEvent == 1 && typeReceptor == 'CLIENTE') {
+          this.constancyDeliveryArray['identificator'] = data.clientIden;
+          this.constancyDeliveryArray['IdennNum'] = data.clientIdennNum;
+          this.constancyDeliveryArray['name'] = data.cliente;
+        } else if (typeEvent != 1 && typeReceptor != 'CLIENTE') {
+          this.constancyDeliveryArray['identificator'] = data.repLegalIden;
+          this.constancyDeliveryArray['IdennNum'] = data.repLegalIdenNum;
+          this.constancyDeliveryArray['name'] = data.repLegal;
+        }
+
+        this.constancyDeliveryArray = [...this.constancyDeliveryArray];
+        this.loadingT2 = false;
+      });
+    }
   }
 
   newDocument() {
@@ -694,14 +702,10 @@ export class ExecuteSchedulingDeliveriesComponent
         return false;
       }
 
-      const goodAdded =
-        item.sunGoodEnt +
-        item.sumGoodNoEnt +
-        item.sumGoodNoAce +
-        item.sumGoodNoRet;
-      const totalGood = item.amountGood;
+      console.log('lsColumna', lsColumna);
+      console.log('lsColumnaTot', item);
 
-      if (goodAdded > totalGood) {
+      if (lsColumna > item.faltante) {
         this.onLoadToast(
           'info',
           `El bien ${item.goodId} - ${item.inventoryNumber} - excede la cantidad permitida`

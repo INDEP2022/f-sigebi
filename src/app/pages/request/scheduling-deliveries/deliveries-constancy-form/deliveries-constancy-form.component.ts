@@ -287,6 +287,19 @@ export class DeliveriesConstancyFormComponent
 
   generateReport() {}
 
+  generateUniqueNumber() {
+    const date = new Date();
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    const second = date.getSeconds();
+    const millisecond = date.getMilliseconds();
+
+    const uniqueNumber =
+      hour * 10000 + minute * 100 + second + millisecond / 10;
+
+    return Math.floor(uniqueNumber);
+  }
+
   async create() {
     let idProgDelivery = this.progEntrega.id;
     let folio = this.progEntrega.folio;
@@ -297,6 +310,7 @@ export class DeliveriesConstancyFormComponent
 
     //CREATE CERTIFICADO DE ENTREGA
     let deliveryForm = this.deliveryConstancyForm.getRawValue();
+    deliveryForm.certificateId = this.generateUniqueNumber();
     deliveryForm.deliveryScheduleId = idProgDelivery;
     deliveryForm.folio = folio;
     deliveryForm.userCreation = userAuth.username;
