@@ -104,11 +104,11 @@ export class AppraisalEventFormComponent
   }
   pupGenOficio() {
     const { id_evento, documentType } = this.controls;
-    this.router.navigate(['/pages/siab-web/appraisals/valuation-request'], {
+    this.router.navigate(['/pages/siab-web/appraisals/res-cancel-valuation'], {
       queryParams: {
         origin: this.screen,
-        event: id_evento,
-        type: documentType,
+        event: id_evento.value,
+        type: documentType.value,
       },
     });
   }

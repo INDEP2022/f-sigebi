@@ -125,6 +125,7 @@ export class AppraisalDetailListComponent
       tap(aprraisal => {
         if (!aprraisal) {
           this.resetTable();
+
           return;
         }
         const params = new FilterParams();

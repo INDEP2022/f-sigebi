@@ -158,9 +158,11 @@ export class AppraisalDetailActionsComponent
                     .subscribe({
                       next: res => {
                         console.log(res);
-
                         this.searchGoods.next(id_evento.value);
                         this.loader.load = false;
+                        this.$appraisedRejectedList.next(
+                          res.COMER_AVALUOS_RECHAZADOS
+                        );
                       },
                       error: eror => {
                         this.loader.load = false;
@@ -208,6 +210,9 @@ export class AppraisalDetailActionsComponent
                       console.log(res);
                       this.searchGoods.next(id_evento.value);
                       this.loader.load = false;
+                      this.$appraisedRejectedList.next(
+                        res.COMER_AVALUOS_RECHAZADOS
+                      );
                     },
                     error: eror => {
                       this.loader.load = false;
@@ -253,7 +258,7 @@ export class AppraisalDetailActionsComponent
         .subscribe({
           next: resp => {
             console.log(resp);
-            // this.alert('warning', resp.message[0], '');
+            this.alert('warning', resp.message, '');
             this.$appraisedRejectedGoodsList.next(resp.rejectedGoods);
             this.loader.load = false;
           },
@@ -274,7 +279,7 @@ export class AppraisalDetailActionsComponent
         .subscribe({
           next: resp => {
             console.log(resp);
-            // this.alert('warning', resp.message[0], '');
+            this.alert('warning', resp.message, '');
             this.$appraisedRejectedGoodsList.next(resp.rejectedGoods);
             this.loader.load = false;
           },
