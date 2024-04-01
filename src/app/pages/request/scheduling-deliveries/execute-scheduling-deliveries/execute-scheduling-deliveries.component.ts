@@ -30,6 +30,7 @@ import {
   PROG_DELIVERY_GOOD_NO_DELIVERED,
   PROG_DELIVERY_GOOD_TYPE_REST_COLUMNS,
 } from './columns/good-delivery-columns';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-execute-scheduling-deliveries',
@@ -695,9 +696,15 @@ export class ExecuteSchedulingDeliveriesComponent
           break;
       }
       if (lsColumna <= 0) {
-        this.onLoadToast(
-          'info',
-          `El bien ${item.goodId} - ${item.inventoryNumber} - tiene un valor menor o igual a cero`
+        // this.onLoadToast(
+        //   'info',
+        //   `El bien ${item.goodId} - ${item.inventoryNumber} - tiene un valor menor o igual a cero`
+        // );
+
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          `El bien ${item.goodId} tiene un valor menor o igual a cero`
         );
         return false;
       }
@@ -1267,8 +1274,12 @@ export class ExecuteSchedulingDeliveriesComponent
       const good = this.progGoodNoDeliveredSelected[index];
 
       if (good.typeRestitution == null) {
-        const msg = `El bien ${good.goodId} - ${good.inventoryNumber} debe tener asignado un tipo de restitución`;
-        this.onLoadToast('info', msg);
+        //const msg = `El bien ${good.goodId} - ${good.inventoryNumber} debe tener asignado un tipo de restitución`;
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'El bien ' + good.goodId + '-' + good.inventoryNumber + ' debe tener asignado un tipo de restitución'
+        );
         error = true;
         break;
       }
@@ -1456,24 +1467,38 @@ export class ExecuteSchedulingDeliveriesComponent
 
   showDocuments(): void {
     console.log('o aqui' + this.selectRows);
-    if (this.selectedRows.length == 0 || this.selectedRows.length >= 2) {
+    if (isNullOrEmpty(this.selectedRows)) {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se debe seleccionar un bien '
+      );
     } else {
-      const idGood = this.selectedRows[0].id;
-      const idRequest = 0;
-      let config: ModalOptions = {
-        initialState: {
-          idGood,
-          idRequest,
-          parameter: '',
-          typeDoc: 'expedient',
-          callback: (next: boolean) => {
-            //if(next) this.getExample();
+      if (this.selectedRows.length == 0 || this.selectedRows.length >= 2) {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'Se debe seleccionar un bien '
+        );
+      } else {
+        const idGood = this.selectedRows[0].id;
+        const idRequest = 0;
+        let config: ModalOptions = {
+          initialState: {
+            idGood,
+            idRequest,
+            parameter: '',
+            typeDoc: 'expedient',
+            callback: (next: boolean) => {
+              //if(next) this.getExample();
+            },
           },
-        },
-        class: `modalSizeXL modal-dialog-centered`,
-        ignoreBackdropClick: true,
-      };
-      this.modalService.show(ShowDocumentsGoodComponent, config);
+          class: `modalSizeXL modal-dialog-centered`,
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(ShowDocumentsGoodComponent, config);
+      }
     }
+
   }
 }

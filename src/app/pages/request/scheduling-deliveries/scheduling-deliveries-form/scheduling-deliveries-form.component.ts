@@ -633,7 +633,6 @@ export class SchedulingDeliveriesFormComponent
           'DD/MM/YYYY HH:mm:ssZ'
         ).toDate();
         console.log('2');
-
         const infoSave: IprogrammingDelivery = {
           id: this.programmingDeliveryInfo.id,
           typeEvent: typeEvent,
@@ -641,7 +640,7 @@ export class SchedulingDeliveriesFormComponent
           store: store,
           endDate: endDate,
           transferId: transferent,
-          client: this.clientName,
+          client: this.clientName ? this.clientName : null,
           email: this.schedulingDeliverieForm.get('email').value,
           officeDestructionNumber: this.schedulingDeliverieForm.get(
             'officeDestructionNumber'
@@ -1083,6 +1082,7 @@ export class SchedulingDeliveriesFormComponent
             `Los siguientes bienes ya han sido agregados a la programación de entrega: ${alreadyAddedGoodsNames}`
           );
         } else {
+
           this.goodDesSelect.map(good => {
             const goodForm: IGoodDelivery = {
               programmingDeliveryId: saveProgramming['id'],
@@ -1214,7 +1214,7 @@ export class SchedulingDeliveriesFormComponent
         this.schedulingDeliverieForm.get('endDate').value
       ).format(),
       transferId: this.schedulingDeliverieForm.get('transferId').value,
-      client: this.clientName,
+      client: this.clientName ? this.clientName : null,
       email: this.schedulingDeliverieForm.get('email').value,
       officeDestructionNumber: this.schedulingDeliverieForm.get(
         'officeDestructionNumber'
