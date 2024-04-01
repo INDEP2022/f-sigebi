@@ -1019,7 +1019,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           this.lblDireccion = ' ACTIVOS FINANCIEROS ';
         }
         this.lblCvlOfocio = i?.cve_oficio;
-
+        this.form.controls['office'].setValue(i?.cve_oficio);
         this.form
           .get('event')
           .setValue(i?.id_evento, { onlySelf: true, emitEvent: false });
