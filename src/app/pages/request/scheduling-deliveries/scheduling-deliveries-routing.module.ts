@@ -12,6 +12,9 @@ const routes: Routes = [
     path: 'execute-schelude-delivery',
     component: ExecuteSchedulingDeliveriesComponent,
   },
+  {
+    path: 'execute-schelude-delivery/:id',
+  },
 ];
 
 @NgModule({

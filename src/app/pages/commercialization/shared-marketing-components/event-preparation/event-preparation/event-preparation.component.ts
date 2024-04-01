@@ -223,9 +223,12 @@ export class EventPreparationComponent
   taskOpenEvent() {
     this.hideCanvas();
     this.cleanStadistics();
-    // const params = new FilterParams();
+    const params = new FilterParams();
     console.log('taskOpenEvent: ', this.comerEventsListParams);
-    // this.comerEventsListParams.next(params);
+    params.page = this.comerCustomersListParams.value.page;
+    params.limit = this.comerCustomersListParams.value.limit;
+    this.comerEventsListParams.next(params);
+    // this.commerEventsList.refreshData();
   }
 
   /**
@@ -239,6 +242,7 @@ export class EventPreparationComponent
    * ABRIR_EVENTO
    */
   async onOpenEvent() {
+    console.log('Se dio click a abrir eventos');
     this.parameters.pValids = 1;
     const user = this.loggedUser.preferred_username;
     const { statusVtaId, eventTpId, id } = this.eventControls;

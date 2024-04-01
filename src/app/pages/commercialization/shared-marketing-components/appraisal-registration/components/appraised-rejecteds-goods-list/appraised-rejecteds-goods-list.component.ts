@@ -23,11 +23,11 @@ export class AppraisedRejectedsGoodsListComponent
       ...this.settings,
       actions: false,
       columns: {
-        NO_BIEN: {
+        goodNumber: {
           title: 'No. Bien',
           sort: false,
         },
-        CAUSA: {
+        cause: {
           title: 'CAUSA',
           sort: false,
         },

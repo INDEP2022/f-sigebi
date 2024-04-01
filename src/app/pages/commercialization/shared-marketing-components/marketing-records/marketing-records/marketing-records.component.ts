@@ -345,7 +345,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
           global_valbien = null;
         }
 
-        if (global_valbien == null) {
+        if (global_valbien == null && res.data[0].Good.length > 0) {
           const goodData = res.data[0].Good[0];
           console.log(res.data[0].Good);
 
@@ -368,8 +368,14 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
           this.NO_VOLANTE = goodData.no_volante;
           this.NO_EXPEDIENTE = goodData.no_expediente;
         }
+
+        if (res.data[0].Good.length == 0) {
+          this.alert('warning', 'No existen bienes', '');
+          return;
+        }
       },
       err => {
+        this.alert('error', 'Error', 'Ocurrio un error al obtener los datos');
         console.log(err);
       }
     );

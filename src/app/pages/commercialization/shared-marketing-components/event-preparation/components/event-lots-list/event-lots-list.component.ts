@@ -65,6 +65,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   totalItems = 0;
   @Input() lots = new LocalDataSource();
   @Input() onlyBase = false;
+  @Output() onInit: EventEmitter<void> = new EventEmitter<void>();
   lotSelected: IComerLot = null;
 
   private _flagTracker = true;
@@ -101,6 +102,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   }
 
   refreshTable() {
+    console.log('Llamo');
     const params = new FilterParams();
     this.params.next(params);
   }
@@ -109,7 +111,14 @@ export class EventLotsListComponent extends BasePage implements OnInit {
     console.log(event);
   }
 
+  refreshDate(): void {
+    console.log('Sí llama a este emit');
+    this.onInit.emit();
+  }
+
   ngOnInit(): void {
+    this.refreshTable();
+
     this.eventPreparationService.$refreshLots
       .pipe(
         takeUntil(this.$unSubscribe),
