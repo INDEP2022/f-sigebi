@@ -28,4 +28,18 @@ export class ProceedingSusPcancelService extends HttpService {
   queryRNomencla(delegation: string, params?: any) {
     return this.get(`application/query-r-nomencla/${delegation}`, params);
   }
+
+  postQuery(body: IPostQueryGoodFACTCIRCUN_0001) {
+    return this.post('application/process-factcircun', body);
+  }
+}
+
+export interface IPostQueryGoodFACTCIRCUN_0001 {
+  elaborationDate: Date | null;
+  delegationNumber: number;
+  subdelegationNumber: number;
+  goodNumber: number;
+  proceedingsNumber: number;
+  status: string;
+  screen: string;
 }

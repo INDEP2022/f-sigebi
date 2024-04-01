@@ -1,6 +1,6 @@
 export interface IComerGoodXLot {
   idGoodInLot: string;
-  goodNumber: string;
+  goodNumber: any;
   idLot: string;
   baseValue: any;
   appraisalRefPrice: any;
@@ -40,6 +40,7 @@ export interface IComerGoodXLot {
   remittanceLotId: any;
   remittanceGoodInLotId: any;
   sold: any;
+  id: any;
   observations: any;
   invoiceNumber: any;
   invoiceDate: any;
