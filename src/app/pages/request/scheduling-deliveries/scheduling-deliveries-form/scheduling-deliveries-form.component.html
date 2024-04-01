@@ -232,6 +232,7 @@
         *ngIf="idTypeEvent == 5 && showDetailProgrammingDes">
         <div class="justify-content-end btn-toolbar">
           <button
+            [disabled]="!(notification1exist && notification2exist)"
             *ngIf="isReadOnlyDes == 'N'"
             (click)="generateConDestruccion()"
             class="btn btn-primary btn-sm active">

@@ -126,6 +126,9 @@ export class SchedulingDeliveriesFormComponent
   totalItemsSearchDevol: number = 0;
   totalItemsSearchDonation: number = 0;
   totalItemsSearchSales: number = 0;
+
+  notification1exist: boolean = false;
+  notification2exist: boolean = false;
   //programmingDelId: number = 0;
   settingsSearchSales = {
     ...this.settings,
@@ -799,7 +802,7 @@ export class SchedulingDeliveriesFormComponent
       }
 
       if (descriptionGood) {
-        params['filter.descriptionGood'] = `$eq:${descriptionGood}`;
+        params['filter.descriptionGood'] = `$ilike:${descriptionGood}`;
       }
 
       if (inventoryNum) {
@@ -836,7 +839,7 @@ export class SchedulingDeliveriesFormComponent
       }
 
       if (descriptionGood) {
-        params['filter.descriptionGood'] = `$eq:${descriptionGood}`;
+        params['filter.descriptionGood'] = `$ilike:${descriptionGood}`;
       }
 
       if (inventoryNum) {
@@ -1398,6 +1401,8 @@ export class SchedulingDeliveriesFormComponent
               callback: (next: boolean) => {
                 if (next) {
                   this.showReportDestruction();
+                  this.notification1exist = true;
+
                 }
               },
             };
@@ -1512,6 +1517,7 @@ export class SchedulingDeliveriesFormComponent
               callback: (next: boolean) => {
                 if (next) {
                   this.showReportDestructionFond();
+                  this.notification2exist = true;
                 }
               },
             };
@@ -1671,6 +1677,11 @@ export class SchedulingDeliveriesFormComponent
 
   showDocuments(): void {
     if (this.selectedRows.length == 0 || this.selectedRows.length >= 2) {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se debe seleccionar un bien '
+      );
     } else {
       const idGood = this.selectedRows[0].id;
       const idRequest = 0;
