@@ -73,7 +73,7 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
   checkStatusTask() {
     const _task = JSON.parse(localStorage.getItem('Task'));
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.id'] = `$eq:${_task.id}`;
+    params.getValue()['filter.id'] = `$eq:${_task?.id}`;
     this.taskService.getAll(params.getValue()).subscribe({
       next: response => {
         if (response.data[0].State == 'FINALIZADA') this.disabledButton = true;
@@ -142,7 +142,7 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
     ).then(async question => {
       if (question.isConfirmed) {
         const allGoodsSample: any = await this.getGoods();
-        if (allGoodsSample) {
+        if (allGoodsSample.length > 0) {
           const ckeckResultEvaluation: any = await this.checkResultEvaluation(
             allGoodsSample
           );
@@ -162,7 +162,7 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
                 this.alertQuestion(
                   'question',
                   'Todos los bienes han sido aprobados en el pago de la ficha de orden de ingreso.',
-                  '¿Esta de acuerdo que la información es correcta para finalizar?'
+                  '¿Está de acuerdo que la información es correcta para finalizar?'
                 ).then(async question => {
                   if (question.isConfirmed) {
                     const updateGoodsSample = await this.updateGoodSample(
@@ -190,7 +190,7 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
               if (checkDeclineRes.length > 0) {
                 this.alertQuestion(
                   'question',
-                  'Hay bienes Rechazados.',
+                  'Hay bienes rechazados.',
                   '¿Esta de acuerdo que la información es correcta para turnar?'
                 ).then(async question => {
                   if (question.isConfirmed) {
@@ -209,6 +209,8 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
               }
             }
           }
+        } else {
+          this.alert('warning', 'No se encontraron bienes', '');
         }
       }
     });
@@ -223,7 +225,9 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
         next: response => {
           resolve(response.data);
         },
-        error: error => {},
+        error: error => {
+          resolve([]);
+        },
       });
     });
   }
@@ -300,7 +304,7 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
     const _task = JSON.parse(localStorage.getItem('Task'));
     let body: any = {};
 
-    body['idTask'] = _task.id;
+    body['idTask'] = _task?.id;
     body['userProcess'] = user.username;
     body['type'] = 'MUESTREO_BIENES';
     body['subtype'] = 'Verificar_pago';
@@ -383,7 +387,7 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
     const _task = JSON.parse(localStorage.getItem('Task'));
     let body: any = {};
 
-    body['idTask'] = _task.id;
+    body['idTask'] = _task?.id;
     body['userProcess'] = user.username;
     body['type'] = 'MUESTREO_BIENES';
     body['subtype'] = 'Verificacion_bienes';
@@ -419,6 +423,6 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
   }
 
   getSearchForm(event: any) {
-    this.filterObject = this.filterForm.value;
+    this.filterObject = event;
   }
 }
