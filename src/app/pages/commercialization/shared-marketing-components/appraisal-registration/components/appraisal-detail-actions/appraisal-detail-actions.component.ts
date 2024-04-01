@@ -1,6 +1,10 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { AppraisesService } from 'src/app/core/services/ms-appraises/appraises.service';
+import { MsMassiveappraiseService } from 'src/app/core/services/ms-massiveappraise/ms-massiveappraise.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
 import { AppraisalRegistrationChild } from '../../classes/appraisal-registration-child';
@@ -19,10 +23,16 @@ export class AppraisalDetailActionsComponent
   fileControl = new FormControl();
   @ViewChild('inputFile', { static: true })
   inputFile: ElementRef<HTMLInputElement>;
+  tipeProccess: string;
   get controls() {
     return this.comerEventForm.controls;
   }
-  constructor(private parameterComerService: ParameterModService) {
+  constructor(
+    private parameterComerService: ParameterModService,
+    private massiveGoodService: MassiveGoodService,
+    private msMassiveappraiseService: MsMassiveappraiseService,
+    private appraisesService: AppraisesService
+  ) {
     super();
   }
 
@@ -54,6 +64,7 @@ export class AppraisalDetailActionsComponent
 
   // ?-------------------------- INSERTAR AVALUOS
   async onInsertAppraissal() {
+    this.tipeProccess = 'I';
     const body = this.getPufValEventBody('I');
     console.log(body);
     await this.pufValEvent(body);
@@ -74,6 +85,7 @@ export class AppraisalDetailActionsComponent
   // ?-------------------------- Agregar AVALUOS
   async onAddAppraissal() {
     const body = this.getPufValEventBody('A');
+    this.tipeProccess = 'A';
     console.log(body);
     await this.pufValEvent(body);
     const { id_evento, item_desc_tpsolaval } = this.controls;
@@ -86,11 +98,136 @@ export class AppraisalDetailActionsComponent
     if (!isConfirmed) {
       return;
     }
-    this.$file.next(this.AddAppraisal);
+    this.$file.next(this.insertAppraisal);
     this.inputFile.nativeElement.click();
   }
-  AddAppraisal(file: File) {}
-  insertAppraisal(file: File) {}
+  // ?-------------------------- Actualizar AVALUOS
+  async onUpdateAppraissal() {
+    const body = this.getPufValEventBody('U');
+    this.tipeProccess = 'U';
+    console.log(body);
+    await this.pufValEvent(body);
+    const { id_evento, item_desc_tpsolaval } = this.controls;
+    console.log(this.controls);
+    const { isConfirmed } = await this.alertQuestion(
+      'question',
+      `¿Actualizar los Avaluós del evento ${id_evento.value}, referencia ${item_desc_tpsolaval.value}?`,
+      ''
+    );
+    if (!isConfirmed) {
+      return;
+    }
+    this.$file.next(this.insertAppraisal);
+    this.inputFile.nativeElement.click();
+  }
+  insertAppraisal(file: File) {
+    const { id_evento, documentType } = this.controls;
+    if (documentType.value != null) {
+      if (this.global.direction == 'I') {
+        this.loader.load = true;
+        let res = {};
+        this.appraisesService.deleteTmpeatAppraisal(res).subscribe({
+          next: res => {
+            console.log(res);
+            let params = new ListParams();
+            let data = {
+              pEventId: id_evento.value,
+              pTypeAppraisal: documentType.value,
+              v_iva: this.global.vIva,
+              address: this.global.direction,
+            };
+            this.massiveGoodService
+              .postInsertTmpcomerappraisalProperty(params, file, data)
+              .subscribe({
+                next: resp => {
+                  console.log(resp.data);
+
+                  const { id_evento, no_delegacion, usuario } = this.controls;
+                  let data = {
+                    pEvent: id_evento.value,
+                    typeProcces: this.tipeProccess,
+                    delagationNumber: no_delegacion.value,
+                    user: usuario.value,
+                    address: this.global.direction,
+                    whereAppraisalId: ' ',
+                    screenKey: this.screen,
+                    error: resp.data[0].GLOBAL_V_TMPBIENES_ERROR,
+                  };
+                  this.appraisesService
+                    .postInsertAppraisalFcomerreavaluo(data)
+                    .subscribe({
+                      next: res => {
+                        console.log(res);
+
+                        this.searchGoods.next(id_evento.value);
+                        this.loader.load = false;
+                      },
+                      error: eror => {
+                        this.loader.load = false;
+                      },
+                    });
+                },
+                error: eror => {
+                  this.loader.load = false;
+                },
+              });
+          },
+          error: eror => {
+            this.loader.load = false;
+          },
+        });
+      } else {
+        this.loader.load = true;
+        let res = {};
+        this.appraisesService.deleteTmpeatAppraisal(res).subscribe({
+          next: res => {
+            console.log(res);
+            let params = new ListParams();
+            let data = {
+              pEventId: id_evento.value,
+              pTypeAppraisal: documentType.value,
+            };
+            this.massiveGoodService
+              .postInsertTmpcomerappraisa(params, file, data)
+              .subscribe({
+                next: resp => {
+                  console.log(resp);
+                  this.$appraisedRejectedList.next(resp.data);
+                  const { id_evento, no_delegacion, usuario } = this.controls;
+                  let data = {
+                    pEvent: id_evento.value,
+                    typeProcces: this.tipeProccess,
+                    delagationNumber: no_delegacion.value,
+                    user: usuario.value,
+                    address: this.global.direction,
+                    screenKey: this.screen,
+                    tmpgoodError: resp.data[0].GLOBAL_V_TMPBIENES_ERROR,
+                  };
+                  this.massiveGoodService.postInsertAppraisal(data).subscribe({
+                    next: res => {
+                      console.log(res);
+                      this.searchGoods.next(id_evento.value);
+                      this.loader.load = false;
+                    },
+                    error: eror => {
+                      this.loader.load = false;
+                    },
+                  });
+                },
+                error: eror => {
+                  this.loader.load = false;
+                },
+              });
+          },
+          error: eror => {
+            this.loader.load = false;
+          },
+        });
+      }
+    } else {
+      this.alert('warning', 'Debe seleccionar un Tipo de Oficio', '');
+    }
+  }
 
   async onValidationAppraissal() {
     const { isConfirmed } = await this.alertQuestion(
@@ -104,16 +241,48 @@ export class AppraisalDetailActionsComponent
     }
   }
   validFile(file: File) {
-    this.parameterComerService
-      .validFile(file)
-      .pipe(
-        catchError(error => {
-          this.alert('error', UNEXPECTED_ERROR, '');
-          return throwError(() => error);
-        }),
-        tap(response => this.handleValidDisscountFileResponse(response.data))
-      )
-      .subscribe();
+    if (this.global.direction == 'I') {
+      this.loader.load = true;
+      let params = new ListParams();
+      let data = {
+        vIva: this.global.vIva,
+        columNumber: this.global.vColumnNum,
+      };
+      this.msMassiveappraiseService
+        .postValidaArchivoAppraisalRegistryProperty(params, file, data)
+        .subscribe({
+          next: resp => {
+            console.log(resp);
+            // this.alert('warning', resp.message[0], '');
+            this.$appraisedRejectedGoodsList.next(resp.rejectedGoods);
+            this.loader.load = false;
+          },
+          error: eror => {
+            console.log(eror);
+            this.loader.load = false;
+          },
+        });
+    } else {
+      this.loader.load = true;
+      let params = new ListParams();
+      let data = {
+        vIva: this.global.vIva,
+        columNumber: this.global.vColumnNum,
+      };
+      this.msMassiveappraiseService
+        .postValidaArchivoAppraisalRegistry(params, file, data)
+        .subscribe({
+          next: resp => {
+            console.log(resp);
+            // this.alert('warning', resp.message[0], '');
+            this.$appraisedRejectedGoodsList.next(resp.rejectedGoods);
+            this.loader.load = false;
+          },
+          error: eror => {
+            this.loader.load = false;
+          },
+        });
+    }
   }
 
   // ? ------------------------- VALIDAR ARCHIVO DESCUENTO

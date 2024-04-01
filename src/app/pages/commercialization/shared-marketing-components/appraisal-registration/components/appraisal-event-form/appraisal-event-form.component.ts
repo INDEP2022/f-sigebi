@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { catchError, tap, throwError } from 'rxjs';
 import {
   FilterParams,
@@ -22,7 +23,10 @@ export class AppraisalEventFormComponent
   get controls() {
     return this.comerEventForm.controls;
   }
-  constructor(private parameterComerService: ParameterModService) {
+  constructor(
+    private parameterComerService: ParameterModService,
+    private router: Router
+  ) {
     super();
   }
 
@@ -97,5 +101,15 @@ export class AppraisalEventFormComponent
         })
       )
       .subscribe();
+  }
+  pupGenOficio() {
+    const { id_evento, documentType } = this.controls;
+    this.router.navigate(['/pages/siab-web/appraisals/valuation-request'], {
+      queryParams: {
+        origin: this.screen,
+        event: id_evento,
+        type: documentType,
+      },
+    });
   }
 }

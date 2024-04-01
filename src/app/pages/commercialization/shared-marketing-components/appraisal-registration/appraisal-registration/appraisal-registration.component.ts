@@ -7,8 +7,11 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { AppraisalRegistrationMain } from '../classes/appraisal-registration-main';
+
 const IVA = 'IVA';
 const COLUMN_NUM = 'AVALUOM_NOCOLUM';
+const COLUMN_NUM_I = 'AVALUOI_NOCOLUM';
+
 const NO_PARAMETERS_ERROR =
   'Ocurrió un error al obtener parámetros para el funcionamiento de la pantalla';
 @Component({
@@ -40,7 +43,10 @@ export class AppraisalRegistrationComponent
   }
 
   getColumnNum() {
-    return this.parameterService.getById(COLUMN_NUM).pipe(
+    console.log(this.screen);
+    let num = this.screen == 'FCOMERREGAVALUO' ? COLUMN_NUM : COLUMN_NUM_I;
+    console.log(num);
+    return this.parameterService.getById(num).pipe(
       catchError(error => {
         this.alert('error', 'Error', NO_PARAMETERS_ERROR);
         return throwError(() => error);
