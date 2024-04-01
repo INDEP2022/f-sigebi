@@ -739,13 +739,33 @@ export class SchedulingDeliveriesFormComponent
   }
 
   showGoodsInventory() {
-    this.paramsSearchDest = new BehaviorSubject<ListParams>(new ListParams());
     const typeEvent = this.schedulingDeliverieForm.get('typeEvent').value;
     const transferId = this.schedulingDeliverieForm.get('transferId').value;
     const store = this.schedulingDeliverieForm.get('store').value;
     const client = this.schedulingDeliverieForm.get('client').value;
     if (this.regionalDelegationNum && typeEvent && transferId && store) {
-      this.showGoodInvDest(transferId, store);
+      switch (typeEvent) {
+        case 5:
+          this.paramsSearchDest
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.showGoodInvDest(transferId, store));
+          break;
+        case 1:
+          this.paramsSearchSales
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.showGoodInvDest(transferId, store));
+          break;
+        case 4:
+          this.paramsSearchDevol
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.showGoodInvDest(transferId, store));
+          break;
+        case 2:
+          this.paramsSearchDonation
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.showGoodInvDest(transferId, store));
+          break;
+      }
     } else {
       this.alert(
         'warning',
@@ -756,10 +776,11 @@ export class SchedulingDeliveriesFormComponent
   }
 
   showGoodInvDest(transferent: number, store: string) {
-    let params = new ListParams();
+    let params: any = {};
 
     if (this.idTypeEvent == 5) {
       this.nameEvent = 'DESTRUCCIÓN';
+      params = this.paramsSearchDest.getValue();
 
       const managementNum =
         this.searchDestructionForm.get('managementNum').value;
@@ -801,6 +822,7 @@ export class SchedulingDeliveriesFormComponent
 
     if (this.idTypeEvent == 1) {
       this.nameEvent = 'VENTAS';
+      params = this.paramsSearchSales.getValue();
       const managementNum = this.searchSalesForm.get('managementNum').value;
       const descriptionGood = this.searchSalesForm.get('descriptionGood').value;
       const inventoryNum = this.searchSalesForm.get('inventoryNum').value;
@@ -850,6 +872,7 @@ export class SchedulingDeliveriesFormComponent
 
     if (this.idTypeEvent == 4) {
       this.nameEvent = 'DEVOLUCIÓN';
+      params = this.paramsSearchDevol.getValue();
       const managementNum =
         this.searchDevolutionForm.get('managementNum').value;
       const quantity = this.searchDevolutionForm.get('quantity').value;
@@ -890,6 +913,7 @@ export class SchedulingDeliveriesFormComponent
 
     if (this.idTypeEvent == 2) {
       this.nameEvent = 'DONACIÓN';
+      params = this.paramsSearchDonation.getValue();
       const managementNum = this.searchDonationForm.get('managementNum').value;
       const quantity = this.searchDonationForm.get('quantity').value;
       const descriptionGood =
