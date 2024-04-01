@@ -1185,6 +1185,7 @@ export class EventCaptureComponent
       this.generateCve();
     });
     await this.initForm();
+    this.transferClick();
   }
 
   async generateCve() {

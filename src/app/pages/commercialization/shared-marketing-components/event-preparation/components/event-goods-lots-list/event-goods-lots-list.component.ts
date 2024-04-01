@@ -364,6 +364,7 @@ export class EventGoodsLotsListComponent
   }
 
   transformGood(good: IComerGoodXLot) {
+    console.log(good);
     const { remittanceEventId, remittanceLotId } = good;
     const { id, eventTpId, statusVtaId } = this.controls;
     return {
@@ -372,7 +373,7 @@ export class EventGoodsLotsListComponent
       statusvtaId: statusVtaId.value,
       eventEeatId: good.commercialEventId,
       statusBefore: good.previousStatus,
-      goodNo: good.goodNumber,
+      goodNo: good.goodNumber.id,
       toolbarUser: this.loggedUser.preferred_username,
       eventId: id.value,
       statusEat: good.commercialStatus,
