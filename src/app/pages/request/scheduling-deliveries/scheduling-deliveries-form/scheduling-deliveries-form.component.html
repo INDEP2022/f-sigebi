@@ -399,17 +399,17 @@
         <div class="row pt-4">
           <div class="col-md-6">
             <form-field
-              *ngIf="isReadOnlyDes == 'N'"
+              *ngIf="false"
               [control]="schedulingDeliverieForm.get('postAddressee')"
               label="C.P.">
               <input
                 class="form-control"
                 maxlength="250"
-                formControlName="postAddressee" 
-                type="number"/>
+                formControlName="postAddressee"
+                type="number" />
             </form-field>
             <form-field
-              *ngIf="isReadOnlyDes == 'Y'"
+              *ngIf="false"
               [control]="schedulingDeliverieForm.get('postAddressee')"
               label="C.P.">
               <input
@@ -420,19 +420,30 @@
                 type="number" />
             </form-field>
           </div>
-          </div>
+        </div>
 
-          <div class="row pt-4">
-            <div class="col-md-6">
-              <form-field *ngIf="isReadOnlyDes == 'N'" [control]="schedulingDeliverieForm.get('addressAddressee')"
-                label="Dirección Destinatario">
-                <input class="form-control" maxlength="250" formControlName="addressAddressee" />
-              </form-field>
-              <form-field *ngIf="isReadOnlyDes == 'Y'" [control]="schedulingDeliverieForm.get('addressAddressee')"
-                label="Dirección Destinatario">
-                <input class="form-control" [readOnly]="true" maxlength="250" formControlName="addressAddressee" />
-              </form-field>
-            </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              *ngIf="isReadOnlyDes == 'N'"
+              [control]="schedulingDeliverieForm.get('addressAddressee')"
+              label="Dirección Destinatario">
+              <input
+                class="form-control"
+                maxlength="250"
+                formControlName="addressAddressee" />
+            </form-field>
+            <form-field
+              *ngIf="isReadOnlyDes == 'Y'"
+              [control]="schedulingDeliverieForm.get('addressAddressee')"
+              label="Dirección Destinatario">
+              <input
+                class="form-control"
+                [readOnly]="true"
+                maxlength="250"
+                formControlName="addressAddressee" />
+            </form-field>
+          </div>
           <div class="col-md-6">
             <form-field
               *ngIf="isReadOnlyDes == 'N'"

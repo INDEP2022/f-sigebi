@@ -94,6 +94,7 @@ export class SchedulingDeliveriesFormComponent
   infoGoodDonation = new LocalDataSource();
   infoGoodSales = new LocalDataSource();
   regionalDelegationNum: number = 0;
+  nameEvent: string = '';
 
   programmingDeliveryInfo: IprogrammingDelivery;
   statusNotification = 'N';
@@ -765,35 +766,7 @@ export class SchedulingDeliveriesFormComponent
     const store = this.schedulingDeliverieForm.get('store').value;
     const client = this.schedulingDeliverieForm.get('client').value;
     if (this.regionalDelegationNum && typeEvent && transferId && store) {
-      if (typeEvent == 5) {
-        this.paramsSearchDest = new BehaviorSubject<ListParams>(
-          new ListParams()
-        );
-        this.paramsSearchDest
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.showGoodInvDest(transferId, store));
-      } else if (typeEvent == 4) {
-        this.paramsSearchDevol = new BehaviorSubject<ListParams>(
-          new ListParams()
-        );
-        this.paramsSearchDevol
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.showGoodInvDev(transferId, store));
-      } else if (typeEvent == 2) {
-        this.paramsSearchDonation = new BehaviorSubject<ListParams>(
-          new ListParams()
-        );
-        this.paramsSearchDonation
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.showGoodInvDonation(transferId, store));
-      } else if (typeEvent == 1) {
-        this.paramsSearchSales = new BehaviorSubject<ListParams>(
-          new ListParams()
-        );
-        this.paramsSearchSales
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.showGoodInvSales(transferId, store, client));
-      }
+      this.showGoodInvDest(transferId, store);
     } else {
       this.alert(
         'warning',
@@ -804,1185 +777,216 @@ export class SchedulingDeliveriesFormComponent
   }
 
   showGoodInvDest(transferent: number, store: string) {
-    const quantity = this.searchDestructionForm.get('quantity').value;
-    const managementNum = this.searchDestructionForm.get('managementNum').value;
-    const descriptionGood =
-      this.searchDestructionForm.get('descriptionGood').value;
-    const inventoryNum = this.searchDestructionForm.get('inventoryNum').value;
-    const bienSiabNum = this.searchDestructionForm.get('bienSiabNum').value;
+    let params = new ListParams();
 
-    if (
-      !quantity &&
-      !managementNum &&
-      !descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum
-    ) {
+    if (this.idTypeEvent == 5) {
+      this.nameEvent = 'DESTRUCCIÓN';
+
+      const managementNum =
+        this.searchDestructionForm.get('managementNum').value;
+      const quantity = this.searchDestructionForm.get('quantity').value;
+      const descriptionGood =
+        this.searchDestructionForm.get('descriptionGood').value;
+      const inventoryNum = this.searchDestructionForm.get('inventoryNum').value;
+      const bienSiabNum = this.searchDestructionForm.get('bienSiabNum').value;
+
+      if (managementNum) {
+        params['filter.managementNum'] = `$eq:${managementNum}`;
+      }
+
+      if (quantity) {
+        params['filter.quantity'] = `$eq:${quantity}`;
+      }
+
+      if (descriptionGood) {
+        params['filter.descriptionGood'] = `$eq:${descriptionGood}`;
+      }
+
+      if (inventoryNum) {
+        params['filter.inventoryNum'] = `$eq:${inventoryNum}`;
+      }
+
+      if (bienSiabNum) {
+        params['filter.bienSiabNum'] = `$eq:${bienSiabNum}`;
+      }
+
+      params['filter.orderBy'] = `descriptionGood:ASC`;
+
+      params['filter.delRegSol'] = `$eq:${this.regionalDelegationNum}`;
+      params['filter.inventoryKey'] = `$eq:${store}`;
+      params['filter.entTransfereeId'] = `$eq:${transferent}`;
+      params['filter.eventType'] = `$eq:A Destruir`;
+
       this.loadingGoodsDest = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'A Destruir',
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDest.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDestruction.load(response.data);
-            this.totalItemsSearchDest = response.count;
-            this.loadingGoodsDest = false;
-          },
-          error: error => {
-            this.loadingGoodsDest = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para destrucción en el inventario'
-            );
-          },
-        });
     }
 
-    if (
-      quantity &&
-      !managementNum &&
-      !descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDest = true;
+    if (this.idTypeEvent == 1) {
+      this.nameEvent = 'VENTAS';
+      const managementNum = this.searchSalesForm.get('managementNum').value;
+      const descriptionGood = this.searchSalesForm.get('descriptionGood').value;
+      const inventoryNum = this.searchSalesForm.get('inventoryNum').value;
+      const bienSiabNum = this.searchSalesForm.get('bienSiabNum').value;
+      const commercialEvent = this.searchSalesForm.get('commercialEvent').value;
+      const bill = this.searchSalesForm.get('bill').value;
+      const commercialLot = this.searchSalesForm.get('commercialLot').value;
+
+      if (managementNum) {
+        params['filter.managementNum'] = `$eq:${managementNum}`;
+      }
+
+      if (descriptionGood) {
+        params['filter.descriptionGood'] = `$eq:${descriptionGood}`;
+      }
+
+      if (inventoryNum) {
+        params['filter.inventoryNum'] = `$eq:${inventoryNum}`;
+      }
+
+      if (bienSiabNum) {
+        params['filter.bienSiabNum'] = `$eq:${bienSiabNum}`;
+      }
+
+      if (commercialEvent) {
+        params['filter.commercialEvent'] = `$eq:${commercialEvent}`;
+      }
+
+      if (bill) {
+        params['filter.bill'] = `$eq:${bill}`;
+      }
+
+      if (commercialLot) {
+        params['filter.commercialLot'] = `$eq:${commercialLot}`;
+      }
+
+      params['filter.orderBy'] = `descriptionGood:ASC`;
+
+      params['filter.delRegSol'] = `$eq:${this.regionalDelegationNum}`;
+      params['filter.inventoryKey'] = `$eq:${store}`;
+      params['filter.entTransfereeId'] = `$eq:${transferent}`;
+      params['filtter.client'] = `$eq:${this.clientName}`;
+      params['filter.eventType'] = `$eq:Vendidos`;
 
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'A Destruir',
-        quantity: quantity,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDest.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDestruction.load(response.data);
-            this.totalItemsSearchDest = response.count;
-            this.loadingGoodsDest = false;
-          },
-          error: error => {
-            this.loadingGoodsDest = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para destrucción en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      quantity &&
-      managementNum &&
-      !descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDest = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'A Destruir',
-        quantity: quantity,
-        managementNum: managementNum,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDest.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDestruction.load(response.data);
-            this.totalItemsSearchDest = response.count;
-            this.loadingGoodsDest = false;
-          },
-          error: error => {
-            this.loadingGoodsDest = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para destrucción en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      quantity &&
-      managementNum &&
-      descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDest = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'A Destruir',
-        quantity: quantity,
-        managementNum: managementNum,
-        descriptionGood: descriptionGood,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDest.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDestruction.load(response.data);
-            this.totalItemsSearchDest = response.count;
-            this.loadingGoodsDest = false;
-          },
-          error: error => {
-            this.loadingGoodsDest = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para destrucción en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      quantity &&
-      managementNum &&
-      descriptionGood &&
-      inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDest = true;
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'A Destruir',
-        quantity: quantity,
-        managementNum: managementNum,
-        descriptionGood: descriptionGood,
-        inventoryNum: inventoryNum,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDest.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDestruction.load(response.data);
-            this.totalItemsSearchDest = response.count;
-            this.loadingGoodsDest = false;
-          },
-          error: error => {
-            this.loadingGoodsDest = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para destrucción en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      quantity &&
-      managementNum &&
-      descriptionGood &&
-      inventoryNum &&
-      bienSiabNum
-    ) {
-      this.loadingGoodsDest = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'A Destruir',
-        quantity: quantity,
-        managementNum: managementNum,
-        descriptionGood: descriptionGood,
-        inventoryNum: inventoryNum,
-        bienSiabNum: bienSiabNum,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDest.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDestruction.load(response.data);
-            this.totalItemsSearchDest = response.count;
-            this.loadingGoodsDest = false;
-          },
-          error: error => {
-            this.loadingGoodsDest = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para destrucción en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      !quantity &&
-      managementNum &&
-      !descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDest = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'A Destruir',
-
-        managementNum: managementNum,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDest.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDestruction.load(response.data);
-            this.totalItemsSearchDest = response.count;
-            this.loadingGoodsDest = false;
-          },
-          error: error => {
-            this.loadingGoodsDest = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para destrucción en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      !quantity &&
-      !managementNum &&
-      descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDest = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'A Destruir',
-        descriptionGood: descriptionGood,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDest.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDestruction.load(response.data);
-            this.totalItemsSearchDest = response.count;
-            this.loadingGoodsDest = false;
-          },
-          error: error => {
-            this.loadingGoodsDest = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para destrucción en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      !quantity &&
-      !managementNum &&
-      !descriptionGood &&
-      inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDest = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'A Destruir',
-        inventoryNum: inventoryNum,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDest.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDestruction.load(response.data);
-            this.totalItemsSearchDest = response.count;
-            this.loadingGoodsDest = false;
-          },
-          error: error => {
-            this.loadingGoodsDest = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para destrucción en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      !quantity &&
-      !managementNum &&
-      !descriptionGood &&
-      !inventoryNum &&
-      bienSiabNum
-    ) {
-      this.loadingGoodsDest = true;
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'A Destruir',
-        bienSiabNum: bienSiabNum,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDest.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDestruction.load(response.data);
-            this.totalItemsSearchDest = response.count;
-            this.loadingGoodsDest = false;
-          },
-          error: error => {
-            this.loadingGoodsDest = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para destrucción en el inventario'
-            );
-          },
-        });
-    }
-  }
-
-  showGoodInvDev(transferent: number, store: string) {
-    const quantity = this.searchDevolutionForm.get('quantity').value;
-    const managementNum = this.searchDevolutionForm.get('managementNum').value;
-    const descriptionGood =
-      this.searchDevolutionForm.get('descriptionGood').value;
-    const inventoryNum = this.searchDevolutionForm.get('inventoryNum').value;
-    const bienSiabNum = this.searchDevolutionForm.get('bienSiabNum').value;
-
-    if (
-      !quantity &&
-      !managementNum &&
-      !descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDevolution = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Devolución',
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDevolution.load(response.data);
-            this.totalItemsSearchDevol = response.count;
-            this.loadingGoodsDevolution = false;
-          },
-          error: error => {
-            this.loadingGoodsDevolution = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Devolución en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      quantity &&
-      !managementNum &&
-      !descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDevolution = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Devolución',
-        quantity: quantity,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDevolution.load(response.data);
-            this.totalItemsSearchDevol = response.count;
-            this.loadingGoodsDevolution = false;
-          },
-          error: error => {
-            this.loadingGoodsDevolution = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Devolución en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      quantity &&
-      managementNum &&
-      !descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDevolution = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Devolución',
-        quantity: quantity,
-        managementNum: managementNum,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDevolution.load(response.data);
-            this.totalItemsSearchDevol = response.count;
-            this.loadingGoodsDevolution = false;
-          },
-          error: error => {
-            this.loadingGoodsDevolution = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Devolución en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      quantity &&
-      managementNum &&
-      descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDevolution = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Devolución',
-        quantity: quantity,
-        managementNum: managementNum,
-        descriptionGood: descriptionGood,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDevolution.load(response.data);
-            this.totalItemsSearchDevol = response.count;
-            this.loadingGoodsDevolution = false;
-          },
-          error: error => {
-            this.loadingGoodsDevolution = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Devolución en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      quantity &&
-      managementNum &&
-      descriptionGood &&
-      inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDevolution = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Devolución',
-        quantity: quantity,
-        managementNum: managementNum,
-        descriptionGood: descriptionGood,
-        inventoryNum: inventoryNum,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDevolution.load(response.data);
-            this.totalItemsSearchDevol = response.count;
-            this.loadingGoodsDevolution = false;
-          },
-          error: error => {
-            this.loadingGoodsDevolution = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Devolución en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      quantity &&
-      managementNum &&
-      descriptionGood &&
-      inventoryNum &&
-      bienSiabNum
-    ) {
-      this.loadingGoodsDevolution = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Devolución',
-        quantity: quantity,
-        managementNum: managementNum,
-        descriptionGood: descriptionGood,
-        inventoryNum: inventoryNum,
-        bienSiabNum: bienSiabNum,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDevolution.load(response.data);
-            this.totalItemsSearchDevol = response.count;
-            this.loadingGoodsDevolution = false;
-          },
-          error: error => {
-            this.loadingGoodsDevolution = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Devolución en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      !quantity &&
-      managementNum &&
-      !descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDevolution = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Devolución',
-
-        managementNum: managementNum,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDevolution.load(response.data);
-            this.totalItemsSearchDevol = response.count;
-            this.loadingGoodsDevolution = false;
-          },
-          error: error => {
-            this.loadingGoodsDevolution = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Devolución en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      !quantity &&
-      !managementNum &&
-      descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDevolution = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Devolución',
-        descriptionGood: descriptionGood,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDevolution.load(response.data);
-            this.totalItemsSearchDevol = response.count;
-            this.loadingGoodsDevolution = false;
-          },
-          error: error => {
-            this.loadingGoodsDevolution = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Devolución en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      !quantity &&
-      !managementNum &&
-      !descriptionGood &&
-      inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDevolution = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Devolución',
-        inventoryNum: inventoryNum,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDevolution.load(response.data);
-            this.totalItemsSearchDevol = response.count;
-            this.loadingGoodsDevolution = false;
-          },
-          error: error => {
-            this.loadingGoodsDevolution = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Devolución en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      !quantity &&
-      !managementNum &&
-      !descriptionGood &&
-      !inventoryNum &&
-      bienSiabNum
-    ) {
-      this.loadingGoodsDevolution = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Devolución',
-        bienSiabNum: bienSiabNum,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDevolution.load(response.data);
-            this.totalItemsSearchDevol = response.count;
-            this.loadingGoodsDevolution = false;
-          },
-          error: error => {
-            this.loadingGoodsDevolution = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Devolución en el inventario'
-            );
-          },
-        });
-    }
-  }
-
-  showGoodInvDonation(transferent: number, store: string) {
-    const quantity = this.searchDonationForm.get('quantity').value;
-    const managementNum = this.searchDonationForm.get('managementNum').value;
-    const descriptionGood =
-      this.searchDonationForm.get('descriptionGood').value;
-    const inventoryNum = this.searchDonationForm.get('inventoryNum').value;
-    const bienSiabNum = this.searchDonationForm.get('bienSiabNum').value;
-
-    if (
-      !quantity &&
-      !managementNum &&
-      !descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDonation = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Donados',
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDonation.load(response.data);
-            this.totalItemsSearchDonation = response.count;
-            this.loadingGoodsDonation = false;
-          },
-          error: error => {
-            this.loadingGoodsDonation = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Donación en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      quantity &&
-      !managementNum &&
-      !descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDonation = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Donados',
-        quantity: quantity,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDonation.load(response.data);
-            this.totalItemsSearchDonation = response.count;
-            this.loadingGoodsDonation = false;
-          },
-          error: error => {
-            this.loadingGoodsDonation = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Donación en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      quantity &&
-      managementNum &&
-      !descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDonation = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Donados',
-        quantity: quantity,
-        managementNum: managementNum,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDonation.load(response.data);
-            this.totalItemsSearchDonation = response.count;
-            this.loadingGoodsDonation = false;
-          },
-          error: error => {
-            this.loadingGoodsDonation = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Donación en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      quantity &&
-      managementNum &&
-      descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDonation = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Donados',
-        quantity: quantity,
-        managementNum: managementNum,
-        descriptionGood: descriptionGood,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDonation.load(response.data);
-            this.totalItemsSearchDonation = response.count;
-            this.loadingGoodsDonation = false;
-          },
-          error: error => {
-            this.loadingGoodsDonation = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Donación en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      quantity &&
-      managementNum &&
-      descriptionGood &&
-      inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDonation = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Donados',
-        quantity: quantity,
-        managementNum: managementNum,
-        descriptionGood: descriptionGood,
-        inventoryNum: inventoryNum,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDonation.load(response.data);
-            this.totalItemsSearchDonation = response.count;
-            this.loadingGoodsDonation = false;
-          },
-          error: error => {
-            this.loadingGoodsDonation = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Donación en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      quantity &&
-      managementNum &&
-      descriptionGood &&
-      inventoryNum &&
-      bienSiabNum
-    ) {
-      this.loadingGoodsDonation = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Donados',
-        quantity: quantity,
-        managementNum: managementNum,
-        descriptionGood: descriptionGood,
-        inventoryNum: inventoryNum,
-        bienSiabNum: bienSiabNum,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDonation.load(response.data);
-            this.totalItemsSearchDonation = response.count;
-            this.loadingGoodsDonation = false;
-          },
-          error: error => {
-            this.loadingGoodsDonation = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Donación en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      !quantity &&
-      managementNum &&
-      !descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDonation = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Donados',
-        managementNum: managementNum,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDonation.load(response.data);
-            this.totalItemsSearchDonation = response.count;
-            this.loadingGoodsDonation = false;
-          },
-          error: error => {
-            this.loadingGoodsDonation = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Donación en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      !quantity &&
-      !managementNum &&
-      descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDonation = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Donados',
-        descriptionGood: descriptionGood,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDonation.load(response.data);
-            this.totalItemsSearchDonation = response.count;
-            this.loadingGoodsDonation = false;
-          },
-          error: error => {
-            this.loadingGoodsDonation = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Donación en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      !quantity &&
-      !managementNum &&
-      !descriptionGood &&
-      inventoryNum &&
-      !bienSiabNum
-    ) {
-      this.loadingGoodsDonation = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Donados',
-        inventoryNum: inventoryNum,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDonation.load(response.data);
-            this.totalItemsSearchDonation = response.count;
-            this.loadingGoodsDonation = false;
-          },
-          error: error => {
-            this.loadingGoodsDonation = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Donación en el inventario'
-            );
-          },
-        });
-    }
-
-    if (
-      !quantity &&
-      !managementNum &&
-      !descriptionGood &&
-      !inventoryNum &&
-      bienSiabNum
-    ) {
-      this.loadingGoodsDonation = true;
-
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Donados',
-        bienSiabNum: bienSiabNum,
-      };
-
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchDevol.getValue(), formData)
-        .subscribe({
-          next: response => {
-            this.infoGoodDonation.load(response.data);
-            this.totalItemsSearchDonation = response.count;
-            this.loadingGoodsDonation = false;
-          },
-          error: error => {
-            this.loadingGoodsDonation = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Donación en el inventario'
-            );
-          },
-        });
-    }
-  }
-
-  showGoodInvSales(transferent: number, store: string, client: string) {
-    const descriptionGood = this.searchSalesForm.get('descriptionGood').value;
-    const bienSiabNum = this.searchSalesForm.get('bienSiabNum').value;
-    const commercialEvent = this.searchSalesForm.get('commercialEvent').value;
-    const managementNum = this.searchSalesForm.get('managementNum').value;
-    const bill = this.searchSalesForm.get('bill').value;
-    const inventoryNum = this.searchSalesForm.get('inventoryNum').value;
-    const commercialLot = this.searchSalesForm.get('commercialLot').value;
-
-    if (
-      !commercialEvent &&
-      !managementNum &&
-      !descriptionGood &&
-      !inventoryNum &&
-      !bienSiabNum &&
-      !bill &&
-      !commercialLot
-    ) {
       this.loadingGoodsSales = true;
+    }
 
-      const formData = {
-        delRegSol: this.regionalDelegationNum,
-        inventoryKey: store,
-        entTransfereeId: transferent,
-        eventType: 'Vendidos',
-        client: client,
-      };
+    if (this.idTypeEvent == 4) {
+      this.nameEvent = 'DEVOLUCIÓN';
+      const managementNum =
+        this.searchDevolutionForm.get('managementNum').value;
+      const quantity = this.searchDevolutionForm.get('quantity').value;
+      const descriptionGood =
+        this.searchDevolutionForm.get('descriptionGood').value;
+      const inventoryNum = this.searchDevolutionForm.get('inventoryNum').value;
+      const bienSiabNum = this.searchDevolutionForm.get('bienSiabNum').value;
 
-      this.goodsInvService
-        .getAllGoodInv(this.paramsSearchSales.getValue(), formData)
-        .subscribe({
-          next: response => {
+      if (managementNum) {
+        params['filter.managementNum'] = `$eq:${managementNum}`;
+      }
+
+      if (quantity) {
+        params['filter.quantity'] = `$eq:${quantity}`;
+      }
+
+      if (descriptionGood) {
+        params['filter.descriptionGood'] = `$eq:${descriptionGood}`;
+      }
+
+      if (inventoryNum) {
+        params['filter.inventoryNum'] = `$eq:${inventoryNum}`;
+      }
+
+      if (bienSiabNum) {
+        params['filter.bienSiabNum'] = `$eq:${bienSiabNum}`;
+      }
+
+      params['filter.orderBy'] = `descriptionGood:ASC`;
+
+      params['filter.delRegSol'] = `$eq:${this.regionalDelegationNum}`;
+      params['filter.inventoryKey'] = `$eq:${store}`;
+      params['filter.entTransfereeId'] = `$eq:${transferent}`;
+      params['filter.eventType'] = `$eq:Devolución`;
+
+      this.loadingGoodsDevolution = true;
+    }
+
+    if (this.idTypeEvent == 2) {
+      this.nameEvent = 'DONACIÓN';
+      const managementNum = this.searchDonationForm.get('managementNum').value;
+      const quantity = this.searchDonationForm.get('quantity').value;
+      const descriptionGood =
+        this.searchDonationForm.get('descriptionGood').value;
+      const inventoryNum = this.searchDonationForm.get('inventoryNum').value;
+      const bienSiabNum = this.searchDonationForm.get('bienSiabNum').value;
+
+      if (managementNum) {
+        params['filter.managementNum'] = `$eq:${managementNum}`;
+      }
+
+      if (quantity) {
+        params['filter.quantity'] = `$eq:${quantity}`;
+      }
+
+      if (descriptionGood) {
+        params['filter.descriptionGood'] = `$eq:${descriptionGood}`;
+      }
+
+      if (inventoryNum) {
+        params['filter.inventoryNum'] = `$eq:${inventoryNum}`;
+      }
+
+      if (bienSiabNum) {
+        params['filter.bienSiabNum'] = `$eq:${bienSiabNum}`;
+      }
+
+      params['filter.orderBy'] = `descriptionGood:ASC`;
+
+      params['filter.delRegSol'] = `$eq:${this.regionalDelegationNum}`;
+      params['filter.inventoryKey'] = `$eq:${store}`;
+      params['filter.entTransfereeId'] = `$eq:${transferent}`;
+      params['filter.eventType'] = `$eq:Donados`;
+
+      this.loadingGoodsDonation = true;
+    }
+
+    this.goodsInvService.getAllGoodInvParams(params).subscribe({
+      next: response => {
+        switch (this.idTypeEvent) {
+          case 5:
+            this.infoGoodDestruction.load(response.data);
+            this.totalItemsSearchDest = response.count;
+            this.loadingGoodsDest = false;
+            break;
+          case 1:
             this.infoGoodSales.load(response.data);
             this.totalItemsSearchSales = response.count;
             this.loadingGoodsSales = false;
-          },
-          error: error => {
-            this.loadingGoodsSales = false;
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No hay bienes para Venta en el inventario'
-            );
-          },
-        });
-    }
+            break;
+
+          case 4:
+            this.infoGoodDevolution.load(response.data);
+            this.totalItemsSearchDevol = response.count;
+            this.loadingGoodsDevolution = false;
+            break;
+
+          case 2:
+            this.infoGoodDonation.load(response.data);
+            this.totalItemsSearchDonation = response.count;
+            this.loadingGoodsDonation = false;
+            break;
+        }
+      },
+      error: error => {
+        this.loadingGoodsDest = false;
+        this.loadingGoodsDevolution = false;
+        this.loadingGoodsDonation = false;
+        this.loadingGoodsSales = false;
+        this.alert(
+          'warning',
+          'Advertencia',
+          'No hay bienes para' + this.nameEvent + 'en el inventario'
+        );
+      },
+    });
   }
 
   /*getInventaryGoods() {
@@ -2025,41 +1029,15 @@ export class SchedulingDeliveriesFormComponent
   }
 
   cleanSearchForm() {
-    const typeEvent = this.schedulingDeliverieForm.get('typeEvent').value;
-    const store = this.schedulingDeliverieForm.get('store').value;
-    const transferId = this.schedulingDeliverieForm.get('transferId').value;
-    const client = this.schedulingDeliverieForm.get('client').value;
-    if (typeEvent == 5) {
-      this.searchDestructionForm.reset();
-      this.paramsSearchDest = new BehaviorSubject<ListParams>(new ListParams());
-      this.paramsSearchDest
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.showGoodInvDest(transferId, store));
-    } else if (typeEvent == 4) {
-      this.searchDevolutionForm.reset();
-      this.paramsSearchDevol = new BehaviorSubject<ListParams>(
-        new ListParams()
-      );
-      this.paramsSearchDevol
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.showGoodInvDev(transferId, store));
-    } else if (typeEvent == 2) {
-      this.searchDonationForm.reset();
-      this.paramsSearchDonation = new BehaviorSubject<ListParams>(
-        new ListParams()
-      );
-      this.paramsSearchDonation
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.showGoodInvDonation(transferId, store));
-    } else if (typeEvent == 1) {
-      this.searchSalesForm.reset();
-      this.paramsSearchSales = new BehaviorSubject<ListParams>(
-        new ListParams()
-      );
-      this.paramsSearchSales
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.showGoodInvSales(transferId, store, client));
-    }
+    this.searchDestructionForm.reset();
+    this.searchDevolutionForm.reset();
+    this.searchDonationForm.reset();
+    this.searchSalesForm.reset();
+
+    this.infoGoodDestruction.load([]);
+    this.infoGoodDevolution.load([]);
+    this.infoGoodDonation.load([]);
+    this.infoGoodSales.load([]);
   }
 
   goodsSelectDest(goodInvSelect: IGoodInvAvailableView[]) {
