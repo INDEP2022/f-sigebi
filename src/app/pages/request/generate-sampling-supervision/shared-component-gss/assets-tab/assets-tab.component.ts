@@ -89,7 +89,7 @@ export class AssetsTabComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoodsSampling());
+      .subscribe(() => this.getGoodsSampling(true));
 
     this.settings3.columns = LIST_VERIFY_NONCOMPLIANCE;
     this.columns.quantityBreak = {
@@ -221,7 +221,7 @@ export class AssetsTabComponent extends BasePage implements OnInit {
       this.params = new BehaviorSubject<ListParams>(new ListParams());
       this.params
         .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getGoodsSampling());
+        .subscribe(() => this.getGoodsSampling(true));
     }
   }
 
@@ -261,7 +261,7 @@ export class AssetsTabComponent extends BasePage implements OnInit {
     }
   }
 
-  getGoodsSampling() {
+  getGoodsSampling(val?: boolean) {
     if (this.typeTask == 'assets-approval')
       this.params.getValue()['filter.typeRestitution'] = 'EN ESPECIE';
     if (
@@ -281,7 +281,13 @@ export class AssetsTabComponent extends BasePage implements OnInit {
         this.paragraphsApprov.load(response.data);
         this.totalItems = response.count;
       },
-      error: error => {},
+      error: error => {
+        this.paragraphs3.load([]);
+        this.paragraphsView.load([]);
+        this.paragraphsApprov.load([]);
+        this.totalItems = 0;
+        if (!val) this.alert('warning', 'No se encontraron registros', '');
+      },
     });
   }
 
