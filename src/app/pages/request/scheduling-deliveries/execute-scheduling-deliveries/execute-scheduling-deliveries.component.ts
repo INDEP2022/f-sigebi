@@ -50,7 +50,7 @@ export class ExecuteSchedulingDeliveriesComponent
   constancyNoRetired: boolean = false;
   showDetailProgDestruc: boolean = true;
 
-  statusProgramming: string = 'RESTITUCION_BIENES'; //APROBAR_NO_ENT_ESP
+  statusProgramming: string = ''; //APROBAR_NO_ENT_ESP
 
   programmingDetailPanel: any = {};
   GoodDeliverySettings = {
@@ -288,9 +288,8 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   certificateDelivery(constancy: number) {
-    if (this.goodDeliveredSelected.length == 0) {
-      this.onLoadToast('info', 'Debe tener al menos un bien seleccionado');
-    }
+    console.log('aqui', this.selectedRows);
+
     const typeEvent = this.programmingDetailPanel.typeEvent;
     const comply = this.validateBeforeOpenModal(constancy);
     if (comply != true) return;
@@ -299,7 +298,7 @@ export class ExecuteSchedulingDeliveriesComponent
       DeliveriesConstancyFormComponent,
       {
         initialState: {
-          goods: this.goodDeliveredSelected,
+          goods: this.selectedRows,
           typeConstancy: constancy,
           typeEvent: typeEvent,
           progEntrega: this.programmingDetailPanel,
@@ -607,7 +606,7 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   selectRows(event: any) {
-    console.log(event.selected);
+    console.log('as' + event.selected);
     /*const index = this.goodDeliveryArray.indexOf(event.data);
 
     const table = document.getElementById('table');
@@ -654,9 +653,11 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   validateBeforeOpenModal(typeConstancy: number): any {
-    for (let index = 0; index < this.goodDeliveredSelected.length; index++) {
-      const item = this.goodDeliveredSelected[index];
+    //listo 1
+    for (let index = 0; index < this.selectedRows.length; index++) {
+      const item = this.selectedRows[index];
       const typeEvent = this.programmingDetailPanel.typeEvent;
+      console.log(item);
       if (typeEvent === 1 && item.commercialEvent == null) {
         this.onLoadToast(
           'info',
@@ -1133,7 +1134,7 @@ export class ExecuteSchedulingDeliveriesComponent
       this.progDelivGoodTypeRestArray[index].observation != ''
         ? event.text
         : null; */
-    console.log(this.goodDeliveryFieldSelected);
+    console.log('aqui', this.goodDeliveryFieldSelected);
 
     const idx = this.goodDeliveryFieldSelected.indexOf(event.data);
     if (this.goodDeliveryFieldSelected.length == 0 || idx == -1) {
@@ -1196,7 +1197,7 @@ export class ExecuteSchedulingDeliveriesComponent
       list.push(body);
     }
 
-    console.log(list);
+    console.log('2', list);
     if (list.length == 0) return;
     list.map(async (item: any, _i: number) => {
       const index = _i + 1;
@@ -1212,7 +1213,7 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   selectGoodNoDelivered(event: any) {
-    console.log(this.tablePEGNE);
+    console.log('3', this.tablePEGNE);
     this.progDeliveNoDSelectAll = false;
     if (this.tablePEGNE.isAllSelected == true && event.isSelected == null) {
       this.progDeliveNoDSelectAll = true;
@@ -1442,13 +1443,15 @@ export class ExecuteSchedulingDeliveriesComponent
      */
     window.alert('No se implento la funcion');
   }
+
   selectedRows;
   goodsSelect(goodSelect: IGoodInvAvailableView[]) {
     this.selectedRows = goodSelect;
-    console.log(this.selectedRows);
+    console.log('paqu', this.selectedRows);
   }
+
   showDocuments(): void {
-    console.log(this.selectRows);
+    console.log('o aqui' + this.selectRows);
     if (this.selectedRows.length == 0 || this.selectedRows.length >= 2) {
     } else {
       const idGood = this.selectedRows[0].id;

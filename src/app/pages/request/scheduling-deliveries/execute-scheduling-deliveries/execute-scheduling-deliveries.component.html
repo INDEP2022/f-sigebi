@@ -276,7 +276,7 @@
         >&nbsp;
         <!-- lsEstatusProgramacion -->
         <a
-          *ngIf="statusProgramming == 'RESTITUCION_BIENES'"
+          *ngIf="programmingDetailPanel.status == 'EJECUTAR_ENTREGA'"
           style="cursor: pointer"
           (click)="showDocuments()"
           class="link-primary"

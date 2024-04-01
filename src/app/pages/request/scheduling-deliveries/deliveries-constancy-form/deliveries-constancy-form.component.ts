@@ -297,7 +297,6 @@ export class DeliveriesConstancyFormComponent
 
     //CREATE CERTIFICADO DE ENTREGA
     let deliveryForm = this.deliveryConstancyForm.getRawValue();
-    deliveryForm.certificateId = 999953; //ingresar el dato
     deliveryForm.deliveryScheduleId = idProgDelivery;
     deliveryForm.folio = folio;
     deliveryForm.userCreation = userAuth.username;
