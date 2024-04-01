@@ -96,6 +96,8 @@ export class SchedulingDeliveriesFormComponent
   regionalDelegationNum: number = 0;
   nameEvent: string = '';
 
+  save: boolean = false;
+
   programmingDeliveryInfo: IprogrammingDelivery;
   statusNotification = 'N';
   typeUser: string = '';
@@ -616,28 +618,10 @@ export class SchedulingDeliveriesFormComponent
       '¿Desea guardar la programación de entrega?'
     ).then(question => {
       if (question.isConfirmed) {
+        console.log('1');
         let typeEvent: any;
         let store: any;
         let transferent: any;
-        if (this.programmingDeliveryInfo?.typeEvent) {
-          typeEvent = this.programmingDeliveryInfo?.typeEvent;
-        } else {
-          typeEvent = this.schedulingDeliverieForm.get('typeEvent');
-        }
-
-        if (this.programmingDeliveryInfo?.store) {
-          store = this.programmingDeliveryInfo?.store;
-        } else {
-          store = this.schedulingDeliverieForm.get('store');
-        }
-
-        if (this.programmingDeliveryInfo?.transferId) {
-          transferent = this.programmingDeliveryInfo?.transferId;
-        } else {
-          transferent = this.schedulingDeliverieForm.get('transferId');
-        }
-
-        //this.schedulingDeliverieForm.get('id').setValue(this.programmingDelId);
 
         const startDate = moment(
           this.schedulingDeliverieForm.get('startDate').value,
@@ -647,9 +631,10 @@ export class SchedulingDeliveriesFormComponent
           this.schedulingDeliverieForm.get('endDate').value,
           'DD/MM/YYYY HH:mm:ssZ'
         ).toDate();
+        console.log('2');
 
         const infoSave: IprogrammingDelivery = {
-          id: this.schedulingDeliverieForm.get('id').value,
+          id: this.programmingDeliveryInfo.id,
           typeEvent: typeEvent,
           startDate: startDate,
           store: store,
@@ -678,10 +663,6 @@ export class SchedulingDeliveriesFormComponent
             'legalRepresentativeName'
           ).value,
           term: this.schedulingDeliverieForm.get('term').value,
-          status: 'PROG_ENTREGA',
-          statusAut: 'SIN_BIENES',
-          statusInstance: 'SIN_INSTANCIA',
-          statusInstanceNumber: 'SIN_INSTANCIA',
           typeUser: this.typeUser,
         };
 
@@ -689,21 +670,13 @@ export class SchedulingDeliveriesFormComponent
           .updateProgrammingDelivery(this.programmingDeliveryInfo.id, infoSave)
           .subscribe({
             next: async response => {
-              const generateFolio = await this.generateFolioProgrammingDelivery(
-                response
+              this.getFolio();
+              this.save = true;
+              this.alert(
+                'success',
+                'Correcto',
+                'Programación entrega guardada correctamente'
               );
-
-              if (generateFolio) {
-                this.disabledTypeEvent = true;
-                this.disabledTransferent = true;
-                this.disabledWarehouse = true;
-                this.checkProgrammingDelivery();
-                this.alert(
-                  'success',
-                  'Correcto',
-                  'Programación entrega guardada correctamente'
-                );
-              }
             },
             error: () => {},
           });
@@ -991,7 +964,7 @@ export class SchedulingDeliveriesFormComponent
         this.alert(
           'warning',
           'Advertencia',
-          'No hay bienes para' + this.nameEvent + 'en el inventario'
+          'No hay bienes para ' + this.nameEvent + ' en el inventario'
         );
       },
     });
@@ -1288,9 +1261,7 @@ export class SchedulingDeliveriesFormComponent
       .get('typeEventInfo')
       .setValue(this.typeEventname);
 
-    this.schedulingDeliverieForm
-      .get('client')
-      .setValue(this.clientName);
+    this.schedulingDeliverieForm.get('client').setValue(this.clientName);
   }
 
   showInfoProgrammingDelivery() {
@@ -1544,8 +1515,6 @@ export class SchedulingDeliveriesFormComponent
     const endDate = this.schedulingDeliverieForm.get('endDate').value;
     const email = this.schedulingDeliverieForm.get('email').value;
 
-    this.getFolio();
-
     if (!startDate && !endDate) {
       this.alert(
         'warning',
@@ -1568,13 +1537,9 @@ export class SchedulingDeliveriesFormComponent
       this.programmingRequestService
         .sendEmailProgrammingDelivery(formData)
         .subscribe({
-          next: () => {
-            console.log('sendEmailProgrammingDelivery');
-            this.confirm();
-          },
+          next: () => {},
           error: () => {},
         });
-
     } else {
       this.alert(
         'warning',
@@ -1595,7 +1560,7 @@ export class SchedulingDeliveriesFormComponent
           const infoProgramming: IprogrammingDelivery = {
             id: this.programmingDeliveryInfo.id,
             status: 'EJECUTAR_ENTREGA',
-          }
+          };
 
           this.programmingRequestService
             .updateProgrammingDelivery(
@@ -1606,7 +1571,7 @@ export class SchedulingDeliveriesFormComponent
               next: response => {
                 console.log('response', response);
               },
-              error: error => { },
+              error: error => {},
             });
           this.loading = true;
           this.programmingId = this.programmingDeliveryInfo.id;
@@ -1665,6 +1630,7 @@ export class SchedulingDeliveriesFormComponent
           const taskResult = await this.createTaskOrderService(body);
           this.loading = false;
           if (taskResult) {
+            this.sendProgramming();
             this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
             this.alert(
               'success',
