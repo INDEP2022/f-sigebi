@@ -171,15 +171,15 @@
             </form-field>
           </div>
 
-          <div class="pt-3" *ngIf="idTypeEvent == 1">
-            <ngx-select
-              [form]="schedulingDeliverieForm"
-              control="client"
-              [data]="clients"
-              value="client"
-              bindLabel="client"
+          <div class="pt-3" *ngIf="idTypeEvent == 1 && !isReadOnly">
+            <ngx-select [form]="schedulingDeliverieForm" control="client" [data]="clients" value="client" bindLabel="client"
+              label="Cliente" (fetchItems)="getClientSelect($event)"></ngx-select>
+          </div>
+          <div class="pt-3" *ngIf="idTypeEvent == 1 && isReadOnly">
+            <ngx-select [form]="schedulingDeliverieForm" control="client" [data]="clients" value="client" bindLabel="client"
               label="Cliente"
-              (fetchItems)="getClientSelect($event)"></ngx-select>
+            [readonly]="true"
+            (fetchItems)="getClientSelect($event)"></ngx-select>
           </div>
         </div>
         <div class="col-md-12">

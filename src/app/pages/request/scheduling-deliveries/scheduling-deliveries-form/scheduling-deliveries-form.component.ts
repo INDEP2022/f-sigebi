@@ -99,6 +99,7 @@ export class SchedulingDeliveriesFormComponent
   statusNotification = 'N';
   typeUser: string = '';
   nameUser: string = '';
+  idClient: number;
   clientName: string = '';
   idTypeEvent: number = 0;
   typeEventname: string = '';
@@ -589,6 +590,13 @@ export class SchedulingDeliveriesFormComponent
       //this.disableStore = true;
       this.organizationCode = typeEvent.organizationCode;
       this.organizationName = typeEvent.name;
+      //this.schedulingDeliverieForm.get('storeName').setValue(typeEvent.name);
+    }
+
+    if (infoSelect == 'client') {
+      //this.disableStore = true;
+      this.idClient = typeEvent.id;
+      this.clientName = typeEvent.client;
       //this.schedulingDeliverieForm.get('storeName').setValue(typeEvent.name);
     }
 
@@ -2301,6 +2309,10 @@ export class SchedulingDeliveriesFormComponent
     this.schedulingDeliverieForm
       .get('typeEventInfo')
       .setValue(this.typeEventname);
+
+    this.schedulingDeliverieForm
+      .get('client')
+      .setValue(this.clientName);
   }
 
   showInfoProgrammingDelivery() {
@@ -2584,6 +2596,7 @@ export class SchedulingDeliveriesFormComponent
           },
           error: () => {},
         });
+
     } else {
       this.alert(
         'warning',
@@ -2601,6 +2614,22 @@ export class SchedulingDeliveriesFormComponent
     ).then(async question => {
       if (question.isConfirmed) {
         if (this.programmingDeliveryInfo) {
+          const infoProgramming: IprogrammingDelivery = {
+            id: this.programmingDeliveryInfo.id,
+            status: 'EJECUTAR_ENTREGA',
+          }
+
+          this.programmingRequestService
+            .updateProgrammingDelivery(
+              this.programmingDeliveryInfo.id,
+              infoProgramming
+            )
+            .subscribe({
+              next: response => {
+                console.log('response', response);
+              },
+              error: error => { },
+            });
           this.loading = true;
           this.programmingId = this.programmingDeliveryInfo.id;
           //this.requestForm.get('creationUser').setValue(this.nameUser);
