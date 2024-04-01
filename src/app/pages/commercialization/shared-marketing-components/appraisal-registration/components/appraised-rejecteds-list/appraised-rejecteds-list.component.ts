@@ -20,7 +20,20 @@ export class AppraisedRejectedsListComponent
   constructor() {
     super();
 
-    this.settings = { ...this.settings, actions: false };
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: {
+        COMER_BIENES_RECHAZADOS_NO_BIEN: {
+          title: 'No. Bien',
+          sort: false,
+        },
+        COMER_BIENES_RECHAZADOS_CAUSA: {
+          title: 'CAUSA',
+          sort: false,
+        },
+      },
+    };
   }
 
   ngOnInit(): void {
@@ -47,6 +60,7 @@ export class AppraisedRejectedsListComponent
     return this.$appraisedRejectedList.pipe(
       takeUntil(this.$unSubscribe),
       tap(appraisal => {
+        console.log(appraisal);
         this.params.next(new FilterParams());
         this.data = appraisal;
         this.totalItems = this.data.length;
