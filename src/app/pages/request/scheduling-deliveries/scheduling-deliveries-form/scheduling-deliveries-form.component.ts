@@ -204,7 +204,6 @@ export class SchedulingDeliveriesFormComponent
         this.getWarehouseSelect(new ListParams());
         this.getClientSelect(new ListParams());
         // this.checkProgrammingDelivery();
-        const getClientName = await this.getClientName();
 
         //if (getClientName)
       },
@@ -600,9 +599,6 @@ export class SchedulingDeliveriesFormComponent
       //this.disableStore = true;
       this.idClient = typeEvent.id;
       this.clientName = typeEvent.client;
-      console.log('name', this.clientName)
-      console.log('id', this.idClient)
-      //this.schedulingDeliverieForm.get('storeName').setValue(typeEvent.name);
     }
 
     if (this.idTypeEvent && this.organizationCode && this.transferent) {
@@ -1005,7 +1001,7 @@ export class SchedulingDeliveriesFormComponent
 
     this.goodsInvService.getClients(params, formData).subscribe({
       next: response => {
-        this.clientName = response.data[0].client;
+        //this.clientName = response.data[0].client;
 
         this.clients = new DefaultSelect(response.data, response.count);
       },
@@ -1267,7 +1263,7 @@ export class SchedulingDeliveriesFormComponent
       .get('typeEventInfo')
       .setValue(this.typeEventname);
 
-    this.schedulingDeliverieForm.get('client').setValue(this.clientName);
+    //this.schedulingDeliverieForm.get('client').setValue(this.clientName);
   }
 
   showInfoProgrammingDelivery() {
