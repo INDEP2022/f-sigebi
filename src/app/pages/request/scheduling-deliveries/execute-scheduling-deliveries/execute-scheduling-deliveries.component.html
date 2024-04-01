@@ -278,7 +278,7 @@
         <a
           *ngIf="statusProgramming == 'RESTITUCION_BIENES'"
           style="cursor: pointer"
-          (click)="photos()"
+          (click)="showDocuments()"
           class="link-primary"
           >Expediente <i class="fa fa-file" aria-hidden="true"></i></a
         >&nbsp;
@@ -452,7 +452,7 @@
                   [attr.class]="'table-bordered table-responsive'"
                   [settings]="GoodDeliverySettings"
                   [source]="goodDeliveryArray"
-                  (userRowSelect)="selectRows($event)"
+                  (userRowSelect)="goodsSelect($event.selected)"
                   ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
                 </ng2-smart-table>
               </div>

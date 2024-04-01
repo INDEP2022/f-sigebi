@@ -28,6 +28,8 @@ import {
   PROG_DELIVERY_GOOD_TYPE_REST_COLUMNS,
 } from './columns/good-delivery-columns';
 import { ActivatedRoute } from '@angular/router';
+import { ShowDocumentsGoodComponent } from '../../shared-request/expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
+import { IGoodInvAvailableView } from 'src/app/core/models/ms-goodsinv/goodsinv.model';
 
 @Component({
   selector: 'app-execute-scheduling-deliveries',
@@ -1265,7 +1267,7 @@ export class ExecuteSchedulingDeliveriesComponent
       }
 
       if (good.typeRestitution != 'NUMERARIO') {
-        const msg = `El tipo de restitucion dl bien ${good.goodId} - ${good.inventoryNumber} debe ser numerario`;
+        const msg = `El tipo de restitucion del bien ${good.goodId} - ${good.inventoryNumber} debe ser numerario`;
         this.onLoadToast('info', msg);
         error = true;
         break;
@@ -1437,5 +1439,32 @@ export class ExecuteSchedulingDeliveriesComponent
      * mustraPopAprobarBienes()
      */
     window.alert('No se implento la funcion');
+  }
+  selectedRows
+  goodsSelect(goodSelect: IGoodInvAvailableView[]) {
+    this.selectedRows = goodSelect;
+    console.log(this.selectedRows);
+  }
+  showDocuments(): void {
+    console.log(this.selectRows)
+    if (this.selectedRows.length == 0 || this.selectedRows.length >= 2) {
+    } else {
+      const idGood = this.selectedRows[0].id;
+      const idRequest = 0;
+      let config: ModalOptions = {
+        initialState: {
+          idGood,
+          idRequest,
+          parameter: '',
+          typeDoc: 'expedient',
+          callback: (next: boolean) => {
+            //if(next) this.getExample();
+          },
+        },
+        class: `modalSizeXL modal-dialog-centered`,
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(ShowDocumentsGoodComponent, config);
+    }
   }
 }
