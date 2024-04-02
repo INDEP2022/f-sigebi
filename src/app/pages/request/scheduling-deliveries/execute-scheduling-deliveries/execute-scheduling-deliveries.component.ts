@@ -31,6 +31,8 @@ import {
   PROG_DELIVERY_GOOD_NO_DELIVERED,
   PROG_DELIVERY_GOOD_TYPE_REST_COLUMNS,
 } from './columns/good-delivery-columns';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { ShowSchedulingReportComponentComponent } from './show-scheduling-report-component/show-scheduling-report-component.component';
 
 @Component({
   selector: 'app-execute-scheduling-deliveries',
@@ -1499,5 +1501,23 @@ export class ExecuteSchedulingDeliveriesComponent
         this.modalService.show(ShowDocumentsGoodComponent, config);
       }
     }
+  }
+
+  showReport() {
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modal-xl modal-dialog-centered',
+    };
+    config.initialState = {
+      //idprogDel: this.programmingDeliveryInfo.id,
+      typeNotification: 2,
+      callback: (next: boolean) => {
+        if (next) {
+          //this.showReportDestruction();
+        }
+      },
+    };
+
+    this.modalService.show(ShowSchedulingReportComponentComponent, config);
   }
 }
