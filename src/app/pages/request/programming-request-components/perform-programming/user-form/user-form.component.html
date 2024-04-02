@@ -6,13 +6,15 @@
   </div>
   <div body>
     <form [formGroup]="userForm" class="form-material">
-      <form-field [control]="userForm.get('user')" label="Nombre Usuario">
-        <input
-          type="text"
-          class="form-control"
-          maxlength="70"
-          formControlName="user" />
-      </form-field>
+      <div class="row">
+        <form-field [control]="userForm.get('user')" label="Nombre Usuario">
+          <input
+            type="text"
+            class="form-control"
+            maxlength="70"
+            formControlName="user" />
+        </form-field>
+      </div>
       <div class="row pt-3">
         <form-field
           *ngIf="this.userData?.email"

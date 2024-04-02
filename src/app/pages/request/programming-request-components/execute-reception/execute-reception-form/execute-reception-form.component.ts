@@ -2286,7 +2286,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             this.alert(
               'warning',
               'Error de captura',
-              `La cantidad indep es mayor a la cantidad transferente ${good.goodId}`
+              `La cantidad INDEP es mayor a la cantidad transferente ${good.goodId}`
             );
           }
         } else if (this.goodsCancelation.value[0].saePhysicalState == null) {
