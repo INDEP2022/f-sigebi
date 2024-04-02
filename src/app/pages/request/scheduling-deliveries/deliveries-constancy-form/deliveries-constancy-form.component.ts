@@ -7,7 +7,8 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IProgrammingDeliveryGood } from 'src/app/core/models/good-programming/programming-delivery-good.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -20,6 +21,7 @@ import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-req
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ShowSchedulingReportComponentComponent } from '../execute-scheduling-deliveries/show-scheduling-report-component/show-scheduling-report-component.component';
 import { PERSONAL_ESTATE_COLUMNS } from './personal-estate-columns';
 
 const typeContances: any = [
@@ -93,7 +95,8 @@ export class DeliveriesConstancyFormComponent
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private delegationStateService: DelegationStateService,
-    private nonDeliveryReasonsService: NonDeliveryReasonService
+    private nonDeliveryReasonsService: NonDeliveryReasonService,
+    private modalService: BsModalService
   ) {
     super();
     this.settings = {
@@ -296,7 +299,24 @@ export class DeliveriesConstancyFormComponent
     }
   }
 
-  generateReport() {}
+  showReport(data: any) {
+    console.log('data', data);
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modal-xl modal-dialog-centered',
+    };
+    config.initialState = {
+      idprogDel: data.certificateId,
+      report: data.certificateType,
+      callback: (next: boolean) => {
+        if (next) {
+          //this.showReportDestruction();
+        }
+      },
+    };
+
+    this.modalService.show(ShowSchedulingReportComponentComponent, config);
+  }
 
   generateUniqueNumber() {
     const date = new Date();
@@ -382,6 +402,7 @@ export class DeliveriesConstancyFormComponent
       if (index == this.goods.length) {
         this.onLoadToast('success', 'Se creo el certificado de constacia');
         this.event.emit(deliveryForm);
+        this.showReport(deliveryForm);
         this.close();
       }
     });
@@ -416,7 +437,9 @@ export class DeliveriesConstancyFormComponent
     const created = await this.updateCertificateDelivery(certify);
 
     this.onLoadToast('success', 'Se actualizo la constancia');
-    this.event.emit(true);
+    this.event.emit(deliveryForm);
+    this.showReport(deliveryForm);
+
     this.close();
   }
 

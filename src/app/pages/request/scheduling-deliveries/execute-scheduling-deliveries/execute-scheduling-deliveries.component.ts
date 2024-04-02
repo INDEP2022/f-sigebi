@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, of, takeUntil } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
@@ -31,7 +32,6 @@ import {
   PROG_DELIVERY_GOOD_NO_DELIVERED,
   PROG_DELIVERY_GOOD_TYPE_REST_COLUMNS,
 } from './columns/good-delivery-columns';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ShowSchedulingReportComponentComponent } from './show-scheduling-report-component/show-scheduling-report-component.component';
 
 @Component({
@@ -133,7 +133,6 @@ export class ExecuteSchedulingDeliveriesComponent
   ngOnInit(): void {
     const segments = this.route.snapshot.url;
     this.idProgram = segments[segments.length - 1].path;
-    console.log(this.idProgram);
     this.getSchedulingDelivery();
     this.GoodDeliverySettings.columns = GOOD_DELIVERY_COLUMN;
 
@@ -224,7 +223,6 @@ export class ExecuteSchedulingDeliveriesComponent
       ...this.progDelivGoodNDColumns.causeNotDelivered,
       onComponentInitFunction: (instance?: any) => {
         instance.input.subscribe((data: any) => {
-          console.log(data);
           this.setCauseNotDelivered(data);
         });
       },
@@ -234,7 +232,6 @@ export class ExecuteSchedulingDeliveriesComponent
       ...this.progDelivGoodNDColumns.typeRestitution,
       onComponentInitFunction: (instance?: any) => {
         instance.input.subscribe((data: any) => {
-          console.log(data);
           this.setTypeRestitution(data);
         });
       },
@@ -318,7 +315,6 @@ export class ExecuteSchedulingDeliveriesComponent
       );
 
       certificateDelivery.content.event.subscribe((data: any) => {
-        console.log(data);
         const typeEvent = this.programmingDetailPanel.typeEvent;
         this.loadingT2 = true;
         const typeReceptor = data.receiverType;
@@ -394,7 +390,6 @@ export class ExecuteSchedulingDeliveriesComponent
       config
     );
     this.bsModelRef.content.event.subscribe((data: any) => {
-      console.log(data);
       if (data == true) {
         this.getCertificateDelivery(new ListParams());
       }
@@ -616,7 +611,6 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   selectRows(event: any) {
-    console.log('as' + event.selected);
     /*const index = this.goodDeliveryArray.indexOf(event.data);
 
     const table = document.getElementById('table');
@@ -710,9 +704,6 @@ export class ExecuteSchedulingDeliveriesComponent
         return false;
       }
 
-      console.log('lsColumna', lsColumna);
-      console.log('lsColumnaTot', item);
-
       if (lsColumna > item.faltante) {
         this.alert(
           'warning',
@@ -773,7 +764,6 @@ export class ExecuteSchedulingDeliveriesComponent
         const ele: any = tbody[index];
         const isclose = this.constancyDeliveryArray[index].closing;
         if (isclose != null && isclose != 'N') {
-          console.log(ele.children[6].children[1].children[1].hidden);
           ele.children[6].children[1].children[1].hidden = true;
         }
       }
@@ -808,7 +798,6 @@ export class ExecuteSchedulingDeliveriesComponent
 
     for (let index = 0; index < this.selectedRows.length; index++) {
       const item = this.selectedRows[index];
-      console.log(item);
 
       lsColumna = item.amountDelivered;
 
@@ -833,7 +822,6 @@ export class ExecuteSchedulingDeliveriesComponent
         const body: any = {};
         body['id'] = item.id;
         body[colDestino] = total;
-        console.log(body);
 
         this.updateProgrammingGoodDelivery(body);
       });
@@ -873,7 +861,6 @@ export class ExecuteSchedulingDeliveriesComponent
       config
     );
     this.bsModelRef.content.event.subscribe((data: any) => {
-      console.log(data);
       this.delivery(executionType, data.type);
     });
   }
@@ -903,7 +890,7 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   preview(event: any) {
-    console.log(event);
+    this.showReport(event);
   }
 
   close(event: any) {
@@ -1521,14 +1508,15 @@ export class ExecuteSchedulingDeliveriesComponent
     }
   }
 
-  showReport() {
+  showReport(data: any) {
+    console.log('data', data);
     let config = {
       ...MODAL_CONFIG,
       class: 'modal-xl modal-dialog-centered',
     };
     config.initialState = {
-      //idprogDel: this.programmingDeliveryInfo.id,
-      typeNotification: 2,
+      idprogDel: data.certificateId,
+      report: data.certificateType,
       callback: (next: boolean) => {
         if (next) {
           //this.showReportDestruction();

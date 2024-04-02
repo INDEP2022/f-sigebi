@@ -5,6 +5,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { ShowSchedulingReportComponentComponent } from '../../scheduling-deliveries/execute-scheduling-deliveries/show-scheduling-report-component/show-scheduling-report-component.component';
 import { CancelationGoodFormComponent } from './cancelation-good-form/cancelation-good-form.component';
 import { DocumentsListComponent } from './documents-list/documents-list.component';
 import { EditGoodFormComponent } from './edit-good-form/edit-good-form.component';
@@ -28,6 +29,7 @@ import { UploadReportReceiptComponent } from './upload-report-receipt/upload-rep
     ShowReceiptCloseComponent,
     ShowReceiptGuardCloseComponent,
     SelectInputComponent,
+    ShowSchedulingReportComponentComponent,
   ],
   imports: [
     CommonModule,

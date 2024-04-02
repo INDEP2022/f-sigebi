@@ -33,10 +33,12 @@ import { UploadFielsModalComponent } from '../../../transfer-request/tabs/notify
 @Component({
   selector: 'app-show-scheduling-report-component',
   templateUrl: './show-scheduling-report-component.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class ShowSchedulingReportComponentComponent extends BasePage implements OnInit {
+export class ShowSchedulingReportComponentComponent
+  extends BasePage
+  implements OnInit
+{
   private pdf: PDFDocumentProxy;
   idTypeDoc: number = 0;
   reportName: string = '';
@@ -46,6 +48,8 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
   idSampleOrder: number = 0;
   idprogDel: number = 0;
   typeNotification: number = 0;
+  report: number = 0;
+
   orderSampleId: number = 0;
   receiptId: number = 0;
   idSample: number = 0;
@@ -93,7 +97,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
   dynamic: boolean = false;
   signed: boolean = true;
   requestId: number = 0;
-  contentId: string = "";
+  contentId: string = '';
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -112,7 +116,6 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
     private orderService: OrderServiceService,
     private samplingGoodService: SamplingGoodService
   ) {
-
     super();
     this.settings = {
       ...this.settings,
@@ -135,7 +138,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
     if (this.showTDR) {
       this.title = 'ETIQUETA';
     } else {
-      this.title = 'Imprimir Reporte';
+      this.title = 'Constancia';
     }
 
     if (this.typeFirm == 'autografa' || this.typeFirm == 'autograf') {
@@ -160,105 +163,34 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
   }
 
   showReportByTypeDoc() {
-    if (this.idTypeDoc == 103) {
-      let linkDoc: string = `${this.urlBaseReport}Recibo_Entrega.jasper&ID_PROG=${this.idProg}&ID_RECIBO=${this.receipt.id}&ID_ACTA=${this.receipt.actId}`;
-      this.src = linkDoc;
-      this.formLoading = false;
-    }
-
-    if (this.idTypeDoc == 221) {
-      let linkDoc: string = `${this.urlBaseReport}oficio_programacion_recepcion.jasper&ID_PROGRAMACION=${this.idProg}`;
-      this.src = linkDoc;
-      this.formLoading = false;
-    }
-
-    if (
-      this.idTypeDoc == 106 ||
-      this.idTypeDoc == 107 ||
-      this.idTypeDoc == 210
-    ) {
-      let linkDoc: string = `${this.urlBaseReport}${this.nomReport}&ID_ACTA=${this.actId}&ID_PROGRAMACION=${this.idProg}`;
-      this.src = linkDoc;
-      this.formLoading = false;
-    }
-
-    if (this.idTypeDoc == 185 || this.idTypeDoc == 186) {
-      let linkDoc: string = `${this.urlBaseReport}Recibo_Resguardo.jasper&ID_RECIBO_RESGUARDO=${this.receiptGuards.id}`;
-      this.src = linkDoc;
-      this.formLoading = false;
-    }
-
-    if (this.showTDR) {
-      if (this.goodId) {
-        let linkDoc: string = `${this.urlBaseReport}Etiqueta_TDR.jasper&idSolicitud=${this.programming?.id}&CID_BIEN=${this.goodId}`;
-        this.src = linkDoc;
-        this.formLoading = false;
-      } else {
-        let linkDoc: string = `${this.urlBaseReport}Etiqueta_TDR.jasper&idSolicitud=${this.programming?.id}`;
-
-        this.src = linkDoc;
-        this.formLoading = false;
-      }
-
-      if (this.goodsId) {
-        let linkDoc: string = `${this.urlBaseReport}Etiqueta_TDR.jasper&idSolicitud=${this.programming?.id}&CID_BIEN=${this.goodsId}`;
-        this.src = linkDoc;
-        this.formLoading = false;
-      }
-    }
-    if (this.idprogDel && this.typeNotification == 1) {
-      let linkDoc: string = `${this.urlBaseReport}NotificacionParaDestruccion.jasper&ID_PROG_ENTREGA=${this.idprogDel}`;
+    if (this.idprogDel && this.report == 1) {
+      let linkDoc: string = `${this.urlBaseReport}ConstanciaEntrega.jasper&ID_CONSTANCIA=${this.idprogDel}`;
       this.src = linkDoc;
 
       this.formLoading = false;
     }
 
-    if (this.idprogDel && this.typeNotification == 2) {
-      let linkDoc: string = `${this.urlBaseReport}NotificacionDestruccionFondos.jasper&ID_PROG_ENTREGA=${this.idprogDel}`;
+    //NO ENTREGADOS
+    if (this.idprogDel && this.report == 2) {
+      let linkDoc: string = `${this.urlBaseReport}ConstanciaNoEntregados.jasper&ID_CONSTANCIA=${this.idprogDel}`;
       this.src = linkDoc;
 
       this.formLoading = false;
     }
 
-    if (this.idOrderService) {
-      let linkDoc: string = `${this.urlBaseReport}orden_servicio.jasper&ordenServicioID=${this.idOrderService}`;
+    //NO ACEPTADO
+    if (this.idprogDel && this.report == 3) {
+      let linkDoc: string = `${this.urlBaseReport}ConstanciaNoEntregados.jasper&ID_CONSTANCIA=${this.idprogDel}`;
       this.src = linkDoc;
+
       this.formLoading = false;
     }
 
-    if (this.idOrderService) {
-      let linkDoc: string = `${this.urlBaseReport}orden_servicio.jasper&ordenServicioID=${this.idOrderService}`;
+    //NO RETIRADOS
+    if (this.idprogDel && this.report == 4) {
+      let linkDoc: string = `${this.urlBaseReport}ConstanciaNoEntregados.jasper&ID_CONSTANCIA=${this.idprogDel}`;
       this.src = linkDoc;
-      this.formLoading = false;
-    }
 
-    if (this.idTypeDoc == 198 && this.annexW == true) {
-      let linkDoc: string = `${this.urlBaseReport}AnexoOrdenesW.jasper&ID_ORDE_SERVICIO=${this.idOrderService}&ID_TIPO_DOCTO=2`;
-      this.src = linkDoc;
-      this.formLoading = false;
-    }
-
-    if (this.process == 'validation-report' && this.idOrderService) {
-      let linkDoc: string = `${this.urlBaseReport}reporte_implementacion.jasper&ordenServicioID=${this.idOrderService}`;
-      this.src = linkDoc;
-      this.formLoading = false;
-    }
-
-    if (this.idTypeDoc == 197 && this.orderSampleId) {
-      let linkDoc: string = `${this.urlBaseReport}AnexoKOrdenes.jasper&ID_MUESTREO_ORDEN=${this.orderSampleId}&ID_TIPO_DOCTO=197`;
-      this.src = linkDoc;
-      this.formLoading = false;
-    }
-
-    if (this.idTypeDoc == 218) {
-      let linkDoc: string = `${this.urlBaseReport}FormatoReclamacionMuestreo.jasper&ID_MUESTREO=${this.idSample}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
-      this.src = linkDoc;
-      this.formLoading = false;
-    }
-
-    if (this.idTypeDoc == 219) {
-      let linkDoc: string = `${this.urlBaseReport}AnexoKBienes.jasper&ID_MUESTREO=${this.idSample}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
-      this.src = linkDoc;
       this.formLoading = false;
     }
 
@@ -273,9 +205,8 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
           this.src = fileURL;
           this.formLoading = false;
         },
-        error: error => { },
+        error: error => {},
       });
-
     } else if (this.dynamic) {
       let linkDoc: string = `${this.urlBaseReport}${this.reportName}&ID_TABLA=NOMBRE_TABLA,ID_REGISTRO,ID_TIPO_DOCTO&NOM_TABLA=REPORTES_DINAMICOS&NOM_CAMPO=CONTENIDO&ID_REGISTRO=${this.tableName},${this.requestId},${this.idTypeDoc}`;
       this.src = linkDoc;
@@ -301,7 +232,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
       next: response => {
         //this.createPersonsSing(response.data[0]);
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -367,7 +298,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
             urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
             type: 'pdf',
           },
-          callback: (response: any) => { },
+          callback: (response: any) => {},
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
         keyboard: false,
@@ -472,10 +403,9 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
   }
 
   registerSign() {
-
     let learnedType = 221;
-    let column = "TIPO_FIRMA";
-    let boardSig = "PROGRAMACIONES";
+    let column = 'TIPO_FIRMA';
+    let boardSig = 'PROGRAMACIONES';
 
     const learndedId = this.idProg;
 
@@ -487,7 +417,6 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
       .getSignatoriesFilter(learnedType, learndedId)
       .subscribe({
         next: response => {
-
           this.signatoriesService
             .deleteFirmante(Number(response.data[0].signatoryId))
             .subscribe({
@@ -502,7 +431,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
                 );
                 if (createSignatore) this.getSignatories();
               },
-              error: error => { },
+              error: error => {},
             });
         },
         error: async error => {
@@ -541,7 +470,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -555,7 +484,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
   openMessage(message: string): void {
     let electronic = [
       2, 174, 185, 186, 187, 192, 108, 183, 221, 26, 27, 50, 68, 217, 94, 40,
-      101, 105, 104, 72, 222, 223, 224, 225, 245, 246, 249, 223
+      101, 105, 104, 72, 222, 223, 224, 225, 245, 246, 249, 223,
     ];
 
     this.alertQuestion('question', 'Confirmación', `${message}`).then(
@@ -566,7 +495,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
             this.gelectronicFirmService
               .firmDocument(210, 'ProgramacionRecibo', {})
               .subscribe({
-                next: (response) => {
+                next: response => {
                   if (this.isXML(response)) {
                     let node = this.getXMLNode(response, 'boolProcesoFirma');
                     if (node?.textContent == 'false') {
@@ -590,7 +519,6 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
 
                   this.loadingButton = false;
                   this.msjCheck = true;
-
                 },
                 error: () => {
                   this.alert(
@@ -772,7 +700,6 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
                 },
               });
             return;
-
           }
 
           if (this.idTypeDoc == 219) {
@@ -992,7 +919,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
                 this.close();
               }
             },
-            error: error => { },
+            error: error => {},
           });
       });
     } else {
@@ -1065,7 +992,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
                   }
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idTypeDoc == 107 && this.typeFirm == 'electronica') {
@@ -1121,7 +1048,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idTypeDoc == 210 && this.typeFirm == 'electronica') {
@@ -1177,7 +1104,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idTypeDoc == 106 && this.typeFirm == 'electronica') {
@@ -1233,7 +1160,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idTypeDoc == 197 && this.typeFirm == 'electronica') {
@@ -1283,7 +1210,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idOrderService && this.typeFirm == 'electronica') {
@@ -1337,7 +1264,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idTypeDoc == 218 && this.typeFirm == 'electronica') {
@@ -1385,7 +1312,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idTypeDoc == 219 && this.typeFirm == 'electronica') {
@@ -1434,7 +1361,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (electronic.includes(parseInt('' + this.idTypeDoc))) {
@@ -1481,7 +1408,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       }
@@ -1501,7 +1428,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -1519,7 +1446,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
           next: response => {
             resolve(true);
           },
-          error: error => { },
+          error: error => {},
         });
       });
     });
@@ -1556,7 +1483,7 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
           next: response => {
             resolve(true);
           },
-          error: error => { },
+          error: error => {},
         });
       });
     });
@@ -1711,18 +1638,17 @@ export class ShowSchedulingReportComponentComponent extends BasePage implements 
 
   isXML(xmlStr: string): boolean {
     let parser = new DOMParser();
-    let doc = parser.parseFromString(xmlStr, "application/xml");
+    let doc = parser.parseFromString(xmlStr, 'application/xml');
     return !doc.getElementsByTagName('parsererror').length;
   }
 
   getXMLNode(xmlStr: string, tagName: string): Node | null {
     let parser = new DOMParser();
-    let doc = parser.parseFromString(xmlStr, "application/xml");
+    let doc = parser.parseFromString(xmlStr, 'application/xml');
 
     let nodes = doc.getElementsByTagName(tagName);
 
     // Devuelve el primer nodo con el nombre de etiqueta especificado, o null si no se encontró ninguno
     return nodes.length > 0 ? nodes[0] : null;
   }
-
 }
