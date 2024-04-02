@@ -330,6 +330,8 @@ export class ExecuteSchedulingDeliveriesComponent
 
         this.constancyDeliveryArray = [...this.constancyDeliveryArray];
         this.loadingT2 = false;
+
+        this.getCertificateDelivery(new ListParams());
       });
     }
   }
@@ -339,7 +341,11 @@ export class ExecuteSchedulingDeliveriesComponent
       this.constanceSelected == null ||
       this.constanceSelected.certificateId == null
     ) {
-      this.onLoadToast('info', 'Es necesario seleccionar una constancia');
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Es necesario seleccionar una constancia'
+      );
       return;
     }
 
@@ -347,9 +353,10 @@ export class ExecuteSchedulingDeliveriesComponent
       this.constanceSelected.closing == null ||
       this.constanceSelected.closing == 'N'
     ) {
-      this.onLoadToast(
-        'info',
-        'Para adjuntar documentos es necesario cerrar la constancia'
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Es necesario cerrar la constancia para adjuntar documentos'
       );
       return;
     }
@@ -409,8 +416,9 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   getSchedulingDelivery() {
+    this.selectedRows = [];
     const params = new ListParams();
-    params['filter.id'] = `$eq:${this.idProgram}`; //16896
+    params['filter.id'] = `$eq:${this.idProgram}`;
     this.programmingService
       .getProgrammingDelivery(params)
       .pipe(
@@ -603,7 +611,7 @@ export class ExecuteSchedulingDeliveriesComponent
           },
           error: error => {
             reject(error);
-            this.onLoadToast('error', 'No se actualizo los bienes entregados');
+
             this.loadingEEB = false;
           },
         });
@@ -663,10 +671,12 @@ export class ExecuteSchedulingDeliveriesComponent
       const typeEvent = this.programmingDetailPanel.typeEvent;
       console.log(item);
       if (typeEvent === 1 && item.commercialEvent == null) {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
+          'Advertencia',
           'El bien debe tener un evento comercial. Consulte a su administrador.'
         );
+
         return false;
       }
 
@@ -691,11 +701,6 @@ export class ExecuteSchedulingDeliveriesComponent
           break;
       }
       if (lsColumna <= 0) {
-        // this.onLoadToast(
-        //   'info',
-        //   `El bien ${item.goodId} - ${item.inventoryNumber} - tiene un valor menor o igual a cero`
-        // );
-
         this.alert(
           'warning',
           'Acción Invalida',
@@ -744,8 +749,9 @@ export class ExecuteSchedulingDeliveriesComponent
       error: error => {
         console.log(error);
         if (error.status != 400) {
-          this.onLoadToast(
+          this.alert(
             'error',
+            'Error',
             'Ocurrio un error al cargar los certificados de constancia'
           );
         }
@@ -772,34 +778,34 @@ export class ExecuteSchedulingDeliveriesComponent
 
   //aqui
   delivery(executionType: string, causa?: string) {
-    if (this.selectedRows.length == 0 || this.selectedRows > 1) {
-      this.onLoadToast(
-        'info',
+    if (!this.selectedRows || this.selectedRows.length !== 1) {
+      this.alert(
+        'warning',
+        'Acción Invalida',
         'Debe tener un bien seleccionado para la ejecucide entrega'
       );
       return;
     }
-    let colDestino = '';
 
-    if (executionType == 'entragados') {
-      colDestino = 'amountDelivered';
-    } else {
-      if (causa == 'NO ENTREGADOS') {
-        colDestino = 'amountNotDelivered'; //CantidadNoEntregados
-      } else if (causa == 'NO ACEPTADOS') {
-        colDestino = 'anountNotAccelted'; //CantidadNoAceptados
+    this.selectedRows.map((item: any) => {
+      let colDestino = '';
+      let lsColumna = null;
+
+      if (executionType == 'entragados') {
+        lsColumna = item.amountDelivered;
+        colDestino = 'amountDelivered';
       } else {
-        colDestino = 'amountNotWhithdrawn'; //CantidadNoRetirados
+        if (causa == 'NO ENTREGADOS') {
+          lsColumna = item.amountNotDelivered;
+          colDestino = 'amountNotDelivered';
+        } else if (causa == 'NO ACEPTADOS') {
+          lsColumna = item.anountNotAccelted;
+          colDestino = 'anountNotAccelted';
+        } else {
+          lsColumna = item.amountNotWhithdrawn;
+          colDestino = 'amountNotWhithdrawn';
+        }
       }
-    }
-
-    let lsColumna = null;
-    let lsColumnaTot = null;
-
-    for (let index = 0; index < this.selectedRows.length; index++) {
-      const item = this.selectedRows[index];
-
-      lsColumna = item.amountDelivered;
 
       if (lsColumna < 1) {
         this.alert(
@@ -807,34 +813,44 @@ export class ExecuteSchedulingDeliveriesComponent
           'Acción Invalida',
           'El bien seleccionado tiene un valor menor o igual a cero'
         );
+        return;
       }
 
-      if (lsColumna > item.faltante) {
+      const totalAmount =
+        Number(item.amountDelivered) +
+        Number(item.amountNotDelivered) +
+        Number(item.anountNotAccelted) +
+        Number(item.amountNotWhithdrawn);
+
+      if (totalAmount > item.faltante) {
         this.alert(
           'warning',
           'Acción Invalida',
           'El bien seleccionado excede la cantidad permitida'
         );
+        return;
       }
 
-      this.selectedRows.map((item: any) => {
-        const total = Number(item.amountDelivered);
-        const body: any = {};
-        body['id'] = item.id;
-        body[colDestino] = total;
+      const total = Number(lsColumna);
+      const body: any = {};
+      body['id'] = item.id;
+      body[colDestino] = total;
 
-        this.updateProgrammingGoodDelivery(body);
-      });
-    }
+      this.updateProgrammingGoodDelivery(body);
+      this.alert(
+        'success',
+        'Acción Exitosa',
+        'Se ha actualizado la cantidad de bienes'
+      );
+      this.getSchedulingDelivery();
+    });
   }
 
   noDelivery(executionType: string) {
-    if (
-      this.goodDeliveredSelected.length == 0 ||
-      this.goodDeliveredSelected > 1
-    ) {
-      this.onLoadToast(
-        'info',
+    if (!this.selectedRows || this.selectedRows.length > 1) {
+      this.alert(
+        'warning',
+        'Acción Invalida',
         'Debe tener un bien seleccionado para la ejecucide entrega'
       );
       return;
@@ -908,11 +924,11 @@ export class ExecuteSchedulingDeliveriesComponent
           //luego actualizar los botones
           this.displayCloseConstanceIcon();
         }
-        this.onLoadToast('success', 'Constancia cerrada');
+        this.alert('success', 'Constancia cerrada', 'La constancia se cerro');
         this.loadingT2 = false;
       },
       error: error => {
-        this.onLoadToast('error', 'No se pudo cerrar la constancia');
+        this.alert('error', 'Error', 'No se pudo cerrar la constancia');
         this.loadingT2 = false;
       },
     });
@@ -937,7 +953,11 @@ export class ExecuteSchedulingDeliveriesComponent
 
     //Verifica si existen constancias
     if (this.constancyDeliveryArray.length == 0) {
-      this.onLoadToast('info', 'Debes generar por lo menos una constacia');
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Debes generar por lo menos una constacia'
+      );
       return;
     }
 
@@ -947,7 +967,11 @@ export class ExecuteSchedulingDeliveriesComponent
 
     //Verifica que las constancias esten cerradas
     if (constDeliveryClosed.count > 0) {
-      this.onLoadToast('info', 'Todas las constancias deben estar cerradas');
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Todas las constancias deben estar cerradas'
+      );
       return;
     }
 
@@ -958,10 +982,12 @@ export class ExecuteSchedulingDeliveriesComponent
     haveError = true;
 
     if (haveError == true) {
-      this.onLoadToast(
-        'info',
+      this.alert(
+        'warning',
+        'Advertencia',
         'Es necesario adjuntar un documento a las constancias'
       );
+
       return;
     }
 
@@ -1100,7 +1126,7 @@ export class ExecuteSchedulingDeliveriesComponent
     let nomProcess = null;
 
     if (this.goodRestSelected.id == null) {
-      this.onLoadToast('info', 'Debe tener un bien seleccionado');
+      this.alert('warning', 'Advertencia', 'Debe tener un bien seleccionado');
       return;
     }
     if (this.statusProgramming == 'APROBAR_NO_ENT_ESP') {
@@ -1225,7 +1251,7 @@ export class ExecuteSchedulingDeliveriesComponent
       if (list.length == index) {
         this.goodDeliveryFieldSelected = [];
         this.getProgrammingGoodDelivery(new ListParams());
-        this.onLoadToast('success', 'Entrega de bienes actualizado');
+        this.alert('success', 'Actualizado', 'Se han actualizado los bienes');
       }
     });
   }
@@ -1248,7 +1274,11 @@ export class ExecuteSchedulingDeliveriesComponent
 
   entryOrder() {
     if (this.progGoodNoDeliveredSelected.length == 0) {
-      this.onLoadToast('info', 'Debes seleccionar al menos un bien');
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Debes seleccionar al menos un bien'
+      );
       return;
     }
 
@@ -1270,7 +1300,11 @@ export class ExecuteSchedulingDeliveriesComponent
     //ojo: IdContentTe no se encuentra para firma del formato de reclamacion
     let error = false;
     if (this.progGoodNoDeliveredSelected.length == 0) {
-      this.onLoadToast('info', 'Debes seleccionar al menos un bien');
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Debes seleccionar al menos un bien'
+      );
       return;
     }
     for (
@@ -1297,7 +1331,7 @@ export class ExecuteSchedulingDeliveriesComponent
 
       if (good.typeRestitution != 'NUMERARIO') {
         const msg = `El tipo de restitucion del bien ${good.goodId} - ${good.inventoryNumber} debe ser numerario`;
-        this.onLoadToast('info', msg);
+        this.alert('warning', 'Acción Invalida', msg);
         error = true;
         break;
       }
@@ -1353,7 +1387,11 @@ export class ExecuteSchedulingDeliveriesComponent
         //actualizar los programacion de bienes entregados --enviarAprobacion()
         //const updateGood = await this.updateProgrammingGoodDelivery(item);
         if (goodEsp.length == index) {
-          this.onLoadToast('success', 'Bienes aprobados');
+          this.alert(
+            'success',
+            'Bienes enviados',
+            'Los bienes fueron enviados a aprobación'
+          );
           return;
         }
       });
@@ -1387,18 +1425,15 @@ export class ExecuteSchedulingDeliveriesComponent
         .updateAllProgrammingDeliveryGoodByIdDeliverySchedule(id, body)
         .subscribe({
           next: resp => {
-            this.onLoadToast(
+            this.alert(
               'success',
+              'Actualizado',
               'La clasificación a numeraria fue exitosa'
             );
             this.loadingPENE = false;
             this.getProgrammingGoodDelivery(new ListParams());
           },
           error: error => {
-            this.onLoadToast(
-              'error',
-              'Ocurrio un error al actualizar los bienes'
-            );
             this.loadingPENE = false;
           },
         });
@@ -1411,10 +1446,12 @@ export class ExecuteSchedulingDeliveriesComponent
 
           const updated = await this.updateProgrammingGoodDelivery(body);
           if (this.progGoodNoDeliveredSelected.length == index) {
-            this.onLoadToast(
+            this.alert(
               'success',
+              'Actualizado',
               'La clasificación a numeraria fue exitosa'
             );
+
             this.loadingPENE = false;
             this.getProgrammingGoodDelivery(new ListParams());
             return;
