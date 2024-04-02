@@ -165,17 +165,13 @@ export class AppraisalDetailActionsComponent
                         );
                       },
                       error: eror => {
+                        this.alert('warning', eror.error.message, '');
                         this.loader.load = false;
                       },
                     });
                 },
                 error: eror => {
-                  this.alert(
-                    'warning',
-                    'Error falla de datos en el Evento y Bien',
-                    ''
-                  );
-
+                  this.alert('warning', eror.error.message, '');
                   this.loader.load = false;
                 },
               });
@@ -221,16 +217,13 @@ export class AppraisalDetailActionsComponent
                     },
                     error: eror => {
                       console.log(eror);
-                      this.alert(
-                        'warning',
-                        'Error falla de datos en el Evento y Bien',
-                        ''
-                      );
+                      this.alert('warning', eror.error.message, '');
                       this.loader.load = false;
                     },
                   });
                 },
                 error: eror => {
+                  this.alert('warning', eror.error.message, '');
                   this.loader.load = false;
                 },
               });
