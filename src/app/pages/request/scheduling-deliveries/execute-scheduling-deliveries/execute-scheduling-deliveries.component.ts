@@ -16,6 +16,7 @@ import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.serv
 import { BasePage } from 'src/app/core/shared/base-page';
 import { JSON_TO_CSV } from 'src/app/pages/admin/home/constants/json-to-csv';
 import Swal from 'sweetalert2';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { ShowDocumentsGoodComponent } from '../../shared-request/expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
 import { ClaimFormModalComponent } from '../claim-form-modal/claim-form-modal.component';
@@ -30,7 +31,6 @@ import {
   PROG_DELIVERY_GOOD_NO_DELIVERED,
   PROG_DELIVERY_GOOD_TYPE_REST_COLUMNS,
 } from './columns/good-delivery-columns';
-import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-execute-scheduling-deliveries',
@@ -289,8 +289,7 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   certificateDelivery(constancy: number) {
-    console.log(this.selectedRows);
-    if (this.selectedRows.length < 1) {
+    if (!this.selectedRows || this.selectedRows.length < 1) {
       this.alert(
         'warning',
         'Advertencia',
@@ -713,9 +712,10 @@ export class ExecuteSchedulingDeliveriesComponent
       console.log('lsColumnaTot', item);
 
       if (lsColumna > item.faltante) {
-        this.onLoadToast(
-          'info',
-          `El bien ${item.goodId} - ${item.inventoryNumber} - excede la cantidad permitida`
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          `El bien ${item.goodId} excede la cantidad permitida`
         );
         return false;
       }
@@ -1278,7 +1278,11 @@ export class ExecuteSchedulingDeliveriesComponent
         this.alert(
           'warning',
           'Acción Invalida',
-          'El bien ' + good.goodId + '-' + good.inventoryNumber + ' debe tener asignado un tipo de restitución'
+          'El bien ' +
+            good.goodId +
+            '-' +
+            good.inventoryNumber +
+            ' debe tener asignado un tipo de restitución'
         );
         error = true;
         break;
@@ -1468,11 +1472,7 @@ export class ExecuteSchedulingDeliveriesComponent
   showDocuments(): void {
     console.log('o aqui' + this.selectRows);
     if (isNullOrEmpty(this.selectedRows)) {
-      this.alert(
-        'warning',
-        'Acción Invalida',
-        'Se debe seleccionar un bien '
-      );
+      this.alert('warning', 'Acción Invalida', 'Se debe seleccionar un bien ');
     } else {
       if (this.selectedRows.length == 0 || this.selectedRows.length >= 2) {
         this.alert(
@@ -1499,6 +1499,5 @@ export class ExecuteSchedulingDeliveriesComponent
         this.modalService.show(ShowDocumentsGoodComponent, config);
       }
     }
-
   }
 }
