@@ -246,6 +246,7 @@ export class AppraisalDetailActionsComponent
     }
   }
   validFile(file: File) {
+    console.log(this.global.direction);
     if (this.global.direction == 'I') {
       this.loader.load = true;
       let params = new ListParams();
@@ -264,6 +265,7 @@ export class AppraisalDetailActionsComponent
           },
           error: eror => {
             console.log(eror);
+            this.alert('warning', eror.message[0], '');
             this.loader.load = false;
           },
         });
@@ -272,7 +274,7 @@ export class AppraisalDetailActionsComponent
       let params = new ListParams();
       let data = {
         vIva: this.global.vIva,
-        columNumber: this.global.vColumnNum,
+        columNumber: 11,
       };
       this.msMassiveappraiseService
         .postValidaArchivoAppraisalRegistry(params, file, data)
@@ -284,6 +286,8 @@ export class AppraisalDetailActionsComponent
             this.loader.load = false;
           },
           error: eror => {
+            console.log(eror);
+            this.alert('warning', eror.error.message, '');
             this.loader.load = false;
           },
         });
