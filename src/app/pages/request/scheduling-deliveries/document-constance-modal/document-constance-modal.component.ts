@@ -272,6 +272,7 @@ export class DocumentConstanceModalComponent
 
   //añadir nuevo documento
   newDocument() {
+    console.log(this.rowSelected);
     if (this.rowSelected?.xDelegacionRegional == null) {
       this.onLoadToast(
         'info',

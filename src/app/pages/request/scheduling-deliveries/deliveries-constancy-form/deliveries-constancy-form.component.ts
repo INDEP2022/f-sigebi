@@ -12,6 +12,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IProgrammingDeliveryGood } from 'src/app/core/models/good-programming/programming-delivery-good.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
+import { NonDeliveryReasonService } from 'src/app/core/services/catalogs/non-delivery-reason.service';
 import { CertificatesDeliveryService } from 'src/app/core/services/ms-delivery-constancy/certificates-delivery.service';
 import { CertificatesGoodsService } from 'src/app/core/services/ms-delivery-constancy/certificates-goods.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -91,7 +92,8 @@ export class DeliveriesConstancyFormComponent
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private delegationStateService: DelegationStateService
+    private delegationStateService: DelegationStateService,
+    private nonDeliveryReasonsService: NonDeliveryReasonService
   ) {
     super();
     this.settings = {
@@ -101,8 +103,10 @@ export class DeliveriesConstancyFormComponent
   }
 
   ngOnInit(): void {
+    console.log(this.typeConstancy);
     this.settings.columns = PERSONAL_ESTATE_COLUMNS;
     this.prepareForm();
+    this.getReasons();
     this.regDele = this.progEntrega.delRegId;
     this.listTypeConstances = new DefaultSelect(
       typeContances,
@@ -114,6 +118,13 @@ export class DeliveriesConstancyFormComponent
       this.setColumns();
       this.validateClientSeccion();
     }, 300);
+  }
+
+  getReasons() {
+    const params = new ListParams();
+    this.getReasonNotDelivery(params);
+    this.getReasonNotAccepted(params);
+    this.getReasonNotWithdrawn(params);
   }
 
   prepareForm() {
@@ -322,6 +333,13 @@ export class DeliveriesConstancyFormComponent
         ? moment(deliveryForm.oficioDate).format('YYYY-MM-DD')
         : null;
     deliveryForm.closing = null;
+    deliveryForm.reasonsNotAccepted =
+      this.deliveryConstancyForm.get('reasonsNotAccepted').value;
+    deliveryForm.reasonsNotDelivered = this.deliveryConstancyForm.get(
+      'reasonsNotDelivered'
+    ).value;
+    deliveryForm.reasonsNotRetired =
+      this.deliveryConstancyForm.get('reasonsNotRetired').value;
     const created = await this.createCertificateDelivery(deliveryForm);
 
     //ACTUALIZA PROGRAMACION ENTREGA BIENES
@@ -342,7 +360,7 @@ export class DeliveriesConstancyFormComponent
       );
 
       const bodyConstanceGood: any = {};
-      bodyConstanceGood.certificateId = 999953; //incresar el certificateId
+      bodyConstanceGood.certificateId = this.generateUniqueNumber(); //incresar el certificateId
       bodyConstanceGood.transactionId = item.transactionId;
       bodyConstanceGood.siabGoodNumber = item.siabGoodNumber;
       bodyConstanceGood.goodId = item.goodId;
@@ -487,6 +505,86 @@ export class DeliveriesConstancyFormComponent
           resolve(resp.data[0].descriptionGood);
         },
       });
+    });
+  }
+
+  getReasonNotDelivery(params: ListParams) {
+    params['filter.orderBy'] = `reason:ASC`;
+    params['filter.reasonType'] = `$eq:Motivos No Entregados`;
+    if (params.text) {
+      params['filter.reason'] = `$ilike:${params.text}`;
+    }
+
+    this.nonDeliveryReasonsService.getAll(params).subscribe({
+      next: response => {
+        this.selectReasonNoDelive = new DefaultSelect(
+          response.data,
+          response.count
+        );
+      },
+      error: error => {
+        this.selectReasonNoDelive = new DefaultSelect();
+      },
+    });
+  }
+
+  reasonChange(selectedValue, id) {
+    if (id == 3) {
+      this.deliveryConstancyForm
+        .get('reasonsNotAccepted')
+        .setValue(selectedValue);
+    }
+    if (id == 2) {
+      this.deliveryConstancyForm
+        .get('reasonsNotDelivered')
+        .setValue(selectedValue);
+    }
+    if (id == 4) {
+      this.deliveryConstancyForm
+        .get('reasonsNotRetired')
+        .setValue(selectedValue);
+    }
+
+    console.log(selectedValue);
+  }
+
+  getReasonNotAccepted(params: ListParams) {
+    params['filter.orderBy'] = `reason:ASC`;
+    params['filter.reasonType'] = `$eq:Motivos No Aceptados`;
+    if (params.text) {
+      params['filter.reason'] = `$ilike:${params.text}`;
+    }
+
+    this.nonDeliveryReasonsService.getAll(params).subscribe({
+      next: response => {
+        this.selectReasonNoAcep = new DefaultSelect(
+          response.data,
+          response.count
+        );
+      },
+      error: error => {
+        this.selectReasonNoAcep = new DefaultSelect();
+      },
+    });
+  }
+
+  getReasonNotWithdrawn(params: ListParams) {
+    params['filter.orderBy'] = `reason:ASC`;
+    params['filter.reasonType'] = `$eq:Motivos No Retirados`;
+    if (params.text) {
+      params['filter.reason'] = `$ilike:${params.text}`;
+    }
+
+    this.nonDeliveryReasonsService.getAll(params).subscribe({
+      next: response => {
+        this.selectReasonNoWithdrawn = new DefaultSelect(
+          response.data,
+          response.count
+        );
+      },
+      error: error => {
+        this.selectReasonNoWithdrawn = new DefaultSelect();
+      },
     });
   }
 
