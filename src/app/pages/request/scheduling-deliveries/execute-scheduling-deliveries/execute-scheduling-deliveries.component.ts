@@ -778,11 +778,9 @@ export class ExecuteSchedulingDeliveriesComponent
     }, 300);
   }
 
+  //aqui
   delivery(executionType: string, causa?: string) {
-    if (
-      this.goodDeliveredSelected.length == 0 ||
-      this.goodDeliveredSelected > 1
-    ) {
+    if (this.selectedRows.length == 0 || this.selectedRows > 1) {
       this.onLoadToast(
         'info',
         'Debe tener un bien seleccionado para la ejecucide entrega'
@@ -792,7 +790,7 @@ export class ExecuteSchedulingDeliveriesComponent
     let colDestino = '';
 
     if (executionType == 'entragados') {
-      colDestino = 'amountDelivered'; //Cantidad Entregados
+      colDestino = 'amountDelivered';
     } else {
       if (causa == 'NO ENTREGADOS') {
         colDestino = 'amountNotDelivered'; //CantidadNoEntregados
@@ -803,21 +801,41 @@ export class ExecuteSchedulingDeliveriesComponent
       }
     }
 
-    this.goodDeliveredSelected.map((item: any) => {
-      const goodTotal = item.amountGood;
-      const sumGoods =
-        Number(item.sunGoodEnt) +
-        Number(item.sumGoodNoAce) +
-        Number(item.sumGoodNoEnt) +
-        Number(item.sumGoodNoRet);
-      const total = goodTotal - sumGoods;
-      const body: any = {};
-      body['id'] = item.id;
-      body[colDestino] = total;
-      console.log(body);
-      //Consultar si lo que se actualizara esta correcto
-      //this.updateProgrammingGoodDelivery(body)
-    });
+    let lsColumna = null;
+    let lsColumnaTot = null;
+
+    for (let index = 0; index < this.selectedRows.length; index++) {
+      const item = this.selectedRows[index];
+      console.log(item);
+
+      lsColumna = item.amountDelivered;
+
+      if (lsColumna < 1) {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'El bien seleccionado tiene un valor menor o igual a cero'
+        );
+      }
+
+      if (lsColumna > item.faltante) {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'El bien seleccionado excede la cantidad permitida'
+        );
+      }
+
+      this.selectedRows.map((item: any) => {
+        const total = Number(item.amountDelivered);
+        const body: any = {};
+        body['id'] = item.id;
+        body[colDestino] = total;
+        console.log(body);
+
+        this.updateProgrammingGoodDelivery(body);
+      });
+    }
   }
 
   noDelivery(executionType: string) {
