@@ -1244,6 +1244,7 @@ export class SchedulingDeliveriesFormComponent
         'statusInstanceNumber'
       ).value,
       typeUser: this.schedulingDeliverieForm.get('typeUser').value,
+      delRegId: this.regionalDelegationNum,
     };
 
     return new Promise((resolve, reject) => {
@@ -1289,8 +1290,9 @@ export class SchedulingDeliveriesFormComponent
     this.schedulingDeliverieForm
       .get('typeEventInfo')
       .setValue(this.typeEventname);
-
-    //this.schedulingDeliverieForm.get('client').setValue(this.clientName);
+    console.log(this.clientName)
+    this.schedulingDeliverieForm.get('client').setValue(this.clientName);
+    console.log(this.schedulingDeliverieForm.get('clientName').value)
   }
 
   showInfoProgrammingDelivery() {

@@ -74,6 +74,8 @@ export class DocumentConstanceModalComponent
   private bsModelRef = inject(BsModalRef);
 
   ngOnInit(): void {
+    console.log("certificate", this.certificate);
+    console.log("good", this.goodDelivery);
     this.initForm();
     this.getTypeDocumentSelect(new ListParams());
     this.getRegionalDelegationSelect(new ListParams());
@@ -165,6 +167,7 @@ export class DocumentConstanceModalComponent
   }
 
   getRegionalDelegationSelect(params: ListParams) {
+    console.log(params.text)
     params['filter.description'] = `$ilike:${params.text}`;
     this.regDelegationService.getAll(params).subscribe({
       next: resp => {
@@ -273,7 +276,7 @@ export class DocumentConstanceModalComponent
   //añadir nuevo documento
   newDocument() {
     console.log(this.rowSelected);
-    if (this.rowSelected?.xDelegacionRegional == null) {
+    if (this.goodDelivery.delRegId == null) {
       this.onLoadToast(
         'info',
         '',
@@ -282,7 +285,7 @@ export class DocumentConstanceModalComponent
       return;
     }
 
-    this.openModal(DocumentFormComponent, 'doc-constance', this.rowSelected);
+    this.openModal(DocumentFormComponent, 'doc-constance', this.goodDelivery);
   }
   //abrir detalle del documento
   showDocument(event: any) {

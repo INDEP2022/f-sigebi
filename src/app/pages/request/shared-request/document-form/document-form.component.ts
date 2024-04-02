@@ -48,6 +48,7 @@ export class DocumentFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.parameter)
     this.prepareForm();
     this.getDocType(new ListParams());
     this.setRegionalDelegacion();
