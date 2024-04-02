@@ -7,7 +7,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
-import { CertificatesGoodsService } from 'src/app/core/services/ms-delivery-constancy/certificates-goods.service';
+import { CertificatesDeliveryService } from 'src/app/core/services/ms-delivery-constancy/certificates-delivery.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared';
 import {
@@ -54,7 +54,7 @@ export class DocumentConstanceModalComponent
     private regDelegationService: RegionalDelegationService,
     private delegationStateService: DelegationStateService,
     private transferentService: TransferenteService,
-    private certificateGoodService: CertificatesGoodsService
+    private certificateGoodService: CertificatesDeliveryService
   ) {
     super();
     this.settings.actions.delete = true;
@@ -74,13 +74,12 @@ export class DocumentConstanceModalComponent
   private bsModelRef = inject(BsModalRef);
 
   ngOnInit(): void {
-    console.log("certificate", this.certificate);
-    console.log("good", this.goodDelivery);
     this.initForm();
     this.getTypeDocumentSelect(new ListParams());
     this.getRegionalDelegationSelect(new ListParams());
 
     if (this.certificate.certificateId != null) {
+      console.log('entro');
       this.getCertificateGood();
     }
   }
@@ -167,7 +166,7 @@ export class DocumentConstanceModalComponent
   }
 
   getRegionalDelegationSelect(params: ListParams) {
-    console.log(params.text)
+    console.log(params.text);
     params['filter.description'] = `$ilike:${params.text}`;
     this.regDelegationService.getAll(params).subscribe({
       next: resp => {
@@ -210,7 +209,6 @@ export class DocumentConstanceModalComponent
   getData() {
     this.data = [];
     if (this.data.length == 0) {
-      //siab 3785794
       this.loading = true;
       const form = this.searchForm.getRawValue();
       this.wcontentService.getDocumentos(form, new ListParams()).subscribe({
@@ -269,14 +267,15 @@ export class DocumentConstanceModalComponent
     this.searchForm.reset();
     this.documentsSeaData = [];
   }
+
   documentSelect(event: any) {
     this.rowSelected = event.data;
   }
 
   //añadir nuevo documento
   newDocument() {
-    console.log(this.rowSelected);
-    if (this.goodDelivery.delRegId == null) {
+    console.log('entro a newDocument', this.rowSelected);
+    if (this.rowSelected.xdelegacionRegional == null) {
       this.onLoadToast(
         'info',
         '',
@@ -285,7 +284,7 @@ export class DocumentConstanceModalComponent
       return;
     }
 
-    this.openModal(DocumentFormComponent, 'doc-constance', this.goodDelivery);
+    this.openModal(DocumentFormComponent, 'doc-constance', this.rowSelected);
   }
   //abrir detalle del documento
   showDocument(event: any) {
@@ -353,6 +352,7 @@ export class DocumentConstanceModalComponent
 
   /* Get Certificate Good */
   getCertificateGood() {
+    console.log('entro a getCertificateGood', this.rowSelected);
     const params = new ListParams();
     let goodIds = '';
     let NoGoodSiab = '';
