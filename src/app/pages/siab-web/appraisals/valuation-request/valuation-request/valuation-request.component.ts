@@ -932,7 +932,11 @@ export class valuationRequestComponent extends BasePage implements OnInit {
     this.form.reset();
   }
   close() {
-    this.router.navigateByUrl('pages/commercialization/event-preparation');
-    return;
+    if (this.address == 'M') {
+      this.router.navigateByUrl('pages/commercialization/event-preparation');
+      return;
+    } else if (this.address == 'I') {
+      this.router.navigateByUrl('pages/commercialization/event-preparation-i');
+    }
   }
 }

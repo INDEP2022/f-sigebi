@@ -11,4 +11,6 @@ export enum AppraiseEndpoints {
   PaTriggerOAppraise = 'application/paTriggerOAppraise',
   PupInseertAppraisal = 'application/pupInseertAppraisal',
   PcValEvent = 'application/pcValEvent',
+  pupInsertAppraisalFcomerreavaluo = 'application/pup-insert-appraisal-fcomerreavaluo',
+  tmpeatAppraisal = 'tmp-eat-appraisal',
 }
