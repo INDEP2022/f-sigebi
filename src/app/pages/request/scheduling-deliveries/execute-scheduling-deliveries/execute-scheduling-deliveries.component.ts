@@ -269,7 +269,7 @@ export class ExecuteSchedulingDeliveriesComponent
       this.statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
       this.statusProgramming == 'VERIFICACION_BIENES' ||
       this.statusProgramming == 'FORMATO_RECLAMACION_TE' ||
-      this.statusProgramming == 'RESTITUCION_BIENES'
+      this.programmingDetailPanel.status == 'RESTITUCION_BIENES'
     ) {
       this.progDelivGoodNDParams
         .pipe(takeUntil(this.$unSubscribe))
@@ -526,7 +526,7 @@ export class ExecuteSchedulingDeliveriesComponent
           this.statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
           this.statusProgramming == 'VERIFICACION_BIENES' ||
           this.statusProgramming == 'FORMATO_RECLAMACION_TE' ||
-          this.statusProgramming == 'RESTITUCION_BIENES'
+          this.programmingDetailPanel.status == 'RESTITUCION_BIENES'
         ) {
           if (this.statusProgramming == 'BIENES_NO_ENTREGADOS') {
             resp.data.map((item: any) => {
@@ -1135,7 +1135,7 @@ export class ExecuteSchedulingDeliveriesComponent
     if (this.statusProgramming == 'APROBAR_NO_ENT_ESP') {
       typeDoc = 209;
       nomProcess = 'Aprobar RestituciEspecie';
-    } else if (this.statusProgramming == 'RESTITUCION_BIENES') {
+    } else if (this.programmingDetailPanel.status == 'RESTITUCION_BIENES') {
       typeDoc = 208;
       nomProcess = 'RestituciBienes';
     } else {
@@ -1504,10 +1504,72 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   sendApprove() {
-    /**
-     * mustraPopAprobarBienes()
-     */
-    window.alert('No se implento la funcion');
+    this.alertQuestion(
+      'question',
+      'Turnar Solicitud',
+      `¿Desea enviar la aprobación de los bienes en especie para la programación con folio ${this.programmingDetailPanel.folio}?`
+    ).then(async question => {
+      if (question.isConfirmed) {
+        if (this.programmingDetailPanel) {
+          const infoProgramming: IprogrammingDelivery = {
+            id: this.programmingDetailPanel.id,
+            status: 'RESTITUCION_BIENES',
+          };
+
+          this.programmingRequestService
+            .updateProgrammingDelivery(
+              this.programmingDetailPanel.id,
+              infoProgramming
+            )
+            .subscribe({
+              next: response => {
+                console.log('response', response);
+              },
+              error: error => {},
+            });
+          this.loading = true;
+          this.programmingId = this.programmingDetailPanel.id;
+          const user: any = this.authService.decodeToken();
+
+          let body: any = {};
+
+          body['type'] = 'SOLICITUD_PROGRAMACION';
+          body['subtype'] = 'Programar_Recepcion';
+          body['ssubtype'] = 'TURNAR';
+
+          let task: any = {};
+          task['id'] = 0;
+          task['assignees'] = user.username;
+          task['assigneesDisplayname'] = user.nameUser;
+          task['creator'] = user.username;
+          task['reviewers'] = user.username;
+          task['taskNumber'] = Number(this.programmingId);
+          task['title'] =
+            'Clasificación de bienes no entregados para la programación. ' +
+            this.programmingDetailPanel.folio;
+          task['programmingId'] = this.programmingId;
+          task['requestId'] = this.programmingId;
+          task['expedientId'] = 0;
+          console.log('task', this.programmingDetailPanel.delRegId);
+          task['idDelegationRegional'] = this.programmingDetailPanel.delRegId;
+          task['urlNb'] =
+            'pages/request/scheduling-deliveries/execute-schelude-delivery';
+          task['processName'] = 'SolicitudProgramacion';
+          body['task'] = task;
+          const taskResult = await this.createTaskOrderService(body);
+          this.loading = false;
+          if (taskResult) {
+            this.closeTask();
+            this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+            this.alert(
+              'success',
+              'Creación de Tarea Correcta',
+              `Se creó la tarea Realizar Programación con el folio: ${this.programmingId}`
+            );
+          }
+        }
+      }
+    });
   }
 
   selectedRows;
@@ -1604,7 +1666,7 @@ export class ExecuteSchedulingDeliveriesComponent
           const taskResult = await this.createTaskOrderService(body);
           this.loading = false;
           if (taskResult) {
-            //this.closeTask();
+            this.closeTask();
             this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
             this.alert(
               'success',
