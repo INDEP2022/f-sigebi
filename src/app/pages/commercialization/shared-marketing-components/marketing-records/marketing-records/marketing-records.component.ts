@@ -300,6 +300,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
   }
 
   goodNumChange() {
+    let global_valbien = null;
     if (this.form.get('goodId').value == null) {
       this.form.get('goodId').markAsTouched();
       return;
@@ -310,9 +311,14 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       goodNumber: this.form.get('goodId').value,
     };
 
+    console.log(body);
+
     this.mJobManagement.keyNextItem(body).subscribe(
       res => {
-        console.log(res);
+        console.log(res.data);
+        global_valbien = res.data[0].V_VALBIEN;
+        console.log(res.data[0].Good);
+
         if (res.data[0].V_VALBIEN != null) {
           this.alertQuestion(
             'question',
@@ -322,14 +328,54 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
               res.data[0].VAL_TIPOF2 +
               '.',
             '¿Deseas continuar?'
-          ).then(res => {
-            if (res.isDismissed) {
-              this.PupAgregaTexto();
+          ).then(response => {
+            if (response.isDismissed) {
+              this.PupExtraeDatos(res.data[0].GLOBAL_V_OFICIO);
             }
           });
+
+          if (res.data[0].VAL_TIPOF2 == 'ESCRITURACION') {
+            this.officeTypeCtrl.setValue('ESC');
+            this.PupAgregaTexto();
+          } else if (res.data[0].VAL_TIPOF2 == 'ENTREGA') {
+            this.officeTypeCtrl.setValue('ENT');
+            this.PupAgregaTexto();
+          }
+
+          global_valbien = null;
+        }
+
+        if (global_valbien == null && res.data[0].Good.length > 0) {
+          const goodData = res.data[0].Good[0];
+          console.log(res.data[0].Good);
+
+          res.data[0].Good.forEach(data => {
+            let param = {
+              goodId: data.no_bien,
+              description: data.descripcion,
+              amount: data.cantidad,
+              identifier: data.identificador,
+              estatus: data.estatus,
+            };
+            console.log(param);
+            this.goods.push(param);
+          });
+
+          this.totalGoods = res.data[0].Good.length;
+          this.localGoods.load(this.goods);
+
+          //TODO:
+          this.NO_VOLANTE = goodData.no_volante;
+          this.NO_EXPEDIENTE = goodData.no_expediente;
+        }
+
+        if (res.data[0].Good.length == 0) {
+          this.alert('warning', 'No existen bienes', '');
+          return;
         }
       },
       err => {
+        this.alert('error', 'Error', 'Ocurrio un error al obtener los datos');
         console.log(err);
       }
     );
@@ -800,6 +846,8 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
 
   isGood() {
     const { event, portfolio, lot, goodId } = this.controls;
+    this.totalGoods = 0;
+    this.localGoods.load([]);
     this.setControlNullAndOptional([event, portfolio, lot]);
     this.setControlRequired([goodId]);
   }

@@ -85,7 +85,7 @@ export class UploadZipImagesComponent extends BasePage implements OnInit {
       });
 
       if (filterData.length == entries.length) {
-        entries.map(async (entrie, index) => {
+        let result = entries.map(async (entrie, index) => {
           const blob = await entrie.getData(new BlobWriter());
           const formData = {
             xidcProfile: 'NSBDB_Gral',
@@ -105,12 +105,14 @@ export class UploadZipImagesComponent extends BasePage implements OnInit {
               entrie.filename
             )
             .subscribe({
-              next: data => {
-                this.modalRef.content.callback(true);
-                this.close();
-              },
+              next: data => {},
               error: () => {},
             });
+        });
+
+        Promise.all(result).then(resp => {
+          this.modalRef.content.callback(true);
+          this.close();
         });
       } else {
         this.alert(

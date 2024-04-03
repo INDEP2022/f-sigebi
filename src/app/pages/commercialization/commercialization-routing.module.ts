@@ -247,7 +247,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./massive-conversion/massive-conversion.module'))
         .MassiveConversionModule,
-    data: { title: 'Conversión Masiva de LCs', screen: 'FCOMERGENLCMASIV' },
+    data: { title: 'Generación Masiva de LCs', screen: 'FCOMERGENLCMASIV' },
   },
   {
     path: 'mass-biling-base-sales-tab',
