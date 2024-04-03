@@ -18,14 +18,19 @@
 
 .title {
   text-align: center;
-  /* Centrado horizontal */
   margin-top: 0;
-  /* Elimina el espacio superior predeterminado del encabezado */
   display: flex;
   justify-content: center;
-  /* Centrado vertical */
   align-items: center;
-  /* Centrado vertical */
   height: 100%;
-  /* Si deseas centrado vertical en el 100% del contenedor */
+}
+
+.contenedor-flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.item-flex {
+  flex: 1 1 200px;
+  margin: 10px;
 }

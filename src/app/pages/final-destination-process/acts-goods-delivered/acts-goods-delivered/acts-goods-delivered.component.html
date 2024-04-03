@@ -325,7 +325,9 @@
                     </div>
                     <div class="">
                       <button
-                        [disabled]="!valTableNgIf"
+                        [disabled]="
+                          !valTableNgIf || dataTableGoodsCargada.count() == 0
+                        "
                         tooltip="Eliminará los bienes inválidos de la tabla"
                         containerClass="tooltip-style"
                         class="btn btn-danger btn-sm active mr-3"

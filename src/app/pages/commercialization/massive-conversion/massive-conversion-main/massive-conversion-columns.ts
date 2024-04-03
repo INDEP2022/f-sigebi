@@ -703,7 +703,6 @@ export const SETTING_REPROCESS = {
           'dd/MM/yyyy',
           'UTC'
         );
-
         return formatted;
       },
     },

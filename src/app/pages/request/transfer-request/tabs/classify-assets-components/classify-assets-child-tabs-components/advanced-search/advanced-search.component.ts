@@ -7,6 +7,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -46,7 +47,11 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
   private fractionService = inject(FractionService);
   private typeRelevantService = inject(TypeRelevantService);
 
-  constructor(public fb: FormBuilder, private modelRef: BsModalRef) {
+  constructor(
+    public fb: FormBuilder,
+    private modelRef: BsModalRef,
+    private goodProcessService: GoodProcessService
+  ) {
     super();
   }
 
@@ -88,6 +93,7 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
 
   rowSelected(event: any) {
     this.complaince = event.data;
+    console.log('Registro seleccionado: ', this.complaince);
   }
 
   search(): void {
@@ -147,9 +153,35 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
 
   complianceSelected(): void {
     if (this.complaince != undefined) {
-      this.event.emit(this.complaince);
-      this.close();
+      console.log('unit', this.complaince.unit);
+      console.log('code', this.complaince.code);
+
+      const params = new ListParams();
+      params['filter.nbCode'] = `$eq:${this.complaince.unit}`;
+      params['filter.codsami'] = `$ilike:${this.complaince.code}`;
+      this.goodProcessService.getVsigLigie(params).subscribe({
+        next: resp => {
+          console.log('Encontrado', resp.data);
+
+          this.event.emit(this.complaince);
+          this.selectionFraccion();
+        },
+        error: error => {
+          this.alert(
+            'warning',
+            'Fracción sin Unidad de Medida Ligie',
+            'No es posible seleccionar este tipo de Bien'
+          );
+          console.log('No Encontrado', error);
+        },
+      });
     }
+  }
+
+  selectionFraccion(): void {
+    const fractionSelect = this.complaince;
+    this.modelRef.content.callback(true, fractionSelect);
+    this.modelRef.hide();
   }
 
   close(): void {

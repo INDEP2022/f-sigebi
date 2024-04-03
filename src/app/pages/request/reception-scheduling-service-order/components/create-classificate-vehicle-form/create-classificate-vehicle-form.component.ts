@@ -17,8 +17,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class CreateClassificateVehicleFormComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   form: FormGroup = new FormGroup({});
   item: any;
   title: string = 'Clasificación de vehiculos';
@@ -82,7 +81,7 @@ export class CreateClassificateVehicleFormComponent
               this.modalRef.content.callback(true);
               this.modalRef.hide();
             },
-            error: error => {},
+            error: error => { },
           });
         //Ejecutar servicio
         /*
@@ -107,7 +106,7 @@ export class CreateClassificateVehicleFormComponent
             this.modalRef.content.callback(true);
             this.close();
           },
-          error: error => {},
+          error: error => { },
         });
         //this.onLoadToast('success', 'Clasificación creada correctamente', '');
         //this.modalRef.content.callback(this.form.value);
@@ -123,7 +122,7 @@ export class CreateClassificateVehicleFormComponent
       next: response => {
         this.typeVehicle = new DefaultSelect(response.data, response.count);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 

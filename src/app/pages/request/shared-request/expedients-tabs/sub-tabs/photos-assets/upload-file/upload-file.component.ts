@@ -7,11 +7,13 @@ import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.serv
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IUploadEvent } from 'src/app/utils/file-upload/components/file-upload.component';
+import { FileUploadService } from 'src/app/utils/file-upload/service/file-upload.service';
 
 @Component({
   selector: 'app-upload-file',
   templateUrl: './upload-file.component.html',
   styles: [],
+  providers: [FileUploadService],
 })
 export class UploadFileComponent extends BasePage implements OnInit {
   @ViewChild('FileInput', { static: false }) inputFile: ElementRef = null;

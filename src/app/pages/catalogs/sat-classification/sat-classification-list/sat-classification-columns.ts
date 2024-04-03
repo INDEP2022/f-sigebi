@@ -1,6 +1,6 @@
 export const SAT_CLASSIFICATION_COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'ID',
     type: 'number',
     sort: false,
     width: '20%',

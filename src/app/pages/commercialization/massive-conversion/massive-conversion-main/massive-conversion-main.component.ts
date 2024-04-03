@@ -151,7 +151,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   isLoadingLcs = false;
   isLoadingRep = false;
   pathGetBath = generateUrlOrPath('catalog', 'batch', true);
-  title: string = "Conversión Masiva de LC'S";
+  title: string = "Generación Masiva de LC'S";
 
   paramsD = new BehaviorSubject<ListParams>(new ListParams());
   columnFiltersD: any = [];

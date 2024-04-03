@@ -84,7 +84,7 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
   checkStatusTask() {
     const _task = JSON.parse(localStorage.getItem('Task'));
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.id'] = `$eq:${_task.id}`;
+    params.getValue()['filter.id'] = `$eq:${_task?.id}`;
     this.taskService.getAll(params.getValue()).subscribe({
       next: response => {
         if (response.data[0].State == 'FINALIZADA') this.disabledButton = true;
@@ -137,7 +137,6 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
 
   async turnSampling() {
     const goodsSample: any = await this.getGoodsSample();
-
     const stateGood = goodsSample.filter(item => {
       if (!item.goodState) return item;
     });
@@ -157,7 +156,7 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
                 const _task = JSON.parse(localStorage.getItem('Task'));
                 let body: any = {};
 
-                body['idTask'] = _task.id;
+                body['idTask'] = _task?.id;
                 body['userProcess'] = user.username;
                 body['type'] = 'MUESTREO_BIENES';
                 body['subtype'] = 'Clasificar_bienes';
@@ -272,7 +271,9 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
         next: response => {
           resolve(response.data);
         },
-        error: () => {},
+        error: () => {
+          resolve([]);
+        },
       });
     });
   }

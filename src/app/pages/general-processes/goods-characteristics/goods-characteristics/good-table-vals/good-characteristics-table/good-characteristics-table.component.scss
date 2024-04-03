@@ -45,7 +45,7 @@
   &.required {
     td {
       &:nth-child(2) {
-        background-color: #ffc107a6;
+        background-color: #f2faaca6;
         input.form-control {
           &:focus {
             background-color: transparent !important;
@@ -58,12 +58,12 @@
   &.update {
     td {
       &:nth-child(2) {
-        background-color: #17a2b899;
-        color: white;
+        background-color: #d0f6fc;
+        color: rgb(0, 0, 0);
         input.form-control {
           &:focus {
             background-color: transparent !important;
-            color: white;
+            color: rgb(0, 0, 0);
           }
         }
         ng2-smart-table-cell {

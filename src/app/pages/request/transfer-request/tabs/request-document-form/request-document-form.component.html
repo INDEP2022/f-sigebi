@@ -22,10 +22,8 @@
 <div *ngIf="showSearchForm">
   <form [formGroup]="searchForm" class="form-material">
     <div class="row pt-3">
-      <div class="col-md-3">
-        <form-field
-          [control]="searchForm.get('id')"
-          label="N&uacute;mero de Solicitud">
+      <div class="col-md-2">
+        <form-field [control]="searchForm.get('id')" label="No. Solicitud">
           <input
             type="number"
             class="form-control"
@@ -33,7 +31,7 @@
             min="0" />
         </form-field>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-4">
         <form-field [control]="searchForm.get('regionalDelegationId')">
           <ngx-select
             [form]="searchForm"
@@ -46,13 +44,10 @@
           </ngx-select>
         </form-field>
       </div>
-    </div>
-
-    <div class="row pt-3">
-      <div class="col-md-3">
+      <div class="col-md-2">
         <form-field
           [control]="searchForm.get('recordId')"
-          label="N&uacute;mero de Expediente">
+          label="No. Expediente">
           <input
             type="number"
             class="form-control"
@@ -60,7 +55,7 @@
             min="0" />
         </form-field>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-4">
         <form-field [control]="searchForm.get('keyStateOfRepublic')">
           <ngx-select
             [form]="searchForm"
@@ -69,16 +64,10 @@
             value="id"
             bindLabel="descCondition"
             label="Estado"
+            [searchOnInit]="true"
+            [searchable]="false"
             (fetchItems)="getStateSelect($event)">
           </ngx-select>
-        </form-field>
-      </div>
-    </div>
-
-    <div class="row pt-4">
-      <div class="col-md-4">
-        <form-field [control]="searchForm.get('lawsuit')" label="Causa Penal">
-          <input type="text" class="form-control" formControlName="lawsuit" />
         </form-field>
       </div>
     </div>

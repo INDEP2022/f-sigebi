@@ -345,7 +345,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             this.loading = false;
             this.alertInfo(
               'success',
-              'El Documento ha sido Agregado',
+              'El documento ha sido agregado',
               `ID: ${resp.dDocName}`
             ).then(question => {
               if (question.isConfirmed) {
@@ -441,7 +441,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             this.loading = false;
             this.alertInfo(
               'success',
-              'El Documento ha sido Agregado',
+              'El documento ha sido agregado',
               `ID: ${resp.dDocName}`
             ).then(question => {
               if (question.isConfirmed) {
@@ -459,6 +459,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     }
 
     if (this.typeDoc == 'doc-request' && this.process != 'sampling-assets') {
+      console.log('doc-request y diferente a sampling-assets');
       this.loading = true;
       const formData = {
         dDocAuthor: this.userLogName,
@@ -529,7 +530,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             this.loading = false;
             this.alertInfo(
               'success',
-              'El Documento ha sido Agregado',
+              'El documento ha sido agregado',
               `ID: ${resp.dDocName}`
             ).then(question => {
               if (question.isConfirmed) {
@@ -617,7 +618,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             this.loading = false;
             this.alertInfo(
               'success',
-              'El Documento ha sido Agregado',
+              'El documento ha sido agregado',
               `ID: ${resp.dDocName}`
             ).then(question => {
               if (question.isConfirmed) {
@@ -634,6 +635,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     }
 
     if (this.process == 'sampling-assets') {
+      console.log('sampling-assets');
       const formData = {
         dInDate: new Date(),
         xfecha: this.formatDate(new Date()),
@@ -705,7 +707,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             this.loading = false;
             this.alertInfo(
               'success',
-              'El Documento ha sido Agregado',
+              'El documento ha sido agregado',
               `ID: ${resp.dDocName}`
             ).then(question => {
               if (question.isConfirmed) {

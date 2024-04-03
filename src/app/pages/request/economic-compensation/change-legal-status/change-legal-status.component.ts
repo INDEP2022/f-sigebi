@@ -191,7 +191,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
 
         //this.onLoadToast('error', 'Error', error);
       },
-      () => { }
+      () => {}
     );
   }
 

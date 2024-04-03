@@ -29,7 +29,6 @@ import { environment } from 'src/environments/environment';
 import { isNullOrEmpty } from '../../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { LIST_REPORTS_COLUMN } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/list-reports-column';
 import { UploadFielsModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/upload-fiels-modal/upload-fiels-modal.component';
-import { te } from 'date-fns/locale';
 
 @Component({
   selector: 'app-show-report-component',
@@ -93,7 +92,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   dynamic: boolean = false;
   signed: boolean = true;
   requestId: number = 0;
-  contentId: string = "";
+  contentId: string = '';
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -112,7 +111,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     private orderService: OrderServiceService,
     private samplingGoodService: SamplingGoodService
   ) {
-
     super();
     this.settings = {
       ...this.settings,
@@ -132,6 +130,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('ID Tipo de Documento: ', this.idTypeDoc);
+    console.log('ID Documento: ', this.idProg);
     if (this.showTDR) {
       this.title = 'ETIQUETA';
     } else {
@@ -273,9 +273,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           this.src = fileURL;
           this.formLoading = false;
         },
-        error: error => { },
+        error: error => {},
       });
-
     } else if (this.dynamic) {
       let linkDoc: string = `${this.urlBaseReport}${this.reportName}&ID_TABLA=NOMBRE_TABLA,ID_REGISTRO,ID_TIPO_DOCTO&NOM_TABLA=REPORTES_DINAMICOS&NOM_CAMPO=CONTENIDO&ID_REGISTRO=${this.tableName},${this.requestId},${this.idTypeDoc}`;
       this.src = linkDoc;
@@ -301,7 +300,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       next: response => {
         //this.createPersonsSing(response.data[0]);
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -367,7 +366,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
             type: 'pdf',
           },
-          callback: (response: any) => { },
+          callback: (response: any) => {},
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
         keyboard: false,
@@ -472,10 +471,9 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   registerSign() {
-
     let learnedType = 221;
-    let column = "TIPO_FIRMA";
-    let boardSig = "PROGRAMACIONES";
+    let column = 'TIPO_FIRMA';
+    let boardSig = 'PROGRAMACIONES';
 
     const learndedId = this.idProg;
 
@@ -487,7 +485,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       .getSignatoriesFilter(learnedType, learndedId)
       .subscribe({
         next: response => {
-
           this.signatoriesService
             .deleteFirmante(Number(response.data[0].signatoryId))
             .subscribe({
@@ -502,7 +499,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 );
                 if (createSignatore) this.getSignatories();
               },
-              error: error => { },
+              error: error => {},
             });
         },
         error: async error => {
@@ -541,13 +538,14 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
 
   sendSign() {
     //verificar que el estado de registro este como "datos completo" y enviarlo!
+    console.log('Id del tipo de documento a firmar: ', this.idTypeDoc);
     let message = '¿Está seguro de enviar la información a firmar?';
     this.openMessage(message);
   }
@@ -555,18 +553,18 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   openMessage(message: string): void {
     let electronic = [
       2, 174, 185, 186, 187, 192, 108, 183, 221, 26, 27, 50, 68, 217, 94, 40,
-      101, 105, 104, 72, 222, 223, 224, 225, 245, 246, 249, 223
+      101, 105, 104, 72, 222, 223, 224, 225, 245, 246, 249, 223,
     ];
 
     this.alertQuestion('question', 'Confirmación', `${message}`).then(
       question => {
         if (question.isConfirmed) {
           this.loadingButton = true;
-          if (electronic.includes(parseInt('' + this.idTypeDoc))) {
+          /*if (electronic.includes(parseInt('' + this.idTypeDoc))) {
             this.gelectronicFirmService
               .firmDocument(210, 'ProgramacionRecibo', {})
               .subscribe({
-                next: (response) => {
+                next: response => {
                   if (this.isXML(response)) {
                     let node = this.getXMLNode(response, 'boolProcesoFirma');
                     if (node?.textContent == 'false') {
@@ -590,7 +588,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
                   this.loadingButton = false;
                   this.msjCheck = true;
-
                 },
                 error: () => {
                   this.alert(
@@ -602,7 +599,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 },
               });
             return;
-          }
+          }*/
           if (this.idTypeDoc == 218) {
             this.gelectronicFirmService
               .firmDocument(this.programming?.id, 'ProgramacionRecibo', {})
@@ -772,7 +769,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 },
               });
             return;
-
           }
 
           if (this.idTypeDoc == 219) {
@@ -808,6 +804,41 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
             this.gelectronicFirmService
               .firmDocument(idKeyDoc, 'AnexoKMuestreoOrdenServicio', {})
+              .subscribe({
+                next: () => {
+                  this.msjCheck = true;
+                  this.loadingButton = false;
+                  this.alert(
+                    'success',
+                    'Correcto',
+                    'Documento firmado correctamente'
+                  );
+                },
+                error: () => {
+                  //this.msjCheck = true;
+                  this.loadingButton = false;
+                  this.alertInfo(
+                    'error',
+                    'Acción Inválida',
+                    'No fue posible firmar el documento'
+                  ).then();
+                },
+              });
+            return;
+
+            /* const idKeyDoc = this.orderSampleId + '-K';
+            this.saveElectronicSign(idKeyDoc, 'AnexoKMuestreoOrdenServicio'); */
+          }
+          if (this.idTypeDoc == 221) {
+            const nameTypeReport = 'ProgramacionRecibo';
+            const formData: Object = {
+              id: this.idProg,
+              firma: true,
+              tipoDocumento: nameTypeReport,
+            };
+
+            this.gelectronicFirmService
+              .firmDocument(this.idProg, nameTypeReport, formData)
               .subscribe({
                 next: () => {
                   this.msjCheck = true;
@@ -992,7 +1023,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 this.close();
               }
             },
-            error: error => { },
+            error: error => {},
           });
       });
     } else {
@@ -1065,7 +1096,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   }
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idTypeDoc == 107 && this.typeFirm == 'electronica') {
@@ -1121,7 +1152,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idTypeDoc == 210 && this.typeFirm == 'electronica') {
@@ -1177,7 +1208,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idTypeDoc == 106 && this.typeFirm == 'electronica') {
@@ -1233,7 +1264,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idTypeDoc == 197 && this.typeFirm == 'electronica') {
@@ -1283,7 +1314,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idOrderService && this.typeFirm == 'electronica') {
@@ -1337,7 +1368,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idTypeDoc == 218 && this.typeFirm == 'electronica') {
@@ -1385,7 +1416,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (this.idTypeDoc == 219 && this.typeFirm == 'electronica') {
@@ -1434,7 +1465,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       } else if (electronic.includes(parseInt('' + this.idTypeDoc))) {
@@ -1481,7 +1512,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => { },
+              error: error => {},
             });
         });
       }
@@ -1501,7 +1532,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -1519,7 +1550,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => { },
+          error: error => {},
         });
       });
     });
@@ -1556,7 +1587,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => { },
+          error: error => {},
         });
       });
     });
@@ -1711,18 +1742,17 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   isXML(xmlStr: string): boolean {
     let parser = new DOMParser();
-    let doc = parser.parseFromString(xmlStr, "application/xml");
+    let doc = parser.parseFromString(xmlStr, 'application/xml');
     return !doc.getElementsByTagName('parsererror').length;
   }
 
   getXMLNode(xmlStr: string, tagName: string): Node | null {
     let parser = new DOMParser();
-    let doc = parser.parseFromString(xmlStr, "application/xml");
+    let doc = parser.parseFromString(xmlStr, 'application/xml');
 
     let nodes = doc.getElementsByTagName(tagName);
 
     // Devuelve el primer nodo con el nombre de etiqueta especificado, o null si no se encontró ninguno
     return nodes.length > 0 ? nodes[0] : null;
   }
-
 }

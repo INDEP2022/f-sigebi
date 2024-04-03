@@ -16,6 +16,7 @@ import { IGood } from 'src/app/core/models/good/good.model';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
+import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { TABLE_SETTINGS } from '../../../../../../common/constants/table-settings';
@@ -25,8 +26,6 @@ import { DefaultSelect } from '../../../../../../shared/components/select/defaul
 import { LIST_ASSETS_COLUMNS_GOODFINDER } from './columns/list-assets-columns';
 import { OpenPhotosComponent } from './open-photos/open-photos.component';
 import { UploadFileComponent } from './upload-file/upload-file.component';
-import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
-import { da } from 'date-fns/locale';
 
 @Component({
   selector: 'app-photos-assets',
@@ -35,7 +34,8 @@ import { da } from 'date-fns/locale';
 })
 export class PhotosAssetsComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   @Input() requestId: number = null;
   parentRef: BsModalRef;
   showSearchFilter: boolean = true;
@@ -63,7 +63,7 @@ export class PhotosAssetsComponent
     private requestservice: RequestService,
     private showHideErrorInterceptorService: showHideErrorInterceptorService,
     private readonly goodFinderService: GoodFinderService,
-    private rejectedGoodService: RejectedGoodService,
+    private rejectedGoodService: RejectedGoodService
   ) {
     super();
     this.idRequest = this.activatedRoute.snapshot.paramMap.get(
@@ -129,9 +129,9 @@ export class PhotosAssetsComponent
     if (this.idRequest) {
       this.params.getValue()['filter.requestId'] = this.idRequest;
       this.params.getValue()['filter.applicationId'] = null;
+      this.params.getValue()['filter.status'] = '$not:STI';
       this.goodFinderService.goodFinder(this.params.getValue()).subscribe({
         next: async (data: any) => {
-
           if (data.data.length > 0) {
             const filterGoodType = data.data.map(async (item: any) => {
               const goodType = await this.getGoodType(item.goodTypeId);
@@ -157,14 +157,12 @@ export class PhotosAssetsComponent
               this.loading = false;
             });
           } else {
-            this.getGoodRes()
+            this.getGoodRes();
           }
-
-
         },
         error: error => {
           this.loading = false;
-          this.getGoodRes()
+          this.getGoodRes();
         },
       });
     } else {
@@ -317,7 +315,6 @@ export class PhotosAssetsComponent
     this.params.getValue()['filter.applicationId'] = this.idRequest;
     this.rejectedGoodService.getAll(this.params.getValue()).subscribe({
       next: async (data: any) => {
-
         data.data = data.data.map(x => x.good);
 
         const filterGoodType = data.data.map(async (item: any) => {
@@ -342,12 +339,10 @@ export class PhotosAssetsComponent
           this.totalItems = data.count;
           this.loading = false;
         });
-
       },
       error: error => {
         this.loading = false;
       },
     });
   }
-
 }

@@ -167,6 +167,14 @@ export class ParameterModService
       formData
     );
   }
+  validFile(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.post<IListResponse<{ NO_BIEN: string; CAUSA: string }>>(
+      'aplication/pup-valid-arch-desc',
+      formData
+    );
+  }
 
   pufValService(body: {
     cveDisplay: string;

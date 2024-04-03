@@ -342,6 +342,13 @@ export class GoodProcessService extends HttpService {
     const route = `${GoodProcessPoints.VGoodType}`;
     return this.get<any>(route, params);
   }
+  getVgoodTypeObtnTypeGood(body: any, params: ListParams) {
+    return this.post<IListResponse>(
+      GoodProcessPoints.ObtnTypeGood,
+      body,
+      params
+    );
+  }
 
   getVsigLigie(params: ListParams | string): Observable<IListResponse<any>> {
     const route = GoodProcessPoints.GetVsigLigie;
@@ -429,5 +436,13 @@ export class GoodProcessService extends HttpService {
 
   validInitiationLabel(body: any) {
     return this.post(GoodprocessEndpoints.InitiationLabel, body);
+  }
+
+  getApplicationGetDataNoprocedingConsultaExcel(body: any, params: _Params) {
+    return this.post(
+      GoodProcessPoints.ApplicationGetDataNoprocedingConsultaExcel,
+      body,
+      params
+    );
   }
 }

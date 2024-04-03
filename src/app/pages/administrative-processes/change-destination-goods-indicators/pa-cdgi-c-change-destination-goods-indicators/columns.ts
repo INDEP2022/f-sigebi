@@ -39,17 +39,21 @@ export const COLUMNS = {
         case 7:
           return 'ENTERADO LIF';
           break;
-
         default:
+          // return row != null ? row.labelNumber : '';
           return '0';
           break;
       }
+    },
+    filterFunction: (cell: any, search?: string) => {
+      return true;
     },
     filter: {
       type: 'list',
       config: {
         selectText: 'Seleccionar',
         list: [
+          { value: 0, title: 'SIN INDICADOR' },
           { value: 1, title: 'VENTA' },
           { value: 2, title: 'DONACION' },
           { value: 3, title: 'RESGUARDO' },

@@ -8,10 +8,13 @@ import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, Subscription, takeUntil, tap } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IGoodParameter } from 'src/app/core/models/ms-good-parameter/good-parameter.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import {
   IDetailProceedingsDevollution,
   IDetailProceedingsDevollutionDelete,
@@ -27,6 +30,10 @@ import {
   ProceedingsDeliveryReceptionService,
   ProceedingsService,
 } from 'src/app/core/services/ms-proceedings';
+import {
+  IPostQueryGoodFACTCIRCUN_0001,
+  ProceedingSusPcancelService,
+} from 'src/app/core/services/ms-proceedings/proceeding-suspcancel.service';
 import { ProgrammingGoodsService } from 'src/app/core/services/ms-programming-good/programming-good.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -35,8 +42,13 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
-import { ListParams } from './../../../../common/repository/interfaces/list-params';
+import { AllExpedientsModal } from '../all-expedientes-modal/all-expedients-modal.component';
+import {
+  FilterParams,
+  ListParams,
+} from './../../../../common/repository/interfaces/list-params';
 import { COLUMNS1 } from './columns1';
 import { COLUMNS2 } from './columns2';
 
@@ -126,6 +138,18 @@ export class CircumstantialActsSuspensionCancellationComponent
     origin: null,
     noExpedient: null,
   };
+  dataIdent = new DefaultSelect(['DES', 'DEV', 'DON', 'RES', 'VEN', 'SUS']);
+  dataAuthority = new DefaultSelect();
+  dataDelegation = new DefaultSelect();
+
+  canNew = false;
+  canSave = false;
+  subscriptions: Subscription[] = [];
+
+  maxDate = new Date();
+  status_time: string = null;
+  type_proceeding: string = null;
+
   get username() {
     return this.authService.decodeToken().username;
   }
@@ -146,7 +170,9 @@ export class CircumstantialActsSuspensionCancellationComponent
     private programminggoodService: ProgrammingGoodsService,
     private expedientService: ExpedientService,
     private historygoodService: HistoryGoodService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private modalService: BsModalService,
+    private proceedingSusCanService: ProceedingSusPcancelService
   ) {
     super();
     this.settings1 = {
@@ -180,9 +206,12 @@ export class CircumstantialActsSuspensionCancellationComponent
           this.inputValue = Number(this.queryParams.noExpedient);
         }
       });
+
     this.initForm();
     this.startCalendars();
     this.pupInitForms();
+    this.navigateGoods();
+
     const localExpdeient = localStorage.getItem('expediente');
     const folio = localStorage.getItem('folio');
     if (localExpdeient) {
@@ -195,13 +224,187 @@ export class CircumstantialActsSuspensionCancellationComponent
         this.data1.refresh();
       });
       if (folio) {
-        this.form.controls['universalFolio'].setValue(folio);
+        this.form.get('universalFolio').setValue(folio);
       }
       this.formBlkExpedient.get('noExpedient').setValue(Number(localExpdeient));
       this.search();
       localStorage.removeItem('expediente');
       //
     }
+  }
+
+  subscribeAssembleKey() {
+    this.subscriptions.push(
+      this.form
+        .get('ident')
+        .valueChanges.pipe(takeUntil(this.$unSubscribe))
+        .subscribe(value => {
+          if (value == 'DON') {
+            this.type_proceeding = 'ACIRDON';
+          } else if (value == 'DES') {
+            this.type_proceeding = 'ACIRDES';
+          } else if (value == 'DEV') {
+            this.type_proceeding = 'ACIRDEV';
+          } else if (value == 'VEN') {
+            this.type_proceeding = 'ACIRVEN';
+          } else {
+            this.type_proceeding = null;
+          }
+        }),
+
+      this.form
+        .get('actSelect')
+        .valueChanges.pipe(takeUntil(this.$unSubscribe))
+        .subscribe(value => {
+          if (['S/DON', 'C/DON'].includes(value)) {
+            this.form.get('ident').setValue('DON');
+            this.form.get('ident').disable();
+            this.getTransferent();
+            //OCULTAR Y DESHABILITAS EL ASUN
+          } else if (['S/DES', 'C/DES'].includes(value)) {
+            this.form.get('ident').setValue('DES');
+            this.form.get('ident').disable();
+            this.getTransferent();
+            //OCULTAR Y DESHABILITAS EL ASUN
+          } else if (['S/DEV', 'C/DEV'].includes(value)) {
+            this.form.get('ident').setValue('DEV');
+            this.form.get('ident').disable();
+            this.getTransferent();
+            //OCULTAR Y DESHABILITAS EL ASUN
+          } else if (value == 'S/VEN') {
+            //ACTIVA LA ACTUALIZACIÓN E INSERVIÓN DE BLK_ACT
+            this.form.get('ident').enable();
+            this.getTransferent();
+            //MUESTRA Y HABILITA EL ASUN
+          } else if (value == 'C/VNR') {
+            this.alertQuestion(
+              'question',
+              'Esta seleccionando el proceso de Bien vendido dejado por el comprador',
+              '¿Desea continuar ? '
+            ).then(response => {
+              if (response.isConfirmed) {
+                this.form.get('ident').setValue('VEN');
+                this.form.get('ident').disable();
+                //TODO: ABRE MODAL
+                this.getTransferent();
+                //OCULTA Y DESHABILITA EL ASUN
+              } else {
+                this.form.get('actSelect').reset();
+                this.form.get('authority').reset();
+                this.dataAuthority = new DefaultSelect();
+              }
+            });
+          } else {
+            this.form.get('ident').reset();
+            this.form.get('ident').enable();
+          }
+          this.assembleKey();
+        }),
+      this.form
+        .get('authority')
+        .valueChanges.pipe(takeUntil(this.$unSubscribe))
+        .subscribe(value => {
+          this.assembleKey();
+        }),
+      this.form
+        .get('ident')
+        .valueChanges.pipe(takeUntil(this.$unSubscribe))
+        .subscribe(value => {
+          this.assembleKey();
+        }),
+      this.form
+        .get('receive')
+        .valueChanges.pipe(takeUntil(this.$unSubscribe))
+        .subscribe(value => {
+          this.assembleKey();
+        }),
+      this.form
+        .get('admin')
+        .valueChanges.pipe(takeUntil(this.$unSubscribe))
+        .subscribe(value => {
+          this.assembleKey();
+        }),
+      this.form
+        .get('folio')
+        .valueChanges.pipe(takeUntil(this.$unSubscribe))
+        .subscribe(value => {
+          this.assembleKey();
+        }),
+      this.form
+        .get('year')
+        .valueChanges.pipe(takeUntil(this.$unSubscribe))
+        .subscribe(value => {
+          this.assembleKey();
+        }),
+      this.form
+        .get('month')
+        .valueChanges.pipe(takeUntil(this.$unSubscribe))
+        .subscribe(value => {
+          this.assembleKey();
+        })
+    );
+  }
+
+  unsubscribeAssembleKey() {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+    this.subscriptions = [];
+  }
+
+  zeroAdd(number: number, lengthS: number) {
+    if (number != null) {
+      const stringNum = number.toString();
+      let newString = '';
+      if (stringNum.length < lengthS) {
+        lengthS = lengthS - stringNum.length;
+        for (let i = 0; i < lengthS; i++) {
+          newString = newString + '0';
+        }
+        newString = newString + stringNum;
+        return newString;
+      } else {
+        return stringNum;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  assembleKey() {
+    const nameAct =
+      (this.form.get('actSelect').value != null
+        ? this.form.get('actSelect').value
+        : '') +
+      '/' +
+      (this.form.get('authority').value != null
+        ? this.form.get('authority').value.transferKey
+        : '') +
+      '/' +
+      (this.form.get('ident').value != null
+        ? this.form.get('ident').value
+        : '') +
+      '/' +
+      (this.form.get('receive').value != null
+        ? this.form.get('receive').value.delegation
+        : '') +
+      '/' +
+      (this.form.get('admin').value != null
+        ? this.form.get('admin').value.delegation
+        : '') +
+      '/' +
+      (this.form.get('folio').value != null
+        ? this.zeroAdd(this.form.get('folio').value, 5)
+        : '') +
+      '/' +
+      (this.form.get('year').value != null
+        ? this.form.get('year').value.toString().substr(2, 2)
+        : '') +
+      '/' +
+      (this.form.get('month').value != null
+        ? this.zeroAdd(this.form.get('month').value, 2)
+        : '');
+
+    console.log(nameAct);
+    this.form.get('act').setValue(nameAct);
   }
 
   startCalendars() {
@@ -302,7 +505,7 @@ export class CircumstantialActsSuspensionCancellationComponent
     });
 
     this.formBlkExpedient = this.fb.group({
-      noExpedient: [null],
+      noExpedient: [null, Validators.required],
       averiguacionPrevia: [null],
       causePenal: [null],
     });
@@ -443,21 +646,21 @@ export class CircumstantialActsSuspensionCancellationComponent
   getBlkExpedient(expedient: number) {}
 
   async actButton() {
-    const data = await this.data1.getAll();
-    if (data.length > 0) {
-      if (['CERRADO', 'CERRADA'].includes(this.form.get('statusAct').value)) {
-        this.global.cerrada = 'S';
-      } else {
-        this.global.cerrada = 'N';
-      }
-      this.pupMovimientoActa();
-    } else {
-      this.alert(
-        'warning',
-        this.title,
-        'El Acta no contiene Bienes ingresados.'
-      );
+    console.log(this.data2);
+    console.log(this.data2['data']);
+    console.log(this.data2['data'].length);
+
+    if (this.data2['data'].length == 0 || this.data2 == null) {
+      this.alert('warning', 'El Acta no contiene Bienes ingresados', '');
+      return;
     }
+
+    if (['CERRADO', 'CERRADA'].includes(this.form.get('statusAct').value)) {
+      this.global.cerrada = 'S';
+    } else {
+      this.global.cerrada = 'N';
+    }
+    this.pupMovimientoActa();
   }
 
   async pupMovimientoActa() {
@@ -489,6 +692,94 @@ export class CircumstantialActsSuspensionCancellationComponent
         this.global.cerrada = 'N';
       }
     } else {
+      let lv_VALMOTOS: any = await this.getLvValMotos();
+      if (lv_VALMOTOS == null) {
+        lv_VALMOTOS = 0;
+      }
+
+      if (lv_VALMOTOS == 1) {
+        //TODO: PUP_CIERRE_ACTA_PRIMARIO
+      } else if (lv_VALMOTOS == 0) {
+        //TODO: PUP_CIERRE_PRIMARIO
+      }
+    }
+  }
+
+  correctDate(date: string) {
+    const dateUtc = new Date(date);
+    return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
+  }
+
+  deleteProceeding() {
+    const user = this.authService
+      .decodeToken()
+      .preferred_username.toUpperCase();
+    const statusProceedings = this.form.get('statusAct').value;
+    const elaboratedDate = this.form.get('elabDate').value;
+    const newElaboratedDate = new Date(elaboratedDate);
+
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1;
+
+    const elaboratedYear = new Date(elaboratedDate).getFullYear();
+    const elaboratedMonth = new Date(elaboratedDate).getMonth() + 1;
+
+    console.log({
+      elaboratedDate,
+      newElaboratedDate,
+      currentYear,
+      currentMonth,
+      elaboratedYear,
+      elaboratedMonth,
+    });
+
+    if (
+      !['MARRIETA', 'SERA', 'DESARROLLO', 'ALEDESMA', 'JRAMIREZ'].includes(user)
+    ) {
+      if (['CERRADO', 'CERRADA'].includes(statusProceedings)) {
+        this.alert('warning', 'No puede eliminar un acta cerrada', '');
+        return;
+      }
+
+      if (currentYear != elaboratedYear || currentMonth != elaboratedMonth) {
+        this.alert(
+          'warning',
+          'No puede eliminar un Acta fuera del mes de elaboración',
+          ''
+        );
+        return;
+      }
+    }
+
+    if (statusProceedings != null) {
+      this.alertQuestion(
+        'question',
+        '¿Está seguro de eliminar el Acta?',
+        'Esta acción no se puede deshacer'
+      ).then(response => {
+        if (response.isConfirmed) {
+          this.proceedingService
+            .deleteProceeding(this.form.get('noActa').value)
+            .subscribe({
+              next: (response: any) => {
+                this.alert(
+                  'success',
+                  this.title,
+                  'El Acta se ha eliminado correctamente'
+                );
+                this.search();
+              },
+              error: err => {
+                this.alert(
+                  'error',
+                  'Se presentó un error al eliminar el acta',
+                  ''
+                );
+                console.log(err);
+              },
+            });
+        }
+      });
     }
   }
 
@@ -591,14 +882,15 @@ export class CircumstantialActsSuspensionCancellationComponent
       } else {
         const data: any[] = await this.data1.getAll();
         data.forEach(item => {
-          if (item.id === this.selectedGood2.numberGood) {
+          if (item.id === this.selectedGood2.id) {
             item.di_disponible = 'S';
           }
         });
         this.data1.load(data);
         this.data1.refresh();
+        console.log(this.selectedGood2.id);
         this.deleteDetailProceedingsDevolution(
-          this.selectedGood2.numberGood,
+          this.selectedGood2.id,
           this.form.get('noActa').value
         );
       }
@@ -615,6 +907,7 @@ export class CircumstantialActsSuspensionCancellationComponent
     this.proceedingService.deleteDetailProceedingsDevolution(model).subscribe({
       next: (response: any) => {
         console.log(response.data);
+        this.selectedGood2 = null;
         this.getDetailProceedingsDevolution(numberProceedings);
         this.alert(
           'success',
@@ -897,6 +1190,72 @@ export class CircumstantialActsSuspensionCancellationComponent
     }
   }
 
+  clearAll() {
+    this.canNew = false;
+    this.formBlkExpedient.reset();
+    this.form.reset();
+    this.formTable1.reset();
+    this.formTable2.reset();
+    this.data1.load([]);
+    this.data2.load([]);
+    this.totalItems = 0;
+    this.totalItems2 = 0;
+    this.unsubscribeAssembleKey();
+    this.notRequired();
+  }
+
+  notRequired() {
+    this.form.controls['actSelect'].clearValidators();
+    this.form.controls['actSelect'].updateValueAndValidity();
+    this.form.controls['authority'].clearValidators();
+    this.form.controls['authority'].updateValueAndValidity();
+    this.form.controls['ident'].clearValidators();
+    this.form.controls['ident'].updateValueAndValidity();
+    this.form.controls['receive'].clearValidators();
+    this.form.controls['receive'].updateValueAndValidity();
+    this.form.controls['admin'].clearValidators();
+    this.form.controls['admin'].updateValueAndValidity();
+    this.form.controls['folio'].clearValidators();
+    this.form.controls['folio'].updateValueAndValidity();
+    this.form.controls['year'].clearValidators();
+    this.form.controls['year'].updateValueAndValidity();
+    this.form.controls['month'].clearValidators();
+    this.form.controls['month'].updateValueAndValidity();
+  }
+
+  required() {
+    this.form.controls['actSelect'].setValidators(Validators.required);
+    this.form.controls['actSelect'].updateValueAndValidity();
+    this.form.controls['authority'].setValidators(Validators.required);
+    this.form.controls['authority'].updateValueAndValidity();
+    this.form.controls['ident'].setValidators(Validators.required);
+    this.form.controls['ident'].updateValueAndValidity();
+    this.form.controls['receive'].setValidators(Validators.required);
+    this.form.controls['receive'].updateValueAndValidity();
+    this.form.controls['admin'].setValidators(Validators.required);
+    this.form.controls['admin'].updateValueAndValidity();
+    this.form.controls['folio'].setValidators(Validators.required);
+    this.form.controls['folio'].updateValueAndValidity();
+    this.form.controls['year'].setValidators(Validators.required);
+    this.form.controls['year'].updateValueAndValidity();
+    this.form.controls['month'].setValidators(Validators.required);
+    this.form.controls['month'].updateValueAndValidity();
+  }
+
+  newProceeding() {
+    this.required();
+    this.form.reset();
+    this.data2.load([]);
+    this.totalItems2 = 0;
+    this.subscribeAssembleKey();
+    this.canSave = true;
+    this.form.get('captureDate').setValue(new Date());
+    this.form.get('captureDate').disable();
+    this.form.get('year').setValue(new Date().getFullYear());
+    this.form.get('month').setValue(new Date().getMonth() + 1);
+    this.getDelegations();
+  }
+
   search() {
     this.expediente = this.formBlkExpedient.get('noExpedient').value;
     const params: ListParams = {};
@@ -904,6 +1263,7 @@ export class CircumstantialActsSuspensionCancellationComponent
     this.expedientService.getAll(params).subscribe({
       next: resp => {
         console.log(resp);
+        this.canNew = true;
         this.formBlkExpedient.controls['averiguacionPrevia'].setValue(
           resp.data[0].preliminaryInquiry
         );
@@ -911,6 +1271,7 @@ export class CircumstantialActsSuspensionCancellationComponent
           resp.data[0].criminalCase
         );
         this.relationsExpedient();
+        this.notRequired();
       },
       error: err => {
         this.alert(
@@ -930,11 +1291,16 @@ export class CircumstantialActsSuspensionCancellationComponent
     this.proceedingsDetailDel.getProceeding2(this.expediente).subscribe(
       response => {
         console.log(response);
+
         if (response == null) {
           this.alert('info', this.title, 'No se encontrarón registros', '');
           return;
         }
+        this.form
+          .get('universalFolio')
+          .setValue(response.data[0].universalFolio);
 
+        console.log('Folio: ' + response.data[0].universalFolio);
         this.response = true;
         //this.idActa = Number(response.data[i].id);
         this.form.controls['noActa'].setValue(response.data[0].id);
@@ -947,10 +1313,7 @@ export class CircumstantialActsSuspensionCancellationComponent
         );
         this.form.controls['address'].setValue(response.data[0].address);
         this.form.controls['elabDate'].setValue(
-          this.datePipe.transform(
-            response.data[0].elaborationDate,
-            'dd/MM/yyyy'
-          )
+          this.correctDate(response.data[0].elaborationDate)
         );
         this.form.controls['captureDate'].setValue(
           this.datePipe.transform(response.data[0].captureDate, 'dd/MM/yyyy')
@@ -969,10 +1332,9 @@ export class CircumstantialActsSuspensionCancellationComponent
           response.data[0].comptrollerWitness
         );
         this.form.controls['authority'].setValue(
-          response.data[0].numTransfer.key
-        );
-        this.form.controls['universalFolio'].setValue(
-          response.data[0].universalFolio
+          response.data[0].numTransfer != null
+            ? response.data[0].numTransfer.key
+            : null
         );
         this.form.controls['ident'].setValue(response.data[0].identifier);
         this.form.controls['receive'].setValue(response.data[0].receiptKey);
@@ -987,7 +1349,9 @@ export class CircumstantialActsSuspensionCancellationComponent
         } else if (statusAct === null) {
           this.textButtonAct = 'Cerrar Acta';
         }
-        this.getDetailProceedingsDevolution(this.form.controls['noActa'].value);
+        //TODO
+        console.log('numero de acta: ' + response.data[0].id);
+        this.getDetailProceedingsDevolution(response.data[0].id);
       },
       error => {
         this.alert(
@@ -1007,6 +1371,7 @@ export class CircumstantialActsSuspensionCancellationComponent
       ...this.columnFilters,
     };
     params['filter.fileNumber'] = `$eq:${this.expediente}`;
+
     this.goodService.getAll(params).subscribe({
       next: async response => {
         console.log(response);
@@ -1020,7 +1385,7 @@ export class CircumstantialActsSuspensionCancellationComponent
             return {
               ...item,
               acta,
-              di_disponible,
+              di_disponible: 'S',
             };
           })
         );
@@ -1073,13 +1438,15 @@ export class CircumstantialActsSuspensionCancellationComponent
     });
   }
 
-  getDetailProceedingsDevolution(numberAct: number) {
+  getDetailProceedingsDevolution(numberAct: number | string) {
+    console.log('Se llamo los bienes');
     this.loading2 = true;
     let params = {
       ...this.params2,
       ...this.columnFilters2,
     };
     params['filter.numberProceedings'] = `$eq:${numberAct}`;
+    console.log(params);
     this.proceedingService.getDetailProceedingsDevolution(params).subscribe({
       next: response => {
         console.log(response);
@@ -1112,41 +1479,263 @@ export class CircumstantialActsSuspensionCancellationComponent
     }
   }
 
-  manejarTipoActa(event: any): void {
-    console.log(event);
-    /* const idTipoActaControl = form.get('idTipoActa') as FormControl;
-    const identificadorControl = form.get('identificador') as FormControl;
-    const asunControl = form.get('asun') as FormControl; */ // Supongo que asun es el nombre de tu control
-    const idTipoActaValue = event;
+  listAllExpedients() {
+    let modalConfig = MODAL_CONFIG;
+    modalConfig = {
+      initialState: {
+        title: 'Lista general de actas',
+        callback: (data: any) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
 
-    /* if (idTipoActaValue === 'S/DON' || idTipoActaValue === 'C/DON') {
-      identificadorControl.setValue('DON');
-      asunControl.disable();
-      asunControl.disable();
-    } else if (idTipoActaValue === 'S/DES' || idTipoActaValue === 'C/DES') {
-      identificadorControl.setValue('DES');
-      asunControl.disable();
-      asunControl.disable();
-    } else if (idTipoActaValue === 'S/DEV' || idTipoActaValue === 'C/DEV') {
-      identificadorControl.setValue('DEV');
-      asunControl.disable();
-      asunControl.disable();
-    } else if (idTipoActaValue === 'S/VEN') {
-      // LIP_MENSAJE('BLK_ACT','A'); // No estoy seguro de cómo implementar esta función.
-      // Supongo que es una función para mostrar un mensaje, podrías usar un MatSnackBar por ejemplo.
-      form.get('asun').enable();
-      form.get('asun').disable();
-    } else if (idTipoActaValue === 'C/VNR') {
-      // Aquí deberías implementar tu lógica para mostrar un mensaje de confirmación y realizar acciones basadas en la respuesta.
-      // IF LIF_MENSAJE_SI_NO(...) = 'S' THEN
-      // ...
-      // GO_ITEM('BLK_VNR.ID_EVENTO');
-      // ...
-      // GO_ITEM('BLK_VNR.ID_EVENTO');
-      // ...
-      // ELSE
-      // ...
-      // END IF;
-    } */
+    this.modalService.show(AllExpedientsModal, modalConfig);
+  }
+
+  listProceedingByExpedient() {
+    const expedient = this.formBlkExpedient.get('noExpedient').value;
+    if (expedient === null || expedient === undefined) {
+      expedient.markAsTouched();
+      this.alert('warning', 'Error', 'Debe registrar un expediente');
+      return;
+    }
+
+    let modalConfig = MODAL_CONFIG;
+    modalConfig = {
+      initialState: {
+        expedient: expedient,
+        title: 'Lista de actas del expediente ' + expedient,
+        callback: (data: any) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+
+    this.modalService.show(AllExpedientsModal, modalConfig);
+  }
+
+  navigateGoods() {
+    this.params
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(params => this.getGoods())
+      )
+      .subscribe();
+  }
+
+  existProceeding() {
+    return new Promise((res, _rej) => {
+      const paramsF = new FilterParams();
+      paramsF.addFilter('keysProceedings', this.form.get('act').value);
+      this.proceedingsDetailDel
+        .getProceeding2All(paramsF.getParams())
+        .subscribe(
+          response => {
+            console.log(response);
+            res(true);
+          },
+          err => {
+            res(false);
+          }
+        );
+    });
+  }
+
+  keyIsValid() {
+    return new Promise((res, _rej) => {
+      let cveActa = this.form.get('act').value;
+
+      if (
+        cveActa.includes('//') ||
+        cveActa.startsWith('/') ||
+        cveActa.endsWith('/')
+      ) {
+        res(false);
+      } else {
+        res(true);
+      }
+    });
+  }
+
+  validElaborationDate() {
+    const date = this.form.get('elabDate').value;
+    console.log(date);
+    //VALIDAR HORA
+    const hours = date.getHours();
+    console.log(hours);
+    if (hours == 0) {
+      this.alert(
+        'warning',
+        'Fecha de elaboración inválida',
+        'Indicar la hora de elaboración'
+      );
+      this.form.get('elabDate').reset();
+      return;
+    }
+    //VALIDAR HORAS TRANSCURRIDAS
+    const now = new Date();
+    const diffInMilliseconds = now.getTime() - date.getTime();
+    const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
+    console.log(diffInHours);
+
+    if (diffInHours > 72) {
+      this.status_time = 'DESTIEMPO';
+      this.alert(
+        'info',
+        'Acto registrado con ' +
+          parseInt(diffInHours.toString()) +
+          ' horas de retraso',
+        ''
+      );
+    } else {
+      this.status_time = 'EN TIEMPO';
+    }
+
+    //VALIDAR AÑO Y MES
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1;
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    console.log({ currentYear, currentMonth, year, month });
+
+    if (currentYear !== year || currentMonth !== month) {
+      this.alert(
+        'warning',
+        'Fecha de elaboración inválida',
+        'El acta no puede ser registrada por encontrarse fuera de las políticas de registro de actas de recepción física.'
+      );
+      this.form.get('elabDate').reset();
+      return;
+    }
+
+    this.form.get('closingDate').setValue(date);
+  }
+
+  async saveNewProceeding() {
+    //TODO Agregar loading
+    const exists = await this.existProceeding();
+    console.log(exists);
+
+    if (exists) {
+      this.alert(
+        'warning',
+        'Ya existe un acta con el mismo número',
+        'Se sumará uno al folio'
+      );
+      this.form
+        .get('folio')
+        .setValue(parseInt(this.form.get('folio').value) + 1);
+      return;
+    }
+
+    const isValid = await this.keyIsValid();
+
+    if (!isValid) {
+      this.alert(
+        'warning',
+        'Clave de acta inválida',
+        'Verifique la clave de acta'
+      );
+      return;
+    }
+
+    if (this.type_proceeding == null) {
+      this.alert(
+        'warning',
+        'Tipo de acta inválida',
+        'Seleccione un tipo de acta'
+      );
+      return;
+    }
+
+    this.form.get('captureDate').setValue(new Date());
+
+    const user = this.authService.decodeToken();
+
+    const body: IProccedingsDeliveryReception = {
+      keysProceedings: this.form.get('act').value,
+      statusProceedings: 'ABIERTA',
+      elaborationDate: this.form.get('elabDate').value.getTime(),
+      datePhysicalReception: this.form.get('closingDate').value.getTime(),
+      address: this.form.get('address').value,
+      elaborate: user.preferred_username,
+      numFile: this.formBlkExpedient.get('noExpedient').value,
+      observations: this.form.get('observations').value,
+      witness1: this.form.get('autorithyCS').value,
+      witness2: this.form.get('elaboration').value,
+      comptrollerWitness: this.form.get('witnessContr').value,
+      typeProceedings: this.type_proceeding,
+      captureDate: new Date().getTime(),
+      numDelegation1: this.form.get('admin').value.delegationNumber2,
+      numDelegation2:
+        this.form.get('admin').value.delegationNumber2 == 11 ? '11' : null,
+    };
+
+    console.log(body);
+    this.proceedingsDetailDel.create(body).subscribe(
+      res => {
+        this.alert('success', 'Acta registrada', '');
+        this.form.get('statusAct').setValue('ABIERTA');
+        this.canSave = false;
+        this.unsubscribeAssembleKey();
+        console.log(res);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  getTransferent() {
+    if (this.formBlkExpedient.get('noExpedient').value != null) {
+      this.form.get('authority').reset();
+
+      const body = {
+        proceedingsNumber: this.formBlkExpedient.get('noExpedient').value,
+        typeMinutes: this.form.get('actSelect').value,
+      };
+
+      this.proceedingSusCanService.queryTransferKey(body).subscribe(
+        res => {
+          console.log(res);
+          this.dataAuthority = new DefaultSelect(res.data, res.count);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    }
+  }
+
+  getDelegations() {
+    const delegation = this.authService.decodeToken().department;
+    console.log(delegation);
+
+    this.proceedingSusCanService.queryRNomencla(delegation).subscribe(
+      res => {
+        console.log(res);
+        this.dataDelegation = new DefaultSelect(res.data, res.count);
+      },
+      err => {
+        console.log(err);
+        this.dataDelegation = new DefaultSelect();
+      }
+    );
+  }
+
+  postQueryGoods() {
+    //TODO
+    return new Promise((res, _rej) => {
+      const body: IPostQueryGoodFACTCIRCUN_0001 = {
+        elaborationDate: undefined,
+        delegationNumber: 0,
+        subdelegationNumber: 0,
+        goodNumber: 0,
+        proceedingsNumber: 0,
+        status: '',
+        screen: '',
+      };
+    });
   }
 }

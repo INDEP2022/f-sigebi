@@ -4,7 +4,6 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PersonService } from 'src/app/core/services/catalogs/person.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
-  CURP_PATTERN,
   NUMBERS_PATTERN,
   PHONE_PATTERN,
   RFC_PATTERN,
@@ -74,7 +73,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
       ],
       observations: [null, [Validators.required, Validators.maxLength(100)]],
       rfc: [null, [Validators.pattern(RFC_PATTERN)]],
-      curp: [null, [Validators.pattern(CURP_PATTERN)]],
+      curp: [null, [Validators.pattern(STRING_PATTERN)]],
       curriculumV: [null],
       curriculum: ['N'],
       typePerson: [null, [Validators.required]],
