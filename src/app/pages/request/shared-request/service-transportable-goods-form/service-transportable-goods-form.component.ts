@@ -43,8 +43,7 @@ const testData = [
 })
 export class ServiceTransportableGoodsFormComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   @ViewChild('table', { static: false }) table: any;
   @Input() op: number;
   @Input() showForm: boolean;
@@ -95,7 +94,14 @@ export class ServiceTransportableGoodsFormComponent
 
       this.columns.selected = {
         ...this.columns.selected,
-        onComponentInitFunction: this.orderSelected.bind(this),
+        onComponentInitFunction: (instance?: any) => {
+          console.log('instance', instance);
+          instance.input.subscribe((data: any) => {
+            console.log('instance', data);
+
+            this.orderSelected(data)
+          });
+        },
       };
 
       this.columns.commentService = {
@@ -594,7 +600,7 @@ export class ServiceTransportableGoodsFormComponent
     if (this.op == 12 || this.op == 13 || this.op == 14 || this.op == 15) {
       this.title = 'Servicio Bienes Transportables';
     } else {
-      this.title = 'Servicios Prestados';
+      this.title = 'Servicio Bienes Transportables';
     }
   }
 
@@ -651,14 +657,8 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   orderSelected(event: any) {
-    event.toggle.subscribe((data: any) => {
-      if (data.toggle == true) {
-        this.ordersSelected.push(data.row);
-      } else {
-        const index = this.ordersSelected.indexOf(data.row);
-        this.ordersSelected.splice(index, 1);
-      }
-    });
+    console.log(this.data.filter(x => x.to));
+    this.ordersSelected = this.data.filter(x => x.to);
   }
 
   setCommentService(data: any) {

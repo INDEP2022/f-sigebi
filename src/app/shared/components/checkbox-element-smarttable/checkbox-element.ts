@@ -18,7 +18,7 @@ import {
         id="checkbox-input"
         class="common-check custom-checkbox"
         [checked]="checked"
-        (change)="onToggle($event)"
+        (click)="onToggle($event)"
         type="checkbox" />
     </div>
   `,
@@ -46,7 +46,7 @@ export class CheckboxElementComponent<T = any> implements OnInit {
   @Output() toggle: EventEmitter<{ row: T; toggle: boolean }> =
     new EventEmitter();
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit(): void {
     ////
@@ -54,6 +54,7 @@ export class CheckboxElementComponent<T = any> implements OnInit {
   }
 
   onToggle($event: Event) {
+    console.log('onToggle', $event);
     let row: any = this.rowData;
     let toggle = ($event.currentTarget as HTMLInputElement).checked;
     this.toggle.emit({ row, toggle });
