@@ -112,7 +112,17 @@ export class ModalNotTransferredComponent extends BasePage implements OnInit {
           resolve(resp);
         },
         error: error => {
-          this.onLoadToast('error', 'No se pudo crear el Bien no transferido');
+
+          //como saber si un parametro es un array
+
+
+          if (error.error.message && Array.isArray(error.error.message)) {
+            let message = error.error.message.join('\n');
+            this.onLoadToast('error', 'No se pudo crear el Bien no transferido.\n' + message);
+          } else {
+            this.onLoadToast('error', 'No se pudo crear el Bien no transferido');
+          }
+
           reject(error);
         },
       });
@@ -145,10 +155,10 @@ export class ModalNotTransferredComponent extends BasePage implements OnInit {
       relevantType: [null, [Validators.required]],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.pattern(STRING_PATTERN), Validators.maxLength(300)],
       ],
       unitExtent: [null, [Validators.required]],
-      amount: [null, [Validators.required]],
+      amount: [null, [Validators.required, Validators.maxLength(7)]],
     });
     if (this.allotment != null) {
       this.edit = true;
