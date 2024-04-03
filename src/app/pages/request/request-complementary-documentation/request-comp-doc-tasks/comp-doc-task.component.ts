@@ -1205,6 +1205,7 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
 
+      case 'register-declaration-abandonment':
       case 'register-abandonment-instruction':
         this.regDocForm = true;
         this.searchAssociateFile = true;
@@ -1265,7 +1266,7 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
 
-      case 'register-declaration-abandonment':
+      case 'register-declaration-abandonment---A':
         this.regDocForm = true;
         this.searchAssociateFile = true;
         this.selectGoods = true;
