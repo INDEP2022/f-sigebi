@@ -1127,6 +1127,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         this.tipoOficio = i?.tipo_oficio;
         statusOffice = i?.estatus_of;
         this.statusOffice = i?.estatus_of;
+        console.log(this.statusOffice);
 
         this.m_comer = i;
         console.log(this.m_comer);
