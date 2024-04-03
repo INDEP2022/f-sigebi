@@ -137,6 +137,7 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
 
   loadImages() {
     if (this.process != 'sampling-assets') {
+      console.log("entra condicion: this.process != 'sampling-assets'");
       let loadingPhotos = 0;
       let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
       config.initialState = {
@@ -163,6 +164,7 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
       };
       this.modalService.show(UploadFileComponent, config);
     } else {
+      console.log("no entra condicion: this.process != 'sampling-assets'");
       let loadingPhotos = 0;
       let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
       config.initialState = {
