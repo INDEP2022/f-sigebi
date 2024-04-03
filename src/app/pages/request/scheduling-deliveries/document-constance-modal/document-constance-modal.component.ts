@@ -155,12 +155,16 @@ export class DocumentConstanceModalComponent
     this.searchForm
       .get('xDelegacionRegional')
       .setValue(this.goodDelivery.delRegId);
+    this.searchForm.get('xTipoDocumento').setValue('19')
   }
 
   getTypeDocumentSelect(params: ListParams) {
+    params['filter.xTipoDocumento'] = 19;
     this.wcontentService.getDocumentTypes(params).subscribe({
       next: (resp: any) => {
-        this.typeDocuments = new DefaultSelect(resp.data, resp.length);
+        this.typeDocuments = new DefaultSelect(resp.data.filter(obj => obj.ddocType === '19'), resp.length);
+        //this.typeDocuments = this.typeDocuments.data.filter(obj => obj.ddocType === '9');
+        console.log(this.typeDocuments);
       },
     });
   }

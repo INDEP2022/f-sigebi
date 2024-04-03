@@ -353,6 +353,7 @@ export class SchedulingDeliveriesFormComponent
       transferId: [null],
       transferName: [null],
       client: [null],
+      clientName: [null],
       postAddressee: [null],
       email: [
         null,
@@ -619,7 +620,6 @@ export class SchedulingDeliveriesFormComponent
       '¿Desea guardar la programación de entrega?'
     ).then(question => {
       if (question.isConfirmed) {
-        console.log('1');
         let typeEvent: any;
         let store: any;
         let transferent: any;
@@ -632,7 +632,6 @@ export class SchedulingDeliveriesFormComponent
           this.schedulingDeliverieForm.get('endDate').value,
           'DD/MM/YYYY HH:mm:ssZ'
         ).toDate();
-        console.log('2');
         const infoSave: IprogrammingDelivery = {
           id: this.programmingDeliveryInfo.id,
           typeEvent: typeEvent,
@@ -1141,24 +1140,7 @@ export class SchedulingDeliveriesFormComponent
   }
 
   selectedRows: any[] = [];
-  /*goodsSelect3(data): void {
-    console.log(data)
-    if (!Array.isArray(data)) {
-      data = [data];
-    }
 
-    data.forEach(row => {
-      const index = this.selectedRows.findIndex(
-        selectedRow => selectedRow.id === row.id
-      );
-      if (index > -1) {
-        this.selectedRows.splice(index, 1);
-      } else {
-        this.selectedRows.push(row);
-      }
-    });
-    console.log(this.selectedRows)
-  }*/
   goodsSelect(goodSelect: IGoodInvAvailableView[]) {
     this.selectedRows = goodSelect;
     console.log(this.selectedRows);
@@ -1290,9 +1272,10 @@ export class SchedulingDeliveriesFormComponent
     this.schedulingDeliverieForm
       .get('typeEventInfo')
       .setValue(this.typeEventname);
-    console.log(this.clientName)
-    this.schedulingDeliverieForm.get('client').setValue(this.clientName);
-    console.log(this.schedulingDeliverieForm.get('clientName').value)
+    this.schedulingDeliverieForm
+      .get('clientName')
+      .setValue(this.clientName);
+
   }
 
   showInfoProgrammingDelivery() {
