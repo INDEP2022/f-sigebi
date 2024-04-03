@@ -139,13 +139,13 @@
               prefixSearch="$eq"
               value="usuario"
               bindLabel="nombre"
-              [labelTemplate]="userLabel"
-              [optionTemplate]="userOption">
+              [labelTemplate]="userLabel1"
+              [optionTemplate]="userOption1">
             </ng-custom-select-loading>
-            <ng-template #userLabel let-item="item"
+            <ng-template #userLabel1 let-item="item"
               >{{ item.usuario }} - {{ item.nombre }}</ng-template
             >
-            <ng-template #userOption let-item="item"
+            <ng-template #userOption1 let-item="item"
               >{{ item.usuario }} - {{ item.nombre }}</ng-template
             >
 
@@ -180,13 +180,13 @@
               prefixSearch="$eq"
               value="usuario"
               bindLabel="nombre"
-              [labelTemplate]="userLabel"
-              [optionTemplate]="userOption">
+              [labelTemplate]="userLabel2"
+              [optionTemplate]="userOption2">
             </ng-custom-select-loading>
-            <ng-template #userLabel let-item="item"
+            <ng-template #userLabel2 let-item="item"
               >{{ item.usuario }} - {{ item.nombre }}</ng-template
             >
-            <ng-template #userOption let-item="item"
+            <ng-template #userOption2 let-item="item"
               >{{ item.usuario }} - {{ item.nombre }}</ng-template
             >
 
@@ -387,7 +387,7 @@
           <!--  -->
           <!--  -->
           <!--  -->
-          <div *ngIf="statusOffice != 'ENVIADO'">
+          <div>
             <app-card [header]="true">
               <div header>
                 <div class="ch-content">
@@ -422,13 +422,13 @@
                         prefixSearch="$eq"
                         value="usuario"
                         bindLabel="nombre"
-                        [labelTemplate]="userLabel"
-                        [optionTemplate]="userOption">
+                        [labelTemplate]="userLabel3"
+                        [optionTemplate]="userOption3">
                       </ng-custom-select-loading>
-                      <ng-template #userLabel let-item="item"
+                      <ng-template #userLabel3 let-item="item"
                         >{{ item.usuario }} - {{ item.nombre }}</ng-template
                       >
-                      <ng-template #userOption let-item="item"
+                      <ng-template #userOption3 let-item="item"
                         >{{ item.usuario }} - {{ item.nombre }}</ng-template
                       >
 
