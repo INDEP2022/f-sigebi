@@ -1465,33 +1465,70 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   finalizeClassify() {
-    /**
-     * De donde sale IdContentSae para las validaciones
-     * No se entiende la validacion para RESTITUCION_BIENES
-     * mustraPopClasificaNoEntrega()
-     */
-    let lbError = true;
-    const statusProg = this.statusProgramming;
-    if (statusProg == 'RESTITUCION_BIENES') {
-      lbError = true;
-    } else if (statusProg == 'FORMATO_RECLAMACION_SAE') {
-    } else if (statusProg == 'FORMATO_RECLAMACION_TE') {
-    }
+    this.alertQuestion(
+      'question',
+      'Finalizar Clasificación',
+      `¿Desea enviar la clasificación de los bienes no entregados para la programación con folio ${this.programmingDetailPanel.folio}?`
+    ).then(async question => {
+      if (question.isConfirmed) {
+        if (this.programmingDetailPanel) {
+          const infoProgramming: IprogrammingDelivery = {
+            id: this.programmingDetailPanel.id,
+            status: 'APROBAR_ENTREGA',
+          };
 
-    if (lbError == true) {
-      return;
-    }
-    const folio = this.programmingDetailPanel.folio;
-    Swal.fire({
-      title: 'Confirmación',
-      html: `&#191; Decea enviar la clasificación de los bienes no entregados para la programación con el folio: ${folio}?`,
-      icon: undefined,
-      showCancelButton: true,
-      confirmButtonColor: '#9D2449',
-      cancelButtonColor: '#B38E5D',
-      confirmButtonText: 'Enviar',
-    }).then(result => {
-      if (result.isConfirmed) {
+          this.programmingRequestService
+            .updateProgrammingDelivery(
+              this.programmingDetailPanel.id,
+              infoProgramming
+            )
+            .subscribe({
+              next: response => {
+                console.log('response', response);
+              },
+              error: error => {},
+            });
+          this.loading = true;
+          this.programmingId = this.programmingDetailPanel.id;
+          const user: any = this.authService.decodeToken();
+
+          let body: any = {};
+
+          body['type'] = 'SOLICITUD_PROGRAMACION';
+          body['subtype'] = 'Programar_Recepcion';
+          body['ssubtype'] = 'TURNAR';
+
+          let task: any = {};
+          task['id'] = 0;
+          task['assignees'] = user.username;
+          task['assigneesDisplayname'] = user.nameUser;
+          task['creator'] = user.username;
+          task['reviewers'] = user.username;
+          task['taskNumber'] = Number(this.programmingId);
+          task['title'] =
+            'Aprobar solicitud para la restitución de los bienes de la programación  ' +
+            this.programmingDetailPanel.folio;
+          task['programmingId'] = this.programmingId;
+          task['requestId'] = this.programmingId;
+          task['expedientId'] = 0;
+          console.log('task', this.programmingDetailPanel.delRegId);
+          task['idDelegationRegional'] = this.programmingDetailPanel.delRegId;
+          task['urlNb'] =
+            'pages/request/scheduling-deliveries/execute-schelude-delivery';
+          task['processName'] = 'SolicitudProgramacion';
+          body['task'] = task;
+          const taskResult = await this.createTaskOrderService(body);
+          this.loading = false;
+          if (taskResult) {
+            this.closeTask();
+            this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+            this.alert(
+              'success',
+              'Creación de Tarea Correcta',
+              `Se creó la tarea Realizar Programación con el folio: ${this.programmingId}`
+            );
+          }
+        }
       }
     });
   }
