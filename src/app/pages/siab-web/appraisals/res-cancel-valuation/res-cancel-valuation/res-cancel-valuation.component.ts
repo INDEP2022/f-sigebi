@@ -276,6 +276,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         body.eventId = +params['event'];
         body.officeType = +params['type'];
         this.loadOffice(body.eventId, body.officeType);
+        this.tipoOficio = body.officeType;
       }
     });
   }
@@ -539,6 +540,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.form
       .get('event')
       .setValue(valorObjeto?.eventId, { onlySelf: true, emitEvent: false });
+
     this.findOffice(body);
   }
 
@@ -726,6 +728,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   async insertaOficio() {
+    console.log(this.m_comer);
     return new Promise((resolve, reject) => {
       let body = {
         TIPO_OFICIO_IN: this.m_comer.tipo_oficio,
@@ -1019,7 +1022,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           this.lblDireccion = ' ACTIVOS FINANCIEROS ';
         }
         this.lblCvlOfocio = i?.cve_oficio;
-        this.form.controls['office'].setValue(i?.cve_oficio);
+
         this.form
           .get('event')
           .setValue(i?.id_evento, { onlySelf: true, emitEvent: false });
@@ -1124,7 +1127,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         this.tipoOficio = i?.tipo_oficio;
         statusOffice = i?.estatus_of;
         this.statusOffice = i?.estatus_of;
+
         this.m_comer = i;
+        console.log(this.m_comer);
       }
       this.validateFindOfficeOne(statusOffice);
     } else {

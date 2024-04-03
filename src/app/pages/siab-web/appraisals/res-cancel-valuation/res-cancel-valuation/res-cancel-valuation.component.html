@@ -47,8 +47,16 @@
                 [form]="form"
                 bindLabel="cveJob"
                 label="Folios de Oficios de Avalúos"
+                [labelTemplate]="userLabel"
+                [optionTemplate]="userOption"
                 control="office">
               </ngx-select>
+              <ng-template #userLabel let-item="item"
+                >{{ item.eventId }} - {{ item.cveJob }}</ng-template
+              >
+              <ng-template #userOption let-item="item"
+                >{{ item.eventId }} - {{ item.cveJob }}</ng-template
+              >
             </form-field>
           </div>
         </div>
