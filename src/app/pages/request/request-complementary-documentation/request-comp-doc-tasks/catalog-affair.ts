@@ -493,6 +493,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
     //ABANDONO
 
+    case 'register-declaration-abandonment':
     case 'register-abandonment-instruction':
       return {
         title: `Abandono: Verificar Cumplimiento, No. Solicitud: ${requestId} ${contributor}`,

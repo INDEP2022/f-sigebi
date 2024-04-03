@@ -22,9 +22,8 @@ export class CommentsFormComponent implements OnInit {
   @Input() showForm: boolean;
   @Input() programmingId: number = 0;
   @Input() ordServform: FormGroup = new FormGroup({});
-
+  @Input() readonly: boolean = false;
   showComments: boolean = true;
-  readonly: boolean = false;
   readonlyNotification: boolean = false;
 
   commentsForm: FormGroup = new FormGroup({});
@@ -32,7 +31,7 @@ export class CommentsFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private orderServiceService: OrderServiceService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getOrderService();
@@ -67,11 +66,11 @@ export class CommentsFormComponent implements OnInit {
 
   checkReadOnly() {
     if (this.op == 1) {
-      this.readonly = false;
-      this.readonlyNotification = true;
+      //this.readonly = false;
+      //this.readonlyNotification = true;
     } else if (this.op == 9) {
-      this.readonly = false;
-      this.readonlyNotification = true;
+      //this.readonly = false;
+      //this.readonlyNotification = true;
     }
     /*this.readonly = this.op == 1 && this.op != 9 ? false : true;
     this.readonlyNotification = this.op == 9 ? true : false; */
@@ -79,17 +78,17 @@ export class CommentsFormComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.showForm) {
-      this.readonly = false;
+      //this.readonly = false;
     }
 
     if (this.showForm == true && this.op == 2) {
-      this.readonly = true;
-      this.readonlyNotification = true;
+      //this.readonly = true;
+      //this.readonlyNotification = true;
     }
 
     if (this.showForm == true && this.op != 2) {
-      this.readonly = true;
-      this.readonlyNotification = true;
+      //this.readonly = true;
+      //this.readonlyNotification = true;
     }
   }
 
