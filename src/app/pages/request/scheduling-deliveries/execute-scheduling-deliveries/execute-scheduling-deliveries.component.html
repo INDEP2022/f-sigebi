@@ -41,6 +41,7 @@
         class="p-2"
         *ngIf="
           programmingDetailPanel.status == 'APROBAR_ENTREGA' ||
+          programmingDetailPanel.status == 'APROBAR_ENTREGA_N' ||
           statusProgramming == 'APROBAR_NO_ENT_ESP' ||
           statusProgramming == 'APROBAR_NO_ENT_NUM'
         ">
@@ -267,6 +268,7 @@
         <a
           *ngIf="
             programmingDetailPanel.status == 'APROBAR_ENTREGA' ||
+            programmingDetailPanel.status == 'APROBAR_ENTREGA_N' ||
             statusProgramming == 'APROBAR_NO_ENT_ESP' ||
             statusProgramming == 'APROBAR_NO_ENT_NUM'
           "
@@ -339,6 +341,7 @@
     <div
       *ngIf="
         programmingDetailPanel.status == 'APROBAR_ENTREGA' ||
+        programmingDetailPanel.status == 'APROBAR_ENTREGA_N' ||
         statusProgramming == 'APROBAR_NO_ENT_ESP' ||
         statusProgramming == 'APROBAR_NO_ENT_NUM'
       ">

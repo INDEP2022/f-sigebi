@@ -508,6 +508,7 @@ export class ExecuteSchedulingDeliveriesComponent
 
         if (
           this.programmingDetailPanel.status == 'APROBAR_ENTREGA' ||
+          this.programmingDetailPanel.status == 'APROBAR_ENTREGA_N' ||
           this.statusProgramming == 'APROBAR_NO_ENT_ESP' ||
           this.statusProgramming == 'APROBAR_NO_ENT_NUM'
         ) {
@@ -1465,6 +1466,7 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   finalizeClassify() {
+
     this.alertQuestion(
       'question',
       'Finalizar Clasificación',
@@ -1474,7 +1476,7 @@ export class ExecuteSchedulingDeliveriesComponent
         if (this.programmingDetailPanel) {
           const infoProgramming: IprogrammingDelivery = {
             id: this.programmingDetailPanel.id,
-            status: 'APROBAR_ENTREGA',
+            status: 'APROBAR_ENTREGA_N',
           };
 
           this.programmingRequestService
@@ -1541,6 +1543,17 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   sendApprove() {
+    let title = '';
+    let status = '';
+    if (this.programmingDetailPanel == 'APROBAR_ENTREGA') {
+      title = 'Clasificación de bienes no entregados para la programación. ' +
+        this.programmingDetailPanel.folio;
+      status = 'RESTITUCION_BIENES'
+    } else if (this.programmingDetailPanel == 'APROBAR_ENTREGA_N') {
+      title = 'Restitución de bienes dañados y faltantes para la programación' +
+        this.programmingDetailPanel.folio;
+      status = 'RESTITUCION_BIENES_N'
+    }
     this.alertQuestion(
       'question',
       'Turnar Solicitud',
@@ -1550,7 +1563,7 @@ export class ExecuteSchedulingDeliveriesComponent
         if (this.programmingDetailPanel) {
           const infoProgramming: IprogrammingDelivery = {
             id: this.programmingDetailPanel.id,
-            status: 'RESTITUCION_BIENES',
+            status: status,
           };
 
           this.programmingRequestService
@@ -1581,9 +1594,7 @@ export class ExecuteSchedulingDeliveriesComponent
           task['creator'] = user.username;
           task['reviewers'] = user.username;
           task['taskNumber'] = Number(this.programmingId);
-          task['title'] =
-            'Clasificación de bienes no entregados para la programación. ' +
-            this.programmingDetailPanel.folio;
+          task['title'] = title;
           task['programmingId'] = this.programmingId;
           task['requestId'] = this.programmingId;
           task['expedientId'] = 0;
