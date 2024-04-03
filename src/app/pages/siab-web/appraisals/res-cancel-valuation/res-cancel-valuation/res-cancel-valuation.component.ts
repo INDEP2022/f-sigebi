@@ -255,7 +255,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.updateHour();
     this.intervalId = setInterval(() => {
       this.updateHour();
-      let good = goodCheck.map(item => item.no_bien).join(',');
+      let good = goodCheck.map(item => item.goodNumber).join(',');
       console.log(good);
       this.formTwo.controls['selectedGood'].setValue(good);
     }, 1000);
@@ -611,13 +611,13 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       if (tpOfi == 2) {
         await this.insertaBien(idOficio, 0, 'D');
         for (let i = 0; i < goodCheck.length; i++) {
-          await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+          await this.insertaBien(idOficio, goodCheck[i].goodNumber, 'I');
         }
       } else if (tpOfi == 3) {
         await this.insertaBien(idOficio, 0, 'D');
         for (let i = 0; i < this.dataGoodList.length; i++) {
           await this.insertaMotRev(
-            this.dataGoodList[i].no_bien,
+            this.dataGoodList[i].goodNumber,
             this.form.controls['event'].value,
             'NADA',
             'NADA',
@@ -626,15 +626,15 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         }
         for (let i = 0; i < goodCheck.length; i++) {
           this.dataGoodList.forEach(async element => {
-            if (element.no_bien == goodCheck[i].no_bien) {
+            if (element.goodNumber == goodCheck[i].goodNumber) {
               await this.insertaMotRev(
-                goodCheck[i].no_bien,
+                goodCheck[i].goodNumber,
                 this.form.controls['event'].value,
                 this.changeChar(element.motivos.toString()),
                 element.idMotivos.toString(),
                 'I'
               );
-              await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+              await this.insertaBien(idOficio, goodCheck[i].goodNumber, 'I');
             }
           });
         }
@@ -1201,13 +1201,13 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       console.log(this.dataGoodList);
       if (this.form.get('radio').value == 2) {
         for (let i = 0; i < this.dataGoodList.length; i++) {
-          if (this.dataGoodList[0].no_bien == no_bien) {
+          if (this.dataGoodList[0].goodNumber == no_bien) {
             console.log(this.dataGoodList[0]);
           }
         }
       } else if (this.form.get('radio').value == 3) {
         for (let i = 0; i < this.dataGoodList.length; i++) {
-          if (this.dataGoodList[0].no_bien == no_bien) {
+          if (this.dataGoodList[0].goodNumber == no_bien) {
             console.log(this.dataGoodList[0]);
           }
         }
@@ -1299,7 +1299,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           onComponentInitFunction: (instance: any) => {
             instance.onClick.subscribe((row: any) => {
               console.log(row);
-              let event = row.id_evento;
+              let event = this.event;
               let officeType = this.officeType;
               let config: ModalOptions = {
                 initialState: {
@@ -1315,7 +1315,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
                       let idMotive = next.map(item => item.id_motivo).join(',');
                       this.dataGood2.getElements().then(_item => {
                         let result = _item.map(item => {
-                          if (item.no_bien == row.no_bien) {
+                          if (item.goodNumber == row.goodNumber) {
                             item.motivos = motive;
                             item.idMotivos = idMotive;
                           }
@@ -1326,7 +1326,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
                       });
                       this.dataGood.getElements().then(_item => {
                         let result = _item.map(item => {
-                          if (item.no_bien == row.no_bien) {
+                          if (item.goodNumber == row.goodNumber) {
                             item.motivos = motive;
                             item.idMotivos = idMotive;
                           }
@@ -1336,7 +1336,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
                         });
                       });
                       this.dataGoodList.forEach(item => {
-                        if (item.no_bien == row.no_bien) {
+                        if (item.goodNumber == row.goodNumber) {
                           item.motivos = motive;
                           item.idMotivos = idMotive;
                         }
@@ -1362,7 +1362,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
               console.log(row);
               this.dataGood2.getElements().then(_item => {
                 let result = _item.map(item => {
-                  if (item.no_bien == row.no_bien) {
+                  if (item.goodNumber == row.goodNumber) {
                     item.motivos = '';
                     item.idMotivos = '';
                   }
@@ -1373,7 +1373,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
               });
               this.dataGood.getElements().then(_item => {
                 let result = _item.map(item => {
-                  if (item.no_bien == row.no_bien) {
+                  if (item.goodNumber == row.goodNumber) {
                     item.motivos = '';
                     item.idMotivos = '';
                   }
@@ -1383,7 +1383,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
                 });
               });
               this.dataGoodList.forEach(item => {
-                if (item.no_bien == row.no_bien) {
+                if (item.goodNumber == row.goodNumber) {
                   item.motivos = '';
                   item.idMotivos = '';
                 }
@@ -1574,7 +1574,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
                   bienesArray = resp.data.map((x: any) => {
                     let newRow: any = {
-                      ID_BIENES: x.no_bien,
+                      ID_BIENES: x.goodNumber,
                       ID_MOTIVO1: '',
                       MOTIVOS1: '',
                       ID_MOTIVO2: '',
@@ -1687,26 +1687,26 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       if (tpOfi == 2) {
         await this.insertaBien(idOficio, 0, 'D');
         for (let i = 0; i < goodCheck.length; i++) {
-          await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+          await this.insertaBien(idOficio, goodCheck[i].goodNumber, 'I');
         }
       } else if (tpOfi == 3) {
         console.log(this.dataGoodList);
         console.log(goodCheck);
         for (let i = 0; i < goodCheck.length; i++) {
           this.dataGoodList.forEach(async element => {
-            console.log(element.no_bien);
-            console.log(goodCheck[i].no_bien);
+            console.log(element.goodNumber);
+            console.log(goodCheck[i].goodNumber);
 
-            if (element.no_bien == goodCheck[i].no_bien) {
+            if (element.goodNumber == goodCheck[i].goodNumber) {
               console.log(element.motivos);
               await this.insertaMotRev(
-                goodCheck[i].no_bien,
+                goodCheck[i].goodNumber,
                 this.form.controls['event'].value,
                 this.changeChar(element.motivos),
                 element.idMotivos.toString(),
                 'I'
               );
-              await this.insertaBien(idOficio, goodCheck[i].no_bien, 'I');
+              await this.insertaBien(idOficio, goodCheck[i].goodNumber, 'I');
               bienesTotales++;
             }
           });
@@ -1824,7 +1824,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       this.dataExcel.forEach(element => {
         this.dataGood2.getElements().then(_item => {
           let result = _item.map(item => {
-            if (item.no_bien == element.ID_BIENES) {
+            if (item.goodNumber == element.ID_BIENES) {
               item.motivos =
                 (element.MOTIVOS1 ? `${element.MOTIVOS1},` : '') +
                 (element.MOTIVOS2 ? `${element.MOTIVOS2},` : '') +
@@ -1843,7 +1843,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         });
         this.dataGood.getElements().then(_item => {
           let result = _item.map(item => {
-            if (item.no_bien == element.ID_BIENES) {
+            if (item.goodNumber == element.ID_BIENES) {
               item.motivos =
                 (element.MOTIVOS1 ? `${element.MOTIVOS1},` : '') +
                 (element.MOTIVOS2 ? `${element.MOTIVOS2},` : '') +
@@ -1861,7 +1861,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           });
         });
         this.dataGoodList.forEach(item => {
-          if (item.no_bien == element.ID_BIENES) {
+          if (item.goodNumber == element.ID_BIENES) {
             item.motivos =
               (element.MOTIVOS1 ? `${element.MOTIVOS1},` : '') +
               (element.MOTIVOS2 ? `${element.MOTIVOS2},` : '') +
