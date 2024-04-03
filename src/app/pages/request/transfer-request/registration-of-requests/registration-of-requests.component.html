@@ -16,6 +16,8 @@
 
       <div class="p-2" *ngIf="approvalProcess && haveDictamen == false">
         <button
+          [ngClass]="{ loading: loadingBtn }"
+          [disabled]="loadingBtn"
           type="button"
           [disabled]="statusTask == 'FINALIZADA'"
           class="btn btn-primary btn-sm active"
@@ -68,7 +70,8 @@
       <div class="p-2" *ngIf="approvalProcess">
         <div>
           <button
-            [disabled]="statusTask == 'FINALIZADA'"
+            [ngClass]="{ loading: loadingBtn }"
+            [disabled]="statusTask == 'FINALIZADA' || loadingBtn"
             type="button"
             class="btn btn-primary btn-sm active"
             (click)="approveRequest()">
@@ -79,7 +82,8 @@
       <div class="p-2" *ngIf="approvalProcess">
         <div *ngIf="approvalProcess && haveDictamen == false">
           <button
-            [disabled]="statusTask == 'FINALIZADA'"
+            [ngClass]="{ loading: loadingBtn }"
+            [disabled]="statusTask == 'FINALIZADA' || loadingBtn"
             type="button"
             class="btn btn-primary btn-sm active"
             (click)="refuseRequest()">

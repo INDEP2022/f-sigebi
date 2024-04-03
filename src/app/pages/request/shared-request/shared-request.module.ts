@@ -107,6 +107,7 @@ import { WarehouseConfirmComponent } from './warehouse-confirm/warehouse-confirm
 import { WarehouseFormComponent } from './warehouse-form/warehouse-form.component';
 import { WarehouseShowComponent } from './warehouse-show/warehouse-show.component';
 import { WitnessFormComponent } from './witness-form/witness-form.component';
+import { CustomHeaderComponent } from './verify-compliance-goods/check-verify-compliance/custom-header.component';
 
 @NgModule({
   declarations: [
@@ -172,6 +173,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     ServiceTransportableGoodsFormComponent,
     VerifyComplianceGoodsComponent,
     CheckVerifyComplianceComponent,
+    CustomHeaderComponent,
     SignatureTypeComponent,
     UploadElectronicSignatureComponent,
     ComplementaryRequestInformationComponent,
@@ -265,4 +267,4 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     ValidateEyeVisitComponent,
   ],
 })
-export class SharedRequestModule {}
+export class SharedRequestModule { }

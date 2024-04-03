@@ -277,9 +277,30 @@
     <div>
       <tabset class="md-tabs">
         <tab heading="Bienes" id="tab1">
-          <div class="row pt-2">
+          <div class="row pt-4">
             <div class="d-flex justify-content-end">
-              <div class="m-3">
+              <div class="m-2">
+                <button
+                  (click)="removeGood()"
+                  class="btn btn-red btn-sm active">
+                  Eliminar <i class="fa fa-trash"></i>
+                </button>
+              </div>
+              <div class="m-2">
+                <button
+                  (click)="meetsGoods()"
+                  class="btn btn-primary btn-sm active">
+                  Cumple <i class="fa fa-check"></i>
+                </button>
+              </div>
+              <div class="m-2">
+                <button
+                  (click)="failsGoods()"
+                  class="btn btn-danger btn-sm active">
+                  No cumple
+                </button>
+              </div>
+              <div class="m-2">
                 <div class="btn-group" dropdown placement="bottom right">
                   <button
                     id="button-alignment"
@@ -323,31 +344,6 @@
                     </li>
                   </ul>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class="row pt-4">
-            <div class="d-flex justify-content-end">
-              <div class="m-3">
-                <button
-                  (click)="removeGood()"
-                  class="btn btn-red btn-sm active">
-                  Eliminar <i class="fa fa-trash"></i>
-                </button>
-              </div>
-              <div class="m-3">
-                <button
-                  (click)="meetsGoods()"
-                  class="btn btn-primary btn-sm active">
-                  Cumple <i class="fa fa-check"></i>
-                </button>
-              </div>
-              <div class="m-3">
-                <button
-                  (click)="failsGoods()"
-                  class="btn btn-danger btn-sm active">
-                  No cumple
-                </button>
               </div>
             </div>
           </div>

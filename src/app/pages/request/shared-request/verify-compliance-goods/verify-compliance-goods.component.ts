@@ -4,6 +4,7 @@ import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckVerifyComplianceComponent } from './check-verify-compliance/check-verify-compliance.component';
+import { CustomHeaderComponent } from './check-verify-compliance/custom-header.component';
 
 @Component({
   selector: 'app-verify-compliance-goods',
@@ -92,7 +93,8 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
       this.process == 'approve-abandonment') {
 
       this.tableSettings.columns["contentId"] = {
-        title: 'Oficio de instrucción de abandono emitido por la autoridad',
+        title: 'OIAEA-Art24',
+        description: 'Oficio de instrucción de abandono emitido por la autoridad',
         type: 'custom',
         sort: false,
         valuePrepareFunction: (cell: any, row: any) => cell,
@@ -103,7 +105,8 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
       }
 
       this.tableSettings.columns["codeStore"] = {
-        title: 'Acuerdo de declaración de abandono',
+        title: 'ADA-Art24',
+        description: 'Acuerdo de declaración de abandono',
         type: 'custom',
         sort: false,
         valuePrepareFunction: (cell: any, row: any) => cell,

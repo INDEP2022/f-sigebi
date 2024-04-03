@@ -224,6 +224,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.displayColumns();
       },
       error: error => {
+        this.selectedGoodColumns = [];
+        this.selectedGoodTotalItems = 0;
         this.displayColumns();
       },
     });
@@ -583,6 +585,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         const goodSelected = this.selectedGoods.length;
         this.selectedGoods.map(async (item: any, _i: number) => {
+          console.log("delete", item);
           //const index = this.selectedGoodColumns.indexOf(item);
           const i = _i + 1;
           //this.selectedGoodColumns.splice(index, 1);
@@ -591,10 +594,11 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
             this.processDet == 'DEVOLUCION'
           ) {
             //elimina inventario
-            await this.deleteGoodDated(item);
+            //await this.deleteGoodDated(item);
           } else {
-            await this.deleteGoodResDev(item);
           }
+
+          await this.deleteGoodResDev(item);
 
           if (goodSelected == i) {
             this.getRejectedGoodService(this.selectedGoodParams.getValue());
@@ -780,6 +784,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   addGoodForInformation(good: any) {
+    console.log(good)
     let goodResDev: IGoodsResDev = {};
     goodResDev.applicationId = this.idRequest; //this.good.solicitudId;
     goodResDev.goodId = good.goodId;
@@ -788,7 +793,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     goodResDev.proceedingsId = good.fileId;
     goodResDev.proceedingsType = good.fileType;
     goodResDev.uniqueKey = good.uniqueKey;
-    goodResDev.descriptionGood = good.goodDescription;
+    goodResDev.descriptionGood = good.goodDescription || good.descriptionGood;
     goodResDev.unitExtent = good.unitMeasurement;
     goodResDev.amountToReserve = good.quantity;
     goodResDev.applicationResDevId = good.applicationResDevId;
@@ -809,14 +814,13 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     goodResDev.organizationId = good.organizationId;
     goodResDev.invoiceRecord = good.folioAct;
     goodResDev.subinventory = good.destination;
-    //goodResDev.origin = good.origin;
-    goodResDev.naturalness =
-      good.inventoryNum != null ? 'INVENTARIOS' : 'GESTION';
+    goodResDev.origin = good.origin;
+    //goodResDev.naturalness = good.origin
+    //good.inventoryNum != null ? 'INVENTARIOS' : 'GESTION';
 
-    console.log(goodResDev);
     this.rejectedGoodService.createGoodsResDev(goodResDev).subscribe({
       next: resp => {
-        this.addGood(goodResDev);
+        this.getRejectedGoodService(this.selectedGoodParams.getValue());
         this.onLoadToast('success', 'Se agregó el bien');
       },
       error: error => {

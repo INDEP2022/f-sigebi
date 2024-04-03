@@ -57,6 +57,7 @@ import { RequestDocumentFormComponent } from './tabs/request-document-form/reque
 import { SearchDocumentFormComponent } from './tabs/search-document-form/search-document-form.component';
 import { ClarificationsComponent } from './tabs/validate-asset-document-components/clarifications/clarifications.component';
 import { TransferRequestRoutingModule } from './transfer-request-routing.module';
+import { RequestSignatureModalComponent } from '../request-complementary-documentation/request-signature-modal/request-signature-modal.component';
 
 @NgModule({
   declarations: [
@@ -87,6 +88,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     SearchDocumentFormComponent,
     NotifyAssetsImproprietyFormComponent,
     PrintReportModalComponent,
+    RequestSignatureModalComponent,
     InputFieldComponent,
     UploadFielsModalComponent,
     RefuseClarificationModalComponent,
@@ -124,4 +126,4 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
   ],
   exports: [VerifyComplianceTabComponent],
 })
-export class TransferRequestModule {}
+export class TransferRequestModule { }

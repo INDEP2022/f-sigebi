@@ -183,6 +183,33 @@ export class MassiveGoodService extends HttpService {
     formData.append('file', file);
     return this.post(this.route.GetFProRecPag2CSV, formData, params);
   }
+  postInsertTmpcomerappraisa(params: ListParams, file: any, body: any) {
+    const formData = new FormData();
+    formData.append('pEventId', body.pEventId);
+    formData.append('pTypeAppraisal', body.pTypeAppraisal);
+    formData.append('file', file);
+    return this.post(this.route.pupInsertTmpcomerappraisa, formData, params);
+  }
+  postInsertTmpcomerappraisalProperty(
+    params: ListParams,
+    file: any,
+    body: any
+  ) {
+    const formData = new FormData();
+    formData.append('pEventId', body.pEventId);
+    formData.append('pTypeAppraisal', body.pTypeAppraisal);
+    formData.append('v_iva', body.v_iva);
+    formData.append('address', body.address);
+    formData.append('file', file);
+    return this.post(
+      this.route.pupInsertTmpcomerappraisalProperty,
+      formData,
+      params
+    );
+  }
+  postInsertAppraisal(body: any) {
+    return this.post(this.route.pupInsertAppraisal, body);
+  }
 
   download(formData: string, params: ListParams): Observable<any> {
     const header: Object = {

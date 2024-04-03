@@ -12,7 +12,6 @@ import {
   of,
   skip,
   startWith,
-  switchMap,
   takeUntil,
   tap,
   throwError,
@@ -174,7 +173,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
       .pipe(
         takeUntil(this.$unSubscribe),
         skip(1),
-        switchMap(params => this.fillFoliosTable(params))
+        tap(params => this.fillFoliosTable(params))
+        // switchMap(params => this.fillFoliosTable(params))
       )
       .subscribe();
   }
@@ -184,19 +184,36 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     if (this.origin.includes('FCOMER084') && this.folio) {
       params.addFilter('id', this.folio);
     }
-    return this.getDocuments(params).pipe(
-      catchError(error => {
-        this.loading = false;
-        return throwError(() => error);
-      }),
-      tap(response => {
-        this.loading = false;
-        this.documents = response.data;
-        this.totalDocuments = response.count;
-        this.noFoliosFound = this.documents.length == 0 ? true : false;
-        this.markSelected();
-      })
-    );
+    // return
+    this.getDocuments(params)
+      .pipe
+      // catchError(error => {
+      //   this.loading = false;
+      //   return throwError(() => error);
+      // }),
+      // tap(response => {
+      //   this.loading = false;
+      //   this.documents = response.data;
+      //   this.totalDocuments = response.count;
+      //   this.noFoliosFound = this.documents.length == 0 ? true : false;
+      //   this.markSelected();
+      // })
+      ()
+      .subscribe({
+        next: response => {
+          this.loading = false;
+          this.documents = response.data;
+          this.totalDocuments = response.count;
+          this.noFoliosFound = this.documents.length == 0 ? true : false;
+          this.markSelected();
+        },
+        error: err => {
+          this.loading = false;
+          this.documents = [];
+          this.totalDocuments = 0;
+          this.noFoliosFound = this.documents.length == 0 ? true : false;
+        },
+      });
   }
 
   getDocumentsByFolio() {

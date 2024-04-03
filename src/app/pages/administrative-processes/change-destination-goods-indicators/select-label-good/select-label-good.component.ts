@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { LabelOkeyService } from 'src/app/core/services/catalogs/label-okey.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -18,13 +19,16 @@ export class SelectLabelGoodComponent extends BasePage implements OnInit {
   path: string = '';
   title: string = '';
   goodData: any;
+  userName: string = '';
+  validUser: boolean = false;
 
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private labelOkeyService: LabelOkeyService,
     private goodService: GoodService,
-    private goodProcessService: GoodProcessService
+    private goodProcessService: GoodProcessService,
+    private authService: AuthService
   ) {
     super();
   }
@@ -32,6 +36,15 @@ export class SelectLabelGoodComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     console.log('labelNumber', this.labelNumber);
 
+    const user = this.authService.decodeToken();
+    this.userName = user.username;
+    console.log('user.username', this.userName);
+
+    if (this.userName.startsWith('TLP')) {
+      this.validUser = false;
+    } else {
+      this.validUser = true;
+    }
     this.labelOkeyService.getById(this.labelNumber).subscribe({
       next: resp => {
         console.log('Respuesta etiqueta: ', resp);
@@ -57,8 +70,60 @@ export class SelectLabelGoodComponent extends BasePage implements OnInit {
 
   changeIndicataors() {
     const labelGood = this.form.controls['labelGood'].value;
-
+    const statusGood = this.goodData.status;
+    const noTransferGood = this.goodData.transferNumberExpedient;
+    const noClasifGood = this.goodData.goodClassNumber;
     console.log('ID de etiqueta seleccionado:_ ', labelGood);
+    console.log('Estatus del Bien', statusGood);
+
+    if (labelGood == null) {
+      this.alert('warning', 'Atención', 'No se ha seleccionado un indicador');
+      return;
+    }
+
+    if (
+      this.validUser != true &&
+      !['ROP', 'STA', 'STI', 'VXR', 'VXP'].includes(statusGood)
+    ) {
+      this.alert('warning', 'Atención', 'No puede realizar cambio de destino');
+      return;
+    }
+
+    if ((noTransferGood == 1 || noTransferGood == 3) && labelGood != 3) {
+      this.alert(
+        'warning',
+        'Atención',
+        'Destino erróneo, necesariamente debe ser Resguardo'
+      );
+      return;
+    }
+
+    if (
+      (noTransferGood == 121 ||
+        noTransferGood == 123 ||
+        noTransferGood == 124 ||
+        noTransferGood == 536) &&
+      noClasifGood != 1600
+    ) {
+      this.alert(
+        'warning',
+        'Atención',
+        'Destino erróneo, necesariamente debe ser Venta.'
+      );
+      return;
+    }
+
+    /*if(![1,3,121,123,124,536].includes(noTransferGood)){
+
+
+
+
+
+
+      this.alert('warning','Atención','Destino erróneo, necesariamente debe ser Venta.');
+      return
+
+    }*/
 
     let objGood1 = {
       goodNumber: Number(this.goodData.id),

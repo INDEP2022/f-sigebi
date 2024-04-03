@@ -6,7 +6,7 @@
   </div>
 
   <div body style="margin-top: -30px">
-    <div class="justify-content-end btn-toolbar">
+    <div class="justify-content-end btn-toolbar mt-4">
       <button
         *ngIf="!claimRequest"
         (click)="setClaimRequest()"
@@ -129,6 +129,7 @@
 
     <app-comments-form
       *ngIf="orderServiceId != null"
+      [readonly]="readonly"
       [ordServform]="ordServform"
       [op]="op"
       [showForm]="showForm"></app-comments-form>

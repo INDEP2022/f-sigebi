@@ -183,11 +183,7 @@ export class SelectAddressComponent extends BasePage implements OnInit {
 
   selectAddress() {
     if (!this.rowSelected) {
-      this.onLoadToast(
-        'error',
-        'No hay direccion',
-        'Seleccione una direccion previamente'
-      );
+      this.onLoadToast('warning', 'Atención', 'Seleccione una dirección');
       return;
     }
     //delete this.rowSelected.stateOfRepublicName;

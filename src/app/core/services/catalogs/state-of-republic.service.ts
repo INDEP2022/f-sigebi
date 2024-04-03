@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpService } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -9,11 +10,15 @@ import { IStateOfRepublic } from '../../models/catalogs/state-of-republic.model'
 @Injectable({
   providedIn: 'root',
 })
-export class StateOfRepublicService implements ICrudMethods<IStateOfRepublic> {
+export class StateOfRepublicService
+  extends HttpService
+  implements ICrudMethods<IStateOfRepublic>
+{
   private readonly route: string = ENDPOINT_LINKS.StateOfRepublic;
-  constructor(
-    private stateOfRepublicRepository: Repository<IStateOfRepublic>
-  ) {}
+  constructor(private stateOfRepublicRepository: Repository<IStateOfRepublic>) {
+    super();
+    this.microservice = 'catalog';
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IStateOfRepublic>> {
     return this.stateOfRepublicRepository.getAllPaginated(this.route, params);
@@ -38,5 +43,9 @@ export class StateOfRepublicService implements ICrudMethods<IStateOfRepublic> {
 
   remove(id: string | number): Observable<Object> {
     return this.stateOfRepublicRepository.remove(this.route + '/id/', id);
+  }
+
+  getAll2(params?: ListParams) {
+    return this.get('state-of-republic', params);
   }
 }

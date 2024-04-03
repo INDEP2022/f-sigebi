@@ -190,7 +190,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
       '¿Seguro de mandar a solicitar un nuevo almacén?'
     ).then(async question => {
       if (question.isConfirmed) {
-        this.sendEmailUser();
+        //this.sendEmailUser();
         this.loading = true;
         this.warehouseForm
           .get('wildebeestDelegationregion')

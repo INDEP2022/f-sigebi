@@ -530,4 +530,8 @@ export class LotService extends HttpService {
   paGarantXLote(event: number) {
     return this.get(`${LotEndpoints.QueryPaGarantByLot}/${event}`);
   }
+
+  thirdFile(eventId: number | string) {
+    return this.get(`apps/third-file/${eventId}`);
+  }
 }
