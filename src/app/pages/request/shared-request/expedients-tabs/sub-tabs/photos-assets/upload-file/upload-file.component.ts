@@ -44,7 +44,8 @@ export class UploadFileComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.idGood) this.idGood = this.data.id;
+    console.log('aqui', this.data);
+    if (this.idGood) this.idGood = this.data.goodId;
     if (this.idRequest) this.infoRequest();
     this.obtainDate();
     this.getInfoUserLog();
@@ -82,7 +83,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
             xfolioProgramacion: this.programming.folio,
             xnoProgramacion: this.programming.id,
             xidTransferente: this.programming.tranferId,
-            xidBien: this.goodProg,
+            xidBien: this.data.goodId,
             xnombreProceso: 'Ejecutar Recepcion',
           };
 
@@ -114,7 +115,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
             dDocAuthor: this.userLogName,
             xidSolicitud: this.idRequest,
             xidTransferente: this.data.tranferId,
-            xidBien: this.idGood,
+            xidBien: this.data.goodId,
             xnombreProceso: this.nomProcess,
             xtipoDocumento: this.typeDoc,
             xDelegacionRegional: this.data.delReg,
@@ -146,7 +147,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
             dDocAuthor: this.userLogName,
             xidSolicitud: this.idRequest,
             xidTransferente: this.idTrans,
-            xidBien: this.idGood,
+            xidBien: this.data.goodId,
             xnombreProceso: 'Clasificar Bien',
           };
           const contentType = 'img';
@@ -176,7 +177,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
           xidcProfile: 'NSBDB_Gral',
           dDocAuthor: this.userLogName,
           xidSolicitud: this.idRequest,
-          xidBien: this.good,
+          xidBien: this.data.goodId,
           xnombreProceso: this.nomProcess,
           xtipoDocumento: 1,
         };

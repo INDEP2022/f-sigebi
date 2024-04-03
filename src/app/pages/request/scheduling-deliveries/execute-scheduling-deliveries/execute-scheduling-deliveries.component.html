@@ -40,6 +40,7 @@
       <div
         class="p-2"
         *ngIf="
+          programmingDetailPanel.status == 'APROBAR_ENTREGA' ||
           statusProgramming == 'APROBAR_NO_ENT_ESP' ||
           statusProgramming == 'APROBAR_NO_ENT_NUM'
         ">
@@ -265,6 +266,7 @@
       <div class="form-inline justify-content-end btn-toolbar">
         <a
           *ngIf="
+            programmingDetailPanel.status == 'APROBAR_ENTREGA' ||
             statusProgramming == 'RESTITUCION_BIENES' ||
             statusProgramming == 'APROBAR_NO_ENT_ESP' ||
             statusProgramming == 'APROBAR_NO_ENT_NUM'
@@ -337,6 +339,7 @@
     <!-- EJECUCION PROGRAMACION ENTREGA BIENES TIPO REST -->
     <div
       *ngIf="
+        programmingDetailPanel.status == 'APROBAR_ENTREGA' ||
         statusProgramming == 'APROBAR_NO_ENT_ESP' ||
         statusProgramming == 'APROBAR_NO_ENT_NUM'
       ">

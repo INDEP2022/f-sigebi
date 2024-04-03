@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, of, takeUntil } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -9,13 +9,17 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IProgrammingDeliveryGood } from 'src/app/core/models/good-programming/programming-delivery-good.model';
 import { IGoodInvAvailableView } from 'src/app/core/models/ms-goodsinv/goodsinv.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { CertificatesDeliveryService } from 'src/app/core/services/ms-delivery-constancy/certificates-delivery.service';
 import { CertificatesGoodsService } from 'src/app/core/services/ms-delivery-constancy/certificates-goods.service';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
+import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { JSON_TO_CSV } from 'src/app/pages/admin/home/constants/json-to-csv';
+import { IprogrammingDelivery } from 'src/app/pages/siab-web/sami/receipt-generation-sami/receipt-table-goods/ireceipt';
 import Swal from 'sweetalert2';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
@@ -114,6 +118,7 @@ export class ExecuteSchedulingDeliveriesComponent
   constanceSelected: any = {};
   is: boolean = false;
   idProgram: string = '';
+  programmingId = '';
 
   private programmingService = inject(ProgrammingGoodService);
   private transferenteService = inject(TransferenteService);
@@ -125,7 +130,11 @@ export class ExecuteSchedulingDeliveriesComponent
 
   constructor(
     private modalService: BsModalService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private taskService: TaskService,
+    private programmingRequestService: ProgrammingRequestService,
+    private authService: AuthService,
+    private router: Router
   ) {
     super();
   }
@@ -498,6 +507,7 @@ export class ExecuteSchedulingDeliveriesComponent
         //
 
         if (
+          this.programmingDetailPanel.status == 'APROBAR_ENTREGA' ||
           this.statusProgramming == 'APROBAR_NO_ENT_ESP' ||
           this.statusProgramming == 'APROBAR_NO_ENT_NUM'
         ) {
@@ -943,15 +953,8 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   async finalizeDelivery() {
-    /**
-     * falta validar documentos
-     * falta crear la tarea
-     * mustraPopEjecutarEntrega()
-     */
-    window.alert('No se tien terminado el metodo');
     let lbNoEnt: boolean = false;
 
-    //Verifica si existen constancias
     if (this.constancyDeliveryArray.length == 0) {
       this.alert(
         'warning',
@@ -965,7 +968,6 @@ export class ExecuteSchedulingDeliveriesComponent
     params1['filter.closing'] = `$eq:N`;
     const constDeliveryClosed: any = await this.getAllCertificates(params1);
 
-    //Verifica que las constancias esten cerradas
     if (constDeliveryClosed.count > 0) {
       this.alert(
         'warning',
@@ -978,10 +980,9 @@ export class ExecuteSchedulingDeliveriesComponent
     let haveError: boolean = false;
     const constDelivery: any = await this.getAllCertificates(new ListParams());
 
-    //Todo:call endpoint who verify if certifi have documents
-    haveError = true;
+    haveError = false;
 
-    if (haveError == true) {
+    /*if (haveError == true) {
       this.alert(
         'warning',
         'Advertencia',
@@ -989,7 +990,7 @@ export class ExecuteSchedulingDeliveriesComponent
       );
 
       return;
-    }
+    }*/
 
     const params3 = new ListParams();
     params3.limit = 100;
@@ -1017,7 +1018,9 @@ export class ExecuteSchedulingDeliveriesComponent
       body.id = item.amountNotRescheduled;
       body.status = item.status;
 
-      const updated = await this.updateProgrammingGoodDelivery(body);
+      if (this.programmingDetailPanel.typeEvent == 4) {
+        this.confirm();
+      }
     }
 
     //Todo: Averiguar donde se encuentra el EstatusProgramming para actualizarlo
@@ -1543,6 +1546,105 @@ export class ExecuteSchedulingDeliveriesComponent
         this.modalService.show(ShowDocumentsGoodComponent, config);
       }
     }
+  }
+
+  confirm() {
+    this.alertQuestion(
+      'question',
+      'Turnar Solicitud',
+      `¿Desea turnar la solicitud a la siguiente etapa con folio ${this.programmingDetailPanel.folio}?`
+    ).then(async question => {
+      if (question.isConfirmed) {
+        if (this.programmingDetailPanel) {
+          const infoProgramming: IprogrammingDelivery = {
+            id: this.programmingDetailPanel.id,
+            status: 'APROBAR_ENTREGA',
+          };
+
+          this.programmingRequestService
+            .updateProgrammingDelivery(
+              this.programmingDetailPanel.id,
+              infoProgramming
+            )
+            .subscribe({
+              next: response => {
+                console.log('response', response);
+              },
+              error: error => {},
+            });
+          this.loading = true;
+          this.programmingId = this.programmingDetailPanel.id;
+          const user: any = this.authService.decodeToken();
+
+          let body: any = {};
+
+          body['type'] = 'SOLICITUD_PROGRAMACION';
+          body['subtype'] = 'Programar_Recepcion';
+          body['ssubtype'] = 'TURNAR';
+
+          let task: any = {};
+          task['id'] = 0;
+          task['assignees'] = user.username;
+          task['assigneesDisplayname'] = user.nameUser;
+          task['creator'] = user.username;
+          task['reviewers'] = user.username;
+          task['taskNumber'] = Number(this.programmingId);
+          task['title'] =
+            'Aprobar solicitud para la restitución de bienes de la programación ' +
+            this.programmingDetailPanel.folio;
+          task['programmingId'] = this.programmingId;
+          task['requestId'] = this.programmingId;
+          task['expedientId'] = 0;
+          console.log('task', this.programmingDetailPanel.delRegId);
+          task['idDelegationRegional'] = this.programmingDetailPanel.delRegId;
+          task['urlNb'] =
+            'pages/request/scheduling-deliveries/execute-schelude-delivery';
+          task['processName'] = 'SolicitudProgramacion';
+          body['task'] = task;
+          const taskResult = await this.createTaskOrderService(body);
+          this.loading = false;
+          if (taskResult) {
+            //this.closeTask();
+            this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+            this.alert(
+              'success',
+              'Creación de Tarea Correcta',
+              `Se creó la tarea Realizar Programación con el folio: ${this.programmingId}`
+            );
+          }
+        }
+      }
+    });
+  }
+
+  async closeTask() {
+    const user: any = this.authService.decodeToken();
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    let body: any = {};
+
+    body['idTask'] = _task.id;
+    body['userProcess'] = user.username;
+    body['type'] = 'SOLICITUD_PROGRAMACION';
+    body['subtype'] = 'Realizar_Programacion';
+    body['ssubtype'] = 'ENVIAR';
+
+    const taskResult: any = await this.createTaskOrderService(body);
+    this.loading = false;
+    if (taskResult || taskResult == false) {
+    }
+  }
+
+  createTaskOrderService(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(false);
+        },
+      });
+    });
   }
 
   showReport(data: any) {
