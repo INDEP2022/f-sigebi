@@ -55,6 +55,7 @@ export class ServiceOrderRequestCaptureFormComponent
   typeOrder: string = 'reception';
   justificationRefused: boolean = false;
   readonly: boolean = true;
+  typeTable: string = '';
 
   //private programmingService = inject(ProgrammingRequestService);
   //private router = inject(ActivatedRoute);
@@ -154,7 +155,7 @@ export class ServiceOrderRequestCaptureFormComponent
 
   async sendOrderService() {
     const orderServProvi: any = await this.getOrderServiceProvided();
-    if (orderServProvi.count) {
+    if (orderServProvi.count == 0) {
       this.onLoadToast(
         'info',
         'Es necesario agregar servicios a la programación'
@@ -238,6 +239,7 @@ export class ServiceOrderRequestCaptureFormComponent
 
   setClaimRequest() {
     this.claimRequest = true;
+    this.typeTable = 'multi';
     if (this.task == 1) {
       this.readonly = false;
       this.ordServform.controls['transferLocation'].enable();
@@ -249,6 +251,23 @@ export class ServiceOrderRequestCaptureFormComponent
       //this.ordServform.controls['notes'].enable();
       //this.ordServform.controls['observation'].enable();
       this.showForm = true;
+    }
+  }
+
+  setRelease() {
+    this.claimRequest = false;
+    this.typeTable = '';
+    if (this.task == 1) {
+      this.readonly = true;
+      this.ordServform.controls['transferLocation'].disable();
+      this.ordServform.controls['transferAddress'].disable();
+      this.ordServform.controls['sourceStore'].disable();
+      this.ordServform.controls['originStreet'].disable();
+      this.ordServform.controls['originPostalCode'].disable();
+      this.ordServform.controls['colonyOrigin'].disable();
+      //this.ordServform.controls['notes'].enable();
+      //this.ordServform.controls['observation'].enable();
+      this.showForm = false;
     }
   }
 

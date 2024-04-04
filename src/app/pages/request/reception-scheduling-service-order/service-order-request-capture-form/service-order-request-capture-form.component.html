@@ -15,7 +15,10 @@
         Reclamar
       </button>
 
-      <button *ngIf="claimRequest" class="btn btn-info btn-sm active">
+      <button
+        (click)="setRelease()"
+        *ngIf="claimRequest"
+        class="btn btn-info btn-sm active">
         Liberar <i class="fa fa-reply" aria-hidden="true"></i>
       </button>
 
@@ -136,6 +139,7 @@
 
     <app-service-transportable-goods-form
       *ngIf="orderServiceId != null"
+      [typeTable]="typeTable"
       [op]="op"
       [typeOrder]="typeOrder"
       [justificationRefused]="justificationRefused"
