@@ -965,7 +965,7 @@ export class ExecuteSchedulingDeliveriesComponent
       this.alert(
         'warning',
         'Advertencia',
-        'Debes generar por lo menos una constacia'
+        'Debes generar por lo menos una constancia'
       );
       return;
     }

@@ -400,7 +400,7 @@ export class DeliveriesConstancyFormComponent
       );
 
       if (index == this.goods.length) {
-        this.onLoadToast('success', 'Se creo el certificado de constacia');
+        this.onLoadToast('success', 'Se creo el certificado de constancia');
         this.event.emit(deliveryForm);
         this.showReport(deliveryForm);
         this.close();

@@ -344,13 +344,13 @@ export class SchedulingDeliveriesFormComponent
       notificationId: [null],
       programmingDeliveryId: this.programmingDeliveryInfo?.id,
       typeNotification: [null],
-      typeEvent: [null],
-      typeEventInfo: [null],
+      typeEvent: [null, [Validators.required]],
+      typeEventInfo: [null,],
       startDate: [null, [Validators.required]],
-      store: [null],
+      store: [null, [Validators.required]],
       storeName: [null],
       endDate: [null, [Validators.required]],
-      transferId: [null],
+      transferId: [null, [Validators.required]],
       transferName: [null],
       client: [null],
       clientName: [null],
@@ -989,12 +989,14 @@ export class SchedulingDeliveriesFormComponent
           'Advertencia',
           'No hay bienes para ' + this.nameEvent + ' en el inventario'
         );
+        this.totalItemsSearchDonation = 0;
         this.infoGoodDestruction.load([]);
         this.infoGoodDevolution.load([]);
         this.infoGoodDonation.load([]);
         this.infoGoodSales.load([]);
       },
-    });
+    }); 
+    this.cleanSearchForm();
   }
 
   /*getInventaryGoods() {
@@ -1037,15 +1039,31 @@ export class SchedulingDeliveriesFormComponent
   }
 
   cleanSearchForm() {
+
+    this.totalItemsSearchDest = 0;
+    this.totalItemsSearchDevol = 0;
+    this.totalItemsSearchDonation = 0;
+    this.totalItemsSearchSales = 0
+
     this.searchDestructionForm.reset();
     this.searchDevolutionForm.reset();
     this.searchDonationForm.reset();
     this.searchSalesForm.reset();
 
+    this.paramsSearchDest;
+
     this.infoGoodDestruction.load([]);
     this.infoGoodDevolution.load([]);
     this.infoGoodDonation.load([]);
     this.infoGoodSales.load([]);
+
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsSearchDest = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsSearchDevol = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsSearchDonation = new BehaviorSubject<ListParams>(
+      new ListParams()
+    );
+    this.paramsSearchSales = new BehaviorSubject<ListParams>(new ListParams());
   }
 
   goodsSelectDest(goodInvSelect: IGoodInvAvailableView[]) {
