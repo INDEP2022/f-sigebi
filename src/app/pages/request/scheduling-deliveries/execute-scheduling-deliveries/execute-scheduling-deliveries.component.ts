@@ -385,6 +385,8 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   editConstancy() {
+
+    console.log(this.goodDeliveredSelected)
     let config: ModalOptions = {
       initialState: {
         goods: this.goodDeliveredSelected,

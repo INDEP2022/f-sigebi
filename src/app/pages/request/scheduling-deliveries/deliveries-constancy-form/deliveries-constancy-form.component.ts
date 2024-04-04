@@ -380,7 +380,7 @@ export class DeliveriesConstancyFormComponent
       );
 
       const bodyConstanceGood: any = {};
-      bodyConstanceGood.certificateId = this.generateUniqueNumber(); //incresar el certificateId
+      bodyConstanceGood.certificateId = deliveryForm.certificateId; //incresar el certificateId
       bodyConstanceGood.transactionId = item.transactionId;
       bodyConstanceGood.siabGoodNumber = item.siabGoodNumber;
       bodyConstanceGood.goodId = item.goodId;
