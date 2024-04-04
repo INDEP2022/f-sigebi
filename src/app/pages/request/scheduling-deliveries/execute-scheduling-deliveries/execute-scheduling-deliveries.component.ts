@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, of, takeUntil } from 'rxjs';
+import { BehaviorSubject, of, Subject, takeUntil } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -265,6 +265,7 @@ export class ExecuteSchedulingDeliveriesComponent
     };
 
     if (
+      this.programmingDetailPanel.status == 'RESTITUCION_BIENES_N' ||
       this.statusProgramming == 'BIENES_NO_ENTREGADOS' ||
       this.statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
       this.statusProgramming == 'VERIFICACION_BIENES' ||
@@ -523,6 +524,7 @@ export class ExecuteSchedulingDeliveriesComponent
         }
 
         if (
+          this.programmingDetailPanel.status == 'RESTITUCION_BIENES_N' ||
           this.statusProgramming == 'BIENES_NO_ENTREGADOS' ||
           this.statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
           this.statusProgramming == 'VERIFICACION_BIENES' ||
@@ -581,8 +583,9 @@ export class ExecuteSchedulingDeliveriesComponent
       );
       const resolutionSat = table.find((x: any) => x.id == 'resolutionSat');
 
-      if (this.statusProgramming != 'RESTITUCION_BIENES') {
+      if (this.programmingDetailPanel.status == 'RESTITUCION_BIENES_N') {
         foundInd.hide = true;
+      } else {
         typeRestitution.hide = true;
         replacementDate.hide = true;
       }
@@ -1129,10 +1132,18 @@ export class ExecuteSchedulingDeliveriesComponent
     let typeDoc = null;
     let nomProcess = null;
 
-    if (this.goodRestSelected.id == null) {
+    if (this.programmingDetailPanel.status == 'RESTITUCION_BIENES_N') {
+      this.goodRestSelected = this.progGoodNoDeliveredSelected;
+    }
+
+    console.log(this.progGoodNoDeliveredSelected);
+    console.log(this.goodRestSelected);
+
+    if (!this.goodRestSelected) {
       this.alert('warning', 'Advertencia', 'Debe tener un bien seleccionado');
       return;
     }
+
     if (this.statusProgramming == 'APROBAR_NO_ENT_ESP') {
       typeDoc = 209;
       nomProcess = 'Aprobar RestituciEspecie';
@@ -1405,7 +1416,7 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   claimmingForm() {
-    let config: ModalOptions = {
+    let config1: ModalOptions = {
       initialState: {
         progGoodsDeliv: this.progGoodNoDeliveredSelected,
         progDeli: this.programmingDetailPanel,
@@ -1417,7 +1428,23 @@ export class ExecuteSchedulingDeliveriesComponent
       class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.bsModelRef = this.modalService.show(ClaimFormModalComponent, config);
+
+    this.bsModelRef = this.modalService.show(ClaimFormModalComponent, config1);
+    this.bsModelRef.content.onClose = new Subject<any>();
+    this.bsModelRef.content.onClose.subscribe(data => {
+      console.log(data);
+      let config2: ModalOptions = {
+        initialState: {
+          callback: (next: boolean) => {
+            if (next) {
+            }
+          },
+        },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.showReport(data);
+    });
   }
 
   changeTypeRestitucion(tipoRest: string) {
@@ -1466,7 +1493,6 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   finalizeClassify() {
-
     this.alertQuestion(
       'question',
       'Finalizar Clasificación',
@@ -1546,13 +1572,15 @@ export class ExecuteSchedulingDeliveriesComponent
     let title = '';
     let status = '';
     if (this.programmingDetailPanel == 'APROBAR_ENTREGA') {
-      title = 'Clasificación de bienes no entregados para la programación. ' +
+      title =
+        'Clasificación de bienes no entregados para la programación. ' +
         this.programmingDetailPanel.folio;
-      status = 'RESTITUCION_BIENES'
+      status = 'RESTITUCION_BIENES';
     } else if (this.programmingDetailPanel == 'APROBAR_ENTREGA_N') {
-      title = 'Restitución de bienes dañados y faltantes para la programación' +
+      title =
+        'Restitución de bienes dañados y faltantes para la programación' +
         this.programmingDetailPanel.folio;
-      status = 'RESTITUCION_BIENES_N'
+      status = 'RESTITUCION_BIENES_N';
     }
     this.alertQuestion(
       'question',

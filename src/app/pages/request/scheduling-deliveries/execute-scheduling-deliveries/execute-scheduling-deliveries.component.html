@@ -267,6 +267,7 @@
       <div class="form-inline justify-content-end btn-toolbar">
         <a
           *ngIf="
+            programmingDetailPanel.status == 'RESTITUCION_BIENES_N' ||
             programmingDetailPanel.status == 'APROBAR_ENTREGA' ||
             programmingDetailPanel.status == 'APROBAR_ENTREGA_N' ||
             statusProgramming == 'APROBAR_NO_ENT_ESP' ||
@@ -369,7 +370,7 @@
     <!-- PROG ENTREGA BIENES NO ENTREGADOS -->
     <div
       *ngIf="
-        statusProgramming == 'BIENES_NO_ENTREGADOS' ||
+        programmingDetailPanel.status == 'RESTITUCION_BIENES_N' ||
         statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
         statusProgramming == 'VERIFICACION_BIENES' ||
         statusProgramming == 'FORMATO_RECLAMACION_TE' ||
@@ -378,7 +379,7 @@
       <div class="row">
         <div
           class="btn-toolbar pt-5"
-          *ngIf="statusProgramming == 'BIENES_NO_ENTREGADOS'">
+          *ngIf="programmingDetailPanel.status == 'RESTITUCION_BIENES_N'">
           <button class="btn btn-success btn-sm active" (click)="entryOrder()">
             Orden de Ingreso
           </button>

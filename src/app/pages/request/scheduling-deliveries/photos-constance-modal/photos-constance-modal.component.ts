@@ -47,7 +47,7 @@ export class PhotosConstanceModalComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.setSettings();
     this.initSearchForm();
-    //this.getTypeRelevant(new ListParams());
+    this.getTypeRelevant(new ListParams());
   }
 
   initSearchForm() {
@@ -58,8 +58,13 @@ export class PhotosConstanceModalComponent extends BasePage implements OnInit {
       ],
       typeGood: [null, [Validators.pattern(STRING_PATTERN)]],
     });
-
-    this.filterForm.get('management').setValue(this.progGood.goodId);
+    this.filterForm
+      .get('management')
+      .setValue(
+        this.progGood[0]?.goodId
+          ? this.progGood[0].goodId
+          : this.progGood.goodId
+      );
   }
 
   setSettings() {
