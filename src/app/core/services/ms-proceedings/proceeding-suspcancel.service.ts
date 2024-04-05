@@ -36,8 +36,8 @@ export class ProceedingSusPcancelService extends HttpService {
 
 export interface IPostQueryGoodFACTCIRCUN_0001 {
   elaborationDate: Date | null;
-  delegationNumber: number;
-  subdelegationNumber: number;
+  delegationNumber: string;
+  subdelegationNumber: string;
   goodNumber: number;
   proceedingsNumber: number;
   status: string;
