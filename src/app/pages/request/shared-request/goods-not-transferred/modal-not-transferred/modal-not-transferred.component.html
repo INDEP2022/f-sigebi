@@ -62,6 +62,8 @@
         <div class="col-md-6">
           <form-field [control]="form.get('amount')" label="Cantidad">
             <input
+              max="9999999"
+              maxlength="9"
               type="number"
               class="form-control"
               formControlName="amount" />

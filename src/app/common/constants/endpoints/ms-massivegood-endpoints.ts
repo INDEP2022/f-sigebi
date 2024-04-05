@@ -35,7 +35,7 @@ export enum MassiveGoodEndpoints {
   ApplicationPupExpCsvReldevGar = 'application/pup-exp-csv-reldevgar',
   ApplicationPupGenLayouts = 'application/pup-gen-layouts',
   pupInsertTmpComer = 'application/pupInsertTmpcomerappraisal',
-  pupInsertTmpcomerappraisa = 'application/pupInsertTmpcomerappraisa',
+  pupInsertTmpcomerappraisa = 'application/pupInsertTmpcomerappraisal',
   pupInsertTmpcomerappraisalProperty = 'application/pupInsertTmpcomerappraisalProperty',
   pupInsertAppraisal = 'application/pupInsertAppraisal',
 }

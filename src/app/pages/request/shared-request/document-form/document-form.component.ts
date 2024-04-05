@@ -172,15 +172,17 @@ export class DocumentFormComponent extends BasePage implements OnInit {
   }
 
   setRegionalDelegacion() {
-    if (this.parameter.regionalDelegation) {
+    let deleRegId = 0;
+    if (this.parameter.xdelegacionRegional) {
       this.documentForm.controls['xdelegacionRegional'].setValue(
-        this.parameter.regionalDelegation.id
+        this.parameter.xdelegacionRegional
       );
-      this.regionalDelegacionName =
-        this.parameter.regionalDelegation.description;
-      this.getState(new ListParams());
+      deleRegId = this.parameter.xdelegacionRegional;
+      // this.regionalDelegacionName =
+      //   this.parameter.xdelegacionRegional;
+      // this.getState(new ListParams());
     } else {
-      let deleRegId = 0;
+
       if (this.typeDoc === 'doc-buscar') {
         deleRegId = this.parameter.xdelegacionRegional;
       } else if (this.typeDoc === 'doc-constance') {
@@ -188,14 +190,15 @@ export class DocumentFormComponent extends BasePage implements OnInit {
       } else {
         deleRegId = this.parameter.regionalDelegacionId;
       }
-      this.regDelegationService.getById(deleRegId).subscribe({
-        next: resp => {
-          this.documentForm.controls['xdelegacionRegional'].setValue(resp.id);
-          this.regionalDelegacionName = resp.description;
-          this.getState(new ListParams());
-        },
-      });
+
     }
+    this.regDelegationService.getById(deleRegId).subscribe({
+      next: resp => {
+        this.documentForm.controls['xdelegacionRegional'].setValue(resp.id);
+        this.regionalDelegacionName = resp.description;
+        this.getState(new ListParams());
+      },
+    });
   }
 
   getDocType(params: ListParams) {
@@ -207,7 +210,7 @@ export class DocumentFormComponent extends BasePage implements OnInit {
           });
           this.typesDocuments = result;
           this.selecteditem = result[0].ddocType;
-          this.documentForm.controls['typesDocuments'].setValue(19);
+          this.documentForm.controls['xtipoDocumento'].setValue(19);
         } else {
           this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
         }

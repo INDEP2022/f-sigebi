@@ -72,7 +72,7 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
         this.servicesSelected.map(async (item: any, _i: number) => {
           const index = _i + 1;
           const body: IOrderServiceProvider = {
-            orderServiceId: 516,
+            orderServiceId: this.orderServId,
             priceUnitary: item.costConter,
             description: item.detServiceConter,
             andmidserv: item.detuomConter,

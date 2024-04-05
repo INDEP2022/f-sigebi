@@ -12,42 +12,45 @@
       >
     </p>
   </h5>
-  <form [formGroup]="commentsForm" class="form-material">
-    <div class="row pt-3">
-      <div class="col-md-12">
-        <form-field
-          [control]="commentsForm.get('observations')"
-          label="Observaciones">
-          <textarea
-            class="form-control"
-            formControlName="observations"
-            [readOnly]="readonly"></textarea>
-        </form-field>
+  <div class="pt-3" *ngIf="showComments">
+    <form [formGroup]="commentsForm" class="form-material" *ngIf="showComments">
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <form-field
+            [control]="commentsForm.get('observations')"
+            label="Observaciones">
+            <textarea
+              class="form-control"
+              formControlName="observations"
+              [readOnly]="readonly"></textarea>
+          </form-field>
+        </div>
       </div>
-    </div>
-    <div class="row pt-3">
-      <div class="col-md-12">
-        <form-field [control]="commentsForm.get('note')" label="Notas">
-          <textarea
-            class="form-control"
-            formControlName="note"
-            [readOnly]="readonly"></textarea>
-        </form-field>
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <form-field [control]="commentsForm.get('note')" label="Notas">
+            <textarea
+              class="form-control"
+              formControlName="note"
+              [readOnly]="readonly"></textarea>
+          </form-field>
+        </div>
       </div>
-    </div>
-    <div class="row pt-3">
-      <div class="col-md-12">
-        <form-field
-          [control]="commentsForm.get('commentRejection')"
-          label="Comentario de Rechazo">
-          <textarea
-            class="form-control"
-            [readOnly]="readonlyNotification"
-            formControlName="commentRejection"></textarea>
-        </form-field>
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <form-field
+            [control]="commentsForm.get('commentRejection')"
+            label="Comentario de Rechazo">
+            <textarea
+              class="form-control"
+              [readOnly]="readonly"
+              formControlName="commentRejection"></textarea>
+          </form-field>
+        </div>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
+
   <!--<div class="row pt-3" *ngIf="showComments">
     <div class="col-md-12">
       <form [formGroup]="ordServform" class="form-material">

@@ -9,7 +9,7 @@ export const VALUATION_REQUEST_COLUMNS = {
     filter: false,
     renderComponent: CheckboxElementComponent,
     valuePrepareFunction: (isSelected: any, row: any) => {
-      return goodCheck.find((e: any) => e.no_bien == row.no_bien)
+      return goodCheck.find((e: any) => e.goodNumber == row.goodNumber)
         ? true
         : false;
     },
@@ -18,21 +18,23 @@ export const VALUATION_REQUEST_COLUMNS = {
         if (data.toggle) {
           goodCheck.push(data.row);
         } else {
-          goodCheck = goodCheck.filter(valor => valor.no_bien != data.no_bien);
+          goodCheck = goodCheck.filter(
+            valor => valor.goodNumber != data.goodNumber
+          );
         }
       });
     },
     sort: false,
   },
-  no_bien: {
+  goodNumber: {
     title: 'No. Bien',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     sort: false,
   },
-  estatus: {
+  status: {
     title: 'Estatus',
     sort: false,
   },
@@ -43,26 +45,26 @@ export const VALUATION_REQUEST_COLUMNS = {
 };
 
 export const VALUATION_REQUEST_COLUMNS_VALIDATED = {
-  no_bien: {
+  goodNumber: {
     title: 'No. Bien',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     sort: false,
   },
 };
 
 export const VALUATION_REQUEST_COLUMNS_TWO = {
-  no_bien: {
+  goodNumber: {
     title: 'No. Bien',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     sort: false,
   },
-  estatus: {
+  status: {
     title: 'Estatus',
     sort: false,
   },
@@ -73,15 +75,15 @@ export const VALUATION_REQUEST_COLUMNS_TWO = {
 };
 
 export const VALUATION_REQUEST_COLUMNS_VALIDATED_TWO = {
-  no_bien: {
+  goodNumber: {
     title: 'No. Bien',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     sort: false,
   },
-  estatus: {
+  status: {
     title: 'Estatus',
     sort: false,
   },

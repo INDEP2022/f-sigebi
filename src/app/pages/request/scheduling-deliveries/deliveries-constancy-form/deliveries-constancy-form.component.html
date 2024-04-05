@@ -261,9 +261,11 @@
               control="reasonsNotAccepted"
               [showTooltip]="false"
               [data]="selectReasonNoAcep"
-              bindLabel="name"
-              label="Motivo No Aceptado"
-              value="id"></ngx-select>
+              (fetchItems)="getReasonNotAccepted($event)"
+              (selectedChange)="reasonChange($event, 3)"
+              value="id"
+              bindLabel="reason"
+              label="Motivo No Aceptado"></ngx-select>
           </div>
           <div class="col-md-6 pt-5" *ngIf="typeConstancy == 2">
             <ngx-select
@@ -271,9 +273,11 @@
               control="reasonsNotDelivered"
               [showTooltip]="false"
               [data]="selectReasonNoDelive"
-              bindLabel="name"
-              label="Motivo No Entregado"
-              value="id"></ngx-select>
+              (fetchItems)="getReasonNotDelivery($event)"
+              (selectedChange)="reasonChange($event, 2)"
+              value="id"
+              bindLabel="reason"
+              label="Motivo No Entregado"></ngx-select>
           </div>
           <div class="col-md-6 pt-5" *ngIf="typeConstancy == 4">
             <ngx-select
@@ -281,9 +285,11 @@
               control="reasonsNotRetired"
               [showTooltip]="false"
               [data]="selectReasonNoWithdrawn"
-              bindLabel="name"
-              label="Motivo No Retiro"
-              value="id"></ngx-select>
+              (fetchItems)="getReasonNotAccepted($event)"
+              (selectedChange)="reasonChange($event, 4)"
+              value="id"
+              bindLabel="reason"
+              label="Motivo No Retiro"></ngx-select>
           </div>
         </div>
         <!-- FIN -->
@@ -756,13 +762,15 @@
         <!-- FIN -->
       </form>
       <div class="pt-4">
-        <button class="btn btn-primary btn-sm active">Separar</button>
+        <button class="btn btn-primary btn-sm active" (click)="separate()">Separar</button>
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             #table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="personalEstateData">
+            [source]="personalEstateData"
+            (rowSelect)="selectGood($event)">
+            
           </ng2-smart-table>
         </div>
       </div>
