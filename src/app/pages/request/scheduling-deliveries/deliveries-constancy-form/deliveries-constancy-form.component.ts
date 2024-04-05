@@ -90,6 +90,7 @@ export class DeliveriesConstancyFormComponent
   private certifiGoodsService = inject(CertificatesGoodsService);
   private auth = inject(AuthService);
   private goodService = inject(GoodService);
+  private programmingService = inject(ProgrammingGoodService);
 
   constructor(
     private modalRef: BsModalRef,
@@ -336,8 +337,36 @@ export class DeliveriesConstancyFormComponent
     let folio = this.progEntrega.folio;
     let userAuth = this.auth.decodeToken();
 
-    //GENERAR REPORTE
-    //this.generateReport()
+    let cause = '';
+    if (!this.deliveryConstancyForm.get('reasonsNotDelivered').value) {
+      cause = 'Faltante';
+    } else {
+      cause = 'Dañado';
+    }
+
+    let selectedId = this.deliveryConstancyForm.get(
+      'reasonsNotDelivered'
+    ).value;
+    let selectedReason = this.selectReasonNoDelive.data.find(
+      (item: Reason) => item.id === selectedId
+    ).reason;
+
+    this.goods.forEach(good => {
+      let body = {
+        id: good.id,
+        reasonsNotAccepted:
+          this.deliveryConstancyForm.get('reasonsNotAccepted').value,
+        reasonsNotDelivered: this.deliveryConstancyForm.get(
+          'reasonsNotDelivered'
+        ).value,
+        reasonsNotWithdrawn:
+          this.deliveryConstancyForm.get('reasonsNotRetired').value,
+        causeNotDelivered: cause,
+        observation: selectedReason,
+      };
+
+      this.updateProgrammingGoodDelivery(body);
+    });
 
     //CREATE CERTIFICADO DE ENTREGA
     let deliveryForm = this.deliveryConstancyForm.getRawValue();
@@ -384,6 +413,8 @@ export class DeliveriesConstancyFormComponent
       bodyConstanceGood.transactionId = item.transactionId;
       bodyConstanceGood.siabGoodNumber = item.siabGoodNumber;
       bodyConstanceGood.goodId = item.goodId;
+      bodyConstanceGood.causeNotDelivered = deliveryForm.reasonsNotDelivered =
+        this.deliveryConstancyForm.get('reasonsNotDelivered').value;
       bodyConstanceGood.quantity = item[this.lsColumna];
       bodyConstanceGood.goodsDeliveryScheduleId = item.id;
       bodyConstanceGood.userCreation = userAuth.username;
@@ -405,6 +436,21 @@ export class DeliveriesConstancyFormComponent
         this.showReport(deliveryForm);
         this.close();
       }
+    });
+  }
+
+  updateProgrammingGoodDelivery(body: any) {
+    return new Promise((resolve, reject) => {
+      this.programmingService
+        .updateProgrammingDeliveryGood(body.id, body)
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+          error: error => {
+            reject(error);
+          },
+        });
     });
   }
 
@@ -627,4 +673,9 @@ export class DeliveriesConstancyFormComponent
       });
     });
   }
+}
+
+interface Reason {
+  id: number;
+  reason: string;
 }

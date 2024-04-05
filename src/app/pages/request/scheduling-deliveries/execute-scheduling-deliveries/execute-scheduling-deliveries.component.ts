@@ -265,12 +265,12 @@ export class ExecuteSchedulingDeliveriesComponent
     };
 
     if (
-      this.programmingDetailPanel.status == 'RESTITUCION_BIENES_N' ||
+      this.programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS_N' ||
       this.statusProgramming == 'BIENES_NO_ENTREGADOS' ||
       this.statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
       this.statusProgramming == 'VERIFICACION_BIENES' ||
       this.statusProgramming == 'FORMATO_RECLAMACION_TE' ||
-      this.programmingDetailPanel.status == 'RESTITUCION_BIENES'
+      this.programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS'
     ) {
       this.progDelivGoodNDParams
         .pipe(takeUntil(this.$unSubscribe))
@@ -385,8 +385,7 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   editConstancy() {
-
-    console.log(this.goodDeliveredSelected)
+    console.log(this.goodDeliveredSelected);
     let config: ModalOptions = {
       initialState: {
         goods: this.goodDeliveredSelected,
@@ -507,11 +506,9 @@ export class ExecuteSchedulingDeliveriesComponent
 
         this.setProgramDeliveryGoodColumns();
 
-        //
-
         if (
-          this.programmingDetailPanel.status == 'APROBAR_ENTREGA' ||
-          this.programmingDetailPanel.status == 'APROBAR_ENTREGA_N' ||
+          this.programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA' ||
+          this.programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA_N' ||
           this.statusProgramming == 'APROBAR_NO_ENT_ESP' ||
           this.statusProgramming == 'APROBAR_NO_ENT_NUM'
         ) {
@@ -526,12 +523,12 @@ export class ExecuteSchedulingDeliveriesComponent
         }
 
         if (
-          this.programmingDetailPanel.status == 'RESTITUCION_BIENES_N' ||
+          this.programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS_N' ||
           this.statusProgramming == 'BIENES_NO_ENTREGADOS' ||
           this.statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
           this.statusProgramming == 'VERIFICACION_BIENES' ||
           this.statusProgramming == 'FORMATO_RECLAMACION_TE' ||
-          this.programmingDetailPanel.status == 'RESTITUCION_BIENES'
+          this.programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS'
         ) {
           if (this.statusProgramming == 'BIENES_NO_ENTREGADOS') {
             resp.data.map((item: any) => {
@@ -584,8 +581,9 @@ export class ExecuteSchedulingDeliveriesComponent
         (x: any) => x.id == 'compensationOpinion'
       );
       const resolutionSat = table.find((x: any) => x.id == 'resolutionSat');
+      foundInd.hide = true;
 
-      if (this.programmingDetailPanel.status == 'RESTITUCION_BIENES_N') {
+      if (this.programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS_N') {
         foundInd.hide = true;
       } else {
         typeRestitution.hide = true;
@@ -930,7 +928,6 @@ export class ExecuteSchedulingDeliveriesComponent
     let body: any = {};
     body.certificateId = event.certificateId;
     body.closing = 'Y';
-    //actializar certificates-delivery
     this.certifiDeliveryService.update(body).subscribe({
       next: resp => {
         const index = this.constancyDeliveryArray.indexOf(event);
@@ -961,6 +958,7 @@ export class ExecuteSchedulingDeliveriesComponent
   async finalizeDelivery() {
     let lbNoEnt: boolean = false;
 
+    //GENERAR CONSTANCIA
     if (this.constancyDeliveryArray.length == 0) {
       this.alert(
         'warning',
@@ -970,11 +968,13 @@ export class ExecuteSchedulingDeliveriesComponent
       return;
     }
 
-    const params1 = new ListParams();
-    params1['filter.closing'] = `$eq:N`;
-    const constDeliveryClosed: any = await this.getAllCertificates(params1);
+    console.log(this.constancyDeliveryArray);
 
-    if (constDeliveryClosed.count > 0) {
+    const allClosed = this.constancyDeliveryArray.every(
+      item => item.closing === 'Y'
+    );
+
+    if (!allClosed) {
       this.alert(
         'warning',
         'Advertencia',
@@ -983,12 +983,13 @@ export class ExecuteSchedulingDeliveriesComponent
       return;
     }
 
-    let haveError: boolean = false;
+    //VALIDAR DOCUMENTO ADJUNTADO CONSTANCIA
+
     const constDelivery: any = await this.getAllCertificates(new ListParams());
 
-    haveError = false;
+    console.log();
 
-    /*if (haveError == true) {
+    if (constDelivery == true) {
       this.alert(
         'warning',
         'Advertencia',
@@ -996,47 +997,21 @@ export class ExecuteSchedulingDeliveriesComponent
       );
 
       return;
-    }*/
-
-    const params3 = new ListParams();
-    params3.limit = 100;
-    const listProgGoods: any = await this.getAllProgramminDeliveryGoods(
-      params3
-    );
-    for (let index = 0; index < listProgGoods.length; index++) {
-      const item = listProgGoods[index];
-
-      if (item.sumGoodNoEnt > 0) {
-        lbNoEnt = true;
-        item.status = 'BIENES_NO_ENTREGADOS';
-      }
-
-      const total =
-        Number(item.amountGood) -
-        (Number(item.sunGoodEnt) -
-          Number(item.sumGoodNoRet) -
-          Number(item.sumGoodNoAce) -
-          Number(item.sumGoodNoEnt));
-      item.amountNotRescheduled = total;
-
-      const body: any = {};
-      body.id = item.id;
-      body.id = item.amountNotRescheduled;
-      body.status = item.status;
-
-      if (this.programmingDetailPanel.typeEvent == 4) {
-        this.confirm();
-      }
     }
 
-    //Todo: Averiguar donde se encuentra el EstatusProgramming para actualizarlo
-    //abrir el modal de turnado
-    if (haveError == false) {
-      if (lbNoEnt == true) {
-        this.statusProgramming = 'CON_NO_ENTREGADOS_T';
-      } else {
-        this.statusProgramming = 'PROG_EJECUTADA';
-      }
+    if (this.programmingDetailPanel.typeEvent == 4) {
+      this.confirm();
+    } else {
+      this.alertQuestion(
+        'question',
+        'Turnar Solicitud',
+        `¿Desea enviar la programación con folio: ${this.programmingDetailPanel.folio}?`
+      ).then(async question => {
+        if (question.isConfirmed) {
+          this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+          this.closeTask();
+        }
+      });
     }
   }
 
@@ -1134,7 +1109,7 @@ export class ExecuteSchedulingDeliveriesComponent
     let typeDoc = null;
     let nomProcess = null;
 
-    if (this.programmingDetailPanel.status == 'RESTITUCION_BIENES_N') {
+    if (this.programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS_N') {
       this.goodRestSelected = this.progGoodNoDeliveredSelected;
     }
 
@@ -1149,7 +1124,7 @@ export class ExecuteSchedulingDeliveriesComponent
     if (this.statusProgramming == 'APROBAR_NO_ENT_ESP') {
       typeDoc = 209;
       nomProcess = 'Aprobar RestituciEspecie';
-    } else if (this.programmingDetailPanel.status == 'RESTITUCION_BIENES') {
+    } else if (this.programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS') {
       typeDoc = 208;
       nomProcess = 'RestituciBienes';
     } else {
@@ -1190,13 +1165,6 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   setObservations(event: any) {
-    // const index = this.progDelivGoodTypeRestArray.indexOf(event.data);
-    /* this.progDelivGoodTypeRestArray[index].observation =
-      this.progDelivGoodTypeRestArray[index].observation != ''
-        ? event.text
-        : null; */
-    console.log('aqui', this.goodDeliveryFieldSelected);
-
     const idx = this.goodDeliveryFieldSelected.indexOf(event.data);
     if (this.goodDeliveryFieldSelected.length == 0 || idx == -1) {
       this.goodDeliveryFieldSelected.push(event.data);
@@ -1206,6 +1174,8 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   setCauseNotDelivered(event: any) {
+    console.log('aqui', this.goodDeliveryFieldSelected);
+    console.log(event.row);
     if (event.text != null && event.text != '') {
       const index = this.goodDeliveryFieldSelected.indexOf(event.row);
       if (this.goodDeliveryFieldSelected.length == 0 || index == -1) {
@@ -1240,37 +1210,39 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   save() {
-    let list: any = [];
-    for (
-      let index = 0;
-      index < this.goodDeliveryFieldSelected.length;
-      index++
-    ) {
-      const good = this.goodDeliveryFieldSelected[index];
-      const body: any = {};
-      for (const key in good) {
-        if (good[key] != null) {
-          body[key] = good[key];
+    if ((this.programmingDetailPanel.status = 'BIENES_NO_ENTREGADOS')) {
+      let list: any = [];
+      for (
+        let index = 0;
+        index < this.goodDeliveryFieldSelected.length;
+        index++
+      ) {
+        const good = this.goodDeliveryFieldSelected[index];
+        const body: any = {};
+        for (const key in good) {
+          if (good[key] != null) {
+            body[key] = good[key];
+          }
         }
+        delete body.programingdelivery;
+        delete body.faltante;
+        list.push(body);
       }
-      delete body.programingdelivery;
-      delete body.faltante;
-      list.push(body);
+
+      console.log('2', list);
+      if (list.length == 0) return;
+      list.map(async (item: any, _i: number) => {
+        const index = _i + 1;
+
+        const updated = await this.updateProgrammingGoodDelivery(item);
+
+        if (list.length == index) {
+          this.goodDeliveryFieldSelected = [];
+          this.getProgrammingGoodDelivery(new ListParams());
+          this.alert('success', 'Actualizado', 'Se han actualizado los bienes');
+        }
+      });
     }
-
-    console.log('2', list);
-    if (list.length == 0) return;
-    list.map(async (item: any, _i: number) => {
-      const index = _i + 1;
-
-      const updated = await this.updateProgrammingGoodDelivery(item);
-
-      if (list.length == index) {
-        this.goodDeliveryFieldSelected = [];
-        this.getProgrammingGoodDelivery(new ListParams());
-        this.alert('success', 'Actualizado', 'Se han actualizado los bienes');
-      }
-    });
   }
 
   selectGoodNoDelivered(event: any) {
@@ -1504,7 +1476,7 @@ export class ExecuteSchedulingDeliveriesComponent
         if (this.programmingDetailPanel) {
           const infoProgramming: IprogrammingDelivery = {
             id: this.programmingDetailPanel.id,
-            status: 'APROBAR_ENTREGA_N',
+            status: 'PROGRAMACION_EJECUTADA_N',
           };
 
           this.programmingRequestService
@@ -1573,16 +1545,18 @@ export class ExecuteSchedulingDeliveriesComponent
   sendApprove() {
     let title = '';
     let status = '';
-    if (this.programmingDetailPanel == 'APROBAR_ENTREGA') {
+    if (this.programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA') {
       title =
         'Clasificación de bienes no entregados para la programación. ' +
         this.programmingDetailPanel.folio;
-      status = 'RESTITUCION_BIENES';
-    } else if (this.programmingDetailPanel == 'APROBAR_ENTREGA_N') {
+      status = 'BIENES_NO_ENTREGADOS';
+    } else if (
+      this.programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA_N'
+    ) {
       title =
         'Restitución de bienes dañados y faltantes para la programación' +
         this.programmingDetailPanel.folio;
-      status = 'RESTITUCION_BIENES_N';
+      status = 'BIENES_NO_ENTREGADOS_N';
     }
     this.alertQuestion(
       'question',
@@ -1692,13 +1666,13 @@ export class ExecuteSchedulingDeliveriesComponent
     this.alertQuestion(
       'question',
       'Turnar Solicitud',
-      `¿Desea turnar la solicitud a la siguiente etapa con folio ${this.programmingDetailPanel.folio}?`
+      `¿Desea enviar la programación con folio: ${this.programmingDetailPanel.folio}?`
     ).then(async question => {
       if (question.isConfirmed) {
         if (this.programmingDetailPanel) {
           const infoProgramming: IprogrammingDelivery = {
             id: this.programmingDetailPanel.id,
-            status: 'APROBAR_ENTREGA',
+            status: 'PROGRAMACION_EJECUTADA',
           };
 
           this.programmingRequestService
@@ -1707,9 +1681,7 @@ export class ExecuteSchedulingDeliveriesComponent
               infoProgramming
             )
             .subscribe({
-              next: response => {
-                console.log('response', response);
-              },
+              next: response => {},
               error: error => {},
             });
           this.loading = true;

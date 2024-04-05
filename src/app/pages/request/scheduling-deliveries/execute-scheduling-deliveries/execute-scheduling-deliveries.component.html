@@ -20,7 +20,7 @@
           statusProgramming == 'BIENES_NO_ENTREGADOS' ||
           statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
           statusProgramming == 'FORMATO_RECLAMACION_TE' ||
-          programmingDetailPanel.status == 'RESTITUCION_BIENES'
+          programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS'
         ">
         <button
           (click)="finalizeClassify()"
@@ -40,7 +40,7 @@
       <div
         class="p-2"
         *ngIf="
-          programmingDetailPanel.status == 'APROBAR_ENTREGA' ||
+          programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA' ||
           programmingDetailPanel.status == 'APROBAR_ENTREGA_N' ||
           statusProgramming == 'APROBAR_NO_ENT_ESP' ||
           statusProgramming == 'APROBAR_NO_ENT_NUM'
@@ -267,8 +267,8 @@
       <div class="form-inline justify-content-end btn-toolbar">
         <a
           *ngIf="
-            programmingDetailPanel.status == 'RESTITUCION_BIENES_N' ||
-            programmingDetailPanel.status == 'APROBAR_ENTREGA' ||
+            programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS_N' ||
+            programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA' ||
             programmingDetailPanel.status == 'APROBAR_ENTREGA_N' ||
             statusProgramming == 'APROBAR_NO_ENT_ESP' ||
             statusProgramming == 'APROBAR_NO_ENT_NUM'
@@ -341,7 +341,7 @@
     <!-- EJECUCION PROGRAMACION ENTREGA BIENES TIPO REST -->
     <div
       *ngIf="
-        programmingDetailPanel.status == 'APROBAR_ENTREGA' ||
+        programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA' ||
         programmingDetailPanel.status == 'APROBAR_ENTREGA_N' ||
         statusProgramming == 'APROBAR_NO_ENT_ESP' ||
         statusProgramming == 'APROBAR_NO_ENT_NUM'
@@ -370,16 +370,16 @@
     <!-- PROG ENTREGA BIENES NO ENTREGADOS -->
     <div
       *ngIf="
-        programmingDetailPanel.status == 'RESTITUCION_BIENES_N' ||
+        programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS_N' ||
         statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
         statusProgramming == 'VERIFICACION_BIENES' ||
         statusProgramming == 'FORMATO_RECLAMACION_TE' ||
-        programmingDetailPanel.status == 'RESTITUCION_BIENES'
+        programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS'
       ">
       <div class="row">
         <div
           class="btn-toolbar pt-5"
-          *ngIf="programmingDetailPanel.status == 'RESTITUCION_BIENES_N'">
+          *ngIf="programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS_N'">
           <button class="btn btn-success btn-sm active" (click)="entryOrder()">
             Orden de Ingreso
           </button>
