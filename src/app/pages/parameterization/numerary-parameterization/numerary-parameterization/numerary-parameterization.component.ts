@@ -36,7 +36,7 @@ export class NumeraryParameterizationComponent
     private numeraryParameterizationAutomService: NumeraryParameterizationAutomService
   ) {
     super();
-    this.settings.actions.edit = true;
+    this.settings.actions.edit = false;
     this.settings.actions.delete = true;
     this.settings.actions.add = false;
     this.settings.columns = NUMERARY_PARAMETERIZATION_COLUMNS;
@@ -137,24 +137,29 @@ export class NumeraryParameterizationComponent
     });
   }
   delete(event: ICategorizationAutomNumerary) {
-    this.numeraryParameterizationAutomService
-      .remove3(JSON.stringify(event))
-      .subscribe({
-        next: () => {
-          this.alert(
-            'success',
-            'Parametrización de Numerario',
-            'Borrado Correctamente'
-          );
-          this.getValuesAll();
-        },
-        error: err => {
-          this.alert(
-            'warning',
-            'Parametrización de Numerario',
-            'No se puede eliminar el objeto debido a una relación con otra tabla.'
-          );
-        },
-      });
+    console.log(event);
+    let data = {
+      typeProceeding: event.typeProceeding,
+      finalCategory: event.finalCategory,
+      initialCategory: event.initialCategory,
+      registerNumber: null,
+    };
+    this.numeraryParameterizationAutomService.remove3(data).subscribe({
+      next: () => {
+        this.alert(
+          'success',
+          'Parametrización de Numerario',
+          'Borrado Correctamente'
+        );
+        this.getValuesAll();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Parametrización de Numerario',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
+    });
   }
 }
