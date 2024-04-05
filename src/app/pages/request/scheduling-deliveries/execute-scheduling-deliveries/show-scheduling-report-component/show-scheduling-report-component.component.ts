@@ -163,6 +163,15 @@ export class ShowSchedulingReportComponentComponent
   }
 
   showReportByTypeDoc() {
+    if (this.idprogDel) {
+      let linkDoc: string = `${
+        this.urlBaseReport
+      }FormatoReclamacionMuestreo.jasper&ID_MUESTREO=${
+        this.idprogDel
+      }&ID_TIPO_DOCTO=${218}`;
+      this.src = linkDoc;
+      this.formLoading = false;
+    }
     if (this.idprogDel && this.report == 1) {
       let linkDoc: string = `${this.urlBaseReport}ConstanciaEntrega.jasper&ID_CONSTANCIA=${this.idprogDel}`;
       this.src = linkDoc;
