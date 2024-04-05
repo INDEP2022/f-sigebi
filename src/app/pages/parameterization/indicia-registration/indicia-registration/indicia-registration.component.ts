@@ -89,7 +89,7 @@ export class IndiciaRegistrationComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'consecutive':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -124,7 +124,13 @@ export class IndiciaRegistrationComponent extends BasePage implements OnInit {
         this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.paragraphs = [];
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+        this.loading = false;
+      },
     });
   }
 
