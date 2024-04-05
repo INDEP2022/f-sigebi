@@ -1355,6 +1355,7 @@ export class ExecuteSchedulingDeliveriesComponent
 
     if (statusAut == 'SIN_BIENES') {
       let infoProgramming = {
+        id: this.programmingDetailPanel.id,
         status: 'APROBAR_NO_ENT',
         statusAut: 'BIENES_PEND_AUT',
       };
