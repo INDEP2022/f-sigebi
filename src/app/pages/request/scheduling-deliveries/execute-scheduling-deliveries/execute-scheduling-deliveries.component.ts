@@ -265,7 +265,7 @@ export class ExecuteSchedulingDeliveriesComponent
     };
 
     if (
-      this.programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS_N' ||
+      this.programmingDetailPanel.status == 'RESTITUCION_BIENES' ||
       this.statusProgramming == 'BIENES_NO_ENTREGADOS' ||
       this.statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
       this.statusProgramming == 'VERIFICACION_BIENES' ||
@@ -483,8 +483,13 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   getProgrammingGoodDelivery(params: ListParams) {
+    //AQUI AGREGAR FILTRO
     this.loading = true;
     this.loadingEEB = true;
+    if (this.programmingDetailPanel.status == 'RESTITUCION_BIENES') {
+      params['filter.status'] = `$eq:''`;
+    }
+
     params[
       'filter.programmingDeliveryId'
     ] = `$eq:${this.programmingDetailPanel.id}`;
@@ -508,7 +513,7 @@ export class ExecuteSchedulingDeliveriesComponent
 
         if (
           this.programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA' ||
-          this.programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA_N' ||
+          this.programmingDetailPanel.status == 'VERIFICACION_BIENES' ||
           this.statusProgramming == 'APROBAR_NO_ENT_ESP' ||
           this.statusProgramming == 'APROBAR_NO_ENT_NUM'
         ) {
@@ -523,7 +528,7 @@ export class ExecuteSchedulingDeliveriesComponent
         }
 
         if (
-          this.programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS_N' ||
+          this.programmingDetailPanel.status == 'RESTITUCION_BIENES' ||
           this.statusProgramming == 'BIENES_NO_ENTREGADOS' ||
           this.statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
           this.statusProgramming == 'VERIFICACION_BIENES' ||
@@ -583,7 +588,7 @@ export class ExecuteSchedulingDeliveriesComponent
       const resolutionSat = table.find((x: any) => x.id == 'resolutionSat');
       foundInd.hide = true;
 
-      if (this.programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS_N') {
+      if (this.programmingDetailPanel.status == 'RESTITUCION_BIENES') {
         foundInd.hide = true;
       } else {
         typeRestitution.hide = true;
@@ -1109,22 +1114,18 @@ export class ExecuteSchedulingDeliveriesComponent
     let typeDoc = null;
     let nomProcess = null;
 
-    if (this.programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS_N') {
+    if (this.programmingDetailPanel.status == 'RESTITUCION_BIENES') {
       this.goodRestSelected = this.progGoodNoDeliveredSelected;
     }
-
-    console.log(this.progGoodNoDeliveredSelected);
-    console.log(this.goodRestSelected);
-
     if (!this.goodRestSelected) {
       this.alert('warning', 'Advertencia', 'Debe tener un bien seleccionado');
       return;
     }
 
-    if (this.statusProgramming == 'APROBAR_NO_ENT_ESP') {
+    if (this.programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA') {
       typeDoc = 209;
       nomProcess = 'Aprobar RestituciEspecie';
-    } else if (this.programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS') {
+    } else if (this.programmingDetailPanel.status == 'VERIFICACION_BIENES') {
       typeDoc = 208;
       nomProcess = 'RestituciBienes';
     } else {
@@ -1286,7 +1287,6 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   sendApproval() {
-    //ojo: IdContentTe no se encuentra para firma del formato de reclamacion
     let error = false;
     if (this.progGoodNoDeliveredSelected.length == 0) {
       this.alert(
@@ -1303,8 +1303,7 @@ export class ExecuteSchedulingDeliveriesComponent
     ) {
       const good = this.progGoodNoDeliveredSelected[index];
 
-      if (good.typeRestitution == null) {
-        //const msg = `El bien ${good.goodId} - ${good.inventoryNumber} debe tener asignado un tipo de restitución`;
+      if (!good.typeRestitution) {
         this.alert(
           'warning',
           'Acción Invalida',
@@ -1319,7 +1318,7 @@ export class ExecuteSchedulingDeliveriesComponent
       }
 
       if (good.typeRestitution != 'NUMERARIO') {
-        const msg = `El tipo de restitucion del bien ${good.goodId} - ${good.inventoryNumber} debe ser numerario`;
+        const msg = `El tipo de restitucion del bien ${good.goodId} debe ser numerario`;
         this.alert('warning', 'Acción Invalida', msg);
         error = true;
         break;
@@ -1346,35 +1345,36 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   sentApprovalTask() {
-    /**
-     * enviarAprobacion()
-     * Falta implentar el guardado de los bienes
-     * Falta implementar el guardado de ProgramationBOType
-     * Si te cambiaron de estatus los bienes con se llama a los bienes
-     */
-    window.alert('No se implemento la logica de aprobado');
     let goodEsp = this.progGoodNoDeliveredSelected;
-    let ProgramationBOType = {};
-    let statusProgramming: string = null;
-    let delegation: any = null;
-
     let statusAut: string = this.programmingDetailPanel.statusAut;
+
+    if (statusAut == 'SIN_BIENES') {
+      let infoProgramming = {
+        statusAut: 'BIENES_PEND_AUT',
+      };
+
+      this.programmingRequestService
+        .updateProgrammingDelivery(
+          this.programmingDetailPanel.id,
+          infoProgramming
+        )
+        .subscribe({
+          next: async response => {},
+          error: () => {},
+        });
+    }
+
     try {
       goodEsp.map(async (item: IProgrammingDeliveryGood, _i: number) => {
         const index = _i + 1;
-        item.status = 'APROBAR_NO_ENT';
 
-        if (statusAut == 'SIN_BIENES') {
-          statusAut = 'BIENES_PEND_AUT';
-          statusProgramming = 'APROBAR_NO_ENT';
-          delegation = item.delReg;
-        }
-        //guardar los valores de ProgramationBOType
+        let data = {
+          id: item.id,
+          status: 'APROBAR_NO_ENT',
+          typeRestitution: item.typeRestitution,
+        };
 
-        console.log(item);
-
-        //actualizar los programacion de bienes entregados --enviarAprobacion()
-        //const updateGood = await this.updateProgrammingGoodDelivery(item);
+        const updateGood = await this.updateProgrammingGoodDelivery(data);
         if (goodEsp.length == index) {
           this.alert(
             'success',
@@ -1476,7 +1476,7 @@ export class ExecuteSchedulingDeliveriesComponent
         if (this.programmingDetailPanel) {
           const infoProgramming: IprogrammingDelivery = {
             id: this.programmingDetailPanel.id,
-            status: 'PROGRAMACION_EJECUTADA_N',
+            status: 'VERIFICACION_BIENES',
           };
 
           this.programmingRequestService
@@ -1550,13 +1550,11 @@ export class ExecuteSchedulingDeliveriesComponent
         'Clasificación de bienes no entregados para la programación. ' +
         this.programmingDetailPanel.folio;
       status = 'BIENES_NO_ENTREGADOS';
-    } else if (
-      this.programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA_N'
-    ) {
+    } else if (this.programmingDetailPanel.status == 'VERIFICACION_BIENES') {
       title =
         'Restitución de bienes dañados y faltantes para la programación' +
         this.programmingDetailPanel.folio;
-      status = 'BIENES_NO_ENTREGADOS_N';
+      status = 'RESTITUCION_BIENES';
     }
     this.alertQuestion(
       'question',

@@ -41,7 +41,7 @@
         class="p-2"
         *ngIf="
           programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA' ||
-          programmingDetailPanel.status == 'APROBAR_ENTREGA_N' ||
+          programmingDetailPanel.status == 'VERIFICACION_BIENES' ||
           statusProgramming == 'APROBAR_NO_ENT_ESP' ||
           statusProgramming == 'APROBAR_NO_ENT_NUM'
         ">
@@ -267,9 +267,9 @@
       <div class="form-inline justify-content-end btn-toolbar">
         <a
           *ngIf="
-            programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS_N' ||
+            programmingDetailPanel.status == 'RESTITUCION_BIENES' ||
             programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA' ||
-            programmingDetailPanel.status == 'APROBAR_ENTREGA_N' ||
+            programmingDetailPanel.status == 'VERIFICACION_BIENES' ||
             statusProgramming == 'APROBAR_NO_ENT_ESP' ||
             statusProgramming == 'APROBAR_NO_ENT_NUM'
           "
@@ -342,7 +342,7 @@
     <div
       *ngIf="
         programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA' ||
-        programmingDetailPanel.status == 'APROBAR_ENTREGA_N' ||
+        programmingDetailPanel.status == 'VERIFICACION_BIENES' ||
         statusProgramming == 'APROBAR_NO_ENT_ESP' ||
         statusProgramming == 'APROBAR_NO_ENT_NUM'
       ">
@@ -370,7 +370,7 @@
     <!-- PROG ENTREGA BIENES NO ENTREGADOS -->
     <div
       *ngIf="
-        programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS_N' ||
+        programmingDetailPanel.status == 'RESTITUCION_BIENES' ||
         statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
         statusProgramming == 'VERIFICACION_BIENES' ||
         statusProgramming == 'FORMATO_RECLAMACION_TE' ||
@@ -379,7 +379,7 @@
       <div class="row">
         <div
           class="btn-toolbar pt-5"
-          *ngIf="programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS_N'">
+          *ngIf="programmingDetailPanel.status == 'RESTITUCION_BIENES'">
           <button class="btn btn-success btn-sm active" (click)="entryOrder()">
             Orden de Ingreso
           </button>

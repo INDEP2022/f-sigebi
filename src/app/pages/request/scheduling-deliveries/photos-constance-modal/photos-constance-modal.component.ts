@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, catchError, of } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, map, of } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -118,28 +118,24 @@ export class PhotosConstanceModalComponent extends BasePage implements OnInit {
     this.content
       .getDocumentos(body)
       .pipe(
+        map(resp =>
+          resp.data.filter((img: any) => img.dDocType == 'DigitalMedia')
+        ),
         catchError((e: any) => {
-          if (e.status == 400) return of({ data: [], count: 0 });
-          this.loading = false;
+          if (e.status == 400) return of([]);
           throw e;
-        })
+        }),
+        finalize(() => (this.loading = false))
       )
       .subscribe({
-        next: resp => {
-          const _data = resp.data.filter((img: any) => {
-            if (img.dDocType == 'DigitalMedia') return img;
-          });
-
+        next: _data => {
           if (_data.length > 0) {
             this.paragraphs =
               _data.length > 10 ? this.setPaginate([..._data]) : _data;
             this.totalItems = _data.length;
-            this.loading = false;
           } else {
             this.selectPage();
           }
-
-          this.loading = false;
         },
       });
   }
