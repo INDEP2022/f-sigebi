@@ -1,5 +1,8 @@
 <ng-container *ngIf="checkStateEditForm">
-  <form [formGroup]="checkForm" class="form-material">
+  <form
+    [formGroup]="checkForm"
+    class="form-material"
+    style="min-width: 50px !important">
     <form-check label="" [for]="checkId">
       <input
         [id]="checkId"
@@ -10,6 +13,6 @@
   </form>
 </ng-container>
 <ng-container *ngIf="!checkStateEditForm">
-  <i *ngIf="value" class="bx bxs-check-square fs-1 check-icon"></i>
-  <i *ngIf="!value" class="bx bx-square fs-1 check-icon"></i>
+  <i *ngIf="value" class="bx bxs-check-square check-icon"></i>
+  <i *ngIf="!value" class="bx bx-square check-icon"></i>
 </ng-container>

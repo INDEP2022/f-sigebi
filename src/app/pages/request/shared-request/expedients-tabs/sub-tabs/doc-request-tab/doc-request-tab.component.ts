@@ -1149,11 +1149,18 @@ export class DocRequestTabComponent
         case 'register-abandonment-goods':
         case 'verify-compliance-abandonment':
         case 'register-abandonment-instruction':
-        case 'register-declaration-abandonment':
+
           let hasType51 = list.some(x => parseInt(x.xtipoDocumentoId) === 51);
+
+          if (hasType51 && containDocCom) {
+            validToks = true;
+          }
+          break;
+
+        case 'register-declaration-abandonment':
           let hasType146 = list.some(x => parseInt(x.xtipoDocumentoId) === 146);
 
-          if (hasType146 && hasType51 && containDocCom) {
+          if (hasType146 && containDocCom) {
             validToks = true;
           }
           break;

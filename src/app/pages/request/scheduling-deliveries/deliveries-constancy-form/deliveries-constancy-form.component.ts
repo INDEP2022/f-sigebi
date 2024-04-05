@@ -7,11 +7,13 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IProgrammingDeliveryGood } from 'src/app/core/models/good-programming/programming-delivery-good.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
+import { NonDeliveryReasonService } from 'src/app/core/services/catalogs/non-delivery-reason.service';
 import { CertificatesDeliveryService } from 'src/app/core/services/ms-delivery-constancy/certificates-delivery.service';
 import { CertificatesGoodsService } from 'src/app/core/services/ms-delivery-constancy/certificates-goods.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -19,6 +21,7 @@ import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-req
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ShowSchedulingReportComponentComponent } from '../execute-scheduling-deliveries/show-scheduling-report-component/show-scheduling-report-component.component';
 import { PERSONAL_ESTATE_COLUMNS } from './personal-estate-columns';
 
 const typeContances: any = [
@@ -78,6 +81,7 @@ export class DeliveriesConstancyFormComponent
   selectReasonNoDelive = new DefaultSelect();
   selectReasonNoWithdrawn = new DefaultSelect();
 
+  goodSelected: any = {};
   btnTitle: string = 'Guardar';
 
   public event: EventEmitter<any> = new EventEmitter();
@@ -87,11 +91,14 @@ export class DeliveriesConstancyFormComponent
   private certifiGoodsService = inject(CertificatesGoodsService);
   private auth = inject(AuthService);
   private goodService = inject(GoodService);
+  private programmingService = inject(ProgrammingGoodService);
 
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private delegationStateService: DelegationStateService
+    private delegationStateService: DelegationStateService,
+    private nonDeliveryReasonsService: NonDeliveryReasonService,
+    private modalService: BsModalService
   ) {
     super();
     this.settings = {
@@ -101,8 +108,10 @@ export class DeliveriesConstancyFormComponent
   }
 
   ngOnInit(): void {
+    console.log(this.typeConstancy);
     this.settings.columns = PERSONAL_ESTATE_COLUMNS;
     this.prepareForm();
+    this.getReasons();
     this.regDele = this.progEntrega.delRegId;
     this.listTypeConstances = new DefaultSelect(
       typeContances,
@@ -114,6 +123,13 @@ export class DeliveriesConstancyFormComponent
       this.setColumns();
       this.validateClientSeccion();
     }, 300);
+  }
+
+  getReasons() {
+    const params = new ListParams();
+    this.getReasonNotDelivery(params);
+    this.getReasonNotAccepted(params);
+    this.getReasonNotWithdrawn(params);
   }
 
   prepareForm() {
@@ -285,19 +301,77 @@ export class DeliveriesConstancyFormComponent
     }
   }
 
-  generateReport() {}
+  showReport(data: any) {
+    console.log('data', data);
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modal-xl modal-dialog-centered',
+    };
+    config.initialState = {
+      idprogDel: data.certificateId,
+      report: data.certificateType,
+      callback: (next: boolean) => {
+        if (next) {
+          //this.showReportDestruction();
+        }
+      },
+    };
+
+    this.modalService.show(ShowSchedulingReportComponentComponent, config);
+  }
+
+  generateUniqueNumber() {
+    const date = new Date();
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    const second = date.getSeconds();
+    const millisecond = date.getMilliseconds();
+
+    const uniqueNumber =
+      hour * 10000 + minute * 100 + second + millisecond / 10;
+
+    return Math.floor(uniqueNumber);
+  }
 
   async create() {
     let idProgDelivery = this.progEntrega.id;
     let folio = this.progEntrega.folio;
     let userAuth = this.auth.decodeToken();
 
-    //GENERAR REPORTE
-    //this.generateReport()
+    let cause = '';
+    if (!this.deliveryConstancyForm.get('reasonsNotDelivered').value) {
+      cause = 'Faltante';
+    } else {
+      cause = 'Dañado';
+    }
+
+    let selectedId = this.deliveryConstancyForm.get(
+      'reasonsNotDelivered'
+    ).value;
+    let selectedReason = this.selectReasonNoDelive.data.find(
+      (item: Reason) => item.id === selectedId
+    ).reason;
+
+    this.goods.forEach(good => {
+      let body = {
+        id: good.id,
+        reasonsNotAccepted:
+          this.deliveryConstancyForm.get('reasonsNotAccepted').value,
+        reasonsNotDelivered: this.deliveryConstancyForm.get(
+          'reasonsNotDelivered'
+        ).value,
+        reasonsNotWithdrawn:
+          this.deliveryConstancyForm.get('reasonsNotRetired').value,
+        causeNotDelivered: cause,
+        observation: selectedReason,
+      };
+
+      this.updateProgrammingGoodDelivery(body);
+    });
 
     //CREATE CERTIFICADO DE ENTREGA
     let deliveryForm = this.deliveryConstancyForm.getRawValue();
-    deliveryForm.certificateId = 999953; //ingresar el dato
+    deliveryForm.certificateId = this.generateUniqueNumber();
     deliveryForm.deliveryScheduleId = idProgDelivery;
     deliveryForm.folio = folio;
     deliveryForm.userCreation = userAuth.username;
@@ -309,6 +383,13 @@ export class DeliveriesConstancyFormComponent
         ? moment(deliveryForm.oficioDate).format('YYYY-MM-DD')
         : null;
     deliveryForm.closing = null;
+    deliveryForm.reasonsNotAccepted =
+      this.deliveryConstancyForm.get('reasonsNotAccepted').value;
+    deliveryForm.reasonsNotDelivered = this.deliveryConstancyForm.get(
+      'reasonsNotDelivered'
+    ).value;
+    deliveryForm.reasonsNotRetired =
+      this.deliveryConstancyForm.get('reasonsNotRetired').value;
     const created = await this.createCertificateDelivery(deliveryForm);
 
     //ACTUALIZA PROGRAMACION ENTREGA BIENES
@@ -329,10 +410,12 @@ export class DeliveriesConstancyFormComponent
       );
 
       const bodyConstanceGood: any = {};
-      bodyConstanceGood.certificateId = 999953; //incresar el certificateId
+      bodyConstanceGood.certificateId = deliveryForm.certificateId; //incresar el certificateId
       bodyConstanceGood.transactionId = item.transactionId;
       bodyConstanceGood.siabGoodNumber = item.siabGoodNumber;
       bodyConstanceGood.goodId = item.goodId;
+      bodyConstanceGood.causeNotDelivered = deliveryForm.reasonsNotDelivered =
+        this.deliveryConstancyForm.get('reasonsNotDelivered').value;
       bodyConstanceGood.quantity = item[this.lsColumna];
       bodyConstanceGood.goodsDeliveryScheduleId = item.id;
       bodyConstanceGood.userCreation = userAuth.username;
@@ -349,10 +432,26 @@ export class DeliveriesConstancyFormComponent
       );
 
       if (index == this.goods.length) {
-        this.onLoadToast('success', 'Se creo el certificado de constacia');
+        this.onLoadToast('success', 'Se creo el certificado de constancia');
         this.event.emit(deliveryForm);
+        this.showReport(deliveryForm);
         this.close();
       }
+    });
+  }
+
+  updateProgrammingGoodDelivery(body: any) {
+    return new Promise((resolve, reject) => {
+      this.programmingService
+        .updateProgrammingDeliveryGood(body.id, body)
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+          error: error => {
+            reject(error);
+          },
+        });
     });
   }
 
@@ -385,7 +484,9 @@ export class DeliveriesConstancyFormComponent
     const created = await this.updateCertificateDelivery(certify);
 
     this.onLoadToast('success', 'Se actualizo la constancia');
-    this.event.emit(true);
+    this.event.emit(deliveryForm);
+    this.showReport(deliveryForm);
+
     this.close();
   }
 
@@ -477,6 +578,86 @@ export class DeliveriesConstancyFormComponent
     });
   }
 
+  getReasonNotDelivery(params: ListParams) {
+    params['filter.orderBy'] = `reason:ASC`;
+    params['filter.reasonType'] = `$eq:Motivos No Entregados`;
+    if (params.text) {
+      params['filter.reason'] = `$ilike:${params.text}`;
+    }
+
+    this.nonDeliveryReasonsService.getAll(params).subscribe({
+      next: response => {
+        this.selectReasonNoDelive = new DefaultSelect(
+          response.data,
+          response.count
+        );
+      },
+      error: error => {
+        this.selectReasonNoDelive = new DefaultSelect();
+      },
+    });
+  }
+
+  reasonChange(selectedValue, id) {
+    if (id == 3) {
+      this.deliveryConstancyForm
+        .get('reasonsNotAccepted')
+        .setValue(selectedValue);
+    }
+    if (id == 2) {
+      this.deliveryConstancyForm
+        .get('reasonsNotDelivered')
+        .setValue(selectedValue);
+    }
+    if (id == 4) {
+      this.deliveryConstancyForm
+        .get('reasonsNotRetired')
+        .setValue(selectedValue);
+    }
+
+    console.log(selectedValue);
+  }
+
+  getReasonNotAccepted(params: ListParams) {
+    params['filter.orderBy'] = `reason:ASC`;
+    params['filter.reasonType'] = `$eq:Motivos No Aceptados`;
+    if (params.text) {
+      params['filter.reason'] = `$ilike:${params.text}`;
+    }
+
+    this.nonDeliveryReasonsService.getAll(params).subscribe({
+      next: response => {
+        this.selectReasonNoAcep = new DefaultSelect(
+          response.data,
+          response.count
+        );
+      },
+      error: error => {
+        this.selectReasonNoAcep = new DefaultSelect();
+      },
+    });
+  }
+
+  getReasonNotWithdrawn(params: ListParams) {
+    params['filter.orderBy'] = `reason:ASC`;
+    params['filter.reasonType'] = `$eq:Motivos No Retirados`;
+    if (params.text) {
+      params['filter.reason'] = `$ilike:${params.text}`;
+    }
+
+    this.nonDeliveryReasonsService.getAll(params).subscribe({
+      next: response => {
+        this.selectReasonNoWithdrawn = new DefaultSelect(
+          response.data,
+          response.count
+        );
+      },
+      error: error => {
+        this.selectReasonNoWithdrawn = new DefaultSelect();
+      },
+    });
+  }
+
   updateCertificateDelivery(body: any) {
     return new Promise((resolve, reject) => {
       this.certifiDeliveryService.update(body).subscribe({
@@ -493,4 +674,107 @@ export class DeliveriesConstancyFormComponent
       });
     });
   }
+
+  selectGood(event: any) {
+    if (event.isSelected == false) {
+      this.goodSelected = {};
+      return;
+    }
+    this.goodSelected = event.data;
+    console.log(this.goodSelected)
+  }
+  async separate() {
+    if (this.goodSelected && Object.keys(this.goodSelected).length > 0) {
+      let idProgDelivery = this.progEntrega.id;
+      let folio = this.progEntrega.folio;
+      let userAuth = this.auth.decodeToken();
+
+      //GENERAR REPORTE
+      //this.generateReport()
+
+      //CREATE CERTIFICADO DE ENTREGA
+      let deliveryForm = this.deliveryConstancyForm.getRawValue();
+      deliveryForm.certificateId = this.generateUniqueNumber();
+      deliveryForm.deliveryScheduleId = idProgDelivery;
+      deliveryForm.folio = folio;
+      deliveryForm.userCreation = userAuth.username;
+      deliveryForm.userModification = userAuth.username;
+      deliveryForm.creationDate = moment(new Date()).format('YYYY-MM-DD');
+      deliveryForm.modificationDate = moment(new Date()).format('YYYY-MM-DD');
+      deliveryForm.oficioDate =
+        deliveryForm.oficioDate != null
+          ? moment(deliveryForm.oficioDate).format('YYYY-MM-DD')
+          : null;
+      deliveryForm.closing = null;
+      deliveryForm.reasonsNotAccepted =
+        this.deliveryConstancyForm.get('reasonsNotAccepted').value;
+      deliveryForm.reasonsNotDelivered = this.deliveryConstancyForm.get(
+        'reasonsNotDelivered'
+      ).value;
+      deliveryForm.reasonsNotRetired =
+        this.deliveryConstancyForm.get('reasonsNotRetired').value;
+      const created = await this.createCertificateDelivery(deliveryForm);
+      console.log(deliveryForm)
+      //ACTUALIZA PROGRAMACION ENTREGA BIENES
+      //this.goodSelected.map(async (item: any, _i: number) => {
+      //const index = _i + 1;
+      let total = Number(this.goodSelected[this.lsColumnaTot]);
+      total = total + Number(this.goodSelected[this.lsColumna]);
+
+      const bodyConstanceDelivery: any = {};
+      bodyConstanceDelivery['id'] = this.goodSelected.id;
+      bodyConstanceDelivery['goodId'] = this.goodSelected.goodId;
+      bodyConstanceDelivery[this.lsColumnaTot] = total;
+
+      console.log(bodyConstanceDelivery);
+      //Actualiza la tabla de programacion entrega bienes
+      const updated = await this.updateProgrammingDeliveryGood(
+        bodyConstanceDelivery
+      );
+
+      const bodyConstanceGood: any = {};
+      bodyConstanceGood.certificateId = deliveryForm.certificateId; //incresar el certificateId
+      bodyConstanceGood.transactionId = this.goodSelected.transactionId;
+      bodyConstanceGood.siabGoodNumber = this.goodSelected.siabGoodNumber;
+      bodyConstanceGood.goodId = this.goodSelected.goodId;
+      bodyConstanceGood.quantity = this.goodSelected[this.lsColumna];
+      bodyConstanceGood.goodsDeliveryScheduleId = this.goodSelected.id;
+      bodyConstanceGood.userCreation = userAuth.username;
+      bodyConstanceGood.userModification = userAuth.username;
+      bodyConstanceGood.creationDate = moment(new Date()).format('YYYY-MM-DD');
+      bodyConstanceGood.modificationDate = moment(new Date()).format(
+        'YYYY-MM-DD'
+      );
+
+      console.log(bodyConstanceGood);
+      //Actualiza la tabla de certificado bienes
+      const createConstGood = await this.createCertificateGood(
+        bodyConstanceGood
+      );
+
+      //if (index == this.goods.length) {
+      this.onLoadToast('success', 'Se creo el certificado de constancia');
+      // this.event.emit(deliveryForm);
+      // this.showReport(deliveryForm);
+      // this.close();
+      //}
+
+      // Filtrar la lista para eliminar el objeto con el id correspondiente
+      this.personalEstateData = this.personalEstateData.filter(objeto => objeto.goodId !== this.goodSelected.goodId)
+      //});
+    } else {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Favor de seleccionar un bien'
+      );
+    }
+
+
+  }
+}
+
+interface Reason {
+  id: number;
+  reason: string;
 }
