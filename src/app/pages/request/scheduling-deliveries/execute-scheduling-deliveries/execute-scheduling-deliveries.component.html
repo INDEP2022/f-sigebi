@@ -20,7 +20,7 @@
           statusProgramming == 'BIENES_NO_ENTREGADOS' ||
           statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
           statusProgramming == 'FORMATO_RECLAMACION_TE' ||
-          statusProgramming == 'RESTITUCION_BIENES'
+          programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS'
         ">
         <button
           (click)="finalizeClassify()"
@@ -40,7 +40,8 @@
       <div
         class="p-2"
         *ngIf="
-          programmingDetailPanel.status == 'APROBAR_ENTREGA' ||
+          programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA' ||
+          programmingDetailPanel.status == 'VERIFICACION_BIENES' ||
           statusProgramming == 'APROBAR_NO_ENT_ESP' ||
           statusProgramming == 'APROBAR_NO_ENT_NUM'
         ">
@@ -266,8 +267,10 @@
       <div class="form-inline justify-content-end btn-toolbar">
         <a
           *ngIf="
-            programmingDetailPanel.status == 'APROBAR_ENTREGA' ||
-            statusProgramming == 'RESTITUCION_BIENES' ||
+            programmingDetailPanel.status == 'RESTITUCION_BIENES' ||
+            this.programmingDetailPanel.status == 'APROBAR_NO_ENT' ||
+            programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA' ||
+            programmingDetailPanel.status == 'VERIFICACION_BIENES' ||
             statusProgramming == 'APROBAR_NO_ENT_ESP' ||
             statusProgramming == 'APROBAR_NO_ENT_NUM'
           "
@@ -339,7 +342,8 @@
     <!-- EJECUCION PROGRAMACION ENTREGA BIENES TIPO REST -->
     <div
       *ngIf="
-        programmingDetailPanel.status == 'APROBAR_ENTREGA' ||
+        programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA' ||
+        programmingDetailPanel.status == 'VERIFICACION_BIENES' ||
         statusProgramming == 'APROBAR_NO_ENT_ESP' ||
         statusProgramming == 'APROBAR_NO_ENT_NUM'
       ">
@@ -367,14 +371,20 @@
     <!-- PROG ENTREGA BIENES NO ENTREGADOS -->
     <div
       *ngIf="
-        statusProgramming == 'BIENES_NO_ENTREGADOS' ||
+        programmingDetailPanel.status == 'RESTITUCION_BIENES' ||
+        this.programmingDetailPanel.status == 'APROBAR_NO_ENT' ||
         statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
         statusProgramming == 'VERIFICACION_BIENES' ||
         statusProgramming == 'FORMATO_RECLAMACION_TE' ||
-        statusProgramming == 'RESTITUCION_BIENES'
+        programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS'
       ">
       <div class="row">
-        <div class="btn-toolbar pt-5">
+        <div
+          class="btn-toolbar pt-5"
+          *ngIf="
+            programmingDetailPanel.status == 'RESTITUCION_BIENES' ||
+            this.programmingDetailPanel.status == 'APROBAR_NO_ENT'
+          ">
           <button class="btn btn-success btn-sm active" (click)="entryOrder()">
             Orden de Ingreso
           </button>
@@ -390,14 +400,12 @@
           </button>
           <button
             class="btn btn-danger btn-sm active"
-            *ngIf="statusProgramming == 'RESTITUCION_BIENES'"
             (click)="changeTypeRestitucion('NUMERARIO')">
             Numerario
           </button>
           <button
             class="btn btn-danger btn-sm active"
-            (click)="changeTypeRestitucion('EN_ESPECIE')"
-            *ngIf="statusProgramming == 'RESTITUCION_BIENES'">
+            (click)="changeTypeRestitucion('EN_ESPECIE')">
             En Especie
           </button>
         </div>
