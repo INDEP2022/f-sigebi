@@ -9,11 +9,8 @@ const routes: Routes = [
     component: SchedulingDeliveriesFormComponent,
   },
   {
-    path: 'execute-schelude-delivery',
-    component: ExecuteSchedulingDeliveriesComponent,
-  },
-  {
     path: 'execute-schelude-delivery/:id',
+    component: ExecuteSchedulingDeliveriesComponent,
   },
 ];
 

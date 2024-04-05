@@ -327,7 +327,7 @@ export const COMMERCIALIZATION_ROUTES = [
         link: '/pages/commercialization/sirsae-payment-consultation',
       },
       {
-        label: 'Conversión Masiva de LCs',
+        label: 'Generación Masiva de LCs',
         link: '/pages/commercialization/lcs-massive-conversion',
       },
       {

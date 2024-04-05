@@ -42,6 +42,7 @@
           <div class="col-md-6">
             <form-field [control]="searchForm.get('xTipoDocumento')">
               <ngx-select
+              [readonly]="true"
                 [form]="searchForm"
                 control="xTipoDocumento"
                 [data]="typeDocuments"
@@ -78,16 +79,11 @@
             </form-field>
           </div>
           <div class="col-md-4">
-            <form-field
-              [control]="searchForm.get('xcargoRemitente')"
-              label="Cargo Remitente">
-              <input
-                type="text"
-                maxlength="100"
-                class="form-control"
-                formControlName="xcargoRemitente" />
+            <form-field [control]="searchForm.get('xComments')" label="Comentarios">
+              <input type="text" maxlength="1000" class="form-control" formControlName="xComments" />
             </form-field>
           </div>
+          
         </div>
 
         <div class="row pt-3">
@@ -111,17 +107,7 @@
                 formControlName="xtipoTransferencia" />
             </form-field>
           </div>
-          <div class="col-md-4">
-            <form-field
-              [control]="searchForm.get('xresponsable')"
-              label="Responsable">
-              <input
-                type="text"
-                maxlength="30"
-                class="form-control"
-                formControlName="xresponsable" />
-            </form-field>
-          </div>
+          
         </div>
 
         <div class="row pt-3">
@@ -136,9 +122,10 @@
                 formControlName="dDocName" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <!-- <div class="col-md-4">
             <form-field [control]="searchForm.get('xDelegacionRegional')">
               <ngx-select
+                [readonly]="true"
                 [form]="searchForm"
                 control="xDelegacionRegional"
                 [data]="regionalsDelegations"
@@ -148,7 +135,7 @@
                 (fetchItems)="getRegionalDelegationSelect($event)">
               </ngx-select>
             </form-field>
-          </div>
+          </div> -->
           <div class="col-md-4">
             <form-field
               [control]="searchForm.get('xcontribuyente')"
@@ -163,7 +150,7 @@
         </div>
 
         <div class="row pt-3">
-          <div class="col-md-4">
+          <!-- <div class="col-md-4">
             <form-field
               [control]="searchForm.get('xidExpediente')"
               label="No&#46; Expediente">
@@ -173,7 +160,7 @@
                 formControlName="xidExpediente"
                 min="0" />
             </form-field>
-          </div>
+          </div> -->
           <div class="col-md-4">
             <form-field [control]="searchForm.get('xestado')">
               <ngx-select
@@ -201,7 +188,7 @@
         </div>
 
         <div class="row pt-3">
-          <div class="col-md-4">
+          <!-- <div class="col-md-4">
             <form-field
               [control]="searchForm.get('xidSolicitud')"
               label="No&#46; Solicitud">
@@ -211,8 +198,8 @@
                 formControlName="xidSolicitud"
                 min="0" />
             </form-field>
-          </div>
-          <div class="col-md-4">
+          </div> -->
+          <!-- <div class="col-md-4">
             <form-field [control]="searchForm.get('xidTransferente')">
               <ngx-select
                 [form]="searchForm"
@@ -224,16 +211,15 @@
                 (fetchItems)="getTransferentSelect($event)">
               </ngx-select>
             </form-field>
-          </div>
+          </div> -->
           <div class="col-md-4">
-            <form-field
-              [control]="searchForm.get('xComments')"
-              label="Comentarios">
-              <input
-                type="text"
-                maxlength="1000"
-                class="form-control"
-                formControlName="xComments" />
+            <form-field [control]="searchForm.get('xresponsable')" label="Responsable">
+              <input type="text" maxlength="30" class="form-control" formControlName="xresponsable" />
+            </form-field>
+            </div>
+          <div class="col-md-4">
+            <form-field [control]="searchForm.get('xcargoRemitente')" label="Cargo Remitente">
+              <input type="text" maxlength="100" class="form-control" formControlName="xcargoRemitente" />
             </form-field>
           </div>
         </div>

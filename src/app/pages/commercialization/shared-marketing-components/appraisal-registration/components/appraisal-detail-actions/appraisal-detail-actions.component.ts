@@ -165,11 +165,13 @@ export class AppraisalDetailActionsComponent
                         );
                       },
                       error: eror => {
+                        this.alert('warning', eror.error.message, '');
                         this.loader.load = false;
                       },
                     });
                 },
                 error: eror => {
+                  this.alert('warning', eror.error.message, '');
                   this.loader.load = false;
                 },
               });
@@ -194,7 +196,6 @@ export class AppraisalDetailActionsComponent
               .subscribe({
                 next: resp => {
                   console.log(resp);
-                  this.$appraisedRejectedList.next(resp.data);
                   const { id_evento, no_delegacion, usuario } = this.controls;
                   let data = {
                     pEvent: id_evento.value,
@@ -215,11 +216,14 @@ export class AppraisalDetailActionsComponent
                       );
                     },
                     error: eror => {
+                      console.log(eror);
+                      this.alert('warning', eror.error.message, '');
                       this.loader.load = false;
                     },
                   });
                 },
                 error: eror => {
+                  this.alert('warning', eror.error.message, '');
                   this.loader.load = false;
                 },
               });
