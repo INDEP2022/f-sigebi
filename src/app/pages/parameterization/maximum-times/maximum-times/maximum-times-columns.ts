@@ -49,11 +49,14 @@ export const MAXIMUM_TIMES_COLUMNS = {
     },
     sort: false,
   },
-  user: {
+  users: {
     title: 'Usuario',
     valuePrepareFunction: (value: IUsers) => {
       return value != null ? value.name : '-';
     },
     sort: false,
+    filterFunction: () => {
+      return true;
+    },
   },
 };

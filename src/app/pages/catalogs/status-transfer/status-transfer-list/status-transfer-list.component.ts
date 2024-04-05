@@ -88,7 +88,13 @@ export class StatusTransferListComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.paragraphs = [];
+        this.totalItems = 0;
+        this.data.load([]);
+        this.data.refresh();
+        this.loading = false;
+      },
     });
   }
 
