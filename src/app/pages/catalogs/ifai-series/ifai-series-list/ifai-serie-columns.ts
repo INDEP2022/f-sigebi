@@ -1,6 +1,11 @@
 export const IFAI_SERIE_COLUMNS = {
-  code: {
+  status: {
     title: 'Código',
+    type: 'string',
+    sort: false,
+  },
+  code: {
+    title: 'Código Ifai',
     type: 'string',
     sort: false,
   },
@@ -14,27 +19,4 @@ export const IFAI_SERIE_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  status: {
-    title: 'Estado',
-    type: 'string',
-    sort: false,
-    valuePrepareFunction: (_cell: any, row: any) => {
-      return row.status == '1' ? 'Activo' : 'Inactivo';
-    },
-    filter: {
-      type: 'list',
-      config: {
-        selectText: 'Seleccionar',
-        list: [
-          { value: '1', title: 'Activo' },
-          { value: '0', title: 'Inactivo' },
-        ],
-      },
-    },
-  },
-  // registryNumber: {
-  //   title: 'No. de registro',
-  //   type: 'number',
-  //   sort: false,
-  // },
 };
