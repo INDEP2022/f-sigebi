@@ -252,6 +252,7 @@ export class ServiceOrderRequestCaptureFormComponent
       //this.ordServform.controls['observation'].enable();
       this.showForm = true;
     }
+
   }
 
   setRelease() {

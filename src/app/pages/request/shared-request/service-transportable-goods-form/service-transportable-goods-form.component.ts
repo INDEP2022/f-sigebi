@@ -637,18 +637,28 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   deleteService() {
-    if (this.ordersSelected.length == 0 || this.ordersSelected.length > 1) {
+    if (this.ordersSelected.length == 0) {
       this.onLoadToast('info', 'Seleccione un bien');
       return;
     }
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Está seguro que desea eliminar el servicio?'
+      '¿Está seguro que desea eliminar los servicios?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.deleteOrderServiceProvided(this.ordersSelected[0].id);
+
+        let result = this.ordersSelected.map((item: any) => {
+          return this.deleteOrderServiceProvided(item.id);
+        });
+
+        Promise.all(result).then(() => {
+          this.onLoadToast('success', 'Servicio eliminados correctamente', '');
+          this.ordersSelected = [];
+          this.getOrderServiceProvided();
+        });
+
       }
     });
   }
@@ -711,12 +721,13 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   deleteOrderServiceProvided(id: number) {
-    this.orderEntryService.deleteOrderServiceProvided(id).subscribe({
-      next: resp => {
-        this.onLoadToast('success', 'Servicio eliminado correctamente', '');
-        this.ordersSelected = [];
-        this.getOrderServiceProvided();
-      },
+
+    return new Promise((resolve, reject) => {
+      this.orderEntryService.deleteOrderServiceProvided(id).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+      });
     });
   }
 
