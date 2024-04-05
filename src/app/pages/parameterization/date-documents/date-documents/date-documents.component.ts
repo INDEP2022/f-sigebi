@@ -72,18 +72,23 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'key':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}.description`;
+                if (!isNaN(parseInt(filter.search))) {
+                  searchFilter = SearchFilter.EQ;
+                  field = `filter.${filter.field}`;
+                } else {
+                  searchFilter = SearchFilter.ILIKE;
+                  field = `filter.keyDocument.description`;
+                  delete this.columnFilters[`filter.key`];
+                }
+                // field = `filter.${filter.field}.description`;
                 break;
               case 'dateReceipt':
-                console.log('dddd', filter.search);
                 if (filter.search != null) {
                   filter.search = this.returnParseDate(filter.search);
                   searchFilter = SearchFilter.EQ;
                 } else {
                   filter.search = '';
                 }
-                console.log('ddddccc', filter.search);
                 break;
               case 'notificationDate':
                 filter.search = this.returnParseDate(filter.search);
