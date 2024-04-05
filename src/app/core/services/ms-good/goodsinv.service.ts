@@ -94,6 +94,14 @@ export class GoodsInvService extends HttpService {
     );
   }
 
+  getAllGoodInvParams(
+    _params: ListParams
+  ): Observable<IListResponse<IGoodInvAvailableView>> {
+    const params = this.makeParams(_params);
+    const route = IGoodsinvEndpoint.GetGoodInvView;
+    return this.get<IListResponse<IGoodInvAvailableView>>(`${route}?${params}`);
+  }
+
   getClients(
     _params: ListParams,
     formData: Object

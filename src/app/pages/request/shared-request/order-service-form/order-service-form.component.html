@@ -1,12 +1,11 @@
-<div class="row pt-4">
+<div class="pt-3">
   <h5 class="title">
     <p>
       <a
         class="text-color"
         (click)="showOrderservice = true"
         *ngIf="!showOrderservice">
-        <i class="fa fa-angle-right" aria-hidden="true"></i> Órden de
-        Servicio</a
+        <i class="fa fa-angle-right" aria-hidden="true"></i> Órden deServicio</a
       >
     </p>
 
@@ -19,118 +18,132 @@
       >
     </p>
   </h5>
-</div>
 
-<div class="row">
-  <form
-    [formGroup]="ordServform"
-    class="form-horizontal form-material"
-    style="margin: 0 auto"
-    *ngIf="showOrderservice">
-    <div class="row pt-2">
-      <div class="col-md-4">
-        <div class="form-group">
-          <label class="ml-3 text-right">Folio Órden Servicio&#58;</label>
-          <span> {{ orderService?.serviceOrderFolio }} </span>
+  <div *ngIf="showOrderservice" class="pt-3">
+    <form
+      [formGroup]="ordServform"
+      class="form-horizontal form-material"
+      style="margin: 0 auto">
+      <div class="row pt-2">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="ml-3 text-right">Folio Órden Servicio&#58;</label>
+            <span> {{ orderService?.serviceOrderFolio }} </span>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="ml-3 text-right">Usuario Turnado&#58;</label>
+            <span> {{ orderService?.shiftUser }} </span>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <form-check label="Visita Ocular" for="checkGoodVisit" class="">
+            <input
+              id="checkGoodVisit"
+              type="checkbox"
+              [(ngModel)]="visitEye"
+              [ngModelOptions]="{ standalone: true }"
+              (change)="changeVisitEye($event)"
+              [disabled]="readonly" />
+          </form-check>
         </div>
       </div>
 
-      <div class="col-md-3">
-        <div class="form-group">
-          <label class="mr-2">No&#46; Contrato&#58;</label>
-          <span> {{ orderService?.contractNumber }} </span>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <form-field
-          [control]="ordServform.get('reasonsNotPerform')"
-          label="Razones no Realizaci&oacute;n">
-          <input
-            class="form-control"
-            formControlName="reasonsNotPerform"
-            [readOnly]="readonly" />
-        </form-field>
-      </div>
-    </div>
-
-    <div class="row pt-4">
-      <div class="col-md-4">
-        <div class="form-group">
-          <label class="ml-3 text-right">Fecha de Turnano&#58;</label>
-          <span> {{ orderService?.shiftDate | date : 'dd/MM/yyyy' }} </span>
-        </div>
-      </div>
-
-      <div class="col-md-3">
-        <form-field
-          [control]="ordServform.get('transportationZone')"
-          label="Transporte Zona">
-          <input
-            type="text"
-            class="form-control"
-            formControlName="transportationZone"
-            [readOnly]="readonly" />
-        </form-field>
-      </div>
-
-      <div class="col-md-4 ml-3">
-        <!--NO TOCAR ESTILOS-->
-        <form-check label="Consolidado con Contenedores" for="checkGood">
-          <input
-            id="checkGood"
-            type="checkbox"
-            [(ngModel)]="consolideContainer"
-            [ngModelOptions]="{ standalone: true }"
-            (change)="changeConsolidate($event)"
-            [disabled]="readonly" />
-        </form-check>
-      </div>
-    </div>
-
-    <div class="row pt-4">
-      <div class="col-md-4">
-        <div class="form-group">
-          <label class="ml-3 text-right">Usuario Turnado&#58;</label>
-          <span> {{ orderService?.shiftUser }} </span>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <form-field [control]="ordServform.get('folioTlp')" label="Folio TLP">
-          <input
-            type="text"
-            class="form-control"
-            formControlName="folioTlp"
-            [readOnly]="readonly" />
-        </form-field>
-      </div>
-
-      <div class="col-md-4 ml-3">
-        <form-check label="Visita Ocular" for="checkGoodVisit">
-          <input
-            id="checkGoodVisit"
-            type="checkbox"
-            [(ngModel)]="visitEye"
-            [ngModelOptions]="{ standalone: true }"
-            (change)="changeVisitEye($event)"
-            [disabled]="readonly" />
-        </form-check>
-      </div>
-    </div>
-
-    <div class="row pt-3">
-      <div class="col-md-4"></div>
-      <div class="col-md-4"></div>
-      <div class="col-md-4">
-        <div class="justify-content-end">
-          <div class="font-size-45">
-            <label class="col-lg-8 text-right"><b>Total&#58;</b></label>
-            <span>
-              <b>{{ total }}</b></span
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="ml-3 text-right"
+              >Folio reporte<br />implementación</label
             >
+            <span> {{ orderService?.serviceOrderFolio }} </span>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="mr-2">No&#46; Contrato&#58;</label>
+            <span> {{ orderService?.contractNumber }} </span>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="ordServform.get('reasonsNotPerform')"
+            label="Razones no Realizaci&oacute;n">
+            <input
+              style="width: 80% !important"
+              class="form-control"
+              formControlName="reasonsNotPerform"
+              [readOnly]="readonly" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="ml-3 text-right">Fecha de Turnano&#58;</label>
+            <span> {{ orderService?.shiftDate | date : 'dd/MM/yyyy' }} </span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="ordServform.get('transportationZone')"
+            label="Transporte Zona">
+            <input
+              style="width: 80% !important"
+              type="text"
+              class="form-control"
+              formControlName="transportationZone"
+              [readOnly]="readonly" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <!--NO TOCAR ESTILOS-->
+          <form-check label="Consolidado con Contenedores" for="checkGood">
+            <input
+              id="checkGood"
+              type="checkbox"
+              [(ngModel)]="consolideContainer"
+              [ngModelOptions]="{ standalone: true }"
+              (change)="changeConsolidate($event)"
+              [disabled]="readonly" />
+          </form-check>
+        </div>
+      </div>
+
+      <div class="row pl-3">
+        <div class="col-md-4">
+          <form-field
+            [control]="ordServform.get('folioTlp')"
+            label="Folio TLP"
+            class="ml-4">
+            <input
+              style="width: 80% !important"
+              type="text"
+              class="form-control"
+              formControlName="folioTlp"
+              [readOnly]="readonly" />
+          </form-field>
+        </div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+          <div class="justify-content-end">
+            <div class="font-size-45" style="margin-top: 15px !important">
+              <label class="col-lg-8 text-right"
+                ><b style="font-size: 23px">Total&#58;</b></label
+              >
+              <span>
+                <b style="font-size: 23px">{{ total }}</b></span
+              >
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>

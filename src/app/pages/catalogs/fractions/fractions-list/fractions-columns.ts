@@ -10,7 +10,11 @@ export const FRACTIONS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-
+  fractionCode: {
+    title: 'Código de Fracción',
+    type: 'number',
+    sort: false,
+  },
   level: {
     title: 'Nivel',
     type: 'string',
@@ -70,11 +74,11 @@ export const FRACTIONS_COLUMNS = {
     sort: false,
   },
 
-  version: {
-    title: 'Versión',
-    type: 'string',
-    sort: false,
-  },
+  // version: {
+  //   title: 'Versión',
+  //   type: 'string',
+  //   sort: false,
+  // },
 
   codeErp1: {
     title: 'Código  Erp 1',
@@ -114,11 +118,5 @@ export const FRACTIONS_COLUMNS = {
         ],
       },
     },
-  },
-
-  fractionCode: {
-    title: 'Código de Fracción',
-    type: 'number',
-    sort: false,
   },
 };

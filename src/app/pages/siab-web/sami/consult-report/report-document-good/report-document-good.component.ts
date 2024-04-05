@@ -247,5 +247,8 @@ export class ReportDocumentGoodComponent extends BasePage implements OnInit {
     });
   }
 
-  clean() {}
+  clean() {
+    this.searchForm.reset();
+    this.getGoodTypeSelect(new ListParams());
+  }
 }

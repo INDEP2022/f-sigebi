@@ -158,16 +158,20 @@ export class AppraisalDetailActionsComponent
                     .subscribe({
                       next: res => {
                         console.log(res);
-
                         this.searchGoods.next(id_evento.value);
                         this.loader.load = false;
+                        this.$appraisedRejectedList.next(
+                          res.COMER_AVALUOS_RECHAZADOS
+                        );
                       },
                       error: eror => {
+                        this.alert('warning', eror.error.message, '');
                         this.loader.load = false;
                       },
                     });
                 },
                 error: eror => {
+                  this.alert('warning', eror.error.message, '');
                   this.loader.load = false;
                 },
               });
@@ -192,7 +196,6 @@ export class AppraisalDetailActionsComponent
               .subscribe({
                 next: resp => {
                   console.log(resp);
-                  this.$appraisedRejectedList.next(resp.data);
                   const { id_evento, no_delegacion, usuario } = this.controls;
                   let data = {
                     pEvent: id_evento.value,
@@ -208,13 +211,19 @@ export class AppraisalDetailActionsComponent
                       console.log(res);
                       this.searchGoods.next(id_evento.value);
                       this.loader.load = false;
+                      this.$appraisedRejectedList.next(
+                        res.COMER_AVALUOS_RECHAZADOS
+                      );
                     },
                     error: eror => {
+                      console.log(eror);
+                      this.alert('warning', eror.error.message, '');
                       this.loader.load = false;
                     },
                   });
                 },
                 error: eror => {
+                  this.alert('warning', eror.error.message, '');
                   this.loader.load = false;
                 },
               });
@@ -241,6 +250,7 @@ export class AppraisalDetailActionsComponent
     }
   }
   validFile(file: File) {
+    console.log(this.global.direction);
     if (this.global.direction == 'I') {
       this.loader.load = true;
       let params = new ListParams();
@@ -253,12 +263,13 @@ export class AppraisalDetailActionsComponent
         .subscribe({
           next: resp => {
             console.log(resp);
-            // this.alert('warning', resp.message[0], '');
+            this.alert('warning', resp.message, '');
             this.$appraisedRejectedGoodsList.next(resp.rejectedGoods);
             this.loader.load = false;
           },
           error: eror => {
             console.log(eror);
+            this.alert('warning', eror.message[0], '');
             this.loader.load = false;
           },
         });
@@ -267,18 +278,20 @@ export class AppraisalDetailActionsComponent
       let params = new ListParams();
       let data = {
         vIva: this.global.vIva,
-        columNumber: this.global.vColumnNum,
+        columNumber: 11,
       };
       this.msMassiveappraiseService
         .postValidaArchivoAppraisalRegistry(params, file, data)
         .subscribe({
           next: resp => {
             console.log(resp);
-            // this.alert('warning', resp.message[0], '');
+            this.alert('warning', resp.message, '');
             this.$appraisedRejectedGoodsList.next(resp.rejectedGoods);
             this.loader.load = false;
           },
           error: eror => {
+            console.log(eror);
+            this.alert('warning', eror.error.message, '');
             this.loader.load = false;
           },
         });

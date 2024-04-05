@@ -120,6 +120,7 @@ export class IndicatorsOfPerformanceFormComponent
       next: data => this.handleSuccess(),
       error: error => {
         this.loading = false;
+        this.alert('warning', 'No se pudo actualizar el registro', '');
         console.log(error);
       },
     });

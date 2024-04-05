@@ -123,10 +123,14 @@
           <form-field
             [control]="fractionForm.get('decimalAmount')"
             label="Cantidad Decimal">
-            <input
-              type="text"
+            <ng-select
+              formControlName="decimalAmount"
+              [searchable]="false"
               class="form-control"
-              formControlName="decimalAmount" />
+              [clearable]="false">
+              <ng-option value="Y">Si</ng-option>
+              <ng-option value="N">No</ng-option>
+            </ng-select>
           </form-field>
         </div>
 

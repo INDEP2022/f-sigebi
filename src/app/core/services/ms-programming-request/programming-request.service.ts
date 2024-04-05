@@ -216,6 +216,11 @@ export class ProgrammingRequestService {
     return this.http.post(`${environment.API_URL}${route}`, goodDelivery);
   }
 
+  deleteGoodProgrammingDevilery(id: number) {
+    const route = `programminggood/api/v1/programming-delivery-good/${id}`;
+    return this.http.delete(`${environment.API_URL}${route}`);
+  }
+
   sendEmailProgrammingDelivery(data: Object) {
     const route = `programminggood/api/v1/programminggood/apps/generate-send-email`;
     return this.http.post(`${environment.API_URL}${route}`, data);

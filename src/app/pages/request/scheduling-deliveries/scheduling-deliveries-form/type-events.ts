@@ -14,10 +14,10 @@ export const TypeEvent = [
     nameEvent: 'DONACIÓN',
   },
 
-  {
+  /*{
     id: 3,
     nameEvent: 'RESARCIMIENTO',
-  },
+  },*/
   {
     id: 1,
     nameEvent: 'VENTAS',

@@ -3,7 +3,7 @@ export enum AppraiseEndpoints {
   EatAppraisalView = 'views/eat-appraisal-view',
   EatAppraisalViewExcel = 'views/eat-appraisal-view-excel',
   EatAppraisalViewSum = 'views/eat-appraisal-view-sum',
-  PostAppraise = 'application/spObtainGoodValued',
+  PostAppraise = 'application/spObtainGoodValued-ra',
   Delegation = 'application/desCordination',
   ComerAvaluo = 'eat-appraisal',
   ComerDetAvaluo = 'eat-det-appraisal',
