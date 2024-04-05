@@ -266,6 +266,7 @@ export class ExecuteSchedulingDeliveriesComponent
 
     if (
       this.programmingDetailPanel.status == 'RESTITUCION_BIENES' ||
+      this.programmingDetailPanel.status == 'APROBAR_NO_ENT' ||
       this.statusProgramming == 'BIENES_NO_ENTREGADOS' ||
       this.statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
       this.statusProgramming == 'VERIFICACION_BIENES' ||
@@ -486,9 +487,9 @@ export class ExecuteSchedulingDeliveriesComponent
     //AQUI AGREGAR FILTRO
     this.loading = true;
     this.loadingEEB = true;
-    if (this.programmingDetailPanel.status == 'RESTITUCION_BIENES') {
+    /*if (this.programmingDetailPanel.status == 'RESTITUCION_BIENES') {
       params['filter.status'] = `$eq:''`;
-    }
+    }*/
 
     params[
       'filter.programmingDeliveryId'
@@ -529,6 +530,7 @@ export class ExecuteSchedulingDeliveriesComponent
 
         if (
           this.programmingDetailPanel.status == 'RESTITUCION_BIENES' ||
+          this.programmingDetailPanel.status == 'APROBAR_NO_ENT' ||
           this.statusProgramming == 'BIENES_NO_ENTREGADOS' ||
           this.statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
           this.statusProgramming == 'VERIFICACION_BIENES' ||
@@ -1114,7 +1116,10 @@ export class ExecuteSchedulingDeliveriesComponent
     let typeDoc = null;
     let nomProcess = null;
 
-    if (this.programmingDetailPanel.status == 'RESTITUCION_BIENES') {
+    if (
+      this.programmingDetailPanel.status == 'RESTITUCION_BIENES' ||
+      this.programmingDetailPanel.status == 'APROBAR_NO_ENT'
+    ) {
       this.goodRestSelected = this.progGoodNoDeliveredSelected;
     }
     if (!this.goodRestSelected) {
@@ -1350,6 +1355,7 @@ export class ExecuteSchedulingDeliveriesComponent
 
     if (statusAut == 'SIN_BIENES') {
       let infoProgramming = {
+        status: 'APROBAR_NO_ENT',
         statusAut: 'BIENES_PEND_AUT',
       };
 
@@ -1370,7 +1376,6 @@ export class ExecuteSchedulingDeliveriesComponent
 
         let data = {
           id: item.id,
-          status: 'APROBAR_NO_ENT',
           typeRestitution: item.typeRestitution,
         };
 
@@ -1454,7 +1459,7 @@ export class ExecuteSchedulingDeliveriesComponent
             this.alert(
               'success',
               'Actualizado',
-              'La clasificación a numeraria fue exitosa'
+              'La clasificación a en especie fue exitosa'
             );
 
             this.loadingPENE = false;
@@ -1467,16 +1472,32 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   finalizeClassify() {
+    let msg = '';
+    let title = '';
+    let status = '';
+
+    if ((this.programmingDetailPanel.status = 'BIENES_NO_ENTREGADOS')) {
+      msg =
+        'Desea enviar la clasificación de los bienes no entregados para la programación con folio';
+      status = 'VERIFICACION_BIENES';
+      title =
+        'Aprobar solicitud para la restitución de los bienes de la programación';
+    } else if (
+      this.programmingDetailPanel.status == 'RESTITUCION_BIENES' ||
+      this.programmingDetailPanel.status == 'APROBAR_NO_ENT'
+    ) {
+    }
+
     this.alertQuestion(
       'question',
       'Finalizar Clasificación',
-      `¿Desea enviar la clasificación de los bienes no entregados para la programación con folio ${this.programmingDetailPanel.folio}?`
+      `¿${msg} ${this.programmingDetailPanel.folio}?`
     ).then(async question => {
       if (question.isConfirmed) {
         if (this.programmingDetailPanel) {
           const infoProgramming: IprogrammingDelivery = {
             id: this.programmingDetailPanel.id,
-            status: 'VERIFICACION_BIENES',
+            status: status,
           };
 
           this.programmingRequestService
@@ -1507,9 +1528,7 @@ export class ExecuteSchedulingDeliveriesComponent
           task['creator'] = user.username;
           task['reviewers'] = user.username;
           task['taskNumber'] = Number(this.programmingId);
-          task['title'] =
-            'Aprobar solicitud para la restitución de los bienes de la programación  ' +
-            this.programmingDetailPanel.folio;
+          task['title'] = title + ' ' + this.programmingDetailPanel.folio;
           task['programmingId'] = this.programmingId;
           task['requestId'] = this.programmingId;
           task['expedientId'] = 0;
