@@ -1381,7 +1381,8 @@ export class CircumstantialActsSuspensionCancellationComponent
               item.goodId,
               item.fileNumber
             );
-            const di_disponible = await this.getDisponible(item.goodId);
+            const di_disponible = await this.postQueryGoods(item);
+            console.log(di_disponible);
             return {
               ...item,
               acta,
@@ -1559,57 +1560,59 @@ export class CircumstantialActsSuspensionCancellationComponent
   }
 
   validElaborationDate() {
-    const date = this.form.get('elabDate').value;
-    console.log(date);
-    //VALIDAR HORA
-    const hours = date.getHours();
-    console.log(hours);
-    if (hours == 0) {
-      this.alert(
-        'warning',
-        'Fecha de elaboración inválida',
-        'Indicar la hora de elaboración'
-      );
-      this.form.get('elabDate').reset();
-      return;
+    if (this.canSave) {
+      const date = this.form.get('elabDate').value;
+      console.log(date);
+      //VALIDAR HORA
+      const hours = date.getHours();
+      console.log(hours);
+      if (hours == 0) {
+        this.alert(
+          'warning',
+          'Fecha de elaboración inválida',
+          'Indicar la hora de elaboración'
+        );
+        this.form.get('elabDate').reset();
+        return;
+      }
+      //VALIDAR HORAS TRANSCURRIDAS
+      const now = new Date();
+      const diffInMilliseconds = now.getTime() - date.getTime();
+      const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
+      console.log(diffInHours);
+
+      if (diffInHours > 72) {
+        this.status_time = 'DESTIEMPO';
+        this.alert(
+          'info',
+          'Acto registrado con ' +
+            parseInt(diffInHours.toString()) +
+            ' horas de retraso',
+          ''
+        );
+      } else {
+        this.status_time = 'EN TIEMPO';
+      }
+
+      //VALIDAR AÑO Y MES
+      const currentYear = new Date().getFullYear();
+      const currentMonth = new Date().getMonth() + 1;
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      console.log({ currentYear, currentMonth, year, month });
+
+      if (currentYear !== year || currentMonth !== month) {
+        this.alert(
+          'warning',
+          'Fecha de elaboración inválida',
+          'El acta no puede ser registrada por encontrarse fuera de las políticas de registro de actas de recepción física.'
+        );
+        this.form.get('elabDate').reset();
+        return;
+      }
+
+      this.form.get('closingDate').setValue(date);
     }
-    //VALIDAR HORAS TRANSCURRIDAS
-    const now = new Date();
-    const diffInMilliseconds = now.getTime() - date.getTime();
-    const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
-    console.log(diffInHours);
-
-    if (diffInHours > 72) {
-      this.status_time = 'DESTIEMPO';
-      this.alert(
-        'info',
-        'Acto registrado con ' +
-          parseInt(diffInHours.toString()) +
-          ' horas de retraso',
-        ''
-      );
-    } else {
-      this.status_time = 'EN TIEMPO';
-    }
-
-    //VALIDAR AÑO Y MES
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth() + 1;
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    console.log({ currentYear, currentMonth, year, month });
-
-    if (currentYear !== year || currentMonth !== month) {
-      this.alert(
-        'warning',
-        'Fecha de elaboración inválida',
-        'El acta no puede ser registrada por encontrarse fuera de las políticas de registro de actas de recepción física.'
-      );
-      this.form.get('elabDate').reset();
-      return;
-    }
-
-    this.form.get('closingDate').setValue(date);
   }
 
   async saveNewProceeding() {
@@ -1724,18 +1727,29 @@ export class CircumstantialActsSuspensionCancellationComponent
     );
   }
 
-  postQueryGoods() {
+  postQueryGoods(good: any) {
     //TODO
     return new Promise((res, _rej) => {
+      const user = this.authService.decodeToken();
       const body: IPostQueryGoodFACTCIRCUN_0001 = {
-        elaborationDate: undefined,
-        delegationNumber: 0,
-        subdelegationNumber: 0,
-        goodNumber: 0,
-        proceedingsNumber: 0,
-        status: '',
-        screen: '',
+        elaborationDate: this.form.get('elabDate').value,
+        delegationNumber: user.department,
+        subdelegationNumber: user.department,
+        goodNumber: good.id,
+        proceedingsNumber: this.form.get('noActa').value,
+        status: good.status,
+        screen: 'FACTCIRCUN_0001',
       };
+
+      this.proceedingSusCanService.postQuery(body).subscribe(
+        res => {
+          console.log(res.data);
+          res(res.data);
+        },
+        err => {
+          console.log(err);
+        }
+      );
     });
   }
 }

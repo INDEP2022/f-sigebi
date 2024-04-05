@@ -10,6 +10,7 @@ import {
   IListResponseMessage,
 } from '../../interfaces/list-response.interface';
 import {
+  IPostThirdFile,
   IPupProcDisp,
   IPupProcEnvSirsae,
   IPupProcReproc,
@@ -533,5 +534,9 @@ export class LotService extends HttpService {
 
   thirdFile(eventId: number | string) {
     return this.get(`apps/third-file/${eventId}`);
+  }
+
+  thirdFilePost(body: IPostThirdFile) {
+    return this.post('apps/third-file', body);
   }
 }

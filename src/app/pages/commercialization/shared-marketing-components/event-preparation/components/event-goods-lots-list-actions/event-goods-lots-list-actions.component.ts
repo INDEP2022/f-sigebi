@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { format } from 'date-fns';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
@@ -27,6 +28,7 @@ import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.mo
 import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
 import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
+import { IPostThirdFile } from 'src/app/core/services/ms-lot/models-lots';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { UtilComerV1Service } from 'src/app/core/services/ms-prepareevent/util-comer-v1.service';
 import { BasePage } from 'src/app/core/shared';
@@ -76,6 +78,7 @@ export class EventGoodsLotsListActionsComponent
   saleBasesControl = new FormControl(null);
   customersBasecontrol = new FormControl(null);
   customersTccontrol = new FormControl(null);
+  ctrlRepFallo = false;
   @Input() onlyBase = false;
   get controls() {
     return this.eventForm.controls;
@@ -245,7 +248,7 @@ export class EventGoodsLotsListActionsComponent
    */
   thirdFile() {
     this.loader.load = true;
-    const { id } = this.controls;
+    const { id, processKey, eventDate, eventTpId } = this.controls;
 
     // TODO: IMPLEMENTAR CUANDO SE TENGA
     // TODO: ES EL ARCHIVO QUE GENERA DEMORA, PABLO ESTA REVISANDO
@@ -253,7 +256,14 @@ export class EventGoodsLotsListActionsComponent
     console.log({ controls: this.controls });
     console.log({ id: id.value });
 
-    this.lotService.thirdFile(id.value).subscribe({
+    const body: IPostThirdFile = {
+      event: id.value,
+      cveProccess: processKey.value,
+      descriptionType: eventTpId.value.toString(),
+      eventDate: format(eventDate.value, 'dd/MM/yyyy'),
+    };
+
+    this.lotService.thirdFilePost(body).subscribe({
       next: res => {
         this.loader.load = false;
         console.log(res);
@@ -522,9 +532,11 @@ export class EventGoodsLotsListActionsComponent
   }
 
   async onLotifyCustomersI() {
+    console.log('Entro a esta lotificación');
     const { statusVtaId, eventTpId } = this.controls;
     const valid = this.consignment();
     const alreadyPaid = true;
+    let cMessage = null;
     if (!alreadyPaid) {
       this.alert(
         'error',
@@ -536,17 +548,28 @@ export class EventGoodsLotsListActionsComponent
     const repFailure = false;
     try {
       const { aprolot, catlot, totlot } = await this.lotifyCountLot();
+      console.log({ aprolot, catlot, totlot });
       if (totlot != aprolot) {
-        if (totlot != catlot) {
-          this.alert(
-            'error',
-            'Error',
-            'El Evento ya tiene un proceso adicional al fallo'
-          );
-          return;
+        if (parseInt(totlot) > 0) {
+          if (totlot != catlot) {
+            this.alert('error', 'El evento ya tiene facturas', '');
+            return;
+          } else {
+            cMessage = '¿Se reprocesa el fallo y elimina las pre facturas?';
+          }
+        } else {
+          cMessage = '¿Se reprocesa el fallo?';
+        }
+
+        const ask = await this.alertQuestion('info', cMessage, '');
+
+        if (ask.isConfirmed) {
+          this.ctrlRepFallo = true;
         }
         await this.lotifyCountInvoice();
       }
+
+      this.customersImportInput.nativeElement.click();
     } catch (error) {
       this.alert('error', 'Error', UNEXPECTED_ERROR);
     }
@@ -596,24 +619,32 @@ export class EventGoodsLotsListActionsComponent
       return;
     }
     const file = this.getFileFromEvent(event);
-    const resp = await this.alertQuestion(
-      'info',
-      '¿El evento es desierto?',
-      ''
-    );
-    let lifMessageYesNo: string = null;
-    const { isConfirmed, dismiss } = resp;
-    if (isConfirmed) {
-      lifMessageYesNo = 'S';
+    if (this.parameters.pDirection == 'I') {
+      //TODO: PUP_NVO_COPIA_ARCHO
+      if (this.ctrlRepFallo) {
+        //TODO: PA_REV_FALLO
+      }
+      this.importCustomersLots(file, 'N').subscribe();
+    } else {
+      const resp = await this.alertQuestion(
+        'info',
+        '¿El evento es desierto?',
+        ''
+      );
+      let lifMessageYesNo: string = null;
+      const { isConfirmed, dismiss } = resp;
+      if (isConfirmed) {
+        lifMessageYesNo = 'S';
+      }
+      if (dismiss == Swal.DismissReason.cancel) {
+        lifMessageYesNo = 'N';
+      }
+      if (!lifMessageYesNo) {
+        this.customersImportControl.reset();
+        return;
+      }
+      this.importCustomersLots(file, lifMessageYesNo).subscribe();
     }
-    if (dismiss == Swal.DismissReason.cancel) {
-      lifMessageYesNo = 'N';
-    }
-    if (!lifMessageYesNo) {
-      this.customersImportControl.reset();
-      return;
-    }
-    this.importCustomersLots(file, lifMessageYesNo).subscribe();
   }
 
   /**PUP_IMP_EXCEL_LOTES_CLIENTE */
