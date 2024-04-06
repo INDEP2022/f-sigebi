@@ -344,30 +344,32 @@ export class DeliveriesConstancyFormComponent
     } else {
       cause = 'Dañado';
     }
+    if (this.deliveryConstancyForm.get('reasonsNotDelivered').value) {
+      let selectedId = this.deliveryConstancyForm.get(
+        'reasonsNotDelivered'
+      ).value;
+      let selectedReason = this.selectReasonNoDelive.data.find(
+        (item: Reason) => item.id === selectedId
+      ).reason;
 
-    let selectedId = this.deliveryConstancyForm.get(
-      'reasonsNotDelivered'
-    ).value;
-    let selectedReason = this.selectReasonNoDelive.data.find(
-      (item: Reason) => item.id === selectedId
-    ).reason;
+      this.goods.forEach(good => {
+        let body = {
+          id: good.id,
+          reasonsNotAccepted:
+            this.deliveryConstancyForm.get('reasonsNotAccepted').value,
+          reasonsNotDelivered: this.deliveryConstancyForm.get(
+            'reasonsNotDelivered'
+          ).value,
+          reasonsNotWithdrawn:
+            this.deliveryConstancyForm.get('reasonsNotRetired').value,
+          causeNotDelivered: cause,
+          observation: selectedReason,
+        };
 
-    this.goods.forEach(good => {
-      let body = {
-        id: good.id,
-        reasonsNotAccepted:
-          this.deliveryConstancyForm.get('reasonsNotAccepted').value,
-        reasonsNotDelivered: this.deliveryConstancyForm.get(
-          'reasonsNotDelivered'
-        ).value,
-        reasonsNotWithdrawn:
-          this.deliveryConstancyForm.get('reasonsNotRetired').value,
-        causeNotDelivered: cause,
-        observation: selectedReason,
-      };
+        this.updateProgrammingGoodDelivery(body);
+      });
+    }
 
-      this.updateProgrammingGoodDelivery(body);
-    });
 
     //CREATE CERTIFICADO DE ENTREGA
     let deliveryForm = this.deliveryConstancyForm.getRawValue();
@@ -397,12 +399,27 @@ export class DeliveriesConstancyFormComponent
       const index = _i + 1;
       let total = Number(item[this.lsColumnaTot]);
       total = total + Number(item[this.lsColumna]);
+      let colDestino = '';
+      switch (this.lsColumnaTot) {
+        case 'sunGoodEnt':
+          colDestino = 'amountDelivered';
+          break;
+        case 'sumGoodNoEnt':
+          colDestino = 'amountNotDelivered';
+          break;
 
+        case 'sumGoodNoAce':
+          colDestino = 'anountNotAccelted';
+          break;
+        case 'sumGoodNoRet':
+          colDestino = 'amountNotWhithdrawn';
+          break;
+      }
       const bodyConstanceDelivery: any = {};
       bodyConstanceDelivery['id'] = item.id;
       bodyConstanceDelivery['goodId'] = item.goodId;
       bodyConstanceDelivery[this.lsColumnaTot] = total;
-
+      bodyConstanceDelivery[colDestino] = total;
       console.log(bodyConstanceDelivery);
       //Actualiza la tabla de programacion entrega bienes
       const updated = await this.updateProgrammingDeliveryGood(

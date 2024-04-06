@@ -803,7 +803,7 @@ export class ExecuteSchedulingDeliveriesComponent
       this.alert(
         'warning',
         'Acción Invalida',
-        'Debe tener un bien seleccionado para la ejecucide entrega'
+        'Debe tener un bien seleccionado para la ejecución de entrega'
       );
       return;
     }
@@ -811,20 +811,28 @@ export class ExecuteSchedulingDeliveriesComponent
     this.selectedRows.map((item: any) => {
       let colDestino = '';
       let lsColumna = null;
-
-      if (executionType == 'entragados') {
+      let lsColumnaTot = '';
+      console.log()
+      if (executionType == 'entregados') {
         lsColumna = item.amountDelivered;
         colDestino = 'amountDelivered';
+        lsColumnaTot = 'sunGoodEnt';
+
       } else {
         if (causa == 'NO ENTREGADOS') {
           lsColumna = item.amountNotDelivered;
           colDestino = 'amountNotDelivered';
+          lsColumnaTot = 'sumGoodNoEnt';
+
         } else if (causa == 'NO ACEPTADOS') {
           lsColumna = item.anountNotAccelted;
           colDestino = 'anountNotAccelted';
+          lsColumnaTot = 'sumGoodNoAce';
+
         } else {
           lsColumna = item.amountNotWhithdrawn;
           colDestino = 'amountNotWhithdrawn';
+          lsColumnaTot = 'sumGoodNoRet';
         }
       }
 
@@ -856,7 +864,7 @@ export class ExecuteSchedulingDeliveriesComponent
       const body: any = {};
       body['id'] = item.id;
       body[colDestino] = total;
-
+      body[lsColumnaTot] = Number(lsColumna);
       this.updateProgrammingGoodDelivery(body);
       this.alert(
         'success',
