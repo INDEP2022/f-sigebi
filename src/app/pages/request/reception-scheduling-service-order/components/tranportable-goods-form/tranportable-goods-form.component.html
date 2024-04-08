@@ -8,7 +8,9 @@
             <app-columns-select [(settings)]="settings"></app-columns-select>
           </div>
           <div class="p-2">
-            <button class="btn btn-primary btn-sm active">Detach</button>
+            <button (click)="detach()" class="btn btn-primary btn-sm active">
+              Detach
+            </button>
           </div>
         </div>
 
@@ -16,7 +18,7 @@
           <ng2-smart-table
             [settings]="settings"
             [source]="data"
-            (edit)="showDocument()">
+            (edit)="showDocument($event)">
           </ng2-smart-table>
         </div>
 

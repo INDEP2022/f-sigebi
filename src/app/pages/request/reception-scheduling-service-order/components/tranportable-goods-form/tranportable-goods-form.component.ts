@@ -29,7 +29,8 @@ export class TranportableGoodsFormComponent extends BasePage implements OnInit {
       columns: SERVICE_ORDER_COLUMNS,
       edit: {
         editButtonContent: '<i class="bx bxs-file-doc"></i> Ver ',
-      },
+      }
+
     };
 
     this.idProg = +this.activeRoute.snapshot.params['id'];
@@ -54,7 +55,7 @@ export class TranportableGoodsFormComponent extends BasePage implements OnInit {
     ]; */
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   getProgrammingGood(id: number) {
     this.loading = true;
@@ -80,5 +81,11 @@ export class TranportableGoodsFormComponent extends BasePage implements OnInit {
     });
   }
 
-  showDocument() {}
+  showDocument(event) {
+    this.alert('info', 'Ver documento', 'Funcionalidad pendiente');
+  }
+
+  detach() {
+    this.alert('info', 'Detach', 'Funcionalidad pendiente');
+  }
 }
