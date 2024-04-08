@@ -653,6 +653,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   async postInsertUsuCopia(acction: string, mComer: any, value: any) {
     return new Promise(async (res, rej) => {
       let user = await this.obtenerTextoDespuesDelGuion(value);
+      console.log(user);
       let data = {
         user: user,
         jobId: mComer,
@@ -674,7 +675,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     });
   }
   obtenerTextoDespuesDelGuion(texto): string {
-    const partes = texto.split('-'); // Dividir el string en partes utilizando el guion como separador
+    const partes = texto.split('/'); // Dividir el string en partes utilizando el guion como separador
     return partes.length > 1 ? partes[1].trim() : ''; // Seleccionar la segunda parte y eliminar espacios en blanco al principio y al final
   }
   private changeChar(chain: string): string {
@@ -728,10 +729,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   async insertaOficio() {
-    console.log(this.m_comer);
+    console.log(this.form.get('radio').value);
     return new Promise((resolve, reject) => {
       let body = {
-        TIPO_OFICIO_IN: this.m_comer.tipo_oficio,
+        TIPO_OFICIO_IN: this.form.get('radio').value,
         USUARIO_INSERT_IN: this.m_comer.usuario_insert,
         REMITENTE_IN: this.m_comer.remitente,
         DESTINATARIO_IN: this.m_comer.destinatario,
@@ -748,14 +749,16 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
             ? this.m_comer.id_programacion
             : null,
       };
-      this.clarificationsService.postSpInsertaOficioRespuesta(body).subscribe({
-        next: response => {
-          resolve(response);
-        },
-        error: error => {
-          reject(null);
-        },
-      });
+      console.log(body);
+      resolve(body);
+      // this.clarificationsService.postSpInsertaOficioRespuesta(body).subscribe({
+      //   next: response => {
+      //     resolve(response);
+      //   },
+      //   error: error => {
+      //     reject(null);
+      //   },
+      // });
     });
   }
   async insertaBien(idOficio: number, noBien: number, accion: string) {

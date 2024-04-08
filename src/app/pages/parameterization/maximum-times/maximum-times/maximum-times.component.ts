@@ -69,6 +69,10 @@ export class MaximumTimesComponent extends BasePage implements OnInit {
                 filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'users':
+                field = `filter.users.name`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
