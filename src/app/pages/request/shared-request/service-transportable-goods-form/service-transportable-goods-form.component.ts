@@ -243,30 +243,10 @@ export class ServiceTransportableGoodsFormComponent
       )
       .subscribe({
         next: resp => {
-          let ttotal = 0;
-          resp.data.map((item: any) => {
-            if (this.op == 6 || this.op == 7 || this.op == 8 || this.op == 9) {
-              this.requestHelperService.changeReadOnly(true);
-            }
-            const resourceNumber =
-              Number(item.resourcesNumber) != null
-                ? Number(item.resourcesNumber)
-                : 0;
-            const resourcesReal = item.resourcesReal;
-            const resource =
-              resourcesReal != null ? Number(resourcesReal) : resourceNumber;
-            item['total'] = Number(item.priceUnitary) * Number(resource);
-            ttotal = ttotal + item['total'];
-          });
 
-          const t = `$${this.formatTotalAmount(ttotal)}`;
-          this.totalAmount = t;
-          this.totEvent.emit(t);
-          //const bodyTotal: any = { total: t };
-          //resp.data.push(bodyTotal);
           this.data = resp.data;
           this.totalItems = resp.count;
-
+          this.setTotalAmount();
 
           //this.setTableRowTotal();
           //this.setTableColumnsRows();
@@ -285,6 +265,34 @@ export class ServiceTransportableGoodsFormComponent
           }
         },
       });
+  }
+
+  setTotalAmount() {
+    let ttotal = 0;
+    this.data.map((item: any) => {
+      if (this.op == 6 || this.op == 7 || this.op == 8 || this.op == 9) {
+        this.requestHelperService.changeReadOnly(true);
+      }
+      const resourceNumber = isNullOrEmpty(item.resourcesNumber) ? 0 : Number(item.resourcesNumber);
+      const priceUnitary = isNullOrEmpty(item.priceUnitary) ? 0 : Number(item.priceUnitary);
+      const durationTime = isNullOrEmpty(item.durationTime) ? 0 : Number(item.durationTime);
+
+      item.durationTime = durationTime;
+      item.resourcesNumber = resourceNumber;
+      item.priceUnitary = priceUnitary;
+
+      item.total = (durationTime * priceUnitary) * resourceNumber;
+      ttotal += item.total;
+    });
+
+    console.log('ttotal', this.data.map((item: any) => item.total));
+
+    const t = `$${this.formatTotalAmount(ttotal)}`;
+    this.totalAmount = t;
+    this.totEvent.emit(t);
+    //const bodyTotal: any = { total: t };
+    //resp.data.push(bodyTotal);
+    this.data = [... this.data];
   }
 
   setTableColumnsRows() {
@@ -670,6 +678,7 @@ export class ServiceTransportableGoodsFormComponent
 
   setValues(param, data) {
     this.data.find((x: any) => x.id == data.row.id)[param] = data.text;
+    this.setTotalAmount();
   }
 
 

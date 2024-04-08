@@ -70,16 +70,18 @@ export class ServiceOrderRequestCaptureFormComponent
 
   constructor() {
     super();
+    this.prepareOrderServiceForm();
+
   }
 
   ngOnInit(): void {
+
     const task = JSON.parse(localStorage.getItem('Task'));
     this.task = task['op'];
     this.op = this.task;
 
     this.programmingId = +this.activeRouter.snapshot.params['id'];
     this.prepareProgForm();
-    this.prepareOrderServiceForm();
     this.getProgramming();
     this.getOrderService();
     setTimeout(() => {

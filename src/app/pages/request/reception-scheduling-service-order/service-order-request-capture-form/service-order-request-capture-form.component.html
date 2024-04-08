@@ -132,6 +132,7 @@
 
     <app-comments-form
       *ngIf="orderServiceId != null"
+      [programmingId]="this.programmingId"
       [readonly]="readonly"
       [ordServform]="ordServform"
       [op]="op"
