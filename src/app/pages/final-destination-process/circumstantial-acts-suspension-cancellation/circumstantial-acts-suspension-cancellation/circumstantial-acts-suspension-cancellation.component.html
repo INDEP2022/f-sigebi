@@ -362,6 +362,14 @@
       <div class="row text-center">
         <div class="col">
           <button
+            *ngIf="['ABIERTA', 'ABIERTO'].includes(form.get('statusAct').value)"
+            type="button"
+            (click)="updateProceeding()"
+            class="btn btn-primary btn-sm active mr-3">
+            Guardar Cambios
+            <i aria-hidden="true" class="fa fa-save"></i>
+          </button>
+          <button
             class="btn btn-primary btn-sm active mr-3"
             (click)="actButton()">
             {{ textButtonAct }}
@@ -517,42 +525,5 @@
         </div>
       </div>
     </div>
-
-    <!--  <form
-          class="form-material form-horizontal"
-          [formGroup]="formTag"
-          (ngSubmit)="onSubmit()">
-          <div class="row mt-5">
-            <div class="col-12 col-md-6">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field
-                  [control]="formTag.get('tag')"
-                  label="Etiquetas de Raz&oacute;n">
-                  <select class="form-control" formControlName="tag">
-                    <option [value]="null">Seleccione un valor</option>
-                    <option [value]="1">1</option>
-                    <option [value]="2">2</option>
-                  </select>
-                </form-field>
-              </div>
-            </div>
-            <div class="col-12 col-md-6">
-              <div class="row">
-                <div class="col-6">
-                  <button
-                    class="btn btn-secondary btn-sm active text-center text-md-right">
-                    Valida Bienes
-                  </button>
-                </div>
-                <div class="col-6">
-                  <button
-                    class="btn btn-success btn-sm active text-center text-md-right">
-                    Exportar Datos
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </form> -->
   </div>
 </app-card>

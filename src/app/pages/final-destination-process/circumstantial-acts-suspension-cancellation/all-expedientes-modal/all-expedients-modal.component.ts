@@ -31,6 +31,8 @@ export class AllExpedientsModal extends BasePage implements OnInit {
   expedient: any;
   title: string;
 
+  selectData: any = null;
+
   override settings = {
     ...TABLE_SETTINGS,
     columns: columns,
@@ -92,9 +94,16 @@ export class AllExpedientsModal extends BasePage implements OnInit {
 
   selectRow(event: any) {
     console.log(event);
+    this.selectData = event.data;
   }
 
   close() {
+    this.bsModalRef.hide();
+  }
+
+  sendData() {
+    console.log('Se envia el siguiente dato', this.selectData);
+    this.bsModalRef.content.callback(this.selectData);
     this.bsModalRef.hide();
   }
 
