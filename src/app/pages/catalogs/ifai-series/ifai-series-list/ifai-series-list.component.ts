@@ -32,7 +32,7 @@ export class IfaiSeriesListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = IFAI_SERIE_COLUMNS;
-    this.settings.actions.delete = false;
+    this.settings.actions.delete = true;
     this.settings.actions.add = false;
     this.settings.hideSubHeader = false;
   }
@@ -95,6 +95,7 @@ export class IfaiSeriesListComponent extends BasePage implements OnInit {
       next: response => {
         this.ifai = response.data;
         this.totalItems = response.count || 0;
+        console.log(response.data);
         this.data.load(response.data);
         this.data.refresh();
         this.loading = false;

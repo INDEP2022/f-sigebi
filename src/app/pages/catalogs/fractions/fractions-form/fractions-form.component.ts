@@ -116,14 +116,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(80)],
       ],
-      decimalAmount: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.maxLength(1),
-        ],
-      ],
+      decimalAmount: [null, [Validators.required, Validators.maxLength(1)]],
       status: [null, [Validators.maxLength(1)]],
       fractionCode: [
         null,

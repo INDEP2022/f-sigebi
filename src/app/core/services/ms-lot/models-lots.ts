@@ -66,3 +66,10 @@ export interface IPupImpExcelBatchesCustomer {
   tpEventId: string;
   eventId: number;
 }
+
+export interface IPostThirdFile {
+  event: number;
+  cveProccess: string;
+  descriptionType: string;
+  eventDate: string;
+}

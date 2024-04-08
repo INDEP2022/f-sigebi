@@ -66,6 +66,7 @@ export class IfaiSeriesFormComponent extends BasePage implements OnInit {
     if (this.ifaiSerie != null) {
       this.edit = true;
       this.ifaiSerieForm.patchValue(this.ifaiSerie);
+      this.ifaiSerieForm.controls['status'].disable();
     }
   }
   close() {
@@ -87,6 +88,9 @@ export class IfaiSeriesFormComponent extends BasePage implements OnInit {
     }
 
     this.loading = true;
+    this.params.getValue()['filter.status'] = `$eq:${
+      this.ifaiSerieForm.get('status').value
+    }`;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -98,19 +102,23 @@ export class IfaiSeriesFormComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
 
-        if (
-          this.ifaiSerieForm.get('code').value == response.data[0].code &&
-          this.ifaiSerieForm.get('typeProcedure').value ==
-            response.data[0].typeProcedure
-        ) {
+        if (this.ifaiSerieForm.get('status').value == response.data[0].status) {
           this.alert(
-            'error',
+            'warning',
             'El Codigo con el Tipo de Tramite ya fueron registrados',
             ''
           );
-          return;
+        } else {
+          this.loading = true;
+          this.ifaiSeriService
+            .create(this.ifaiSerieForm.getRawValue())
+            .subscribe({
+              next: data => this.handleSuccess(),
+              error: error => ((this.loading = false), console.log(error)),
+            });
         }
-
+      },
+      error: error => {
         this.loading = true;
         this.ifaiSeriService
           .create(this.ifaiSerieForm.getRawValue())
@@ -119,7 +127,6 @@ export class IfaiSeriesFormComponent extends BasePage implements OnInit {
             error: error => ((this.loading = false), console.log(error)),
           });
       },
-      error: error => (this.loading = false),
     });
   }
 
