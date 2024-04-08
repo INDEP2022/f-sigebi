@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   inject,
@@ -71,6 +72,8 @@ export class DeliveriesConstancyFormComponent
   personalEstateData: any[] = [];
   typeEvent: number = null;
 
+  data: any = {};
+
   listTypeConstances = new DefaultSelect();
   typeReceptor: string = '';
   lsColumna: string = '';
@@ -98,7 +101,8 @@ export class DeliveriesConstancyFormComponent
     private fb: FormBuilder,
     private delegationStateService: DelegationStateService,
     private nonDeliveryReasonsService: NonDeliveryReasonService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private cdr: ChangeDetectorRef
   ) {
     super();
     this.settings = {
@@ -108,7 +112,6 @@ export class DeliveriesConstancyFormComponent
   }
 
   ngOnInit(): void {
-    console.log(this.typeConstancy);
     this.settings.columns = PERSONAL_ESTATE_COLUMNS;
     this.prepareForm();
     this.getReasons();
@@ -118,7 +121,8 @@ export class DeliveriesConstancyFormComponent
       typeContances.length
     );
     this.isEdit();
-    this.personalEstateData = this.goods;
+    this.personalEstateData = []; // Limpia los datos existentes
+    this.personalEstateData = [...this.goods]; // Asigna una copia de this.goods a this.personalEstateData
     setTimeout(() => {
       this.setColumns();
       this.validateClientSeccion();
@@ -198,7 +202,22 @@ export class DeliveriesConstancyFormComponent
   isEdit() {
     if (this.edit == true) {
       this.btnTitle = 'Actualizar';
-      this.deliveryConstancyForm.patchValue(this.constanceForm);
+
+      this.certifiDeliveryService
+        .getById(this.constanceForm.certificateId)
+        .subscribe({
+          next: resp => {
+            this.data = resp;
+            this.setFormValues(resp);
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'No se pudo crear la constancia de entrega'
+            );
+          },
+        });
+
       const certiType = this.constanceForm.certificateType;
       this.typeConstancy = +certiType;
       this.deliveryConstancyForm.controls['certificateType'].setValue(
@@ -228,12 +247,10 @@ export class DeliveriesConstancyFormComponent
       this.selectEntity = new DefaultSelect();
       this.deliveryConstancyForm.get('cveState').setValue(null);
     }
-    console.log(this.typeReceptor);
     return (event.target as HTMLInputElement).value;
   }
 
   setColumns() {
-    console.log(this.table);
     //
     const table = this.table.grid.getColumns();
     const type1 = table.find((x: any) => x.id == 'amountDelivered');
@@ -277,8 +294,6 @@ export class DeliveriesConstancyFormComponent
     params['filter.regionalDelegation'] = `$eq:${this.regDele}`;
     this.delegationStateService.getAll(params).subscribe({
       next: data => {
-        console.log(data);
-
         const stateCode = data.data
           .map((x: any) => {
             if (x.stateCode != null) {
@@ -302,7 +317,6 @@ export class DeliveriesConstancyFormComponent
   }
 
   showReport(data: any) {
-    console.log('data', data);
     let config = {
       ...MODAL_CONFIG,
       class: 'modal-xl modal-dialog-centered',
@@ -370,7 +384,6 @@ export class DeliveriesConstancyFormComponent
       });
     }
 
-
     //CREATE CERTIFICADO DE ENTREGA
     let deliveryForm = this.deliveryConstancyForm.getRawValue();
     deliveryForm.certificateId = this.generateUniqueNumber();
@@ -420,7 +433,6 @@ export class DeliveriesConstancyFormComponent
       bodyConstanceDelivery['goodId'] = item.goodId;
       bodyConstanceDelivery[this.lsColumnaTot] = total;
       bodyConstanceDelivery[colDestino] = total;
-      console.log(bodyConstanceDelivery);
       //Actualiza la tabla de programacion entrega bienes
       const updated = await this.updateProgrammingDeliveryGood(
         bodyConstanceDelivery
@@ -442,7 +454,6 @@ export class DeliveriesConstancyFormComponent
         'YYYY-MM-DD'
       );
 
-      console.log(bodyConstanceGood);
       //Actualiza la tabla de certificado bienes
       const createConstGood = await this.createCertificateGood(
         bodyConstanceGood
@@ -477,9 +488,6 @@ export class DeliveriesConstancyFormComponent
     let folio = this.progEntrega.folio;
     let userAuth = this.auth.decodeToken();
 
-    //GENERAR REPORTE
-    //this.generateReport()
-
     //CREATE CERTIFICADO DE ENTREGA
     let deliveryForm = this.deliveryConstancyForm.getRawValue();
     deliveryForm.oficioDate =
@@ -496,7 +504,6 @@ export class DeliveriesConstancyFormComponent
         certify[key] = element;
       }
     }
-    console.log(certify);
 
     const created = await this.updateCertificateDelivery(certify);
 
@@ -567,7 +574,6 @@ export class DeliveriesConstancyFormComponent
     params['filter.certificateId'] = `$eq:${this.constanceForm.certificateId}`;
     this.certifiGoodsService.getAll(params).subscribe({
       next: (resp: any) => {
-        console.log(resp);
         resp.data.map(async (item: any) => {
           let body: any = {};
           body.goodId = item.goodId;
@@ -631,8 +637,6 @@ export class DeliveriesConstancyFormComponent
         .get('reasonsNotRetired')
         .setValue(selectedValue);
     }
-
-    console.log(selectedValue);
   }
 
   getReasonNotAccepted(params: ListParams) {
@@ -675,10 +679,218 @@ export class DeliveriesConstancyFormComponent
     });
   }
 
+  setFormValues(data: any) {
+    if (data) {
+      data.certificateId
+        ? this.deliveryConstancyForm.controls['certificateId'].setValue(
+            data.certificateId
+          )
+        : null;
+      data.publicDeed
+        ? this.deliveryConstancyForm.controls['publicDeed'].setValue(
+            data.publicDeed
+          )
+        : null;
+      data.writedate
+        ? this.deliveryConstancyForm.controls['writedate'].setValue(
+            data.writedate
+          )
+        : null;
+      data.adjudicator
+        ? this.deliveryConstancyForm.controls['adjudicator'].setValue(
+            data.adjudicator
+          )
+        : null;
+      data.publicNotary
+        ? this.deliveryConstancyForm.controls['publicNotary'].setValue(
+            data.publicNotary
+          )
+        : null;
+      data.cveState
+        ? this.deliveryConstancyForm.controls['cveState'].setValue(
+            data.cveState
+          )
+        : null;
+      data.transport
+        ? this.deliveryConstancyForm.controls['transport'].setValue(
+            data.transport
+          )
+        : null;
+      data.marck
+        ? this.deliveryConstancyForm.controls['marck'].setValue(data.marck)
+        : null;
+      data.model
+        ? this.deliveryConstancyForm.controls['model'].setValue(data.model)
+        : null;
+      data.plates
+        ? this.deliveryConstancyForm.controls['plates'].setValue(data.plates)
+        : null;
+      data.serie
+        ? this.deliveryConstancyForm.controls['serie'].setValue(data.serie)
+        : null;
+      data.driverName
+        ? this.deliveryConstancyForm.controls['driverName'].setValue(
+            data.driverName
+          )
+        : null;
+      data.oficioNum
+        ? this.deliveryConstancyForm.controls['oficioNum'].setValue(
+            data.oficioNum
+          )
+        : null;
+      data.oficioDate
+        ? this.deliveryConstancyForm.controls['oficioDate'].setValue(
+            data.oficioDate
+          )
+        : null;
+      data.acreditPerson
+        ? this.deliveryConstancyForm.controls['acreditPerson'].setValue(
+            data.acreditPerson
+          )
+        : null;
+      data.virtue
+        ? this.deliveryConstancyForm.controls['virtue'].setValue(data.virtue)
+        : null;
+      data.reasonsNotAccepted
+        ? this.deliveryConstancyForm.controls['reasonsNotAccepted'].setValue(
+            data.reasonsNotAccepted
+          )
+        : null;
+      data.reasonsNotDelivered
+        ? this.deliveryConstancyForm.controls['reasonsNotDelivered'].setValue(
+            data.reasonsNotDelivered
+          )
+        : null;
+      data.reasonsNotRetired
+        ? this.deliveryConstancyForm.controls['reasonsNotRetired'].setValue(
+            data.reasonsNotRetired
+          )
+        : null;
+      data.teName
+        ? this.deliveryConstancyForm.controls['teName'].setValue(data.teName)
+        : null;
+      data.tePosition
+        ? this.deliveryConstancyForm.controls['tePosition'].setValue(
+            data.tePosition
+          )
+        : null;
+      data.clientIden
+        ? this.deliveryConstancyForm.controls['clientIden'].setValue(
+            data.clientIden
+          )
+        : null;
+      data.clientIdennNum
+        ? this.deliveryConstancyForm.controls['clientIdennNum'].setValue(
+            data.clientIdennNum
+          )
+        : null;
+      data.procClientIdennNum
+        ? this.deliveryConstancyForm.controls['procClientIdennNum'].setValue(
+            data.procClientIdennNum
+          )
+        : null;
+      data.repLegal
+        ? this.deliveryConstancyForm.controls['repLegal'].setValue(
+            data.repLegal
+          )
+        : null;
+      data.repLegalPosition
+        ? this.deliveryConstancyForm.controls['repLegalPosition'].setValue(
+            data.repLegalPosition
+          )
+        : null;
+      data.repLegalIden
+        ? this.deliveryConstancyForm.controls['repLegalIden'].setValue(
+            data.repLegalIden
+          )
+        : null;
+      data.repLegalIdenNum
+        ? this.deliveryConstancyForm.controls['repLegalIdenNum'].setValue(
+            data.repLegalIdenNum
+          )
+        : null;
+      data.repLegalIdenProg
+        ? this.deliveryConstancyForm.controls['repLegalIdenProg'].setValue(
+            data.repLegalIdenProg
+          )
+        : null;
+      data.companyName
+        ? this.deliveryConstancyForm.controls['companyName'].setValue(
+            data.companyName
+          )
+        : null;
+      data.positionCompany
+        ? this.deliveryConstancyForm.controls['positionCompany'].setValue(
+            data.positionCompany
+          )
+        : null;
+      data.deliveryName
+        ? this.deliveryConstancyForm.controls['deliveryName'].setValue(
+            data.deliveryName
+          )
+        : null;
+      data.postDelivery
+        ? this.deliveryConstancyForm.controls['postDelivery'].setValue(
+            data.postDelivery
+          )
+        : null;
+      data.deliveryIden
+        ? this.deliveryConstancyForm.controls['deliveryIden'].setValue(
+            data.deliveryIden
+          )
+        : null;
+      data.deliveryNum
+        ? this.deliveryConstancyForm.controls['deliveryNum'].setValue(
+            data.deliveryNum
+          )
+        : null;
+      data.deliveryProcIden
+        ? this.deliveryConstancyForm.controls['deliveryProcIden'].setValue(
+            data.deliveryProcIden
+          )
+        : null;
+      data.witnessName1
+        ? this.deliveryConstancyForm.controls['witnessName1'].setValue(
+            data.witnessName1
+          )
+        : null;
+      data.witnessName2
+        ? this.deliveryConstancyForm.controls['witnessName2'].setValue(
+            data.witnessName2
+          )
+        : null;
+      data.authorizeReceive
+        ? this.deliveryConstancyForm.controls['authorizeReceive'].setValue(
+            data.authorizeReceive
+          )
+        : null;
+      data.certifiesPersonality
+        ? this.deliveryConstancyForm.controls['certifiesPersonality'].setValue(
+            data.certifiesPersonality
+          )
+        : null;
+      data.oicParticipates
+        ? this.deliveryConstancyForm.controls['oicParticipates'].setValue(
+            data.oicParticipates
+          )
+        : null;
+      data.oicName
+        ? this.deliveryConstancyForm.controls['oicName'].setValue(data.oicName)
+        : null;
+      data.oicCall
+        ? this.deliveryConstancyForm.controls['oicCall'].setValue(data.oicCall)
+        : null;
+      data.closing
+        ? this.deliveryConstancyForm.controls['closing'].setValue(data.closing)
+        : null;
+    }
+  }
+
   updateCertificateDelivery(body: any) {
     return new Promise((resolve, reject) => {
       this.certifiDeliveryService.update(body).subscribe({
         next: resp => {
+          this.deliveryConstancyForm.patchValue(resp.data);
           resolve(resp);
         },
         error: error => {
@@ -698,7 +910,6 @@ export class DeliveriesConstancyFormComponent
       return;
     }
     this.goodSelected = event.data;
-    console.log(this.goodSelected)
   }
   async separate() {
     if (this.goodSelected && Object.keys(this.goodSelected).length > 0) {
@@ -706,10 +917,6 @@ export class DeliveriesConstancyFormComponent
       let folio = this.progEntrega.folio;
       let userAuth = this.auth.decodeToken();
 
-      //GENERAR REPORTE
-      //this.generateReport()
-
-      //CREATE CERTIFICADO DE ENTREGA
       let deliveryForm = this.deliveryConstancyForm.getRawValue();
       deliveryForm.certificateId = this.generateUniqueNumber();
       deliveryForm.deliveryScheduleId = idProgDelivery;
@@ -731,7 +938,6 @@ export class DeliveriesConstancyFormComponent
       deliveryForm.reasonsNotRetired =
         this.deliveryConstancyForm.get('reasonsNotRetired').value;
       const created = await this.createCertificateDelivery(deliveryForm);
-      console.log(deliveryForm)
       //ACTUALIZA PROGRAMACION ENTREGA BIENES
       //this.goodSelected.map(async (item: any, _i: number) => {
       //const index = _i + 1;
@@ -743,7 +949,6 @@ export class DeliveriesConstancyFormComponent
       bodyConstanceDelivery['goodId'] = this.goodSelected.goodId;
       bodyConstanceDelivery[this.lsColumnaTot] = total;
 
-      console.log(bodyConstanceDelivery);
       //Actualiza la tabla de programacion entrega bienes
       const updated = await this.updateProgrammingDeliveryGood(
         bodyConstanceDelivery
@@ -763,7 +968,6 @@ export class DeliveriesConstancyFormComponent
         'YYYY-MM-DD'
       );
 
-      console.log(bodyConstanceGood);
       //Actualiza la tabla de certificado bienes
       const createConstGood = await this.createCertificateGood(
         bodyConstanceGood
@@ -777,17 +981,13 @@ export class DeliveriesConstancyFormComponent
       //}
 
       // Filtrar la lista para eliminar el objeto con el id correspondiente
-      this.personalEstateData = this.personalEstateData.filter(objeto => objeto.goodId !== this.goodSelected.goodId)
+      this.personalEstateData = this.personalEstateData.filter(
+        objeto => objeto.goodId !== this.goodSelected.goodId
+      );
       //});
     } else {
-      this.alert(
-        'warning',
-        'Advertencia',
-        'Favor de seleccionar un bien'
-      );
+      this.alert('warning', 'Advertencia', 'Favor de seleccionar un bien');
     }
-
-
   }
 }
 

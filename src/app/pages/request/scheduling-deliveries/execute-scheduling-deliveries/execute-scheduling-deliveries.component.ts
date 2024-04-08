@@ -386,7 +386,19 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   editConstancy() {
-    console.log(this.goodDeliveredSelected);
+    console.log('test', this.constanceSelected);
+    if (
+      this.constanceSelected == null ||
+      Object.keys(this.constanceSelected).length === 0
+    ) {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Es necesario seleccionar una constancia'
+      );
+      return;
+    }
+
     let config: ModalOptions = {
       initialState: {
         goods: this.goodDeliveredSelected,
@@ -812,23 +824,20 @@ export class ExecuteSchedulingDeliveriesComponent
       let colDestino = '';
       let lsColumna = null;
       let lsColumnaTot = '';
-      console.log()
+      console.log();
       if (executionType == 'entregados') {
         lsColumna = item.amountDelivered;
         colDestino = 'amountDelivered';
         lsColumnaTot = 'sunGoodEnt';
-
       } else {
         if (causa == 'NO ENTREGADOS') {
           lsColumna = item.amountNotDelivered;
           colDestino = 'amountNotDelivered';
           lsColumnaTot = 'sumGoodNoEnt';
-
         } else if (causa == 'NO ACEPTADOS') {
           lsColumna = item.anountNotAccelted;
           colDestino = 'anountNotAccelted';
           lsColumnaTot = 'sumGoodNoAce';
-
         } else {
           lsColumna = item.amountNotWhithdrawn;
           colDestino = 'amountNotWhithdrawn';
