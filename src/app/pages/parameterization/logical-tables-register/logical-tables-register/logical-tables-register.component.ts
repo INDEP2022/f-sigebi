@@ -109,7 +109,13 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
         //this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.columns = [];
+        this.totalItems = 0;
+        this.data.load([]);
+        this.data.refresh();
+        this.loading = false;
+      },
     });
   }
 
