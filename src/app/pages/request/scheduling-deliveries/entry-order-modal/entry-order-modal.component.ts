@@ -60,13 +60,8 @@ export class EntryOrderModalComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    /**
-     * Falta implementar el guardado
-     */
-    window.alert('Aun no se guarda la orde de ingreso');
     let orderEntry = this.form.getRawValue();
 
-    //itera programming delivery good
     this.goods.map(async (item: IProgrammingDeliveryGood) => {
       orderEntry.delegationRegionalId = item.delReg;
       const orderCreated: any = await this.createEntryOrder(orderEntry);
@@ -75,16 +70,25 @@ export class EntryOrderModalComponent extends BasePage implements OnInit {
         id: item.id,
         entryOrderDedId: orderCreated.id,
       };
-      //const goodUpdated = await this.updatedProgDeliveryGood(body);
+      const goodUpdated = await this.updatedProgDeliveryGood(body);
 
       const body2: any = {
         transactionId: item.id,
-        userCreation: this.auth.userCreation,
-        userModification: this.auth.userCreation,
+        userCreation: this.auth.username,
+        userModification: this.auth.username,
         creationDate: moment(new Date()).format('YYYY/MM/DD'),
         modificationDate: moment(new Date()).format('YYYY/MM/DD'),
       };
-      //const createOrdGood = await this.createGoodOrderEntry(body);
+      const createOrdGood = await this.createGoodOrderEntry(body2);
+
+      if (goodUpdated && createOrdGood) {
+        this.alert(
+          'success',
+          'Orden de ingreso creada correctamente',
+          'Se ha creado la orden de ingreso y se ha actualizado la programación de entrega'
+        );
+        this.close();
+      }
     });
   }
 
@@ -99,7 +103,6 @@ export class EntryOrderModalComponent extends BasePage implements OnInit {
           resolve(resp);
         },
         error: error => {
-          console.log(error);
           reject(error);
           this.onLoadToast('error', 'No se pudo crear la orden de ingreso');
         },
@@ -116,7 +119,6 @@ export class EntryOrderModalComponent extends BasePage implements OnInit {
             resolve(resp);
           },
           error: error => {
-            console.log(error);
             reject(error);
             this.onLoadToast('error', 'No se pudo actualizar la programación');
           },
@@ -131,7 +133,6 @@ export class EntryOrderModalComponent extends BasePage implements OnInit {
           resolve(resp);
         },
         error: error => {
-          console.log(error);
           reject(error);
           this.onLoadToast('error', 'No se pudo actualizar la order de bien');
         },
