@@ -37,14 +37,7 @@ export class OfficeFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.officeForm = this.fb.group({
       id: [null],
-      name: [
-        null,
-        [
-          Validators.required,
-          Validators.maxLength(80),
-          Validators.pattern(STRING_PATTERN),
-        ],
-      ],
+      name: [null, [Validators.required, Validators.maxLength(80)]],
       street: [
         null,
         [
@@ -138,6 +131,7 @@ export class OfficeFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
+    this.loading = true;
     this.edit ? this.update() : this.create();
   }
 
