@@ -18,6 +18,7 @@ import {
   IProceedings,
   IPufValidTerm,
   IPupMovDestruction,
+  IPupPrimaryClosureSus,
   IQueryRegAdminGood,
   ITmpCreateAuthoDestroy,
   ITmpUpdateMassive,
@@ -413,5 +414,9 @@ export class ProceedingsService extends HttpService {
 
   getAplicationValidaClave(body: any) {
     return this.post(`${ProceedingsEndpoints.AplicationValidaClave}`, body);
+  }
+
+  pupPrimayClosureSus(body: IPupPrimaryClosureSus) {
+    return this.post('aplication/pup-primary-closure', body);
   }
 }

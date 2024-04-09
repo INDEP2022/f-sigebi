@@ -6,6 +6,7 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { ILegalSupport } from '../../models/catalogs/legal-suport.model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -14,7 +15,7 @@ export class LegalSupportService implements ICrudMethods<ILegalSupport> {
   constructor(private legalSupportRepository: Repository<ILegalSupport>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<ILegalSupport>> {
-    return this.legalSupportRepository.getAll(this.route, params);
+    return this.legalSupportRepository.getAllPaginated(this.route, params);
   }
 
   getById(id: string | number): Observable<ILegalSupport> {

@@ -87,7 +87,7 @@
         <div [class]="loading ? 'table-loading' : ''">
           <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
             <ng2-smart-table
-              [attr.class]="'table-bordered'"
+              [attr.class]="'table-bordered table-responsive'"
               [settings]="settings"
               [source]="tableSource"
               (userRowSelect)="onRowSelect($event)"

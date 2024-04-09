@@ -55,7 +55,7 @@
               <div [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   class="col-md-12"
-                  [attr.class]="'table-bordered'"
+                  [attr.class]="'table-bordered table-responsive'"
                   [settings]="TABLE_SETTINGS"
                   [source]="dataTable"
                   (edit)="editData($event)"></ng2-smart-table>

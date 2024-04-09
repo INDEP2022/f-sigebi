@@ -15,15 +15,14 @@
         <div class="d-flex">
           <h5 class="mr-auto p-2">{{ btnSubTitle }}</h5>
           <div class="p-2">
-      
-              <confirm-button 
-                *ngIf="!process && !readOnly"
-                [text]="btnTitle" 
-                [loadingText]="'Cargando'" 
-                [loading]="loadSingnatures" 
-                [btnSmall]="true"
-                [icon]="'bx bx-edit-alt'" 
-                (confirm)="signReport()"></confirm-button>
+            <confirm-button
+              *ngIf="!process && !readOnly"
+              [text]="btnTitle"
+              [loadingText]="'Cargando'"
+              [loading]="loadSingnatures"
+              [btnSmall]="true"
+              [icon]="'bx bx-edit-alt'"
+              (confirm)="signReport()"></confirm-button>
 
             <button
               *ngIf="process == 'guard'"
@@ -93,7 +92,10 @@
             </button> -->
           </div>
           <div class="p-2">
-            <button *ngIf="!msjCheck" class="btn btn-primary btn-sm active" (click)="backStep()">
+            <button
+              *ngIf="!msjCheck"
+              class="btn btn-primary btn-sm active"
+              (click)="backStep()">
               <i class="bx bx-left-arrow-alt"></i> Paso Anterior
             </button>
           </div>
@@ -110,7 +112,7 @@
             <div class="table-responsive">
               <div [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
-                  [attr.class]="'table-bordered'"
+                  [attr.class]="'table-bordered table-responsive'"
                   [settings]="settings"
                   (edit)="uploadData($event.data)"
                   (userRowSelect)="rowsSelected($event)"
