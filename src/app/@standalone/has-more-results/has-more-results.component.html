@@ -4,10 +4,10 @@
   </div>
   <div body>
     <div class="row pt-4">
-      <div class="col-md-12">
+      <div class="col-md-12 table-responsive">
         <div [class]="isLoading ? 'table-loading' : ''" class="overflow-auto">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             (userRowSelect)="onClickSelect($event)"
             [source]="data">

@@ -31,7 +31,7 @@
           [track]="'all'"
           [ngStyle]="{ height: loading ? '0px' : '300px' }">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="comCalculate"
             (edit)="openForm1($event.data)"
@@ -108,7 +108,7 @@
               [track]="'all'"
               [ngStyle]="{ height: loading2 ? '0px' : '300px' }">
               <ng2-smart-table
-                [attr.class]="'table-bordered'"
+                [attr.class]="'table-bordered table-responsive'"
                 [settings]="settings2"
                 [source]="comCommisionXGood"
                 (edit)="openForm2($event.data)"
@@ -156,7 +156,7 @@
         <div class="row pt-3">
         <div [class]="loading ? 'table-loading' : ''">
           <div class="table-responsive">
-            <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings2" [source]="comerCommissionsList"
+            <ng2-smart-table [attr.class]="'table-bordered table-responsive'" [settings]="settings2" [source]="comerCommissionsList"
               (edit)="openForm2($event.data)">
             </ng2-smart-table>
           </div>
