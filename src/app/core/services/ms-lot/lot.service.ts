@@ -385,6 +385,20 @@ export class LotService extends HttpService {
     return this.post('apps/pup-imp-excel-lote', formData);
   }
 
+  impLotExcelI(body: {
+    file: File;
+    eventId: string;
+    eventType: string;
+    address: string;
+  }) {
+    const formData = new FormData();
+    formData.append('file', body.file);
+    formData.append('event', body.eventId);
+    formData.append('eventType', body.eventType);
+    formData.append('address', body.address);
+    return this.post('apps/pup-imp-excel-batches-customer', formData);
+  }
+
   // ------------------------
   PUP_ENTRA(body: any) {
     // PUP_ENTRA
@@ -463,6 +477,20 @@ export class LotService extends HttpService {
     formData.append('pClientId', body.pClientId as string);
     formData.append('pLotId', body.pLotId as string);
     return this.post('apps/pup-imp-excel-batches-customer', formData);
+  }
+
+  pupImpExcelBatchesCustomerI(body: {
+    file: File;
+    eventId: number | string;
+    eventType: string | number;
+    address: 'M' | 'I';
+  }) {
+    const formData = new FormData();
+    formData.append('file', body.file);
+    formData.append('eventId', body.eventId as string);
+    formData.append('address', 'I');
+    formData.append('eventType', body.eventType as string);
+    return this.post('apps/pup-imp-excel-lotes-cliente', formData);
   }
 
   loadGoodsBilling(body: {
