@@ -35,4 +35,8 @@ export const COLUMNS = {
     title: 'Codigo Postal',
     sort: false,
   },
+  idCity: {
+    title: 'Ciudad',
+    sort: false,
+  },
 };

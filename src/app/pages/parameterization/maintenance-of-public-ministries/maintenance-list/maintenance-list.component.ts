@@ -129,6 +129,7 @@ export class MaintenanceListComponent extends BasePage implements OnInit {
     };
     this.ministerService.getAll(params).subscribe({
       next: response => {
+        console.log(response);
         this.data.load(response.data);
         this.data.refresh();
         this.totalItems = response.count || 0;
