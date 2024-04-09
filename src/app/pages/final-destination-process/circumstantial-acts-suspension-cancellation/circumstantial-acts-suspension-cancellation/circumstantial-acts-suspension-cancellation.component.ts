@@ -46,6 +46,8 @@ import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/s
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 import { AllExpedientsModal } from '../all-expedientes-modal/all-expedients-modal.component';
+import { ExportDataModal } from '../export-data-modal/export-data-modal.component';
+import { ProceedingNVRModalComponent } from '../proceeding-nvr-modal/procceding-nvr-modal.component';
 import {
   FilterParams,
   ListParams,
@@ -88,6 +90,7 @@ export class CircumstantialActsSuspensionCancellationComponent
   implements OnInit
 {
   formBlkExpedient: FormGroup;
+  formSubject: FormGroup;
   form: FormGroup;
   formTable1: FormGroup;
   formTable2: FormGroup;
@@ -140,6 +143,16 @@ export class CircumstantialActsSuspensionCancellationComponent
     noExpedient: null,
   };
   dataIdent = new DefaultSelect(['DES', 'DEV', 'DON', 'RES', 'VEN', 'SUS']);
+  dataSubject = new DefaultSelect([
+    { value: 1, label: 'EL CLIENTE NO SE PRESENTÓ A LA ENTREGA.' },
+    {
+      value: 2,
+      label: 'EL CLIENTE SE PRESENTÓ PERO ESTÁ INCONFORME CON LOS BIENES.',
+    },
+    { value: 3, label: 'LA MERCANCÍA NO ESTÁ COMPLETA EN ALMACÉN PROPIO.' },
+    { value: 4, label: 'LA MERCANCÍA NO ESTÁ COMPLETA EN ALMACÉN DE TERCERO.' },
+    { value: 5, label: 'CANCELACIÓN POR SOLICITUD DE AUTORIDAD.' },
+  ]);
   dataAuthority = new DefaultSelect();
   dataDelegation = new DefaultSelect();
 
@@ -150,6 +163,8 @@ export class CircumstantialActsSuspensionCancellationComponent
   maxDate = new Date();
   status_time: string = null;
   type_proceeding: string = null;
+
+  numberProccedings: string = null;
 
   get username() {
     return this.authService.decodeToken().username;
@@ -518,6 +533,9 @@ export class CircumstantialActsSuspensionCancellationComponent
     this.formTable2 = this.fb.group({
       detail: [null],
     });
+    this.formSubject = this.fb.group({
+      subject: [null],
+    });
   }
 
   onSubmit() {}
@@ -754,7 +772,10 @@ export class CircumstantialActsSuspensionCancellationComponent
       return;
     }
 
-    if (typeProceding == 'S/VEN' && this.formTag.get('tag').value == null) {
+    if (
+      typeProceding == 'S/VEN' &&
+      this.formSubject.get('subject').value == null
+    ) {
       this.alert(
         'warning',
         'No se puede cerrar el acta',
@@ -1339,6 +1360,7 @@ export class CircumstantialActsSuspensionCancellationComponent
     this.expediente = this.formBlkExpedient.get('noExpedient').value;
     const params: ListParams = {};
     params['filter.id'] = `$eq:${this.expediente}`;
+
     this.expedientService.getAll(params).subscribe({
       next: resp => {
         console.log(resp);
@@ -1367,7 +1389,14 @@ export class CircumstantialActsSuspensionCancellationComponent
   relationsExpedient() {
     this.getGoods();
     this.loading = false;
-    this.proceedingsDetailDel.getProceeding2(this.expediente).subscribe(
+
+    const paramsF = new FilterParams();
+    paramsF.addFilter('numFile', this.expediente);
+    if (this.numberProccedings != null) {
+      paramsF.addFilter('id', this.numberProccedings);
+    }
+
+    this.proceedingsDetailDel.getProceeding2All(paramsF.getParams()).subscribe(
       response => {
         console.log(response);
 
@@ -1430,9 +1459,11 @@ export class CircumstantialActsSuspensionCancellationComponent
         }
         //TODO
         console.log('numero de acta: ' + response.data[0].id);
+        this.numberProccedings = null;
         this.getDetailProceedingsDevolution(response.data[0].id);
       },
       error => {
+        this.numberProccedings = null;
         this.alert(
           'error',
           this.title,
@@ -1547,6 +1578,10 @@ export class CircumstantialActsSuspensionCancellationComponent
         title: 'Lista general de actas',
         callback: (data: any) => {
           console.log(data);
+          this.expediente = data.numFile;
+          this.formBlkExpedient.get('noExpedient').setValue(data.numFile);
+          this.numberProccedings = data.id;
+          this.search();
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -1554,6 +1589,46 @@ export class CircumstantialActsSuspensionCancellationComponent
     };
 
     this.modalService.show(AllExpedientsModal, modalConfig);
+  }
+
+  exportDataModal() {
+    if (
+      this.formBlkExpedient.get('noExpedient').value != null &&
+      this.form.get('act').value != null &&
+      this.form.get('statusAct').value != null
+    ) {
+      let modalConfig = MODAL_CONFIG;
+      modalConfig = {
+        initialState: {
+          callback: (data: any) => {},
+        },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+
+      this.modalService.show(ExportDataModal, modalConfig);
+    } else {
+      this.alert('warning', 'Necesitas un número de expediente con actas', '');
+    }
+  }
+
+  nvrProceedingModal() {
+    if (
+      !['CERRADO', 'CERRADA', null].includes(this.form.get('statusAct').value)
+    ) {
+      let modalConfig = MODAL_CONFIG;
+      modalConfig = {
+        initialState: {
+          callback: (data: any) => {},
+        },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+
+      this.modalService.show(ProceedingNVRModalComponent, modalConfig);
+    } else {
+      this.alert('warning', 'El acta no cuenta con un estado válido', '');
+    }
   }
 
   listProceedingByExpedient() {
@@ -1571,6 +1646,10 @@ export class CircumstantialActsSuspensionCancellationComponent
         title: 'Lista de actas del expediente ' + expedient,
         callback: (data: any) => {
           console.log(data);
+          this.expediente = data.numFile;
+          this.formBlkExpedient.get('noExpedient').setValue(data.numFile);
+          this.numberProccedings = data.id;
+          this.search();
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -1677,7 +1756,7 @@ export class CircumstantialActsSuspensionCancellationComponent
           'Fecha de elaboración inválida',
           'El acta no puede ser registrada por encontrarse fuera de las políticas de registro de actas de recepción física.'
         );
-        this.form.get('elabDate').reset();
+        // this.form.get('elabDate').reset();
         return;
       }
 

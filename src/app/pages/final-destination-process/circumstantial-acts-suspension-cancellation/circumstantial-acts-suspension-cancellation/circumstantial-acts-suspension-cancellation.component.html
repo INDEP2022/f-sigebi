@@ -370,6 +370,18 @@
             <i aria-hidden="true" class="fa fa-save"></i>
           </button>
           <button
+            *ngIf="['ABIERTA', 'ABIERTO'].includes(form.get('statusAct').value)"
+            type="button"
+            (click)="nvrProceedingModal()"
+            class="btn btn-primary btn-sm active mr-3">
+            Crear acta VNR
+          </button>
+          <button
+            *ngIf="
+              ['ABIERTA', 'ABIERTO', 'CERRADO', 'CERRADA'].includes(
+                form.get('statusAct').value
+              )
+            "
             class="btn btn-primary btn-sm active mr-3"
             (click)="actButton()">
             {{ textButtonAct }}
@@ -383,7 +395,9 @@
             Agregar Bienes <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
           <button
-            [disabled]="form.get('statusAct').value == null"
+            [disabled]="
+              ['CERRADO', 'CERRADA', null].includes(form.get('statusAct').value)
+            "
             (click)="deleteProceeding()"
             class="btn btn-red btn-sm active">
             Eliminar Acta <i class="fa fa-trash" aria-hidden="true"></i>
@@ -523,6 +537,33 @@
             {{ status_time }}
           </h5>
         </div>
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="col-md-6">
+        <form class="form-material" [formGroup]="formSubject">
+          <form-field [control]="formSubject.get('subject')">
+            <ngx-select
+              [data]="dataSubject"
+              [form]="formSubject"
+              [searchable]="false"
+              bindLabel="label"
+              label="Asunto"
+              control="subject">
+            </ngx-select>
+          </form-field>
+        </form>
+      </div>
+      <div class="col">
+        <button class="btn btn-primary active btn-sm mr-3">
+          Validar bienees
+        </button>
+        <button
+          class="btn btn-sm btn-success active"
+          (click)="exportDataModal()">
+          Exportar datos
+          <i class="bx bx-download float-icon"></i>
+        </button>
       </div>
     </div>
   </div>
