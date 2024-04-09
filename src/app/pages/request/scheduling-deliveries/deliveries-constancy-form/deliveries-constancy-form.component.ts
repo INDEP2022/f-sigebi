@@ -577,6 +577,12 @@ export class DeliveriesConstancyFormComponent
         resp.data.map(async (item: any) => {
           let body: any = {};
           body.goodId = item.goodId;
+          console.log(item)
+          const delGoodId: any = await this.getGoodId(item.goodId)
+          console.log(delGoodId)
+          body.id = delGoodId.id;
+          body.transactionId = delGoodId.transactionId;
+          body.siabGoodNumber = delGoodId.siabGoodNumber;
           body[this.lsColumna] = item.quantity;
           const descrip = await this.getGood(item.goodId);
           body.descriptionGood = descrip;
@@ -596,6 +602,18 @@ export class DeliveriesConstancyFormComponent
       this.programmingGoodService.getProgrammingDeliveryGood(params).subscribe({
         next: (resp: any) => {
           resolve(resp.data[0].descriptionGood);
+        },
+      });
+    });
+  }
+  getGoodId(id: number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.goodId'] = `$eq:${id}`;
+      this.programmingGoodService.getProgrammingDeliveryGood(params).subscribe({
+        next: (resp: any) => {
+          console.log(resp.data[0])
+          resolve(resp.data[0]);
         },
       });
     });
@@ -910,6 +928,8 @@ export class DeliveriesConstancyFormComponent
       return;
     }
     this.goodSelected = event.data;
+    console.log(this.goodSelected)
+    console.log(this.typeConstancy)
   }
   async separate() {
     if (this.goodSelected && Object.keys(this.goodSelected).length > 0) {
@@ -948,7 +968,7 @@ export class DeliveriesConstancyFormComponent
       bodyConstanceDelivery['id'] = this.goodSelected.id;
       bodyConstanceDelivery['goodId'] = this.goodSelected.goodId;
       bodyConstanceDelivery[this.lsColumnaTot] = total;
-
+      console.log(bodyConstanceDelivery);
       //Actualiza la tabla de programacion entrega bienes
       const updated = await this.updateProgrammingDeliveryGood(
         bodyConstanceDelivery
