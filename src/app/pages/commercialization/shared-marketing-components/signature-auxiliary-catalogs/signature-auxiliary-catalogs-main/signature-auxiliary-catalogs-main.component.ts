@@ -569,9 +569,14 @@ export class SignatureAuxiliaryCatalogsMainComponent
         .getParameterMod(params)
         .subscribe({
           next: res => {
-            resolve(
-              documentStatus + ' - ' + res.data[0]['descriptionparameter']
-            );
+            console.log(res);
+            if (res.data.length > 0) {
+              resolve(
+                documentStatus + ' - ' + res.data[0]['descriptionparameter']
+              );
+            } else {
+              resolve(documentStatus + ' - ' + 'Verificar');
+            }
           },
           error: error => {
             resolve(documentStatus + ' - ' + 'Verificar');
