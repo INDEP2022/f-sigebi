@@ -32,12 +32,16 @@ export class ProceedingSusPcancelService extends HttpService {
   postQuery(body: IPostQueryGoodFACTCIRCUN_0001) {
     return this.post('application/process-factcircun', body);
   }
+
+  deleteProceeding(proceding: string) {
+    return this.delete(`application/pupDelDeliveryCertificate/${proceding}`);
+  }
 }
 
 export interface IPostQueryGoodFACTCIRCUN_0001 {
   elaborationDate: Date | null;
-  delegationNumber: number;
-  subdelegationNumber: number;
+  delegationNumber: string;
+  subdelegationNumber: string;
   goodNumber: number;
   proceedingsNumber: number;
   status: string;

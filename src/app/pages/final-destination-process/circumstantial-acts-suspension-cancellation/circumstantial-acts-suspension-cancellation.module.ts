@@ -7,6 +7,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { AllExpedientsModal } from './all-expedientes-modal/all-expedients-modal.component';
 import { CircumstantialActsSuspensionCancellationRoutingModule } from './circumstantial-acts-suspension-cancellation-routing.module';
 import { CircumstantialActsSuspensionCancellationComponent } from './circumstantial-acts-suspension-cancellation/circumstantial-acts-suspension-cancellation.component';
+import { ExportDataModal } from './export-data-modal/export-data-modal.component';
+import { ProceedingNVRModalComponent } from './proceeding-nvr-modal/procceding-nvr-modal.component';
 import { ReceptionDeliveryComponent } from './reception-delivery/reception-delivery.component';
 
 @NgModule({
@@ -14,6 +16,8 @@ import { ReceptionDeliveryComponent } from './reception-delivery/reception-deliv
     CircumstantialActsSuspensionCancellationComponent,
     ReceptionDeliveryComponent,
     AllExpedientsModal,
+    ExportDataModal,
+    ProceedingNVRModalComponent,
   ],
   imports: [
     CommonModule,

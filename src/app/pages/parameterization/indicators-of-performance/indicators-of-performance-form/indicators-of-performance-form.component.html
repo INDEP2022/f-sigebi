@@ -53,6 +53,7 @@
               type="text"
               formControlName="initialDate"
               class="form-control"
+              [ngClass]="{ 'not-press bg-gray': edit }"
               [bsConfig]="{
                 dateInputFormat: 'YYYY-MM-DD',
                 displayOneMonthRange: true

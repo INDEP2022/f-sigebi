@@ -170,7 +170,12 @@ export class CatTransferentModalComponent extends BasePage implements OnInit {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.modalRef.content.callback(true);
+    if (this.edit) {
+      this.modalRef.content.callback(true);
+    } else {
+      this.modalRef.content.callback(false);
+    }
+
     this.modalRef.hide();
   }
 }

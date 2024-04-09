@@ -35,11 +35,12 @@
             <tab heading="NO MANIFESTADOS">
               <app-fiel-set-unstated
                 [content]="contentData"
-                (loadData)="getAllGoodTypes()"></app-fiel-set-unstated>
+                (loadData)="loadData()"></app-fiel-set-unstated>
             </tab>
             <tab heading="NO RECOGIDOS">
               <app-fiel-set-uncollected
-                [content]="contentData"></app-fiel-set-uncollected>
+                [content]="contentData"
+                (loadData)="loadData()"></app-fiel-set-uncollected>
             </tab>
           </tabset>
         </div>

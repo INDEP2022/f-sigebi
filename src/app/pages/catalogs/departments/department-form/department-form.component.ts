@@ -147,7 +147,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
   }
 
   getDelegations(params: ListParams) {
-    this.departmentService.getDelegationsCatalog(params).subscribe({
+    this.departmentService.getAll_(params).subscribe({
       next: data => {
         this.delegations = new DefaultSelect(data.data, data.count);
       },
@@ -160,7 +160,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
 
   getDelegationsId(params: ListParams, id: any) {
     params['filter.id'] = `$eq:${id}`;
-    this.departmentService.getDelegationsCatalog(params).subscribe({
+    this.departmentService.getAll_(params).subscribe({
       next: data => {
         this.delegations = new DefaultSelect(data.data, data.count);
         console.log('consola 3', data.data);

@@ -154,7 +154,34 @@ export class CourtListComponent extends BasePage implements OnInit {
             });
           }
         },
-        error: error => this.onLoadToast('error', error.error.message, ''),
+        error: error => {
+          // this.onLoadToast('error', error.error.message, '')
+          this.alertQuestion(
+            'warning',
+            'Eliminar',
+            '¿Desea eliminar este registro?'
+          ).then(question => {
+            if (question.isConfirmed) {
+              this.courtService.remove(id).subscribe({
+                next: () => {
+                  this.alert(
+                    'success',
+                    'Registro de Juzgado',
+                    'Borrado Correctamente'
+                  );
+                  this.getCourts();
+                },
+                error: err => {
+                  this.alert(
+                    'warning',
+                    'Juzgado con Ciudades',
+                    'No se puede eliminar el objeto debido a una relación con otra tabla.'
+                  );
+                },
+              });
+            }
+          });
+        },
       });
   }
 

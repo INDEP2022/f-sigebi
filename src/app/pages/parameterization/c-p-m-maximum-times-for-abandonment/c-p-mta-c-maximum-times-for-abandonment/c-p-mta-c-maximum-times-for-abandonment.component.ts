@@ -32,7 +32,7 @@ export class CPMtaCMaximumTimesForAbandonmentComponent
   dataTable: LocalDataSource = new LocalDataSource();
   dataTable1: LocalDataSource = new LocalDataSource();
   rowSelected: boolean = false;
-  selectedItem: any = null;
+  selectedItem: IGoodType;
   constructor(
     private modalService: BsModalService,
     private goodTypeServ: GoodTypeService,
@@ -141,27 +141,10 @@ export class CPMtaCMaximumTimesForAbandonmentComponent
       ...this.columnFilters,
     };
     this.goodTypeServicio.getAll(params).subscribe({
-      /*next: (resp: any) => {
-        if (resp.data) {
-          resp.data.forEach((item: any) => {
-            this.data.push({
-              nameGoodType: item.nameGoodType,
-              id: item.id,
-            });
-            this.dataTable.load(resp.data);
-            this.dataTable.refresh();
-            //this.contentData = resp;
-            this.totalItems = resp.count || 0;
-
-            console.log(resp);
-          });
-        }
-      },*/
       next: response => {
         console.log(response);
         this.dataTable.load(response.data);
         this.dataTable.refresh();
-        //this.contentData = response;
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -175,10 +158,10 @@ export class CPMtaCMaximumTimesForAbandonmentComponent
   }
 
   selectRow(event: any) {
-    //this.contentData = event;
+    this.selectedItem = event;
     if (event) {
       console.log(event, this.contentData);
-      this.getAllGoodTypesFilter(event.id);
+      this.getAllGoodTypesFilter(this.selectedItem.id);
       this.rowSelected = true;
     } else {
       this.getAllGoodTypesFilter(0);
@@ -218,5 +201,9 @@ export class CPMtaCMaximumTimesForAbandonmentComponent
         this.totalItems1 = 0;
       },
     });
+  }
+  loadData() {
+    this.getAllGoodTypes();
+    this.getAllGoodTypesFilter(this.selectedItem.id);
   }
 }

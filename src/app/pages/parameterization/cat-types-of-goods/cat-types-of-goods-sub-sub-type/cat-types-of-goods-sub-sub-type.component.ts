@@ -90,12 +90,16 @@ export class CatTypesOfGoodsSubSubTypeComponent
       this.loading = false;
       return;
     } else {
-      this.goodSsubtypeService
-        .create(this.typeGoodsForm.getRawValue())
-        .subscribe({
-          next: data => this.handleSuccess(),
-          error: error => (this.loading = false),
-        });
+      let data = {
+        noSubType: this.typeGoodsForm.controls['noSubType'].value,
+        noType: this.typeGoodsForm.controls['noType'].value,
+        description: this.typeGoodsForm.controls['description'].value,
+        noRegister: null,
+      };
+      this.goodSsubtypeService.create(data).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
     }
   }
   handleSuccess() {

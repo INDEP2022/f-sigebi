@@ -52,6 +52,7 @@ export class AccountBanksSharedComponent extends BasePage implements OnInit {
       if (data) {
         this.service.getById({ accountNumber: data }).subscribe({
           next: resp => {
+            console.log(data);
             this.banks = new DefaultSelect([resp], 1);
             this.properties.next(resp);
           },

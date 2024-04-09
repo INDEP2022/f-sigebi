@@ -21,5 +21,8 @@ export const THIRDPARTYCOMPANY_COLUMS = {
     valuePrepareFunction: (value: any) => {
       return value != null ? value.description : '';
     },
+    filterFunction: () => {
+      return true;
+    },
   },
 };
