@@ -29,7 +29,7 @@ export class TranportableGoodsFormComponent extends BasePage implements OnInit {
       columns: SERVICE_ORDER_COLUMNS,
       edit: {
         editButtonContent: '<i class="bx bxs-file-doc"></i> Ver ',
-      }
+      },
 
     };
 
