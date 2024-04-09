@@ -25,6 +25,6 @@ export class TypesOfClaimsService {
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.claimsRepository.newRemove(this.route, id);
+    return this.claimsRepository.remove(this.route, id);
   }
 }

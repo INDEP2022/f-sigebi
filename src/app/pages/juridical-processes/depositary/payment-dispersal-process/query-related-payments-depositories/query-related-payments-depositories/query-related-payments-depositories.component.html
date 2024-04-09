@@ -449,7 +449,7 @@
         style="max-height: 500px; overflow-y: scroll">
         <div [class]="loadingTablePayBanks ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="tableSettingsPagosBanco"
             [source]="dataPagosBanco"
             (userRowSelect)="selectRow($event, $event.data)"></ng2-smart-table>
@@ -489,7 +489,7 @@
         style="max-height: 500px; overflow-y: scroll">
         <div [class]="loadingTableReceivedPays ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="tableSettingsPagosRecibidos"
             [source]="dataPagosRecibidos"></ng2-smart-table>
         </div>

@@ -37,10 +37,14 @@ export class LegalSupportFormComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
     });
+    console.log(this.legalSupport);
     if (this.legalSupport != null) {
       this.edit = true;
       this.legalSupportForm.patchValue(this.legalSupport);
-      //this.legalSupportForm.get('id').disable();
+      this.legalSupportForm.controls['doctoTypeId'].setValue(
+        this.legalSupport.doctoTypeId.id
+      );
+      this.legalSupportForm.get('doctoTypeId').disable();
     }
   }
   close() {
@@ -65,7 +69,7 @@ export class LegalSupportFormComponent extends BasePage implements OnInit {
     this.loading = true;
     this.legalSupportService
       .update(
-        this.legalSupport.doctoTypeId,
+        this.legalSupport.doctoTypeId.id,
         this.legalSupportForm.getRawValue()
       )
       .subscribe({

@@ -23,7 +23,7 @@
       <div class="table-responsive">
         <div [class]="loading1 ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="data"
             (edit)="openForm2($event.data)"
@@ -57,7 +57,7 @@
         <div class="table-responsive">
           <div [class]="loading2 ? 'table-loading' : ''">
             <ng2-smart-table
-              [attr.class]="'table-bordered'"
+              [attr.class]="'table-bordered table-responsive'"
               [settings]="settings2"
               [source]="affairTypeList"
               (delete)="showDeleteAlert2($event.data)"
