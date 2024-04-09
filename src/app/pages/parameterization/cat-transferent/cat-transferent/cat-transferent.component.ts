@@ -169,7 +169,13 @@ export class CatTransferentComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading1 = false;
       },
-      error: error => (this.loading1 = false),
+      error: error => {
+        this.columns = [];
+        this.totalItems = 0;
+        this.data.load([]);
+        this.data.refresh();
+        this.loading1 = false;
+      },
     });
   }
 
@@ -179,7 +185,13 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     modalConfig.initialState = {
       transferent,
       callback: (next: boolean) => {
-        if (next) this.getTransferents();
+        if (next) {
+          this.getTransferents();
+        } else {
+          this.getTransferents();
+          this.transferents = null;
+          this.getStationByTransferent1();
+        }
       },
     };
     this.modalService.show(CatTransferentModalComponent, modalConfig);
@@ -282,7 +294,13 @@ export class CatTransferentComponent extends BasePage implements OnInit {
         this.data1.refresh();
         this.loading2 = false;
       },
-      error: error => (this.loading2 = false),
+      error: error => {
+        this.stationList = [];
+        this.totalItems2 = 0;
+        this.data1.load([]);
+        this.data1.refresh();
+        this.loading2 = false;
+      },
     });
   }
 
