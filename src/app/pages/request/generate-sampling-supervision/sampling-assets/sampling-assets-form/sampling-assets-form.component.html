@@ -350,7 +350,7 @@
           <div class="row pt-1">
             <div [class]="loadingGoods ? 'table-loading' : ''">
               <ng2-smart-table
-                [attr.class]="'table-bordered'"
+                [attr.class]="'table-bordered table-responsive'"
                 [settings]="settings3"
                 [source]="paragraphs3"
                 (edit)="editResultEvaluation($event.data)"

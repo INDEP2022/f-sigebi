@@ -274,8 +274,13 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
     if (id) {
       params['filter.state'] = `$eq:${id}`;
     }
-    this.cityService.getAllCitys(params).subscribe(data => {
-      this.cities = new DefaultSelect(data.data, data.count);
+    this.cityService.getAllCitys(params).subscribe({
+      next: data => {
+        this.cities = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.cities = new DefaultSelect([], 0);
+      },
     });
   }
   getMunicipalitie(data: any) {
@@ -306,13 +311,24 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
     if (id) {
       params['filter.stateKey'] = `$eq:${id}`;
     }*/
-    this.localityService.getAll(params).subscribe(data => {
-      this.localities = new DefaultSelect(data.data, data.count);
+    this.localityService.getAll(params).subscribe({
+      next: data => {
+        this.localities = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.localities = new DefaultSelect([], 0);
+      },
     });
   }
   getResponsibleDelegation(params: ListParams) {
-    this.warehouseService.getAllDelegation(params).subscribe(data => {
-      this.responsibleDelegation = new DefaultSelect(data.data, data.count);
+    if (params?.text) params['filter.description'] = `$ilike:${params?.text}`;
+    this.warehouseService.getAllDelegation(params).subscribe({
+      next: data => {
+        this.responsibleDelegation = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.responsibleDelegation = new DefaultSelect([], 0);
+      },
     });
   }
   getType(params: ListParams, id?: string) {
@@ -320,16 +336,26 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
     if (id) {
       params['filter.otkey'] = `$eq:${id}`;
     }
-    this.tvalTable1Service.getAlls(params).subscribe(data => {
-      this.type = new DefaultSelect(data.data, data.count);
+    this.tvalTable1Service.getAlls(params).subscribe({
+      next: data => {
+        this.type = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.type = new DefaultSelect([], 0);
+      },
     });
   }
   getUser(params: ListParams, user?: string) {
     if (user) {
       params['filter.user'] = `$eq:${user}`;
     }
-    this.securityService.getAllUsersTracker(params).subscribe(data => {
-      this.user = new DefaultSelect(data.data, data.count);
+    this.securityService.getAllUsersTracker(params).subscribe({
+      next: data => {
+        this.user = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.user = new DefaultSelect([], 0);
+      },
     });
   }
 }

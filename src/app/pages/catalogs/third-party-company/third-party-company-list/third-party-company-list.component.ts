@@ -49,20 +49,21 @@ export class ThirdPartyCompanyListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
-            switch (filters.field) {
-              case 'id':
+            console.log(field);
+            switch (field) {
+              case 'filter.id':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'keyCompany':
+              case 'filter.keyCompany':
                 searchFilter = SearchFilter.EQ;
 
                 break;
-              case 'keyZoneContract':
+              case 'filter.keyZoneContract':
                 searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}`;
+                // field = `keyZoneContract`;
                 break;
               default:
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
             }
             console.log(field);
@@ -89,6 +90,11 @@ export class ThirdPartyCompanyListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    if (params['filter.keyZoneContract']) {
+      params['filter.ZoneContract.description'] =
+        params['filter.keyZoneContract'];
+      delete params['filter.keyZoneContract'];
+    }
     this.thirdPartyCompanyService.getAll(params).subscribe({
       next: response => {
         this.thirdPartyCompany = response.data;

@@ -57,7 +57,7 @@ export class OriginListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'idTransferer':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'idCity':
                 field = `filter.${filter.field}.nameCity`;
@@ -111,7 +111,12 @@ export class OriginListComponent extends BasePage implements OnInit {
           this.loading = false;
         }
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+        this.loading = false;
+      },
     });
   }
 

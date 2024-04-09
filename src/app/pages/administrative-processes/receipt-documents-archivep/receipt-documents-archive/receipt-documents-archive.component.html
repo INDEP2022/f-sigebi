@@ -16,7 +16,7 @@
             <div class="col-md-12 table-responsive">
               <div [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
-                  [attr.class]="'table-bordered'"
+                  [attr.class]="'table-bordered table-responsive'"
                   [settings]="settings"
                   (userRowSelect)="select($event.data)"
                   [source]="dataFactGen">
@@ -62,7 +62,7 @@
             <div class="col-md-12 table-responsive">
               <div [class]="loadingRecib ? 'table-loading' : ''">
                 <ng2-smart-table
-                  [attr.class]="'table-bordered'"
+                  [attr.class]="'table-bordered table-responsive'"
                   [settings]="settingsRecib"
                   (userRowSelect)="selectRecib($event.data)"
                   [source]="dataRecib">

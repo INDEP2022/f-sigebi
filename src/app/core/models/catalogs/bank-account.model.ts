@@ -11,6 +11,7 @@ export interface IBankAccount {
   cveInterestCalcRate?: any;
   cveBank: string;
   isReference?: any;
+  banco?: any;
 }
 
 export interface IAccountBank {

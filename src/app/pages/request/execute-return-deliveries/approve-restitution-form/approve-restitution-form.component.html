@@ -89,7 +89,7 @@
           <app-columns-select [(settings)]="settings"></app-columns-select>
         </div>
         <ng2-smart-table
-          [attr.class]="'table-bordered'"
+          [attr.class]="'table-bordered table-responsive'"
           [settings]="settings"
           [source]="paragraphs"
           (rowSelect)="selectItem($event)">

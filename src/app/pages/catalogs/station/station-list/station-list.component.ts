@@ -50,7 +50,7 @@ export class StationListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'transferent':
+              case 'transferentRe':
                 searchFilter = SearchFilter.ILIKE;
                 field = `filter.${filter.field}.nameTransferent`;
                 break;

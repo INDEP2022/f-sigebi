@@ -12,7 +12,7 @@
               <div class="tr-text" [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   id="trackRecordsTable"
-                  [attr.class]="'table-bordered'"
+                  [attr.class]="'table-bordered table-responsive'"
                   [settings]="trackRecordSettings"
                   [source]="trackRecords"
                   (rowSelect)="selectRow($event)"
@@ -55,7 +55,7 @@
                 [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   id="goodsTable"
-                  [attr.class]="'table-bordered'"
+                  [attr.class]="'table-bordered table-responsive'"
                   [settings]="goodSettings"
                   [source]="goodColumns"
                   (rowSelect)="selectGood($event)"

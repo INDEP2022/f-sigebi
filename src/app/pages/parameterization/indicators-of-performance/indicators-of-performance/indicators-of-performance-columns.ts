@@ -97,11 +97,55 @@ export const INDICATORSPERFORMANCE_COLUMNS = {
     title: 'Fecha Ind. Page',
     //width: '20%',
     sort: false,
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Todos',
+        list: [
+          { value: 'FRECEPCION', title: 'Fec. Recepción/Escaneo' },
+          { value: 'FINICIA', title: 'Fecha de Inicio' },
+        ],
+      },
+    },
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.initialDDate == 'FRECEPCION') {
+        return 'Fec. Recepción/Escaneo';
+      } else if (row.initialDDate == 'FINICIA') {
+        return 'Fecha de Inicio';
+      } else {
+        return row.initialDDate;
+      }
+    },
+    filterFunction: () => {
+      return true;
+    },
   },
   endDDate: {
     title: 'Fecha Ind.Término',
     //width: '20%',
     sort: false,
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Todos',
+        list: [
+          { value: 'FFINALIZA', title: 'Fec. Término/Desahogo' },
+          { value: 'FESCANEO', title: 'Fecha de Inicio' },
+        ],
+      },
+    },
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.endDDate == 'FFINALIZA') {
+        return 'Fec. Término/Desahogo';
+      } else if (row.endDDate == 'FESCANEO') {
+        return 'Fecha de Escaneo';
+      } else {
+        return row.endDDate;
+      }
+    },
+    filterFunction: () => {
+      return true;
+    },
   },
   endDate: {
     title: 'Fin',

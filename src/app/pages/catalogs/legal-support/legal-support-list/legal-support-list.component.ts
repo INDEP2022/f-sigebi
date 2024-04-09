@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
 import { LocalDataSource } from 'ng2-smart-table';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
@@ -103,17 +104,15 @@ export class LegalSupportListComponent extends BasePage implements OnInit {
   }
 
   openForm(legalSupport?: ILegalSupport) {
-    let config: ModalOptions = {
-      initialState: {
-        legalSupport,
-        callback: (next: boolean) => {
-          if (next) this.getExample();
-        },
+    console.log(legalSupport);
+    const modalConfig = MODAL_CONFIG;
+    (modalConfig.initialState = {
+      legalSupport,
+      callback: (next: boolean) => {
+        if (next) this.getExample();
       },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(LegalSupportFormComponent, config);
+    }),
+      this.modalService.show(LegalSupportFormComponent, modalConfig);
   }
 
   delete(legalSupport: ILegalSupport) {
