@@ -123,7 +123,7 @@ export class LegalSupportListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.remove(legalSupport.doctoTypeId);
+        this.remove(legalSupport.doctoTypeId.id);
       }
     });
   }
