@@ -18,24 +18,14 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import {
   SERVICE_TRANSPORTABLE_COLUMNS,
   SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE,
+  SERVICE_TRANSPORTABLE_COLUMNS_READONLY,
 } from '../../reception-scheduling-service-order/columns/service-transportable-columns';
 import { CreateManualServiceFormComponent } from '../../reception-scheduling-service-order/components/create-manual-service-form/create-manual-service-form.component';
 import { CreateServiceFormComponent } from '../../reception-scheduling-service-order/components/create-service-form/create-service-form.component';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
-const testData = [
-  {
-    description: 'MANIOBRAS(UN MNIOBRISTA POR HORA)',
-    andmidserv: 'Servicio (Hora)',
-    classificationService: 'Equipo y Maniobra',
-    commentService: 'COMENTARIO',
-    durationTime: '',
-    resourcesNumber: '',
-    resourcesReal: '',
-    priceUnitary: '$217.81',
-    total: '$217.81',
-  },
-];
 @Component({
   selector: 'app-service-transportable-goods-form',
   templateUrl: './service-transportable-goods-form.component.html',
@@ -52,6 +42,7 @@ export class ServiceTransportableGoodsFormComponent
   @Input() isUpdate?: boolean = false;
   @Input() typeOrder?: string = null;
   @Input() justificationRefused: boolean = false;
+  @Input() typeTable: string = '';
   title: string = '';
   showButtonServiceManual: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -62,6 +53,7 @@ export class ServiceTransportableGoodsFormComponent
   columns: any;
   data: any[] = [];
   @Output() totEvent: EventEmitter<string> = new EventEmitter();
+  totalAmount: string = '0.00';
 
   private orderEntryService = inject(orderentryService);
   private requestHelperService = inject(RequestHelperService);
@@ -71,6 +63,18 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   ngOnInit(): void {
+    this.configTable();
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      //verificar si existe el order service id
+      if (this.orderServiceId != null) {
+        this.getOrderServiceProvided();
+      }
+    });
+  }
+
+  configTable() {
+
     this.getOrderServiceProvided();
     if (
       this.op != 1 &&
@@ -83,16 +87,61 @@ export class ServiceTransportableGoodsFormComponent
     ) {
       this.columns = SERVICE_TRANSPORTABLE_COLUMNS;
       this.settings = {
-        ...this.settings,
+        ...TABLE_SETTINGS,
         actions: false,
-        selectMode: '',
-        columns: SERVICE_TRANSPORTABLE_COLUMNS,
+        selectMode: this.typeTable,
+        columns: this.columns,
       };
 
       this.titleTab();
       this.showButtonServiceManual = true;
 
-      this.columns.selected = {
+      this.columns.resourcesReal = {
+        ...this.columns.resourcesReal,
+        onComponentInitFunction: (instance?: any) => {
+          instance.input.subscribe((data: any) => {
+            //this.setResourcesReal(data);
+          });
+        },
+      };
+
+      this.columns.descriptionDifference = {
+        ...this.columns.descriptionDifference,
+        onComponentInitFunction: (instance?: any) => {
+          instance.input.subscribe((data: any) => {
+            //this.setDescriptionDifference(data);
+          });
+        },
+      };
+
+      this.columns.resultAssessment = {
+        ...this.columns.resultAssessment,
+        onComponentInitFunction: (instance?: any) => {
+          instance.input.subscribe((data: any) => {
+            //this.setResulAssessment(data);
+          });
+        },
+      };
+
+      this.columns.amountNumbercomplies = {
+        ...this.columns.amountNumbercomplies,
+        onComponentInitFunction: (instance?: any) => {
+          instance.input.subscribe((data: any) => {
+            //this.setAmountNumbercomplies(data);
+          });
+        },
+      };
+
+      this.columns.porcbreaches = {
+        ...this.columns.porcbreaches,
+        onComponentInitFunction: (instance?: any) => {
+          instance.input.subscribe((data: any) => {
+            //this.setPorcbreaches(data);
+          });
+        },
+      };
+
+      /*this.columns.selected = {
         ...this.columns.selected,
         onComponentInitFunction: (instance?: any) => {
           console.log('instance', instance);
@@ -102,86 +151,9 @@ export class ServiceTransportableGoodsFormComponent
             this.orderSelected(data)
           });
         },
-      };
+      };*/
 
-      this.columns.commentService = {
-        ...this.columns.commentService,
-        onComponentInitFunction: (instance?: any) => {
-          instance.input.subscribe((data: any) => {
-            this.setCommentService(data);
-          });
-        },
-      };
 
-      this.columns.durationTime = {
-        ...this.columns.durationTime,
-        onComponentInitFunction: (instance?: any) => {
-          instance.input.subscribe((data: any) => {
-            this.setDurationTime(data);
-          });
-        },
-      };
-
-      this.columns.resourcesNumber = {
-        ...this.columns.resourcesNumber,
-        onComponentInitFunction: (instance?: any) => {
-          instance.input.subscribe((data: any) => {
-            this.setResourcesNumber(data);
-          });
-        },
-      };
-
-      this.columns.resourcesReal = {
-        ...this.columns.resourcesReal,
-        onComponentInitFunction: (instance?: any) => {
-          instance.input.subscribe((data: any) => {
-            this.setResourcesReal(data);
-          });
-        },
-      };
-
-      this.columns.descriptionDifference = {
-        ...this.columns.descriptionDifference,
-        onComponentInitFunction: (instance?: any) => {
-          instance.input.subscribe((data: any) => {
-            this.setDescriptionDifference(data);
-          });
-        },
-      };
-
-      this.columns.resultAssessment = {
-        ...this.columns.resultAssessment,
-        onComponentInitFunction: (instance?: any) => {
-          instance.input.subscribe((data: any) => {
-            this.setResulAssessment(data);
-          });
-        },
-      };
-
-      this.columns.amountNumbercomplies = {
-        ...this.columns.amountNumbercomplies,
-        onComponentInitFunction: (instance?: any) => {
-          instance.input.subscribe((data: any) => {
-            this.setAmountNumbercomplies(data);
-          });
-        },
-      };
-
-      this.columns.porcbreaches = {
-        ...this.columns.porcbreaches,
-        onComponentInitFunction: (instance?: any) => {
-          instance.input.subscribe((data: any) => {
-            this.setPorcbreaches(data);
-          });
-        },
-      };
-
-      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-        //verificar si existe el order service id
-        if (this.orderServiceId != null) {
-          this.getOrderServiceProvided();
-        }
-      });
     } else if (
       this.op == 1 ||
       this.op == 2 ||
@@ -191,15 +163,48 @@ export class ServiceTransportableGoodsFormComponent
       this.op == 8 ||
       this.op == 9
     ) {
+      this.columns = !this.typeTable ? SERVICE_TRANSPORTABLE_COLUMNS_READONLY :
+        SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE;
+
       this.titleTab();
       this.showButtonServiceManual = true;
       this.settings = {
-        ...this.settings,
+        ...TABLE_SETTINGS,
         actions: false,
-        selectMode: '',
-        columns: SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE,
+        selectMode: this.typeTable,
+        columns: this.columns,
       };
+
+      this.columns.commentService = {
+        ...this.columns.commentService,
+        onComponentInitFunction: (instance?: any) => {
+          instance.input.subscribe((data: any) => {
+            this.setValues('commentService', data);
+          });
+        },
+      };
+
+      this.columns.durationTime = {
+        ...this.columns.durationTime,
+        onComponentInitFunction: (instance?: any) => {
+          instance.input.subscribe((data: any) => {
+            this.setValues('durationTime', data);
+          });
+        },
+      };
+
+      this.columns.resourcesNumber = {
+        ...this.columns.resourcesNumber,
+        onComponentInitFunction: (instance?: any) => {
+          instance.input.subscribe((data: any) => {
+            this.setValues('resourcesNumber', data);
+          });
+        },
+      };
+
     }
+
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -212,6 +217,13 @@ export class ServiceTransportableGoodsFormComponent
     if (this.justificationRefused == true) {
       this.enableJustificationRows();
     }
+
+    if (!isNullOrEmpty(changes['typeTable'])) {
+      this.configTable();
+    }
+
+    console.log('changes', changes);
+
   }
 
   getOrderServiceProvided() {
@@ -231,28 +243,13 @@ export class ServiceTransportableGoodsFormComponent
       )
       .subscribe({
         next: resp => {
-          let ttotal = 0;
-          resp.data.map((item: any) => {
-            if (this.op == 6 || this.op == 7 || this.op == 8 || this.op == 9) {
-              this.requestHelperService.changeReadOnly(true);
-            }
-            const resourceNumber =
-              Number(item.resourcesNumber) != null
-                ? Number(item.resourcesNumber)
-                : 0;
-            const resourcesReal = item.resourcesReal;
-            const resource =
-              resourcesReal != null ? Number(resourcesReal) : resourceNumber;
-            item['total'] = Number(item.priceUnitary) * Number(resource);
-            ttotal = ttotal + item['total'];
-          });
 
-          const t = `$${this.formatTotalAmount(ttotal)}`;
-          this.totEvent.emit(t);
-          const bodyTotal: any = { total: t };
-          resp.data.push(bodyTotal);
           this.data = resp.data;
           this.totalItems = resp.count;
+          this.setTotalAmount();
+
+          //this.setTableRowTotal();
+          //this.setTableColumnsRows();
 
           if (
             this.op != 1 &&
@@ -263,31 +260,39 @@ export class ServiceTransportableGoodsFormComponent
             this.op != 8 &&
             this.op != 9
           ) {
-            this.setTableColumnsRows();
-            this.setTableRowTotal();
-          } else if (this.op == 1) {
-            this.setTableRowTotal();
-          } else if (this.op == 2) {
-            this.setTableRowTotal();
-            this.setTableColumnsRows();
-          } else if (this.op == 3) {
-            this.setTableRowTotal();
-            this.setTableColumnsRows();
-          } else if (this.op == 6) {
-            this.setTableRowTotal();
-            this.setTableColumnsRows();
-          } else if (this.op == 7) {
-            this.setTableRowTotal();
-            this.setTableColumnsRows();
-          } else if (this.op == 8) {
-            this.setTableRowTotal();
-            this.setTableColumnsRows();
-          } else if (this.op == 9) {
-            this.setTableRowTotal();
-            this.setTableColumnsRows();
+
+
           }
         },
       });
+  }
+
+  setTotalAmount() {
+    let ttotal = 0;
+    this.data.map((item: any) => {
+      if (this.op == 6 || this.op == 7 || this.op == 8 || this.op == 9) {
+        this.requestHelperService.changeReadOnly(true);
+      }
+      const resourceNumber = isNullOrEmpty(item.resourcesNumber) ? 0 : Number(item.resourcesNumber);
+      const priceUnitary = isNullOrEmpty(item.priceUnitary) ? 0 : Number(item.priceUnitary);
+      const durationTime = isNullOrEmpty(item.durationTime) ? 0 : Number(item.durationTime);
+
+      item.durationTime = durationTime;
+      item.resourcesNumber = resourceNumber;
+      item.priceUnitary = priceUnitary;
+
+      item.total = (durationTime * priceUnitary) * resourceNumber;
+      ttotal += item.total;
+    });
+
+    console.log('ttotal', this.data.map((item: any) => item.total));
+
+    const t = `$${this.formatTotalAmount(ttotal)}`;
+    this.totalAmount = t;
+    this.totEvent.emit(t);
+    //const bodyTotal: any = { total: t };
+    //resp.data.push(bodyTotal);
+    this.data = [... this.data];
   }
 
   setTableColumnsRows() {
@@ -640,157 +645,42 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   deleteService() {
-    if (this.ordersSelected.length == 0 || this.ordersSelected.length > 1) {
+    if (this.ordersSelected.length == 0) {
       this.onLoadToast('info', 'Seleccione un bien');
       return;
     }
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Está seguro que desea eliminar el servicio?'
+      '¿Está seguro que desea eliminar los servicios?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.deleteOrderServiceProvided(this.ordersSelected[0].id);
+
+        let result = this.ordersSelected.map((item: any) => {
+          return this.deleteOrderServiceProvided(item.id);
+        });
+
+        Promise.all(result).then(() => {
+          this.onLoadToast('success', 'Servicio eliminados correctamente', '');
+          this.ordersSelected = [];
+          this.getOrderServiceProvided();
+        });
+
       }
     });
   }
 
-  orderSelected(event: any) {
-    console.log(this.data.filter(x => x.to));
-    this.ordersSelected = this.data.filter(x => x.to);
+  onSelectedRows(event: any) {
+    console.log('onSelectedRows', this.data);
+    this.ordersSelected = event.selected;
   }
 
-  setCommentService(data: any) {
-    if (data.text != null) {
-      const index = this.data.indexOf(data.row);
-      this.data[index].commentService = data.text != '' ? data.text : null;
-
-      //aniadir a la lista de actualizaciones
-      const index2 = this.listforUpdate.indexOf(data.row);
-      if (index2 == -1) {
-        this.listforUpdate.push(data.row);
-      } else {
-        this.listforUpdate[index].commentService =
-          data.text != '' ? data.text : null;
-      }
-    }
+  setValues(param, data) {
+    this.data.find((x: any) => x.id == data.row.id)[param] = data.text;
+    this.setTotalAmount();
   }
 
-  setDurationTime(data: any) {
-    if (data.text != null) {
-      const index = this.data.indexOf(data.row);
-      this.data[index].durationTime = data.text != '' ? data.text : null;
-
-      //aniadir a la lista de actualizaciones
-      const index2 = this.listforUpdate.indexOf(data.row);
-      if (index2 == -1) {
-        this.listforUpdate.push(data.row);
-      } else {
-        this.listforUpdate[index].durationTime =
-          data.text != '' ? data.text : null;
-      }
-    }
-  }
-
-  setResourcesNumber(data: any) {
-    if (data.text != null) {
-      const index = this.data.indexOf(data.row);
-      this.data[index].resourcesNumber = data.text != '' ? data.text : null;
-
-      //aniadir a la lista de actualizaciones
-      const index2 = this.listforUpdate.indexOf(data.row);
-      if (index2 == -1) {
-        this.listforUpdate.push(data.row);
-      } else {
-        this.listforUpdate[index].resourcesNumber =
-          data.text != '' ? data.text : null;
-      }
-    }
-  }
-
-  setResourcesReal(data: any) {
-    if (data.text != null) {
-      const index = this.data.indexOf(data.row);
-      this.data[index].resourcesReal = data.text != '' ? data.text : null;
-
-      //aniadir a la lista de actualizaciones
-      const index2 = this.listforUpdate.indexOf(data.row);
-      if (index2 == -1) {
-        this.listforUpdate.push(data.row);
-      } else {
-        this.listforUpdate[index].resourcesReal =
-          data.text != '' ? data.text : null;
-      }
-    }
-  }
-
-  setDescriptionDifference(data: any) {
-    if (data.text != null) {
-      const index = this.data.indexOf(data.row);
-      this.data[index].descriptionDifference =
-        data.text != '' ? data.text : null;
-
-      //aniadir a la lista de actualizaciones
-      const index2 = this.listforUpdate.indexOf(data.row);
-      if (index2 == -1) {
-        this.listforUpdate.push(data.row);
-      } else {
-        this.listforUpdate[index].descriptionDifference =
-          data.text != '' ? data.text : null;
-      }
-    }
-  }
-
-  setResulAssessment(data: any) {
-    /*if (data.text != null) {
-      debugger*/
-    const index = this.data.indexOf(data.row);
-    this.data[index].resultAssessment = data.text != '' ? data.text : null;
-
-    //aniadir a la lista de actualizaciones
-    const index2 = this.listforUpdate.indexOf(data.row);
-    if (index2 == -1) {
-      this.listforUpdate.push(data.row);
-    } else {
-      this.listforUpdate[index].resultAssessment =
-        data.text != '' ? data.text : null;
-    }
-    /*}*/
-  }
-
-  setAmountNumbercomplies(data: any) {
-    if (data.text != null) {
-      const index = this.data.indexOf(data.row);
-      this.data[index].amountNumbercomplies =
-        data.text != '' ? data.text : null;
-
-      //aniadir a la lista de actualizaciones
-      const index2 = this.listforUpdate.indexOf(data.row);
-      if (index2 == -1) {
-        this.listforUpdate.push(data.row);
-      } else {
-        this.listforUpdate[index].amountNumbercomplies =
-          data.text != '' ? data.text : null;
-      }
-    }
-  }
-
-  setPorcbreaches(data: any) {
-    if (data.text != null) {
-      const index = this.data.indexOf(data.row);
-      this.data[index].porcbreaches = data.text != '' ? data.text : null;
-
-      //aniadir a la lista de actualizaciones
-      const index2 = this.listforUpdate.indexOf(data.row);
-      if (index2 == -1) {
-        this.listforUpdate.push(data.row);
-      } else {
-        this.listforUpdate[index].porcbreaches =
-          data.text != '' ? data.text : null;
-      }
-    }
-  }
 
   saveForm() {
     if (this.listforUpdate.length == 0) return;
@@ -840,11 +730,13 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   deleteOrderServiceProvided(id: number) {
-    this.orderEntryService.deleteOrderServiceProvided(id).subscribe({
-      next: resp => {
-        this.onLoadToast('success', 'Servicio eliminado correctamente', '');
-        this.getOrderServiceProvided();
-      },
+
+    return new Promise((resolve, reject) => {
+      this.orderEntryService.deleteOrderServiceProvided(id).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+      });
     });
   }
 
