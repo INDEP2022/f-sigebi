@@ -40,11 +40,19 @@ export class CommentsFormComponent implements OnInit {
   }
 
   getOrderService() {
+
+    if (this.programmingId == 0) {
+      return;
+    }
+
     const params = new ListParams();
     params['filter.programmingId'] = `$eq:${this.programmingId}`;
     this.orderServiceService.getAllOrderService(params).subscribe({
       next: response => {
         this.orderServiceData = response.data[0];
+
+        console.log('orderServiceData', this.orderServiceData);
+
         if (this.orderServiceData?.observation) {
           this.commentsForm
             .get('observations')
@@ -90,13 +98,25 @@ export class CommentsFormComponent implements OnInit {
       //this.readonly = true;
       //this.readonlyNotification = true;
     }
+
+    if (changes['programmingId']) {
+      this.getOrderService();
+    }
+
   }
 
   prepareForm() {
+
     this.commentsForm = this.fb.group({
       observations: [null],
       note: [null],
       commentRejection: [null],
+    });
+
+    this.commentsForm.valueChanges.subscribe((value) => {
+      this.ordServform.get('observation').setValue(value.observations);
+      this.ordServform.get('notes').setValue(value.note);
+      this.ordServform.get('commentRejection').setValue(value.commentRejection);
     });
   }
 }

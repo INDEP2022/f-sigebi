@@ -163,6 +163,8 @@ export class ShowSchedulingReportComponentComponent
   }
 
   showReportByTypeDoc() {
+    console.log('idProgDel', this.idprogDel);
+    console.log('report', this.report);
     if (this.idprogDel) {
       let linkDoc: string = `${
         this.urlBaseReport
@@ -173,6 +175,7 @@ export class ShowSchedulingReportComponentComponent
       this.formLoading = false;
     }
     if (this.idprogDel && this.report == 1) {
+      console.log('Dentro')
       let linkDoc: string = `${this.urlBaseReport}ConstanciaEntrega.jasper&ID_CONSTANCIA=${this.idprogDel}`;
       this.src = linkDoc;
 
