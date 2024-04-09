@@ -90,12 +90,13 @@ export class TypeServicesListComponent extends BasePage implements OnInit {
         this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
-        /*
-        this.paragraphs = response.data;
-        this.totalItems = response.count;
-        this.loading = false;*/
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.totalItems = 0;
+        this.data.load([]);
+        this.data.refresh();
+        this.loading = false;
+      },
     });
   }
 

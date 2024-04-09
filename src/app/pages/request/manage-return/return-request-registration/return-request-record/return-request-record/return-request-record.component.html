@@ -23,7 +23,7 @@
       <div [class]="loading ? 'table-loading' : ''">
         <ng-scrollbar track="all" style="min-height: 200px; border: none">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="paragraphs"
             (userRowSelect)="editRowTable($event)">

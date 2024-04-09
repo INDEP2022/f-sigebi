@@ -50,7 +50,7 @@ export class StationListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'transferent':
+              case 'transferentRe':
                 searchFilter = SearchFilter.ILIKE;
                 field = `filter.${filter.field}.nameTransferent`;
                 break;
@@ -99,7 +99,13 @@ export class StationListComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.paragraphs = [];
+        this.totalItems = 0;
+        this.data.load([]);
+        this.data.refresh();
+        this.loading = false;
+      },
     });
   }
 

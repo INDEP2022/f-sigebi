@@ -1,20 +1,29 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, of, takeUntil } from 'rxjs';
+import { BehaviorSubject, of, Subject, takeUntil } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IProgrammingDeliveryGood } from 'src/app/core/models/good-programming/programming-delivery-good.model';
+import { IGoodInvAvailableView } from 'src/app/core/models/ms-goodsinv/goodsinv.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { CertificatesDeliveryService } from 'src/app/core/services/ms-delivery-constancy/certificates-delivery.service';
 import { CertificatesGoodsService } from 'src/app/core/services/ms-delivery-constancy/certificates-goods.service';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
+import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { JSON_TO_CSV } from 'src/app/pages/admin/home/constants/json-to-csv';
+import { IprogrammingDelivery } from 'src/app/pages/siab-web/sami/receipt-generation-sami/receipt-table-goods/ireceipt';
 import Swal from 'sweetalert2';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
+import { ShowDocumentsGoodComponent } from '../../shared-request/expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
 import { ClaimFormModalComponent } from '../claim-form-modal/claim-form-modal.component';
 import { DeliveriesConstancyFormComponent } from '../deliveries-constancy-form/deliveries-constancy-form.component';
 import { DocumentConstanceModalComponent } from '../document-constance-modal/document-constance-modal.component';
@@ -27,6 +36,7 @@ import {
   PROG_DELIVERY_GOOD_NO_DELIVERED,
   PROG_DELIVERY_GOOD_TYPE_REST_COLUMNS,
 } from './columns/good-delivery-columns';
+import { ShowSchedulingReportComponentComponent } from './show-scheduling-report-component/show-scheduling-report-component.component';
 
 @Component({
   selector: 'app-execute-scheduling-deliveries',
@@ -47,7 +57,7 @@ export class ExecuteSchedulingDeliveriesComponent
   constancyNoRetired: boolean = false;
   showDetailProgDestruc: boolean = true;
 
-  statusProgramming: string = 'RESTITUCION_BIENES'; //APROBAR_NO_ENT_ESP
+  statusProgramming: string = ''; //APROBAR_NO_ENT_ESP
 
   programmingDetailPanel: any = {};
   GoodDeliverySettings = {
@@ -107,6 +117,8 @@ export class ExecuteSchedulingDeliveriesComponent
   jsonToCsv = JSON_TO_CSV;
   constanceSelected: any = {};
   is: boolean = false;
+  idProgram: string = '';
+  programmingId = '';
 
   private programmingService = inject(ProgrammingGoodService);
   private transferenteService = inject(TransferenteService);
@@ -116,11 +128,20 @@ export class ExecuteSchedulingDeliveriesComponent
   private certifiGoodsService = inject(CertificatesGoodsService);
   private requestHelpService = inject(RequestHelperService);
 
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private route: ActivatedRoute,
+    private taskService: TaskService,
+    private programmingRequestService: ProgrammingRequestService,
+    private authService: AuthService,
+    private router: Router
+  ) {
     super();
   }
 
   ngOnInit(): void {
+    const segments = this.route.snapshot.url;
+    this.idProgram = segments[segments.length - 1].path;
     this.getSchedulingDelivery();
     this.GoodDeliverySettings.columns = GOOD_DELIVERY_COLUMN;
 
@@ -211,7 +232,6 @@ export class ExecuteSchedulingDeliveriesComponent
       ...this.progDelivGoodNDColumns.causeNotDelivered,
       onComponentInitFunction: (instance?: any) => {
         instance.input.subscribe((data: any) => {
-          console.log(data);
           this.setCauseNotDelivered(data);
         });
       },
@@ -221,7 +241,6 @@ export class ExecuteSchedulingDeliveriesComponent
       ...this.progDelivGoodNDColumns.typeRestitution,
       onComponentInitFunction: (instance?: any) => {
         instance.input.subscribe((data: any) => {
-          console.log(data);
           this.setTypeRestitution(data);
         });
       },
@@ -246,11 +265,13 @@ export class ExecuteSchedulingDeliveriesComponent
     };
 
     if (
+      this.programmingDetailPanel.status == 'RESTITUCION_BIENES' ||
+      this.programmingDetailPanel.status == 'APROBAR_NO_ENT' ||
       this.statusProgramming == 'BIENES_NO_ENTREGADOS' ||
       this.statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
       this.statusProgramming == 'VERIFICACION_BIENES' ||
       this.statusProgramming == 'FORMATO_RECLAMACION_TE' ||
-      this.statusProgramming == 'RESTITUCION_BIENES'
+      this.programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS'
     ) {
       this.progDelivGoodNDParams
         .pipe(takeUntil(this.$unSubscribe))
@@ -278,45 +299,52 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   certificateDelivery(constancy: number) {
-    if (this.goodDeliveredSelected.length == 0) {
-      this.onLoadToast('info', 'Debe tener al menos un bien seleccionado');
-    }
-    const typeEvent = this.programmingDetailPanel.typeEvent;
-    const comply = this.validateBeforeOpenModal(constancy);
-    if (comply != true) return;
-
-    const certificateDelivery = this.modalService.show(
-      DeliveriesConstancyFormComponent,
-      {
-        initialState: {
-          goods: this.goodDeliveredSelected,
-          typeConstancy: constancy,
-          typeEvent: typeEvent,
-          progEntrega: this.programmingDetailPanel,
-        },
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
-    );
-
-    certificateDelivery.content.event.subscribe((data: any) => {
-      console.log(data);
+    if (!this.selectedRows || this.selectedRows.length < 1) {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Se debe seleccionar al menos un bien para generar la constancia de entrega'
+      );
+      return;
+    } else {
       const typeEvent = this.programmingDetailPanel.typeEvent;
-      this.loadingT2 = true;
-      const typeReceptor = data.receiverType;
-      if (typeEvent == 1 && typeReceptor == 'CLIENTE') {
-        this.constancyDeliveryArray['identificator'] = data.clientIden;
-        this.constancyDeliveryArray['IdennNum'] = data.clientIdennNum;
-        this.constancyDeliveryArray['name'] = data.cliente;
-      } else if (typeEvent != 1 && typeReceptor != 'CLIENTE') {
-        this.constancyDeliveryArray['identificator'] = data.repLegalIden;
-        this.constancyDeliveryArray['IdennNum'] = data.repLegalIdenNum;
-        this.constancyDeliveryArray['name'] = data.repLegal;
-      }
+      const comply = this.validateBeforeOpenModal(constancy);
+      if (comply != true) return;
 
-      this.constancyDeliveryArray = [...this.constancyDeliveryArray];
-      this.loadingT2 = false;
-    });
+      const certificateDelivery = this.modalService.show(
+        DeliveriesConstancyFormComponent,
+        {
+          initialState: {
+            goods: this.selectedRows,
+            typeConstancy: constancy,
+            typeEvent: typeEvent,
+            progEntrega: this.programmingDetailPanel,
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        }
+      );
+
+      certificateDelivery.content.event.subscribe((data: any) => {
+        const typeEvent = this.programmingDetailPanel.typeEvent;
+        this.loadingT2 = true;
+        const typeReceptor = data.receiverType;
+        if (typeEvent == 1 && typeReceptor == 'CLIENTE') {
+          this.constancyDeliveryArray['identificator'] = data.clientIden;
+          this.constancyDeliveryArray['IdennNum'] = data.clientIdennNum;
+          this.constancyDeliveryArray['name'] = data.cliente;
+        } else if (typeEvent != 1 && typeReceptor != 'CLIENTE') {
+          this.constancyDeliveryArray['identificator'] = data.repLegalIden;
+          this.constancyDeliveryArray['IdennNum'] = data.repLegalIdenNum;
+          this.constancyDeliveryArray['name'] = data.repLegal;
+        }
+
+        this.constancyDeliveryArray = [...this.constancyDeliveryArray];
+        this.loadingT2 = false;
+
+        this.getCertificateDelivery(new ListParams());
+      });
+    }
   }
 
   newDocument() {
@@ -324,7 +352,11 @@ export class ExecuteSchedulingDeliveriesComponent
       this.constanceSelected == null ||
       this.constanceSelected.certificateId == null
     ) {
-      this.onLoadToast('info', 'Es necesario seleccionar una constancia');
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Es necesario seleccionar una constancia'
+      );
       return;
     }
 
@@ -332,9 +364,10 @@ export class ExecuteSchedulingDeliveriesComponent
       this.constanceSelected.closing == null ||
       this.constanceSelected.closing == 'N'
     ) {
-      this.onLoadToast(
-        'info',
-        'Para adjuntar documentos es necesario cerrar la constancia'
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Es necesario cerrar la constancia para adjuntar documentos'
       );
       return;
     }
@@ -353,6 +386,7 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   editConstancy() {
+    console.log(this.goodDeliveredSelected);
     let config: ModalOptions = {
       initialState: {
         goods: this.goodDeliveredSelected,
@@ -375,7 +409,6 @@ export class ExecuteSchedulingDeliveriesComponent
       config
     );
     this.bsModelRef.content.event.subscribe((data: any) => {
-      console.log(data);
       if (data == true) {
         this.getCertificateDelivery(new ListParams());
       }
@@ -395,8 +428,9 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   getSchedulingDelivery() {
+    this.selectedRows = [];
     const params = new ListParams();
-    params['filter.id'] = `$eq:${16894}`; //16896
+    params['filter.id'] = `$eq:${this.idProgram}`;
     this.programmingService
       .getProgrammingDelivery(params)
       .pipe(
@@ -407,6 +441,7 @@ export class ExecuteSchedulingDeliveriesComponent
       .subscribe({
         next: (resp: any) => {
           this.programmingDetailPanel = resp;
+          console.log(this.programmingDetailPanel);
           /*this.programmingDetailPanel.id = resp.id;
           this.programmingDetailPanel.typeEvent = resp.typeEvent;
           this.programmingDetailPanel.folio = resp.folio;
@@ -449,8 +484,13 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   getProgrammingGoodDelivery(params: ListParams) {
+    //AQUI AGREGAR FILTRO
     this.loading = true;
     this.loadingEEB = true;
+    /*if (this.programmingDetailPanel.status == 'RESTITUCION_BIENES') {
+      params['filter.status'] = `$eq:''`;
+    }*/
+
     params[
       'filter.programmingDeliveryId'
     ] = `$eq:${this.programmingDetailPanel.id}`;
@@ -472,9 +512,9 @@ export class ExecuteSchedulingDeliveriesComponent
 
         this.setProgramDeliveryGoodColumns();
 
-        //
-
         if (
+          this.programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA' ||
+          this.programmingDetailPanel.status == 'VERIFICACION_BIENES' ||
           this.statusProgramming == 'APROBAR_NO_ENT_ESP' ||
           this.statusProgramming == 'APROBAR_NO_ENT_NUM'
         ) {
@@ -489,11 +529,13 @@ export class ExecuteSchedulingDeliveriesComponent
         }
 
         if (
+          this.programmingDetailPanel.status == 'RESTITUCION_BIENES' ||
+          this.programmingDetailPanel.status == 'APROBAR_NO_ENT' ||
           this.statusProgramming == 'BIENES_NO_ENTREGADOS' ||
           this.statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
           this.statusProgramming == 'VERIFICACION_BIENES' ||
           this.statusProgramming == 'FORMATO_RECLAMACION_TE' ||
-          this.statusProgramming == 'RESTITUCION_BIENES'
+          this.programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS'
         ) {
           if (this.statusProgramming == 'BIENES_NO_ENTREGADOS') {
             resp.data.map((item: any) => {
@@ -546,9 +588,11 @@ export class ExecuteSchedulingDeliveriesComponent
         (x: any) => x.id == 'compensationOpinion'
       );
       const resolutionSat = table.find((x: any) => x.id == 'resolutionSat');
+      foundInd.hide = true;
 
-      if (this.statusProgramming != 'RESTITUCION_BIENES') {
+      if (this.programmingDetailPanel.status == 'RESTITUCION_BIENES') {
         foundInd.hide = true;
+      } else {
         typeRestitution.hide = true;
         replacementDate.hide = true;
       }
@@ -588,7 +632,7 @@ export class ExecuteSchedulingDeliveriesComponent
           },
           error: error => {
             reject(error);
-            this.onLoadToast('error', 'No se actualizo los bienes entregados');
+
             this.loadingEEB = false;
           },
         });
@@ -596,7 +640,6 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   selectRows(event: any) {
-    console.log(event.selected);
     /*const index = this.goodDeliveryArray.indexOf(event.data);
 
     const table = document.getElementById('table');
@@ -643,14 +686,18 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   validateBeforeOpenModal(typeConstancy: number): any {
-    for (let index = 0; index < this.goodDeliveredSelected.length; index++) {
-      const item = this.goodDeliveredSelected[index];
+    //listo 1
+    for (let index = 0; index < this.selectedRows.length; index++) {
+      const item = this.selectedRows[index];
       const typeEvent = this.programmingDetailPanel.typeEvent;
+      console.log(item);
       if (typeEvent === 1 && item.commercialEvent == null) {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
+          'Advertencia',
           'El bien debe tener un evento comercial. Consulte a su administrador.'
         );
+
         return false;
       }
 
@@ -675,24 +722,19 @@ export class ExecuteSchedulingDeliveriesComponent
           break;
       }
       if (lsColumna <= 0) {
-        this.onLoadToast(
-          'info',
-          `El bien ${item.goodId} - ${item.inventoryNumber} - tiene un valor menor o igual a cero`
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          `El bien ${item.goodId} tiene un valor menor o igual a cero`
         );
         return false;
       }
 
-      const goodAdded =
-        item.sunGoodEnt +
-        item.sumGoodNoEnt +
-        item.sumGoodNoAce +
-        item.sumGoodNoRet;
-      const totalGood = item.amountGood;
-
-      if (goodAdded > totalGood) {
-        this.onLoadToast(
-          'info',
-          `El bien ${item.goodId} - ${item.inventoryNumber} - excede la cantidad permitida`
+      if (lsColumna > item.faltante) {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          `El bien ${item.goodId} excede la cantidad permitida`
         );
         return false;
       }
@@ -728,8 +770,9 @@ export class ExecuteSchedulingDeliveriesComponent
       error: error => {
         console.log(error);
         if (error.status != 400) {
-          this.onLoadToast(
+          this.alert(
             'error',
+            'Error',
             'Ocurrio un error al cargar los certificados de constancia'
           );
         }
@@ -748,62 +791,87 @@ export class ExecuteSchedulingDeliveriesComponent
         const ele: any = tbody[index];
         const isclose = this.constancyDeliveryArray[index].closing;
         if (isclose != null && isclose != 'N') {
-          console.log(ele.children[6].children[1].children[1].hidden);
           ele.children[6].children[1].children[1].hidden = true;
         }
       }
     }, 300);
   }
 
+  //aqui
   delivery(executionType: string, causa?: string) {
-    if (
-      this.goodDeliveredSelected.length == 0 ||
-      this.goodDeliveredSelected > 1
-    ) {
-      this.onLoadToast(
-        'info',
+    if (!this.selectedRows || this.selectedRows.length !== 1) {
+      this.alert(
+        'warning',
+        'Acción Invalida',
         'Debe tener un bien seleccionado para la ejecucide entrega'
       );
       return;
     }
-    let colDestino = '';
 
-    if (executionType == 'entragados') {
-      colDestino = 'amountDelivered'; //Cantidad Entregados
-    } else {
-      if (causa == 'NO ENTREGADOS') {
-        colDestino = 'amountNotDelivered'; //CantidadNoEntregados
-      } else if (causa == 'NO ACEPTADOS') {
-        colDestino = 'anountNotAccelted'; //CantidadNoAceptados
+    this.selectedRows.map((item: any) => {
+      let colDestino = '';
+      let lsColumna = null;
+
+      if (executionType == 'entragados') {
+        lsColumna = item.amountDelivered;
+        colDestino = 'amountDelivered';
       } else {
-        colDestino = 'amountNotWhithdrawn'; //CantidadNoRetirados
+        if (causa == 'NO ENTREGADOS') {
+          lsColumna = item.amountNotDelivered;
+          colDestino = 'amountNotDelivered';
+        } else if (causa == 'NO ACEPTADOS') {
+          lsColumna = item.anountNotAccelted;
+          colDestino = 'anountNotAccelted';
+        } else {
+          lsColumna = item.amountNotWhithdrawn;
+          colDestino = 'amountNotWhithdrawn';
+        }
       }
-    }
 
-    this.goodDeliveredSelected.map((item: any) => {
-      const goodTotal = item.amountGood;
-      const sumGoods =
-        Number(item.sunGoodEnt) +
-        Number(item.sumGoodNoAce) +
-        Number(item.sumGoodNoEnt) +
-        Number(item.sumGoodNoRet);
-      const total = goodTotal - sumGoods;
+      if (lsColumna < 1) {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'El bien seleccionado tiene un valor menor o igual a cero'
+        );
+        return;
+      }
+
+      const totalAmount =
+        Number(item.amountDelivered) +
+        Number(item.amountNotDelivered) +
+        Number(item.anountNotAccelted) +
+        Number(item.amountNotWhithdrawn);
+
+      if (totalAmount > item.faltante) {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'El bien seleccionado excede la cantidad permitida'
+        );
+        return;
+      }
+
+      const total = Number(lsColumna);
       const body: any = {};
       body['id'] = item.id;
       body[colDestino] = total;
-      console.log(body);
-      //Consultar si lo que se actualizara esta correcto
-      //this.updateProgrammingGoodDelivery(body)
+
+      this.updateProgrammingGoodDelivery(body);
+      this.alert(
+        'success',
+        'Acción Exitosa',
+        'Se ha actualizado la cantidad de bienes'
+      );
+      this.getSchedulingDelivery();
     });
   }
 
   noDelivery(executionType: string) {
-    if (
-      this.goodDeliveredSelected.length == 0 ||
-      this.goodDeliveredSelected > 1
-    ) {
-      this.onLoadToast(
-        'info',
+    if (!this.selectedRows || this.selectedRows.length > 1) {
+      this.alert(
+        'warning',
+        'Acción Invalida',
         'Debe tener un bien seleccionado para la ejecucide entrega'
       );
       return;
@@ -830,7 +898,6 @@ export class ExecuteSchedulingDeliveriesComponent
       config
     );
     this.bsModelRef.content.event.subscribe((data: any) => {
-      console.log(data);
       this.delivery(executionType, data.type);
     });
   }
@@ -860,7 +927,7 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   preview(event: any) {
-    console.log(event);
+    this.showReport(event);
   }
 
   close(event: any) {
@@ -868,7 +935,6 @@ export class ExecuteSchedulingDeliveriesComponent
     let body: any = {};
     body.certificateId = event.certificateId;
     body.closing = 'Y';
-    //actializar certificates-delivery
     this.certifiDeliveryService.update(body).subscribe({
       next: resp => {
         const index = this.constancyDeliveryArray.indexOf(event);
@@ -878,11 +944,11 @@ export class ExecuteSchedulingDeliveriesComponent
           //luego actualizar los botones
           this.displayCloseConstanceIcon();
         }
-        this.onLoadToast('success', 'Constancia cerrada');
+        this.alert('success', 'Constancia cerrada', 'La constancia se cerro');
         this.loadingT2 = false;
       },
       error: error => {
-        this.onLoadToast('error', 'No se pudo cerrar la constancia');
+        this.alert('error', 'Error', 'No se pudo cerrar la constancia');
         this.loadingT2 = false;
       },
     });
@@ -897,81 +963,62 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   async finalizeDelivery() {
-    /**
-     * falta validar documentos
-     * falta crear la tarea
-     * mustraPopEjecutarEntrega()
-     */
-    window.alert('No se tien terminado el metodo');
     let lbNoEnt: boolean = false;
 
-    //Verifica si existen constancias
+    //GENERAR CONSTANCIA
     if (this.constancyDeliveryArray.length == 0) {
-      this.onLoadToast('info', 'Debes generar por lo menos una constacia');
-      return;
-    }
-
-    const params1 = new ListParams();
-    params1['filter.closing'] = `$eq:N`;
-    const constDeliveryClosed: any = await this.getAllCertificates(params1);
-
-    //Verifica que las constancias esten cerradas
-    if (constDeliveryClosed.count > 0) {
-      this.onLoadToast('info', 'Todas las constancias deben estar cerradas');
-      return;
-    }
-
-    let haveError: boolean = false;
-    const constDelivery: any = await this.getAllCertificates(new ListParams());
-
-    //Todo:call endpoint who verify if certifi have documents
-    haveError = true;
-
-    if (haveError == true) {
-      this.onLoadToast(
-        'info',
-        'Es necesario adjuntar un documento a las constancias'
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Debes generar por lo menos una constancia'
       );
       return;
     }
 
-    const params3 = new ListParams();
-    params3.limit = 100;
-    const listProgGoods: any = await this.getAllProgramminDeliveryGoods(
-      params3
+    console.log(this.constancyDeliveryArray);
+
+    const allClosed = this.constancyDeliveryArray.every(
+      item => item.closing === 'Y'
     );
-    for (let index = 0; index < listProgGoods.length; index++) {
-      const item = listProgGoods[index];
 
-      if (item.sumGoodNoEnt > 0) {
-        lbNoEnt = true;
-        item.status = 'BIENES_NO_ENTREGADOS';
-      }
-
-      const total =
-        Number(item.amountGood) -
-        (Number(item.sunGoodEnt) -
-          Number(item.sumGoodNoRet) -
-          Number(item.sumGoodNoAce) -
-          Number(item.sumGoodNoEnt));
-      item.amountNotRescheduled = total;
-
-      const body: any = {};
-      body.id = item.id;
-      body.id = item.amountNotRescheduled;
-      body.status = item.status;
-
-      const updated = await this.updateProgrammingGoodDelivery(body);
+    if (!allClosed) {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Todas las constancias deben estar cerradas'
+      );
+      return;
     }
 
-    //Todo: Averiguar donde se encuentra el EstatusProgramming para actualizarlo
-    //abrir el modal de turnado
-    if (haveError == false) {
-      if (lbNoEnt == true) {
-        this.statusProgramming = 'CON_NO_ENTREGADOS_T';
-      } else {
-        this.statusProgramming = 'PROG_EJECUTADA';
-      }
+    //VALIDAR DOCUMENTO ADJUNTADO CONSTANCIA
+
+    const constDelivery: any = await this.getAllCertificates(new ListParams());
+
+    console.log();
+
+    if (constDelivery == true) {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Es necesario adjuntar un documento a las constancias'
+      );
+
+      return;
+    }
+
+    if (this.programmingDetailPanel.typeEvent == 4) {
+      this.confirm();
+    } else {
+      this.alertQuestion(
+        'question',
+        'Turnar Solicitud',
+        `¿Desea enviar la programación con folio: ${this.programmingDetailPanel.folio}?`
+      ).then(async question => {
+        if (question.isConfirmed) {
+          this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+          this.closeTask();
+        }
+      });
     }
   }
 
@@ -1069,14 +1116,21 @@ export class ExecuteSchedulingDeliveriesComponent
     let typeDoc = null;
     let nomProcess = null;
 
-    if (this.goodRestSelected.id == null) {
-      this.onLoadToast('info', 'Debe tener un bien seleccionado');
+    if (
+      this.programmingDetailPanel.status == 'RESTITUCION_BIENES' ||
+      this.programmingDetailPanel.status == 'APROBAR_NO_ENT'
+    ) {
+      this.goodRestSelected = this.progGoodNoDeliveredSelected;
+    }
+    if (!this.goodRestSelected) {
+      this.alert('warning', 'Advertencia', 'Debe tener un bien seleccionado');
       return;
     }
-    if (this.statusProgramming == 'APROBAR_NO_ENT_ESP') {
+
+    if (this.programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA') {
       typeDoc = 209;
       nomProcess = 'Aprobar RestituciEspecie';
-    } else if (this.statusProgramming == 'RESTITUCION_BIENES') {
+    } else if (this.programmingDetailPanel.status == 'VERIFICACION_BIENES') {
       typeDoc = 208;
       nomProcess = 'RestituciBienes';
     } else {
@@ -1117,13 +1171,6 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   setObservations(event: any) {
-    // const index = this.progDelivGoodTypeRestArray.indexOf(event.data);
-    /* this.progDelivGoodTypeRestArray[index].observation =
-      this.progDelivGoodTypeRestArray[index].observation != ''
-        ? event.text
-        : null; */
-    console.log(this.goodDeliveryFieldSelected);
-
     const idx = this.goodDeliveryFieldSelected.indexOf(event.data);
     if (this.goodDeliveryFieldSelected.length == 0 || idx == -1) {
       this.goodDeliveryFieldSelected.push(event.data);
@@ -1133,6 +1180,8 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   setCauseNotDelivered(event: any) {
+    console.log('aqui', this.goodDeliveryFieldSelected);
+    console.log(event.row);
     if (event.text != null && event.text != '') {
       const index = this.goodDeliveryFieldSelected.indexOf(event.row);
       if (this.goodDeliveryFieldSelected.length == 0 || index == -1) {
@@ -1167,41 +1216,43 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   save() {
-    let list: any = [];
-    for (
-      let index = 0;
-      index < this.goodDeliveryFieldSelected.length;
-      index++
-    ) {
-      const good = this.goodDeliveryFieldSelected[index];
-      const body: any = {};
-      for (const key in good) {
-        if (good[key] != null) {
-          body[key] = good[key];
+    if ((this.programmingDetailPanel.status = 'BIENES_NO_ENTREGADOS')) {
+      let list: any = [];
+      for (
+        let index = 0;
+        index < this.goodDeliveryFieldSelected.length;
+        index++
+      ) {
+        const good = this.goodDeliveryFieldSelected[index];
+        const body: any = {};
+        for (const key in good) {
+          if (good[key] != null) {
+            body[key] = good[key];
+          }
         }
+        delete body.programingdelivery;
+        delete body.faltante;
+        list.push(body);
       }
-      delete body.programingdelivery;
-      delete body.faltante;
-      list.push(body);
+
+      console.log('2', list);
+      if (list.length == 0) return;
+      list.map(async (item: any, _i: number) => {
+        const index = _i + 1;
+
+        const updated = await this.updateProgrammingGoodDelivery(item);
+
+        if (list.length == index) {
+          this.goodDeliveryFieldSelected = [];
+          this.getProgrammingGoodDelivery(new ListParams());
+          this.alert('success', 'Actualizado', 'Se han actualizado los bienes');
+        }
+      });
     }
-
-    console.log(list);
-    if (list.length == 0) return;
-    list.map(async (item: any, _i: number) => {
-      const index = _i + 1;
-
-      const updated = await this.updateProgrammingGoodDelivery(item);
-
-      if (list.length == index) {
-        this.goodDeliveryFieldSelected = [];
-        this.getProgrammingGoodDelivery(new ListParams());
-        this.onLoadToast('success', 'Entrega de bienes actualizado');
-      }
-    });
   }
 
   selectGoodNoDelivered(event: any) {
-    console.log(this.tablePEGNE);
+    console.log('3', this.tablePEGNE);
     this.progDeliveNoDSelectAll = false;
     if (this.tablePEGNE.isAllSelected == true && event.isSelected == null) {
       this.progDeliveNoDSelectAll = true;
@@ -1218,7 +1269,11 @@ export class ExecuteSchedulingDeliveriesComponent
 
   entryOrder() {
     if (this.progGoodNoDeliveredSelected.length == 0) {
-      this.onLoadToast('info', 'Debes seleccionar al menos un bien');
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Debes seleccionar al menos un bien'
+      );
       return;
     }
 
@@ -1237,10 +1292,13 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   sendApproval() {
-    //ojo: IdContentTe no se encuentra para firma del formato de reclamacion
     let error = false;
     if (this.progGoodNoDeliveredSelected.length == 0) {
-      this.onLoadToast('info', 'Debes seleccionar al menos un bien');
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Debes seleccionar al menos un bien'
+      );
       return;
     }
     for (
@@ -1250,16 +1308,23 @@ export class ExecuteSchedulingDeliveriesComponent
     ) {
       const good = this.progGoodNoDeliveredSelected[index];
 
-      if (good.typeRestitution == null) {
-        const msg = `El bien ${good.goodId} - ${good.inventoryNumber} debe tener asignado un tipo de restitución`;
-        this.onLoadToast('info', msg);
+      if (!good.typeRestitution) {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'El bien ' +
+            good.goodId +
+            '-' +
+            good.inventoryNumber +
+            ' debe tener asignado un tipo de restitución'
+        );
         error = true;
         break;
       }
 
       if (good.typeRestitution != 'NUMERARIO') {
-        const msg = `El tipo de restitucion dl bien ${good.goodId} - ${good.inventoryNumber} debe ser numerario`;
-        this.onLoadToast('info', msg);
+        const msg = `El tipo de restitucion del bien ${good.goodId} debe ser numerario`;
+        this.alert('warning', 'Acción Invalida', msg);
         error = true;
         break;
       }
@@ -1285,37 +1350,43 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   sentApprovalTask() {
-    /**
-     * enviarAprobacion()
-     * Falta implentar el guardado de los bienes
-     * Falta implementar el guardado de ProgramationBOType
-     * Si te cambiaron de estatus los bienes con se llama a los bienes
-     */
-    window.alert('No se implemento la logica de aprobado');
     let goodEsp = this.progGoodNoDeliveredSelected;
-    let ProgramationBOType = {};
-    let statusProgramming: string = null;
-    let delegation: any = null;
-
     let statusAut: string = this.programmingDetailPanel.statusAut;
+
+    if (statusAut == 'SIN_BIENES') {
+      let infoProgramming = {
+        id: this.programmingDetailPanel.id,
+        status: 'APROBAR_NO_ENT',
+        statusAut: 'BIENES_PEND_AUT',
+      };
+
+      this.programmingRequestService
+        .updateProgrammingDelivery(
+          this.programmingDetailPanel.id,
+          infoProgramming
+        )
+        .subscribe({
+          next: async response => {},
+          error: () => {},
+        });
+    }
+
     try {
       goodEsp.map(async (item: IProgrammingDeliveryGood, _i: number) => {
         const index = _i + 1;
-        item.status = 'APROBAR_NO_ENT';
 
-        if (statusAut == 'SIN_BIENES') {
-          statusAut = 'BIENES_PEND_AUT';
-          statusProgramming = 'APROBAR_NO_ENT';
-          delegation = item.delReg;
-        }
-        //guardar los valores de ProgramationBOType
+        let data = {
+          id: item.id,
+          typeRestitution: item.typeRestitution,
+        };
 
-        console.log(item);
-
-        //actualizar los programacion de bienes entregados --enviarAprobacion()
-        //const updateGood = await this.updateProgrammingGoodDelivery(item);
+        const updateGood = await this.updateProgrammingGoodDelivery(data);
         if (goodEsp.length == index) {
-          this.onLoadToast('success', 'Bienes aprobados');
+          this.alert(
+            'success',
+            'Bienes enviados',
+            'Los bienes fueron enviados a aprobación'
+          );
           return;
         }
       });
@@ -1325,7 +1396,7 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   claimmingForm() {
-    let config: ModalOptions = {
+    let config1: ModalOptions = {
       initialState: {
         progGoodsDeliv: this.progGoodNoDeliveredSelected,
         progDeli: this.programmingDetailPanel,
@@ -1337,7 +1408,23 @@ export class ExecuteSchedulingDeliveriesComponent
       class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.bsModelRef = this.modalService.show(ClaimFormModalComponent, config);
+
+    this.bsModelRef = this.modalService.show(ClaimFormModalComponent, config1);
+    this.bsModelRef.content.onClose = new Subject<any>();
+    this.bsModelRef.content.onClose.subscribe(data => {
+      console.log(data);
+      let config2: ModalOptions = {
+        initialState: {
+          callback: (next: boolean) => {
+            if (next) {
+            }
+          },
+        },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.showReport(data);
+    });
   }
 
   changeTypeRestitucion(tipoRest: string) {
@@ -1349,18 +1436,15 @@ export class ExecuteSchedulingDeliveriesComponent
         .updateAllProgrammingDeliveryGoodByIdDeliverySchedule(id, body)
         .subscribe({
           next: resp => {
-            this.onLoadToast(
+            this.alert(
               'success',
+              'Actualizado',
               'La clasificación a numeraria fue exitosa'
             );
             this.loadingPENE = false;
             this.getProgrammingGoodDelivery(new ListParams());
           },
           error: error => {
-            this.onLoadToast(
-              'error',
-              'Ocurrio un error al actualizar los bienes'
-            );
             this.loadingPENE = false;
           },
         });
@@ -1373,10 +1457,12 @@ export class ExecuteSchedulingDeliveriesComponent
 
           const updated = await this.updateProgrammingGoodDelivery(body);
           if (this.progGoodNoDeliveredSelected.length == index) {
-            this.onLoadToast(
+            this.alert(
               'success',
-              'La clasificación a numeraria fue exitosa'
+              'Actualizado',
+              'La clasificación a en especie fue exitosa'
             );
+
             this.loadingPENE = false;
             this.getProgrammingGoodDelivery(new ListParams());
             return;
@@ -1387,33 +1473,84 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   finalizeClassify() {
-    /**
-     * De donde sale IdContentSae para las validaciones
-     * No se entiende la validacion para RESTITUCION_BIENES
-     * mustraPopClasificaNoEntrega()
-     */
-    let lbError = true;
-    const statusProg = this.statusProgramming;
-    if (statusProg == 'RESTITUCION_BIENES') {
-      lbError = true;
-    } else if (statusProg == 'FORMATO_RECLAMACION_SAE') {
-    } else if (statusProg == 'FORMATO_RECLAMACION_TE') {
+    let msg = '';
+    let title = '';
+    let status = '';
+
+    if ((this.programmingDetailPanel.status = 'BIENES_NO_ENTREGADOS')) {
+      msg =
+        'Desea enviar la clasificación de los bienes no entregados para la programación con folio';
+      status = 'VERIFICACION_BIENES';
+      title =
+        'Aprobar solicitud para la restitución de los bienes de la programación';
+    } else if (
+      this.programmingDetailPanel.status == 'RESTITUCION_BIENES' ||
+      this.programmingDetailPanel.status == 'APROBAR_NO_ENT'
+    ) {
     }
 
-    if (lbError == true) {
-      return;
-    }
-    const folio = this.programmingDetailPanel.folio;
-    Swal.fire({
-      title: 'Confirmación',
-      html: `&#191; Decea enviar la clasificación de los bienes no entregados para la programación con el folio: ${folio}?`,
-      icon: undefined,
-      showCancelButton: true,
-      confirmButtonColor: '#9D2449',
-      cancelButtonColor: '#B38E5D',
-      confirmButtonText: 'Enviar',
-    }).then(result => {
-      if (result.isConfirmed) {
+    this.alertQuestion(
+      'question',
+      'Finalizar Clasificación',
+      `¿${msg} ${this.programmingDetailPanel.folio}?`
+    ).then(async question => {
+      if (question.isConfirmed) {
+        if (this.programmingDetailPanel) {
+          const infoProgramming: IprogrammingDelivery = {
+            id: this.programmingDetailPanel.id,
+            status: status,
+          };
+
+          this.programmingRequestService
+            .updateProgrammingDelivery(
+              this.programmingDetailPanel.id,
+              infoProgramming
+            )
+            .subscribe({
+              next: response => {
+                console.log('response', response);
+              },
+              error: error => {},
+            });
+          this.loading = true;
+          this.programmingId = this.programmingDetailPanel.id;
+          const user: any = this.authService.decodeToken();
+
+          let body: any = {};
+
+          body['type'] = 'SOLICITUD_PROGRAMACION';
+          body['subtype'] = 'Programar_Recepcion';
+          body['ssubtype'] = 'TURNAR';
+
+          let task: any = {};
+          task['id'] = 0;
+          task['assignees'] = user.username;
+          task['assigneesDisplayname'] = user.nameUser;
+          task['creator'] = user.username;
+          task['reviewers'] = user.username;
+          task['taskNumber'] = Number(this.programmingId);
+          task['title'] = title + ' ' + this.programmingDetailPanel.folio;
+          task['programmingId'] = this.programmingId;
+          task['requestId'] = this.programmingId;
+          task['expedientId'] = 0;
+          console.log('task', this.programmingDetailPanel.delRegId);
+          task['idDelegationRegional'] = this.programmingDetailPanel.delRegId;
+          task['urlNb'] =
+            'pages/request/scheduling-deliveries/execute-schelude-delivery';
+          task['processName'] = 'SolicitudProgramacion';
+          body['task'] = task;
+          const taskResult = await this.createTaskOrderService(body);
+          this.loading = false;
+          if (taskResult) {
+            this.closeTask();
+            this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+            this.alert(
+              'success',
+              'Creación de Tarea Correcta',
+              `Se creó la tarea Realizar Programación con el folio: ${this.programmingId}`
+            );
+          }
+        }
       }
     });
   }
@@ -1426,9 +1563,236 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   sendApprove() {
-    /**
-     * mustraPopAprobarBienes()
-     */
-    window.alert('No se implento la funcion');
+    let title = '';
+    let status = '';
+    if (this.programmingDetailPanel.status == 'PROGRAMACION_EJECUTADA') {
+      title =
+        'Clasificación de bienes no entregados para la programación. ' +
+        this.programmingDetailPanel.folio;
+      status = 'BIENES_NO_ENTREGADOS';
+    } else if (this.programmingDetailPanel.status == 'VERIFICACION_BIENES') {
+      title =
+        'Restitución de bienes dañados y faltantes para la programación' +
+        this.programmingDetailPanel.folio;
+      status = 'RESTITUCION_BIENES';
+    }
+    this.alertQuestion(
+      'question',
+      'Turnar Solicitud',
+      `¿Desea enviar la aprobación de los bienes en especie para la programación con folio ${this.programmingDetailPanel.folio}?`
+    ).then(async question => {
+      if (question.isConfirmed) {
+        if (this.programmingDetailPanel) {
+          const infoProgramming: IprogrammingDelivery = {
+            id: this.programmingDetailPanel.id,
+            status: status,
+          };
+
+          this.programmingRequestService
+            .updateProgrammingDelivery(
+              this.programmingDetailPanel.id,
+              infoProgramming
+            )
+            .subscribe({
+              next: response => {
+                console.log('response', response);
+              },
+              error: error => {},
+            });
+          this.loading = true;
+          this.programmingId = this.programmingDetailPanel.id;
+          const user: any = this.authService.decodeToken();
+
+          let body: any = {};
+
+          body['type'] = 'SOLICITUD_PROGRAMACION';
+          body['subtype'] = 'Programar_Recepcion';
+          body['ssubtype'] = 'TURNAR';
+
+          let task: any = {};
+          task['id'] = 0;
+          task['assignees'] = user.username;
+          task['assigneesDisplayname'] = user.nameUser;
+          task['creator'] = user.username;
+          task['reviewers'] = user.username;
+          task['taskNumber'] = Number(this.programmingId);
+          task['title'] = title;
+          task['programmingId'] = this.programmingId;
+          task['requestId'] = this.programmingId;
+          task['expedientId'] = 0;
+          console.log('task', this.programmingDetailPanel.delRegId);
+          task['idDelegationRegional'] = this.programmingDetailPanel.delRegId;
+          task['urlNb'] =
+            'pages/request/scheduling-deliveries/execute-schelude-delivery';
+          task['processName'] = 'SolicitudProgramacion';
+          body['task'] = task;
+          const taskResult = await this.createTaskOrderService(body);
+          this.loading = false;
+          if (taskResult) {
+            this.closeTask();
+            this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+            this.alert(
+              'success',
+              'Creación de Tarea Correcta',
+              `Se creó la tarea Realizar Programación con el folio: ${this.programmingId}`
+            );
+          }
+        }
+      }
+    });
+  }
+
+  selectedRows;
+  goodsSelect(goodSelect: IGoodInvAvailableView[]) {
+    this.selectedRows = goodSelect;
+    console.log('paqu', this.selectedRows);
+  }
+
+  showDocuments(): void {
+    console.log('o aqui' + this.selectRows);
+    if (isNullOrEmpty(this.selectedRows)) {
+      this.alert('warning', 'Acción Invalida', 'Se debe seleccionar un bien ');
+    } else {
+      if (this.selectedRows.length == 0 || this.selectedRows.length >= 2) {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'Se debe seleccionar un bien '
+        );
+      } else {
+        const idGood = this.selectedRows[0].id;
+        const idRequest = 0;
+        let config: ModalOptions = {
+          initialState: {
+            idGood,
+            idRequest,
+            parameter: '',
+            typeDoc: 'expedient',
+            callback: (next: boolean) => {
+              //if(next) this.getExample();
+            },
+          },
+          class: `modalSizeXL modal-dialog-centered`,
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(ShowDocumentsGoodComponent, config);
+      }
+    }
+  }
+
+  confirm() {
+    this.alertQuestion(
+      'question',
+      'Turnar Solicitud',
+      `¿Desea enviar la programación con folio: ${this.programmingDetailPanel.folio}?`
+    ).then(async question => {
+      if (question.isConfirmed) {
+        if (this.programmingDetailPanel) {
+          const infoProgramming: IprogrammingDelivery = {
+            id: this.programmingDetailPanel.id,
+            status: 'PROGRAMACION_EJECUTADA',
+          };
+
+          this.programmingRequestService
+            .updateProgrammingDelivery(
+              this.programmingDetailPanel.id,
+              infoProgramming
+            )
+            .subscribe({
+              next: response => {},
+              error: error => {},
+            });
+          this.loading = true;
+          this.programmingId = this.programmingDetailPanel.id;
+          const user: any = this.authService.decodeToken();
+
+          let body: any = {};
+
+          body['type'] = 'SOLICITUD_PROGRAMACION';
+          body['subtype'] = 'Programar_Recepcion';
+          body['ssubtype'] = 'TURNAR';
+
+          let task: any = {};
+          task['id'] = 0;
+          task['assignees'] = user.username;
+          task['assigneesDisplayname'] = user.nameUser;
+          task['creator'] = user.username;
+          task['reviewers'] = user.username;
+          task['taskNumber'] = Number(this.programmingId);
+          task['title'] =
+            'Aprobar solicitud para la restitución de bienes de la programación ' +
+            this.programmingDetailPanel.folio;
+          task['programmingId'] = this.programmingId;
+          task['requestId'] = this.programmingId;
+          task['expedientId'] = 0;
+          console.log('task', this.programmingDetailPanel.delRegId);
+          task['idDelegationRegional'] = this.programmingDetailPanel.delRegId;
+          task['urlNb'] =
+            'pages/request/scheduling-deliveries/execute-schelude-delivery';
+          task['processName'] = 'SolicitudProgramacion';
+          body['task'] = task;
+          const taskResult = await this.createTaskOrderService(body);
+          this.loading = false;
+          if (taskResult) {
+            this.closeTask();
+            this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+            this.alert(
+              'success',
+              'Creación de Tarea Correcta',
+              `Se creó la tarea Realizar Programación con el folio: ${this.programmingId}`
+            );
+          }
+        }
+      }
+    });
+  }
+
+  async closeTask() {
+    const user: any = this.authService.decodeToken();
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    let body: any = {};
+
+    body['idTask'] = _task.id;
+    body['userProcess'] = user.username;
+    body['type'] = 'SOLICITUD_PROGRAMACION';
+    body['subtype'] = 'Realizar_Programacion';
+    body['ssubtype'] = 'ENVIAR';
+
+    const taskResult: any = await this.createTaskOrderService(body);
+    this.loading = false;
+    if (taskResult || taskResult == false) {
+    }
+  }
+
+  createTaskOrderService(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(false);
+        },
+      });
+    });
+  }
+
+  showReport(data: any) {
+    console.log('data', data);
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modal-xl modal-dialog-centered',
+    };
+    config.initialState = {
+      idprogDel: data.certificateId,
+      report: data.certificateType,
+      callback: (next: boolean) => {
+        if (next) {
+          //this.showReportDestruction();
+        }
+      },
+    };
+
+    this.modalService.show(ShowSchedulingReportComponentComponent, config);
   }
 }

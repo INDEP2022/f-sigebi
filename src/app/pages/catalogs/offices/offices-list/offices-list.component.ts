@@ -38,7 +38,7 @@ export class OfficesListComponent extends BasePage implements OnInit {
         columnTitle: 'Acciones',
         edit: true,
         add: false,
-        delete: false,
+        delete: true,
         position: 'right',
       },
     };
@@ -130,7 +130,6 @@ export class OfficesListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(office.id);
-        //Swal.fire('Borrado', '', 'success');
       }
     });
   }
@@ -140,6 +139,13 @@ export class OfficesListComponent extends BasePage implements OnInit {
       next: () => {
         this.getDeductives();
         this.alert('success', 'Despacho', 'Borrado Correctamente');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Despacho',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
       },
     });
   }

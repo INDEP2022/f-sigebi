@@ -41,7 +41,7 @@ export class StateFormComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(200),
         ],
       ],
       codeCondition: [null, [Validators.required, Validators.maxLength(30)]],

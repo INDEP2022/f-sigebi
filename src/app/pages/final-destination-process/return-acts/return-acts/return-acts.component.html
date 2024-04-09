@@ -346,7 +346,7 @@
           style="margin-left: 5px">
           <ng2-smart-table
             #mySmartTable
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settingsGoods"
             [source]="goodsList"
             (userRowSelect)="onRowSelect($event)">
@@ -387,7 +387,7 @@
           style="margin-left: 5px">
           <ng2-smart-table
             #mySmartTable
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settingsDetailProceedings"
             [source]="goodsListTable"
             (userRowSelect)="deleteRowSelect($event)"></ng2-smart-table>

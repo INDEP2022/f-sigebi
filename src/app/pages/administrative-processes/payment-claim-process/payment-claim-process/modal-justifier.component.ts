@@ -21,7 +21,7 @@ interface ExampleData {
       <div body>
         <div class="row">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="data"
             (userRowSelect)="select($event)">

@@ -708,7 +708,7 @@
           <div class="row pt-2 mb-2">
             <div class="col-sm-11 col-11 col-md-11">
               <ng2-smart-table
-                [attr.class]="'table-bordered'"
+                [attr.class]="'table-bordered table-responsive'"
                 [settings]="settings2"
                 [source]="data2"></ng2-smart-table>
             </div>
@@ -751,7 +751,7 @@
                 <div class="table-responsive">
                   <div [class]="loading ? 'table-loading' : ''">
                     <ng2-smart-table
-                      [attr.class]="'table-bordered'"
+                      [attr.class]="'table-bordered table-responsive'"
                       [settings]="settings3"
                       [source]="copyOficio"
                       (delete)="showDeleteAlert($event.data)">

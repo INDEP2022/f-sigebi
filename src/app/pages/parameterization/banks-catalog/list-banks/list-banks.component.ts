@@ -99,6 +99,7 @@ export class ListBanksComponent extends BasePage implements OnInit {
     };
     this.bankService.getAllWithFilters(params).subscribe({
       next: response => {
+        console.log(response.data);
         this.data.load(response.data);
         this.data.refresh();
         this.totalItems = response.count;
@@ -140,7 +141,7 @@ export class ListBanksComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.bankService.remove(body).subscribe({
           next: () => {
-            this.alert('success', 'Cuenda de Banco', 'Borrada Correctamente');
+            this.alert('success', 'Cuenta de Banco', 'Borrada Correctamente');
             this.filterParams
               .pipe(takeUntil(this.$unSubscribe))
               .subscribe(() => this.getCourts());

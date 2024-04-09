@@ -152,7 +152,7 @@ export class CityDetailComponent extends BasePage implements OnInit {
 
   getDelegations(params: ListParams) {
     this.delegations = new DefaultSelect([], 0);
-    if (this.selectedState.id) params['filter.id'] = this.selectedState.id;
+    if (this.selectedState?.id) params['filter.id'] = this.selectedState.id;
     this.delegationService.getAllPaginated(params).subscribe({
       next: data => {
         this.delegations = new DefaultSelect(data.data, data.count);
@@ -176,6 +176,10 @@ export class CityDetailComponent extends BasePage implements OnInit {
       next: data => {
         console.log(data);
         this.subDelegations = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.subDelegations = new DefaultSelect([], 0);
+        this.loading = false;
       },
     });
   }
@@ -286,13 +290,29 @@ export class CityDetailComponent extends BasePage implements OnInit {
     this.loading = true;
     this.cityService.create2(this.cityForm.getRawValue()).subscribe({
       next: data => {
-        this.modalRef.hide();
-        this.handleSuccess();
+        if (
+          data?.error ==
+          'duplicate key value violates unique constraint "cat_ciudad_pk"'
+        ) {
+          this.alert('warning', 'Ya existe un registros con estos datos', '');
+        } else {
+          console.log(data);
+          this.modalRef.hide();
+          this.handleSuccess();
+        }
       },
       error: err => {
-        this.loading = false;
-        this.alert('error', err.err.message, '');
         console.log(err);
+        this.loading = false;
+        if (
+          err.err.message ==
+          'duplicate key value violates unique constraint "cat_ciudad_pk"'
+        ) {
+          this.alert('warning', 'Ya existe un registros con estos datos', '');
+        } else {
+          this.alert('error', err.err.message, '');
+          console.log(err);
+        }
       },
     });
   }

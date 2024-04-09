@@ -1232,7 +1232,7 @@ export class PaymentDispersionValidationComponent
 
     params3['filter.validSistem'] = `$not:$in:R,D`;
     params3['filter.lotId'] = `$eq:${this.loteSelected.idLot}`;
-    params3['sortBy'] = `paymentId:ASC`;
+    params3['sortBy'] = `paymentId:DESC`;
     this.paymentService.getComerPaymentRefgetAllV2Total(params3).subscribe({
       next: response => {
         console.log('PAYMENTS', response);
@@ -1279,7 +1279,7 @@ export class PaymentDispersionValidationComponent
     }
 
     params4['filter.lotId'] = `$eq:${this.loteSelected.idLot}`;
-    params4['sortBy'] = `paymentId:ASC`;
+    params4['sortBy'] = `paymentId:DESC`;
     this.spentService.getComerPaymentRefGensV2Total(params4).subscribe({
       next: (response: any) => {
         console.log('PAYMENTS', response);

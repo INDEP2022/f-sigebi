@@ -11,7 +11,13 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-indicators-of-performance-form',
   templateUrl: './indicators-of-performance-form.component.html',
-  styles: [],
+  styles: [
+    `
+      .bg-gray {
+        background-color: #eee !important;
+      }
+    `,
+  ],
 })
 export class IndicatorsOfPerformanceFormComponent
   extends BasePage
@@ -120,6 +126,7 @@ export class IndicatorsOfPerformanceFormComponent
       next: data => this.handleSuccess(),
       error: error => {
         this.loading = false;
+        this.alert('warning', 'No se pudo actualizar el registro', '');
         console.log(error);
       },
     });

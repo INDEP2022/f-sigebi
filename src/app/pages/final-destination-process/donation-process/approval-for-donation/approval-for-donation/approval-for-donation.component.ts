@@ -674,7 +674,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         params.addFilter('description', lparams.text, SearchFilter.ILIKE);
         // params.addFilter('cve_banco', lparams.text);
       }
-    console.log('AAQUII');
+    params.addFilter('etapaEdo', 2, SearchFilter.EQ);
     this.delegationService.getAll(params.getParams()).subscribe({
       next: response => {
         this.delegations$ = new DefaultSelect(response.data, response.count);
@@ -687,14 +687,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   async getnoDelegation1(id: any) {
     const params = new FilterParams();
-    // params.page = lparams.page;
-    // params.limit = lparams.limit;
-    // if (lparams?.text.length > 0)
     params.addFilter('id', id, SearchFilter.EQ);
     params.addFilter('description', 'DELE', SearchFilter.ILIKE);
-
-    // this.hideError();
-
     this.delegationService.getAll(params.getParams()).subscribe({
       next: (data: any) => {
         this.delegationRegional = data.data[0];
@@ -703,7 +697,6 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       },
       error: () => {
         this.getDelegations(new ListParams());
-        // this.cities = new DefaultSelect();
       },
     });
   }
@@ -950,7 +943,9 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.response = false;
     this.responseDetail = false;
     this.validate = true;
-    this.form.reset();
+    this.form.controls['estatusAct'].reset();
+    this.form.controls['cveActa'].reset();
+    this.form.controls['elaborated'].reset();
     localStorage.removeItem('actaId');
     localStorage.removeItem('cveActa');
     localStorage.removeItem('captureDate');
@@ -970,9 +965,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     await this.clearSubheaderFields();
     if (this.valUser) {
       // const valDele = this.authService.decodeToken().department;
-      // this.getnoDelegation1(valDele);
+      // this.getnoDelegation1(this.valDele);
       this.form.get('noDelegation1').setValue(this.delegationRegional);
-      this.form.get('noDelegation1').disable();
     } else {
       this.getDelegations(new ListParams());
     }

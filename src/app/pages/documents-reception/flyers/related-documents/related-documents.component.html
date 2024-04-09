@@ -530,7 +530,7 @@
           </div> -->
             <!-- <div class="col-md-12" style="max-height: 600px; overflow-y: scroll">
             <div [class]="loadingGoods ? 'table-loading' : ''">
-              <ng2-smart-table class="col-md-12" id="goods" [attr.class]="'table-bordered'" [settings]="settings"
+              <ng2-smart-table class="col-md-12" id="goods" [attr.class]="'table-bordered table-responsive'" [settings]="settings"
                 [source]="data1"></ng2-smart-table>
               <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
             </div>
@@ -719,7 +719,7 @@
             <!-- <ng2-smart-table
                class="col-md-12"
                id="goods"
-               [attr.class]="'table-bordered'"
+               [attr.class]="'table-bordered table-responsive'"
                [settings]="configTableCCp.settings"
                [source]="[]">
              </ng2-smart-table> -->
@@ -741,7 +741,7 @@
                 <div class="table-responsive">
                   <div [class]="loading ? 'table-loading' : ''">
                     <ng2-smart-table
-                      [attr.class]="'table-bordered'"
+                      [attr.class]="'table-bordered table-responsive'"
                       [settings]="settings3"
                       [source]="copyOficio"
                       (delete)="showDeleteAlertCcp($event.data)">
