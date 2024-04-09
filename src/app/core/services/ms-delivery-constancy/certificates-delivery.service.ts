@@ -34,6 +34,12 @@ export class CertificatesDeliveryService extends HttpService {
     return this.put(route, body);
   }
 
+  //getById
+  getById(id: string | number) {
+    const route = `${DeliveryConstancy.CertificatesDelivery}/${id}`;
+    return this.get(route);
+  }
+
   remove(id: string | number) {
     const route = `${DeliveryConstancy.CertificatesDelivery}/${id}`;
     return this.delete(route);
