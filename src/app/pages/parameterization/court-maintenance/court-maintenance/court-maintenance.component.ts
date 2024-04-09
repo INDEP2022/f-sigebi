@@ -246,6 +246,7 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
 
   getCourtByCity() {
     this.loading = true;
+
     this.courtCityServ
       .getAllWithFilters(this.filterParams.getValue().getParams())
       .subscribe({
@@ -273,10 +274,11 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
           this.loading = false;
           this.isPresent = true;
         },
-        error: error => (
-          this.onLoadToast('error', error.error.message, ''),
-          (this.loading = false)
-        ),
+        error: error => {
+          this.dataCourtCity.data = [];
+          this.dataCourtCity.count = 0;
+          this.loading = false;
+        },
       });
   }
 

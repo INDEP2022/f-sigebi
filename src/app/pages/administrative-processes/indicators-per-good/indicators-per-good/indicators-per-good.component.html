@@ -50,11 +50,11 @@
           <div class="row pt-4">
             <div class="col-md-12">
               <div [class]="loading ? 'table-loading' : ''">
-                <!-- <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings1" [source]="data1">
+                <!-- <ng2-smart-table [attr.class]="'table-bordered table-responsive'" [settings]="settings1" [source]="data1">
                       </ng2-smart-table> -->
                 <ng2-smart-table
                   class="col-md-12"
-                  [attr.class]="'table-bordered'"
+                  [attr.class]="'table-bordered table-responsive'"
                   [settings]="settings1"
                   [source]="indicatorsTotal"
                   (userRowSelect)="onUserRowSelect($event)"></ng2-smart-table>
@@ -66,11 +66,11 @@
           <div class="row pt-4">
             <div class="col-md-12">
               <div [class]="loading ? 'table-loading' : ''">
-                <!-- <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data2">
+                <!-- <ng2-smart-table [attr.class]="'table-bordered table-responsive'" [settings]="settings" [source]="data2">
                       </ng2-smart-table> -->
                 <ng2-smart-table
                   class="col-md-12"
-                  [attr.class]="'table-bordered'"
+                  [attr.class]="'table-bordered table-responsive'"
                   [settings]="settings2"
                   [source]="indicatorsTotal"></ng2-smart-table>
               </div>

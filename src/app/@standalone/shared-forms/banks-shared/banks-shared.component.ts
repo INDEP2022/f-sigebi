@@ -40,8 +40,12 @@ export class BanksSharedComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     let bankCode = this.form.controls[this.bankField].value;
-    if (bankCode !== null && this.form.contains('bankName')) {
+    console.log(bankCode);
+    console.log(this.form.contains('bankName'));
+
+    if (bankCode != null) {
       let name = this.form.controls['bankName'].value;
+      console.log(name);
       this.banks = new DefaultSelect([
         {
           bankCode: bankCode,
