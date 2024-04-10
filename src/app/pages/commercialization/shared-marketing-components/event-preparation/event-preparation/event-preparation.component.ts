@@ -225,8 +225,8 @@ export class EventPreparationComponent
     this.cleanStadistics();
     const params = new FilterParams();
     console.log('taskOpenEvent: ', this.comerEventsListParams);
-    params.page = this.comerCustomersListParams.value.page;
-    params.limit = this.comerCustomersListParams.value.limit;
+    params.page = 1;
+    params.limit = 10;
     this.comerEventsListParams.next(params);
     // this.commerEventsList.refreshData();
   }
