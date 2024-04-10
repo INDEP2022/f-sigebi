@@ -84,8 +84,14 @@
                   [attr.class]="'table-bordered table-responsive'"
                   [settings]="settings"
                   [source]="data"
+                  (userRowSelect)="onSelectedRows($event)"
                   ><!-- (edit)="showDocument()" -->
                 </ng2-smart-table>
+
+                <div class="table-footer">
+                  <div style="width: 100%"></div>
+                  <b class="mr-4">Total:</b> {{ totalAmount }}
+                </div>
               </div>
 
               <app-pagination

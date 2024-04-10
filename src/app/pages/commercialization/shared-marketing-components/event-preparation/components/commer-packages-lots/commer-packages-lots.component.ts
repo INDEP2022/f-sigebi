@@ -125,6 +125,10 @@ export class CommerPackagesLotsComponent
           await this.verifyRejectedGoods();
           this.fillStadistics.emit();
           const params = new FilterParams();
+          console.log(
+            'Comer lots list params: ',
+            this.comerLotsListParams.value
+          );
           this.comerLotsListParams.next(params);
         })
       );

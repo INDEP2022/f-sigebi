@@ -62,7 +62,8 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
       .pipe(
         takeUntil(this.$unSubscribe),
         tap(params => {
-          console.log(params);
+          console.log('params: ', params);
+          console.log('params this: ', this.params);
           this.getEvents(params).subscribe();
         })
       )
@@ -239,6 +240,7 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
   }
 
   refreshTable() {
+    console.log('Its called');
     const params = new FilterParams();
     this.params.next(params);
   }

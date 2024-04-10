@@ -82,14 +82,14 @@
         <div class="col-md-5">
           <form class="form-horizontal" style="margin: 0 auto">
             <div class="form-group">
-              <label class="col-lg-5 text-right">Tipo evento:</label>
+              <label class="col-lg-5 text-left">Tipo evento:</label>
               <span *ngIf="programmingDetailPanel.typeEvent == 1">
                 Ventas
               </span>
               <span *ngIf="programmingDetailPanel.typeEvent == 2">
                 Donación
               </span>
-              <span *ngIf="programmingDetailPanel.typeEvent == 3">
+              <span *ngIf="programmingDetailPanel.typeEvent == 5">
                 Destrucción
               </span>
               <span *ngIf="programmingDetailPanel.typeEvent == 4">
@@ -98,17 +98,17 @@
             </div>
 
             <div class="form-group">
-              <label class="col-lg-5 text-right">Folio:</label>
+              <label class="col-lg-5 text-left">Folio:</label>
               <span> {{ programmingDetailPanel.folio }} </span>
             </div>
 
             <div class="form-group">
-              <label class="col-lg-5 text-right">Transferente:</label>
+              <label class="col-lg-5 text-left">Transferente:</label>
               <span> {{ programmingDetailPanel.transferId }} </span>
             </div>
 
             <div class="form-group">
-              <label class="col-lg-5 text-right">Fecha page entrega:</label>
+              <label class="col-lg-5 text-left">Fecha page entrega:</label>
               <span>
                 {{ programmingDetailPanel.startDate | date : 'MM/dd/yy' }}
               </span>
@@ -119,21 +119,21 @@
         <div class="col-md-6">
           <form class="form-horizontal" style="margin: 0 auto">
             <div class="form-group">
-              <label class="col-lg-4 text-right">Fecha final entrega:</label>
+              <label class="col-lg-4 text-left">Fecha final entrega:</label>
               <span>
                 {{ programmingDetailPanel.endDate | date : 'MM/dd/yy' }}
               </span>
             </div>
 
             <div class="form-group">
-              <label class="col-lg-4 text-right">Almac&eacute;n:</label>
+              <label class="col-lg-4 text-left">Almac&eacute;n:</label>
               <span> {{ programmingDetailPanel.store }} </span>
             </div>
 
             <div
               class="form-group"
               *ngIf="programmingDetailPanel.typeEvent == 1">
-              <label class="col-lg-4 text-right">Cliente:</label>
+              <label class="col-lg-4 text-left">Cliente:</label>
               <span> {{ programmingDetailPanel.client }} </span>
             </div>
           </form>
@@ -145,7 +145,7 @@
             programmingDetailPanel.status == 'FORMATO_RECLAMACION_SAE'
           ">
           <div class="form-group">
-            <label class="col-lg-4 text-right">Correo Dirección:</label>
+            <label class="col-lg-4 text-left">Correo Dirección:</label>
             <span> {{ programmingDetailPanel.emailAddressCenterTe }} </span>
           </div>
         </div>
@@ -181,13 +181,13 @@
       <div class="row" *ngIf="showDetailProgDestruc">
         <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-4 text-right">No. Of&iacute;cio:</label>
+            <label class="col-md-4 text-left">No. Of&iacute;cio:</label>
             <span> {{ programmingDetailPanel.officeDestructionNumber }} </span>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-4 text-right"
+            <label class="col-md-4 text-left"
               >M&eacute;todo Destrucci&oacute;n:</label
             >
             <span> {{ programmingDetailPanel.metodDestruction }} </span>
@@ -195,7 +195,7 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-4 text-right"
+            <label class="col-md-4 text-left"
               >Ubicaci&oacute;n Destrucci&oacute;n:</label
             >
             <span> {{ programmingDetailPanel.metodDestruction }} </span>
@@ -203,13 +203,13 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-4 text-right">Nombre Destinatario:</label>
+            <label class="col-lg-4 text-left">Nombre Destinatario:</label>
             <span> {{ programmingDetailPanel.addressee }} </span>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-4 text-right"
+            <label class="col-lg-4 text-left"
               >Plazo &#40;d&iacute;as&#41;:</label
             >
             <span> {{ programmingDetailPanel.term }} </span>
@@ -217,25 +217,25 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-4 text-right">Nombre Contribuyente:</label>
+            <label class="col-lg-4 text-left">Nombre Contribuyente:</label>
             <span> {{ programmingDetailPanel.taxpayerName }} </span>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-4 text-right">Cargo Destinatario:</label>
+            <label class="col-lg-4 text-left">Cargo Destinatario:</label>
             <span> {{ programmingDetailPanel.chargeAddressee }} </span>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-4 text-right">Empresa:</label>
+            <label class="col-lg-4 text-left">Empresa:</label>
             <span> {{ programmingDetailPanel.company }} </span>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-4 text-right"
+            <label class="col-lg-4 text-left"
               >Nombre Representante Legal:</label
             >
             <span> {{ programmingDetailPanel.legalRepresentativeName }} </span>
@@ -243,7 +243,7 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-4 text-right"
+            <label class="col-lg-4 text-left"
               >Direcci&oacute;n Destinatario:</label
             >
             <span> {{ programmingDetailPanel.addressAddressee }} </span>
@@ -251,7 +251,7 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-4 text-right">Lugar Destrucci&oacute;n:</label>
+            <label class="col-lg-4 text-left">Lugar Destrucci&oacute;n:</label>
             <span> {{ programmingDetailPanel.placeDestruction }} </span>
           </div>
         </div>
@@ -443,7 +443,7 @@
           </button>
           <button
             class="btn btn-primary btn-sm active"
-            (click)="delivery('entragados')">
+            (click)="delivery('entregados')">
             <i class="fa fa-check-circle" aria-hidden="true"></i> Entregados
           </button>
           <button
