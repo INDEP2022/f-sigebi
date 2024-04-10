@@ -21,7 +21,8 @@ import { INSTITUTION_CLASIFICATION_COLUMNS } from './institution-columns';
 })
 export class InstitutionClassificationListComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   institutions: IInstitutionClassification[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -50,8 +51,8 @@ export class InstitutionClassificationListComponent
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-              filter.field == 'description' ||
-              filter.field == 'numRegister'
+            filter.field == 'description' ||
+            filter.field == 'numRegister'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -75,6 +76,7 @@ export class InstitutionClassificationListComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    params['sortBy'] = `id:DESC`;
     this.institutionService.getAll(params).subscribe({
       next: response => {
         this.institutions = response.data;
@@ -83,7 +85,13 @@ export class InstitutionClassificationListComponent
         this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.institutions = [];
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+        this.loading = false;
+      },
     });
   }
   openForm(institution?: IInstitutionClassification) {
