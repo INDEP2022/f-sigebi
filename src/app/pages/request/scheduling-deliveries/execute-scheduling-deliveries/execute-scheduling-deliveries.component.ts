@@ -120,6 +120,8 @@ export class ExecuteSchedulingDeliveriesComponent
   idProgram: string = '';
   programmingId = '';
 
+  title: string = '';
+
   private programmingService = inject(ProgrammingGoodService);
   private transferenteService = inject(TransferenteService);
   private certifiDeliveryService = inject(CertificatesDeliveryService);
@@ -294,8 +296,29 @@ export class ExecuteSchedulingDeliveriesComponent
           }
         });
     }
+    console.log('status', this.statusProgramming)
 
     //this.constancyDeliveryArray = testdata;
+  }
+
+  getTitle() {
+    console.log('status', this.programmingDetailPanel.status)
+    switch (this.programmingDetailPanel.status) {
+      case 'PROGRAMACION_EJECUTADA':
+      case 'VERIFICACION_BIENES':
+        this.title = 'APROBAR SOLICITUD PARA LA RESTITUCIÓN DE BIENES'
+        break;
+      case 'BIENES_NO_ENTREGADOS':
+        this.title = 'CLASIFICACIÓN DE BIENES NO ENTREGADOS'
+        break;
+      case 'RESTITUCION_BIENES':
+        this.title = 'RESTITUCIÓN DE BIENES DAÑADOS Y FALTANTES'
+        break;
+      default:
+        this.title = 'EJECUTAR PROGRAMACIÓN DE ENTREGA'
+        break;
+
+    }
   }
 
   certificateDelivery(constancy: number) {
@@ -483,6 +506,7 @@ export class ExecuteSchedulingDeliveriesComponent
 
           this.getProgrammingGoodDelivery(new ListParams());
           this.getCertificateDelivery(new ListParams());
+          this.getTitle()
         },
       });
   }
@@ -1233,7 +1257,8 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   save() {
-    if ((this.programmingDetailPanel.status = 'BIENES_NO_ENTREGADOS')) {
+    console.log(this.programmingDetailPanel.status)
+    if ((this.programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS')) {
       let list: any = [];
       for (
         let index = 0;
@@ -1265,6 +1290,8 @@ export class ExecuteSchedulingDeliveriesComponent
           this.alert('success', 'Actualizado', 'Se han actualizado los bienes');
         }
       });
+    } else {
+      this.alert('success', 'Actualizado', 'Se han actualizado los bienes');
     }
   }
 
