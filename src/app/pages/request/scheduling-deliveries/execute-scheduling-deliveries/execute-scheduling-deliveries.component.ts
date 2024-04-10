@@ -843,6 +843,36 @@ export class ExecuteSchedulingDeliveriesComponent
 
   //aqui
   delivery(executionType: string, causa?: string) {
+    console.log('causa', this.constancyDeliveryArray);
+
+    if (executionType == 'entregados') {
+      let constancyDelivered = this.constancyDeliveryArray.filter(
+        item => item.certificateType === '1'
+      );
+
+      if (constancyDelivered.length < 1) {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Debes generar por lo menos una constancia de entrega'
+        );
+        return;
+      }
+    } else {
+      let types = ['2', '3', '4'];
+      let constancyNoDelivered = this.constancyDeliveryArray.filter(item =>
+        types.includes(item.certificateType)
+      );
+      if (constancyNoDelivered.length < 1) {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Debes generar por lo menos una constancia de no entrega'
+        );
+        return;
+      }
+    }
+
     if (!this.selectedRows || this.selectedRows.length !== 1) {
       this.alert(
         'warning',
