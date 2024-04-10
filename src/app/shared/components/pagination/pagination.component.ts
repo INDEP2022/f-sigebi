@@ -27,6 +27,7 @@ export class PaginationComponent extends BasePage implements OnInit {
   @Input() limit: FormControl = new FormControl(10);
   @Input() paginatorPageSize: boolean = true;
   @Input() paginatorRangeLabel: boolean = true;
+  filterParamsValue: FilterParams;
   constructor() {
     super();
   }
@@ -38,7 +39,28 @@ export class PaginationComponent extends BasePage implements OnInit {
     this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       this.limit.setValue(params.limit || params.page);
     }); */
+    this.filterParams.subscribe(value => {
+      this.filterParamsValue = value;
+      this.params.value.page = this.filterParamsValue.page;
+    });
   }
+
+  override ngOnDestroy() {
+    this.filterParams.unsubscribe();
+  }
+
+  /*  ngOnChanges(changes: SimpleChanges) {
+     if (changes['params'] && !changes['params'].firstChange) {
+       this.params = changes['params'].currentValue;
+       console.log('params', this.params.getValue());
+     }
+ 
+     if (changes['filterParams'] && !changes['filterParams'].firstChange) {
+       this.filterParams = changes['filterParams'].currentValue;
+       console.log('filterParams', this.filterParams.getValue());
+     }
+   } */
+
   pageChanged(event: PageChangedEvent) {
     const params = this.params.getValue();
     this.emitEvent({ ...params, page: event.page });
