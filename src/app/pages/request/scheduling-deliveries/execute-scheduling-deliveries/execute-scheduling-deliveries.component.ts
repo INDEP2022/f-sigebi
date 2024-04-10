@@ -1329,7 +1329,24 @@ export class ExecuteSchedulingDeliveriesComponent
         }
       });
     } else {
-      this.alert('success', 'Actualizado', 'Se han actualizado los bienes');
+      let infoProgramming = {
+        id: this.programmingDetailPanel.id,
+      };
+      this.programmingRequestService
+        .updateProgrammingDelivery(
+          this.programmingDetailPanel.id,
+          infoProgramming
+        )
+        .subscribe({
+          next: async response => {
+            this.alert(
+              'success',
+              'Actualizado',
+              'Se han actualizado los bienes'
+            );
+          },
+          error: () => {},
+        });
     }
   }
 
