@@ -5,7 +5,7 @@
   <div body>
     <form class="form-material" [formGroup]="officeForm">
       <div class="row">
-        <div class="col-md-4">
+        <div *ngIf="edit" class="col-md-4">
           <form-field
             [control]="officeForm.get('numRegister')"
             label="N&uacute;mero de Registro">
@@ -21,10 +21,12 @@
             <form-field
               [control]="officeForm.get('description')"
               label="Descripci&oacute;n">
-              <input
+              <textarea
                 type="text"
+                rows="3"
                 class="form-control"
-                formControlName="description" />
+                formControlName="description">
+              </textarea>
             </form-field>
           </div>
         </div>
