@@ -97,6 +97,7 @@
               value="nameCity"
               bindLabel="nameCity"
               control="city"
+              (fetchItems)="getCities($event)"
               (change)="changeCity($event)">
             </ngx-select>
           </form-field>

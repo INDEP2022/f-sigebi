@@ -72,11 +72,16 @@ export const INDICATORSPERFORMANCE_COLUMNS = {
     //width: '10%',
     type: 'html',
     sort: false,
-    valuePrepareFunction: (date: Date) => {
-      var raw = new Date(date);
-
-      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
-      return formatted;
+    valuePrepareFunction: (text: string) => {
+      return `${
+        text
+          ? text.split('T')[0].split('-').reverse().join('/') +
+            ' ' +
+            text.split('T')[1].split(':')[0] +
+            ':' +
+            text.split('T')[1].split(':')[1]
+          : ''
+      }`;
     },
     /*valuePrepareFunction: (text: string) => {
       return `
