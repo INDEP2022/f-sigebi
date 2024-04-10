@@ -238,7 +238,7 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
       data => {
         this.states = new DefaultSelect(data.data, data.count);
       },
-      error => (this.states = new DefaultSelect())
+      error => (this.states = new DefaultSelect([], 0))
     );
   }
   getCitie(data: any) {
@@ -293,8 +293,13 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
     if (id) {
       params['filter.stateKey'] = `$eq:${id}`;
     }
-    this.municipalityService.getAll(params).subscribe(data => {
-      this.municipalities = new DefaultSelect(data.data, data.count);
+    this.municipalityService.getAll(params).subscribe({
+      next: data => {
+        this.municipalities = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.municipalities = new DefaultSelect([], 0);
+      },
     });
   }
   getLocalitie(data: any) {

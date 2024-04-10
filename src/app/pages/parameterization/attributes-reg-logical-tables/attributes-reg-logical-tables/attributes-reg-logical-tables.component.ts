@@ -138,17 +138,28 @@ export class AttributesRegLogicalTablesComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.dynamicTablesService.getAll(params).subscribe(res => {
-      console.log(res);
-      this.totalItems = res.count;
-      this.data1.load(res.data);
-      this.data1.refresh();
-      this.loading1 = false;
-
-      /*this.totalItems = res.count;
-      this.logicTables = res.data;
-      this.loading1 = false;*/
+    this.dynamicTablesService.getAll(params).subscribe({
+      next: res => {
+        console.log(res);
+        this.totalItems = res.count;
+        this.data1.load(res.data);
+        this.data1.refresh();
+        this.loading1 = false;
+      },
+      error: err => {
+        this.totalItems = 0;
+        this.data1.load([]);
+        this.data1.refresh();
+        this.loading1 = false;
+      },
     });
+
+    // (res => {
+
+    //   /*this.totalItems = res.count;
+    //   this.logicTables = res.data;
+    //   this.loading1 = false;*/
+    // });
   }
 
   rowsSelected(event: any) {

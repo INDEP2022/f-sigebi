@@ -1724,6 +1724,7 @@ export class SchedulingDeliveriesFormComponent
       grid.getSelectedRows().forEach(row => {
         row.isSelected = false;
       });
+      table.isAllSelected = false;
     });
   }
   numericOnly(event): boolean {

@@ -762,9 +762,7 @@
         <!-- FIN -->
       </form>
       <div class="pt-4">
-        <button class="btn btn-primary btn-sm active" (click)="separate()">
-          Separar
-        </button>
+        <button *ngIf="!edit" class="btn btn-primary btn-sm active" (click)="separate()">Separar</button>
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             #table

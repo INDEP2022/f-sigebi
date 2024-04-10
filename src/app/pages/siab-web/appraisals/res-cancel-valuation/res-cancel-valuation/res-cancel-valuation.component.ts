@@ -750,15 +750,14 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
             : null,
       };
       console.log(body);
-      resolve(body);
-      // this.clarificationsService.postSpInsertaOficioRespuesta(body).subscribe({
-      //   next: response => {
-      //     resolve(response);
-      //   },
-      //   error: error => {
-      //     reject(null);
-      //   },
-      // });
+      this.clarificationsService.postSpInsertaOficioRespuesta(body).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          reject(null);
+        },
+      });
     });
   }
   async insertaBien(idOficio: number, noBien: number, accion: string) {
