@@ -13,8 +13,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class CreateManualServiceFormComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   form: FormGroup = new FormGroup({});
   orderServiceId: number = null;
 
@@ -53,7 +52,7 @@ export class CreateManualServiceFormComponent
       if (question.isConfirmed) {
         const form = this.form.getRawValue();
         form.classificationService = 'Manual';
-        form.orderServiceId = 516;
+        form.orderServiceId = this.orderServiceId;
         form.typeService = 'ORDEN_SERVICIO_PRESTAMO_MANUAL';
 
         this.createOrderServiceProvided(form);

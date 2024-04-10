@@ -103,6 +103,7 @@ export class EventGoodsLotsListActionsComponent
   }
 
   ngOnInit(): void {
+    console.log('Se llamaron los lotes');
     this.eventPreparationService.$lotifyGoods
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -226,16 +227,19 @@ export class EventGoodsLotsListActionsComponent
       this.alert('warning', 'No hay datos para exportar', '');
       return;
     }
-    const forThirdQuestion = await this.alertQuestion(
-      'question',
-      '¿Archivo para Tercero?',
-      '',
-      'Si',
-      'No'
-    );
-    if (forThirdQuestion.isConfirmed) {
-      this.thirdFile();
-      return;
+
+    if (this.parameters.pDirection == 'M') {
+      const forThirdQuestion = await this.alertQuestion(
+        'question',
+        '¿Archivo para Tercero?',
+        '',
+        'Si',
+        'No'
+      );
+      if (forThirdQuestion.isConfirmed) {
+        this.thirdFile();
+        return;
+      }
     }
     const { statusVtaId } = this.controls;
     if (['PREP', 'APRO', 'PUB', 'ACT'].includes(statusVtaId.value)) {

@@ -55,7 +55,7 @@
               class="form-control"
               [ngClass]="{ 'not-press bg-gray': edit }"
               [bsConfig]="{
-                dateInputFormat: 'YYYY-MM-DD',
+                dateInputFormat: 'DD/MM/YYYY',
                 displayOneMonthRange: true
               }"
               (bsValueChange)="validateDate($event)"
@@ -70,7 +70,7 @@
               class="form-control"
               [minDate]="minDate"
               [bsConfig]="{
-                dateInputFormat: 'YYYY-MM-DD',
+                dateInputFormat: 'DD/MM/YYYY',
                 displayOneMonthRange: true
               }"
               bsDatepicker />
@@ -97,7 +97,10 @@
             <input
               type="text"
               [bsConfig]="{
-                dateInputFormat: 'YYYY-MM-DD',
+                withTimepicker: true,
+                dateInputFormat: 'DD/MM/YYYY HH:mm',
+                keepDatepickerOpened: true,
+                adaptivePosition: true,
                 displayOneMonthRange: true
               }"
               formControlName="hoursLimNumber"
