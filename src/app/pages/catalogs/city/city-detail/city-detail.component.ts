@@ -167,7 +167,7 @@ export class CityDetailComponent extends BasePage implements OnInit {
 
   getSubDelegations(params: ListParams, subdelegationID?: number) {
     if (this.selectedDelegation.id)
-      params['filter.delegationNumber'] = this.selectedDelegation.id;
+      params['filter.delegationNumber'] = `$eq:${this.selectedDelegation.id}`;
     console.log(params);
 
     if (subdelegationID) params['filter.id'] = subdelegationID;
@@ -334,5 +334,6 @@ export class CityDetailComponent extends BasePage implements OnInit {
     this.loading = false;
     this.refresh.emit(true);
     this.modalRef.hide();
+    this.modalRef.content.callback(true);
   }
 }

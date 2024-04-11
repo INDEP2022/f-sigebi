@@ -227,14 +227,19 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: response => {
-          console.log(response);
           this.departments = response.data;
           this.data.load(response.data);
           this.data.refresh();
           this.totalItems = response.count | 0;
           this.loading = false;
         },
-        error: error => (this.loading = false),
+        error: error => {
+          this.departments = [];
+          this.data.load([]);
+          this.data.refresh();
+          this.totalItems = 0;
+          this.loading = false;
+        },
       });
     /*this.departmentService
       .getAll(params)
