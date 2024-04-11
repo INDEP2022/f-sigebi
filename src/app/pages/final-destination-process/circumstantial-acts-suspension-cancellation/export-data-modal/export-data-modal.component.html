@@ -9,8 +9,10 @@
           <ngx-select
             (fetchItems)="getData($event)"
             [data]="data"
+            label="Lista de actas"
             [form]="form"
-            [searchable]="true"
+            bindLabel="minutesKey"
+            [searchable]="false"
             control="proceddingsList">
           </ngx-select>
         </form-field>
@@ -18,7 +20,9 @@
     </form>
     <div class="row text-center">
       <div class="col">
-        <button class="btn btn-sm btn-success active mr-3">
+        <button
+          class="btn btn-sm btn-success active mr-3"
+          (click)="exportFile()">
           Generar reporte
           <i class="bx bx-download float-icon"></i>
         </button>
