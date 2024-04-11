@@ -1527,7 +1527,7 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   changeTypeRestitucion(tipoRest: string) {
-    if (this.progDeliveNoDSelectAll == true) {
+    if (tipoRest == 'NUMERARIO') {
       this.loadingPENE = true;
       const id = this.programmingDetailPanel.id;
       const body = { typeRestitution: tipoRest };
