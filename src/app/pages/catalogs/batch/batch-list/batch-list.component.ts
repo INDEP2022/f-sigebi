@@ -129,13 +129,17 @@ export class BatchListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.remove(batch.id);
+        this.remove(batch);
       }
     });
   }
 
-  remove(id: number) {
-    this.batchService.remove(id).subscribe({
+  remove(batch: IBatch) {
+    const body = {
+      id: batch.id,
+      numStore: batch.numStore?.idWarehouse,
+    };
+    this.batchService.remove_(body).subscribe({
       next: () => {
         this.getExample(),
           this.alert('success', 'Lote', 'Borrado Correctamente');

@@ -163,8 +163,16 @@ export class OriginFormComponent extends BasePage implements OnInit {
     if (id) {
       params['filter.state'] = `$eq:${id}`;
     }
-    this.cityService.getAllCitys(params).subscribe(data => {
-      this.cities = new DefaultSelect(data.data, data.count);
+    if (params?.text) params['filter.nameCity'] = `$ilike:${params.text}`;
+
+    delete params['search'];
+    this.cityService.getAllCitys(params).subscribe({
+      next: data => {
+        this.cities = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.cities = new DefaultSelect([], 0);
+      },
     });
     console.log(this.cityService);
   }

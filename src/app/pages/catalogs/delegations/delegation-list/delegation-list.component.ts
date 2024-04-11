@@ -113,7 +113,12 @@ export class DelegationListComponent extends BasePage implements OnInit {
         this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+        this.loading = false;
+      },
     });
   }
 

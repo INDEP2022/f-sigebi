@@ -86,7 +86,7 @@ export class DeliveriesConstancyFormComponent
 
   goodSelected: any = {};
   btnTitle: string = 'Guardar';
-
+  blockButtons: boolean = false;
   public event: EventEmitter<any> = new EventEmitter();
 
   private programmingGoodService = inject(ProgrammingGoodService);
@@ -309,6 +309,7 @@ export class DeliveriesConstancyFormComponent
   }
 
   async confirm() {
+    this.blockButtons = true;
     if (this.edit == false) {
       this.create();
     } else {
@@ -461,6 +462,7 @@ export class DeliveriesConstancyFormComponent
 
       if (index == this.goods.length) {
         this.onLoadToast('success', 'Se creo el certificado de constancia');
+        this.blockButtons = false;
         this.event.emit(deliveryForm);
         this.showReport(deliveryForm);
         this.close();
@@ -510,7 +512,7 @@ export class DeliveriesConstancyFormComponent
     this.onLoadToast('success', 'Se actualizo la constancia');
     this.event.emit(deliveryForm);
     this.showReport(deliveryForm);
-
+    this.blockButtons = false;
     this.close();
   }
 
@@ -932,6 +934,7 @@ export class DeliveriesConstancyFormComponent
     console.log(this.typeConstancy)
   }
   async separate() {
+    this.blockButtons = true;
     if (this.goodSelected && Object.keys(this.goodSelected).length > 0) {
       let idProgDelivery = this.progEntrega.id;
       let folio = this.progEntrega.folio;
@@ -999,7 +1002,7 @@ export class DeliveriesConstancyFormComponent
       // this.showReport(deliveryForm);
       // this.close();
       //}
-
+      this.blockButtons = false;
       // Filtrar la lista para eliminar el objeto con el id correspondiente
       this.personalEstateData = this.personalEstateData.filter(
         objeto => objeto.goodId !== this.goodSelected.goodId
@@ -1007,6 +1010,7 @@ export class DeliveriesConstancyFormComponent
       //});
     } else {
       this.alert('warning', 'Advertencia', 'Favor de seleccionar un bien');
+      this.blockButtons = false;
     }
   }
 }
