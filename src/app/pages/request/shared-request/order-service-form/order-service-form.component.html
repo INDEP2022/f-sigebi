@@ -46,8 +46,7 @@
               type="checkbox"
               [(ngModel)]="visitEye"
               [ngModelOptions]="{ standalone: true }"
-              (change)="changeVisitEye($event)"
-              [disabled]="readonly" />
+              (change)="changeVisitEye($event)" />
           </form-check>
         </div>
       </div>
@@ -76,8 +75,7 @@
             <input
               style="width: 80% !important"
               class="form-control"
-              formControlName="reasonsNotPerform"
-              [readOnly]="readonly" />
+              formControlName="reasonsNotPerform" />
           </form-field>
         </div>
       </div>
@@ -97,8 +95,7 @@
               style="width: 80% !important"
               type="text"
               class="form-control"
-              formControlName="transportationZone"
-              [readOnly]="readonly" />
+              formControlName="transportationZone" />
           </form-field>
         </div>
 
@@ -110,8 +107,7 @@
               type="checkbox"
               [(ngModel)]="consolideContainer"
               [ngModelOptions]="{ standalone: true }"
-              (change)="changeConsolidate($event)"
-              [disabled]="readonly" />
+              (change)="changeConsolidate($event)" />
           </form-check>
         </div>
       </div>
@@ -126,8 +122,7 @@
               style="width: 80% !important"
               type="text"
               class="form-control"
-              formControlName="folioTlp"
-              [readOnly]="readonly" />
+              formControlName="folioTlp" />
           </form-field>
         </div>
         <div class="col-md-4"></div>

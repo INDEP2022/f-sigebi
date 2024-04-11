@@ -28,11 +28,11 @@ import { LIST_REPORTS_COLUMN } from './list-reports-column';
 import { UploadFielsModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/upload-fiels-modal/upload-fiels-modal.component';
 
 @Component({
-  selector: 'app-request-signature-modal',
-  templateUrl: './request-signature-modal.component.html',
+  selector: 'app-order-signature-modal',
+  templateUrl: './order-signature-modal.component.html',
   styles: [],
 })
-export class RequestSignatureModalComponent extends BasePage implements OnInit {
+export class OrderSignatureModalComponent extends BasePage implements OnInit {
   //idDoc: number;
   idTypeDoc: any; //ID Tipo de documento
   idReportAclara: any; //ID de los reportes

@@ -26,14 +26,7 @@
       <div class="mr-auto p-2"></div>
       <div class="p-2">
         <button
-          *ngIf="
-            (showForm && createVehicle && op == 1) ||
-            (!showForm && createVehicle && op == 9) ||
-            (!showForm && createVehicle && op == 10 && rejected) ||
-            (!showForm && createVehicle && op == 12) ||
-            (!showForm && createVehicle && op == 13) ||
-            (!showForm && createVehicle && op == 14)
-          "
+          *ngIf="editable"
           (click)="formClassificateVehicle()"
           class="btn btn-primary btn-sm active">
           Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
@@ -41,14 +34,7 @@
       </div>
       <div class="p-2">
         <button
-          *ngIf="
-            (showForm && !dataItem && op == 1) ||
-            (!showForm && createVehicle && op == 9) ||
-            (!showForm && createVehicle && op == 10 && rejected) ||
-            (!showForm && createVehicle && op == 12) ||
-            (!showForm && createVehicle && op == 13) ||
-            (!showForm && createVehicle && op == 14)
-          "
+          *ngIf="editable"
           (click)="editClassificateVehicle()"
           class="btn btn-info btn-sm active">
           Editar <i class="fa fa-pencil-alt"></i>
