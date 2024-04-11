@@ -409,8 +409,16 @@ export class PayloadComponent extends BasePage implements OnInit {
     }
   }
 
-  getDataAll() {
+  getDataAll(data?: any) {
     console.log(this.dataFormat);
+    if (data) {
+      this.dataFormat.forEach(element => {
+        if (element.idPago == data.idPago) {
+          element = data;
+        }
+      });
+    }
+
     if (this.dataFormat) {
       this.data1.load(this.dataFormat);
       this.data1.refresh();
@@ -587,9 +595,65 @@ export class PayloadComponent extends BasePage implements OnInit {
         if (next)
           this.params1
             .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.getDataAll());
+            .subscribe(() => this.getDataAll(next));
       },
     };
     this.modalService.show(PayloadFormComponent, modalConfig);
+  }
+  async save() {
+    try {
+      for (let i = 0; i < this.dataFormat.length; i++) {
+        let resp: any = await this.insertaPago(this.dataFormat[i]);
+        console.log(resp.status);
+        if (resp.status === 400) {
+          this.alert(
+            'warning',
+            '',
+            'No se pudo actualizar el pago en pantalla'
+          );
+          return;
+        }
+        if (this.dataFormat.length == i + 1) {
+          this.alert('success', '', 'El oficio se guardó correctamente');
+        }
+      }
+    } catch (error) {
+      this.alert('warning', '', 'No se pudo actualizar el pago en pantalla');
+    }
+  }
+  async insertaPago(data: any) {
+    return new Promise((resolve, reject) => {
+      let body = {
+        pReference: Number.parseInt(data.Referencia),
+        pReferenceOri: data.ReferenciaOrdenIngreso,
+        pDateMov: data.FechaMov.toString().replace(/-/g, ''),
+        pvDate: data.V_Fecha,
+        pAmount: data.Monto,
+        pType: data.Tipo,
+        pDescPag: data.DescPago,
+        pNoMovime: data.NoMovimiento,
+        pCveBank: data.Banco,
+        pCode: data.Codigo_Banco != '' ? data.Codigo_Banco : 0,
+        pSucurs: data.Sucursal,
+        pResult: data.Resultado,
+        pVal: data.Valido,
+        pIdPag: data.idPago,
+        pIdLot: Number.parseInt(data.Id_Lote),
+        pIdOrdenIng: data.OrdenIngreso,
+        pEvent: Number.parseInt(data.Evento),
+        pLotPubl: Number.parseInt(data.LotePublico),
+        pCuenta: data.Cuenta,
+        pIdTypeSat: Number.parseInt(data.Id_Tipo_SAT),
+      };
+      this.paymentService.postComerpagrefweb(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: err => {
+          console.log(err);
+          resolve(err);
+        },
+      });
+    });
   }
 }
