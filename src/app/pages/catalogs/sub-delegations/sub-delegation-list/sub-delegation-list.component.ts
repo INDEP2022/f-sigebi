@@ -49,11 +49,12 @@ export class SubDelegationListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-            filter.field == 'description' ||
-            filter.field == 'delegationNumber' ||
-            filter.field == 'dailyConNumber' ||
-            filter.field == 'dateDailyCon' ||
-            filter.field == 'phaseEdo'
+              filter.field == 'description' ||
+              filter.field == 'delegationNumber' ||
+              filter.field == 'dailyConNumber' ||
+              filter.field == 'dateDailyCon' ||
+              filter.field == 'phaseEdo';
+            filter.field == 'registerNumber'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -79,13 +80,20 @@ export class SubDelegationListComponent extends BasePage implements OnInit {
     };
     this.subdelegationService.getAll(params).subscribe({
       next: response => {
+        console.log(response);
         this.paragraphs = response.data;
         this.totalItems = response.count || 0;
         this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.paragraphs = [];
+        this.totalItems = 0;
+        this.data.load([]);
+        this.data.refresh();
+        this.loading = false;
+      },
     });
   }
 
