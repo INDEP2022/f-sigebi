@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
@@ -73,8 +74,46 @@ export class AppraisalDetailListComponent
     if (dataSource.action == 'filter') {
       const filters = dataSource.filter.filters;
       filters.forEach((filter: any) => {
+        console.log(filter.search);
         const columns = this.settings.columns as any;
         const operator = columns[filter.field]?.operator;
+        console.log(filter.search);
+        if (filter.field == 'fechaAvaluo') {
+          var raw = filter.search;
+          var formatted = new DatePipe('en-EN').transform(
+            raw,
+            'yyyy-MM-dd',
+            'UTC'
+          );
+          filter.search = formatted;
+        }
+        if (filter.field == 'fechaVigAvaluo') {
+          var raw = filter.search;
+          var formatted = new DatePipe('en-EN').transform(
+            raw,
+            'yyyy-MM-dd',
+            'UTC'
+          );
+          filter.search = formatted;
+        }
+        if (filter.field == 'fechaDictamen') {
+          var raw = filter.search;
+          var formatted = new DatePipe('en-EN').transform(
+            raw,
+            'yyyy-MM-dd',
+            'UTC'
+          );
+          filter.search = formatted;
+        }
+        if (filter.field == 'fechaVigDictamen') {
+          var raw = filter.search;
+          var formatted = new DatePipe('en-EN').transform(
+            raw,
+            'yyyy-MM-dd',
+            'UTC'
+          );
+          filter.search = formatted;
+        }
         if (!filter.search) {
           return;
         }

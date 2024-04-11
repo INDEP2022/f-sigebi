@@ -209,7 +209,7 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
 
   getMunicipalities(params: ListParams) {
     console.log(this.storeHouseForm.controls['municipality'].value);
-    params['filter.description'] = `$ilike:${this.stateKey}`;
+    if (params.text) params['filter.description'] = `$ilike:${params.text}`;
     this.municipalityService.getAll(params).subscribe({
       next: data => {
         this.municipalities = new DefaultSelect(data.data, data.count);

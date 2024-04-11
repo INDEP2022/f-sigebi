@@ -94,7 +94,13 @@ export class NotaryListComponent extends BasePage implements OnInit {
         this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.columns = [];
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+        this.loading = false;
+      },
     });
   }
 
@@ -106,9 +112,7 @@ export class NotaryListComponent extends BasePage implements OnInit {
     });
     modalRef.content.refresh.subscribe(next => {
       if (next) {
-        this.params
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getExample());
+        this.getExample();
       }
     });
   }

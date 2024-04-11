@@ -48,7 +48,6 @@ export class InstitutionClassificationDetailComponent
       numRegister: [
         null,
         [
-          Validators.required,
           Validators.minLength(1),
           Validators.pattern(NUMBERS_PATTERN),
           Validators.maxLength(10),

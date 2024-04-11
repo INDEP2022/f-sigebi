@@ -9,13 +9,13 @@ export const SUB_DELEGATION_COLUMS = {
     type: 'string',
     sort: false,
   },
-  delegationNumber: {
+  registerNumber: {
     title: 'No Registro',
     type: 'number',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value != null ? value.id : '';
-    },
+    // valuePrepareFunction: (value: any) => {
+    //   return value != null ? value.id : '';
+    // },
   },
   dailyConNumber: {
     title: 'Nro C. diario',
