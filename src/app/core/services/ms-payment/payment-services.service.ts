@@ -254,7 +254,7 @@ export class PaymentService extends HttpService {
   }
 
   postComerpagrefweb(body: any) {
-    return this.post(PaymentEndPoints.InsComerpagrefweb, body);
+    return this.post<any>(PaymentEndPoints.InsComerpagrefweb, body);
   }
   getExpRefSol(id_ctlpay: number) {
     return this.get(PaymentEndPoints.ApplicationExpRefSol + '/' + id_ctlpay);
