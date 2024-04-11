@@ -1,0 +1,79 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">Capturar datos firmante</h5>
+  </div>
+  <div body class="body">
+    <div>
+      <form [formGroup]="signForm" class="form-material">
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <form-field [control]="signForm.get('name')" label="Nombre">
+              <input type="text" class="form-control" formControlName="name" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <form-field [control]="signForm.get('inCharge')" label="Cargo">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="100"
+                formControlName="inCharge" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-12" style="display: flex">
+            <div style="line-height: 3">
+              <label for="electronica">Tipo de firma:</label>
+            </div>
+            <div style="padding-left: 7px" class="form-check form-check-inline">
+              <form-radio label="Electr&oacute;nica">
+                <input
+                  type="radio"
+                  formControlName="tipeSign"
+                  value="electronica"
+                  id="electronica"
+                  style="height: 3.5px !important" />
+              </form-radio>
+
+              <div>
+                <form-radio label="Autografa">
+                  <input
+                    type="radio"
+                    formControlName="tipeSign"
+                    style="height: 1.5rem !important"
+                    value="autografa"
+                    id="autografa" />
+                </form-radio>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <confirm-button
+            [disabled]="!signForm.valid"
+            [btnSmall]="true"
+            class="mr-2"
+            (confirm)="acepted()"></confirm-button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-danger btn-sm active"
+            (click)="close()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-modal>

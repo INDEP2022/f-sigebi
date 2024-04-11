@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { catchError, of } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -20,6 +20,10 @@ import { AnnexWFormComponent } from '../components/annex-w-form/annex-w-form.com
 import { RejectionCommentFormComponent } from '../components/rejection-comment-form/rejection-comment-form.component';
 import { RejectionJustifyFormComponent } from '../components/rejection-justify-form/rejection-justify-form.component';
 import { OrderSignatureModalComponent } from '../components/service-order-signature-modal/order-signature-modal.component';
+import { getConfigService } from './service-order-task-case';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import { TypeSignatureModalComponent } from '../components/type-signature-modal/type-signature-modal..component';
 
 @Component({
   selector: 'app-service-order-task',
@@ -69,8 +73,9 @@ export class ServiceOrderTaskComponent
   private programmingService = inject(ProgrammingRequestService);
   private orderService = inject(OrderServiceService);
   private signatoriesService = inject(SignatoriesService);
+  private taskService = inject(TaskService);
 
-  constructor() {
+  constructor(private router: Router) {
     super();
     this.configureProcess();
   }
@@ -146,6 +151,9 @@ export class ServiceOrderTaskComponent
       id: [null],
     });
 
+    this.form.disable();
+    this.ordServform.disable();
+
   }
 
   async sendOrderService() {
@@ -165,12 +173,7 @@ export class ServiceOrderTaskComponent
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.processSendOrderService();
-        this.onLoadToast(
-          'success',
-          'Orden de servicio enviada correctamente',
-          ''
-        );
+        this.createTask();
       }
     });
   }
@@ -312,7 +315,7 @@ export class ServiceOrderTaskComponent
 
   generateOrdSerReport() {
 
-    this.openFirma();
+    this.configuraModalFirma();
     return;
 
     const config = MODAL_CONFIG;
@@ -547,7 +550,12 @@ export class ServiceOrderTaskComponent
         this.editServicios = true;
         break;
       case 'service-order-validation':
+        this.title = `Solicitud orden de servicio (Captura de servicios)`;
         this.btnReclamar = true;
+        this.btnReporteOrdenServ = true;
+        this.btnGuardar = true;
+        this.btnLiberar = true;
+        this.btnRechazar = true;
         break;
       case 'service-order-aproval':
         this.btnReclamar = true;
@@ -570,5 +578,146 @@ export class ServiceOrderTaskComponent
 
   }
 
+  createTask() {
+
+    let task = getConfigService(this.process, null);
+    console.log(task);
+
+  }
+
+  async generateTask() {
+
+    /** VERIFICAR VALIDACIONES PARA REALIZAR LA TAREA*/
+
+    this.loading = true;
+    const { title, url, type, subtype, ssubtype, process, close } = getConfigService(this.process, null);
+    const user: any = this.authService.decodeToken();
+    let body: any = {};
+
+    body['userProcess'] = user.username;
+    body['type'] = type;
+    body['subtype'] = subtype;
+    body['ssubtype'] = ssubtype;
+
+    let task: any = {};
+
+    if (close) {
+      //body['idTask'] = this.taskInfo.id;
+    }
+
+    /*if (rollBack) {
+      task['taskDefinitionId'] = this.taskInfo.id;
+
+      if (!isNullOrEmpty(this.taskInfo.taskDefinitionId)) {
+        task['taskDefinitionName'] = this.taskInfo.taskDefinitionId;
+      }
+    } else {
+      task['taskDefinitionId'] = this.taskInfo.taskDefinitionId;
+    }*/
+
+    task['id'] = 0;
+    task['assignees'] = 'pendiente';//this.taskInfo.assignees;
+    task['assigneesDisplayname'] = 'pendiente';//this.taskInfo.assigneesDisplayname;
+    task['reviewers'] = user.username;
+    task['creator'] = user.username;
+    task['taskNumber'] = Number(this.programmingId);
+    task['title'] = title;
+    task['programmingId'] = 0;
+    task['requestId'] = this.programmingId;
+    task['expedientId'] = 0;
+    task['urlNb'] = url;
+    task['processName'] = process;
+    //task['idstation'] = this.taskInfo.idstation;
+    //task['idTransferee'] = this.taskInfo.idTransferee;
+    //task['idAuthority'] = this.taskInfo.idAuthority;
+    task['idDelegationRegional'] = user.department;
+
+    /*if (!isNullOrEmpty(this.delegation)) {
+      task['satZoneCoordinator'] = this['addressOffice'];
+    } else {
+      task['satZoneCoordinator'] = '';
+    }*/
+
+    body['task'] = task;
+
+    let orderservice: any = {};
+    orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
+    orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
+    orderservice['pIdApplication'] = this.programmingId;
+    orderservice['pCurrentDate'] = new Date().toISOString();
+    orderservice['pOrderServiceIn'] = '';
+
+    body['orderservice'] = orderservice;
+
+    const response: any = await this.createTaskOrderService(body);
+
+    if (response && !isNullOrEmpty(response.task)) {
+      this.onLoadToast(
+        'success',
+        'Orden de servicio enviada correctamente',
+        'Solicitud turnada'
+      );
+
+      this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+
+    } else {
+
+      this.onLoadToast(
+        'error',
+        'No se pudo enviar la orden de servicio',
+        ''
+      );
+    }
+  }
+
+  createTaskOrderService(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          this.loading = false;
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
+        },
+      });
+    });
+  }
+
+  configuraModalFirma() {
+
+    const formOnly = true;
+    const nameSignatoryRuling = '';// this.requestInfo.detail.nameSignatoryRuling;
+    const postSignatoryRuling = '';//this.requestInfo.detail.postSignatoryRuling;
+    const typeSign = '';//this.requestInfo.detail.nameRecipientRuling;
+    const typeAnnex = 'sign-annexJ-assets-classification';
+
+    let config: ModalOptions = {
+      initialState: {
+        requestId: this.programmingId,
+        reportId: '',
+        idSample: this.programmingId,
+        contentId: '',
+        typeAnnex: typeAnnex,
+        nameSignatoryRuling,
+        postSignatoryRuling,
+        typeSign,
+        formOnly,
+        callback: async (responsibleSae, saePosition, typeSign) => {
+
+          console.log(responsibleSae, saePosition, typeSign);
+          this.openFirma();
+          //Actualizar la orden de servicio con los datos de la firma
+          //this.updateOrderService(responsibleSae, saePosition, typeSign);
+
+
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(TypeSignatureModalComponent, config);
+  }
 
 }

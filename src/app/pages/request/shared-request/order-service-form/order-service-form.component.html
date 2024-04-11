@@ -43,6 +43,7 @@
           <form-check label="Visita Ocular" for="checkGoodVisit" class="">
             <input
               id="checkGoodVisit"
+              [disabled]="ordServform.disabled"
               type="checkbox"
               [(ngModel)]="visitEye"
               [ngModelOptions]="{ standalone: true }"
@@ -105,6 +106,7 @@
             <input
               id="checkGood"
               type="checkbox"
+              [disabled]="ordServform.disabled"
               [(ngModel)]="consolideContainer"
               [ngModelOptions]="{ standalone: true }"
               (change)="changeConsolidate($event)" />
