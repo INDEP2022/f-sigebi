@@ -11,7 +11,7 @@
             [data]="eventData"
             [form]="form"
             control="events"
-            bindLabel="processKey"
+            bindLabel="bindLabel"
             label="Evento">
           </ngx-select>
         </form-field>
@@ -36,7 +36,10 @@
     </form>
     <div class="row text-center mb-5">
       <div class="col">
-        <button type="button" class="btn btn-primary active btn-sm">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm"
+          (click)="generalSearching()">
           Buscar
           <i class="bx bx-search-alt bx-sm float-icon"></i>
         </button>
@@ -55,7 +58,10 @@
     </div>
     <div class="row text-center">
       <div class="col">
-        <button type="button" class="btn btn-primary active btn-sm mr-3">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm mr-3"
+          (click)="sendGoods()">
           Importar bienes al acta
         </button>
         <button class="btn btn-danger btn-sm active" (click)="close()">
