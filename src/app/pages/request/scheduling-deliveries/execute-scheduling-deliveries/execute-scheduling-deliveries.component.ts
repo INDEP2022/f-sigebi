@@ -608,6 +608,8 @@ export class ExecuteSchedulingDeliveriesComponent
             resp.data.map((item: any) => {
               this.requestHelpService.changeReadOnly(true);
             });
+          } else {
+            this.requestHelpService.changeReadOnly(false);
           }
           this.progDelivGoodNDArray = resp.data;
           this.progDelivGoodNDTotalItems = resp.count;
@@ -1328,7 +1330,7 @@ export class ExecuteSchedulingDeliveriesComponent
         this.alert(
           'warning',
           'Advertencia',
-          'Debes realizar cambios en al menos un bien'
+          'Debes realizar cambios de observaciones'
         );
         return;
       }
