@@ -311,6 +311,7 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   getTitle() {
+    console.log(this.programmingDetailPanel.status)
     switch (this.programmingDetailPanel.status) {
       case 'PROGRAMACION_EJECUTADA':
       case 'VERIFICACION_BIENES':
@@ -1290,6 +1291,7 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   setCauseNotDelivered(event: any) {
+    console.log(event)
     if (event.text != null && event.text != '') {
       const index = this.goodDeliveryFieldSelected.indexOf(event.row);
       if (this.goodDeliveryFieldSelected.length == 0 || index == -1) {
@@ -1615,8 +1617,7 @@ export class ExecuteSchedulingDeliveriesComponent
       );
       return;
     }
-
-    if (this.progDeliveNoDSelectAll == true) {
+    if (tipoRest == 'NUMERARIO') {
       this.loadingPENE = true;
       const id = this.programmingDetailPanel.id;
       const body = { typeRestitution: tipoRest };
@@ -1661,6 +1662,52 @@ export class ExecuteSchedulingDeliveriesComponent
         }
       );
     }
+/*
+    if (this.progDeliveNoDSelectAll == true) {
+      this.loadingPENE = true;
+      const id = this.programmingDetailPanel.id;
+      const body = { typeRestitution: tipoRest };
+      this.programmingService
+        .updateAllProgrammingDeliveryGoodByIdDeliverySchedule(id, body)
+        .subscribe({
+          next: resp => {
+            this.alert(
+              'success',
+              'Actualizado',
+              'La clasificación a numeraria fue exitosa'
+            );
+            this.loadingPENE = false;
+            this.progGoodNoDeliveredSelected = [];
+            this.getProgrammingGoodDelivery(new ListParams());
+          },
+          error: error => {
+            this.loadingPENE = false;
+          },
+        });
+    } else {
+      this.loadingPENE = true;
+      this.progGoodNoDeliveredSelected.map(
+        async (item: IProgrammingDeliveryGood, _i: number) => {
+          const index = _i + 1;
+          const body: any = { id: item.id, typeRestitution: tipoRest };
+
+          const updated = await this.updateProgrammingGoodDelivery(body);
+          if (this.progGoodNoDeliveredSelected.length == index) {
+            this.alert(
+              'success',
+              'Actualizado',
+              'La clasificación a en especie fue exitosa'
+            );
+
+            this.loadingPENE = false;
+            this.progGoodNoDeliveredSelected = [];
+
+            this.getProgrammingGoodDelivery(new ListParams());
+            return;
+          }
+        }
+      );
+    }*/
   }
 
   async finalizeClassify() {
