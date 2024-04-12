@@ -34,6 +34,13 @@ import { UploadFielsModalComponent } from '../../../transfer-request/tabs/notify
 })
 export class OrderSignatureModalComponent extends BasePage implements OnInit {
   //idDoc: number;
+
+  nameDoc: string = '';
+  userName: string = null;
+  chargeUser: string = null;
+  numSignature: number = 1;// en ingles
+
+
   idTypeDoc: any; //ID Tipo de documento
   idReportAclara: any; //ID de los reportes
   sign: boolean = true;
@@ -121,80 +128,22 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
     this.isPdfLoaded = true;
   }
 
-  userName: any[] = [];
-
   ngOnInit(): void {
-    this.idSolicitud = this.requestInfo.id;
-    this.idRegionalDelegation = this.requestInfo.regionalDelegationId;
 
-    //Condición para saber que ID tipo de documento lelga
-    switch (parseInt(this.idTypeDoc)) {
-      case 50: {
-        let linkDoc: string = `${this.urlBaseReport}Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idReportAclara}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
-        this.src = linkDoc;
+    switch (this.nameDoc) {
+      case 'orden_servicio':
+        this.src = 'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=orden_servicio.jasper&ordenServicioID=5668';
+        break;
+      case 'reporte_implementacion':
+        this.src = 'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=reporte_implementacion.jasper&ordenServicioID=5668';
+        break;
+      case 'anexo_ordenes_w':
+        this.src = 'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=AnexoOrdenesW.jasper&ID_MUESTREO_ORDEN=5668&ID_TIPO_DOCTO=198';
+        break;
 
-        break;
-      }
-      case 104: {
-        let linkDoc: string = `${this.urlBaseReport}OficioAclaracionTransferente.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
-        this.src = linkDoc;
-
-        break;
-      }
-      case 111: {
-        let linkDoc: string = `${this.urlBaseReport}OficioImprocedencia.jasper&ID_DOCUMENTO=${this.idReportAclara}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
-        this.src = linkDoc;
-
-        break;
-      }
-      case 211: {
-        let linkDoc: string = `${this.urlBaseReport}AclaracionAsegurados.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
-        this.src = linkDoc;
-
-        break;
-      }
-      case 212: {
-        let linkDoc: string = `${this.urlBaseReport}AclaracionComercioExterior.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
-        this.src = linkDoc;
-
-        break;
-      }
-      case 216: {
-        let linkDoc: string = `${this.urlBaseReport}ImprocedenciaTransferentesVoluntarias.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
-        this.src = linkDoc;
-
-        break;
-      }
-      case 213: {
-        let linkDoc: string = `${this.urlBaseReport}AclaracionTransferentesVoluntarias.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
-        this.src = linkDoc;
-
-        break;
-      }
-      case 221: {
-        let linkDoc: string = `${this.urlBaseReport}oficio_programacion_recepcion.jasper&ID_PROGRAMACION=${this.idReportAclara}`;
-        this.src = linkDoc;
-        break;
-      }
-      case 223: {
-        let linkDoc: string = `${this.urlBaseReport}situacion_juridica_amparo.jasper&ID_SOLICITUD=${this.idReportAclara}`;
-        this.src = linkDoc;
-        console.log('Link: ', linkDoc);
-        break;
-      }
-      default: {
-        break;
-      }
     }
 
-    if (this.isDynamic) {
-      let linkDoc: string = `${this.urlBaseReport}sae.rptdesign&ID_TABLA=NOMBRE_TABLA,ID_REGISTRO,ID_TIPO_DOCTO&NOM_TABLA=REPORTES_DINAMICOS&NOM_CAMPO=CONTENIDO&ID_REGISTRO=SOLICITUDES,${this.idSolicitud},${this.idTypeDoc}`;
-      this.src = linkDoc;
-    }
-
-    if (!this.readOnly) {
-      this.loadSignatories(true);
-    }
+    this.loadSignatories(true);
 
   }
 
@@ -279,21 +228,11 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
   async createSignatorie() {
 
     let token = this.authService.decodeToken();
-    let name = token.name;
-    let post = token.cargonivel1;
+    let name = this.userName || token.name;
+    let post = this.chargeUser || token.cargonivel1;
+
     let learnedId = this.idReportAclara;
     let learnedType = this.idTypeDoc;
-
-    if (this.isDynamic) {
-      learnedType = 217;
-      learnedId = 'SOLICITUDES-' + this.idReportAclara + '-' + this.idTypeDoc;
-      name = this.requestInfo.nameSignatoryRuling;
-      post = this.requestInfo.postSignatoryRuling;
-    }
-
-    if (parseInt(this.idTypeDoc) == 223) {
-      learnedId = this.idReportAclara + '-2-' + this.idTypeDoc;
-    }
 
     const formData = {
       name: name,

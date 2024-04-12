@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { catchError, of } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams, ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { IOrderServiceDTO } from 'src/app/core/models/ms-order-service/order-service.mode';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -62,6 +62,7 @@ export class ServiceOrderTaskComponent
   justificationRefused: boolean = false;
   readonly: boolean = true;
   typeTable: string = '';
+  taskInfo: any = {};
 
   //private programmingService = inject(ProgrammingRequestService);
   //private router = inject(ActivatedRoute);
@@ -80,15 +81,17 @@ export class ServiceOrderTaskComponent
     this.configureProcess();
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
 
-    const task = JSON.parse(localStorage.getItem('Task'));
-    this.task = task['op'];
-    this.op = this.task;
+    this.taskInfo = await this.getTask();
+    this.title = this.taskInfo.title;
 
     this.prepareForm();
     this.getProgramming();
     this.getOrderService();
+
+    //Crear tarea inicial
+    //this.generateTask("service-order-request");
   }
 
   prepareForm() {
@@ -469,7 +472,7 @@ export class ServiceOrderTaskComponent
     });
   }
 
-  async openFirma(dynamic = false) {
+  async openFirma(name, charge) {
 
     let token = this.authService.decodeToken();
     let today = new Date();
@@ -482,18 +485,28 @@ export class ServiceOrderTaskComponent
     const idReportAclara = this.programmingId;
     const nameTypeDoc = 'OrdenServicio';
     const nomenglatura = '';
-    const isDynamic = dynamic;
+
+    const nameDoc = this.nameDoc;
+    const userName = name;
+    const chargeUser = charge;
+    const numSignature = this.numSignature;
+
     //const readOnly = this.requestInfo.detail.version == "1";
 
     let config: ModalOptions = {
       initialState: {
+        nameDoc,
+        userName,
+        chargeUser,
+        numSignature,
+
+
         idReportAclara,
         idTypeDoc,
         typeAnnex,
         requestInfo,
         nameTypeDoc,
         nomenglatura,
-        isDynamic,
         readOnly,
         callback: (next, xml) => {
           //this.updateInfo = !this.updateInfo;
@@ -533,6 +546,9 @@ export class ServiceOrderTaskComponent
   editDireccionOrigen = false;
   editComentarios = false;
 
+  nameDoc = '';
+  numSignature = 1;
+
 
   configureProcess() {
 
@@ -541,7 +557,7 @@ export class ServiceOrderTaskComponent
 
     switch (this.process) {
       case 'service-order-capture':
-        this.title = `Solicitud orden de servicio (Captura de servicios)`;
+        this.title = this.taskInfo.title;
         this.btnReclamar = true;
         this.btnGuardar = true;
         this.btnLiberar = true;
@@ -550,15 +566,22 @@ export class ServiceOrderTaskComponent
         this.editServicios = true;
         break;
       case 'service-order-validation':
-        this.title = `Solicitud orden de servicio (Captura de servicios)`;
         this.btnReclamar = true;
         this.btnReporteOrdenServ = true;
         this.btnGuardar = true;
         this.btnLiberar = true;
         this.btnRechazar = true;
+        this.numSignature = 1;
+        this.nameDoc = 'orden_servicio';
         break;
       case 'service-order-aproval':
         this.btnReclamar = true;
+        this.btnReporteOrdenServ = true;
+        this.btnGuardar = true;
+        this.btnLiberar = true;
+        this.btnRechazar = true;
+        this.numSignature = 2;
+        this.nameDoc = 'orden_servicio';
         break;
       case 'service-order-report':
         this.btnReclamar = true;
@@ -578,19 +601,13 @@ export class ServiceOrderTaskComponent
 
   }
 
-  createTask() {
 
-    let task = getConfigService(this.process, null);
-    console.log(task);
-
-  }
-
-  async generateTask() {
+  async createTask(current = this.process) {
 
     /** VERIFICAR VALIDACIONES PARA REALIZAR LA TAREA*/
 
     this.loading = true;
-    const { title, url, type, subtype, ssubtype, process, close } = getConfigService(this.process, null);
+    const { title, url, type, subtype, ssubtype, process, close } = getConfigService(current, this.programming);
     const user: any = this.authService.decodeToken();
     let body: any = {};
 
@@ -602,7 +619,7 @@ export class ServiceOrderTaskComponent
     let task: any = {};
 
     if (close) {
-      //body['idTask'] = this.taskInfo.id;
+      body['idTask'] = this.taskInfo.id;
     }
 
     /*if (rollBack) {
@@ -616,13 +633,13 @@ export class ServiceOrderTaskComponent
     }*/
 
     task['id'] = 0;
-    task['assignees'] = 'pendiente';//this.taskInfo.assignees;
-    task['assigneesDisplayname'] = 'pendiente';//this.taskInfo.assigneesDisplayname;
-    task['reviewers'] = user.username;
+    task['assignees'] = user.username;
+    task['assigneesDisplayname'] = user.nameUser;
     task['creator'] = user.username;
-    task['taskNumber'] = Number(this.programmingId);
+    task['reviewers'] = user.username;
+    task['taskNumber'] = this.programmingId;
     task['title'] = title;
-    task['programmingId'] = 0;
+    task['programmingId'] = this.programmingId;
     task['requestId'] = this.programmingId;
     task['expedientId'] = 0;
     task['urlNb'] = url;
@@ -647,7 +664,7 @@ export class ServiceOrderTaskComponent
     orderservice['pCurrentDate'] = new Date().toISOString();
     orderservice['pOrderServiceIn'] = '';
 
-    body['orderservice'] = orderservice;
+    //body['orderservice'] = orderservice;
 
     const response: any = await this.createTaskOrderService(body);
 
@@ -685,6 +702,34 @@ export class ServiceOrderTaskComponent
     });
   }
 
+  getTask() {
+
+    const task = JSON.parse(localStorage.getItem('Task'));
+
+    const param = new FilterParams();
+    param.addFilter('id', task.id);
+    const filter = param.getParams();
+
+    return new Promise((resolve, reject) => {
+      this.taskService.getAll(filter).subscribe({
+        next: resp => {
+
+          if (resp.data.length > 0) {
+            resolve(resp.data[0]);
+          } else {
+            reject(false);
+          }
+
+        },
+        error: error => {
+          this.loading = false;
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
+        },
+      });
+    });
+  }
+
   configuraModalFirma() {
 
     const formOnly = true;
@@ -704,10 +749,10 @@ export class ServiceOrderTaskComponent
         postSignatoryRuling,
         typeSign,
         formOnly,
-        callback: async (responsibleSae, saePosition, typeSign) => {
+        callback: async (name, charge, typeSign) => {
 
-          console.log(responsibleSae, saePosition, typeSign);
-          this.openFirma();
+          console.log(name, charge, typeSign);
+          this.openFirma(name, charge);
           //Actualizar la orden de servicio con los datos de la firma
           //this.updateOrderService(responsibleSae, saePosition, typeSign);
 

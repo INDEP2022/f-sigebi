@@ -7,8 +7,8 @@ import { ca } from "date-fns/locale";
  */
 export function getConfigService(path, data) {
 
-    let progFolio = '';
-    let folio = '';
+    let progFolio = data.folio;
+    let folio = data.folio;
 
     switch (path) {
         case 'service-order-request':
@@ -16,8 +16,8 @@ export function getConfigService(path, data) {
                 title: `Solicitud orden de servicio (Captura de servicios)`,
                 url: 'pages/request/reception-service-order/service-order-capture',
                 process: 'ServiceOrderCapture',
-                type: 'OrdenServicioRecepcion',
-                subtype: 'PropuestaServicioINDEPEnviada',
+                type: 'SOLICITUD_PROGRAMACION',
+                subtype: 'Programar_Recepcion',
                 ssubtype: 'TURNAR',
                 close: true,
             };
@@ -26,8 +26,8 @@ export function getConfigService(path, data) {
                 title: `Solicitud Orden de Servicio(Validación de Servicios) con folio: ${folio}`,
                 url: 'pages/request/reception-service-order/service-order-validation',
                 process: 'ServiceOrderValidation',
-                type: 'OrdenServicioRecepcion',
-                subtype: 'OrdenServicioAutorizado',
+                type: 'SOLICITUD_PROGRAMACION',
+                subtype: 'Programar_Recepcion',
                 ssubtype: 'TURNAR',
                 close: true,
             };
@@ -36,8 +36,8 @@ export function getConfigService(path, data) {
                 title: `Aprobación de servicios (Programación de recepción: ${progFolio}) para la orden de servicio con folio: ${folio}`,
                 url: 'pages/request/reception-service-order/service-order-aproval',
                 process: 'ServiceOrderAproval',
-                type: 'OrdenServicioRecepcion',
-                subtype: 'OrdenFirmaPorDeleRegional',
+                type: 'SOLICITUD_PROGRAMACION',
+                subtype: 'Programar_Recepcion',
                 ssubtype: 'TURNAR',
                 close: true,
             };
@@ -46,8 +46,8 @@ export function getConfigService(path, data) {
                 title: `Reporte de Implementación (Programación de recepción: ${progFolio}) para la orden de servicio con folio: ${folio}`,
                 url: 'pages/request/reception-service-order/service-order-report',
                 process: 'ServiceOrderReport',
-                type: 'OrdenServicioRecepcion',
-                subtype: 'ReporteImplemenEnviadoINDEP',
+                type: 'SOLICITUD_PROGRAMACION',
+                subtype: 'Programar_Recepcion',
                 ssubtype: 'TURNAR',
                 close: true,
             };
@@ -56,8 +56,8 @@ export function getConfigService(path, data) {
                 title: `Validación de reporte de Implementación (Programación de recepción: ${progFolio}) Para el orden de servicio con el folio: ${folio}`,
                 url: 'pages/request/reception-service-order/service-order-report-validation',
                 process: 'ServiceOrderReportValidation',
-                type: 'OrdenServicioRecepcion',
-                subtype: 'ReporteImplemenAutorizado',
+                type: 'SOLICITUD_PROGRAMACION',
+                subtype: 'Programar_Recepcion',
                 ssubtype: 'TURNAR',
                 close: true,
             };
@@ -66,8 +66,8 @@ export function getConfigService(path, data) {
                 title: `Validación de reporte de Implementación (Programación de recepción: ${progFolio}) Para el orden de servicio con el folio: ${folio}`,
                 url: 'pages/request/reception-service-order/service-order-report-signature',
                 process: 'ServiceOrderReportSignature',
-                type: 'OrdenServicioRecepcion',
-                subtype: 'ReporteImplemenFirmadoDelegReg',
+                type: 'SOLICITUD_PROGRAMACION',
+                subtype: 'Programar_Recepcion',
                 ssubtype: 'TURNAR',
                 close: true,
             };
@@ -76,8 +76,8 @@ export function getConfigService(path, data) {
                 title: `Reporte de Implementación aprobado (Programación de recepción: ${progFolio}) Para el orden de servicio con el folio: ${folio}`,
                 url: 'pages/request/reception-service-order/service-order-report-aprove',
                 process: 'ServiceOrderReportAprove',
-                type: 'OrdenServicioRecepcion',
-                subtype: 'AnexoWFirmaTercero',
+                type: 'SOLICITUD_PROGRAMACION',
+                subtype: 'Programar_Recepcion',
                 ssubtype: 'TURNAR',
                 close: true,
             };
@@ -87,8 +87,8 @@ export function getConfigService(path, data) {
                 title: `Solicitud Orden de Servicio (Rechazo de Orden de Servicio) con el folio: ${folio}`,
                 url: 'pages/request/reception-service-order/service-order-validation-justification',
                 process: 'ServiceOrderReportValidationJustification',
-                type: 'OrdenServicioRecepcion',
-                subtype: 'JustifiPropuestaServiEnviado',
+                type: 'SOLICITUD_PROGRAMACION',
+                subtype: 'Programar_Recepcion',
                 ssubtype: 'TURNAR',
                 close: true,
             };
@@ -97,8 +97,8 @@ export function getConfigService(path, data) {
                 title: `Solicitud Orden de Servicio (Validación de Orden de Servicio) con el folio: ${folio}`,
                 url: 'pages/request/reception-service-order/service-order-report-reject',
                 process: 'ServiceOrderReportReportReject',
-                type: 'OrdenServicioRecepcion',
-                subtype: 'PropuestaReporteImplemenNoAceptada',
+                type: 'SOLICITUD_PROGRAMACION',
+                subtype: 'Programar_Recepcion',
                 ssubtype: 'TURNAR',
                 close: true,
             };
@@ -107,8 +107,8 @@ export function getConfigService(path, data) {
                 title: `Rechazo de reporte de implementación (Programación de recepción: ${progFolio}) para el orden de servicio con folio: ${folio}`,
                 url: 'pages/request/reception-service-order/service-order-report-justification-validation',
                 process: 'ServiceOrderReportJustificationValidation',
-                type: 'OrdenServicioRecepcion',
-                subtype: 'JustificaPropuestaReporteImplemenEnviada',
+                type: 'SOLICITUD_PROGRAMACION',
+                subtype: 'Programar_Recepcion',
                 ssubtype: 'TURNAR',
                 close: true,
             };
@@ -118,8 +118,8 @@ export function getConfigService(path, data) {
                 title: `Validación de reporte de implementación (Programación de recepción: ${progFolio}) para el orden de servicio con folio: ${folio}`,
                 url: 'pages/request/reception-service-order/service-order-report-justification-reject',
                 process: 'ServiceOrderReportJustificationReject',
-                type: 'OrdenServicioRecepcion',
-                subtype: 'JustificaPropuestaReporteImplemenRechazo',
+                type: 'SOLICITUD_PROGRAMACION',
+                subtype: 'Programar_Recepcion',
                 ssubtype: 'TURNAR',
                 close: true,
             };
@@ -128,8 +128,8 @@ export function getConfigService(path, data) {
                 title: `Rechazo de orden de servicios (Programación de recepción: ${progFolio}) con folio: ${folio}`,
                 url: 'pages/request/reception-service-order/service-order-reject',
                 process: 'ServiceOrderReject',
-                type: 'OrdenServicioRecepcion',
-                subtype: 'ContrapropuestaServicioEnviado',
+                type: 'SOLICITUD_PROGRAMACION',
+                subtype: 'Programar_Recepcion',
                 ssubtype: 'TURNAR',
                 close: true,
             };
@@ -138,8 +138,8 @@ export function getConfigService(path, data) {
                 title: `Rechazo de reporte de implementación (Programación de recepción: ${progFolio}) para la orden de servicio con folio: ${folio}`,
                 url: 'pages/request/reception-service-order/service-order-report-impl-reject',
                 process: 'ServiceOrderReportReject',
-                type: 'OrdenServicioRecepcion',
-                subtype: 'ContrapropuestaReporteImpleEnviada',
+                type: 'SOLICITUD_PROGRAMACION',
+                subtype: 'Programar_Recepcion',
                 ssubtype: 'TURNAR',
                 close: true,
             };

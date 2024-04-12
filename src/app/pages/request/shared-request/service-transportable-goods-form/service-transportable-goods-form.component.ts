@@ -264,8 +264,6 @@ export class ServiceTransportableGoodsFormComponent
       ttotal += item.total;
     });
 
-    console.log('ttotal', this.data.map((item: any) => item.total));
-
     const t = `$${this.formatTotalAmount(ttotal)}`;
     this.totalAmount = t;
     this.totEvent.emit(t);
