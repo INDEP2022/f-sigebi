@@ -762,9 +762,8 @@
         <!-- FIN -->
       </form>
       <div class="pt-4">
-        <button class="btn btn-primary btn-sm active" (click)="separate()">
-          Separar
-        </button>
+        <button *ngIf="!edit" [disabled]="blockButtons" class="btn btn-primary btn-sm active"
+          (click)="separate()">Separar</button>
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             #table
@@ -782,6 +781,7 @@
       <div class="m-3">
         <confirm-button
           [text]="btnTitle"
+          [disabled]="blockButtons"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

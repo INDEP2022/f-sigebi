@@ -213,7 +213,6 @@ export interface IPupPrimaryClosureSus {
   universalFolio: string;
   expedient: number;
   screen: string;
-  good: number;
   user: string;
   receptionDate: Date | string;
   proceeding: number;
