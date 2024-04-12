@@ -59,7 +59,7 @@ export class PayloadComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.loadSqlPayments(new ListParams());
+    // this.loadSqlPayments(new ListParams());
   }
 
   private prepareForm() {
@@ -86,8 +86,6 @@ export class PayloadComponent extends BasePage implements OnInit {
       this.loading = true;
       this.dataFormat = [];
       this.data1.load([]);
-      let data = await this.loadSqlPayments(new ListParams());
-      console.log(data);
       let Contador: number = 0;
       let ResFase: number = 0;
       let NoEvento: number = 0;
@@ -147,7 +145,10 @@ export class PayloadComponent extends BasePage implements OnInit {
           for (let i = 0; i < this.paymentData.count; i++) {
             references = this.paymentData.data[i].reference;
             //Llamar al servicio
-            let data = await this.loadSqlPayments(new ListParams());
+            let data = await this.loadSqlPayments(
+              new ListParams(),
+              this.paymentData.data[i].reference
+            );
             this.dataSql = data;
             console.log(data);
             TipoSat = this.dataSql.data[0].TIPO_PAGO_SAT;
@@ -331,7 +332,7 @@ export class PayloadComponent extends BasePage implements OnInit {
             console.log(sucursal);
             SUCURSAL_B = sucursalData.data[0].sucursal;
             let existe = await this.consultaExiste(
-              LST_COL2,
+              this.dataSql.data[0].Fecha_Mov,
               V_FECHA,
               references
             );
@@ -479,10 +480,9 @@ export class PayloadComponent extends BasePage implements OnInit {
     });
   }
 
-  async loadSqlPayments(params: ListParams) {
-    //Servicio de Obten_Proc_Nuevo_Carga_Pagos_SQL
+  async loadSqlPayments(params: ListParams, id: string) {
     return new Promise((resolve, reject) => {
-      this.interfaceesirsaeService.loadPayments(params).subscribe({
+      this.interfaceesirsaeService.loadPayments(params, id).subscribe({
         next: resp => {
           resolve(resp);
         },
