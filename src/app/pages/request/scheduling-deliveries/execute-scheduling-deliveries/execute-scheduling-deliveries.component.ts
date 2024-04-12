@@ -1617,52 +1617,8 @@ export class ExecuteSchedulingDeliveriesComponent
       );
       return;
     }
-    if (tipoRest == 'NUMERARIO') {
-      this.loadingPENE = true;
-      const id = this.programmingDetailPanel.id;
-      const body = { typeRestitution: tipoRest };
-      this.programmingService
-        .updateAllProgrammingDeliveryGoodByIdDeliverySchedule(id, body)
-        .subscribe({
-          next: resp => {
-            this.alert(
-              'success',
-              'Actualizado',
-              'La clasificación a numeraria fue exitosa'
-            );
-            this.loadingPENE = false;
-            this.progGoodNoDeliveredSelected = [];
-            this.getProgrammingGoodDelivery(new ListParams());
-          },
-          error: error => {
-            this.loadingPENE = false;
-          },
-        });
-    } else {
-      this.loadingPENE = true;
-      this.progGoodNoDeliveredSelected.map(
-        async (item: IProgrammingDeliveryGood, _i: number) => {
-          const index = _i + 1;
-          const body: any = { id: item.id, typeRestitution: tipoRest };
 
-          const updated = await this.updateProgrammingGoodDelivery(body);
-          if (this.progGoodNoDeliveredSelected.length == index) {
-            this.alert(
-              'success',
-              'Actualizado',
-              'La clasificación a en especie fue exitosa'
-            );
 
-            this.loadingPENE = false;
-            this.progGoodNoDeliveredSelected = [];
-
-            this.getProgrammingGoodDelivery(new ListParams());
-            return;
-          }
-        }
-      );
-    }
-/*
     if (this.progDeliveNoDSelectAll == true) {
       this.loadingPENE = true;
       const id = this.programmingDetailPanel.id;
@@ -1674,7 +1630,7 @@ export class ExecuteSchedulingDeliveriesComponent
             this.alert(
               'success',
               'Actualizado',
-              'La clasificación a numeraria fue exitosa'
+              'La clasificación fue exitosa'
             );
             this.loadingPENE = false;
             this.progGoodNoDeliveredSelected = [];
@@ -1696,7 +1652,7 @@ export class ExecuteSchedulingDeliveriesComponent
             this.alert(
               'success',
               'Actualizado',
-              'La clasificación a en especie fue exitosa'
+              'La clasificación fue exitosa'
             );
 
             this.loadingPENE = false;
@@ -1707,7 +1663,7 @@ export class ExecuteSchedulingDeliveriesComponent
           }
         }
       );
-    }*/
+    }
   }
 
   async finalizeClassify() {
