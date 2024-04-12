@@ -19,6 +19,7 @@ import { ConfirmProgrammingComponent } from '../../shared-request/confirm-progra
 import { AnnexWFormComponent } from '../components/annex-w-form/annex-w-form.component';
 import { RejectionCommentFormComponent } from '../components/rejection-comment-form/rejection-comment-form.component';
 import { RejectionJustifyFormComponent } from '../components/rejection-justify-form/rejection-justify-form.component';
+import { OrderSignatureModalComponent } from '../components/service-order-signature-modal/order-signature-modal.component';
 
 @Component({
   selector: 'app-service-order-request-capture-form',
@@ -332,6 +333,10 @@ export class ServiceOrderRequestCaptureFormComponent
   }
 
   generateOrdSerReport() {
+
+    this.openFirma();
+    return;
+
     const config = MODAL_CONFIG;
     config.initialState = {
       idProgramming: this.programmingId,
@@ -516,6 +521,46 @@ export class ServiceOrderRequestCaptureFormComponent
         },
       });
     });
+  }
+
+  async openFirma(dynamic = false) {
+
+    let token = this.authService.decodeToken();
+    let today = new Date();
+
+    let idTypeDoc = "0";
+    let readOnly = false;
+
+    const typeAnnex = 'approval-request';
+    const requestInfo = { id: this.programmingId, type: 'programming' };
+    const idReportAclara = this.programmingId;
+    const nameTypeDoc = 'OrdenServicio';
+    const nomenglatura = '';
+    const isDynamic = dynamic;
+    //const readOnly = this.requestInfo.detail.version == "1";
+
+    let config: ModalOptions = {
+      initialState: {
+        idReportAclara,
+        idTypeDoc,
+        typeAnnex,
+        requestInfo,
+        nameTypeDoc,
+        nomenglatura,
+        isDynamic,
+        readOnly,
+        callback: (next, xml) => {
+          //this.updateInfo = !this.updateInfo;
+          if (next) {
+            //this.updateReport(xml);
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      keyboard: false,
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(OrderSignatureModalComponent, config);
   }
 
   /*openAutografoModal(sampleOrder: ISamplingOrder) {

@@ -223,7 +223,7 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
 
   getLocalitie(data: IMunicipality) {
     this.stateKey = data.idMunicipality;
-    console.log(this.stateKey);
+    this.storeHouseForm.get('locality').reset();
     if (this.stateKey != null) {
       this.getLocalities(new ListParams());
     }
@@ -243,7 +243,8 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
   }
 
   getLocalities(params: ListParams) {
-    params['filter.municipalityId'] = this.stateKey;
+    params['filter.municipalityId'] = `$eq:${this.stateKey}`;
+    if (params.text) params['filter.nameLocation'] = `$ilike:${params.text}`;
     this.localityService.getAll(params).subscribe({
       next: data => {
         this.localities = new DefaultSelect(data.data, data.count);

@@ -55,9 +55,14 @@ export class PayloadFormComponent extends BasePage implements OnInit {
       this.form.patchValue(this.paymentLoad);
       //this.form.get('id_factura').setValue(this.factura);
       const formatDate = this.valuePrepareFunction(this.paymentLoad.FechaMov);
+      let formatDateFecha: any;
+      if (this.paymentLoad.Fecha) {
+        formatDateFecha = this.valuePrepareFunction(this.paymentLoad.Fecha);
+      }
 
       console.log(formatDate);
       this.form.get('FechaMov').setValue(formatDate);
+      this.form.get('Fecha').setValue(formatDateFecha);
       this.form.get('NoMovimiento').disable();
       this.form.get('FechaMov').disable();
       this.form.get('Movimiento').disable();
@@ -90,7 +95,12 @@ export class PayloadFormComponent extends BasePage implements OnInit {
     this.paymentLoad.LotePublico = this.form.get('LotePublico').value;
     this.paymentLoad.Evento = this.form.get('Evento').value;
     this.paymentLoad.OrdenIngreso = this.form.get('OrdenIngreso').value;
-    this.paymentLoad.Fecha = this.form.get('Fecha').value;
+    if (this.form.get('Fecha').value) {
+      this.paymentLoad.Fecha = this.valuePrepareFunction(
+        this.form.get('Fecha').value
+      );
+    }
+
     this.paymentLoad.DescripcionSAT = this.form.get('DescripcionSAT').value;
     this.paymentLoad.Valido = this.form.get('Valido').value;
     switch (this.form.get('Valido').value) {
@@ -148,21 +158,22 @@ export class PayloadFormComponent extends BasePage implements OnInit {
       pIdTypeSat: Number.parseInt(this.paymentLoad.Id_Tipo_SAT),
     };
     console.log(body, this.paymentLoad);
-    this.paymentService.postComerpagrefweb(body).subscribe({
-      next: resp => {
-        this.handleSuccess();
-      },
-      error: err => {
-        this.loading = false;
-      },
-    });
+    this.handleSuccess(this.paymentLoad);
+    // this.paymentService.postComerpagrefweb(body).subscribe({
+    //   next: resp => {
+
+    //   },
+    //   error: err => {
+    //     this.loading = false;
+    //   },
+    // });
   }
 
-  handleSuccess() {
+  handleSuccess(body: any) {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.alert('success', 'Carga de Pago', `${message} Correctamente`);
     this.loading = false;
-    this.modalRef.content.callback(true);
+    this.modalRef.content.callback(body);
     this.modalRef.hide();
   }
 }
