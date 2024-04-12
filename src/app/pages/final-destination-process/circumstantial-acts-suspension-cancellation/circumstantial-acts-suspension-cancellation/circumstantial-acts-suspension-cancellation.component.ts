@@ -12,6 +12,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Subscription, takeUntil, tap } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
+import { IQueryGoodTracker } from 'src/app/core/models/ms-delivery-constancy/ms-delivery-constancy-model';
 import { IGoodParameter } from 'src/app/core/models/ms-good-parameter/good-parameter.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
@@ -21,6 +22,7 @@ import {
   IPupPrimaryClosureSus,
 } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { CertificatesGoodsService } from 'src/app/core/services/ms-delivery-constancy/certificates-goods.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
@@ -44,6 +46,7 @@ import {
 } from 'src/app/core/shared/patterns';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 import { AllExpedientsModal } from '../all-expedientes-modal/all-expedients-modal.component';
 import { ExportDataModal } from '../export-data-modal/export-data-modal.component';
@@ -165,6 +168,8 @@ export class CircumstantialActsSuspensionCancellationComponent
   type_proceeding: string = null;
 
   numberProccedings: string = null;
+  ngGlobal: any;
+  flag: boolean = true;
 
   get username() {
     return this.authService.decodeToken().username;
@@ -188,7 +193,9 @@ export class CircumstantialActsSuspensionCancellationComponent
     private historygoodService: HistoryGoodService,
     private activatedRoute: ActivatedRoute,
     private modalService: BsModalService,
-    private proceedingSusCanService: ProceedingSusPcancelService
+    private proceedingSusCanService: ProceedingSusPcancelService,
+    private globalVarService: GlobalVarsService,
+    private deliveryConstancy: CertificatesGoodsService
   ) {
     super();
     this.settings1 = {
@@ -227,6 +234,7 @@ export class CircumstantialActsSuspensionCancellationComponent
     this.startCalendars();
     this.pupInitForms();
     this.navigateGoods();
+    this.returnInGoodTracker();
 
     const localExpdeient = localStorage.getItem('expediente');
     const folio = localStorage.getItem('folio');
@@ -247,6 +255,41 @@ export class CircumstantialActsSuspensionCancellationComponent
       localStorage.removeItem('expediente');
       //
     }
+  }
+
+  returnInGoodTracker() {
+    //TODO:
+    this.globalVarService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: global => {
+          this.ngGlobal = global;
+          if (this.ngGlobal.REL_BIENES && this.flag) {
+            console.log(this.ngGlobal.REL_BIENES);
+            this.flag = false;
+            const acta = localStorage.getItem('acta');
+
+            const body: IQueryGoodTracker = {
+              vcsScreen: 'FACTCIRCUN_0001',
+              typeMinutes: acta,
+              relGood: this.ngGlobal.REL_BIENES,
+            };
+
+            this.deliveryConstancy.queryGoodTracker(body).subscribe(
+              res => {
+                console.log(res);
+                localStorage.removeItem('acta');
+                localStorage.removeItem('expediente');
+                localStorage.removeItem('acta');
+              },
+              err => {
+                console.log(err);
+              }
+            );
+          }
+        },
+      });
   }
 
   subscribeAssembleKey() {
@@ -538,8 +581,6 @@ export class CircumstantialActsSuspensionCancellationComponent
     });
   }
 
-  onSubmit() {}
-
   settingsChange(event: any, op: number) {
     op === 1 ? (this.settings = event) : (this.settings2 = event);
   }
@@ -797,9 +838,26 @@ export class CircumstantialActsSuspensionCancellationComponent
     this.proceedingService.pupPrimayClosureSus(body).subscribe(
       res => {
         console.log(res);
+        if (res.status === 400) {
+          this.alert('warning', 'Error al cerrar el acta', res.message);
+          return;
+        }
+
+        this.alert('success', 'Acta cerrada correctamente', '');
+        this.form.get('statusAct').setValue('CERRADA');
       },
       err => {
         console.log(err);
+        if (err.status === 400) {
+          this.alert('warning', 'Error al cerrar el acta', err.error.message);
+          return;
+        }
+
+        this.alert(
+          'error',
+          'Error al cerrar el acta',
+          'Se presentó un error inesperado al cerrar el acta'
+        );
       }
     );
   }
@@ -1196,7 +1254,12 @@ export class CircumstantialActsSuspensionCancellationComponent
   addGood() {
     /// llamar al Rastreador de bienes
     //this.alert('success',this.title,'Llamar al Rastreador de Bienes');
+    const proceedingKey = this.form.get('act').value;
+    const partsKey = proceedingKey.split('/');
+    const acta = `${partsKey[0]}/${partsKey[1]}`;
     localStorage.setItem('expediente', this.expediente.toString());
+    localStorage.setItem('acta', this.form.get('noActa').value.toString());
+    localStorage.setItem('tipoActa', acta);
     this.router.navigate([GOODS_TACKER_ROUTE], {
       queryParams: {
         origin: 'FACTCIRCUN_0001',
@@ -1931,7 +1994,7 @@ export class CircumstantialActsSuspensionCancellationComponent
         delegationNumber: user.department,
         subdelegationNumber: user.department,
         goodNumber: good.id,
-        proceedingsNumber: this.form.get('noActa').value,
+        proceedingsNumber: this.formBlkExpedient.get('noExpedient').value,
         status: good.status,
         screen: 'FACTCIRCUN_0001',
       };
@@ -1954,7 +2017,7 @@ export class CircumstantialActsSuspensionCancellationComponent
     this.proceedingSusCanService.validateGoods(proceedingsNumber).subscribe(
       res => {
         console.log(res);
-        this.alert('success', res.data, '');
+        this.alert('success', res.msg, '');
       },
       err => {
         console.log(err);

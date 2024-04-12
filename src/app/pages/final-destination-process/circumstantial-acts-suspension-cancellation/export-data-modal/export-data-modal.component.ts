@@ -75,8 +75,8 @@ export class ExportDataModal extends BasePage implements OnInit {
 
     const body: IPupLaunchReport = {
       minuteList: this.form.get('proceddingsList').value.minutesKey,
-      minutesNumber: this.expedientNumber,
-      proceedingsNumber: this.proceedingNumber,
+      minutesNumber: this.proceedingNumber,
+      proceedingsNumber: this.expedientNumber,
     };
 
     this.proceedingSusCanService.pupLaunchReport(body).subscribe(
