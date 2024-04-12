@@ -58,6 +58,7 @@ import { SearchDocumentFormComponent } from './tabs/search-document-form/search-
 import { ClarificationsComponent } from './tabs/validate-asset-document-components/clarifications/clarifications.component';
 import { TransferRequestRoutingModule } from './transfer-request-routing.module';
 import { RequestSignatureModalComponent } from '../request-complementary-documentation/request-signature-modal/request-signature-modal.component';
+import { OrderSignatureModalComponent } from '../reception-scheduling-service-order/components/service-order-signature-modal/order-signature-modal.component';
 
 @NgModule({
   declarations: [
@@ -89,6 +90,7 @@ import { RequestSignatureModalComponent } from '../request-complementary-documen
     NotifyAssetsImproprietyFormComponent,
     PrintReportModalComponent,
     RequestSignatureModalComponent,
+    OrderSignatureModalComponent,
     InputFieldComponent,
     UploadFielsModalComponent,
     RefuseClarificationModalComponent,

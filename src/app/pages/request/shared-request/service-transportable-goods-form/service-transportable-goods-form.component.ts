@@ -44,6 +44,7 @@ export class ServiceTransportableGoodsFormComponent
   @Input() justificationRefused: boolean = false;
   @Input() typeTable: string = '';
   title: string = '';
+  @Input() editable: boolean = true;
   showButtonServiceManual: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -76,15 +77,7 @@ export class ServiceTransportableGoodsFormComponent
   configTable() {
 
     this.getOrderServiceProvided();
-    if (
-      this.op != 1 &&
-      this.op != 2 &&
-      this.op != 3 &&
-      this.op != 6 &&
-      this.op != 7 &&
-      this.op != 8 &&
-      this.op != 9
-    ) {
+    if (this.typeOrder != 'reception') {
       this.columns = SERVICE_TRANSPORTABLE_COLUMNS;
       this.settings = {
         ...TABLE_SETTINGS,
@@ -154,17 +147,8 @@ export class ServiceTransportableGoodsFormComponent
       };*/
 
 
-    } else if (
-      this.op == 1 ||
-      this.op == 2 ||
-      this.op == 3 ||
-      this.op == 6 ||
-      this.op == 7 ||
-      this.op == 8 ||
-      this.op == 9
-    ) {
-      this.columns = !this.typeTable ? SERVICE_TRANSPORTABLE_COLUMNS_READONLY :
-        SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE;
+    } else {
+      this.columns = !this.editable ? SERVICE_TRANSPORTABLE_COLUMNS_READONLY : SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE;
 
       this.titleTab();
       this.showButtonServiceManual = true;
@@ -214,15 +198,10 @@ export class ServiceTransportableGoodsFormComponent
     if (this.isUpdate == true) {
       this.saveForm();
     }
-    if (this.justificationRefused == true) {
-      this.enableJustificationRows();
-    }
 
-    if (!isNullOrEmpty(changes['typeTable'])) {
+    if (!isNullOrEmpty(changes['editable'])) {
       this.configTable();
     }
-
-    console.log('changes', changes);
 
   }
 
@@ -284,8 +263,6 @@ export class ServiceTransportableGoodsFormComponent
       item.total = (durationTime * priceUnitary) * resourceNumber;
       ttotal += item.total;
     });
-
-    console.log('ttotal', this.data.map((item: any) => item.total));
 
     const t = `$${this.formatTotalAmount(ttotal)}`;
     this.totalAmount = t;
@@ -677,7 +654,13 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   setValues(param, data) {
-    this.data.find((x: any) => x.id == data.row.id)[param] = data.text;
+
+    let row = this.data.find((x: any) => x.id == data.row.id);
+    row[param] = data.text;
+
+    this.listforUpdate = this.listforUpdate.filter((x: any) => x.id != row.id);
+    this.listforUpdate.push(row);
+
     this.setTotalAmount();
   }
 

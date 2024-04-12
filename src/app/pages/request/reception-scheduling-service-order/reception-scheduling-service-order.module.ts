@@ -25,10 +25,12 @@ import { ServiceOrderRequestImplementFormComponent } from './service-order-reque
 import { ServiceOrderRequestRejectedFormComponent } from './service-order-request-rejected-form/service-order-request-rejected-form.component';
 import { ServiceOrderRequestValidateFormComponent } from './service-order-request-validate-form/service-order-request-validate-form.component';
 import { ValidateReportImplementFormComponent } from './validate-report-implement-form/validate-report-implement-form.component';
+import { ServiceOrderTaskComponent } from './service-order-task/service-order-task.component';
 
 @NgModule({
   declarations: [
     ServiceOrderRequestCaptureFormComponent,
+    ServiceOrderTaskComponent,
     CreateServiceFormComponent,
     CreateManualServiceFormComponent,
     ServiceOrderRequestValidateFormComponent,
@@ -60,4 +62,4 @@ import { ValidateReportImplementFormComponent } from './validate-report-implemen
 
   exports: [ReceptionSchedulingServiceOrderRoutingModule, SharedRequestModule],
 })
-export class ReceptionSchedulingServiceOrderModule {}
+export class ReceptionSchedulingServiceOrderModule { }
