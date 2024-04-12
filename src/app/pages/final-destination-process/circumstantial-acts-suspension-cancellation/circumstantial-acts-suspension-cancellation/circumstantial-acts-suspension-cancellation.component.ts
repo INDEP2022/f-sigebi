@@ -788,7 +788,6 @@ export class CircumstantialActsSuspensionCancellationComponent
       universalFolio: this.form.get('universalFolio').value,
       expedient: this.formBlkExpedient.get('noExpedient').value,
       screen: 'FACTCIRCUN_0001',
-      good: 0,
       user: user,
       receptionDate: this.form.get('closingDate').value,
       proceeding: this.form.get('noActa').value,
@@ -1046,6 +1045,8 @@ export class CircumstantialActsSuspensionCancellationComponent
     console.log(model);
     this.proceedingService.createDetailProceedingsDevolution(model).subscribe({
       next: (response: any) => {
+        console.log(response);
+        this.getGoods();
         this.getDetailProceedingsDevolution(numberProceedings);
       },
       error: error => {
@@ -1600,6 +1601,8 @@ export class CircumstantialActsSuspensionCancellationComponent
       let modalConfig = MODAL_CONFIG;
       modalConfig = {
         initialState: {
+          expedientNumber: this.formBlkExpedient.get('noExpedient').value,
+          proceedingNumber: this.form.get('noActa').value,
           callback: (data: any) => {},
         },
         class: 'modal-lg modal-dialog-centered',
@@ -1619,7 +1622,9 @@ export class CircumstantialActsSuspensionCancellationComponent
       let modalConfig = MODAL_CONFIG;
       modalConfig = {
         initialState: {
-          callback: (data: any) => {},
+          callback: (isProcees: boolean) => {
+            console.log(isProcees);
+          },
         },
         class: 'modal-lg modal-dialog-centered',
         ignoreBackdropClick: true,
@@ -1827,11 +1832,12 @@ export class CircumstantialActsSuspensionCancellationComponent
     console.log(body);
     this.proceedingsDetailDel.create(body).subscribe(
       res => {
+        console.log(res);
         this.alert('success', 'Acta registrada', '');
         this.form.get('statusAct').setValue('ABIERTA');
         this.canSave = false;
         this.unsubscribeAssembleKey();
-        console.log(res);
+        this.form.get('noActa').setValue(res.id);
       },
       err => {
         console.log(err);
@@ -1940,5 +1946,19 @@ export class CircumstantialActsSuspensionCancellationComponent
         }
       );
     });
+  }
+
+  validateGoods() {
+    const proceedingsNumber = this.form.get('noActa').value;
+
+    this.proceedingSusCanService.validateGoods(proceedingsNumber).subscribe(
+      res => {
+        console.log(res);
+        this.alert('success', res.data, '');
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 }
