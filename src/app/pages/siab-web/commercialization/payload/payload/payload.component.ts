@@ -59,7 +59,7 @@ export class PayloadComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.loadSqlPayments(new ListParams());
+    // this.loadSqlPayments(new ListParams());
   }
 
   private prepareForm() {
@@ -86,8 +86,6 @@ export class PayloadComponent extends BasePage implements OnInit {
       this.loading = true;
       this.dataFormat = [];
       this.data1.load([]);
-      let data = await this.loadSqlPayments(new ListParams());
-      console.log(data);
       let Contador: number = 0;
       let ResFase: number = 0;
       let NoEvento: number = 0;
@@ -147,7 +145,10 @@ export class PayloadComponent extends BasePage implements OnInit {
           for (let i = 0; i < this.paymentData.count; i++) {
             references = this.paymentData.data[i].reference;
             //Llamar al servicio
-            let data = await this.loadSqlPayments(new ListParams());
+            let data = await this.loadSqlPayments(
+              new ListParams(),
+              this.paymentData.data[i].reference
+            );
             this.dataSql = data;
             console.log(data);
             TipoSat = this.dataSql.data[0].TIPO_PAGO_SAT;
@@ -171,6 +172,7 @@ export class PayloadComponent extends BasePage implements OnInit {
             if (references) {
               references = references.trim();
               LST_REFERENCIA = references.substring(0, 20);
+              V_TIPOREF = this.paymentData.data[i].typeReference;
               if (V_TIPOREF == 3 || V_TIPOREF == 4 || V_TIPOREF == 5)
                 LST_TIPO = 'L';
               else LST_TIPO = 'G';
@@ -209,8 +211,8 @@ export class PayloadComponent extends BasePage implements OnInit {
                 LOTE_AUX = 0;
               }
             }
-
-            if (LST_2COL1.indexOf('BANAMEX') !== -1) {
+            console.log(LST_2COL1);
+            if (LST_2COL1 == 'BANAMEX') {
               V_FECHA = 1;
               if (V_CTA_BANCARIA == '7495220') {
                 LST_2COL1 = 'BANAMEX2';
@@ -246,7 +248,7 @@ export class PayloadComponent extends BasePage implements OnInit {
                     : '';
                 console.log(bancDesc1);
               }
-            } else if (LST_2COL1.indexOf('BANCO SANT') !== -1) {
+            } else if (LST_2COL1 == 'BANCO SANT') {
               V_FECHA = 2;
               LST_2COL1 = 'SANTAND PS';
               let DESCRIPCION_MOV_TRIM = DESCRIPCION_MOV.trim();
@@ -262,7 +264,7 @@ export class PayloadComponent extends BasePage implements OnInit {
                 bancData2.data[0].descripcion != undefined
                   ? bancData2.data[0].descripcion
                   : '';
-            } else if (LST_2COL1.indexOf('HSBC') !== -1) {
+            } else if (LST_2COL1 == 'HSBC') {
               V_FECHA = 3;
               LST_2COL1 = 'HSBC PS';
               let bancDesc3 = await this.obtenCodDescPago(
@@ -280,7 +282,7 @@ export class PayloadComponent extends BasePage implements OnInit {
                 bancData3.data[0].descripcion != undefined
                   ? bancData3.data[0].descripcion
                   : '';
-            } else if (LST_2COL1.indexOf('BANORTE') !== -1) {
+            } else if (LST_2COL1 == 'BANORTE') {
               V_FECHA = 4;
               LST_2COL1 = 'BANORTE PS';
               let bancDesc4 = await this.obtenCodDescPago(LST_2COL1, 3, false);
@@ -294,7 +296,7 @@ export class PayloadComponent extends BasePage implements OnInit {
                 bancData4.data[0].descripcion != undefined
                   ? bancData4.data[0].descripcion
                   : '';
-            } else if (LST_2COL1.indexOf('SCOTIABANK') !== -1) {
+            } else if (LST_2COL1 == 'SCOTIABANK') {
               V_FECHA = 5;
               LST_2COL1 = 'SCOTIA PS';
               let bancDesc5 = await this.obtenCodDescPago(LST_2COL1, 10, false);
@@ -308,7 +310,7 @@ export class PayloadComponent extends BasePage implements OnInit {
                 bancData5.data[0].descripcion != undefined
                   ? bancData5.data[0].descripcion
                   : '';
-            } else if (LST_2COL1.indexOf('BBVA BA') !== -1) {
+            } else if (LST_2COL1 == 'BBVA BA') {
               V_FECHA = 5;
               LST_2COL1 = 'BANCOM PS';
               let bancDesc6 = await this.obtenCodDescPago(LST_2COL1, 10, false);
@@ -330,7 +332,7 @@ export class PayloadComponent extends BasePage implements OnInit {
             console.log(sucursal);
             SUCURSAL_B = sucursalData.data[0].sucursal;
             let existe = await this.consultaExiste(
-              LST_COL2,
+              this.dataSql.data[0].Fecha_Mov,
               V_FECHA,
               references
             );
@@ -363,7 +365,7 @@ export class PayloadComponent extends BasePage implements OnInit {
                 Referencia: references,
                 ReferenciaOrdenIngreso: '',
                 Banco: LST_2COL1,
-                Sucursal: '',
+                Sucursal: SUCURSAL_B,
                 //Monto: Convert.ToDecimal(dtSQL.Rows[0.ItemArray[2.ToString()),  parseFloat(ImporteDep)
                 Monto: parseFloat(this.dataSql.data[0].ImporteDep),
                 Resultado: AUX_RESULTADO,
@@ -478,10 +480,9 @@ export class PayloadComponent extends BasePage implements OnInit {
     });
   }
 
-  async loadSqlPayments(params: ListParams) {
-    //Servicio de Obten_Proc_Nuevo_Carga_Pagos_SQL
+  async loadSqlPayments(params: ListParams, id: string) {
     return new Promise((resolve, reject) => {
-      this.interfaceesirsaeService.loadPayments(params).subscribe({
+      this.interfaceesirsaeService.loadPayments(params, id).subscribe({
         next: resp => {
           resolve(resp);
         },
@@ -546,7 +547,6 @@ export class PayloadComponent extends BasePage implements OnInit {
   }
 
   async consultaExiste(fecMov: string, vFec: number, ref: string) {
-    //Consultar a back
     return new Promise((resolve, reject) => {
       let body = {
         vmovimiento: this.dataSql.data[0].numMov,

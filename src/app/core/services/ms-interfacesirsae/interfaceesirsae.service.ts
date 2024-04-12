@@ -13,8 +13,8 @@ export class InterfaceesirsaeService extends HttpService {
     this.microservice = this.route.Interfaceesirsae;
   }
 
-  loadPayments(params: ListParams) {
-    return this.get(`application/selectReference/11998905403245735568`);
+  loadPayments(params: ListParams, id: string) {
+    return this.get(`application/selectReference/${id}`);
   }
 
   ApplicationGetReturnPayments(params: _Params) {
