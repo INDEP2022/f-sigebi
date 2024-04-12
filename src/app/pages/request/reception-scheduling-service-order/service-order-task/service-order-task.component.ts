@@ -575,6 +575,7 @@ export class ServiceOrderTaskComponent
         this.nameDoc = 'orden_servicio';
         break;
       case 'service-order-aproval':
+        this.title = `Aprobación de Servicios (Programación de recepción: )Para la orden de servicio con folio:  `;
         this.btnReclamar = true;
         this.btnReporteOrdenServ = true;
         this.btnGuardar = true;
@@ -584,16 +585,58 @@ export class ServiceOrderTaskComponent
         this.nameDoc = 'orden_servicio';
         break;
       case 'service-order-report':
+        this.title = `Reporte de implementación (Programación de recepción: )Para la orden de servicio con folio: `;
+
         this.btnReclamar = true;
+        this.btnGuardar = true;
+        this.btnEnviar = true;
         break;
       case 'service-order-report-validation':
+        this.title = `Validación de reporte de Implementación (Programación de recepción: )Para la orden de servicio con folio: `;
+
         this.btnReclamar = true;
+        this.btnReporteOrdenServ = true;
+        this.btnGuardar = true;
+        this.btnRechazar = true;
+        this.btnAnexoW = true;
         break;
       case 'service-order-report-signature':
+        this.title = `Validación de reporte de Implementación (Programación de recepción: )Para la orden de servicio con folio: `;
+
         this.btnReclamar = true;
+        this.btnReporteOrdenServ = true;
+        this.btnGuardar = true;
+        break;
+      case 'service-order-report-aprove':
+        this.title = `Reporte de Implementación Aprobado (Programación de recepción: )Para la orden de servicio con folio: `;
+        this.btnReclamar = true;
+        this.btnReporteOrdenServ = true;
+        this.btnAnexoW = true;
         break;
       case 'service-order-validation-reject':
+        this.title = `Solicitud de Orden de Servicio (Validación de Servicios) con folio: `;
         this.btnReclamar = true;
+        this.btnLiberar = true;
+        this.btnReporteOrdenServ = true;
+        this.btnGuardar = true;
+        this.btnRechazar = true;
+        break;
+      case 'service-order-validation-justification':
+        this.title = `Solicitud de Orden de Servicio (Validación de Servicios) con folio: `;
+        this.btnReclamar = true;
+        this.btnReporteOrdenServ = true;
+        this.btnGuardar = true;
+        break;
+      case 'service-order-report-reject':
+        this.title = `Solicitud orden de servicio (Validación de reporte) con folio: `;
+        this.btnReclamar = true;
+        this.btnReporteOrdenServ = true;
+        this.btnGuardar = true;
+        this.btnRechazar = true;
+        break;
+
+      case 'service-order-report-justification-validation':
+
         break;
       default:
         break;
