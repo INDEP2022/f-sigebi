@@ -16,6 +16,7 @@ export enum GOOD_TRACKER_ORIGINS {
   DonationAuthorization = 'FDONSOLAUTORIZA',
   OutstandingAssetsValidation = 'FCOMERBIENEX',
   ChangesGoodsDestinationIndicators = 'FACTADBCAMBIOETIQ',
+  CircumstantialActsSuspensionCancellation = 'FACTCIRCUN_0001',
 }
 
 export enum GOOD_TRACKER_ORIGINS_TITLES {
