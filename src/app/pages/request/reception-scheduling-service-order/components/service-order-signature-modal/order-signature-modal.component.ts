@@ -159,6 +159,7 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
     //console.log('Firmantes -----------------');
 
     let signatories = await this.getSignatories();
+    signatories = signatories.filter(sign => isNullOrEmpty(sign.pass));
     console.log('Firmantes: ', signatories);
 
     let deletes = signatories.map(signatory => {

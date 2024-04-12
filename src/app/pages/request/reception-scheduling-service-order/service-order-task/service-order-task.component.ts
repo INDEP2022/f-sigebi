@@ -85,6 +85,7 @@ export class ServiceOrderTaskComponent
 
     this.taskInfo = await this.getTask();
     this.title = this.taskInfo.title;
+    console.log(this.taskInfo);
 
     this.prepareForm();
     this.getProgramming();
@@ -644,7 +645,6 @@ export class ServiceOrderTaskComponent
 
   }
 
-
   async createTask(current = this.process) {
 
     /** VERIFICAR VALIDACIONES PARA REALIZAR LA TAREA*/
@@ -773,12 +773,24 @@ export class ServiceOrderTaskComponent
     });
   }
 
+
+  updateTask(id, body) {
+    return new Promise((resolve, reject) => {
+      this.taskService.update(id, body).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => { },
+      });
+    });
+  }
+
   configuraModalFirma() {
 
     const formOnly = true;
-    const nameSignatoryRuling = '';// this.requestInfo.detail.nameSignatoryRuling;
-    const postSignatoryRuling = '';//this.requestInfo.detail.postSignatoryRuling;
-    const typeSign = '';//this.requestInfo.detail.nameRecipientRuling;
+    const nameSignatoryRuling = this.taskInfo.participantName;
+    const postSignatoryRuling = this.taskInfo.ownerRole;
+    const typeSign = this.taskInfo.componentName;
     const typeAnnex = 'sign-annexJ-assets-classification';
 
     let config: ModalOptions = {
@@ -794,7 +806,17 @@ export class ServiceOrderTaskComponent
         formOnly,
         callback: async (name, charge, typeSign) => {
 
+          this.taskInfo.ownerRole = charge;
+          this.taskInfo.participantName = name;
+          this.taskInfo.componentName = typeSign;
+
           console.log(name, charge, typeSign);
+          this.updateTask(this.taskInfo.id, {
+            ownerRole: charge,
+            participantName: name,
+            componentName: typeSign,
+          });
+
           this.openFirma(name, charge);
           //Actualizar la orden de servicio con los datos de la firma
           //this.updateOrderService(responsibleSae, saePosition, typeSign);
