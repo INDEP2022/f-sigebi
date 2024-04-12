@@ -25,8 +25,7 @@ import { CreateClassificateVehicleFormComponent } from '../../reception-scheduli
 })
 export class ClassificateVehicleFormComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   @Input() op: number;
   @Input() showForm: boolean;
   @Input() rejected: boolean;
@@ -39,7 +38,7 @@ export class ClassificateVehicleFormComponent
   item: any;
   data = new LocalDataSource();
   vehicleSelect: IServiceVehicle[];
-  private bsModalService = inject(BsModalRef);
+  @Input() editable: boolean = true;
 
   constructor(
     private modalService: BsModalService,
@@ -82,7 +81,7 @@ export class ClassificateVehicleFormComponent
             this.totalItems = response.length;
           });
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -96,7 +95,7 @@ export class ClassificateVehicleFormComponent
           resolve(response.data[0].description);
           //this.typeVehicle = new DefaultSelect(response.data, response.count);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }

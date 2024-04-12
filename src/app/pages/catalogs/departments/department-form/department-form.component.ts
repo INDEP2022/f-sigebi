@@ -249,7 +249,26 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
         .create(this.departmentForm.getRawValue())
         .subscribe({
           next: data => this.handleSuccess(),
-          error: error => (this.loading = false),
+          error: error => {
+            if (
+              error.error.message ==
+                'duplicate key value violates unique constraint "cdp_pk"' ||
+              'Dato duplicado'
+            ) {
+              this.alert(
+                'error',
+                'Ya existe un registro con este id',
+                'Verifique e intente nuevamente'
+              );
+            } else {
+              this.alert(
+                'error',
+                'Ha ocurrido un error al intentar crear el registro',
+                'Verifique e intente nuevamente'
+              );
+            }
+            this.loading = false;
+          },
         });
     }
   }
@@ -270,7 +289,14 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
         .update4(this.departmentForm.getRawValue())
         .subscribe({
           next: data => this.handleSuccess(),
-          error: error => (this.loading = false),
+          error: error => {
+            this.alert(
+              'error',
+              'Ha ocurrido un error al intentar crear el registro',
+              'Verifique e intente nuevamente'
+            );
+            this.loading = false;
+          },
         });
     }
   }
