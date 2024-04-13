@@ -37,6 +37,7 @@ export class DepositoryFeesComponent extends BasePage implements OnInit {
   origin2: string = null;
   noBienParams: number = null;
   consult: boolean = false;
+  idNombra: number;
 
   constructor(
     private fb: FormBuilder,
@@ -69,6 +70,12 @@ export class DepositoryFeesComponent extends BasePage implements OnInit {
           this.noBienParams = params['p_bien']
             ? Number(params['p_bien'])
             : null;
+
+          this.idNombra = params['idNombra'] ?? null;
+
+          setTimeout(() => {
+            this.search();
+          }, 1500);
         }
         this.origin2 = params['origin2'] ?? null;
       });
@@ -133,7 +140,7 @@ export class DepositoryFeesComponent extends BasePage implements OnInit {
    */
   private buildForm() {
     this.form = this.fb.group({
-      appointment: [null],
+      appointment: [this.idNombra],
       idPayment: [null],
     });
   }
