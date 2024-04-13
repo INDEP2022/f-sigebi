@@ -71,8 +71,26 @@ export const PROVIDER_CATALOGS_PROVIDER_COLUMNS = {
   },
   typePerson: {
     title: 'Tipo Persona',
-    type: 'string',
     sort: false,
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Todos',
+        list: [
+          { value: 1, title: 'Física' },
+          { value: 2, title: 'Moral' },
+        ],
+      },
+    },
+    valuePrepareFunction: (value: any) => {
+      if (value == '1') {
+        return 'Física';
+      } else if (value == '2') {
+        return 'Moral';
+      } else {
+        return '';
+      }
+    },
   },
   preponderantAct: {
     title: 'Actividad Preponderante',
