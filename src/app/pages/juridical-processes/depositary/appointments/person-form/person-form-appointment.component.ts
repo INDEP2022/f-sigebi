@@ -208,6 +208,15 @@ export class PersonFormComponentAppointment extends BasePage implements OnInit {
 
   confirm() {
     // this.edit ? this.update() : this.create();
+
+    Object.keys(this.personForm.controls).forEach(key => {
+      const control = this.personForm.get(key);
+      // Si el valor es una cadena vacía, establecerlo como null
+      if (control.value === '') {
+        control.setValue(null);
+      }
+    });
+
     this.create();
   }
 
