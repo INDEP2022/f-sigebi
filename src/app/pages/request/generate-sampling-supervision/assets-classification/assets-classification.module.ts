@@ -10,11 +10,13 @@ import { AnnexJAssetsClassificationComponent } from './annex-j-assets-classifica
 import { AssetsClassificationRoutingModule } from './assets-classification-routing-module';
 import { AssetsClassificationComponent } from './assets-classification/assets-classification.component';
 import { ClassificationAnnexedSignComponent } from './classification-annexed-sign/classification-annexed-sign.component';
+import { TypeSignatureModalComponent } from '../../reception-scheduling-service-order/components/type-signature-modal/type-signature-modal..component';
 
 @NgModule({
   declarations: [
     AssetsClassificationComponent,
     AnnexJAssetsClassificationComponent,
+    TypeSignatureModalComponent,
     ClassificationAnnexedSignComponent,
   ],
   imports: [
@@ -29,4 +31,4 @@ import { ClassificationAnnexedSignComponent } from './classification-annexed-sig
     TabsModule,
   ],
 })
-export class AssetsClassificationModule {}
+export class AssetsClassificationModule { }

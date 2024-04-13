@@ -19,6 +19,7 @@ import { ConfirmProgrammingComponent } from '../../shared-request/confirm-progra
 import { AnnexWFormComponent } from '../components/annex-w-form/annex-w-form.component';
 import { RejectionCommentFormComponent } from '../components/rejection-comment-form/rejection-comment-form.component';
 import { RejectionJustifyFormComponent } from '../components/rejection-justify-form/rejection-justify-form.component';
+import { OrderSignatureModalComponent } from '../components/service-order-signature-modal/order-signature-modal.component';
 
 @Component({
   selector: 'app-service-order-request-capture-form',
@@ -55,6 +56,7 @@ export class ServiceOrderRequestCaptureFormComponent
   typeOrder: string = 'reception';
   justificationRefused: boolean = false;
   readonly: boolean = true;
+  typeTable: string = '';
 
   //private programmingService = inject(ProgrammingRequestService);
   //private router = inject(ActivatedRoute);
@@ -69,16 +71,18 @@ export class ServiceOrderRequestCaptureFormComponent
 
   constructor() {
     super();
+    this.prepareOrderServiceForm();
+
   }
 
   ngOnInit(): void {
+
     const task = JSON.parse(localStorage.getItem('Task'));
     this.task = task['op'];
     this.op = this.task;
 
     this.programmingId = +this.activeRouter.snapshot.params['id'];
     this.prepareProgForm();
-    this.prepareOrderServiceForm();
     this.getProgramming();
     this.getOrderService();
     setTimeout(() => {
@@ -154,7 +158,7 @@ export class ServiceOrderRequestCaptureFormComponent
 
   async sendOrderService() {
     const orderServProvi: any = await this.getOrderServiceProvided();
-    if (orderServProvi.count) {
+    if (orderServProvi.count == 0) {
       this.onLoadToast(
         'info',
         'Es necesario agregar servicios a la programación'
@@ -238,6 +242,7 @@ export class ServiceOrderRequestCaptureFormComponent
 
   setClaimRequest() {
     this.claimRequest = true;
+    this.typeTable = 'multi';
     if (this.task == 1) {
       this.readonly = false;
       this.ordServform.controls['transferLocation'].enable();
@@ -249,6 +254,24 @@ export class ServiceOrderRequestCaptureFormComponent
       //this.ordServform.controls['notes'].enable();
       //this.ordServform.controls['observation'].enable();
       this.showForm = true;
+    }
+
+  }
+
+  setRelease() {
+    this.claimRequest = false;
+    this.typeTable = '';
+    if (this.task == 1) {
+      this.readonly = true;
+      this.ordServform.controls['transferLocation'].disable();
+      this.ordServform.controls['transferAddress'].disable();
+      this.ordServform.controls['sourceStore'].disable();
+      this.ordServform.controls['originStreet'].disable();
+      this.ordServform.controls['originPostalCode'].disable();
+      this.ordServform.controls['colonyOrigin'].disable();
+      //this.ordServform.controls['notes'].enable();
+      //this.ordServform.controls['observation'].enable();
+      this.showForm = false;
     }
   }
 
@@ -310,6 +333,10 @@ export class ServiceOrderRequestCaptureFormComponent
   }
 
   generateOrdSerReport() {
+
+    this.openFirma();
+    return;
+
     const config = MODAL_CONFIG;
     config.initialState = {
       idProgramming: this.programmingId,
@@ -494,6 +521,46 @@ export class ServiceOrderRequestCaptureFormComponent
         },
       });
     });
+  }
+
+  async openFirma(dynamic = false) {
+
+    let token = this.authService.decodeToken();
+    let today = new Date();
+
+    let idTypeDoc = "0";
+    let readOnly = false;
+
+    const typeAnnex = 'approval-request';
+    const requestInfo = { id: this.programmingId, type: 'programming' };
+    const idReportAclara = this.programmingId;
+    const nameTypeDoc = 'OrdenServicio';
+    const nomenglatura = '';
+    const isDynamic = dynamic;
+    //const readOnly = this.requestInfo.detail.version == "1";
+
+    let config: ModalOptions = {
+      initialState: {
+        idReportAclara,
+        idTypeDoc,
+        typeAnnex,
+        requestInfo,
+        nameTypeDoc,
+        nomenglatura,
+        isDynamic,
+        readOnly,
+        callback: (next, xml) => {
+          //this.updateInfo = !this.updateInfo;
+          if (next) {
+            //this.updateReport(xml);
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      keyboard: false,
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(OrderSignatureModalComponent, config);
   }
 
   /*openAutografoModal(sampleOrder: ISamplingOrder) {

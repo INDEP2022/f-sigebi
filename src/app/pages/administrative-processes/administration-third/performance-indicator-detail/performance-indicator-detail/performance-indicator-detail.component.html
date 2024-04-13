@@ -224,7 +224,7 @@
         <h5 class="title">Estrategia de Administración</h5>
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="data"
             (userRowSelect)="onRowSelect($event)">
@@ -255,7 +255,7 @@
         <h5 class="title">Reportes de Implementación</h5>
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings2"
             [source]="dataF">
           </ng2-smart-table>

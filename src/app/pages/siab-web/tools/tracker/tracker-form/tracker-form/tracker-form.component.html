@@ -220,7 +220,7 @@
         <p class="title text-center"><b>Bienes muebles</b></p>
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="movables">
           </ng2-smart-table>
@@ -235,7 +235,7 @@
         <p class="title text-center"><b>Bienes inmuebles</b></p>
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settingsImmovable"
             [source]="immovables">
           </ng2-smart-table>

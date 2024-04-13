@@ -208,3 +208,13 @@ export interface IPaConstDelivery {
   pProc: number;
   pAction: string;
 }
+
+export interface IPupPrimaryClosureSus {
+  universalFolio: string;
+  expedient: number;
+  screen: string;
+  user: string;
+  receptionDate: Date | string;
+  proceeding: number;
+  proceedingKey: string;
+}

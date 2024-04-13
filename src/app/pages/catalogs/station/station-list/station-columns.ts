@@ -16,6 +16,9 @@ export const STATION_COLUMS = {
     valuePrepareFunction: (value: any) => {
       return value != null ? value.nameTransferent : '';
     },
+    filterFunction: () => {
+      return true;
+    },
   },
   status: {
     title: 'Estado',

@@ -1,0 +1,35 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Archivo plano de las Actas entrega recepción</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mt-5 mb-5">
+        <form-field [control]="form.get('proceddingsList')">
+          <ngx-select
+            (fetchItems)="getData($event)"
+            [data]="data"
+            label="Lista de actas"
+            [form]="form"
+            bindLabel="minutesKey"
+            [searchable]="false"
+            control="proceddingsList">
+          </ngx-select>
+        </form-field>
+      </div>
+    </form>
+    <div class="row text-center">
+      <div class="col">
+        <button
+          class="btn btn-sm btn-success active mr-3"
+          (click)="exportFile()">
+          Generar reporte
+          <i class="bx bx-download float-icon"></i>
+        </button>
+        <button class="btn btn-danger btn-sm active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

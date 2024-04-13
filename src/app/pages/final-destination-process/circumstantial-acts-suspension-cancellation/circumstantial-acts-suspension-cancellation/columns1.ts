@@ -24,7 +24,7 @@ export const COLUMNS1 = {
     type: 'string',
     sort: false,
   },
-  act: {
+  acta: {
     title: 'Acta',
     type: 'string',
     sort: false,

@@ -11,7 +11,13 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-indicators-of-performance-form',
   templateUrl: './indicators-of-performance-form.component.html',
-  styles: [],
+  styles: [
+    `
+      .bg-gray {
+        background-color: #eee !important;
+      }
+    `,
+  ],
 })
 export class IndicatorsOfPerformanceFormComponent
   extends BasePage
@@ -30,7 +36,8 @@ export class IndicatorsOfPerformanceFormComponent
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private detailIndParameterService: DetailIndParameterService,
-    private zoneContractService: ZoneContractService
+    private zoneContractService: ZoneContractService,
+    private datePipe: DatePipe
   ) {
     super();
   }
@@ -39,7 +46,7 @@ export class IndicatorsOfPerformanceFormComponent
     this.prepareForm();
   }
 
-  prepareForm() {
+  async prepareForm() {
     this.form = this.fb.group({
       indicatorNumber: [null],
       endDate: [null, [Validators.required]],
@@ -71,9 +78,31 @@ export class IndicatorsOfPerformanceFormComponent
       const dateInitial = this.transformDate(this.event.initialDate);
       const dateLimNumber = this.transformDate(this.event.hoursLimNumber);
 
-      this.form.controls['endDate'].setValue(dateEnd);
-      this.form.controls['initialDate'].setValue(dateInitial);
-      this.form.controls['hoursLimNumber'].setValue(dateLimNumber);
+      this.form.controls['endDate'].setValue(
+        this.event.endDate
+          ? this.datePipe.transform(
+              await this.correctDate(this.event.endDate),
+              'dd/MM/yyyy'
+            )
+          : ''
+      );
+      this.form.controls['initialDate'].setValue(
+        this.event.initialDate
+          ? this.datePipe.transform(
+              await this.correctDate(this.event.initialDate),
+              'dd/MM/yyyy'
+            )
+          : ''
+      );
+
+      this.form.controls['hoursLimNumber'].setValue(
+        this.event.hoursLimNumber
+          ? this.datePipe.transform(
+              await this.correctDate(this.event.hoursLimNumber),
+              'dd/MM/yyyy HH:mm'
+            )
+          : ''
+      );
       this.form.controls['contractZoneKey'].disable();
       this.form.controls['indicatorNumber'].disable();
     }
@@ -83,7 +112,10 @@ export class IndicatorsOfPerformanceFormComponent
       this.getZoneContracts(new ListParams());
     }, 1000);
   }
-
+  async correctDate(date: string) {
+    const dateUtc = new Date(date);
+    return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
+  }
   transformDate(date: Date) {
     const date2 = new Date(date);
     const datePipe = new DatePipe('en-US');

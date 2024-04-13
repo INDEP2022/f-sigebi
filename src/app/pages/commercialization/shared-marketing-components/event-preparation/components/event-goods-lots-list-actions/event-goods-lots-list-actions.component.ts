@@ -26,6 +26,7 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { IPostThirdFile } from 'src/app/core/services/ms-lot/models-lots';
@@ -95,12 +96,14 @@ export class EventGoodsLotsListActionsComponent
     private lotService: LotService,
     private modalService: BsModalService,
     private utilComerV1Service: UtilComerV1Service,
-    private invoiceService: MsInvoiceService
+    private invoiceService: MsInvoiceService,
+    private eventService: ComerEventosService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    console.log('Se llamaron los lotes');
     this.eventPreparationService.$lotifyGoods
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -224,16 +227,19 @@ export class EventGoodsLotsListActionsComponent
       this.alert('warning', 'No hay datos para exportar', '');
       return;
     }
-    const forThirdQuestion = await this.alertQuestion(
-      'question',
-      '¿Archivo para Tercero?',
-      '',
-      'Si',
-      'No'
-    );
-    if (forThirdQuestion.isConfirmed) {
-      this.thirdFile();
-      return;
+
+    if (this.parameters.pDirection == 'M') {
+      const forThirdQuestion = await this.alertQuestion(
+        'question',
+        '¿Archivo para Tercero?',
+        '',
+        'Si',
+        'No'
+      );
+      if (forThirdQuestion.isConfirmed) {
+        this.thirdFile();
+        return;
+      }
     }
     const { statusVtaId } = this.controls;
     if (['PREP', 'APRO', 'PUB', 'ACT'].includes(statusVtaId.value)) {
@@ -620,11 +626,35 @@ export class EventGoodsLotsListActionsComponent
     }
     const file = this.getFileFromEvent(event);
     if (this.parameters.pDirection == 'I') {
+      console.log('Entró');
+      console.log(this.ctrlRepFallo);
       //TODO: PUP_NVO_COPIA_ARCHO
+
       if (this.ctrlRepFallo) {
         //TODO: PA_REV_FALLO
+        this.eventService
+          .paRevFailed({ pldEvent: this.controls.id.value as number })
+          .subscribe(
+            res => {
+              console.log(res);
+              console.log(res.p_IND_RESUL);
+              if (res.p_IND_RESUL != 'OK') {
+                this.alert('warning', res.p_IND_RESUL, '');
+                return;
+              }
+            },
+            err => {
+              console.log(err);
+              this.alert(
+                'warning',
+                'Se presentó un problema al reprocesar el fallo',
+                ''
+              );
+              return;
+            }
+          );
       }
-      this.importCustomersLots(file, 'N').subscribe();
+      this.importCustomersLotsI(file).subscribe();
     } else {
       const resp = await this.alertQuestion(
         'info',
@@ -645,6 +675,34 @@ export class EventGoodsLotsListActionsComponent
       }
       this.importCustomersLots(file, lifMessageYesNo).subscribe();
     }
+  }
+
+  importCustomersLotsI(file: File) {
+    const { id, eventTpId } = this.eventForm.getRawValue();
+    this.loader.load = true;
+    return this.lotService
+      .pupImpExcelBatchesCustomerI({
+        file,
+        eventId: id,
+        eventType: eventTpId,
+        address: this.parameters.pDirection,
+      })
+      .pipe(
+        catchError(error => {
+          this.alert('error', 'Error', UNEXPECTED_ERROR);
+          return throwError(() => error);
+        }),
+        tap(response => {
+          console.log(response);
+          this.eventPreparationService.$refreshLots.next();
+          this.eventPreparationService.$fillStadistics.next();
+          this.alert('success', 'Proceso Terminado', '');
+        }),
+        finalize(() => {
+          this.loader.load = false;
+          this.customersImportControl.reset();
+        })
+      );
   }
 
   /**PUP_IMP_EXCEL_LOTES_CLIENTE */
@@ -1038,7 +1096,7 @@ export class EventGoodsLotsListActionsComponent
 
         this._downloadExcelFromBase64(
           res.base64File,
-          `Evento-${id.value}`,
+          `Evento - ${id.value}`,
           'csv'
         );
       })

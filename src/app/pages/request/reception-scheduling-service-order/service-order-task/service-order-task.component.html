@@ -1,0 +1,123 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      {{ title }}
+    </h5>
+  </div>
+
+  <div body style="margin-top: -30px">
+    <div class="justify-content-end btn-toolbar mt-4">
+      <button
+        *ngIf="btnReclamar"
+        (click)="setClaimRequest()"
+        class="btn btn-info btn-sm active">
+        <!-- <i class="fa fa-reply" aria-hidden="true"></i> -->
+        Reclamar
+      </button>
+
+      <button
+        (click)="setRelease()"
+        *ngIf="!btnReclamar && btnLiberar"
+        class="btn btn-info btn-sm active">
+        Liberar <i class="fa fa-reply" aria-hidden="true"></i>
+      </button>
+
+      <button
+        *ngIf="!btnReclamar && btnRechazarJustificacion"
+        class="btn btn-info btn-sm active"
+        (click)="refuseJustification()">
+        Rechazar Justificación <i class="fa fa-reply" aria-hidden="true"></i>
+      </button>
+
+      <button
+        *ngIf="!btnReclamar && btnReporteOrdenServ"
+        type="button"
+        class="btn btn-primary active btn-sm"
+        (click)="generateOrdSerReport()">
+        Generar reporte de orden de servicio
+        <i class="bx bx-edit-alt"></i>
+      </button>
+
+      <button
+        (click)="sendOrderService()"
+        *ngIf="!btnReclamar && btnEnviar"
+        class="btn btn-success btn-sm active">
+        Enviar <i class="fa fa-paper-plane" aria-hidden="true"></i>
+      </button>
+
+      <button
+        (click)="sendJustification()"
+        *ngIf="!btnReclamar && btnEnviarJustificacion"
+        class="btn btn-success btn-sm active">
+        Enviar Justificaci&oacute;
+        <i class="fa fa-paper-plane" aria-hidden="true"></i>
+      </button>
+
+      <button
+        (click)="rejectOrder()"
+        *ngIf="!btnReclamar && btnRechazar"
+        class="btn btn-success btn-sm active">
+        Rechazar <i class="fa fa-times-circle" aria-hidden="true"></i>
+      </button>
+
+      <button
+        *ngIf="!btnReclamar && btnAprobar"
+        (click)="approve()"
+        class="btn btn-primary btn-sm active">
+        Aprobar <i class="fa fa-check" aria-hidden="true"></i>
+      </button>
+
+      <button
+        (click)="saveService()"
+        *ngIf="!btnReclamar && btnGuardar"
+        class="btn btn-primary btn-sm active">
+        Guardar <i class="fa fa-save" aria-hidden="true"></i>
+      </button>
+
+      <button
+        (click)="annexWReport()"
+        *ngIf="!btnReclamar && btnAnexoW"
+        class="btn btn-primary btn-sm active">
+        Anexo W <i class="fa fa-file ml-3" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <app-detail-service-order></app-detail-service-order>
+
+    <app-address-transferent-form
+      *ngIf="orderServiceId != null"
+      [ordServform]="ordServform"></app-address-transferent-form>
+
+    <app-tranportable-goods-form></app-tranportable-goods-form>
+
+    <app-order-service-form
+      *ngIf="orderServiceId != null"
+      [ordServform]="ordServform"
+      [total]="total"></app-order-service-form>
+
+    <app-classificate-vehicle-form
+      *ngIf="orderServiceId != null"
+      [editable]="
+        !btnReclamar && editVehiculos
+      "></app-classificate-vehicle-form>
+
+    <app-address-origin-form
+      *ngIf="orderServiceId != null"
+      [ordServform]="ordServform"></app-address-origin-form>
+
+    <app-comments-form
+      *ngIf="orderServiceId != null"
+      [ordServform]="ordServform"></app-comments-form>
+
+    <app-service-transportable-goods-form
+      *ngIf="orderServiceId != null"
+      [editable]="!btnReclamar && editServicios"
+      [typeTable]="typeTable"
+      [typeOrder]="typeOrder"
+      [justificationRefused]="justificationRefused"
+      [showForm]="showForm"
+      [orderServiceId]="orderServiceId"
+      [isUpdate]="isUpdate"
+      (totEvent)="getTotal($event)"></app-service-transportable-goods-form>
+  </div>
+</app-card>

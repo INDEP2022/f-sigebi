@@ -44,4 +44,8 @@ export class BatchService implements ICrudMethods<IBatch> {
       params
     );
   }
+
+  remove_(body: any): Observable<Object> {
+    return this.batchRepository.remove3(`${this.route}`, body);
+  }
 }

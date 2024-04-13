@@ -6,14 +6,25 @@
     <form [formGroup]="form" class="form-material">
       <div class="row">
         <div class="col-md-8 col-sm-12 col-xs-12">
-          <app-banks-shared
+          <form-field [control]="form.get('nameBank')">
+            <ngx-select
+              [form]="form"
+              control="nameBank"
+              [data]="banks"
+              value="bankCode"
+              bindLabel="name"
+              label="Bancos"
+              (fetchItems)="getBanks($event)"
+              (change)="onBanksChange($event)"></ngx-select>
+          </form-field>
+          <!-- <app-banks-shared
             [labelName]="'Nombre'"
             [form]="form"
             [bankField]="'cveBank'"
             (nameBank)="form.get('nameBank').patchValue($event)"
             (stringBank)="
               form.get('cveBank').patchValue($event)
-            "></app-banks-shared>
+            "></app-banks-shared> -->
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12 pt-3">
           <form-field [control]="form.get('cveBank')" label="Clave Banco">
@@ -85,9 +96,19 @@
         </div>
         <div class="row mt-2">
           <div class="col-md-4 col-sm-12 col-xs-12">
-            <app-account-banks-shared
+            <form-field [control]="form.get('accountNumberTransfer')">
+              <ngx-select
+                [form]="form"
+                control="accountNumberTransfer"
+                [data]="accounts"
+                value="cveAccount"
+                bindLabel="cveAccount"
+                label="Cuenta a traspasar"
+                (fetchItems)="getAccounts($event)"></ngx-select>
+            </form-field>
+            <!-- <app-account-banks-shared
               [form]="form"
-              (properties)="setProperties($event)"></app-account-banks-shared>
+              (properties)="setProperties($event)"></app-account-banks-shared> -->
           </div>
           <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
             <form-field [control]="form.get('bank_I')" label="Banco">

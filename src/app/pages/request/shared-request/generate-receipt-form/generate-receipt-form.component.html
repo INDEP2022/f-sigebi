@@ -146,7 +146,7 @@
         </div>
         <div [class]="loadingWitness ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="paragraphs"
             (delete)="delete($event.data)">

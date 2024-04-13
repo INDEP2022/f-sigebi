@@ -12,14 +12,17 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Subscription, takeUntil, tap } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
+import { IQueryGoodTracker } from 'src/app/core/models/ms-delivery-constancy/ms-delivery-constancy-model';
 import { IGoodParameter } from 'src/app/core/models/ms-good-parameter/good-parameter.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import {
   IDetailProceedingsDevollution,
   IDetailProceedingsDevollutionDelete,
+  IPupPrimaryClosureSus,
 } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { CertificatesGoodsService } from 'src/app/core/services/ms-delivery-constancy/certificates-goods.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
@@ -43,8 +46,11 @@ import {
 } from 'src/app/core/shared/patterns';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 import { AllExpedientsModal } from '../all-expedientes-modal/all-expedients-modal.component';
+import { ExportDataModal } from '../export-data-modal/export-data-modal.component';
+import { ProceedingNVRModalComponent } from '../proceeding-nvr-modal/procceding-nvr-modal.component';
 import {
   FilterParams,
   ListParams,
@@ -87,6 +93,7 @@ export class CircumstantialActsSuspensionCancellationComponent
   implements OnInit
 {
   formBlkExpedient: FormGroup;
+  formSubject: FormGroup;
   form: FormGroup;
   formTable1: FormGroup;
   formTable2: FormGroup;
@@ -139,6 +146,16 @@ export class CircumstantialActsSuspensionCancellationComponent
     noExpedient: null,
   };
   dataIdent = new DefaultSelect(['DES', 'DEV', 'DON', 'RES', 'VEN', 'SUS']);
+  dataSubject = new DefaultSelect([
+    { value: 1, label: 'EL CLIENTE NO SE PRESENTÓ A LA ENTREGA.' },
+    {
+      value: 2,
+      label: 'EL CLIENTE SE PRESENTÓ PERO ESTÁ INCONFORME CON LOS BIENES.',
+    },
+    { value: 3, label: 'LA MERCANCÍA NO ESTÁ COMPLETA EN ALMACÉN PROPIO.' },
+    { value: 4, label: 'LA MERCANCÍA NO ESTÁ COMPLETA EN ALMACÉN DE TERCERO.' },
+    { value: 5, label: 'CANCELACIÓN POR SOLICITUD DE AUTORIDAD.' },
+  ]);
   dataAuthority = new DefaultSelect();
   dataDelegation = new DefaultSelect();
 
@@ -149,6 +166,10 @@ export class CircumstantialActsSuspensionCancellationComponent
   maxDate = new Date();
   status_time: string = null;
   type_proceeding: string = null;
+
+  numberProccedings: string = null;
+  ngGlobal: any;
+  flag: boolean = true;
 
   get username() {
     return this.authService.decodeToken().username;
@@ -172,7 +193,9 @@ export class CircumstantialActsSuspensionCancellationComponent
     private historygoodService: HistoryGoodService,
     private activatedRoute: ActivatedRoute,
     private modalService: BsModalService,
-    private proceedingSusCanService: ProceedingSusPcancelService
+    private proceedingSusCanService: ProceedingSusPcancelService,
+    private globalVarService: GlobalVarsService,
+    private deliveryConstancy: CertificatesGoodsService
   ) {
     super();
     this.settings1 = {
@@ -211,6 +234,7 @@ export class CircumstantialActsSuspensionCancellationComponent
     this.startCalendars();
     this.pupInitForms();
     this.navigateGoods();
+    this.returnInGoodTracker();
 
     const localExpdeient = localStorage.getItem('expediente');
     const folio = localStorage.getItem('folio');
@@ -231,6 +255,41 @@ export class CircumstantialActsSuspensionCancellationComponent
       localStorage.removeItem('expediente');
       //
     }
+  }
+
+  returnInGoodTracker() {
+    //TODO:
+    this.globalVarService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: global => {
+          this.ngGlobal = global;
+          if (this.ngGlobal.REL_BIENES && this.flag) {
+            console.log(this.ngGlobal.REL_BIENES);
+            this.flag = false;
+            const acta = localStorage.getItem('acta');
+
+            const body: IQueryGoodTracker = {
+              vcsScreen: 'FACTCIRCUN_0001',
+              typeMinutes: acta,
+              relGood: this.ngGlobal.REL_BIENES,
+            };
+
+            this.deliveryConstancy.queryGoodTracker(body).subscribe(
+              res => {
+                console.log(res);
+                localStorage.removeItem('acta');
+                localStorage.removeItem('expediente');
+                localStorage.removeItem('acta');
+              },
+              err => {
+                console.log(err);
+              }
+            );
+          }
+        },
+      });
   }
 
   subscribeAssembleKey() {
@@ -517,9 +576,10 @@ export class CircumstantialActsSuspensionCancellationComponent
     this.formTable2 = this.fb.group({
       detail: [null],
     });
+    this.formSubject = this.fb.group({
+      subject: [null],
+    });
   }
-
-  onSubmit() {}
 
   settingsChange(event: any, op: number) {
     op === 1 ? (this.settings = event) : (this.settings2 = event);
@@ -664,6 +724,11 @@ export class CircumstantialActsSuspensionCancellationComponent
   }
 
   async pupMovimientoActa() {
+    const proceedingKey = this.form.get('act').value;
+    const partsKey = proceedingKey.split('/');
+
+    console.log(this.form.get('act').value);
+    console.log(`${partsKey[0]}/${partsKey[1]}`);
     if (
       this.form.get('statusAct').value === 'CERRADO' ||
       this.form.get('statusAct').value === 'CERRADA'
@@ -698,11 +763,103 @@ export class CircumstantialActsSuspensionCancellationComponent
       }
 
       if (lv_VALMOTOS == 1) {
-        //TODO: PUP_CIERRE_ACTA_PRIMARIO
+        this.closeProceeding();
       } else if (lv_VALMOTOS == 0) {
-        //TODO: PUP_CIERRE_PRIMARIO
+        this.closeProceeding();
       }
     }
+  }
+
+  closeProceeding() {
+    const elaboratedDate = this.form.get('elabDate').value;
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1;
+
+    const elaboratedYear = new Date(elaboratedDate).getFullYear();
+    const elaboratedMonth = new Date(elaboratedDate).getMonth() + 1;
+
+    const proceedingKey = this.form.get('act').value;
+    const partsKey = proceedingKey.split('/');
+    const typeProceding = `${partsKey[0]}/${partsKey[1]}`;
+
+    const userData = this.authService.decodeToken();
+    const user = userData.preferred_username;
+
+    if (['CERRADO', 'CERRADA'].includes(this.form.get('statusAct').value)) {
+      this.alert('warning', 'El acta ya esta cerrada', '');
+      return;
+    }
+
+    if (this.form.get('closingDate').value == null) {
+      this.alert('warning', 'Debe introducir la fecha de cancelación', '');
+      return;
+    }
+
+    if (this.form.get('address').value == null) {
+      this.alert(
+        'warning',
+        'Debe introducir la direccion de donde se caceló la recepción',
+        ''
+      );
+      return;
+    }
+
+    if (currentYear != elaboratedYear || currentMonth != elaboratedMonth) {
+      this.alert(
+        'warning',
+        'Solo se pueden cerrar las actas con el mismo año y mes de hoy a la fecha de elaboración',
+        ''
+      );
+      return;
+    }
+
+    if (
+      typeProceding == 'S/VEN' &&
+      this.formSubject.get('subject').value == null
+    ) {
+      this.alert(
+        'warning',
+        'No se puede cerrar el acta',
+        'La etiqueta de razón es obligatoria'
+      );
+      return;
+    }
+
+    const body: IPupPrimaryClosureSus = {
+      universalFolio: this.form.get('universalFolio').value,
+      expedient: this.formBlkExpedient.get('noExpedient').value,
+      screen: 'FACTCIRCUN_0001',
+      user: user,
+      receptionDate: this.form.get('closingDate').value,
+      proceeding: this.form.get('noActa').value,
+      proceedingKey: proceedingKey,
+    };
+
+    this.proceedingService.pupPrimayClosureSus(body).subscribe(
+      res => {
+        console.log(res);
+        if (res.status === 400) {
+          this.alert('warning', 'Error al cerrar el acta', res.message);
+          return;
+        }
+
+        this.alert('success', 'Acta cerrada correctamente', '');
+        this.form.get('statusAct').setValue('CERRADA');
+      },
+      err => {
+        console.log(err);
+        if (err.status === 400) {
+          this.alert('warning', 'Error al cerrar el acta', err.error.message);
+          return;
+        }
+
+        this.alert(
+          'error',
+          'Error al cerrar el acta',
+          'Se presentó un error inesperado al cerrar el acta'
+        );
+      }
+    );
   }
 
   correctDate(date: string) {
@@ -758,7 +915,7 @@ export class CircumstantialActsSuspensionCancellationComponent
         'Esta acción no se puede deshacer'
       ).then(response => {
         if (response.isConfirmed) {
-          this.proceedingService
+          this.proceedingSusCanService
             .deleteProceeding(this.form.get('noActa').value)
             .subscribe({
               next: (response: any) => {
@@ -946,6 +1103,8 @@ export class CircumstantialActsSuspensionCancellationComponent
     console.log(model);
     this.proceedingService.createDetailProceedingsDevolution(model).subscribe({
       next: (response: any) => {
+        console.log(response);
+        this.getGoods();
         this.getDetailProceedingsDevolution(numberProceedings);
       },
       error: error => {
@@ -1095,7 +1254,12 @@ export class CircumstantialActsSuspensionCancellationComponent
   addGood() {
     /// llamar al Rastreador de bienes
     //this.alert('success',this.title,'Llamar al Rastreador de Bienes');
+    const proceedingKey = this.form.get('act').value;
+    const partsKey = proceedingKey.split('/');
+    const acta = `${partsKey[0]}/${partsKey[1]}`;
     localStorage.setItem('expediente', this.expediente.toString());
+    localStorage.setItem('acta', this.form.get('noActa').value.toString());
+    localStorage.setItem('tipoActa', acta);
     this.router.navigate([GOODS_TACKER_ROUTE], {
       queryParams: {
         origin: 'FACTCIRCUN_0001',
@@ -1260,6 +1424,7 @@ export class CircumstantialActsSuspensionCancellationComponent
     this.expediente = this.formBlkExpedient.get('noExpedient').value;
     const params: ListParams = {};
     params['filter.id'] = `$eq:${this.expediente}`;
+
     this.expedientService.getAll(params).subscribe({
       next: resp => {
         console.log(resp);
@@ -1288,7 +1453,14 @@ export class CircumstantialActsSuspensionCancellationComponent
   relationsExpedient() {
     this.getGoods();
     this.loading = false;
-    this.proceedingsDetailDel.getProceeding2(this.expediente).subscribe(
+
+    const paramsF = new FilterParams();
+    paramsF.addFilter('numFile', this.expediente);
+    if (this.numberProccedings != null) {
+      paramsF.addFilter('id', this.numberProccedings);
+    }
+
+    this.proceedingsDetailDel.getProceeding2All(paramsF.getParams()).subscribe(
       response => {
         console.log(response);
 
@@ -1351,9 +1523,11 @@ export class CircumstantialActsSuspensionCancellationComponent
         }
         //TODO
         console.log('numero de acta: ' + response.data[0].id);
+        this.numberProccedings = null;
         this.getDetailProceedingsDevolution(response.data[0].id);
       },
       error => {
+        this.numberProccedings = null;
         this.alert(
           'error',
           this.title,
@@ -1364,29 +1538,28 @@ export class CircumstantialActsSuspensionCancellationComponent
   }
 
   getGoods(): void {
-    console.log('ENTRO A BUSCAR BIENES');
     this.loading = true;
-    let params = {
-      ...this.params,
-      ...this.columnFilters,
-    };
-    params['filter.fileNumber'] = `$eq:${this.expediente}`;
+    console.log('ENTRO A BUSCAR BIENES');
+    console.log(this.params);
+    console.log(this.columnFilters);
+    const paramsF = new FilterParams();
+    this.loading = true;
+    paramsF.addFilter('fileNumber', this.expediente);
 
-    this.goodService.getAll(params).subscribe({
+    paramsF.page = this.params.value.page;
+    paramsF.limit = this.params.value.limit;
+
+    this.goodService.getAll(paramsF.getParams()).subscribe({
       next: async response => {
         console.log(response);
         const datos = await Promise.all(
           response.data.map(async (item: IGood) => {
-            const acta = await this.getActDescription(
-              item.goodId,
-              item.fileNumber
-            );
             const di_disponible = await this.postQueryGoods(item);
-            console.log(di_disponible);
+            // console.log(di_disponible);
             return {
               ...item,
-              acta,
-              di_disponible: 'S',
+              acta: di_disponible.minutes,
+              di_disponible: di_disponible.available,
             };
           })
         );
@@ -1400,24 +1573,6 @@ export class CircumstantialActsSuspensionCancellationComponent
         this.data1.load([]);
         this.data1.refresh();
       },
-    });
-  }
-
-  getActDescription(goodNumber: number, fileNumber: number) {
-    return new Promise<string>((res, _rej) => {
-      const model = {
-        goodNumber,
-        fileNumber,
-      };
-      this.proceedingService.getAct(model).subscribe({
-        next: (response: any) => {
-          res(response.data[0].cve_acta);
-        },
-        error: error => {
-          console.log(error);
-          res(null);
-        },
-      });
     });
   }
 
@@ -1485,13 +1640,63 @@ export class CircumstantialActsSuspensionCancellationComponent
     modalConfig = {
       initialState: {
         title: 'Lista general de actas',
-        callback: (data: any) => {},
+        callback: (data: any) => {
+          console.log(data);
+          this.expediente = data.numFile;
+          this.formBlkExpedient.get('noExpedient').setValue(data.numFile);
+          this.numberProccedings = data.id;
+          this.search();
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
 
     this.modalService.show(AllExpedientsModal, modalConfig);
+  }
+
+  exportDataModal() {
+    if (
+      this.formBlkExpedient.get('noExpedient').value != null &&
+      this.form.get('act').value != null &&
+      this.form.get('statusAct').value != null
+    ) {
+      let modalConfig = MODAL_CONFIG;
+      modalConfig = {
+        initialState: {
+          expedientNumber: this.formBlkExpedient.get('noExpedient').value,
+          proceedingNumber: this.form.get('noActa').value,
+          callback: (data: any) => {},
+        },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+
+      this.modalService.show(ExportDataModal, modalConfig);
+    } else {
+      this.alert('warning', 'Necesitas un número de expediente con actas', '');
+    }
+  }
+
+  nvrProceedingModal() {
+    if (
+      !['CERRADO', 'CERRADA', null].includes(this.form.get('statusAct').value)
+    ) {
+      let modalConfig = MODAL_CONFIG;
+      modalConfig = {
+        initialState: {
+          callback: (isProcees: boolean) => {
+            console.log(isProcees);
+          },
+        },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+
+      this.modalService.show(ProceedingNVRModalComponent, modalConfig);
+    } else {
+      this.alert('warning', 'El acta no cuenta con un estado válido', '');
+    }
   }
 
   listProceedingByExpedient() {
@@ -1507,7 +1712,13 @@ export class CircumstantialActsSuspensionCancellationComponent
       initialState: {
         expedient: expedient,
         title: 'Lista de actas del expediente ' + expedient,
-        callback: (data: any) => {},
+        callback: (data: any) => {
+          console.log(data);
+          this.expediente = data.numFile;
+          this.formBlkExpedient.get('noExpedient').setValue(data.numFile);
+          this.numberProccedings = data.id;
+          this.search();
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -1520,7 +1731,10 @@ export class CircumstantialActsSuspensionCancellationComponent
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
-        tap(params => this.getGoods())
+        tap(params => {
+          console.log(params);
+          this.getGoods();
+        })
       )
       .subscribe();
   }
@@ -1560,7 +1774,10 @@ export class CircumstantialActsSuspensionCancellationComponent
   }
 
   validElaborationDate() {
-    if (this.canSave) {
+    if (
+      this.canSave ||
+      ['ABIERTA', 'ABIERTO'].includes(this.form.get('statusAct').value)
+    ) {
       const date = this.form.get('elabDate').value;
       console.log(date);
       //VALIDAR HORA
@@ -1607,7 +1824,7 @@ export class CircumstantialActsSuspensionCancellationComponent
           'Fecha de elaboración inválida',
           'El acta no puede ser registrada por encontrarse fuera de las políticas de registro de actas de recepción física.'
         );
-        this.form.get('elabDate').reset();
+        // this.form.get('elabDate').reset();
         return;
       }
 
@@ -1678,16 +1895,58 @@ export class CircumstantialActsSuspensionCancellationComponent
     console.log(body);
     this.proceedingsDetailDel.create(body).subscribe(
       res => {
+        console.log(res);
         this.alert('success', 'Acta registrada', '');
         this.form.get('statusAct').setValue('ABIERTA');
         this.canSave = false;
         this.unsubscribeAssembleKey();
-        console.log(res);
+        this.form.get('noActa').setValue(res.id);
       },
       err => {
         console.log(err);
       }
     );
+  }
+
+  updateProceeding() {
+    const body: IProccedingsDeliveryReception = {
+      elaborationDate:
+        this.form.get('elabDate').value.getTime() ??
+        new Date(this.form.get('elabDate').value).getTime(),
+      datePhysicalReception:
+        this.form.get('closingDate').value.getTime() ??
+        new Date(this.form.get('closingDate').value).getTime(),
+      address: this.form.get('address').value,
+      observations: this.form.get('observations').value,
+      witness1: this.form.get('autorithyCS').value,
+      witness2: this.form.get('elaboration').value,
+      comptrollerWitness: this.form.get('witnessContr').value,
+    };
+
+    this.alertQuestion(
+      'question',
+      '¿Está seguro de actualizar el acta?',
+      ''
+    ).then(response => {
+      if (response.isConfirmed) {
+        this.proceedingsDetailDel
+          .update(this.form.get('noActa').value, body)
+          .subscribe(
+            res => {
+              this.alert('success', 'Acta actualizada', '');
+              console.log(res);
+            },
+            err => {
+              this.alert(
+                'error',
+                'Se presentó un error al actualizar el acta',
+                'Intentelo nuevamente'
+              );
+              console.log(err);
+            }
+          );
+      }
+    });
   }
 
   getTransferent() {
@@ -1727,8 +1986,7 @@ export class CircumstantialActsSuspensionCancellationComponent
     );
   }
 
-  postQueryGoods(good: any) {
-    //TODO
+  postQueryGoods(good: any): any {
     return new Promise((res, _rej) => {
       const user = this.authService.decodeToken();
       const body: IPostQueryGoodFACTCIRCUN_0001 = {
@@ -1736,20 +1994,34 @@ export class CircumstantialActsSuspensionCancellationComponent
         delegationNumber: user.department,
         subdelegationNumber: user.department,
         goodNumber: good.id,
-        proceedingsNumber: this.form.get('noActa').value,
+        proceedingsNumber: this.formBlkExpedient.get('noExpedient').value,
         status: good.status,
         screen: 'FACTCIRCUN_0001',
       };
 
       this.proceedingSusCanService.postQuery(body).subscribe(
-        res => {
-          console.log(res.data);
-          res(res.data);
+        response => {
+          // console.log(response);
+          res(response);
         },
         err => {
           console.log(err);
         }
       );
     });
+  }
+
+  validateGoods() {
+    const proceedingsNumber = this.form.get('noActa').value;
+
+    this.proceedingSusCanService.validateGoods(proceedingsNumber).subscribe(
+      res => {
+        console.log(res);
+        this.alert('success', res.msg, '');
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 }

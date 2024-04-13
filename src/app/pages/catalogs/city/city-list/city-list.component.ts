@@ -105,7 +105,7 @@ export class CityListComponent extends BasePage implements OnInit {
           this.params = this.pageFilter(this.params);
 
           this.getCities();
-          this.getDelegation();
+          // this.getDelegation();
         }
       });
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
@@ -129,7 +129,13 @@ export class CityListComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.state = [];
+        this.totalItems = 0;
+        this.data.load([]);
+        this.data.refresh();
+        this.loading = false;
+      },
     });
   }
 
@@ -143,13 +149,20 @@ export class CityListComponent extends BasePage implements OnInit {
     this.cityService.getAll(params).subscribe({
       next: response => {
         this.columns = response.data;
-        console.log(this.columns);
+        console.log('as', this.columns);
         this.totalItems = response.count || 0;
         this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.columns = [];
+        console.log(this.columns);
+        this.totalItems = 0;
+        this.data.load([]);
+        this.data.refresh();
+        this.loading = false;
+      },
     });
   }
 
@@ -163,13 +176,20 @@ export class CityListComponent extends BasePage implements OnInit {
     this.delegationService.getAll2(params).subscribe({
       next: response => {
         this.columnsD = response.data;
-        this.totalItems = response.count || 0;
+        // this.totalItems = response.count || 0;
 
         this.data.load(this.columns);
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.columnsD = [];
+        // this.totalItems = response.count || 0;
+
+        this.data.load([]);
+        this.data.refresh();
+        this.loading = false;
+      },
     });
   }
 

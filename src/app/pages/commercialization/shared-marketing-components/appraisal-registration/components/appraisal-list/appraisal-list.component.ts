@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
@@ -78,6 +79,16 @@ export class AppraisalListComponent
       filters.forEach((filter: any) => {
         const columns = this.settings.columns as any;
         const operator = columns[filter.field]?.operator;
+        console.log(filter.search);
+        if (filter.field == 'insertDate') {
+          var raw = filter.search;
+          var formatted = new DatePipe('en-EN').transform(
+            raw,
+            'yyyy-MM-dd',
+            'UTC'
+          );
+          filter.search = formatted;
+        }
         if (!filter.search) {
           return;
         }

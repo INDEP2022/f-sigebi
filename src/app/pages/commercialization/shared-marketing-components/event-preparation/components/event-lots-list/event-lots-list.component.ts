@@ -694,7 +694,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       }),
       tap(() => {
         this.loading = false;
-        this.alert('success', 'El Evento ha sido Eliminado', '');
+        this.alert('success', 'El Lote ha sido Eliminado', '');
         this.refreshTable();
       })
     );

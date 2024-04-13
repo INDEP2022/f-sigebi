@@ -22,7 +22,7 @@
                 class="col-sm-12 col-12 col-md-12 p-2"
                 [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
-                  [attr.class]="'table-bordered'"
+                  [attr.class]="'table-bordered table-responsive'"
                   [settings]="_tableSettingsProcedeFormalizacion"
                   [source]="_dataTableProcedeFormalizacion"
                   (edit)="edit($event.data)"
@@ -56,7 +56,7 @@
                   [ngStyle]="{ height: loading ? '0px' : '400px' }"> -->
                 <ng2-smart-table
                   (edit)="editStage2($event.data)"
-                  [attr.class]="'table-bordered'"
+                  [attr.class]="'table-bordered table-responsive'"
                   [settings]="_tableSettingsAsignaNotario"
                   [source]="_dataTableAsignaNotario"
                   (delete)="goEscrituracion($event.data)"
@@ -87,7 +87,7 @@
                 [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   (edit)="editStage3($event.data)"
-                  [attr.class]="'table-bordered'"
+                  [attr.class]="'table-bordered table-responsive'"
                   [settings]="_tableSettingsFormalizaEscrituracion"
                   [source]="_dataTableFormalizaEscrituracion"></ng2-smart-table>
               </div>
@@ -113,7 +113,7 @@
                 class="col-sm-12 col-12 col-md-12 p-2"
                 [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
-                  [attr.class]="'table-bordered'"
+                  [attr.class]="'table-bordered table-responsive'"
                   [settings]="_tableSettingsTodos"
                   [source]="_dataTableTodos"></ng2-smart-table>
               </div>

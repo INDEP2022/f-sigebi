@@ -98,7 +98,7 @@
         </form-field>
       </div>
     </form>
-    <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <form class="form-material" [formGroup]="form">
       <div class="row mt-4">
         <div class="col-md-2">
           <form-field [control]="form.get('actSelect')" label="&Aacute;cta">
@@ -362,20 +362,42 @@
       <div class="row text-center">
         <div class="col">
           <button
+            *ngIf="['ABIERTA', 'ABIERTO'].includes(form.get('statusAct').value)"
+            type="button"
+            (click)="updateProceeding()"
+            class="btn btn-primary btn-sm active mr-3">
+            Guardar Cambios
+            <i aria-hidden="true" class="fa fa-save"></i>
+          </button>
+          <button
+            *ngIf="['ABIERTA', 'ABIERTO'].includes(form.get('statusAct').value)"
+            type="button"
+            (click)="nvrProceedingModal()"
+            class="btn btn-primary btn-sm active mr-3">
+            Crear acta VNR
+          </button>
+          <button
+            *ngIf="
+              ['ABIERTA', 'ABIERTO', 'CERRADO', 'CERRADA'].includes(
+                form.get('statusAct').value
+              )
+            "
             class="btn btn-primary btn-sm active mr-3"
             (click)="actButton()">
             {{ textButtonAct }}
           </button>
-          <button
+          <!-- <button
             (click)="addGood()"
             type="button"
             tooltip="Agregar"
             containerClass="tooltip-style"
             class="btn btn-info btn-sm active mr-3">
             Agregar Bienes <i class="bx bx-plus bx-sm float-icon"></i>
-          </button>
+          </button> -->
           <button
-            [disabled]="form.get('statusAct').value == null"
+            [disabled]="
+              ['CERRADO', 'CERRADA', null].includes(form.get('statusAct').value)
+            "
             (click)="deleteProceeding()"
             class="btn btn-red btn-sm active">
             Eliminar Acta <i class="fa fa-trash" aria-hidden="true"></i>
@@ -396,7 +418,7 @@
             <ng2-smart-table
               (userRowSelect)="selectRow($event.data)"
               class="col-md-12"
-              [attr.class]="'table-bordered'"
+              [attr.class]="'table-bordered table-responsive'"
               [settings]="settings1"
               [source]="data1">
             </ng2-smart-table>
@@ -412,8 +434,7 @@
           <div class="mt-5">
             <form
               class="form-material form-horizontal"
-              [formGroup]="formTable1"
-              (ngSubmit)="onSubmit()">
+              [formGroup]="formTable1">
               <div
                 class="row mt-5 justify-content-start justify-content-sm-end">
                 <div class="mb-3 pl-4 pr-4">
@@ -476,7 +497,7 @@
       <ng2-smart-table
         (userRowSelect)="selectRow2($event.data)"
         class="col-md-12"
-        [attr.class]="'table-bordered'"
+        [attr.class]="'table-bordered table-responsive'"
         [settings]="settings2"
         [source]="data2">
       </ng2-smart-table>
@@ -489,8 +510,7 @@
           <div class="mt-5">
             <form
               class="form-material form-horizontal"
-              [formGroup]="formTable2"
-              (ngSubmit)="onSubmit()">
+              [formGroup]="formTable2">
               <div
                 class="row mt-5 justify-content-start justify-content-sm-end">
                 <div class="mb-3 pl-4 pr-4">
@@ -517,42 +537,34 @@
         </div>
       </div>
     </div>
-
-    <!--  <form
-          class="form-material form-horizontal"
-          [formGroup]="formTag"
-          (ngSubmit)="onSubmit()">
-          <div class="row mt-5">
-            <div class="col-12 col-md-6">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field
-                  [control]="formTag.get('tag')"
-                  label="Etiquetas de Raz&oacute;n">
-                  <select class="form-control" formControlName="tag">
-                    <option [value]="null">Seleccione un valor</option>
-                    <option [value]="1">1</option>
-                    <option [value]="2">2</option>
-                  </select>
-                </form-field>
-              </div>
-            </div>
-            <div class="col-12 col-md-6">
-              <div class="row">
-                <div class="col-6">
-                  <button
-                    class="btn btn-secondary btn-sm active text-center text-md-right">
-                    Valida Bienes
-                  </button>
-                </div>
-                <div class="col-6">
-                  <button
-                    class="btn btn-success btn-sm active text-center text-md-right">
-                    Exportar Datos
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </form> -->
+    <div class="row mt-5">
+      <div class="col-md-6">
+        <form class="form-material" [formGroup]="formSubject">
+          <form-field [control]="formSubject.get('subject')">
+            <ngx-select
+              [data]="dataSubject"
+              [form]="formSubject"
+              [searchable]="false"
+              bindLabel="label"
+              label="Asunto"
+              control="subject">
+            </ngx-select>
+          </form-field>
+        </form>
+      </div>
+      <div class="col">
+        <button
+          class="btn btn-primary active btn-sm mr-3"
+          (click)="validateGoods()">
+          Validar bienes
+        </button>
+        <button
+          class="btn btn-sm btn-success active"
+          (click)="exportDataModal()">
+          Exportar datos
+          <i class="bx bx-download float-icon"></i>
+        </button>
+      </div>
+    </div>
   </div>
 </app-card>

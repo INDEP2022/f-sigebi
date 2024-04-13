@@ -29,74 +29,10 @@ export class CommentsFormComponent implements OnInit {
   commentsForm: FormGroup = new FormGroup({});
   orderServiceData: IOrderServiceDTO;
   constructor(
-    private fb: FormBuilder,
-    private orderServiceService: OrderServiceService
   ) { }
 
   ngOnInit(): void {
-    this.getOrderService();
-    this.prepareForm();
-    this.checkReadOnly();
+
   }
 
-  getOrderService() {
-    const params = new ListParams();
-    params['filter.programmingId'] = `$eq:${this.programmingId}`;
-    this.orderServiceService.getAllOrderService(params).subscribe({
-      next: response => {
-        this.orderServiceData = response.data[0];
-        if (this.orderServiceData?.observation) {
-          this.commentsForm
-            .get('observations')
-            .setValue(this.orderServiceData.observation);
-        }
-
-        if (this.orderServiceData?.notes) {
-          this.commentsForm.get('note').setValue(this.orderServiceData.notes);
-        }
-
-        if (this.orderServiceData?.commentRejection) {
-          this.commentsForm
-            .get('commentRejection')
-            .setValue(this.orderServiceData.commentRejection);
-        }
-      },
-    });
-  }
-
-  checkReadOnly() {
-    if (this.op == 1) {
-      //this.readonly = false;
-      //this.readonlyNotification = true;
-    } else if (this.op == 9) {
-      //this.readonly = false;
-      //this.readonlyNotification = true;
-    }
-    /*this.readonly = this.op == 1 && this.op != 9 ? false : true;
-    this.readonlyNotification = this.op == 9 ? true : false; */
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.showForm) {
-      //this.readonly = false;
-    }
-
-    if (this.showForm == true && this.op == 2) {
-      //this.readonly = true;
-      //this.readonlyNotification = true;
-    }
-
-    if (this.showForm == true && this.op != 2) {
-      //this.readonly = true;
-      //this.readonlyNotification = true;
-    }
-  }
-
-  prepareForm() {
-    this.commentsForm = this.fb.group({
-      observations: [null],
-      note: [null],
-      commentRejection: [null],
-    });
-  }
 }

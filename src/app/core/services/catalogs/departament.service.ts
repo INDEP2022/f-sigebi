@@ -154,4 +154,8 @@ export class DepartamentService
     const route = `${DepartamentEndpoints.AppsGetData2}`;
     return this.post(route, body, params);
   }
+
+  getAll_(params?: ListParams): Observable<IListResponse<IDepartment>> {
+    return this.get(`delegation/get-all`, params);
+  }
 }

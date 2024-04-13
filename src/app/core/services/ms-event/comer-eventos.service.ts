@@ -216,4 +216,12 @@ export class ComerEventosService extends HttpService {
   getByIdComerTevents(id: string | number) {
     return this.get(`${EventEndpoints.ComerTevents}/${id}`);
   }
+
+  listComerEvent(params?: any) {
+    return this.get('comer-event', params);
+  }
+
+  paRevFailed(body: { pldEvent: number }) {
+    return this.post('application/paRevFailed', body);
+  }
 }

@@ -40,7 +40,7 @@
       <div [class]="loading ? 'table-loading' : ''">
         <ng2-smart-table
           id="providerTable"
-          [attr.class]="'table-bordered'"
+          [attr.class]="'table-bordered table-responsive'"
           [settings]="providerSettings"
           [source]="data"
           (userRowSelect)="selectProvider($event.data)"

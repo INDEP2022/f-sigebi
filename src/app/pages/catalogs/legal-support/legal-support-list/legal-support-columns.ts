@@ -1,10 +1,12 @@
+import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
+
 export const LEGAL_SUPPORT_COLUMS = {
   doctoTypeId: {
     title: 'Identificador',
     type: 'number',
     width: '15%',
     sort: false,
-    /*valuePrepareFunction: (value: any) => {
+    valuePrepareFunction: (value: any) => {
       return value != null ? value.id : '';
     },
     filterFunction(cell?: any, search?: string): boolean {
@@ -14,12 +16,13 @@ export const LEGAL_SUPPORT_COLUMS = {
       } else {
         return false;
       }
-    },*/
+    },
   },
   support: {
     title: 'Sustento',
-    type: 'string',
     width: '70%',
     sort: false,
+    type: 'custom',
+    renderComponent: SeeMoreComponent,
   },
 };

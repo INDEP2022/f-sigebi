@@ -1,0 +1,73 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Actas NVR</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-5">
+        <form-field [control]="form.get('events')">
+          <ngx-select
+            (fetchItems)="searchEvents($event)"
+            [data]="eventData"
+            [form]="form"
+            control="events"
+            bindLabel="bindLabel"
+            label="Evento">
+          </ngx-select>
+        </form-field>
+      </div>
+      <div class="row mb-5">
+        <form-field [control]="form.get('filter')" class="col-md-6">
+          <ngx-select
+            [data]="filterData"
+            [form]="form"
+            control="filter"
+            bindLabel="label"
+            label="Filtro">
+          </ngx-select>
+        </form-field>
+        <form-field
+          [control]="form.get('value')"
+          class="col-md-6"
+          label="Valor">
+          <input type="text" class="form-control" formControlName="value" />
+        </form-field>
+      </div>
+    </form>
+    <div class="row text-center mb-5">
+      <div class="col">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm"
+          (click)="generalSearching()">
+          Buscar
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div>
+    <div class="row mb-5">
+      <div class="col-md-12">
+        <div [class]="isLoading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-responsive'"
+            [settings]="settings"
+            [source]="data">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <div class="row text-center">
+      <div class="col">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm mr-3"
+          (click)="sendGoods()">
+          Importar bienes al acta
+        </button>
+        <button class="btn btn-danger btn-sm active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -750,15 +750,14 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
             : null,
       };
       console.log(body);
-      resolve(body);
-      // this.clarificationsService.postSpInsertaOficioRespuesta(body).subscribe({
-      //   next: response => {
-      //     resolve(response);
-      //   },
-      //   error: error => {
-      //     reject(null);
-      //   },
-      // });
+      this.clarificationsService.postSpInsertaOficioRespuesta(body).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          reject(null);
+        },
+      });
     });
   }
   async insertaBien(idOficio: number, noBien: number, accion: string) {
@@ -815,6 +814,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       body.eventId = this.event;
       body.officeType = this.officeType;
       dataOffice = await this.getOfficeRequest(body);
+      console.log(dataOffice);
       for (const x of dataOffice) {
         type.description = x.direccion;
         type.descriptionTypeOffice = x.des_tipo_oficio;
@@ -1740,6 +1740,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.showModalCambioRev++;
   }
   senders() {
+    console.log(this.formThree.controls['user'].value);
     this.alertQuestion(
       'question',
       'Una vez que el oficio sea enviado no se podrá realizar ninguna modificación.',
@@ -1765,7 +1766,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         id_evento_in: idEvento,
         id_oficio_in: oficio,
         usuario_envia_in: usuario,
-        pc_no_bien: 0,
       };
       this.clarificationsService.postGetSpEnviaRespuestaOficio(body).subscribe({
         next: response => {

@@ -128,13 +128,14 @@ export class StorehouseListComponent extends BasePage implements OnInit {
       '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(storeHouse.id);
+        console.log(storeHouse);
+        this.delete(storeHouse);
       }
     });
   }
 
-  delete(id: number) {
-    this.storehouseService.remove(id).subscribe({
+  delete(storeHouse: IStorehouse) {
+    this.storehouseService.remove_(storeHouse).subscribe({
       next: () => {
         this.getStorehouses(),
           this.alert('success', 'Bodega', 'Borrada Correctamente');

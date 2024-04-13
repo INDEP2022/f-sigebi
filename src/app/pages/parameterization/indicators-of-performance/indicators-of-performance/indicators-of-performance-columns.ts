@@ -72,11 +72,16 @@ export const INDICATORSPERFORMANCE_COLUMNS = {
     //width: '10%',
     type: 'html',
     sort: false,
-    valuePrepareFunction: (date: Date) => {
-      var raw = new Date(date);
-
-      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
-      return formatted;
+    valuePrepareFunction: (text: string) => {
+      return `${
+        text
+          ? text.split('T')[0].split('-').reverse().join('/') +
+            ' ' +
+            text.split('T')[1].split(':')[0] +
+            ':' +
+            text.split('T')[1].split(':')[1]
+          : ''
+      }`;
     },
     /*valuePrepareFunction: (text: string) => {
       return `
@@ -97,11 +102,55 @@ export const INDICATORSPERFORMANCE_COLUMNS = {
     title: 'Fecha Ind. Page',
     //width: '20%',
     sort: false,
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Todos',
+        list: [
+          { value: 'FRECEPCION', title: 'Fec. Recepción/Escaneo' },
+          { value: 'FINICIA', title: 'Fecha de Inicio' },
+        ],
+      },
+    },
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.initialDDate == 'FRECEPCION') {
+        return 'Fec. Recepción/Escaneo';
+      } else if (row.initialDDate == 'FINICIA') {
+        return 'Fecha de Inicio';
+      } else {
+        return row.initialDDate;
+      }
+    },
+    filterFunction: () => {
+      return true;
+    },
   },
   endDDate: {
     title: 'Fecha Ind.Término',
     //width: '20%',
     sort: false,
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Todos',
+        list: [
+          { value: 'FFINALIZA', title: 'Fec. Término/Desahogo' },
+          { value: 'FESCANEO', title: 'Fecha de Inicio' },
+        ],
+      },
+    },
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.endDDate == 'FFINALIZA') {
+        return 'Fec. Término/Desahogo';
+      } else if (row.endDDate == 'FESCANEO') {
+        return 'Fecha de Escaneo';
+      } else {
+        return row.endDDate;
+      }
+    },
+    filterFunction: () => {
+      return true;
+    },
   },
   endDate: {
     title: 'Fin',

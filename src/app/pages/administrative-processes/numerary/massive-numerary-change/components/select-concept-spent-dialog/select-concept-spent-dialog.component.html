@@ -29,7 +29,7 @@
         <div [class]="isLoading ? 'table-loading' : ''" class="overflow-auto">
           <ng2-smart-table
             (userRowSelect)="onUserRowSelect($event)"
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="spentConcepts">
           </ng2-smart-table>

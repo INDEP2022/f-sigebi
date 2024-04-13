@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { format } from 'date-fns';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
@@ -52,12 +53,20 @@ export const APPRAISAL_DETAIL_COLUMNS = {
     sort: false,
     valuePrepareFunction: (value: string) =>
       value ? format(new Date(value), 'dd/MM/yyyy') : '',
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   fechaVigAvaluo: {
     title: 'Fecha Vig.',
     sort: false,
     valuePrepareFunction: (value: string) =>
       value ? format(new Date(value), 'dd/MM/yyyy') : '',
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   nombreValuador: {
     title: 'Nombre Val.',
@@ -118,12 +127,20 @@ export const APPRAISAL_DETAIL_COLUMNS = {
     sort: false,
     valuePrepareFunction: (value: string) =>
       value ? format(new Date(value), 'dd/MM/yyyy') : '',
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   fechaVigDictamen: {
     title: 'Fecha Vig. Dictamen',
     sort: false,
     valuePrepareFunction: (value: string) =>
       value ? format(new Date(value), 'dd/MM/yyyy') : '',
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   descuentoVri: {
     title: 'VRI con Descuento',
