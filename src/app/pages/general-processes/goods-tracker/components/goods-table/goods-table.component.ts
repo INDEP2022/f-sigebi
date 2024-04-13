@@ -500,6 +500,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       ]);
       return;
     }
+
     this.location.back();
   }
 

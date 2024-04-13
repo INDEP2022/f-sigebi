@@ -98,7 +98,7 @@
         </form-field>
       </div>
     </form>
-    <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <form class="form-material" [formGroup]="form">
       <div class="row mt-4">
         <div class="col-md-2">
           <form-field [control]="form.get('actSelect')" label="&Aacute;cta">
@@ -386,14 +386,14 @@
             (click)="actButton()">
             {{ textButtonAct }}
           </button>
-          <button
+          <!-- <button
             (click)="addGood()"
             type="button"
             tooltip="Agregar"
             containerClass="tooltip-style"
             class="btn btn-info btn-sm active mr-3">
             Agregar Bienes <i class="bx bx-plus bx-sm float-icon"></i>
-          </button>
+          </button> -->
           <button
             [disabled]="
               ['CERRADO', 'CERRADA', null].includes(form.get('statusAct').value)
@@ -434,8 +434,7 @@
           <div class="mt-5">
             <form
               class="form-material form-horizontal"
-              [formGroup]="formTable1"
-              (ngSubmit)="onSubmit()">
+              [formGroup]="formTable1">
               <div
                 class="row mt-5 justify-content-start justify-content-sm-end">
                 <div class="mb-3 pl-4 pr-4">
@@ -511,8 +510,7 @@
           <div class="mt-5">
             <form
               class="form-material form-horizontal"
-              [formGroup]="formTable2"
-              (ngSubmit)="onSubmit()">
+              [formGroup]="formTable2">
               <div
                 class="row mt-5 justify-content-start justify-content-sm-end">
                 <div class="mb-3 pl-4 pr-4">
@@ -555,8 +553,10 @@
         </form>
       </div>
       <div class="col">
-        <button class="btn btn-primary active btn-sm mr-3">
-          Validar bienees
+        <button
+          class="btn btn-primary active btn-sm mr-3"
+          (click)="validateGoods()">
+          Validar bienes
         </button>
         <button
           class="btn btn-sm btn-success active"
