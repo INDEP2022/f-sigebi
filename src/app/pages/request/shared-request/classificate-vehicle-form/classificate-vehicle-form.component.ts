@@ -1,6 +1,6 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IServiceVehicle } from 'src/app/core/models/ms-order-service/order-service-vehicle.model';
@@ -25,7 +25,8 @@ import { CreateClassificateVehicleFormComponent } from '../../reception-scheduli
 })
 export class ClassificateVehicleFormComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   @Input() op: number;
   @Input() showForm: boolean;
   @Input() rejected: boolean;
@@ -81,7 +82,7 @@ export class ClassificateVehicleFormComponent
             this.totalItems = response.length;
           });
         },
-        error: error => { },
+        error: error => {},
       });
   }
 
@@ -95,7 +96,7 @@ export class ClassificateVehicleFormComponent
           resolve(response.data[0].description);
           //this.typeVehicle = new DefaultSelect(response.data, response.count);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }

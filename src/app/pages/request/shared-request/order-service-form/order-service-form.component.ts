@@ -1,11 +1,5 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-} from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-order-service-form',
@@ -27,14 +21,14 @@ export class OrderServiceFormComponent implements OnInit {
   @Input() showForm: boolean;
   @Input() ordServform?: FormGroup = new FormGroup({});
   @Input() total: string = null;
+  @Input() orderService: any = {};
   visitEye: boolean = false;
   consolideContainer: boolean = false;
-  orderService: any = {};
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
-
+    console.log('Data order', this.orderService);
   }
 
   changeVisitEye(event: any) {

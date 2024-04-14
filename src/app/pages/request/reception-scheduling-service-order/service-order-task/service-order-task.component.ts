@@ -4,7 +4,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { catchError, of } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { FilterParams, ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { IOrderServiceDTO } from 'src/app/core/models/ms-order-service/order-service.mode';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -12,18 +15,18 @@ import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { ConfirmProgrammingComponent } from '../../shared-request/confirm-programming/confirm-programming.component';
 import { AnnexWFormComponent } from '../components/annex-w-form/annex-w-form.component';
 import { RejectionCommentFormComponent } from '../components/rejection-comment-form/rejection-comment-form.component';
 import { RejectionJustifyFormComponent } from '../components/rejection-justify-form/rejection-justify-form.component';
 import { OrderSignatureModalComponent } from '../components/service-order-signature-modal/order-signature-modal.component';
-import { getConfigService } from './service-order-task-case';
-import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
-import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { TypeSignatureModalComponent } from '../components/type-signature-modal/type-signature-modal..component';
+import { getConfigService } from './service-order-task-case';
 
 @Component({
   selector: 'app-service-order-task',
@@ -38,9 +41,7 @@ import { TypeSignatureModalComponent } from '../components/type-signature-modal/
     `,
   ],
 })
-export class ServiceOrderTaskComponent
-  extends BasePage
-  implements OnInit {
+export class ServiceOrderTaskComponent extends BasePage implements OnInit {
   claimRequest: boolean = false;
   form: FormGroup = new FormGroup({});
   ordServform: FormGroup = new FormGroup({});
@@ -64,6 +65,8 @@ export class ServiceOrderTaskComponent
   typeTable: string = '';
   taskInfo: any = {};
 
+  dataOrder: any = {};
+
   //private programmingService = inject(ProgrammingRequestService);
   //private router = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
@@ -82,7 +85,6 @@ export class ServiceOrderTaskComponent
   }
 
   async ngOnInit(): Promise<void> {
-
     this.taskInfo = await this.getTask();
     this.title = this.taskInfo.title;
     console.log(this.taskInfo);
@@ -96,7 +98,6 @@ export class ServiceOrderTaskComponent
   }
 
   prepareForm() {
-
     this.form = this.fb.group({
       location: [
         { value: null, disabled: true },
@@ -121,11 +122,11 @@ export class ServiceOrderTaskComponent
       userContainers: [null, [Validators.pattern(STRING_PATTERN)]],
       //
       transferLocation: [
-        { value: null, disabled: true },
+        { value: null, disabled: false },
         [Validators.pattern(STRING_PATTERN)],
       ],
       transferAddress: [
-        { value: null, disabled: true },
+        { value: null, disabled: false },
         [Validators.pattern(STRING_PATTERN)],
       ],
       //
@@ -146,18 +147,26 @@ export class ServiceOrderTaskComponent
         [Validators.pattern(STRING_PATTERN)],
       ],
       //
-      notes: [{ value: null, disabled: true }, [Validators.pattern(STRING_PATTERN)]],
-      observation: [{ value: null, disabled: true }, [Validators.pattern(STRING_PATTERN)]],
+      notes: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      observation: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
       justification: [null, [Validators.pattern(STRING_PATTERN)]],
       justificationReport: [null, [Validators.pattern(STRING_PATTERN)]],
-      commentRejection: [{ value: null, disabled: true }, [Validators.pattern(STRING_PATTERN)]],
+      commentRejection: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
       programmingId: [null],
       id: [null],
     });
 
     this.form.disable();
     this.ordServform.disable();
-
   }
 
   async sendOrderService() {
@@ -176,8 +185,14 @@ export class ServiceOrderTaskComponent
       `¿Desea enviar la orden de servicio con folio ${this.programming.folio}?`
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
-        this.createTask();
+        switch (this.process) {
+          case 'service-order-capture':
+            this.createTask();
+            break;
+          case 'service-order-report':
+            this.createTask('service-order-report');
+            break;
+        }
       }
     });
   }
@@ -248,8 +263,6 @@ export class ServiceOrderTaskComponent
         this.ordServform.enable();
         break;
     }
-
-
   }
 
   setRelease() {
@@ -257,7 +270,6 @@ export class ServiceOrderTaskComponent
 
     this.form.disable();
     this.ordServform.disable();
-
   }
 
   getOrderService() {
@@ -273,10 +285,9 @@ export class ServiceOrderTaskComponent
       )
       .subscribe({
         next: (resp: any) => {
-          // setTimeout(() => {
+          this.dataOrder = resp.data[0];
           this.ordServform.patchValue(resp.data[0]);
           this.orderServiceId = resp.data[0].id;
-          // }, 100);
         },
       });
   }
@@ -318,7 +329,7 @@ export class ServiceOrderTaskComponent
   }
 
   generateOrdSerReport() {
-
+    this.btnAprobar = true;
     this.configuraModalFirma();
     return;
 
@@ -426,7 +437,24 @@ export class ServiceOrderTaskComponent
       ''
     ).then(question => {
       if (question.isConfirmed) {
-        this.onLoadToast('success', 'Solicitud Aprovada', 'falta la logica');
+        switch (this.process) {
+          case 'service-order-validation':
+            this.createTask('service-order-validation');
+            break;
+          case 'service-order-aproval':
+            this.createTask('service-order-aproval');
+            break;
+          case 'service-order-report-validation':
+            this.createTask('service-order-report-validation');
+            break;
+          case 'service-order-report-signature':
+            this.createTask('service-order-report-signature');
+            break;
+          case 'service-order-report-aprove':
+            //FALTA VALIDAR SI FINALIZA LA TAREA
+            this.createTask('service-order-report-aprove');
+            break;
+        }
       }
     });
   }
@@ -474,11 +502,10 @@ export class ServiceOrderTaskComponent
   }
 
   async openFirma(name, charge) {
-
     let token = this.authService.decodeToken();
     let today = new Date();
 
-    let idTypeDoc = "0";
+    let idTypeDoc = '0';
     let readOnly = false;
 
     const typeAnnex = 'approval-request';
@@ -500,7 +527,6 @@ export class ServiceOrderTaskComponent
         userName,
         chargeUser,
         numSignature,
-
 
         idReportAclara,
         idTypeDoc,
@@ -550,9 +576,7 @@ export class ServiceOrderTaskComponent
   nameDoc = '';
   numSignature = 1;
 
-
   configureProcess() {
-
     this.programmingId = +this.activeRouter.snapshot.params['id'];
     this.process = this.activeRouter.snapshot.params['process'];
 
@@ -565,6 +589,8 @@ export class ServiceOrderTaskComponent
         this.btnEnviar = true;
         this.editVehiculos = true;
         this.editServicios = true;
+
+        this.typeOrder = 'reception';
         break;
       case 'service-order-validation':
         this.btnReclamar = true;
@@ -572,8 +598,12 @@ export class ServiceOrderTaskComponent
         this.btnGuardar = true;
         this.btnLiberar = true;
         this.btnRechazar = true;
+        this.btnAprobar = true;
         this.numSignature = 1;
         this.nameDoc = 'orden_servicio';
+
+        this.typeOrder = 'reception';
+
         break;
       case 'service-order-aproval':
         this.title = `Aprobación de Servicios (Programación de recepción: )Para la orden de servicio con folio:  `;
@@ -584,6 +614,9 @@ export class ServiceOrderTaskComponent
         this.btnRechazar = true;
         this.numSignature = 2;
         this.nameDoc = 'orden_servicio';
+
+        this.typeOrder = 'approve';
+
         break;
       case 'service-order-report':
         this.title = `Reporte de implementación (Programación de recepción: )Para la orden de servicio con folio: `;
@@ -591,6 +624,9 @@ export class ServiceOrderTaskComponent
         this.btnReclamar = true;
         this.btnGuardar = true;
         this.btnEnviar = true;
+
+        this.typeOrder = 'approve';
+
         break;
       case 'service-order-report-validation':
         this.title = `Validación de reporte de Implementación (Programación de recepción: )Para la orden de servicio con folio: `;
@@ -599,7 +635,11 @@ export class ServiceOrderTaskComponent
         this.btnReporteOrdenServ = true;
         this.btnGuardar = true;
         this.btnRechazar = true;
+        this.btnAprobar = true;
         this.btnAnexoW = true;
+
+        this.typeOrder = 'approve';
+
         break;
       case 'service-order-report-signature':
         this.title = `Validación de reporte de Implementación (Programación de recepción: )Para la orden de servicio con folio: `;
@@ -607,12 +647,18 @@ export class ServiceOrderTaskComponent
         this.btnReclamar = true;
         this.btnReporteOrdenServ = true;
         this.btnGuardar = true;
+
+        this.typeOrder = 'approve';
+
         break;
       case 'service-order-report-aprove':
         this.title = `Reporte de Implementación Aprobado (Programación de recepción: )Para la orden de servicio con folio: `;
         this.btnReclamar = true;
         this.btnReporteOrdenServ = true;
         this.btnAnexoW = true;
+
+        this.typeOrder = 'approve';
+
         break;
       case 'service-order-validation-reject':
         this.title = `Solicitud de Orden de Servicio (Validación de Servicios) con folio: `;
@@ -621,12 +667,18 @@ export class ServiceOrderTaskComponent
         this.btnReporteOrdenServ = true;
         this.btnGuardar = true;
         this.btnRechazar = true;
+
+        this.typeOrder = 'approve';
+
         break;
       case 'service-order-validation-justification':
         this.title = `Solicitud de Orden de Servicio (Validación de Servicios) con folio: `;
         this.btnReclamar = true;
         this.btnReporteOrdenServ = true;
         this.btnGuardar = true;
+
+        this.typeOrder = 'approve';
+
         break;
       case 'service-order-report-reject':
         this.title = `Solicitud orden de servicio (Validación de reporte) con folio: `;
@@ -634,23 +686,24 @@ export class ServiceOrderTaskComponent
         this.btnReporteOrdenServ = true;
         this.btnGuardar = true;
         this.btnRechazar = true;
+
+        this.typeOrder = 'approve';
+
         break;
 
       case 'service-order-report-justification-validation':
-
         break;
       default:
         break;
     }
-
   }
 
   async createTask(current = this.process) {
-
     /** VERIFICAR VALIDACIONES PARA REALIZAR LA TAREA*/
 
     this.loading = true;
-    const { title, url, type, subtype, ssubtype, process, close } = getConfigService(current, this.programming);
+    const { title, url, type, subtype, ssubtype, process, close } =
+      getConfigService(current, this.programming);
     const user: any = this.authService.decodeToken();
     let body: any = {};
 
@@ -719,14 +772,8 @@ export class ServiceOrderTaskComponent
       );
 
       this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
-
     } else {
-
-      this.onLoadToast(
-        'error',
-        'No se pudo enviar la orden de servicio',
-        ''
-      );
+      this.onLoadToast('error', 'No se pudo enviar la orden de servicio', '');
     }
   }
 
@@ -746,7 +793,6 @@ export class ServiceOrderTaskComponent
   }
 
   getTask() {
-
     const task = JSON.parse(localStorage.getItem('Task'));
 
     const param = new FilterParams();
@@ -756,13 +802,11 @@ export class ServiceOrderTaskComponent
     return new Promise((resolve, reject) => {
       this.taskService.getAll(filter).subscribe({
         next: resp => {
-
           if (resp.data.length > 0) {
             resolve(resp.data[0]);
           } else {
             reject(false);
           }
-
         },
         error: error => {
           this.loading = false;
@@ -773,20 +817,18 @@ export class ServiceOrderTaskComponent
     });
   }
 
-
   updateTask(id, body) {
     return new Promise((resolve, reject) => {
       this.taskService.update(id, body).subscribe({
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
 
   configuraModalFirma() {
-
     const formOnly = true;
     const nameSignatoryRuling = this.taskInfo.participantName;
     const postSignatoryRuling = this.taskInfo.ownerRole;
@@ -805,7 +847,6 @@ export class ServiceOrderTaskComponent
         typeSign,
         formOnly,
         callback: async (name, charge, typeSign) => {
-
           this.taskInfo.ownerRole = charge;
           this.taskInfo.participantName = name;
           this.taskInfo.componentName = typeSign;
@@ -820,8 +861,6 @@ export class ServiceOrderTaskComponent
           this.openFirma(name, charge);
           //Actualizar la orden de servicio con los datos de la firma
           //this.updateOrderService(responsibleSae, saePosition, typeSign);
-
-
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -829,5 +868,4 @@ export class ServiceOrderTaskComponent
     };
     this.modalService.show(TypeSignatureModalComponent, config);
   }
-
 }

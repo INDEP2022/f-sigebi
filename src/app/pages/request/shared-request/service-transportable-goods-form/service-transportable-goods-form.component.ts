@@ -12,6 +12,7 @@ import {
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, of, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -22,9 +23,8 @@ import {
 } from '../../reception-scheduling-service-order/columns/service-transportable-columns';
 import { CreateManualServiceFormComponent } from '../../reception-scheduling-service-order/components/create-manual-service-form/create-manual-service-form.component';
 import { CreateServiceFormComponent } from '../../reception-scheduling-service-order/components/create-service-form/create-service-form.component';
-import { RequestHelperService } from '../../request-helper-services/request-helper.service';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
+import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 
 @Component({
   selector: 'app-service-transportable-goods-form',
@@ -33,7 +33,8 @@ import { isNullOrEmpty } from '../../request-complementary-documentation/request
 })
 export class ServiceTransportableGoodsFormComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   @ViewChild('table', { static: false }) table: any;
   @Input() op: number;
   @Input() showForm: boolean;
@@ -75,7 +76,6 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   configTable() {
-
     this.getOrderServiceProvided();
     if (this.typeOrder != 'reception') {
       this.columns = SERVICE_TRANSPORTABLE_COLUMNS;
@@ -145,10 +145,10 @@ export class ServiceTransportableGoodsFormComponent
           });
         },
       };*/
-
-
     } else {
-      this.columns = !this.editable ? SERVICE_TRANSPORTABLE_COLUMNS_READONLY : SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE;
+      this.columns = !this.editable
+        ? SERVICE_TRANSPORTABLE_COLUMNS_READONLY
+        : SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE;
 
       this.titleTab();
       this.showButtonServiceManual = true;
@@ -185,10 +185,7 @@ export class ServiceTransportableGoodsFormComponent
           });
         },
       };
-
     }
-
-
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -202,7 +199,6 @@ export class ServiceTransportableGoodsFormComponent
     if (!isNullOrEmpty(changes['editable'])) {
       this.configTable();
     }
-
   }
 
   getOrderServiceProvided() {
@@ -222,7 +218,6 @@ export class ServiceTransportableGoodsFormComponent
       )
       .subscribe({
         next: resp => {
-
           this.data = resp.data;
           this.totalItems = resp.count;
           this.setTotalAmount();
@@ -239,8 +234,6 @@ export class ServiceTransportableGoodsFormComponent
             this.op != 8 &&
             this.op != 9
           ) {
-
-
           }
         },
       });
@@ -252,15 +245,21 @@ export class ServiceTransportableGoodsFormComponent
       if (this.op == 6 || this.op == 7 || this.op == 8 || this.op == 9) {
         this.requestHelperService.changeReadOnly(true);
       }
-      const resourceNumber = isNullOrEmpty(item.resourcesNumber) ? 0 : Number(item.resourcesNumber);
-      const priceUnitary = isNullOrEmpty(item.priceUnitary) ? 0 : Number(item.priceUnitary);
-      const durationTime = isNullOrEmpty(item.durationTime) ? 0 : Number(item.durationTime);
+      const resourceNumber = isNullOrEmpty(item.resourcesNumber)
+        ? 0
+        : Number(item.resourcesNumber);
+      const priceUnitary = isNullOrEmpty(item.priceUnitary)
+        ? 0
+        : Number(item.priceUnitary);
+      const durationTime = isNullOrEmpty(item.durationTime)
+        ? 0
+        : Number(item.durationTime);
 
       item.durationTime = durationTime;
       item.resourcesNumber = resourceNumber;
       item.priceUnitary = priceUnitary;
 
-      item.total = (durationTime * priceUnitary) * resourceNumber;
+      item.total = durationTime * priceUnitary * resourceNumber;
       ttotal += item.total;
     });
 
@@ -269,7 +268,7 @@ export class ServiceTransportableGoodsFormComponent
     this.totEvent.emit(t);
     //const bodyTotal: any = { total: t };
     //resp.data.push(bodyTotal);
-    this.data = [... this.data];
+    this.data = [...this.data];
   }
 
   setTableColumnsRows() {
@@ -643,7 +642,6 @@ export class ServiceTransportableGoodsFormComponent
           this.ordersSelected = [];
           this.getOrderServiceProvided();
         });
-
       }
     });
   }
@@ -654,7 +652,6 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   setValues(param, data) {
-
     let row = this.data.find((x: any) => x.id == data.row.id);
     row[param] = data.text;
 
@@ -663,7 +660,6 @@ export class ServiceTransportableGoodsFormComponent
 
     this.setTotalAmount();
   }
-
 
   saveForm() {
     if (this.listforUpdate.length == 0) return;
@@ -713,7 +709,6 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   deleteOrderServiceProvided(id: number) {
-
     return new Promise((resolve, reject) => {
       this.orderEntryService.deleteOrderServiceProvided(id).subscribe({
         next: resp => {

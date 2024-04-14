@@ -93,7 +93,8 @@
     <app-order-service-form
       *ngIf="orderServiceId != null"
       [ordServform]="ordServform"
-      [total]="total"></app-order-service-form>
+      [total]="total"
+      [orderService]="dataOrder"></app-order-service-form>
 
     <app-classificate-vehicle-form
       *ngIf="orderServiceId != null"
