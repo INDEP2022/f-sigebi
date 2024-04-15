@@ -1,32 +1,26 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">entrega de bienes</h5>
+    <h5 class="title">Cambio de Estatus a Bien Vendido y Entregado</h5>
   </div>
   <div body>
-    <div class="row">
-      <div class="col-sm-8 col-md-9">
-        <div class="d-flex align-items-center">
-          <h6 class="d-inline ms-3">
-            Cambio de Estatus a Bien Vendido y Entregado
-          </h6>
-        </div>
-      </div>
-    </div>
-    <hr class="mw-98 mt-n2" />
-
     <div class="row mt-2">
       <div class="col-sm-12 col-md-12">
         <div class="d-flex flex-row-reverse my-3">
-          <div class="">
-            <app-columns-select
-              [(settings)]="goodsSettings"></app-columns-select>
-          </div>
           <div>
             <button
               class="btn btn-sm btn-primary active me-2 font-size-13"
-              (click)="changeStatus()"
-              [disabled]="!flag">
+              (click)="changeStatus()">
               Bien Entregado
+            </button>
+          </div>
+          <div>
+            <button
+              (click)="resetTable()"
+              tooltip="Limpia los filtros y elimina los bienes cargados del rastreador"
+              containerClass="tooltip-style"
+              class="btn btn-sm btn-danger active me-2">
+              Limpiar Tabla
+              <i class="fas fa-eraser"> </i>
             </button>
           </div>
 
@@ -38,21 +32,19 @@
         </div>
       </div>
     </div>
-
-    <ng-scrollbar
-      [track]="'horizontal'"
-      [autoHeightDisabled]="false"
-      class="table-scrollbar">
-      <div [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table
-          id="goodsTable"
-          [settings]="goodsSettings"
-          [source]="LocalData"
-          (userRowSelect)="selectRows($event.selected)">
-        </ng2-smart-table>
+    <div class="mt-2">
+      <div class="row">
+        <form-loader *ngIf="loading"></form-loader>
       </div>
-      <div class="table-padding"></div>
-    </ng-scrollbar>
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{ height: loading ? '0px' : '400px' }">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table [settings]="goodsSettings" [source]="data">
+          </ng2-smart-table>
+        </div>
+      </ng-scrollbar>
+    </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
   </div>
