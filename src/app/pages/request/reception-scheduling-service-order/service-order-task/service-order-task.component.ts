@@ -46,7 +46,6 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   ordServform: FormGroup = new FormGroup({});
   parentModal: BsModalRef;
-  op: number = null;
   showForm: boolean = false;
   orderServiceId: number = null;
   lsProgramming: string = null;
@@ -66,6 +65,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
   taskInfo: any = {};
 
   dataOrder: any = {};
+  op = 0;
 
   //private programmingService = inject(ProgrammingRequestService);
   //private router = inject(ActivatedRoute);
@@ -363,7 +363,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
     const config = MODAL_CONFIG;
     config.initialState = {
       idProgramming: this.programmingId,
-      type: this.op, //
+      type: null, //
       callback: (signatore: any) => {
         //ISignatories
         if (signatore.data) {
@@ -499,7 +499,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
       initialState: {
         orderServiceId: this.orderServiceId,
         folio: folio,
-        op: this.op,
+        op: null,
         callback: (next: boolean) => {
           if (next) {
             switch (this.process) {
@@ -540,19 +540,20 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
     let token = this.authService.decodeToken();
     let today = new Date();
 
-    let idTypeDoc = '0';
+    let idTypeDoc = this.typeDocId;
+    let nameTypeDoc = this.typeDocName;
     let readOnly = false;
 
     const typeAnnex = 'approval-request';
     const requestInfo = { id: this.programmingId, type: 'programming' };
-    const idReportAclara = this.programmingId;
-    const nameTypeDoc = 'OrdenServicio';
+    const idReportAclara = this.orderServiceId;
     const nomenglatura = '';
 
     const nameDoc = this.nameDoc;
     const userName = name;
     const chargeUser = charge;
     const numSignature = this.numSignature;
+    const version = this.numSignature;
 
     //const readOnly = this.requestInfo.detail.version == "1";
 
@@ -562,7 +563,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         userName,
         chargeUser,
         numSignature,
-
+        version,
         idReportAclara,
         idTypeDoc,
         typeAnnex,
@@ -570,6 +571,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         nameTypeDoc,
         nomenglatura,
         readOnly,
+
         callback: (next, xml) => {
           //this.updateInfo = !this.updateInfo;
           if (next) {
@@ -608,8 +610,12 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
   editDireccionOrigen = false;
   editComentarios = false;
 
-  nameDoc = '';
   numSignature = 1;
+  nameDoc = '';
+
+  typeDocId = 0;
+  typeDocName = '';
+
 
   configureProcess() {
     this.programmingId = +this.activeRouter.snapshot.params['id'];
@@ -617,7 +623,6 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
 
     switch (this.process) {
       case 'service-order-capture':
-        this.title = this.taskInfo.title;
         this.btnReclamar = true;
         this.btnGuardar = true;
         this.btnLiberar = true;
@@ -634,21 +639,22 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         this.btnLiberar = true;
         this.btnRechazar = true;
         this.numSignature = 1;
+        this.nameDoc = 'orden_servicio';
+        this.typeDocId = 245;
+        this.typeDocName = 'FormatoOrdenServicio';
+        this.typeOrder = 'reception';
 
-        this.getJustification().then(justification => {
+        /*this.getJustification().then(justification => {
           if (justification != null) {
             this.btnRechazarJustificacion = true;
           }
-        });
+        });*/
 
-        this.nameDoc = 'orden_servicio';
 
-        this.typeOrder = 'reception';
-        this.op = 1;
 
         break;
       case 'service-order-aproval':
-        this.title = `Aprobación de Servicios (Programación de recepción: )Para la orden de servicio con folio:  `;
+
         this.btnReclamar = true;
         this.btnReporteOrdenServ = true;
         this.btnGuardar = true;
@@ -656,24 +662,27 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         this.btnRechazar = true;
         this.numSignature = 2;
         this.nameDoc = 'orden_servicio';
+        this.typeDocId = 245;
+        this.typeDocName = 'FormatoOrdenServicio';
+        this.typeOrder = 'reception';
 
-        this.typeOrder = 'approve';
-        this.op = 2;
+        /*this.getJustification().then(justification => {
+          if (justification != null) {
+            this.btnRechazarJustificacion = true;
+          }
+        });*/
 
         break;
       case 'service-order-report':
-        this.title = `Reporte de implementación (Programación de recepción: )Para la orden de servicio con folio: `;
 
         this.btnReclamar = true;
         this.btnGuardar = true;
         this.btnEnviar = true;
 
         this.typeOrder = 'approve';
-        this.op = 3;
 
         break;
       case 'service-order-report-validation':
-        this.title = `Validación de reporte de Implementación (Programación de recepción: )Para la orden de servicio con folio: `;
 
         this.btnReclamar = true;
         this.btnReporteOrdenServ = true;
@@ -682,32 +691,26 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         this.btnAnexoW = true;
 
         this.typeOrder = 'approve';
-        this.op = 4;
 
         break;
       case 'service-order-report-signature':
-        this.title = `Validación de reporte de Implementación (Programación de recepción: )Para la orden de servicio con folio: `;
 
         this.btnReclamar = true;
         this.btnReporteOrdenServ = true;
         this.btnGuardar = true;
 
         this.typeOrder = 'approve';
-        this.op = 5;
 
         break;
       case 'service-order-report-aprove':
-        this.title = `Reporte de Implementación Aprobado (Programación de recepción: )Para la orden de servicio con folio: `;
         this.btnReclamar = true;
         this.btnReporteOrdenServ = true;
         this.btnAnexoW = true;
 
         this.typeOrder = 'approve';
-        this.op = 6;
 
         break;
       case 'service-order-validation-reject':
-        this.title = `Solicitud de Orden de Servicio (Rechazo de orden de servicio) con folio: `;
         this.btnReclamar = true;
         this.btnLiberar = true;
         this.btnReporteOrdenServ = true;
@@ -715,7 +718,6 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         this.btnRechazar = true;
 
         this.typeOrder = 'approve';
-        this.op = 7;
 
         break;
       case 'service-order-validation-justification':
@@ -736,7 +738,6 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         this.btnGuardar = true;
 
         this.typeOrder = 'approve';
-        this.op = 9;
 
         break;
 
@@ -872,7 +873,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -917,4 +918,24 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
     };
     this.modalService.show(TypeSignatureModalComponent, config);
   }
+
+  async getSignatories() {
+
+    let learnedId = this.orderServiceId;
+    let learnedType = this.typeDocId;
+
+    return new Promise<any[]>((res, rej) => {
+      this.signatoriesService.getSignatoriesName(learnedType, learnedId).subscribe({
+        next: resp => {
+          res(resp.data);
+        },
+        error: err => {
+          res([]);
+        },
+      });
+    });
+  }
+
+
+
 }
