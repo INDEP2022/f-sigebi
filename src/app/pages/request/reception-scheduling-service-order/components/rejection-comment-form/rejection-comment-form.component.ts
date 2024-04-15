@@ -60,10 +60,12 @@ export class RejectionCommentFormComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.loading = true;
+        console.log('1');
         const orderServiceBody: IOrderServiceDTO = {
           id: this.orderServiceInfo.id,
           commentRejection: this.form.get('comments').value,
         };
+        console.log('2');
         this.orderServiceService
           .updateOrderService(orderServiceBody)
           .subscribe({
@@ -74,6 +76,7 @@ export class RejectionCommentFormComponent extends BasePage implements OnInit {
                 'Órden de servicio rechazada correctamente'
               );
               this.loading = false;
+              this.modalRef.content.callback(true);
               this.close();
             },
             error: () => {

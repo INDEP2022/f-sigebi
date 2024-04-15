@@ -22,8 +22,11 @@ export class OrderServiceFormComponent implements OnInit {
   @Input() ordServform?: FormGroup = new FormGroup({});
   @Input() total: string = null;
   @Input() orderService: any = {};
+  @Input() btnRechazarJustificacion: boolean = false;
+
   visitEye: boolean = false;
   consolideContainer: boolean = false;
+  b;
 
   constructor() {}
 
@@ -37,6 +40,10 @@ export class OrderServiceFormComponent implements OnInit {
     } else {
       this.ordServform.controls['eyeVisit'].setValue('N');
     }
+  }
+
+  refuseJustification() {
+    //this.justificationRefused = true;
   }
 
   changeConsolidate(event: any) {

@@ -23,13 +23,6 @@
       </button>
 
       <button
-        *ngIf="!btnReclamar && btnRechazarJustificacion"
-        class="btn btn-info btn-sm active"
-        (click)="refuseJustification()">
-        Rechazar Justificación <i class="fa fa-reply" aria-hidden="true"></i>
-      </button>
-
-      <button
         *ngIf="!btnReclamar && btnReporteOrdenServ"
         type="button"
         class="btn btn-primary active btn-sm"
@@ -49,7 +42,7 @@
         (click)="sendJustification()"
         *ngIf="!btnReclamar && btnEnviarJustificacion"
         class="btn btn-success btn-sm active">
-        Enviar Justificaci&oacute;
+        Enviar Justificaci&oacute;n
         <i class="fa fa-paper-plane" aria-hidden="true"></i>
       </button>
 
@@ -94,6 +87,7 @@
       *ngIf="orderServiceId != null"
       [ordServform]="ordServform"
       [total]="total"
+      [btnRechazarJustificacion]="btnRechazarJustificacion"
       [orderService]="dataOrder"></app-order-service-form>
 
     <app-classificate-vehicle-form
@@ -119,6 +113,7 @@
       [showForm]="showForm"
       [orderServiceId]="orderServiceId"
       [isUpdate]="isUpdate"
+      [op]="op"
       (totEvent)="getTotal($event)"></app-service-transportable-goods-form>
   </div>
 </app-card>

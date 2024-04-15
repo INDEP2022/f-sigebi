@@ -18,7 +18,18 @@
   </p>
 </h5>
 
-<div class="pt-3" *ngIf="showOrderservice">
+<div body style="margin-top: -30px">
+  <div class="justify-content-end btn-toolbar mt-4">
+    <button
+      *ngIf="btnRechazarJustificacion"
+      class="btn btn-info btn-sm active"
+      (click)="refuseJustification()">
+      Rechazar Justificación <i class="fa fa-reply" aria-hidden="true"></i>
+    </button>
+  </div>
+</div>
+
+<div class="pt-3 mt-4" *ngIf="showOrderservice">
   <div class="row">
     <form class="form-horizontal" style="margin: 0 auto">
       <div class="col-md-4">

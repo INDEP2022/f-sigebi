@@ -222,8 +222,8 @@ export class ServiceTransportableGoodsFormComponent
           this.totalItems = resp.count;
           this.setTotalAmount();
 
-          //this.setTableRowTotal();
-          //this.setTableColumnsRows();
+          this.setTableRowTotal();
+          this.setTableColumnsRows();
 
           if (
             this.op != 1 &&
