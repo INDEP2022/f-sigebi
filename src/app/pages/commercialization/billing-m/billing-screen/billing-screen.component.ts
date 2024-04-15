@@ -237,27 +237,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onBillingSelect(instance),
           filter: false,
-          // onComponentInitFunction: (instance: any) => {
-          //   const time = setTimeout(() => {
-          //     const index = this.isSelect.findIndex(
-          //       comer =>
-          //         comer.eventId == instance.rowData.eventId &&
-          //         comer.billId == instance.rowData.billId
-          //     );
-          //     if (index != -1) {
-          //       (instance.box.nativeElement as HTMLInputElement).checked = true;
-          //     }
-          //     clearTimeout(time);
-          //   }, 300);
-          //   instance.toggle.subscribe((data: any) => {
-          //     instance.rowData.select = data.toggle;
-          //     if (data.toggle) {
-          //       this.isSelectComer(instance.rowData, 'add');
-          //     } else {
-          //       this.isSelectComer(instance.rowData, 'remove');
-          //     }
-          //   });
-          // },
         },
         eventId: {
           title: 'Evento',

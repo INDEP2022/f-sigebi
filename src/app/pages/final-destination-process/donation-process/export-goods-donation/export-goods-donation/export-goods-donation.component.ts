@@ -767,7 +767,6 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
         Promise.all(result).then(resp => {
           this.goodsTracker = obj;
           this.getAllOfRastreador(this.goodsTracker, 'si');
-          console.log('sale del For');
           window.scrollTo(0, 80);
         });
       },
