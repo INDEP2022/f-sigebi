@@ -665,4 +665,9 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
   getAllStatusGood_(params: _Params) {
     return this.get(`${GoodEndpoints.OnlyStatus}`, params);
   }
+
+  updateWithParams(good: any) {
+    const route = `${GoodEndpoints.Good}`;
+    return this.put(route, good);
+  }
 }
