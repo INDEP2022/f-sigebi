@@ -28,7 +28,7 @@ export class OrderServiceFormComponent implements OnInit {
   consolideContainer: boolean = false;
   b;
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit(): void {
     console.log('Data order', this.orderService);
@@ -45,6 +45,7 @@ export class OrderServiceFormComponent implements OnInit {
   refuseJustification() {
     //this.justificationRefused = true;
   }
+
 
   changeConsolidate(event: any) {
     if (event.target.checked == true) {

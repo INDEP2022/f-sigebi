@@ -8,10 +8,10 @@
     <div class="row">
       <form [formGroup]="form" class="form-material">
         <div>
-          <form-field [control]="form.get('id_vehiculo')">
+          <form-field [control]="form.get('version')">
             <ngx-select
               [form]="form"
-              control="id_vehiculo"
+              control="version"
               [data]="typeVehicle"
               [loading]="loading"
               value="keyId"

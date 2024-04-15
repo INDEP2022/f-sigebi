@@ -92,6 +92,7 @@
 
     <app-classificate-vehicle-form
       *ngIf="orderServiceId != null"
+      [orderServiceId]="orderServiceId"
       [editable]="
         !btnReclamar && editVehiculos
       "></app-classificate-vehicle-form>

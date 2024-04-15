@@ -33,8 +33,7 @@ import { RequestHelperService } from '../../request-helper-services/request-help
 })
 export class ServiceTransportableGoodsFormComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   @ViewChild('table', { static: false }) table: any;
   @Input() op: number;
   @Input() showForm: boolean;
@@ -150,12 +149,13 @@ export class ServiceTransportableGoodsFormComponent
         ? SERVICE_TRANSPORTABLE_COLUMNS_READONLY
         : SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE;
 
-      this.titleTab();
+      this.title = 'Servicio Bienes Transportables';
+
       this.showButtonServiceManual = true;
       this.settings = {
         ...TABLE_SETTINGS,
         actions: false,
-        selectMode: this.typeTable,
+        selectMode: this.editable ? 'multi' : '',
         columns: this.columns,
       };
 
@@ -222,8 +222,8 @@ export class ServiceTransportableGoodsFormComponent
           this.totalItems = resp.count;
           this.setTotalAmount();
 
-          this.setTableRowTotal();
-          this.setTableColumnsRows();
+          //this.setTableRowTotal();
+          //this.setTableColumnsRows();
 
           if (
             this.op != 1 &&

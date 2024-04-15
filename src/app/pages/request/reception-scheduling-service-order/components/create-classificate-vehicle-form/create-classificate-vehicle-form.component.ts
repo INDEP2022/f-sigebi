@@ -17,8 +17,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class CreateClassificateVehicleFormComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   form: FormGroup = new FormGroup({});
   item: any;
   title: string = 'Clasificación de vehiculos';
@@ -45,7 +44,7 @@ export class CreateClassificateVehicleFormComponent
     this.form = this.fb.group({
       orderServiceId: [this.orderServiceId],
       id: [this.generateId()],
-      id_vehiculo: [null, [Validators.required]],
+      version: [null, [Validators.required]],
       amountSale: [null, [Validators.pattern(STRING_PATTERN)]],
       amountDonation: [null, [Validators.pattern(STRING_PATTERN)]],
       amountDestruction: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -72,8 +71,7 @@ export class CreateClassificateVehicleFormComponent
 
     // Combina las horas, minutos, segundos y el número aleatorio en una cadena y conviértela a un número
     return Number(
-      `${hours < 10 ? '0' + hours : hours}${
-        minutes < 10 ? '0' + minutes : minutes
+      `${hours < 10 ? '0' + hours : hours}${minutes < 10 ? '0' + minutes : minutes
       }${seconds < 10 ? '0' + seconds : seconds}${random}`
     );
   }
@@ -100,7 +98,7 @@ export class CreateClassificateVehicleFormComponent
               this.modalRef.content.callback(true);
               this.modalRef.hide();
             },
-            error: error => {},
+            error: error => { },
           });
         //Ejecutar servicio
         /*
@@ -126,7 +124,7 @@ export class CreateClassificateVehicleFormComponent
             this.modalRef.content.callback(true);
             this.close();
           },
-          error: error => {},
+          error: error => { },
         });
         //this.onLoadToast('success', 'Clasificación creada correctamente', '');
         //this.modalRef.content.callback(this.form.value);
@@ -142,7 +140,7 @@ export class CreateClassificateVehicleFormComponent
       next: response => {
         this.typeVehicle = new DefaultSelect(response.data, response.count);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 

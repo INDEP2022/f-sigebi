@@ -25,6 +25,7 @@ export class CommentsFormComponent implements OnInit {
   @Input() readonly: boolean = false;
   showComments: boolean = true;
   readonlyNotification: boolean = false;
+  reject: boolean = false;
 
   commentsForm: FormGroup = new FormGroup({});
   orderServiceData: IOrderServiceDTO;
