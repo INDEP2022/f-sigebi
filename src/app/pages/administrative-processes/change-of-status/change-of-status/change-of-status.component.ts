@@ -342,6 +342,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
       console.log(jsonRsp.newData[0]);
       this.goodStatus.setValue(jsonRsp.newData[0]);
     } else {
+      console.log('research');
     }
   }
 

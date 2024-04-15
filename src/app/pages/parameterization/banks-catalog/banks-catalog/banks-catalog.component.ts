@@ -91,7 +91,13 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
       console.log(this.data);
       this.form.controls['nameBank'].setValue(this.data.cveBank);
       this.getBanksFilter(this.data.banco.name);
-      this.getAccountsFilter(new ListParams(), this.data.accountNumberTransfer);
+      if (this.data.accountNumberTransfer) {
+        this.getAccountsFilter(
+          new ListParams(),
+          this.data.accountNumberTransfer
+        );
+      }
+
       if (this.form.controls['accountType'].value === 'CONCENTRADORA') {
         this.rowSelecc = true;
         this.params.getValue()['filter.accountNumber'] =
@@ -278,9 +284,9 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
           let error = '';
           if (err.status === 0) {
             error = 'Revise su conexión de Internet.';
-            this.onLoadToast('error', 'Error', error);
+            this.onLoadToast('error', 'Error1', error);
           } else {
-            this.onLoadToast('error', 'Error', err.error.message);
+            this.onLoadToast('error', 'Error2', err.error.message);
           }
         },
       });
@@ -300,9 +306,9 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
           let error = '';
           if (err.status === 0) {
             error = 'Revise su conexión de Internet.';
-            this.onLoadToast('error', 'Error', error);
+            this.onLoadToast('error', 'Error3', error);
           } else {
-            this.onLoadToast('error', 'Error', err.error.message);
+            this.onLoadToast('error', 'Error4', err.error.message);
           }
         },
       });
