@@ -1015,7 +1015,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         if (i?.tipo == 'VALOR') {
           this.lbltipOficio = ' DE REFERENCIA DE ' + i?.tipo;
         } else if (i?.tipo == 'AVALUO') {
-          this.lbltipOficio = ' DE AVALUO ';
+          this.lbltipOficio = ' DE AVALÚO ';
         }
         if (i?.direccion == 'I') {
           this.lblDireccion = ' INMUEBLES ';
@@ -1817,12 +1817,12 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       console.log(this.fileName);
       const fileReader = new FileReader();
       fileReader.readAsBinaryString(files[0]);
-      fileReader.onload = () => this.readExcel(fileReader.result);
-
-      // Lee el contenido binario del archivo
+      fileReader.onload = () => {
+        this.readExcel(fileReader.result);
+        (event.target as HTMLInputElement).value = '';
+      };
     } catch (error) {
       console.error('Error:', error);
-      // Maneja el error de acuerdo a tus necesidades
     }
   }
 

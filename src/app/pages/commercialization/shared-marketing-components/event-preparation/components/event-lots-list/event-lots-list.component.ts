@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   Output,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -67,6 +68,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   @Input() onlyBase = false;
   @Output() onInit: EventEmitter<void> = new EventEmitter<void>();
   lotSelected: IComerLot = null;
+  @Input() change: boolean;
 
   private _flagTracker = true;
 
@@ -107,16 +109,30 @@ export class EventLotsListComponent extends BasePage implements OnInit {
     this.params.next(params);
   }
 
-  fileChange(event: Event) {
-    console.log(event);
+  resetTable() {
+    let paramsValue = this.params.getValue();
+    console.log(paramsValue.filters);
+
+    paramsValue.removeAllFilters();
+
+    this.lots = new LocalDataSource();
+
+    this.params.next(paramsValue);
   }
 
-  refreshDate(): void {
-    console.log('Sí llama a este emit');
-    this.onInit.emit();
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['change']) {
+      this.resetTable();
+      console.log(this.params.getValue());
+      console.log(
+        'lista de lotes ha cambiado a',
+        changes['change'].currentValue
+      );
+    }
   }
 
   ngOnInit(): void {
+    console.log('Se inicializó la lista de eventos');
     this.refreshTable();
 
     this.eventPreparationService.$refreshLots

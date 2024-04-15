@@ -152,6 +152,21 @@ export class managementCaptureLinesComponent
         this.data.load(resp.data);
         this.data.refresh();
         this.totalItems = resp.count;
+        this.formAdm.controls['allotment'].setValue(
+          this.formSearch.controls['allotment'].value
+        );
+        this.formAdm.controls['client'].setValue(
+          this.idClient == 0
+            ? this.formSearch.controls['idClient'].value
+            : this.idClient
+        );
+        this.formAdm.controls['event'].setValue(
+          this.formSearch.controls['idEvent'].value
+        );
+
+        this.formAdm.controls['allotment'].disable();
+        this.formAdm.controls['client'].disable();
+        this.formAdm.controls['event'].disable();
         this.loading = false;
       },
       error: eror => {
@@ -220,7 +235,7 @@ export class managementCaptureLinesComponent
       this.alert(
         'warning',
         'Atención',
-        'No es posible generar lineas de captura de garantias de seriedad'
+        'No es posible generar lineas de captura de Garantias de Seriedad'
       );
       return;
     }
