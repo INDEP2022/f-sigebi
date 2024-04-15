@@ -355,8 +355,6 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
   }
 
   generateOrdSerReport() {
-    this.btnAprobar = true;
-    this.btnRechazar = false;
     this.configuraModalFirma();
     return;
 
@@ -557,6 +555,10 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
 
     //const readOnly = this.requestInfo.detail.version == "1";
 
+
+    this.btnAprobar = true;
+    this.btnRechazar = false;
+
     let config: ModalOptions = {
       initialState: {
         nameDoc,
@@ -573,8 +575,13 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         readOnly,
 
         callback: (next, xml) => {
+
+
           //this.updateInfo = !this.updateInfo;
           if (next) {
+
+
+
             //this.updateReport(xml);
           }
         },
@@ -675,22 +682,26 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         break;
       case 'service-order-report':
 
-        this.btnReclamar = true;
+        this.btnReclamar = false;
         this.btnGuardar = true;
         this.btnEnviar = true;
+        this.editBienesTrans = true;
 
-        this.typeOrder = 'approve';
+        this.typeOrder = 'reception';
+        this.typeTable = 'multi';
 
         break;
       case 'service-order-report-validation':
 
-        this.btnReclamar = true;
+        this.btnReclamar = false;
         this.btnReporteOrdenServ = true;
         this.btnGuardar = true;
         this.btnRechazar = true;
         this.btnAnexoW = true;
+        this.editBienesTrans = true;
 
-        this.typeOrder = 'approve';
+        this.typeOrder = 'reception';
+        this.typeTable = 'multi';
 
         break;
       case 'service-order-report-signature':
