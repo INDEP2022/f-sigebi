@@ -93,11 +93,25 @@ export class SatSubclassificationFormComponent
 
   getClassifications(params: ListParams) {
     console.log('params:', params);
-    var dddd = 'cat';
+    if (params.text)
+      if (!isNaN(parseInt(params.text))) {
+        params['filter.id'] = `$eq:${params.text}`;
+      } else {
+        params['filter.typeDescription'] = `$eq:${params.text}`;
+      }
     //params['filter.text'] = `$ilike:${dddd}`;
-    this.satClassificationService.getAll(params).subscribe(data => {
-      console.log(data.data);
-      this.classifications = new DefaultSelect(data.data, data.count);
+    this.satClassificationService.getAll(params).subscribe({
+      next: data => {
+        let result = data.data.map(item => {
+          item['idAndDesc'] = item.id + ' - ' + item.typeDescription;
+        });
+        Promise.all(result).then(resp => {
+          this.classifications = new DefaultSelect(data.data, data.count);
+        });
+      },
+      error: err => {
+        this.classifications = new DefaultSelect([], 0);
+      },
     });
   }
 
@@ -108,9 +122,25 @@ export class SatSubclassificationFormComponent
     if (id) {
       params['filter.id'] = `$eq:${id}`;
     }
-    this.satClassificationService.getAll(params).subscribe(data => {
-      console.log(data.data);
-      this.classifications = new DefaultSelect(data.data, data.count);
+
+    if (params.text)
+      if (!isNaN(parseInt(params.text))) {
+        params['filter.id'] = `$eq:${params.text}`;
+      } else {
+        params['filter.typeDescription'] = `$eq:${params.text}`;
+      }
+    this.satClassificationService.getAll(params).subscribe({
+      next: data => {
+        let result = data.data.map(item => {
+          item['idAndDesc'] = item.id + ' - ' + item.typeDescription;
+        });
+        Promise.all(result).then(resp => {
+          this.classifications = new DefaultSelect(data.data, data.count);
+        });
+      },
+      error: err => {
+        this.classifications = new DefaultSelect([], 0);
+      },
     });
   }
   close() {

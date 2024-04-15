@@ -1,20 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, skip, takeUntil, tap } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
-import { GOOD_DELIVERY_COLUMNS } from './good-delivery-columns';
-
 @Component({
   selector: 'app-good-delivery-main',
   templateUrl: './good-delivery-main.component.html',
@@ -24,33 +26,85 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
   selectedRows: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  goodsColumns: any[] = [];
+  goodsRastreador: any[] = [];
   ngGlobal: IGlobalVars = null;
-  LocalData = new LocalDataSource();
+  data = new LocalDataSource();
   columnFilters: any = [];
-  flag: boolean = false;
-
   rel_bienes: any;
-
   total: any;
-
   goodsSettings = {
     ...TABLE_SETTINGS,
     actions: false,
-    selectMode: 'multi',
     hideSubHeader: false,
   };
-
+  goodsSelected: any[] = [];
+  goodsTracker: any = null;
+  valRastreador: boolean = false;
   constructor(
     private goodService: GoodService,
     private globalVarsService: GlobalVarsService,
     private router: Router,
-    private goodTrackerService: GoodTrackerService
+    private goodTrackerService: GoodTrackerService,
+    private goodProcessService: GoodProcessService,
+    private authService: AuthService,
+    private historyGoodService: HistoryGoodService
   ) {
     super();
-    this.goodsSettings.columns = GOOD_DELIVERY_COLUMNS;
+    this.goodsSettings.columns = {
+      selection: {
+        sort: false,
+        title: 'Selección',
+        type: 'custom',
+        showAlways: true,
+        valuePrepareFunction: (isSelected: boolean, row: any) =>
+          this.isBillingSelected(row),
+        renderComponent: CheckboxElementComponent,
+        onComponentInitFunction: (instance: CheckboxElementComponent) =>
+          this.onBillingSelect(instance),
+        filter: false,
+      },
+      fileNumber: {
+        title: 'Expediente',
+        type: 'number',
+        sort: false,
+      },
+      id: {
+        title: 'No. Bien',
+        type: 'number',
+        sort: false,
+      },
+      description: {
+        title: 'Descripción',
+        type: 'string',
+        sort: false,
+      },
+      status: {
+        title: 'Estatus',
+        type: 'string',
+        sort: false,
+      },
+    };
   }
-
+  // ACTIONS CHECKBOX TABLE - START //
+  onBillingSelect(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.billingSelectedChange(data.row, data.toggle),
+    });
+  }
+  isBillingSelected(_good: any) {
+    const exists = this.goodsSelected.find((good: any) => good.id == _good.id);
+    return !exists ? false : true;
+  }
+  billingSelectedChange(good: any, selected: boolean) {
+    if (selected) {
+      this.goodsSelected.push(good);
+    } else {
+      this.goodsSelected = this.goodsSelected.filter(
+        (_good: any) => _good.id != good.id
+      );
+    }
+  }
+  // ACTIONS CHECKBOX TABLE - END //
   ngOnInit(): void {
     this.rel_bienes = null;
     this.globalVarsService
@@ -59,20 +113,14 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
       .subscribe({
         next: global => {
           this.ngGlobal = global;
-          //console.log('GLOBAL ', this.ngGlobal);
           if (this.ngGlobal.REL_BIENES != null) {
             this.rel_bienes = this.ngGlobal.REL_BIENES;
-            //console.log('REL_BIENES ', this.rel_bienes);
-            //this.backRastreador(this.ngGlobal.REL_BIENES);
-            //console.log('BackRastreador-> ', this.ngGlobal.REL_BIENES);
           }
         },
       });
-    if (this.rel_bienes != null) {
-      console.log('REL_BIENES 2', this.rel_bienes);
-      this.backRastreador(this.rel_bienes);
-    }
-    this.LocalData.onChanged()
+
+    this.data
+      .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
@@ -82,11 +130,10 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.EQ;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'file':
-                field = 'filter.expediente.id';
+              case 'fileNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'goodId':
+              case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'description':
@@ -109,125 +156,136 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
           this.getGoodStatus();
         }
       });
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoodStatus());
-  }
-
-  getData() {
-    /*this.goodsColumns = this.goodsTestData;
-    this.totalItems = this.goodsColumns.length;*/
-    //this.goodService.filterStatusGood(status, params).subscribe({});
-    this.loadFromGoods();
-  }
-
-  selectRows(rows: any[]) {
-    console.log('row ', rows);
-    if (rows.length > 0) {
-      this.selectedRows = rows;
-      console.log('Rows Selected->', this.selectedRows);
-      console.log('SelectRows', this.selectedRows[0].goodId);
-      this.flag = true;
+    if (this.rel_bienes != null) {
+      this.backRastreador(this.rel_bienes);
+      this.params
+        .pipe(
+          skip(1),
+          tap(() => {
+            this.getGoodStatus('no');
+          }),
+          takeUntil(this.$unSubscribe)
+        )
+        .subscribe(() => {});
     } else {
-      this.flag = false;
-      this.selectedRows = [];
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+        this.getGoodStatus();
+      });
     }
   }
 
+  getData() {
+    this.loadFromGoods();
+  }
+
   changeStatus() {
-    // Llamar servicio para cambiar estado
+    // Vendido y Entregado
+    if (this.goodsSelected.length == 0)
+      return this.alert(
+        'warning',
+        'Debe seleccionar al menos un bien para realizar el cambio de estatus',
+        ''
+      );
     this.alertQuestion(
-      'warning',
-      '',
-      '¿ Estas Seguro de Modificar el ESTATUS de Vendido y Entregado a los Bienes Seleccionados ?'
+      'question',
+      'Se realizará el cambio de estatus de los bienes seleccionados',
+      '¿Desea continuar?'
     ).then(question => {
       if (question.isConfirmed) {
-        if (this.selectedRows != null && this.selectedRows != undefined) {
-          console.log('this.selectedRows', this.selectedRows);
-          for (let i = 0; i < this.selectedRows.length; i++) {
-            console.log(
-              'this.selectedRows.length ->',
-              this.selectedRows.length
-            );
-            console.log('params->', this.selectedRows[i].goodId);
-            this.updateGoodStatus(this.selectedRows[i].goodId, 'ENT');
-          }
-        }
-        console.log(this.selectedRows);
-        this.onLoadToast(
-          'success',
-          'Estatus Cambiado con Éxito',
-          `Se Cambio el Estado de ${this.selectedRows.length} Bienes.`
-        );
-        this.selectedRows = [];
-        //this.getData();
-        this.LocalData.refresh();
-        this.getGoodStatus();
+        let result = this.goodsSelected.map(async item => {
+          let obj = {
+            goodId: item.goodId,
+            id: item.id,
+            status: 'ENT',
+          };
+          await this.updateGoodStatus(obj);
+          // let params2 = {
+          //   propertyNum: item.id,
+          //   status: 'ENT',
+          //   changeDate: new Date(),
+          //   userChange: this.authService.decodeToken().preferred_username,
+          //   statusChangeProgram: 'FCOMERCAMESTBIEN',
+          // };
+          // await this.insertHistoric(params2);
+        });
+
+        Promise.all(result).then(resp => {
+          this.alert(
+            'success',
+            'Estatus cambiados correctamente',
+            `Se cambiaron el estatus de ${this.goodsSelected.length} bienes.`
+          );
+          this.goodsSelected = [];
+          this.getGoodStatus();
+        });
       }
     });
   }
 
-  getGoodStatus() {
-    this.goodsColumns = [];
-    this.LocalData.load(this.goodsColumns);
+  insertHistoric(data: any) {
+    return new Promise((resolve, reject) => {
+      this.historyGoodService.PostStatus(data).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error(err) {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  getGoodStatus(alert?: string) {
+    this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.goodService.filterStatusGood(params).subscribe(resp => {
-      if (resp != null && resp != undefined) {
-        console.log('RESP.GoodStatus-> ', resp);
-        console.log('Resp GoodStatus', resp.data[0].expediente.id);
-        for (let i = 0; i < resp.count; i++) {
-          if (resp.data[i] != null && resp.data[i] != undefined) {
-            let params = {
-              file:
-                resp.data[i].expediente != null
-                  ? resp.data[i].expediente.id
-                  : null,
-              goodId: resp.data[i].goodId,
-              description: resp.data[i].description,
-              status: resp.data[i].statusDetails.descriptionStatus,
-            };
-            this.goodsColumns.push(params);
-            this.LocalData.load(this.goodsColumns);
-          }
-        }
-
+    this.goodService.filterStatusGood(params).subscribe({
+      next: resp => {
+        this.data.load(resp.data);
+        this.data.refresh();
         this.totalItems = resp.count;
-
-        console.log(' this.totalItems ', this.totalItems);
-        console.log(' resp.count ', resp.count);
-        console.log(' this.goodsColumns.length ', this.goodsColumns.length);
-        console.log('this.total ', this.total);
-
-        if (this.rel_bienes != null) {
-          this.totalItems = this.total + resp.count;
+        this.loading = false;
+      },
+      error: err => {
+        if (alert == 'si') {
+          this.alert(
+            'warning',
+            'No se encontraron los bienes seleccionados en el Rastreador',
+            ''
+          );
+          delete this.params.getValue()['filter.id'];
+          this.reloadGetGoodStatus();
+        } else {
+          this.loading = false;
         }
-      }
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
-
-  updateGoodStatus(good: number, status: string) {
-    this.goodService.putStatusGood(good, status).subscribe(resp => {
-      if (resp != null && resp != undefined) {
-        console.log('Resp updateGoodStatus->', resp);
-      }
+  reloadGetGoodStatus() {
+    this.loading = true;
+    this.getGoodStatus();
+  }
+  updateGoodStatus(data: any) {
+    return new Promise((resolve, reject) => {
+      this.goodService.updateWithParams(data).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error(err) {
+          resolve(false);
+        },
+      });
     });
   }
 
   async loadFromGoods() {
     const global = await this.globalVarsService.getVars();
     this.globalVarsService.updateSingleGlobal('REL_BIENES', 0, global);
-    // const selfState = await this.eventPreparationService.getState();
-    // this.eventPreparationService.updateState({
-    //   ...selfState,
-    //   eventForm: this.eventForm,
-    //   lastLot: Number(this.lotSelected.id) ?? -1,
-    //   lastPublicLot: this.lotSelected.publicLot ?? 1,
-    //   executionType: this.onlyBase ? 'base' : 'normal',
-    // });
-
     localStorage.setItem('rastreador', '2');
     this.router.navigate([GOODS_TACKER_ROUTE], {
       queryParams: {
@@ -237,50 +295,64 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
   }
 
   backRastreador(global: any) {
-    this.goodTrackerService.PaInsGoodtmptracker(global).subscribe({
+    this.loading = true;
+    this.goodTrackerService.PaInsGoodtmptracker_(global).subscribe({
       next: response => {
-        //console.log('respuesta TMPTRAKER', response);
-        this.total = response.count;
-        console.log('total resp backRastreador ', response.count);
-        //this.totalItems = this.totalItems + response.count;
-        //console.log('count items -> ', this.totalItems);
-        for (let i = 0; i < response.count; i++) {
-          console.log('response bk', response.data[i].goodNumber);
-          this.goodtrackertmp(response.data[i].goodNumber);
-        }
+        let obj = {
+          goodNumber: [],
+        };
+        let result = response.data.map(item => {
+          obj.goodNumber.push(item.goodNumber);
+        });
+        Promise.all(result).then(resp => {
+          this.goodsTracker = obj;
+          this.valRastreador = true;
+          this.params.getValue()['filter.id'] = `$in:${obj.goodNumber.join(
+            ','
+          )}`;
+          this.getGoodStatus('si');
+          this.deleteGoodTracker(this.rel_bienes);
+        });
+      },
+      error: err => {
+        this.alert('warning', `No se cargaron bienes del rastreador`, '');
+        this.params = new BehaviorSubject<ListParams>(new ListParams());
+        this.getGoodStatus();
       },
     });
   }
 
   goodtrackertmp(goodNum: number) {
-    this.goodTrackerService.getGoodTrackerTmp(goodNum).subscribe(resp => {
-      if (resp != null && resp != undefined) {
-        console.log('goodtrackertmp-> ', resp);
-
-        for (let i = 0; i < resp.count; i++) {
-          if (resp.data[i] != null && resp.data[i] != undefined) {
-            let params = {
-              file: resp.data[i].fileNumber,
-              goodId: resp.data[i].goodNumber,
-              description: resp.data[i].goodDescription,
-              status: resp.data[i].statusDescription,
-            };
-            console.log('Params-> ', params);
-            this.goodsColumns.push(params);
-            this.LocalData.load(this.goodsColumns);
-            //this.totalItems = this.goodsColumns.length;
-            this.deleteGoodTracker(this.rel_bienes);
-          }
-        }
-      }
+    return new Promise((resolve, reject) => {
+      this.goodTrackerService.getGoodTrackerTmp(goodNum).subscribe({
+        next: value => {
+          let result = value.data.map(item => {
+            item['description'] = item.goodDescription;
+          });
+          Promise.all(result).then(resp => {
+            resolve(value.data[0]);
+          });
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
     });
   }
 
-  deleteGoodTracker(id: number) {
-    this.goodTrackerService.deleteTrackerGood(id).subscribe(resp => {
-      if (resp != null && resp != undefined) {
-        console.log('Resp deleteGoodTracker-> ', resp);
-      }
-    });
+  deleteGoodTracker(id: number): void {
+    this.goodTrackerService.deleteTrackerGood(id).subscribe();
+  }
+
+  resetTable() {
+    delete this.params.getValue()['filter.id'];
+    this.goodsSelected = [];
+    this.valRastreador = false;
+    this.goodsRastreador = [];
+    this.data.getFilter().filters = [];
+    this.data.load([]);
+    this.data.refresh();
+    this.totalItems = 0;
+    this.getGoodStatus();
   }
 }

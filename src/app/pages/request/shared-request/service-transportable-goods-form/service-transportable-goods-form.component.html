@@ -7,14 +7,7 @@
           <div class="mr-auto p-2"></div>
           <div class="p-2">
             <button
-              *ngIf="
-                (showForm && op == 1) ||
-                (!showForm && op == 4) ||
-                (!showForm && op == 9) ||
-                (!showForm && op == 10 && rejected) ||
-                (!showForm && op == 13) ||
-                (!showForm && op == 14)
-              "
+              *ngIf="editable"
               (click)="newService()"
               class="btn btn-primary btn-sm active">
               Nuevo servico <i class="fa fa-plus-circle" aria-hidden="true"></i>
@@ -22,14 +15,7 @@
           </div>
           <div class="p-2">
             <button
-              *ngIf="
-                (showButtonServiceManual && showForm && op == 1) ||
-                (!showForm && op == 4) ||
-                (!showForm && op == 9) ||
-                (showButtonServiceManual && showForm && op == 10) ||
-                (!showForm && op == 13) ||
-                (showButtonServiceManual && !showForm && op == 14)
-              "
+              *ngIf="editable"
               (click)="newServiceManual()"
               class="btn btn-info btn-sm active">
               Nuevo servicio manual
@@ -38,14 +24,7 @@
           </div>
           <div class="p-2">
             <button
-              *ngIf="
-                (showForm && op == 1) ||
-                (!showForm && op == 4) ||
-                (!showForm && op == 9) ||
-                (!showForm && op == 10 && rejected) ||
-                (!showForm && op == 13) ||
-                (!showForm && op == 14)
-              "
+              *ngIf="editable"
               (click)="deleteService()"
               class="btn btn-danger btn-sm active">
               Eliminar servicio <i class="fa fa-trash" aria-hidden="true"></i>

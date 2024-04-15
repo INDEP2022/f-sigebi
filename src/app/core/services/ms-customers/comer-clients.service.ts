@@ -27,7 +27,9 @@ export class ComerClientsService extends HttpService {
     return this.get<IListResponse<IComerClients>>(this.endpoint, params);
   }
 
-  getAllWithFilters(params?: string): Observable<IListResponse<IComerClients>> {
+  getAllWithFilters(
+    params?: _Params
+  ): Observable<IListResponse<IComerClients>> {
     return this.get<IListResponse<IComerClients>>(this.endpoint, params);
   }
 
