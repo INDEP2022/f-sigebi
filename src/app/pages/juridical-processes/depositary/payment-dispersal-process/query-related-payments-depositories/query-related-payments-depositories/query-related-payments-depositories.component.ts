@@ -106,6 +106,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
   screenKey: string = 'FCONDEPODISPAGOS';
   origin: string = null;
   noBienParams: number = null;
+  idNombra: number = 0;
 
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   goods = new DefaultSelect<IGood>();
@@ -363,11 +364,13 @@ export class QueryRelatedPaymentsDepositoriesComponent
     // LLAMAR PANTALLA FCARGAPAGOSDEP - Carga Pagos Depositarias
     // PENDIENTE DE MANDAR PARAMETROS
     // this.alert('info', 'LLAMAR PANTALLA FCARGAPAGOSDEP', '');
+    this.idNombra = this.form.controls['nombramiento'].value;
     this.router.navigate(['/pages/juridical/depositary/depository-fees'], {
       queryParams: {
         origin: this.screenKey,
         origin2: this.origin,
         p_bien: this.noBienReadOnly,
+        idNombra: this.idNombra,
       },
     });
   }
