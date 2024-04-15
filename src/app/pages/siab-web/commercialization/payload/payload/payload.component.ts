@@ -151,7 +151,10 @@ export class PayloadComponent extends BasePage implements OnInit {
             );
             this.dataSql = data;
             console.log(data);
-            TipoSat = this.dataSql.data[0].TIPO_PAGO_SAT;
+            TipoSat =
+              this.dataSql.data.length > 0
+                ? this.dataSql.data[0].TIPO_PAGO_SAT
+                : null;
 
             L_LOTE = this.paymentData.data[i].lotId;
             L_PUBLICO = this.paymentData.data[i].lotPublic;

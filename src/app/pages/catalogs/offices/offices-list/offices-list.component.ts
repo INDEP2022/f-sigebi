@@ -137,8 +137,10 @@ export class OfficesListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.officeService.remove(id).subscribe({
       next: () => {
-        this.getDeductives();
         this.alert('success', 'Despacho', 'Borrado Correctamente');
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getDeductives());
       },
       error: error => {
         this.alert(
