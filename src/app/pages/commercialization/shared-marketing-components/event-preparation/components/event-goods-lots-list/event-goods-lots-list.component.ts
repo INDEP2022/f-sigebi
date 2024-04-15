@@ -56,6 +56,7 @@ export class EventGoodsLotsListComponent
   @Input() params = new BehaviorSubject(new FilterParams());
   @Input() lot: IComerLot;
   @Input() loggedUser: TokenInfoModel;
+  @Input() change: boolean;
   totalItems = 0;
   lotGoods = new LocalDataSource();
   get controls() {
@@ -116,6 +117,26 @@ export class EventGoodsLotsListComponent
       const params = new FilterParams();
       this.params.next(params);
     }
+
+    if (changes['change']) {
+      this.resetTable();
+      console.log(this.params.getValue());
+      console.log(
+        'lista de lotes ha cambiado a',
+        changes['change'].currentValue
+      );
+    }
+  }
+
+  resetTable() {
+    let paramsValue = this.params.getValue();
+    console.log(paramsValue.filters);
+
+    paramsValue.removeAllFilters();
+
+    this.lotGoods = new LocalDataSource();
+
+    this.params.next(paramsValue);
   }
 
   ngOnInit(): void {
