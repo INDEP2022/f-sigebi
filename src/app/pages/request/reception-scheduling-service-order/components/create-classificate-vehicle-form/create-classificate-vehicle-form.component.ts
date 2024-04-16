@@ -43,7 +43,8 @@ export class CreateClassificateVehicleFormComponent
   prepareForm() {
     this.form = this.fb.group({
       orderServiceId: [this.orderServiceId],
-      id: [null, [Validators.required]],
+      id: [this.generateId()],
+      version: [null, [Validators.required]],
       amountSale: [null, [Validators.pattern(STRING_PATTERN)]],
       amountDonation: [null, [Validators.pattern(STRING_PATTERN)]],
       amountDestruction: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -57,6 +58,22 @@ export class CreateClassificateVehicleFormComponent
 
   confirm() {
     this.edit ? this.update() : this.create();
+  }
+
+  generateId(): number {
+    const date = new Date();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+
+    // Genera un número aleatorio entre 100 y 999
+    const random = Math.floor(Math.random() * 900) + 100;
+
+    // Combina las horas, minutos, segundos y el número aleatorio en una cadena y conviértela a un número
+    return Number(
+      `${hours < 10 ? '0' + hours : hours}${minutes < 10 ? '0' + minutes : minutes
+      }${seconds < 10 ? '0' + seconds : seconds}${random}`
+    );
   }
 
   update() {
@@ -96,6 +113,7 @@ export class CreateClassificateVehicleFormComponent
       '¿Desea crear una clasificación de vehiculos?'
     ).then(question => {
       if (question.isConfirmed) {
+        console.log(this.form.value);
         this.orderService.postServiceVehicle(this.form.value).subscribe({
           next: response => {
             this.alert(
@@ -111,7 +129,7 @@ export class CreateClassificateVehicleFormComponent
         //this.onLoadToast('success', 'Clasificación creada correctamente', '');
         //this.modalRef.content.callback(this.form.value);
         //this.event.emit(this.form.value);
-        //this.close();
+        this.close();
       }
     });
   }

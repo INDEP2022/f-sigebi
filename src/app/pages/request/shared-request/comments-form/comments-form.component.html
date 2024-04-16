@@ -32,14 +32,27 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-3">
+      <div class="row pt-3" *ngIf="getViewReject()">
         <div class="col-md-12">
           <form-field
             [control]="ordServform.get('commentRejection')"
             label="Comentario de Rechazo">
             <textarea
+              [disabled]="true"
               class="form-control"
               formControlName="commentRejection"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3" *ngIf="getViewJustification()">
+        <div class="col-md-12">
+          <form-field
+            [control]="ordServform.get('justification')"
+            label="Comentario de Rechazo">
+            <textarea
+              [disabled]="true"
+              class="form-control"
+              formControlName="justification"></textarea>
           </form-field>
         </div>
       </div>
