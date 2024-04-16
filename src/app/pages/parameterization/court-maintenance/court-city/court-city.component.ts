@@ -60,31 +60,12 @@ export class CourtCityComponent extends BasePage implements OnInit {
     this.cities = new DefaultSelect();
   }
 
-  /*getState(data: any) {
-    if (data) {
-      if (data)
-        if (typeof data.state == 'string') {
-          this.getEntidad(data.state);
-          // this.getDelegation(data.noDelegation);
-          // this.getSubDelegation(data.noSubDelegation);
-        }
-    }
-  }*/
-
   close() {
     this.modalRef.hide();
   }
 
-  /*handleSuccess() {
-    this.onLoadToast('success', 'Se ha guardado la ciudad', '');
-    this.modalRef.content.callback(true);
-    this.modalRef.hide();
-  }*/
-
   handleSuccess() {
-    //const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    //this.onLoadToast('success', 'Registro de ciudad', `Guardado Correctamente`);
-    this.alert('success', 'Registro de Ciudad', 'Guardado Correctamente');
+    this.alert('success', 'Ciudad guardado correctamente', '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
@@ -94,7 +75,11 @@ export class CourtCityComponent extends BasePage implements OnInit {
     this.courtCityServ.create(this.form.value).subscribe({
       next: () => this.handleSuccess(),
       error: err =>
-        this.onLoadToast('error', 'La Ciudad ya fue registrada', ''),
+        this.onLoadToast(
+          'warning',
+          'La ciudad ya fue registrada para este juzgado',
+          ''
+        ),
     });
   }
 
@@ -108,25 +93,4 @@ export class CourtCityComponent extends BasePage implements OnInit {
       },
     });
   }
-
-  /*getEntidad(id: number) {
-    this.serviceFederation.getById(id).subscribe({
-      next: data => this.form.get('entity').patchValue(data.otWorth),
-      error: error => this.onLoadToast('error', error.erro.message, ''),
-    });
-  }
-
-   private getDelegation(delegation: number) {
-     this.serviceDeleg.getById(delegation).subscribe({
-       next: data => this.form.get('delegation').patchValue(data.description),
-       error: error => this.onLoadToast('error', error.erro.message, ''),
-     });
-   }
-
-   private getSubDelegation(subDelegation: number) {
-     this.serviceSubDeleg.getById(subDelegation).subscribe({
-       next: data => this.form.get('subDelegation').patchValue(data.description),
-       error: error => this.onLoadToast('error', error.erro.message, ''),
-     });
-   }*/
 }

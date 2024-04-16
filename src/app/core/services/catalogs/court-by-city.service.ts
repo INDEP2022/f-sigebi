@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
@@ -20,7 +20,7 @@ export class CourtByCityService
     this.microservice = 'catalog';
   }
 
-  getAllWithFilters(params?: string): Observable<IListResponse<ICourtModel>> {
+  getAllWithFilters(params?: _Params): Observable<IListResponse<ICourtModel>> {
     return this.get<IListResponse<ICourtModel>>('court-by-city', params);
   }
 
