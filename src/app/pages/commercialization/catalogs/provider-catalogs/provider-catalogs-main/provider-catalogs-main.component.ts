@@ -5,7 +5,6 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
-  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
@@ -27,7 +26,6 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   providerForm: FormGroup = new FormGroup({});
   providerItems = new DefaultSelect();
   params = new BehaviorSubject<ListParams>(new ListParams());
-  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   searchFilter: SearchBarFilter;
   totalItems: number = 0;
   selectedProvider: IComerProvider | null = null;
@@ -62,6 +60,7 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.prepareForm();
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -76,7 +75,6 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
             console.log('Antes switch');
             switch (filter.field) {
               case 'providerId':
-                console.log('case');
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -86,77 +84,54 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
 
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log('FilterClg-> ', filter.search);
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getData();
         }
       });
 
-    this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getData();
     });
-    this.prepareForm();
-    this.getProviders();
   }
 
   private prepareForm(): void {
     this.providerForm = this.fb.group({
       providerId: [null],
-      bank: [null, Validators.maxLength(20)],
-      branch: [null, Validators.maxLength(4)],
-      checkingCta: [null, Validators.maxLength(10)],
-      key: [null, Validators.maxLength(18)],
+      bank: [null, Validators.maxLength(30)],
+      branch: [null, Validators.maxLength(6)],
+      checkingCta: [null, Validators.maxLength(20)],
+      key: [null, Validators.maxLength(20)],
     });
 
     this.providerForm.disable();
   }
 
-  getProviders() {
-    console.log('getProviders-> ', this.params.getValue());
-    this.providerService.getAll(this.params.getValue()).subscribe(data => {
-      this.providerItems = new DefaultSelect(data.data, data.count);
-      console.log('this.providerItem-> ', this.providerItems);
+  getData() {
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.loading = true;
+    this.providerService.getAllWithFilters(params).subscribe({
+      next: response => {
+        this.providerColumns = response.data;
+        this.data.load(this.providerColumns);
+        this.data.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => {
+        this.providerColumns = [];
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+        this.loading = false;
+      },
     });
-  }
-
-  getData(id?: IComerProvider) {
-    if (id) {
-      this.loading = true;
-      this.providerService.getById(id.providerId).subscribe({
-        next: response => {
-          this.providerColumns = [response];
-          this.data.load(this.providerColumns);
-          this.totalItems = 1;
-          this.loading = false;
-        },
-        error: error => {
-          this.loading = false;
-          console.log(error);
-        },
-      });
-    } else {
-      let params = {
-        ...this.params.getValue(),
-        ...this.columnFilters,
-      };
-      this.loading = true;
-      console.log('Params->', this.filterParams.getValue().getParams());
-      this.providerService.getAllWithFilters(params).subscribe({
-        next: response => {
-          this.providerColumns = response.data;
-          this.data.load(this.providerColumns);
-          this.totalItems = response.count;
-          this.loading = false;
-        },
-        error: error => {
-          this.showError(error);
-          this.loading = false;
-        },
-      });
-    }
   }
 
   selectProvider(provider: IComerProvider) {
@@ -165,6 +140,7 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
     this.providerForm.patchValue(provider);
     this.selectedProvider = provider;
     this.providerForm.enable();
+    this.providerForm.get('providerId').disable();
   }
 
   openFormProvider(edit: boolean, provider?: IComerProvider) {
@@ -176,11 +152,12 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   openModalProvider(context?: Partial<ProviderCatalogsModalComponent>) {
     const modalRef = this.modalService.show(ProviderCatalogsModalComponent, {
       initialState: { ...context },
-      class: 'modal-lg modal-dialog-centered',
+      class: 'modal-xl modal-dialog-centered',
       ignoreBackdropClick: true,
     });
     modalRef.content.onConfirm.subscribe(data => {
-      if (data) this.getData();
+      if (data)
+        this.getData(), this.providerForm.disable(), this.providerForm.reset();
     });
   }
 
@@ -192,13 +169,14 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.onSelect.subscribe((data: boolean) => {
-      if (data) this.getData();
+      if (data)
+        this.getData(), this.providerForm.disable(), this.providerForm.reset();
     });
   }
 
   delete(provider: IComerProvider): void {
     this.alertQuestion(
-      'warning',
+      'question',
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
@@ -237,7 +215,6 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
       ...this.providerForm.value,
     };
     delete this.selectedProvider.customer;
-    console.log('this.selectedProvider-> ', this.selectedProvider);
     let item = {
       providerId: this.selectedProvider.providerId,
       nameReason: this.selectedProvider.nameReason,
@@ -269,26 +246,19 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
       customerId: this.selectedProvider.customerId,
       references: this.selectedProvider.references,
     };
-    const provider = { ...this.selectedProvider };
-    console.log(
-      'Botón GuardarDatos-> ',
-      this.selectedProvider.providerId,
-      provider
-    );
     this.providerService
       .update(this.selectedProvider.providerId, item)
       .subscribe({
         next: resp => {
-          this.getData(), this.onLoadToast('success', resp.message, '');
+          this.getData();
+          this.alert('success', 'Registro actualizado correctamente', '');
           this.isSelected = false;
-          this.providerForm.reset();
+          this.providerForm.disable(), this.providerForm.reset();
         },
         error: error => {
-          this.showError(error);
+          this.alert('error', 'No se pudo actualizar el registro', '');
           this.loading = false;
         },
       });
-
-    console.log(this.selectedProvider);
   }
 }

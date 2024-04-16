@@ -46,6 +46,8 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getBanks(new ListParams());
+    this.getAccounts(new ListParams());
   }
 
   private prepareForm(): void {
@@ -78,7 +80,7 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
       accountNumberTransfer: [null],
       square_I: [{ value: '', disabled: true }],
       branch_I: [{ value: '', disabled: true }],
-      cveCurrency: [null, [Validators.maxLength(15)]],
+      cveCurrency: [null, [Validators.maxLength(15), Validators.required]],
       accountType_I: [{ value: '', disabled: true }],
       bank_I: [{ value: '', disabled: true }],
       cveInterestCalcRate: ['CETES'],
@@ -91,129 +93,109 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
       console.log(this.data);
       this.form.controls['nameBank'].setValue(this.data.cveBank);
       this.getBanksFilter(this.data.banco.name);
-      this.getAccountsFilter(new ListParams(), this.data.accountNumberTransfer);
-      if (this.form.controls['accountType'].value === 'CONCENTRADORA') {
+      if (this.data.accountType === 'CONCENTRADORA') {
+        // this.getAccountsFilter(new ListParams(), this.data.accountNumberTransfer);
         this.rowSelecc = true;
-        this.params.getValue()['filter.accountNumber'] =
-          this.data.accountNumber;
-        this.params.getValue()['filter.accountNumberTransfer'] =
-          this.data.accountNumberTransfer;
-        /*let params1 = {
-          ...this.params.getValue(),
-        };
-        this.bankServ.getAll(params1).subscribe({
-          next: resp => {
-            console.log(resp);
-            this.setProperties(resp.data);
-          },
-          error: err => {
-            let error = '';
-            /*if (err.status === 0) {
-              error = 'Revise su conexión de Internet.';
-              this.onLoadToast('error', 'Error', error);
-            } else {
-              this.onLoadToast('error', 'Error', err.error.message);
-            }
-          },
-        });*/
-
         this.bankServ
           .getById({
-            accountNumber: this.form.controls['accountNumberTransfer'].value,
+            accountNumber: this.data.accountNumberTransfer,
           })
           .subscribe({
             next: resp => {
-              console.log(resp);
+              console.log('AQUI1', resp);
               this.setProperties(resp);
             },
             error: err => {
               let error = '';
-              /*if (err.status === 0) {
-                error = 'Revise su conexión de Internet.';
-                this.onLoadToast('error', 'Error', error);
-              } else {
-                this.onLoadToast('error', 'Error', err.error.message);
-              }*/
             },
           });
       }
-      console.log(this.form);
-      setTimeout(() => {
-        this.getBanks(new ListParams());
-        this.getAccounts(new ListParams());
-      }, 1000);
+      // setTimeout(() => {
+
+      // }, 1000);
     }
   }
 
   confirm() {
-    console.log(this.form.value);
-    if (this.form.valid) {
-      this.form.controls['nameBank'].disable();
-      const data = this.form.value;
-      delete data.bankName;
-      console.log(data);
-      this.loading = true;
-      if (this.edit) {
-        const id = this.form.get('accountNumber').value;
-        let body: IBankAccount = {
-          accountNumber: this.form.controls['accountNumber'].value,
-          accountNumberTransfer:
-            this.form.controls['accountNumberTransfer'].value,
-          registerNumber: this.form.controls['registerNumber'].value,
-          delegationNumber: this.form.controls['delegationNumber'].value,
-          cveAccount: this.form.controls['cveAccount'].value,
-          accountType: this.form.controls['accountType'].value,
-          cveCurrency: this.form.controls['cveCurrency'].value,
-          square: this.form.controls['square'].value,
-          branch: this.form.controls['branch'].value,
-          cveInterestCalcRate: this.form.controls['cveInterestCalcRate'].value,
-          cveBank: this.form.controls['cveBank'].value,
-          isReference: this.form.controls['isReference'].value,
-        };
-        console.log(body);
-        this.bankServ.update1(body).subscribe({
-          next: () => {
-            this.alert(
-              'success',
-              'Cuenta de Banco',
-              'Actualizada Correctamente'
-            );
-            this.close();
-          },
-          error: err => {
-            this.onLoadToast('error', err.error.message, '');
-            this.loading = false;
-          },
-        });
-      } else {
-        let body: IBankAccount = {
-          accountNumber: this.form.controls['accountNumber'].value,
-          accountNumberTransfer:
-            this.form.controls['accountNumberTransfer'].value,
-          registerNumber: this.form.controls['registerNumber'].value,
-          delegationNumber: this.form.controls['delegationNumber'].value,
-          cveAccount: this.form.controls['cveAccount'].value,
-          accountType: this.form.controls['accountType'].value,
-          cveCurrency: this.form.controls['cveCurrency'].value,
-          square: this.form.controls['square'].value,
-          branch: this.form.controls['branch'].value,
-          cveInterestCalcRate: this.form.controls['cveInterestCalcRate'].value,
-          cveBank: this.form.controls['cveBank'].value,
-          isReference: this.form.controls['isReference'].value,
-        };
-        this.bankServ.create(body).subscribe({
-          next: () => {
-            this.alert('success', 'Cuenta de Banco', 'Guardada Correctamente');
-            this.close();
-          },
-          error: err => {
-            this.onLoadToast('error', err.error.message, '');
-            this.loading = false;
-          },
-        });
-      }
+    this.form.controls['nameBank'].disable();
+    const data = this.form.value;
+    delete data.bankName;
+    this.loading = true;
+    if (this.edit) {
+      let body: IBankAccount = {
+        accountNumber: this.form.controls['accountNumber'].value,
+        accountNumberTransfer:
+          this.form.controls['accountNumberTransfer'].value,
+        registerNumber: this.form.controls['registerNumber'].value,
+        delegationNumber: this.form.controls['delegationNumber'].value,
+        cveAccount: this.form.controls['cveAccount'].value,
+        accountType: this.form.controls['accountType'].value,
+        cveCurrency: this.form.controls['cveCurrency'].value,
+        square: this.form.controls['square'].value,
+        branch: this.form.controls['branch'].value,
+        cveInterestCalcRate: this.form.controls['cveInterestCalcRate'].value,
+        cveBank: this.form.controls['cveBank'].value,
+        isReference: this.form.controls['isReference'].value,
+      };
+      console.log(body);
+      this.bankServ.update1(body).subscribe({
+        next: () => {
+          this.alert(
+            'success',
+            'Cuenta de Banco actualizada correctamente',
+            ''
+          );
+          this.modalRef.content.callback(true);
+          this.close();
+        },
+        error: err => {
+          this.alert(
+            'error',
+            'No se pudo actualizar el registro',
+            err.error.message
+          );
+          this.loading = false;
+        },
+      });
     } else {
-      this.alert('warning', 'Debe de llenar los campos requeridos', '');
+      let body: IBankAccount = {
+        accountNumber: this.form.controls['accountNumber'].value,
+        accountNumberTransfer:
+          this.form.controls['accountNumberTransfer'].value,
+        registerNumber: this.form.controls['registerNumber'].value,
+        delegationNumber: this.form.controls['delegationNumber'].value,
+        cveAccount: this.form.controls['cveAccount'].value,
+        accountType: this.form.controls['accountType'].value,
+        cveCurrency: this.form.controls['cveCurrency'].value,
+        square: this.form.controls['square'].value,
+        branch: this.form.controls['branch'].value,
+        cveInterestCalcRate: this.form.controls['cveInterestCalcRate'].value,
+        cveBank: this.form.controls['cveBank'].value,
+        isReference: this.form.controls['isReference'].value,
+      };
+      this.bankServ.create(body).subscribe({
+        next: () => {
+          this.alert('success', 'Cuenta de Banco guardada correctamente', '');
+          this.modalRef.content.callback(true);
+          this.close();
+          this.loading = false;
+        },
+        error: err => {
+          if (
+            err.error.message ==
+            'null value in column "cve_moneda" of relation "cuentas_bancarias" violates not-null constraint'
+          ) {
+            this.onLoadToast(
+              'error',
+              'Debe asociar una moneda a la cuenta bancaria',
+              ''
+            );
+          } else {
+            this.onLoadToast('error', '', err.error.message);
+          }
+          this.loading = false;
+        },
+      });
     }
   }
   getBanks(params: ListParams) {
@@ -229,13 +211,14 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
         this.banks = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
+        this.banks = new DefaultSelect([], 0);
         let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
           error = err.message;
         }
-        this.onLoadToast('error', 'No se encontraron registros', '');
+        // this.onLoadToast('error', 'No se encontraron registros', '');
       },
     });
   }
@@ -275,13 +258,7 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
         next: resp =>
           (this.accounts = new DefaultSelect(resp.data, resp.count)),
         error: err => {
-          let error = '';
-          if (err.status === 0) {
-            error = 'Revise su conexión de Internet.';
-            this.onLoadToast('error', 'Error', error);
-          } else {
-            this.onLoadToast('error', 'Error', err.error.message);
-          }
+          this.accounts = new DefaultSelect([], 0);
         },
       });
   }
@@ -298,12 +275,7 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
           (this.accounts = new DefaultSelect(resp.data, resp.count)),
         error: err => {
           let error = '';
-          if (err.status === 0) {
-            error = 'Revise su conexión de Internet.';
-            this.onLoadToast('error', 'Error', error);
-          } else {
-            this.onLoadToast('error', 'Error', err.error.message);
-          }
+          this.accounts = new DefaultSelect([], 0);
         },
       });
   }
@@ -320,8 +292,6 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
   }
 
   setProperties(data: IBankAccount) {
-    console.log(data);
-    //this.account = data.cveAccount;
     this.form.get('accountNumberTransfer').patchValue(data.cveAccount);
     this.form.get('square_I').patchValue(data.square);
     this.form.get('branch_I').patchValue(data.branch);
@@ -330,7 +300,6 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
     this.form.get('accountType_I').patchValue(data.accountType);
   }
   close() {
-    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 }

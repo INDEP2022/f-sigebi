@@ -250,7 +250,7 @@
     <br />
     <br />
     <!-- *ngIf="statusOffice == 'ENVIADO' && tipoOficio == 2" -->
-    <div class="row" *ngIf="tipoOficio == 2">
+    <div class="row" *ngIf="tipoOficioView == 2">
       <div class="col-md-12 p-3">
         <div class="table-responsive">
           <div [class]="loading ? 'table-loading' : ''">
@@ -272,7 +272,7 @@
     </div> -->
 
     <!--  -->
-    <div class="row" *ngIf="tipoOficio == 3">
+    <div class="row" *ngIf="tipoOficioView == 3">
       <div class="col-md-12 p-3">
         <div class="table-responsive">
           <div [class]="loading ? 'table-loading' : ''">

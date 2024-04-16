@@ -126,7 +126,7 @@ export class ProfileMaintenanceFormComponent
         });
     }
   }
-  create() {
+  async create() {
     if (
       this.form1.controls['profile'].value.trim() == '' ||
       this.form1.controls['screenKey'].value.trim() == '' ||
@@ -138,13 +138,38 @@ export class ProfileMaintenanceFormComponent
       return;
     } else {
       this.loading = true;
-      this.profileMaintenanceService
-        .create1(this.form1.getRawValue())
-        .subscribe({
-          next: data => this.handleSuccess(),
-          error: error => (this.loading = false),
-        });
+      let resp = await this.getAccessScreen(
+        this.form1.controls['profile'].value,
+        this.form1.controls['screenKey'].value
+      );
+      if (!resp) {
+        this.profileMaintenanceService
+          .create1(this.form1.getRawValue())
+          .subscribe({
+            next: data => this.handleSuccess(),
+            error: error => (this.loading = false),
+          });
+      } else {
+        this.alert('warning', 'Ya existe un registro con esta pantalla', '');
+        this.loading = false;
+      }
     }
+  }
+
+  getAccessScreen(profile: string, screenKey: string): Promise<boolean> {
+    const params = new ListParams();
+    params['filter.profile'] = profile;
+    params['filter.screenKey'] = `$ilike:${screenKey}`;
+    return new Promise((resolve, reject) => {
+      this.profileMaintenanceService.getAllProfileXPant(params).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
