@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   Output,
+  SimpleChanges,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -39,6 +40,7 @@ export class CommerPackagesLotsComponent
   @Input() parameters: IEventPreparationParameters;
   @Input() comerLotsListParams = new BehaviorSubject(new FilterParams());
   @Input() lots = new LocalDataSource();
+  @Input() change: boolean;
   @Input() onlyBase = false;
   @Output() fillStadistics = new EventEmitter<void>();
   @Output() onLotSelected = new EventEmitter<IComerLot>();
@@ -66,6 +68,12 @@ export class CommerPackagesLotsComponent
 
   async ngOnInit() {
     console.warn('INIT');
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['change']) {
+      console.log('onlyBase ha cambiado a', changes['change']);
+    }
   }
 
   async checkGoodsTracker() {

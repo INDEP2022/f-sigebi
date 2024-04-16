@@ -1869,6 +1869,29 @@ export class CircumstantialActsSuspensionCancellationComponent
       return;
     }
 
+    if (this.form.get('elabDate').value == null) {
+      this.alert(
+        'warning',
+        'Fecha de elaboración inválida',
+        'Seleccione una fecha de elaboración'
+      );
+      return;
+    }
+
+    if (this.form.get('closingDate').value == null) {
+      this.alert(
+        'warning',
+        'Fecha de cierre inválida',
+        'Seleccione una fecha de cierre'
+      );
+      return;
+    }
+
+    if (this.form.get('address').value == null) {
+      this.alert('warning', 'Dirección inválida', 'Ingrese una dirección');
+      return;
+    }
+
     this.form.get('captureDate').setValue(new Date());
 
     const user = this.authService.decodeToken();
@@ -2020,6 +2043,7 @@ export class CircumstantialActsSuspensionCancellationComponent
         this.alert('success', res.msg, '');
       },
       err => {
+        this.alert('error', 'Se presentó un error al validar los bienes', '');
         console.log(err);
       }
     );

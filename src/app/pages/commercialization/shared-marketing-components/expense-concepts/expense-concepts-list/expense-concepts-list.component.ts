@@ -192,6 +192,8 @@ export class ExpenseConceptsListComponent
   }
 
   override getSearchFilter(filter: any) {
+    console.log(filter);
+
     let searchFilter = SearchFilter.ILIKE;
     if (this.ilikeFilters.includes(filter.field)) {
       searchFilter = SearchFilter.ILIKE;
@@ -205,6 +207,11 @@ export class ExpenseConceptsListComponent
         searchFilter = SearchFilter.EQ;
       }
     }
+
+    if (filter.field === 'routineCalculation') {
+      searchFilter = SearchFilter.ILIKE;
+    }
+
     return searchFilter;
   }
 

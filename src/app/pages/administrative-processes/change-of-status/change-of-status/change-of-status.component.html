@@ -97,7 +97,7 @@
           <div class="col-md-8 col-sm-12 col-xs-12 mt-3">
             <form-field [control]="formNew.get('goodStatus')">
               <ngx-select
-                (fetchItems)="getStatus($event)"
+                (fetchItems)="getStatus($event, true)"
                 label="Nuevo Estatus"
                 [form]="formNew"
                 [data]="dataStatus"
