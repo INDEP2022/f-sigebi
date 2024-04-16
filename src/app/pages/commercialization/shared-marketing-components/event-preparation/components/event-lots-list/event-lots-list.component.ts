@@ -116,6 +116,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
     paramsValue.removeAllFilters();
 
     this.lots = new LocalDataSource();
+    this.subscribe();
 
     this.params.next(paramsValue);
   }
@@ -134,7 +135,12 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     console.log('Se inicializó la lista de eventos');
     this.refreshTable();
+    this.subscribe();
 
+    // this.returnTracker(); //!Se está realizando en otro lado y se cicla
+  }
+
+  subscribe() {
     this.eventPreparationService.$refreshLots
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -151,8 +157,6 @@ export class EventLotsListComponent extends BasePage implements OnInit {
         tap(params => this.getLots(params).subscribe())
       )
       .subscribe();
-
-    // this.returnTracker(); //!Se está realizando en otro lado y se cicla
   }
 
   returnTracker() {
