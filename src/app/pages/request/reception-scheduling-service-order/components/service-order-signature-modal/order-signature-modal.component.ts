@@ -134,13 +134,13 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
 
     switch (this.nameDoc) {
       case 'orden_servicio':
-        this.src = 'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=orden_servicio.jasper&ordenServicioID=5668';
+        this.src = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=orden_servicio.jasper&ordenServicioID=${this.idReportAclara}`;
         break;
       case 'reporte_implementacion':
-        this.src = 'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=reporte_implementacion.jasper&ordenServicioID=5668';
+        this.src = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=reporte_implementacion.jasper&ordenServicioID=${this.idReportAclara}`;
         break;
       case 'anexo_ordenes_w':
-        this.src = 'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=AnexoOrdenesW.jasper&ID_MUESTREO_ORDEN=5668&ID_TIPO_DOCTO=198';
+        this.src = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=AnexoOrdenesW.jasper&ID_MUESTREO_ORDEN=${this.idReportAclara}&ID_TIPO_DOCTO=198`;
         break;
 
     }

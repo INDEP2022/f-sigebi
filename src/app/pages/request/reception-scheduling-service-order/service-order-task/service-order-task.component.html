@@ -32,6 +32,15 @@
       </button>
 
       <button
+        *ngIf="!btnReclamar && btnReporteImpl"
+        type="button"
+        class="btn btn-primary active btn-sm"
+        (click)="generateReportImpl()">
+        Generar reporte de orden de servicio
+        <i class="bx bx-edit-alt"></i>
+      </button>
+
+      <button
         (click)="sendOrderService()"
         *ngIf="!btnReclamar && btnEnviar"
         class="btn btn-success btn-sm active">

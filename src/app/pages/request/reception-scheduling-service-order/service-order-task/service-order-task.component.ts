@@ -364,8 +364,23 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
     });
   }
 
+  generateReportImpl() {
+
+    this.nameDoc = 'reporte_implementacion';
+    this.typeDocId = 246;
+    this.typeDocName = 'ReporteImplementacion';
+
+    this.configuraModalFirma();
+
+  }
+
+
   generateOrdSerReport() {
+
     this.nameDoc = 'orden_servicio';
+    this.typeDocId = 245;
+    this.typeDocName = 'FormatoOrdenServicio';
+
     this.configuraModalFirma();
     return;
 
@@ -429,6 +444,8 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
 
   annexWReport() {
     this.nameDoc = 'anexo_ordenes_w';
+    this.typeDocId = 198;
+    this.typeDocName = 'AnexoWMuestreoOrdenServicio';
 
     let config: ModalOptions = {
       initialState: {
@@ -622,6 +639,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
   btnGuardar = false;
   btnEnviar = false;
   btnReporteOrdenServ = false;
+  btnReporteImpl = false;
   btnFirmaReporte = false;
   btnRechazar = false;
   btnAprobar = false;
@@ -704,7 +722,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         break;
       case 'service-order-report-validation':
         this.btnReclamar = false;
-        this.btnReporteOrdenServ = true;
+        this.btnReporteImpl = true;
         this.btnGuardar = true;
         this.btnRechazar = true;
         this.btnAnexoW = true;
@@ -716,7 +734,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         break;
       case 'service-order-report-signature':
         this.btnReclamar = true;
-        this.btnReporteOrdenServ = true;
+        this.btnReporteImpl = true;
         this.btnGuardar = true;
 
         this.typeOrder = 'approve';
@@ -893,7 +911,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
