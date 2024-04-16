@@ -118,6 +118,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     this.initForm();
     this.initAnexForm();
     this.getgeographicalAreaSelect(new ListParams());
+    this.orderServiceForm.get('contractNumber').disable();
   }
 
   initForm() {
@@ -344,8 +345,11 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
       this.geographicalAreaSelected = new DefaultSelect();
       this.contractNumberSelected = new DefaultSelect();
     } else {
-      const value = { contractNumber: event.contractNumber };
-      this.getContractNumberSelect(value);
+      //const value = { contractNumber: event.contractNumber };
+      this.orderServiceForm.controls['contractNumber'].setValue(
+        event.contractNumber
+      );
+      //this.getContractNumberSelect(value);
     }
   }
 
