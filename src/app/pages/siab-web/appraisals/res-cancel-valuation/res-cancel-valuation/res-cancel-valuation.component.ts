@@ -30,6 +30,7 @@ import { ClarificationsService } from 'src/app/core/services/ms-office-managemen
 import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
+import { RequestAppraisalService } from 'src/app/core/services/ms-request-appraisal/request-appraisal.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ButtonColumnAddComponent } from 'src/app/shared/components/button-column/button-column-add.component';
@@ -194,7 +195,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     private clarificationsService: ClarificationsService,
     private parameterModService: ParameterModService,
     private siabService: SiabService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private requestAppraisalService: RequestAppraisalService
   ) {
     super();
     this.columnsTable();
@@ -514,6 +516,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
   getOfficeResponseTwo(body: OfficesSend): Promise<any[]> {
     return new Promise((resolve, reject) => {
+      let data = {
+        eventId: body.eventId,
+        officeId: body.officeType,
+      };
       this.serviceJobs.postByFilters(body).subscribe({
         next: response => {
           resolve(response.data);
@@ -849,12 +855,25 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         }
       }
     } catch (e: any) {
-      this.alert('warning', '', 'Problema para visualizar oficio');
+      this.alert('warning', '', 'Problema para visualizar oficio' + e);
     }
   }
-
-  //No esta en la documentacion
-  getDescriptionParameters(nameOffice: string) {}
+  getDescriptionParameters(nameOffice: string) {
+    return new Promise((resolve, reject) => {
+      let data = {
+        office: nameOffice,
+        folio: '4',
+      };
+      this.requestAppraisalService.postFaPathDoc(data).subscribe({
+        next: response => {
+          resolve(response.data.path);
+        },
+        error: error => {
+          reject(error);
+        },
+      });
+    });
+  }
 
   async getDataByOffice(): Promise<MyBody> {
     let myBody: MyBody = new MyBody();
@@ -1000,10 +1019,20 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     );
   }
 
+  getOfficeRequestAvaluo(body: any) {
+    return firstValueFrom(
+      this.serviceJobs.postByFiltersResponseDB(body).pipe(
+        take(1),
+        catchError(x => of({ data: [] })),
+        map(x => x.data)
+      )
+    );
+  }
+
   async getOfficeResponse(body: any, type?: number, arrayLength?: number) {
     console.log(type);
     let array = [];
-    array = await this.getOfficeRequest(body);
+    array = await this.getOfficeRequestAvaluo(body);
     console.log(array);
     if (array.length > 0) {
       for (const i of array) {
