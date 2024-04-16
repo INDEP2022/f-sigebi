@@ -142,7 +142,6 @@ export class OfficeFormComponent extends BasePage implements OnInit {
       this.officeForm.controls['colony'].value.trim() === '' ||
       this.officeForm.controls['municipalDelegate'].value.trim() === '' ||
       this.officeForm.controls['rfc'].value.trim() === '' ||
-      this.officeForm.controls['fax'].value.trim() === '' ||
       this.officeForm.controls['typeOffice'].value.trim() === ''
     ) {
       this.alert('warning', 'No se puede guardar campos vacíos', ``);
