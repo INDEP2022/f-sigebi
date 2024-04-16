@@ -405,12 +405,12 @@
         </div>
       </div>
     </form>
-    <div class="d-flex justify-content-end mt-5">
+    <!-- <div class="d-flex justify-content-end mt-5">
       <app-columns-select
         [(settings)]="settings1"
         class="row justify-content-end">
       </app-columns-select>
-    </div>
+    </div> -->
     <div class="row mt-5 scroll-table">
       <div class="row pt-4 table-container">
         <div class="col-md-12 table-responsive">
@@ -547,6 +547,7 @@
               [searchable]="false"
               bindLabel="label"
               label="Asunto"
+              [showTooltip]="true"
               control="subject">
             </ngx-select>
           </form-field>
