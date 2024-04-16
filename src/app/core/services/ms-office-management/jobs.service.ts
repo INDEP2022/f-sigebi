@@ -24,6 +24,9 @@ export class JobsService extends HttpService {
     return this.post('application/getOfficeAvaluo', body);
   }
 
+  postByFiltersResponseDB(body: any) {
+    return this.post('application/getOfficeAvaluonsbdbMassive', body);
+  }
   postByFiltersResponse(body: any) {
     return this.post('application/getOfficeSolicitud', body);
   }
