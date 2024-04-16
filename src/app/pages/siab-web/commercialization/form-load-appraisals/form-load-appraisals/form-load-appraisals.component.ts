@@ -173,8 +173,6 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     this.createForm();
   }
   async inicialize() {
-    this.cargaDDLEvento();
-
     if (!this.requested) {
       console.log('cargarEvento');
       this.cargaDDLEvento();
@@ -237,7 +235,10 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
       });
     });
   }
-
+  search() {
+    this.CargaGrids();
+    this.inicialize();
+  }
   async CargaGrids() {
     //this.ocultaDivNoti();
     this.carEvento = await this.obtenerEvento0(
@@ -261,6 +262,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     );
     let dataCarAvaluos: any = this.carAvaluos;
     console.log(this.carEvento, this.carBienes, this.carAvaluos);
+
     this.cargarAvaluos(dataCarAvaluos);
   }
 
@@ -1236,10 +1238,6 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     this.gvBienesRecahazados = false;
   }
 
-  search() {
-    this.CargaGrids();
-    this.inicialize();
-  }
   controlBotnoes(tipoProceso: string, estado: string) {
     if (tipoProceso == '1') {
       if (estado == 'V') {
