@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, of, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, of, takeUntil } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -21,10 +21,11 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { JSON_TO_CSV } from 'src/app/pages/admin/home/constants/json-to-csv';
 import { IprogrammingDelivery } from 'src/app/pages/siab-web/sami/receipt-generation-sami/receipt-table-goods/ireceipt';
 import Swal from 'sweetalert2';
+import { OrderSignatureModalComponent } from '../../reception-scheduling-service-order/components/service-order-signature-modal/order-signature-modal.component';
+import { TypeSignatureModalComponent } from '../../reception-scheduling-service-order/components/type-signature-modal/type-signature-modal..component';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { ShowDocumentsGoodComponent } from '../../shared-request/expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
-import { ClaimFormModalComponent } from '../claim-form-modal/claim-form-modal.component';
 import { DeliveriesConstancyFormComponent } from '../deliveries-constancy-form/deliveries-constancy-form.component';
 import { DocumentConstanceModalComponent } from '../document-constance-modal/document-constance-modal.component';
 import { EntryOrderModalComponent } from '../entry-order-modal/entry-order-modal.component';
@@ -57,6 +58,7 @@ export class ExecuteSchedulingDeliveriesComponent
   constancyNoRetired: boolean = false;
   showDetailProgDestruc: boolean = true;
   active: boolean = false;
+  taskInfo: any = {};
 
   statusProgramming: string = ''; //APROBAR_NO_ENT_ESP
 
@@ -311,7 +313,7 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   getTitle() {
-    console.log(this.programmingDetailPanel.status)
+    console.log(this.programmingDetailPanel.status);
     switch (this.programmingDetailPanel.status) {
       case 'PROGRAMACION_EJECUTADA':
       case 'VERIFICACION_BIENES':
@@ -1291,7 +1293,7 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   setCauseNotDelivered(event: any) {
-    console.log(event)
+    console.log(event);
     if (event.text != null && event.text != '') {
       const index = this.goodDeliveryFieldSelected.indexOf(event.row);
       if (this.goodDeliveryFieldSelected.length == 0 || index == -1) {
@@ -1578,34 +1580,109 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   claimmingForm() {
-    let config1: ModalOptions = {
+    this.configuraModalFirma();
+  }
+
+  updateTask(id, body) {
+    return new Promise((resolve, reject) => {
+      this.taskService.update(id, body).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {},
+      });
+    });
+  }
+
+  configuraModalFirma() {
+    const formOnly = true;
+    const nameSignatoryRuling = this.taskInfo.participantName;
+    const postSignatoryRuling = this.taskInfo.ownerRole;
+    const typeSign = this.taskInfo.componentName;
+    const typeAnnex = 'sign-annexJ-assets-classification';
+
+    let config: ModalOptions = {
       initialState: {
-        progGoodsDeliv: this.progGoodNoDeliveredSelected,
-        progDeli: this.programmingDetailPanel,
-        callback: (next: boolean) => {
+        requestId: this.programmingId,
+        reportId: '',
+        idSample: this.programmingId,
+        contentId: '',
+        typeAnnex: typeAnnex,
+        nameSignatoryRuling,
+        postSignatoryRuling,
+        typeSign,
+        formOnly,
+        callback: async (name, charge, typeSign) => {
+          this.taskInfo.ownerRole = charge;
+          this.taskInfo.participantName = name;
+          this.taskInfo.componentName = typeSign;
+
+          console.log(name, charge, typeSign);
+          this.updateTask(this.taskInfo.id, {
+            ownerRole: charge,
+            participantName: name,
+            componentName: typeSign,
+          });
+
+          this.openFirma(name, charge);
+          //Actualizar la orden de servicio con los datos de la firma
+          //this.updateOrderService(responsibleSae, saePosition, typeSign);
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(TypeSignatureModalComponent, config);
+  }
+
+  async openFirma(name, charge) {
+    let token = this.authService.decodeToken();
+    let today = new Date();
+
+    let idTypeDoc = '0';
+    let readOnly = false;
+
+    const typeAnnex = 'approval-request';
+    const requestInfo = { id: this.programmingId, type: 'programming' };
+    const idReportAclara = this.programmingId;
+    const nameTypeDoc = 'OrdenServicio';
+    const nomenglatura = '';
+
+    const nameDoc = 'formato_reclamacion';
+    const userName = name;
+    const chargeUser = charge;
+    const numSignature = 1;
+    const idProg = this.programmingDetailPanel.id;
+
+    //const readOnly = this.requestInfo.detail.version == "1";
+
+    let config: ModalOptions = {
+      initialState: {
+        nameDoc,
+        userName,
+        chargeUser,
+        numSignature,
+        idProg,
+
+        idReportAclara,
+        idTypeDoc,
+        typeAnnex,
+        requestInfo,
+        nameTypeDoc,
+        nomenglatura,
+        readOnly,
+        callback: (next, xml) => {
+          //this.updateInfo = !this.updateInfo;
           if (next) {
+            //this.updateReport(xml);
           }
         },
       },
-      class: 'modal-md modal-dialog-centered',
+      class: 'modal-lg modal-dialog-centered',
+      keyboard: false,
       ignoreBackdropClick: true,
     };
-
-    this.bsModelRef = this.modalService.show(ClaimFormModalComponent, config1);
-    this.bsModelRef.content.onClose = new Subject<any>();
-    this.bsModelRef.content.onClose.subscribe(data => {
-      let config2: ModalOptions = {
-        initialState: {
-          callback: (next: boolean) => {
-            if (next) {
-            }
-          },
-        },
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      };
-      this.showReport(data);
-    });
+    this.modalService.show(OrderSignatureModalComponent, config);
   }
 
   changeTypeRestitucion(tipoRest: string) {
@@ -1617,7 +1694,6 @@ export class ExecuteSchedulingDeliveriesComponent
       );
       return;
     }
-
 
     if (this.progDeliveNoDSelectAll == true) {
       this.loadingPENE = true;
