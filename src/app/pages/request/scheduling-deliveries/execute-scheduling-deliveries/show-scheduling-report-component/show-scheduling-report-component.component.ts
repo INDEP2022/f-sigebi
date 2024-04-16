@@ -175,7 +175,7 @@ export class ShowSchedulingReportComponentComponent
       this.formLoading = false;
     }
     if (this.idprogDel && this.report == 1) {
-      console.log('Dentro')
+      console.log('Dentro');
       let linkDoc: string = `${this.urlBaseReport}ConstanciaEntrega.jasper&ID_CONSTANCIA=${this.idprogDel}`;
       this.src = linkDoc;
 
@@ -184,6 +184,7 @@ export class ShowSchedulingReportComponentComponent
 
     //NO ENTREGADOS
     if (this.idprogDel && this.report == 2) {
+      this.idprogDel = 119;
       let linkDoc: string = `${this.urlBaseReport}ConstanciaNoEntregados.jasper&ID_CONSTANCIA=${this.idprogDel}`;
       this.src = linkDoc;
 
@@ -192,6 +193,7 @@ export class ShowSchedulingReportComponentComponent
 
     //NO ACEPTADO
     if (this.idprogDel && this.report == 3) {
+      this.idprogDel = 122;
       let linkDoc: string = `${this.urlBaseReport}ConstanciaNoEntregados.jasper&ID_CONSTANCIA=${this.idprogDel}`;
       this.src = linkDoc;
 

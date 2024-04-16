@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -24,8 +24,8 @@ import {
   isNullOrEmpty,
 } from 'src/app/pages/request/request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { environment } from 'src/environments/environment';
-import { LIST_REPORTS_COLUMN } from './list-reports-column';
 import { UploadFielsModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/upload-fiels-modal/upload-fiels-modal.component';
+import { LIST_REPORTS_COLUMN } from './list-reports-column';
 
 @Component({
   selector: 'app-order-signature-modal',
@@ -131,7 +131,6 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-
     switch (this.nameDoc) {
       case 'orden_servicio':
         this.src = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=orden_servicio.jasper&ordenServicioID=${this.idReportAclara}`;
@@ -142,15 +141,18 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
       case 'anexo_ordenes_w':
         this.src = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=AnexoOrdenesW.jasper&ID_MUESTREO_ORDEN=${this.idReportAclara}&ID_TIPO_DOCTO=198`;
         break;
-
+      case 'formato_reclamacion':
+        this.src =
+          'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=FormatoReclamacion.jasper&ID_PROG_ENTREGA=' +
+          this.idProg +
+          '&ID_TIPO_DOCTO=3&FOLIO_PROG_ENTREGA=3';
+        break;
     }
 
     this.loadSignatories(true);
-
   }
 
   async loadSignatories(reset: boolean = false) {
-
     if (!reset) {
       this.signatories = await this.getSignatories();
       return;
@@ -175,34 +177,36 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
         let create: any = await this.createSignatorie();
         //console.log('Firmante creado: ', create.signatoryId);
         return create;
-      }).then(async create => {
+      })
+      .then(async create => {
         let signatories = await this.getSignatories();
         this.signatories = signatories;
         //console.log('Firmantes: ', this.signatories);
         this.loadSingnatures = false;
-      }).catch(error => {
+      })
+      .catch(error => {
         // Si algo sale mal, el error se capturará aquí
         this.loadSingnatures = false;
       });
 
     //this.signatories = signatories;
-
   }
 
   async getSignatories() {
-
     let learnedId = this.idReportAclara;
     let learnedType = this.idTypeDoc;
 
     return new Promise<any[]>((res, rej) => {
-      this.signatoriesService.getSignatoriesName(learnedType, learnedId).subscribe({
-        next: resp => {
-          res(resp.data);
-        },
-        error: err => {
-          res([]);
-        },
-      });
+      this.signatoriesService
+        .getSignatoriesName(learnedType, learnedId)
+        .subscribe({
+          next: resp => {
+            res(resp.data);
+          },
+          error: err => {
+            res([]);
+          },
+        });
     });
   }
 
@@ -220,7 +224,6 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
   }
 
   async createSignatorie() {
-
     let token = this.authService.decodeToken();
     let name = this.userName || token.name;
     let post = this.chargeUser || token.cargonivel1;
@@ -246,7 +249,6 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
         },
       });
     });
-
   }
 
   close(): void {
@@ -279,7 +281,7 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
             urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
             type: 'pdf',
           },
-          callback: (response: any) => { },
+          callback: (response: any) => {},
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
         keyboard: false,
@@ -312,7 +314,7 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
         },
         onClose: (cancel: boolean) => {
           if (cancel) this.loading = false;
-        }
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       keyboard: false,
@@ -494,7 +496,7 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
             this.modalRef.content.callback(false, null);
             this.close();
           },
-          error: error => { },
+          error: error => {},
         });
     });
   }
@@ -701,8 +703,8 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
         };
 
         this.requestService.update(this.idReportAclara, obj).subscribe({
-          next: resp => { },
-          error: error => { },
+          next: resp => {},
+          error: error => {},
         });
         break;
       }
@@ -719,8 +721,8 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
         this.documentService
           .updateClarDocImp(this.infoReport.id, modelReport)
           .subscribe({
-            next: data => { },
-            error: error => { },
+            next: data => {},
+            error: error => {},
           });
 
         break;
@@ -738,5 +740,4 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
     this.loading = false;
     this.modalRef.content.callback(true, this.xml);
   }
-
 }
