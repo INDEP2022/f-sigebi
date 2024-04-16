@@ -18,7 +18,8 @@ import { COLUMNS } from './columns';
 })
 export class EntryOrdersComponent
   extends BasePageTableNotServerPagination
-  implements OnInit {
+  implements OnInit
+{
   toggleInformation = true;
   constructor(
     private dataService: PaymentService,
@@ -171,7 +172,7 @@ export class EntryOrdersComponent
           this.loader.load = false;
           this.alert(
             'success',
-            'Se replico el folio y se guardó correctamente',
+            'Se replicó el folio y se guardó correctamente',
             ''
           );
         },

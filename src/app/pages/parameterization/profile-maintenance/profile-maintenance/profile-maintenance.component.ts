@@ -49,6 +49,10 @@ export class ProfileMaintenanceComponent extends BasePage implements OnInit {
         add: false,
         position: 'right',
       },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning pl-4 mx-2"></i>',
+      },
       columns: { ...COLUMNS_I },
     };
 
@@ -61,6 +65,10 @@ export class ProfileMaintenanceComponent extends BasePage implements OnInit {
         delete: false,
         add: false,
         position: 'right',
+      },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning pl-4 mx-2"></i>',
       },
       columns: { ...COLUMNS_PERFIL },
     };

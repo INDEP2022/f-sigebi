@@ -1,11 +1,13 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} Cuenta de Banco</h5>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar' : 'Agregar' }} Cuenta de Banco
+    </h5>
   </div>
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row">
-        <div class="col-md-8 col-sm-12 col-xs-12">
+        <div class="col-md-12 col-sm-12 col-xs-12">
           <form-field [control]="form.get('nameBank')">
             <ngx-select
               [form]="form"
@@ -26,14 +28,18 @@
               form.get('cveBank').patchValue($event)
             "></app-banks-shared> -->
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12 pt-3">
-          <form-field [control]="form.get('cveBank')" label="Clave Banco">
-            <input type="text" class="form-control" formControlName="cveBank" />
-          </form-field>
-        </div>
       </div>
       <div class="row mt-3">
-        <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('cveBank')" label="Clave Banco">
+            <input
+              [disabled]="true"
+              type="text"
+              class="form-control"
+              formControlName="cveBank" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field [control]="form.get('cveAccount')" label="Cuenta">
             <input
               type="text"
@@ -41,19 +47,7 @@
               formControlName="cveAccount" />
           </form-field>
         </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('square')" label="Plaza">
-            <input type="text" class="form-control" formControlName="square" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row mt-3">
-        <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('branch')" label="Sucursal">
-            <input type="text" class="form-control" formControlName="branch" />
-          </form-field>
-        </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field [control]="form.get('cveCurrency')" label="Moneda">
             <input
               type="text"
@@ -63,7 +57,17 @@
         </div>
       </div>
       <div class="row mt-3">
-        <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('square')" label="Plaza">
+            <input type="text" class="form-control" formControlName="square" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('branch')" label="Sucursal">
+            <input type="text" class="form-control" formControlName="branch" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('accountType')"
             label="Tipo de Cuenta">
@@ -79,100 +83,110 @@
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12 col-sm-12 col-xs-12">
           <app-delegation-shared
             [form]="form"
             [delegationField]="'delegationNumber'"
             [showSubdelegation]="false"></app-delegation-shared>
         </div>
       </div>
-      <hr />
-      <div *ngIf="rowSelecc">
-        <div class="row mb-3">
-          <strong
-            >Si Hay Traspasos entre Cuentas, Ind&iacute;quelo
-            Aqu&iacute;&#58;</strong
-          >
-        </div>
-        <div class="row mt-2">
-          <div class="col-md-4 col-sm-12 col-xs-12">
-            <form-field [control]="form.get('accountNumberTransfer')">
-              <ngx-select
+      <accordion style="margin-bottom: 0px !important" [isAnimated]="true">
+        <accordion-group
+          id="testAcc"
+          style="margin-bottom: 0px !important"
+          [isOpen]="rowSelecc"
+          [class.disabled]="!rowSelecc">
+          <div accordion-heading class="d-flex justify-content-between">
+            <h5>SI HAY TRASPASOS ENTRE CUENTAS, INDÍQUELO AQUÍ:</h5>
+          </div>
+          <div class="row mt-4">
+            <div class="col-md-4 col-sm-12 col-xs-12">
+              <form-field [control]="form.get('accountNumberTransfer')">
+                <ngx-select
+                  [form]="form"
+                  control="accountNumberTransfer"
+                  [data]="accounts"
+                  value="cveAccount"
+                  bindLabel="cveAccount"
+                  label="Cuenta a traspasar"
+                  (change)="setProperties($event)"
+                  (fetchItems)="getAccounts($event)"></ngx-select>
+              </form-field>
+              <!-- <app-account-banks-shared
                 [form]="form"
-                control="accountNumberTransfer"
-                [data]="accounts"
-                value="cveAccount"
-                bindLabel="cveAccount"
-                label="Cuenta a traspasar"
-                (fetchItems)="getAccounts($event)"></ngx-select>
-            </form-field>
-            <!-- <app-account-banks-shared
-              [form]="form"
-              (properties)="setProperties($event)"></app-account-banks-shared> -->
+                (properties)="setProperties($event)"></app-account-banks-shared> -->
+            </div>
+            <div class="col-md-4 col-sm-12 col-xs-12">
+              <form-field [control]="form.get('bank_I')" label="Banco">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="bank_I" />
+              </form-field>
+            </div>
+            <div class="col-md-4 col-sm-12 col-xs-12">
+              <form-field [control]="form.get('square_I')" label="Plaza">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="square_I" />
+              </form-field>
+            </div>
           </div>
-          <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-            <form-field [control]="form.get('bank_I')" label="Banco">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="bank_I" />
-            </form-field>
+          <div class="row mt-4">
+            <div class="col-md-4 col-sm-12 col-xs-12">
+              <form-field [control]="form.get('branch_I')" label="Sucursal">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="branch_I" />
+              </form-field>
+            </div>
+            <div class="col-md-4 col-sm-12 col-xs-12">
+              <form-field [control]="form.get('cveCurrency')" label="Moneda">
+                <input
+                  maxlength="15"
+                  type="text"
+                  class="form-control"
+                  formControlName="cveCurrency" />
+              </form-field>
+            </div>
+            <div class="col-md-4 col-sm-12 col-xs-12">
+              <form-field
+                [control]="form.get('accountType_I')"
+                label="Tipo de Cuenta">
+                <ng-select
+                  formControlName="accountType_I"
+                  [searchable]="false"
+                  class="form-control"
+                  [clearable]="false">
+                  <ng-option value="CONCENTRADORA">CONCENTRADORA</ng-option>
+                  <ng-option value="ASEGURADA">ASEGURADA</ng-option>
+                  <ng-option value="DEVOLUCIONES">DEVOLUCIONES</ng-option>
+                </ng-select>
+              </form-field>
+            </div>
           </div>
-          <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-            <form-field [control]="form.get('square_I')" label="Plaza">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="square_I" />
-            </form-field>
-          </div>
-        </div>
-        <div class="row mt-2">
-          <div class="col-md-4 col-sm-12 col-xs-12">
-            <form-field [control]="form.get('branch_I')" label="Sucursal">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="branch_I" />
-            </form-field>
-          </div>
-          <div class="col-md-4 col-sm-12 col-xs-12">
-            <form-field [control]="form.get('cveCurrency')" label="Moneda">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="cveCurrency" />
-            </form-field>
-          </div>
-          <div class="col-md-4 col-sm-12 col-xs-12">
-            <form-field
-              [control]="form.get('accountType_I')"
-              label="Tipo de Cuenta">
-              <ng-select
-                formControlName="accountType_I"
-                [searchable]="false"
-                class="form-control"
-                [clearable]="false">
-                <ng-option value="CONCENTRADORA">CONCENTRADORA</ng-option>
-                <ng-option value="ASEGURADA">ASEGURADA</ng-option>
-                <ng-option value="DEVOLUCIONES">DEVOLUCIONES</ng-option>
-              </ng-select>
-            </form-field>
-          </div>
-        </div>
-      </div>
+        </accordion-group>
+      </accordion>
     </form>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
+          [btnSmall]="true"
           [disabled]="form.invalid"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
           Cancelar
         </button>
       </div>
