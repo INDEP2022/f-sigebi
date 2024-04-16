@@ -1,8 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">
-      Selecciona el motivo de la reprogramaci&oacute;n
-    </h5>
+    <h5 class="modal-title">Anexo W</h5>
   </div>
   <div body style="margin-top: -40px">
     <h5 class="title">
@@ -160,7 +158,7 @@
 
           <div class="pt-3">
             <form-field [control]="form.get('chargeSae')" label="Cargo INDEP">
-              <input class="form-control" formControlName="nameSignerSae" />
+              <input class="form-control" formControlName="chargeSae" />
             </form-field>
           </div>
         </div>
@@ -171,6 +169,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
+          [disabled]="!form.valid"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

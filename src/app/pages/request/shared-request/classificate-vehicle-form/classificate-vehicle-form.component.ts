@@ -1,6 +1,6 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IServiceVehicle } from 'src/app/core/models/ms-order-service/order-service-vehicle.model';
@@ -9,6 +9,7 @@ import { OrderServiceService } from 'src/app/core/services/ms-order-service/orde
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CLASSIFICATION_VEHICLE_COLUMS } from '../../reception-scheduling-service-order/columns/classification-vehicle-columns';
 import { CreateClassificateVehicleFormComponent } from '../../reception-scheduling-service-order/components/create-classificate-vehicle-form/create-classificate-vehicle-form.component';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-classificate-vehicle-form',
@@ -27,6 +28,8 @@ export class ClassificateVehicleFormComponent
   extends BasePage
   implements OnInit {
   @Input() op: number;
+
+  @Input() orderServiceId: number;
   @Input() showForm: boolean;
   @Input() rejected: boolean;
   showClassificateVehicle: boolean = true;
@@ -63,13 +66,13 @@ export class ClassificateVehicleFormComponent
   }
 
   getServiceVehicle() {
-    this.params.getValue()['filter.orderServiceId'] = 516;
+    this.params.getValue()['filter.orderServiceId'] = this.orderServiceId;
     this.orderServiceService
       .getServiceVehicle(this.params.getValue())
       .subscribe({
         next: response => {
-          const infoVehicle = response.data.map(async (info: any) => {
-            const nameTypeVehicle: any = await this.nameVehicle(info.id);
+          const infoVehicle = response.data.filter(x => !isNullOrEmpty(x.version)).map(async (info: any) => {
+            const nameTypeVehicle: any = await this.nameVehicle(info.version);
             if (nameTypeVehicle) {
               info.nameTypeVehicle = nameTypeVehicle;
               return info;
@@ -107,7 +110,7 @@ export class ClassificateVehicleFormComponent
   formClassificateVehicle() {
     let config: ModalOptions = {
       initialState: {
-        orderServiceId: 516,
+        orderServiceId: this.orderServiceId,
         callback: (next: boolean) => {
           if (next)
             this.params
@@ -125,7 +128,7 @@ export class ClassificateVehicleFormComponent
     if (this.vehicleSelect) {
       let config: ModalOptions = {
         initialState: {
-          orderServiceId: 516,
+          orderServiceId: this.orderServiceId,
           serviceVehicleData: this.vehicleSelect[0],
           callback: (next: boolean) => {
             if (next)

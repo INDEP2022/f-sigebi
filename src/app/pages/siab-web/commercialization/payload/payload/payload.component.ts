@@ -151,7 +151,10 @@ export class PayloadComponent extends BasePage implements OnInit {
             );
             this.dataSql = data;
             console.log(data);
-            TipoSat = this.dataSql.data[0].TIPO_PAGO_SAT;
+            TipoSat =
+              this.dataSql.data.length > 0
+                ? this.dataSql.data[0].TIPO_PAGO_SAT
+                : null;
 
             L_LOTE = this.paymentData.data[i].lotId;
             L_PUBLICO = this.paymentData.data[i].lotPublic;
@@ -615,6 +618,7 @@ export class PayloadComponent extends BasePage implements OnInit {
         }
         if (this.dataFormat.length == i + 1) {
           this.alert('success', '', 'El oficio se guardó correctamente');
+          this.loadAgo();
         }
       }
     } catch (error) {
@@ -624,7 +628,7 @@ export class PayloadComponent extends BasePage implements OnInit {
   async insertaPago(data: any) {
     return new Promise((resolve, reject) => {
       let body = {
-        pReference: Number.parseInt(data.Referencia),
+        pReference: data.Referencia,
         pReferenceOri: data.ReferenciaOrdenIngreso,
         pDateMov: data.FechaMov.toString().replace(/-/g, ''),
         pvDate: data.V_Fecha,
@@ -645,6 +649,8 @@ export class PayloadComponent extends BasePage implements OnInit {
         pCuenta: data.Cuenta,
         pIdTypeSat: Number.parseInt(data.Id_Tipo_SAT),
       };
+      console.log(data);
+      console.log(body);
       this.paymentService.postComerpagrefweb(body).subscribe({
         next: resp => {
           resolve(resp);

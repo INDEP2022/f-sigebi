@@ -98,7 +98,7 @@
         </form-field>
       </div>
     </form>
-    <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <form class="form-material" [formGroup]="form">
       <div class="row mt-4">
         <div class="col-md-2">
           <form-field [control]="form.get('actSelect')" label="&Aacute;cta">
@@ -386,14 +386,14 @@
             (click)="actButton()">
             {{ textButtonAct }}
           </button>
-          <button
+          <!-- <button
             (click)="addGood()"
             type="button"
             tooltip="Agregar"
             containerClass="tooltip-style"
             class="btn btn-info btn-sm active mr-3">
             Agregar Bienes <i class="bx bx-plus bx-sm float-icon"></i>
-          </button>
+          </button> -->
           <button
             [disabled]="
               ['CERRADO', 'CERRADA', null].includes(form.get('statusAct').value)
@@ -405,12 +405,12 @@
         </div>
       </div>
     </form>
-    <div class="d-flex justify-content-end mt-5">
+    <!-- <div class="d-flex justify-content-end mt-5">
       <app-columns-select
         [(settings)]="settings1"
         class="row justify-content-end">
       </app-columns-select>
-    </div>
+    </div> -->
     <div class="row mt-5 scroll-table">
       <div class="row pt-4 table-container">
         <div class="col-md-12 table-responsive">
@@ -434,8 +434,7 @@
           <div class="mt-5">
             <form
               class="form-material form-horizontal"
-              [formGroup]="formTable1"
-              (ngSubmit)="onSubmit()">
+              [formGroup]="formTable1">
               <div
                 class="row mt-5 justify-content-start justify-content-sm-end">
                 <div class="mb-3 pl-4 pr-4">
@@ -511,8 +510,7 @@
           <div class="mt-5">
             <form
               class="form-material form-horizontal"
-              [formGroup]="formTable2"
-              (ngSubmit)="onSubmit()">
+              [formGroup]="formTable2">
               <div
                 class="row mt-5 justify-content-start justify-content-sm-end">
                 <div class="mb-3 pl-4 pr-4">
@@ -549,6 +547,7 @@
               [searchable]="false"
               bindLabel="label"
               label="Asunto"
+              [showTooltip]="true"
               control="subject">
             </ngx-select>
           </form-field>

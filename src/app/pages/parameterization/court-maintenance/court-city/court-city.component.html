@@ -2,12 +2,6 @@
   <div class="w-100" header>
     <div class="d-flex flex-wrap justify-content-between aling-items-center">
       <h5 class="modal-title">Agregar Ciudad</h5>
-      <div class="buttons">
-        <button class="btn btn-primary active btn-sm m-2" (click)="close()">
-          Regresar
-          <i class="fas fa-arrow-circle-left"></i>
-        </button>
-      </div>
     </div>
   </div>
 
@@ -46,10 +40,16 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
+          [btnSmall]="true"
           [disabled]="!form.valid"
           [loading]="loading"
           (confirm)="confirm()">
         </confirm-button>
+      </div>
+      <div class="m-2">
+        <button class="btn btn-danger btn-sm active mr-3" (click)="close()">
+          Cancelar
+        </button>
       </div>
     </div>
   </div>

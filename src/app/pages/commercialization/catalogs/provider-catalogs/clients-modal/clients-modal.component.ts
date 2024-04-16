@@ -1,12 +1,15 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IComerClients } from 'src/app/core/models/ms-customers/customers-model';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { FilterParams } from '../../../../../common/repository/interfaces/list-params';
 import { PROVIDER_CATALOGS_CLIENT_COLUMNS } from '../provider-catalogs-main/provider-catalogs-columns';
 import { ProviderCatalogsModalComponent } from '../provider-catalogs-modal/provider-catalogs-modal.component';
 import { SearchBarFilter } from './../../../../../common/repository/interfaces/search-bar-filters';
@@ -19,7 +22,6 @@ import { SearchBarFilter } from './../../../../../common/repository/interfaces/s
 export class ClientsModalComponent extends BasePage implements OnInit {
   title: string = 'Clientes';
   params = new BehaviorSubject<ListParams>(new ListParams());
-  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   searchFilter: SearchBarFilter;
   @Output() onSelect = new EventEmitter<any>();
   selectedRow: IComerClients | null = null;
@@ -30,29 +32,8 @@ export class ClientsModalComponent extends BasePage implements OnInit {
     actions: false,
   };
 
-  clientTestData = [
-    {
-      name: 'NOMBRE CLIENTE EJEMPLO 1',
-      rfc: 'G17LONA6481EN',
-    },
-    {
-      name: 'NOMBRE CLIENTE EJEMPLO 2',
-      rfc: 'HERH51901WSH',
-    },
-    {
-      name: 'NOMBRE CLIENTE EJEMPLO 3',
-      rfc: '92RHJJFDSZ7',
-    },
-    {
-      name: 'NOMBRE CLIENTE EJEMPLO 4',
-      rfc: 'HDHJ9821KGSWA',
-    },
-    {
-      name: 'NOMBRE CLIENTE EJEMPLO 5',
-      rfc: 'KL919ULGSDDK3',
-    },
-  ];
-
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
@@ -60,31 +41,68 @@ export class ClientsModalComponent extends BasePage implements OnInit {
   ) {
     super();
     this.clientSettings.columns = PROVIDER_CATALOGS_CLIENT_COLUMNS;
+    this.clientSettings.hideSubHeader = false;
     this.searchFilter = { field: 'reasonName' };
   }
 
   ngOnInit(): void {
-    this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'reasonName':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getData();
+        }
+      });
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getData();
     });
-    // this.getData();
   }
 
   getData(): void {
+    const params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
     this.loading = true;
-    this.clientsService
-      .getAllWithFilters(this.filterParams.getValue().getParams())
-      .subscribe({
-        next: response => {
-          this.clientColumns = response.data;
-          this.totalItems = response.count;
-          this.loading = false;
-        },
-        error: error => {
-          this.loading = false;
-          console.log(error);
-        },
-      });
+    this.clientsService.getAllWithFilters(params).subscribe({
+      next: response => {
+        this.clientColumns = response.data;
+        this.data.load(response.data);
+        this.data.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => {
+        this.clientColumns = [];
+        this.totalItems = 0;
+        this.data.load([]);
+        this.data.refresh();
+        this.loading = false;
+      },
+    });
   }
 
   select(row: IComerClients[]): void {
@@ -96,8 +114,6 @@ export class ClientsModalComponent extends BasePage implements OnInit {
   }
 
   confirm(): void {
-    // TODO: Obtener clkmun, clkedo y clkCountry
-
     this.openModalProvider({
       provider: {
         nameReason: this.selectedRow.reasonName,
@@ -106,20 +122,15 @@ export class ClientsModalComponent extends BasePage implements OnInit {
         street: this.selectedRow.street,
         colony: this.selectedRow.colony,
         delegation: this.selectedRow.delegation,
-        stateDesc: this.selectedRow.state,
-        cityDesc: this.selectedRow.city,
-        clkmun: '1',
-        clkedo: String(this.selectedRow.stateId),
+        stateDesc: null,
+        cityDesc: null,
+        clkmun: null,
+        clkedo: null,
         clkCountry: null,
         cp: this.selectedRow.zipCode,
         phone: this.selectedRow.phone,
         fax: this.selectedRow.fax,
-        typePerson:
-          this.selectedRow.personType != null
-            ? this.selectedRow.personType.includes('F')
-              ? '1'
-              : '2'
-            : null,
+        typePerson: '1',
         webMail: this.selectedRow.mailWeb,
         customerId: this.selectedRow.id,
       },
@@ -136,7 +147,7 @@ export class ClientsModalComponent extends BasePage implements OnInit {
   openModalProvider(context?: Partial<ProviderCatalogsModalComponent>) {
     const modalRef = this.modalService.show(ProviderCatalogsModalComponent, {
       initialState: { ...context },
-      class: 'modal-lg modal-dialog-centered',
+      class: 'modal-xl modal-dialog-centered',
       ignoreBackdropClick: true,
     });
     modalRef.content.onConfirm.subscribe(data => {

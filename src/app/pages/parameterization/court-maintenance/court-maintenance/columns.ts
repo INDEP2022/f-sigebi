@@ -12,7 +12,7 @@ export const COLUMNS = {
     sort: false,
   },
   cvEntDescripcion: {
-    title: 'Descripción',
+    title: 'Descripción Ent.',
     sort: false,
   },
   noDelegation: {
@@ -20,7 +20,7 @@ export const COLUMNS = {
     sort: false,
   },
   cvDelDescription: {
-    title: 'Descripción',
+    title: 'Descripción Del.',
     sort: false,
   },
   noSubDelegation: {
@@ -28,7 +28,7 @@ export const COLUMNS = {
     sort: false,
   },
   cvSubDelDescription: {
-    title: 'Descripción',
+    title: 'Descripción Sub.',
     sort: false,
   },
 };

@@ -60,6 +60,8 @@ export class EventPreparationComponent
 {
   eventForm = this.fb.group(new ComerEventForm());
   stadisticsForm = this.fb.group(new EventStadisticsForm());
+  changeEvent: boolean = false;
+
   @ViewChild('tasksTabs', { static: true }) tasksTabs?: TabsetComponent;
   get eventControls() {
     return this.eventForm.controls;
@@ -243,6 +245,7 @@ export class EventPreparationComponent
    */
   async onOpenEvent() {
     console.log('Se dio click a abrir eventos');
+    this.changeEvent = !this.changeEvent;
     this.parameters.pValids = 1;
     const user = this.loggedUser.preferred_username;
     const { statusVtaId, eventTpId, id } = this.eventControls;
@@ -359,6 +362,7 @@ export class EventPreparationComponent
 
   resetTableFilters() {
     const filtersData = this.events.getFilter();
+    console.log(filtersData);
     const filters = filtersData.filters.map((filter: any) => {
       return { ...filter, search: '' };
     });

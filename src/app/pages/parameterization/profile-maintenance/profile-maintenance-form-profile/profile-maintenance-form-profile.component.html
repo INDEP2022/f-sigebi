@@ -7,7 +7,12 @@
       <div class="row mt-4">
         <div class="col-md-6">
           <form-field [control]="form.get('profile')" label="Perfil">
-            <input type="text" class="form-control" formControlName="profile" />
+            <input
+              maxlength="20"
+              [readonly]="edit"
+              type="text"
+              class="form-control"
+              formControlName="profile" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -15,6 +20,7 @@
             [control]="form.get('registerNumber')"
             label="No. Registro">
             <input
+              maxlength="20"
               type="text"
               class="form-control"
               formControlName="registerNumber" />
@@ -25,6 +31,7 @@
             [control]="form.get('description')"
             label="Descripci&oacute;n">
             <input
+              maxlength="100"
               type="text"
               class="form-control"
               formControlName="description" />
@@ -37,12 +44,16 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
+          [btnSmall]="true"
           [disabled]="form.invalid"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

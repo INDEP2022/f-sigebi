@@ -13,23 +13,48 @@
             'rotate-up': !toggleInformation
           }"></i>
       </div>
-      <div class="d-flex">
-        <app-card [header]="false" [footer]="false">
-          <div body>
+      <!-- <app-card [header]="false" [footer]="false"> -->
+      <div class="row">
+        <div body>
+          <div class="d-flex">
             <!-- FORMULARIO EXPEDIENTE -->
             <form [formGroup]="form" class="form-material">
+              <div class="row text-left mb-5">
+                <app-select-modal-table-shared
+                  *ngIf="address"
+                  [form]="form"
+                  [onlyButton]="true"
+                  [maxlengthInput]="12"
+                  [disabled]="false"
+                  [widthDescription]="false"
+                  [haveSelectColumns]="true"
+                  [haveColumnFilters]="true"
+                  [ilikeFilters]="ilikeFilters"
+                  [dateFilters]="dateFilters"
+                  [hideFilterPlaceholder]="true"
+                  label="Evento"
+                  formField="idEvent"
+                  [service]="eventService"
+                  [columnsType]="eventColumns"
+                  [functionFilterName]="functionFilterName"
+                  idScss="eventFormNumeraryConversion"
+                  id="id"
+                  title="Evento"
+                  (selectRow)="
+                    selectEvent($event)
+                  "></app-select-modal-table-shared>
+              </div>
               <div class="row">
-                <div class="col-md-4 mt-2">
-                  <form-field
-                    [control]="form.get('idEvent')"
-                    label="No. Evento">
-                    <input
-                      readonly
-                      type="number"
-                      class="form-control"
-                      formControlName="idEvent" />
-                  </form-field>
-                </div>
+                <form-field
+                  class="col-md-4"
+                  [control]="form.get('idEvent')"
+                  label="No. Evento">
+                  <input
+                    readonly
+                    type="number"
+                    class="form-control"
+                    formControlName="idEvent" />
+                </form-field>
                 <div class="col-md-4 mt-2">
                   <form-field
                     [control]="form.get('processKey')"
@@ -105,8 +130,7 @@
                       formControlName="observations" />
                   </form-field>
                 </div>
-
-                <div class="col-md-3 mt-2">
+                <div class="col-md-3">
                   <button
                     (click)="resetForm()"
                     class="btn btn-danger btn-block btn-sm active mt-1">
@@ -115,33 +139,33 @@
                 </div>
               </div>
             </form>
-            <ng-content></ng-content>
           </div>
-        </app-card>
-        <div style="width: 130px; padding-left: 20px">
-          <app-select-modal-table-shared
-            *ngIf="address"
-            [form]="form"
-            [onlyButton]="true"
-            [maxlengthInput]="12"
-            [disabled]="false"
-            [widthDescription]="false"
-            [haveSelectColumns]="true"
-            [haveColumnFilters]="true"
-            [ilikeFilters]="ilikeFilters"
-            [dateFilters]="dateFilters"
-            [hideFilterPlaceholder]="true"
-            label="Evento"
-            formField="idEvent"
-            [service]="eventService"
-            [columnsType]="eventColumns"
-            [functionFilterName]="functionFilterName"
-            idScss="eventFormNumeraryConversion"
-            id="id"
-            title="Evento"
-            (selectRow)="selectEvent($event)"></app-select-modal-table-shared>
+          <!-- <div style="width: 130px; padding-left: 20px">
+            <app-select-modal-table-shared
+              *ngIf="address"
+              [form]="form"
+              [onlyButton]="true"
+              [maxlengthInput]="12"
+              [disabled]="false"
+              [widthDescription]="false"
+              [haveSelectColumns]="true"
+              [haveColumnFilters]="true"
+              [ilikeFilters]="ilikeFilters"
+              [dateFilters]="dateFilters"
+              [hideFilterPlaceholder]="true"
+              label="Evento"
+              formField="idEvent"
+              [service]="eventService"
+              [columnsType]="eventColumns"
+              [functionFilterName]="functionFilterName"
+              idScss="eventFormNumeraryConversion"
+              id="id"
+              title="Evento"
+              (selectRow)="selectEvent($event)"></app-select-modal-table-shared>
+          </div> -->
         </div>
       </div>
+      <!-- </app-card> -->
     </accordion-group>
   </accordion>
 </div>

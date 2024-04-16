@@ -16,4 +16,8 @@ export class RequestAppraisalService extends HttpService {
     const route = 'request-x-appraisal';
     return this.post<IListResponse<IRequestAppraisal>>(route, data);
   }
+  postFaPathDoc(data: any) {
+    const route = 'application/fa-path-doc';
+    return this.post<any>(route, data);
+  }
 }

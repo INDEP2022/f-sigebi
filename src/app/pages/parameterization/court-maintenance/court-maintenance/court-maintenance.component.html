@@ -1,18 +1,8 @@
-<app-card [header]="true">
+<app-modal>
   <div header>
-    <div class="ch-content">
-      <h5 class="title">MANTENIMIENTO A JUZGADOS</h5>
-      <div class="col-md-5 buttons">
-        <div>
-          <button
-            class="btn btn-primary btn-sm active m-3"
-            (click)="openModal()">
-            Consultar Juzgados
-            <i class="bx bx-search-alt bx-sm float-icon"></i>
-          </button>
-        </div>
-      </div>
-    </div>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar' : 'Agregar' }} Mantenimiento a juzgados
+    </h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
@@ -109,6 +99,7 @@
         <div class="col-12 d-flex justify-content-center">
           <div class="m-2">
             <button
+              [disabled]="form.invalid"
               type="button"
               class="btn btn-primary btn-sm active"
               (click)="confirm()">
@@ -117,25 +108,14 @@
             </button>
           </div>
           <div class="m-2">
-            <button
-              type="button"
-              tooltip="Agregar"
-              containerClass="tooltip-style"
-              class="btn btn-info btn-sm active ml-2 mr-2"
-              [disabled]="!isPresent"
-              (click)="openModalCity()">
-              Agregar Ciudad <i class="bx bx-plus bx-sm float-icon"></i>
-            </button>
-          </div>
-          <div class="m-2">
-            <button class="btn btn-danger btn-sm active mr-3" (click)="clean()">
-              Limpiar <i class="fas fa-eraser"> </i>
+            <button class="btn btn-danger btn-sm active mr-3" (click)="close()">
+              Cancelar
             </button>
           </div>
         </div>
       </div>
     </form>
-    <div class="table-responsive mt-5" *ngIf="dataCourtCity.count">
+    <!-- <div class="table-responsive mt-5" *ngIf="dataCourtCity.count">
       <div [class]="loading ? 'table-loading' : ''">
         <ng-scrollbar [track]="'all'" style="min-height: 300px">
           <ng2-smart-table
@@ -152,6 +132,6 @@
         [filterParams]="filterParams"
         [totalItems]="dataCourtCity.count">
       </app-pagination>
-    </div>
+    </div> -->
   </div>
-</app-card>
+</app-modal>
