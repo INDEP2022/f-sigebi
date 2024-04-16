@@ -23,17 +23,19 @@
       </button>
 
       <button
-        *ngIf="!btnReclamar && btnRechazarJustificacion"
-        class="btn btn-info btn-sm active"
-        (click)="refuseJustification()">
-        Rechazar Justificación <i class="fa fa-reply" aria-hidden="true"></i>
-      </button>
-
-      <button
         *ngIf="!btnReclamar && btnReporteOrdenServ"
         type="button"
         class="btn btn-primary active btn-sm"
         (click)="generateOrdSerReport()">
+        Generar reporte de orden de servicio
+        <i class="bx bx-edit-alt"></i>
+      </button>
+
+      <button
+        *ngIf="!btnReclamar && btnReporteImpl"
+        type="button"
+        class="btn btn-primary active btn-sm"
+        (click)="generateReportImpl()">
         Generar reporte de orden de servicio
         <i class="bx bx-edit-alt"></i>
       </button>
@@ -49,7 +51,7 @@
         (click)="sendJustification()"
         *ngIf="!btnReclamar && btnEnviarJustificacion"
         class="btn btn-success btn-sm active">
-        Enviar Justificaci&oacute;
+        Enviar Justificaci&oacute;n
         <i class="fa fa-paper-plane" aria-hidden="true"></i>
       </button>
 
@@ -80,6 +82,14 @@
         class="btn btn-primary btn-sm active">
         Anexo W <i class="fa fa-file ml-3" aria-hidden="true"></i>
       </button>
+
+      <button
+        (click)="rejectOrderJustification()"
+        *ngIf="!btnReclamar && btnRechazarJustificacion"
+        class="btn btn-success btn-sm active">
+        Rechazar Justificación
+        <i class="fa fa-times-circle" aria-hidden="true"></i>
+      </button>
     </div>
 
     <app-detail-service-order></app-detail-service-order>
@@ -93,10 +103,13 @@
     <app-order-service-form
       *ngIf="orderServiceId != null"
       [ordServform]="ordServform"
-      [total]="total"></app-order-service-form>
+      [total]="total"
+      [btnRechazarJustificacion]="btnRechazarJustificacion"
+      [orderService]="dataOrder"></app-order-service-form>
 
     <app-classificate-vehicle-form
       *ngIf="orderServiceId != null"
+      [orderServiceId]="orderServiceId"
       [editable]="
         !btnReclamar && editVehiculos
       "></app-classificate-vehicle-form>
@@ -118,6 +131,7 @@
       [showForm]="showForm"
       [orderServiceId]="orderServiceId"
       [isUpdate]="isUpdate"
+      [op]="op"
       (totEvent)="getTotal($event)"></app-service-transportable-goods-form>
   </div>
 </app-card>
