@@ -106,7 +106,7 @@ export class ProviderCatalogsModalComponent extends BasePage implements OnInit {
       ],
       clkCountry: [null, Validators.pattern(STRING_PATTERN)],
       desCountry: [null],
-      clkmun: [null, [Validators.required]],
+      clkmun: [null, [Validators.required, Validators.maxLength(3)]],
       clkedo: [null, [Validators.required, Validators.maxLength(2)]],
       cp: [
         null,

@@ -59,11 +59,12 @@ export class RejectionJustifyFormComponent extends BasePage implements OnInit {
           .updateOrderService(orderServiceInfo)
           .subscribe({
             next: () => {
-              this.alert(
+              /*this.alert(
                 'success',
                 'Correcto',
                 'Justificación Enviada Correctamente'
-              );
+              );*/
+              this.modalRef.content.callback(true);
               this.loading = false;
               this.close();
             },
