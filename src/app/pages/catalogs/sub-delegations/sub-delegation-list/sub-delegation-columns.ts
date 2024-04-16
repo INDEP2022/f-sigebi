@@ -1,3 +1,6 @@
+import { format } from 'date-fns';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const SUB_DELEGATION_COLUMS = {
   id: {
     title: 'Id',
@@ -24,8 +27,13 @@ export const SUB_DELEGATION_COLUMS = {
   },
   dateDailyCon: {
     title: 'Fecha',
-    type: 'date',
     sort: false,
+    valuePrepareFunction: (value: string) =>
+      value ? format(new Date(value), 'dd/MM/yyyy') : '',
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   phaseEdo: {
     title: 'Etapa EDO',
