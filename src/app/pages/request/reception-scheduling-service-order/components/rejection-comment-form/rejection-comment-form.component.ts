@@ -38,9 +38,9 @@ export class RejectionCommentFormComponent extends BasePage implements OnInit {
         this.orderServiceInfo = response.data[0];
         this.folio = this.orderServiceInfo.serviceOrderFolio;
         if (this.orderServiceInfo?.commentRejection) {
-          this.form
-            .get('comments')
-            .setValue(this.orderServiceInfo?.commentRejection);
+          //this.form
+          //.get('comments')
+          //.setValue(this.orderServiceInfo?.commentRejection);
         }
       },
       error: () => {},
@@ -63,18 +63,22 @@ export class RejectionCommentFormComponent extends BasePage implements OnInit {
         console.log('1');
         const orderServiceBody: IOrderServiceDTO = {
           id: this.orderServiceInfo.id,
-          commentRejection: this.form.get('comments').value,
+          commentRejection:
+            this.form.get('comments').value +
+            (this.orderServiceInfo.commentRejection
+              ? '\n' + this.orderServiceInfo.commentRejection
+              : ''),
         };
         console.log('2');
         this.orderServiceService
           .updateOrderService(orderServiceBody)
           .subscribe({
             next: () => {
-              this.alert(
+              /*this.alert(
                 'success',
                 'Correcto',
                 'Órden de servicio rechazada correctamente'
-              );
+              );*/
               this.loading = false;
               this.modalRef.content.callback(true);
               this.close();

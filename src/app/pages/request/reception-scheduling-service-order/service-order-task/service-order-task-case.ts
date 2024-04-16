@@ -59,6 +59,9 @@ export function getConfigService(path, data) {
         ssubtype: 'TURNAR',
         close: true,
       };
+
+    //Orden de servicio reporte de implementación
+
     case 'service-order-report-validation':
       return {
         title: `Validación de reporte de Implementación (Programación de recepción: ${progFolio}) Para el orden de servicio con el folio: ${folio}`,
@@ -100,9 +103,10 @@ export function getConfigService(path, data) {
         ssubtype: 'TURNAR',
         close: true,
       };
+
     case 'service-order-report-reject':
       return {
-        title: `Rechazo de reporte de implementación (Programación de recepción: ${progFolio}) para el orden de servicio con folio: ${folio}`,
+        title: `Solicitud Orden de Servicio (Validación de Reporte) con el folio: ${folio}`,
         url: 'pages/request/reception-service-order/service-order-report-justification-validation',
         process: 'ServiceOrderReportJustificationValidation',
         type: 'SOLICITUD_PROGRAMACION',
@@ -110,18 +114,28 @@ export function getConfigService(path, data) {
         ssubtype: 'TURNAR',
         close: true,
       };
-
     case 'service-order-report-justification-validation':
       return {
-        title: `Validación de reporte de implementación (Programación de recepción: ${progFolio}) para el orden de servicio con folio: ${folio}`,
+        title: `Rechazo de reporte de implementación (Programación de recepción: ${progFolio}) para el orden de servicio con folio: ${folio}`,
         url: 'pages/request/reception-service-order/service-order-report-justification-reject',
+        process: 'ServiceOrderReportJustificationValidation',
+        type: 'SOLICITUD_PROGRAMACION',
+        subtype: 'Programar_Recepcion',
+        ssubtype: 'TURNAR',
+        close: true,
+      };
+
+    case 'service-order-report-justification-reject':
+      return {
+        title: `Validación de reporte de implementación (Programación de recepción: ${progFolio}) para el orden de servicio con folio: ${folio}`,
+        url: 'pages/request/reception-service-order/service-order-report-validation-justification',
         process: 'ServiceOrderReportJustificationReject',
         type: 'SOLICITUD_PROGRAMACION',
         subtype: 'Programar_Recepcion',
         ssubtype: 'TURNAR',
         close: true,
       };
-    case 'service-order-report-justification-reject':
+    case 'service-order-report-validation-justification':
       return {
         title: `Rechazo de orden de servicios (Programación de recepción: ${progFolio}) con folio: ${folio}`,
         url: 'pages/request/reception-service-order/service-order-reject',

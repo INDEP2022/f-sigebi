@@ -1,8 +1,6 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { IOrderServiceDTO } from 'src/app/core/models/ms-order-service/order-service.mode';
-import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 
 @Component({
   selector: 'app-comments-form',
@@ -29,11 +27,15 @@ export class CommentsFormComponent implements OnInit {
 
   commentsForm: FormGroup = new FormGroup({});
   orderServiceData: IOrderServiceDTO;
-  constructor(
-  ) { }
+  constructor() {}
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
 
+  getViewReject() {
+    return this.ordServform.get('commentRejection').value;
   }
 
+  getViewJustification() {
+    return this.ordServform.get('justification').value;
+  }
 }

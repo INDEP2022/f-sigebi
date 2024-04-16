@@ -89,11 +89,19 @@ export class ServiceTransportableGoodsFormComponent
         ? SERVICE_TRANSPORTABLE_COLUMNS_READONLY
         : SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE;
 
-      if (this.process == 'service-order-report') {
+      if (
+        this.process == 'service-order-report' ||
+        this.process == 'service-order-report-justification-reject'
+      ) {
         this.columns = SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_APROVE;
       }
 
-      if (this.process == 'service-order-report-validation') {
+      if (
+        this.process == 'service-order-report-validation' ||
+        this.process == 'service-order-report-signature' ||
+        this.process == 'service-order-report-aprove' ||
+        this.process == 'service-order-validation-justification'
+      ) {
         this.columns = SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_VALIDATE;
 
         if (!this.editable) {
@@ -197,6 +205,8 @@ export class ServiceTransportableGoodsFormComponent
     if (this.isUpdate == true) {
       this.saveForm();
     }
+
+    console.log('changes', changes);
 
     if (!isNullOrEmpty(changes['editable'])) {
       this.configTable();
