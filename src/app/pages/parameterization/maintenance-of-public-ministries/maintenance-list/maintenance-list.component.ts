@@ -72,10 +72,10 @@ export class MaintenanceListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'insideNumber':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'outNumber':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'zipCode':
                 searchFilter = SearchFilter.EQ;
@@ -111,18 +111,6 @@ export class MaintenanceListComponent extends BasePage implements OnInit {
 
   getMinPub() {
     this.loading = true;
-    /*this.ministerService
-      .getAllWithFilters(this.params.getValue().getParams())
-      .subscribe({
-        next: response => {
-          this.dataMinPub = response;
-          this.loading = false;
-        },
-        error: err => {
-          this.loading = false;
-          this.onLoadToast('error', err.error.message, '');
-        },
-      });*/
     let params = {
       ...this.params1.getValue(),
       ...this.columnFilters,
@@ -141,8 +129,6 @@ export class MaintenanceListComponent extends BasePage implements OnInit {
         this.data.load([]);
         this.data.refresh();
         this.totalItems = 0;
-        //this.loading = false;
-        //this.onLoadToast('error', err.error.message, '');
       },
     });
   }
