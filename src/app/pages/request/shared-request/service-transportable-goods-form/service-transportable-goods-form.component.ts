@@ -9,6 +9,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, of, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -17,17 +18,16 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
-  SERVICE_TRANSPORTABLE_COLUMNS,
   SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE,
   SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_APROVE,
   SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_VALIDATE,
+  SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_VALIDATE_READONLY,
   SERVICE_TRANSPORTABLE_COLUMNS_READONLY,
 } from '../../reception-scheduling-service-order/columns/service-transportable-columns';
 import { CreateManualServiceFormComponent } from '../../reception-scheduling-service-order/components/create-manual-service-form/create-manual-service-form.component';
 import { CreateServiceFormComponent } from '../../reception-scheduling-service-order/components/create-service-form/create-service-form.component';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-service-transportable-goods-form',
@@ -36,7 +36,8 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ServiceTransportableGoodsFormComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   @ViewChild('table', { static: false }) table: any;
   @Input() op: number;
   @Input() showForm: boolean;
@@ -69,7 +70,6 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   ngOnInit(): void {
-
     this.process = this.activeRouter.snapshot.params['process'];
 
     this.configTable();
@@ -85,7 +85,6 @@ export class ServiceTransportableGoodsFormComponent
   configTable() {
     this.getOrderServiceProvided();
     if (this.typeOrder == 'reception') {
-
       this.columns = !this.editable
         ? SERVICE_TRANSPORTABLE_COLUMNS_READONLY
         : SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE;
@@ -96,6 +95,11 @@ export class ServiceTransportableGoodsFormComponent
 
       if (this.process == 'service-order-report-validation') {
         this.columns = SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_VALIDATE;
+
+        if (!this.editable) {
+          this.columns =
+            SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_VALIDATE_READONLY;
+        }
       }
 
       this.title = 'Servicio Bienes Transportables';
@@ -109,7 +113,6 @@ export class ServiceTransportableGoodsFormComponent
       };
 
       if (this.process == 'service-order-report') {
-
         this.columns.resourcesReal = {
           ...this.columns.resourcesReal,
           onComponentInitFunction: (instance?: any) => {
@@ -130,7 +133,6 @@ export class ServiceTransportableGoodsFormComponent
       }
 
       if (this.process == 'service-order-report-validation') {
-
         this.columns.resultAssessment = {
           ...this.columns.resultAssessment,
           onComponentInitFunction: (instance?: any) => {
@@ -228,7 +230,6 @@ export class ServiceTransportableGoodsFormComponent
   setTotalAmount() {
     let ttotal = 0;
     this.data.map((item: any) => {
-
       const resourceNumber = isNullOrEmpty(item.resourcesNumber)
         ? 0
         : Number(item.resourcesNumber);
@@ -379,7 +380,7 @@ export class ServiceTransportableGoodsFormComponent
 
           this.onLoadToast(
             'error',
-            'No se pudo actualzar los bienes transportables'
+            'No se pudo actualizar los bienes transportables'
           );
         },
       });

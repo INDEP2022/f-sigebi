@@ -94,7 +94,9 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
     this.getOrderService();
 
     //Crear tarea inicial
-    //this.generateTask("service-order-request");
+    //this.programmingId = 8760;
+    //this.programming = {}:
+    //this.createTask("service-order-request");
   }
 
   prepareForm() {
@@ -285,9 +287,12 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: (resp: any) => {
-          this.dataOrder = resp.data[0];
-          this.ordServform.patchValue(resp.data[0]);
-          this.orderServiceId = resp.data[0].id;
+          if (resp.data.length > 0) {
+            this.dataOrder = resp.data[0];
+            this.ordServform.patchValue(resp.data[0]);
+            this.orderServiceId = resp.data[0].id;
+          } else {
+          }
         },
       });
   }
@@ -339,22 +344,28 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
     });
   }
 
-  updateOrderService(body: IOrderServiceDTO) {
+  updateOrderService(body: IOrderServiceDTO, alert = true) {
     this.orderService.updateOrderService(body).subscribe({
       next: resp => {
-        this.onLoadToast(
-          'success',
-          'La orden de servicio se guardada correctamente',
-          ''
-        );
+        if (alert)
+          this.onLoadToast(
+            'success',
+            'La orden de servicio se guardada correctamente',
+            ''
+          );
       },
       error: () => {
-        this.onLoadToast('error', 'No se pudo actualizar la orden de servicio');
+        if (alert)
+          this.onLoadToast(
+            'error',
+            'No se pudo actualizar la orden de servicio'
+          );
       },
     });
   }
 
   generateOrdSerReport() {
+    this.nameDoc = 'orden_servicio';
     this.configuraModalFirma();
     return;
 
@@ -417,12 +428,29 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
   }
 
   annexWReport() {
+    this.nameDoc = 'anexo_ordenes_w';
+
     let config: ModalOptions = {
       initialState: {
-        callback: (next: boolean) => {
-          if (next) {
-            //this.getProgrammingId();
+        orderServiceId: this.orderServiceId,
+        idExhibitW: this.dataOrder.contentRepId,
+        callback: data => {
+          console.log(data);
+
+          if (data.next) {
+            if (isNullOrEmpty(this.dataOrder.contentRepId)) {
+              this.dataOrder.contentRepId = data.idExhibitW;
+              this.updateOrderService(
+                {
+                  id: this.orderServiceId,
+                  contentRepId: data.idExhibitW,
+                },
+                false
+              );
+            }
+
             this.isApprove = true;
+            this.openFirma(data.nameSignatorysae, data.postsae);
           }
         },
       },
@@ -555,7 +583,6 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
 
     //const readOnly = this.requestInfo.detail.version == "1";
 
-
     this.btnAprobar = true;
     this.btnRechazar = false;
 
@@ -575,13 +602,8 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         readOnly,
 
         callback: (next, xml) => {
-
-
           //this.updateInfo = !this.updateInfo;
           if (next) {
-
-
-
             //this.updateReport(xml);
           }
         },
@@ -623,7 +645,6 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
   typeDocId = 0;
   typeDocName = '';
 
-
   configureProcess() {
     this.programmingId = +this.activeRouter.snapshot.params['id'];
     this.process = this.activeRouter.snapshot.params['process'];
@@ -636,8 +657,8 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         this.btnEnviar = true;
         this.editVehiculos = true;
         this.editServicios = true;
-
         this.typeOrder = 'reception';
+
         break;
       case 'service-order-validation':
         this.btnReclamar = true;
@@ -651,17 +672,8 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         this.typeDocName = 'FormatoOrdenServicio';
         this.typeOrder = 'reception';
 
-        /*this.getJustification().then(justification => {
-          if (justification != null) {
-            this.btnRechazarJustificacion = true;
-          }
-        });*/
-
-
-
         break;
       case 'service-order-aproval':
-
         this.btnReclamar = true;
         this.btnReporteOrdenServ = true;
         this.btnGuardar = true;
@@ -681,7 +693,6 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
 
         break;
       case 'service-order-report':
-
         this.btnReclamar = false;
         this.btnGuardar = true;
         this.btnEnviar = true;
@@ -692,20 +703,18 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
 
         break;
       case 'service-order-report-validation':
-
         this.btnReclamar = false;
         this.btnReporteOrdenServ = true;
         this.btnGuardar = true;
         this.btnRechazar = true;
         this.btnAnexoW = true;
-        this.editBienesTrans = true;
 
         this.typeOrder = 'reception';
-        this.typeTable = 'multi';
+
+        this.nameDoc = 'anexo_w';
 
         break;
       case 'service-order-report-signature':
-
         this.btnReclamar = true;
         this.btnReporteOrdenServ = true;
         this.btnGuardar = true;
@@ -763,7 +772,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
     /** VERIFICAR VALIDACIONES PARA REALIZAR LA TAREA*/
 
     this.loading = true;
-    const { title, url, type, subtype, ssubtype, process, close } =
+    const { title, url, type, subtype, ssubtype, process, close, rollBack } =
       getConfigService(current, this.programming);
     const user: any = this.authService.decodeToken();
     let body: any = {};
@@ -779,7 +788,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
       body['idTask'] = this.taskInfo.id;
     }
 
-    /*if (rollBack) {
+    if (rollBack) {
       task['taskDefinitionId'] = this.taskInfo.id;
 
       if (!isNullOrEmpty(this.taskInfo.taskDefinitionId)) {
@@ -787,7 +796,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
       }
     } else {
       task['taskDefinitionId'] = this.taskInfo.taskDefinitionId;
-    }*/
+    }
 
     task['id'] = 0;
     task['assignees'] = user.username;
@@ -801,9 +810,9 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
     task['expedientId'] = 0;
     task['urlNb'] = url;
     task['processName'] = process;
-    //task['idstation'] = this.taskInfo.idstation;
-    //task['idTransferee'] = this.taskInfo.idTransferee;
-    //task['idAuthority'] = this.taskInfo.idAuthority;
+    task['idstation'] = this.taskInfo.idstation;
+    task['idTransferee'] = this.taskInfo.idTransferee;
+    task['idAuthority'] = this.taskInfo.idAuthority;
     task['idDelegationRegional'] = user.department;
 
     /*if (!isNullOrEmpty(this.delegation)) {
@@ -884,7 +893,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -931,22 +940,20 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
   }
 
   async getSignatories() {
-
     let learnedId = this.orderServiceId;
     let learnedType = this.typeDocId;
 
     return new Promise<any[]>((res, rej) => {
-      this.signatoriesService.getSignatoriesName(learnedType, learnedId).subscribe({
-        next: resp => {
-          res(resp.data);
-        },
-        error: err => {
-          res([]);
-        },
-      });
+      this.signatoriesService
+        .getSignatoriesName(learnedType, learnedId)
+        .subscribe({
+          next: resp => {
+            res(resp.data);
+          },
+          error: err => {
+            res([]);
+          },
+        });
     });
   }
-
-
-
 }
