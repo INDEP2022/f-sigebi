@@ -136,10 +136,16 @@ export class EventGoodsLotsListComponent
 
     this.lotGoods = new LocalDataSource();
 
+    this.subscribes();
+
     this.params.next(paramsValue);
   }
 
   ngOnInit(): void {
+    this.subscribes();
+  }
+
+  subscribes() {
     this.eventPreparationService.$refreshLotGoods
       .pipe(
         takeUntil(this.$unSubscribe),

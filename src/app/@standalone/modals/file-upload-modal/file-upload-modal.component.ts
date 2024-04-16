@@ -72,7 +72,7 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
     this.loading = false;
     const result = await this.alertQuestion(
       'question',
-      'Archivos Cargados Correctamente',
+      'Archivos cargados correctamente',
       '¿Desea subir más archivos?'
     );
     this.uploadFiles = false;
