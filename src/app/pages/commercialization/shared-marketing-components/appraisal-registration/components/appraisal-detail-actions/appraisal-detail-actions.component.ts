@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { AppraisesService } from 'src/app/core/services/ms-appraises/appraises.service';
 import { MsMassiveappraiseService } from 'src/app/core/services/ms-massiveappraise/ms-massiveappraise.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
@@ -27,17 +28,32 @@ export class AppraisalDetailActionsComponent
   get controls() {
     return this.comerEventForm.controls;
   }
+  jsonToCsv: any[] = [
+    {
+      CVE_AVALUO: '',
+      NO_BIEN: '',
+      NOMENCLATURA_OFICIO: '',
+      DICTAMEN: '',
+      FECHA_DICTAMEN: '',
+    },
+  ];
   constructor(
     private parameterComerService: ParameterModService,
     private massiveGoodService: MassiveGoodService,
     private msMassiveappraiseService: MsMassiveappraiseService,
-    private appraisesService: AppraisesService
+    private appraisesService: AppraisesService,
+    private excelService: ExcelService
   ) {
     super();
   }
 
   ngOnInit(): void {}
 
+  // href = 'assets/csv/Comer_Descuento_Avaluos.csv';
+  async onDownloadFormatDiscount() {
+    const filename: string = `Comer_Descuento_Avaluos`;
+    this.excelService.export(this.jsonToCsv, { type: 'xlsx', filename });
+  }
   // ? ------------------------- DESCARGAR FORMATO
 
   async onDownloadFormat() {
