@@ -61,10 +61,12 @@ export class AppraisalRegistrationChild extends BasePage {
             return null;
           }
           const errors = error.split('/').filter(val => val);
-          for (let index = 0; index < errors.length; index++) {
-            const _err = errors[index];
-            await this.alertInfo('warning', _err, '');
-          }
+          console.log(errors);
+          await this.alertInfo('warning', errors[1], '');
+          // for (let index = 0; index < errors.length; index++) {
+          //   const _err = errors[index];
+          //   await this.alertInfo('warning', _err, '');
+          // }
           throw new Error('Invalid status');
         })
       )
