@@ -647,7 +647,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
             this.dataGoodList[i].goodNumber,
             this.form.controls['event'].value,
             'NADA',
-            'NADA',
+            '0',
             'D'
           );
         }
@@ -852,24 +852,26 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         console.log(this.form.get('radio').value);
         if (this.form.get('radio').value == 2) {
           tituloOficio = await this.getDescriptionParameters('OFI_RES_V');
-          console.log(tituloOficio);
+
           myBody = await this.getDataByOffice();
           myBody.subject = tituloOficio.path;
           this.generateReport(myBody, type.address);
         } else if (this.form.get('radio').value == 3) {
-          tituloOficio = this.getDescriptionParameters('OFI_CAN_V');
-          myBody = await this.getDataByOffice();
+          tituloOficio = await this.getDescriptionParameters('OFI_CAN_V');
+          console.log(tituloOficio);
           myBody.subject = tituloOficio.path;
+          myBody = await this.getDataByOffice();
+          console.log(myBody);
           this.generateReport(myBody, type.address);
         }
       } else if (type.typeOffice == 1) {
         if (this.form.get('radio').value == 2) {
-          tituloOficio = this.getDescriptionParameters('OFI_RES_A');
+          tituloOficio = await this.getDescriptionParameters('OFI_RES_A');
           myBody = await this.getDataByOffice();
           myBody.subject = tituloOficio.path;
           this.generateReport(myBody, type.address);
         } else if (this.form.get('radio').value == 3) {
-          tituloOficio = this.getDescriptionParameters('OFI_CAN_A');
+          tituloOficio = await this.getDescriptionParameters('OFI_CAN_A');
           myBody = await this.getDataByOffice();
           myBody.subject = tituloOficio.path;
           this.generateReport(myBody, type.address);
@@ -932,17 +934,19 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     let noGood: any;
     noGood = await this.getGoodsWithOffice(this.returnIdOffice());
     console.log(noGood);
-    let noGood2: any;
-    noGood2 = await this.getGoodsWithOfficeAll(
-      this.returnIdOffice(),
-      noGood.count
-    );
+    if (noGood != false) {
+      let noGood2: any;
+      noGood2 = await this.getGoodsWithOfficeAll(
+        this.returnIdOffice(),
+        noGood.count
+      );
 
-    for (const x of noGood2) {
-      listGoods = listGoods + x.goodNumber.goodId + ', ';
+      for (const x of noGood2) {
+        listGoods = listGoods + x.goodNumber.goodId + ', ';
+      }
+      console.log(listGoods);
+      myBody.goodsList = listGoods;
     }
-    console.log(listGoods);
-    myBody.goodsList = listGoods;
 
     return myBody;
   }
@@ -956,7 +960,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           resolve(response);
         },
         error: error => {
-          reject(error);
+          resolve(false);
         },
       });
     });
@@ -1198,7 +1202,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         this.statusOffice = i?.estatus_of;
 
         this.m_comer = i;
-        console.log(this.m_comer);
+        console.log(this.tipoOficio);
       }
       this.validateFindOfficeOne(statusOffice);
     } else {
@@ -1354,6 +1358,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.subscribeDelete = this.form
       .get('office')
       .valueChanges.subscribe(value => {
+        this.btnGuardar = true;
+        this.tipoOficio = 0;
+        this.tipoOficioView = 0;
         this.findOfficeService(value);
       });
   }
