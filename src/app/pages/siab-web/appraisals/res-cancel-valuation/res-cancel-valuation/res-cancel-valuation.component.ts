@@ -276,8 +276,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         let body: OfficesSend = new OfficesSend();
         body.eventId = +params['event'];
         body.officeType = +params['type'];
-        this.loadOffice(body.eventId, body.officeType);
-        this.tipoOficio = body.officeType;
+        this.folioCVE(body.eventId);
       }
     });
   }
@@ -545,7 +544,22 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
     this.findOffice(body);
   }
-
+  folioCVE(event: number) {
+    let params = new ListParams();
+    params['filter.eventId'] = `$eq:${event}`;
+    this.serviceJobs.getAll(params).subscribe({
+      next: data => {
+        console.log(data);
+        let body: OfficesSend = new OfficesSend();
+        body.eventId = data.data[0].eventId;
+        body.officeType = data.data[0].jobType;
+        this.loadOffice(body.eventId, body.officeType);
+      },
+      error: () => {
+        // console.log();
+      },
+    });
+  }
   loadOffice(event: number, num: number, arrayLength?: number) {
     let body: OfficesSend = new OfficesSend();
     console.log(event, num);
