@@ -3,7 +3,7 @@
  * Catálogo de asuntos para la gestión de documentación complementaria
  * @interface
  */
-export function getConfigOSEntrega(path, data) {
+export function getConfigServiceEntrega(path, data) {
   let progFolio = data.folio;
   let folio = data.folio;
 
