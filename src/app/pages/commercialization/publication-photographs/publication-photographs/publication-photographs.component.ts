@@ -17,6 +17,7 @@ import {
 
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerLotService } from 'src/app/core/services/ms-parametercomer/comer-lot.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { PublicationPhotographsService } from 'src/app/core/services/ms-parametercomer/publication-photographs.service';
@@ -116,7 +117,8 @@ export class PublicationPhotographsComponent
     private publicationPhotographsService: PublicationPhotographsService,
     private prepareeventServices: ComerClientService,
     private comerTpEventosService: ComerTpEventosService,
-    private parameterModService: ParameterModService
+    private parameterModService: ParameterModService,
+    private lotService: LotService
   ) {
     super();
     this.settings1 = {
@@ -166,7 +168,7 @@ export class PublicationPhotographsComponent
               idLot: () => (searchFilter = SearchFilter.EQ),
               description: () => (searchFilter = SearchFilter.ILIKE),
               idStatusVta: () => (searchFilter = SearchFilter.ILIKE),
-              idClient: () => (searchFilter = SearchFilter.EQ),
+              nameClient: () => (searchFilter = SearchFilter.ILIKE),
             };
             search[filter.field]();
 
@@ -226,6 +228,7 @@ export class PublicationPhotographsComponent
       eventId: [null],
       tpeventoId: [null],
       statusvtaId: [null],
+      descriptionPhoto: [null],
     });
 
     this.formEvent = this.fb.group({
@@ -324,7 +327,6 @@ export class PublicationPhotographsComponent
           item['idAndProcess'] = item.id + ' - ' + item.processKey;
         });
         Promise.all(result).then(resp => {
-          console.log('EVENT', data);
           this.comerEventSelect = new DefaultSelect(data.data, data.count);
         });
       },
@@ -337,7 +339,7 @@ export class PublicationPhotographsComponent
   searchEvent(): void {
     const { id } = this.formEvent.value;
     if (!id) {
-      this.alert('warning', this.title, 'Debe ingresar un evento');
+      this.alert('warning', 'Debe ingresar un evento', '');
     } else {
       this.getLot();
     }
@@ -345,20 +347,29 @@ export class PublicationPhotographsComponent
 
   getLot() {
     const { id } = this.formEvent.value;
-    if (!id) return this.alert('warning', 'Debe seleccionar un evento', '');
     this.loading = true;
     const params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
     params['filter.idEvent'] = `$eq:${id}`;
-    this.comerLotService.getEatLotAll(params).subscribe({
+
+    if (params['filter.nameClient']) {
+      params['filter.client.nomRazon'] = params['filter.nameClient'];
+      delete params['filter.nameClient'];
+    }
+    this.lotService.getFindAllRegistersTot(params).subscribe({
       next: data => {
         console.log(data);
-        this.loading = false;
-        this.data1.load(data.data);
-        this.data1.refresh();
-        this.totalItems1 = data.count;
+        const result = data.items.map((item: any) => {
+          item['nameClient'] = item.client ? item.client.nomRazon : null;
+        });
+        Promise.all(result).then(resp => {
+          this.loading = false;
+          this.data1.load(data.items);
+          this.data1.refresh();
+          this.totalItems1 = data.count;
+        });
       },
       error: error => {
         this.loading = false;
@@ -380,10 +391,7 @@ export class PublicationPhotographsComponent
       next: data => {
         console.log(data);
         this.loading2 = false;
-        const result = data.data.map((item: any) => {
-          // item['status'] = item.good.status
-          // item['description'] = item.good.description
-        });
+        const result = data.data.map((item: any) => {});
         Promise.all(result).then(resp => {
           this.data2.load(data.data);
           this.data2.refresh();
@@ -410,7 +418,7 @@ export class PublicationPhotographsComponent
   selectRow(event: any) {
     console.log(event);
     this.selectedGood = event;
-    this.goodNumber = event.goodNumber;
+    this.goodNumber = 21838744;
   }
 
   userRowSelect(event: any) {

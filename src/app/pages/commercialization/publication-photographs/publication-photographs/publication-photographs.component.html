@@ -73,22 +73,38 @@
         <div accordion-heading class="d-flex justify-content-between">
           <h5>LOTES</h5>
         </div>
-        <div class="row">
-          <div class="col">
-            <div class="table-responsive">
-              <div [class]="loading ? 'table-loading' : ''">
-                <ng2-smart-table
-                  (userRowSelect)="selectRowGood($event.data)"
-                  [attr.class]="'table-bordered table-responsive'"
-                  [settings]="settings1"
-                  [source]="data1">
-                </ng2-smart-table>
-              </div>
-            </div>
+        <div class="col-12">
+          <div class="row">
+            <form-loader *ngIf="loading"></form-loader>
           </div>
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading ? '0px' : '300px' }">
+            <ng2-smart-table
+              (userRowSelect)="selectRowGood($event.data)"
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings1"
+              [source]="data1">
+            </ng2-smart-table>
+          </ng-scrollbar>
         </div>
         <app-pagination [params]="params" [totalItems]="totalItems1">
         </app-pagination>
+        <div *ngIf="!loading" class="row mt-4">
+          <form class="form-material" [formGroup]="form">
+            <div class="col-md-6 text-center">
+              <form-field
+                [control]="form.get('descriptionPhoto')"
+                label="Descripción de la Fotografia Favorita">
+                <input
+                  readonly
+                  type="text"
+                  class="form-control"
+                  formControlName="descriptionPhoto" />
+              </form-field>
+            </div>
+          </form>
+        </div>
       </accordion-group>
     </accordion>
 
@@ -104,20 +120,23 @@
         <div accordion-heading class="d-flex justify-content-between">
           <h5>BIENES DEL LOTE {{ rowAllotment }}</h5>
         </div>
-        <div class="row">
-          <div class="table-responsive">
-            <div [class]="loading2 ? 'table-loading' : ''">
-              <ng2-smart-table
-                (userRowSelect)="selectRow($event.data)"
-                [attr.class]="'table-bordered table-responsive'"
-                [settings]="settings2"
-                [source]="data2">
-              </ng2-smart-table>
-            </div>
+        <div class="col-12">
+          <div class="row">
+            <form-loader *ngIf="loading2"></form-loader>
           </div>
-          <app-pagination [params]="params2" [totalItems]="totalItems2">
-          </app-pagination>
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading2 ? '0px' : '300px' }">
+            <ng2-smart-table
+              (userRowSelect)="selectRow($event.data)"
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings2"
+              [source]="data2">
+            </ng2-smart-table>
+          </ng-scrollbar>
         </div>
+        <app-pagination [params]="params2" [totalItems]="totalItems2">
+        </app-pagination>
       </accordion-group>
     </accordion>
     <accordion

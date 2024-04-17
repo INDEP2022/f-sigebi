@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IStatusCode } from 'src/app/core/models/catalogs/status-code.model';
 import { StatusCodeService } from 'src/app/core/services/catalogs/status-code.service';
@@ -71,71 +72,55 @@ export class StatusCodeFormComponent extends BasePage implements OnInit {
     this.edit ? this.update() : this.create();
   }
 
-  create() {
-    if (
-      this.statusCodeForm.controls['id'].value.trim() == '' ||
-      this.statusCodeForm.controls['descCode'].value.trim() == '' ||
-      (this.statusCodeForm.controls['id'].value.trim() == '' &&
-        this.statusCodeForm.controls['descCode'].value.trim() == '')
-    ) {
-      this.alert('warning', 'No se puede guardar campos vacíos', ``);
-      this.loading = false;
-      return;
-    } else {
-      /*this.loading = true;
-      const params: ListParams = new ListParams();
-      let count: number;
-      params['filter.id'] = this.statusCodeForm.controls['id'].value;
-      this.statusCodeService.getAll(params).subscribe({
-        next: response => {
-          count = response.count;
-          if (response.count > 0) {
-            this.alert('warning', 'Código estado', 'La clave ya existe.');
-          } else {
-            this.statusCodeService
-              .create(this.statusCodeForm.getRawValue())
-              .subscribe({
-                next: data => this.handleSuccess(),
-                error: error => (this.loading = false),
-              });
-          }
-          this.loading = false;
-        },
-        error: error => {
-          if (count > 0) {
-            this.alert('warning', 'Código estado', 'La clave ya existe.');
-          } else {
-            this.statusCodeService
-              .create(this.statusCodeForm.getRawValue())
-              .subscribe({
-                next: data => this.handleSuccess(),
-                error: error => (this.loading = false),
-              });
-          }
+  async create() {
+    const { id } = this.statusCodeForm.value;
+    this.loading = true;
 
-          this.loading = false;
-        },
-      });*/
+    if (await this.getVal(id)) {
       this.alertQuestion(
         'question',
         'El registro ya existe',
         '¿Desea reemplazarlo?'
       ).then(question => {
         if (question.isConfirmed) {
-          //Ejecutar el servicio
           this.statusCodeService
             .create(this.statusCodeForm.getRawValue())
             .subscribe({
               next: data => this.handleSuccess(),
               error: error => {
-                console.log(error);
+                this.alert('warning', 'No se pudo guardar el registro', '');
               },
             });
+        } else if (question.isDismissed) {
+          this.loading = false;
         }
       });
+    } else {
+      this.statusCodeService
+        .create(this.statusCodeForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => {
+            this.alert('warning', 'No se pudo guardar el registro', '');
+          },
+        });
     }
   }
 
+  getVal(id: any): Promise<boolean> {
+    let params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
+    return new Promise((resolve, reject) => {
+      this.statusCodeService.getAll(params).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
   update() {
     if (
       this.statusCodeForm.controls['id'].value.trim() == '' ||

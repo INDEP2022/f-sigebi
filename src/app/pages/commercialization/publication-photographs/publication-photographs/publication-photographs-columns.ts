@@ -13,7 +13,7 @@ export const PUBLICATION_PHOTO1 = {
     title: 'Estatus',
     sort: false,
   },
-  idClient: {
+  nameClient: {
     title: 'Cliente',
     sort: false,
   },
