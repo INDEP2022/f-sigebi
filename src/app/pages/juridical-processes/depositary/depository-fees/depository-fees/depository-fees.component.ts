@@ -37,7 +37,7 @@ export class DepositoryFeesComponent extends BasePage implements OnInit {
   origin2: string = null;
   noBienParams: number = null;
   consult: boolean = false;
-  idNombra: number;
+  idNombra: number = 0;
 
   constructor(
     private fb: FormBuilder,
