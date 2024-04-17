@@ -30,9 +30,10 @@ export class PhotosListCommercialComponent extends BasePage implements OnInit {
     return this._goodNumber;
   }
   set goodNumber(value) {
+    console.log('AQUI', value);
     this._goodNumber = value;
     if (value) {
-      this.getData();
+      this.getData(true);
     } else {
       this.files = [];
       this.errorMessage = '';
@@ -140,7 +141,7 @@ export class PhotosListCommercialComponent extends BasePage implements OnInit {
       );
   }
 
-  private getData() {
+  private getData(val?: boolean) {
     this.files = [];
     this.filePhotoService
       .getAll(this.goodNumber + '')
@@ -152,6 +153,9 @@ export class PhotosListCommercialComponent extends BasePage implements OnInit {
             console.error(this.files);
             this.fileEmiter.emit(this.files);
           }
+        },
+        error: err => {
+          if (val) this.alert('warning', 'No se encontraron fotos', '');
         },
       });
   }
