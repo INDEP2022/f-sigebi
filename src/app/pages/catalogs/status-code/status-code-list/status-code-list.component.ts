@@ -93,7 +93,13 @@ export class StatusCodeListComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.paragraphs = [];
+        this.totalItems = 0;
+        this.data.load([]);
+        this.data.refresh();
+        this.loading = false;
+      },
     });
   }
 
@@ -113,9 +119,9 @@ export class StatusCodeListComponent extends BasePage implements OnInit {
 
   AlertQuestion(statusCode: IStatusCode) {
     this.alertQuestion(
-      'warning',
-      'Eliminar',
-      '¿Desea eliminar este registro?'
+      'question',
+      'Se eliminará el registro',
+      '¿Desea continuar?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -130,7 +136,7 @@ export class StatusCodeListComponent extends BasePage implements OnInit {
     };
     this.statusCodeService.remove2(data).subscribe({
       next: res => {
-        this.alert('success', 'Código de Estado', 'Borrado Correctamente');
+        this.alert('success', 'Código de Estado eliminado correctamente', '');
         this.getExample();
       },
       error: err => {

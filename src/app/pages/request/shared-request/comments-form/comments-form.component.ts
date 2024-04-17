@@ -38,4 +38,8 @@ export class CommentsFormComponent implements OnInit {
   getViewJustification() {
     return this.ordServform.get('justification').value;
   }
+
+  getViewJustificationReport() {
+    return this.ordServform.get('justificationReport').value;
+  }
 }

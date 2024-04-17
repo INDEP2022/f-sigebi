@@ -79,4 +79,11 @@ export class DocumentsComerceService extends HttpService {
       DocumentsComersEndpoints.ComerceDocumentsXmlH + '/' + id
     );
   }
+
+  _updateComerceDocumentsXmlH(body: Partial<ComerceDocumentsXmlH>, id?: any) {
+    return this.put<IListResponse<any>>(
+      `${DocumentsComersEndpoints.ComerceDocumentsXmlH}/${id}`,
+      body
+    );
+  }
 }
