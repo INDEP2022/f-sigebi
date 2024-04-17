@@ -4,27 +4,21 @@
       <div class="mr-auto p-2">
         <h5 class="title">Muestreo Ordenes de Servicio&#58; {{ title }}</h5>
       </div>
+
+      <div class="p-2">
+        <button class="btn btn-primary btn-sm active" (click)="turnSampling()">
+          Turnar muestreo <i class="fa fa-share-square"></i>
+        </button>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-primary btn-sm active" (click)="saveSample()">
+          Guardar <i class="fa fa-save"></i>
+        </button>
+      </div>
     </div>
   </div>
   <div body>
-    <div class="row">
-      <div class="d-flex justify-content-end">
-        <div class="p-2">
-          <button
-            class="btn btn-primary btn-sm active"
-            (click)="turnSampling()">
-            Turnar muestreo <i class="fa fa-share-square"></i>
-          </button>
-        </div>
-        <div class="p-2">
-          <button class="btn btn-primary btn-sm active" (click)="saveSample()">
-            Guardar <i class="fa fa-save"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="row pt-4" *ngIf="showSampleInfo">
+    <div class="row" *ngIf="showSampleInfo">
       <h5 class="title">Detalles de Muestreo Generado</h5>
 
       <div class="col-md-4 pt-4">
@@ -42,7 +36,7 @@
     </div>
 
     <div id="verify-service-orders">
-      <div class="row pt-5">
+      <div class="row">
         <h5>Verificaci&oacute;n de Órdenes de Servicio</h5>
       </div>
 
@@ -90,8 +84,13 @@
                     bindLabel="description"
                     label="Zona Geográfica"
                     (fetchItems)="getgeographicalAreaSelect($event)"
-                    (change)="zoneGeographChange($event)">
+                    (change)="zoneGeographChange($event)"
+                    [optionTemplate]="userOption">
                   </ngx-select>
+                  <ng-template #userOption let-item="item"
+                    >{{ item.description }} - Contrato:
+                    {{ item.contractNumber }}</ng-template
+                  >
                 </form-field>
               </div>
               <div class="col-md-4">
@@ -103,6 +102,10 @@
                     class="form-control"
                     formControlName="samplingPeriod"
                     placeholder=""
+                    [bsConfig]="{
+                      dateInputFormat: 'MM/YYYY',
+                      minMode: 'month'
+                    }"
                     bsDatepicker />
                 </form-field>
               </div>

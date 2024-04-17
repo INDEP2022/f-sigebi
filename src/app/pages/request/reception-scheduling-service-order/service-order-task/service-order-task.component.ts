@@ -18,7 +18,7 @@ import { OrderServiceService } from 'src/app/core/services/ms-order-service/orde
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { ConfirmProgrammingComponent } from '../../shared-request/confirm-programming/confirm-programming.component';
@@ -143,7 +143,11 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
       ],
       originPostalCode: [
         { value: null, disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(5),
+          Validators.minLength(5),
+        ],
       ],
       colonyOrigin: [
         { value: null, disabled: true },
@@ -264,15 +268,21 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
       case 'service-order-capture':
         this.form.enable();
         this.ordServform.enable();
+
+        this.ordServform.get('justification').disable();
+        this.ordServform.get('justificationReport').disable();
+        this.ordServform.get('commentRejection').disable();
+
         break;
     }
   }
 
   setRelease() {
     this.btnReclamar = true;
-
     this.form.disable();
     this.ordServform.disable();
+
+    this.ngOnInit();
   }
 
   getOrderService() {
