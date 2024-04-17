@@ -4,7 +4,10 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IOrderServiceProvider } from 'src/app/core/models/ms-order-entry/order-service-provider.model';
 import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUMBERS_POINT_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-create-manual-service-form',
@@ -13,7 +16,8 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class CreateManualServiceFormComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   orderServiceId: number = null;
 
@@ -39,7 +43,11 @@ export class CreateManualServiceFormComponent
       ],
       priceUnitary: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_POINT_PATTERN),
+          Validators.maxLength(7),
+        ],
       ],
     });
   }

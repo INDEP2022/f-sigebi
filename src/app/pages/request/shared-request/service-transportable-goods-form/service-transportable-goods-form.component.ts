@@ -43,6 +43,7 @@ export class ServiceTransportableGoodsFormComponent
   @Input() showForm: boolean;
   @Input() rejected: boolean;
   @Input() orderServiceId: number;
+  @Input() programmingId: number;
   @Input() isUpdate?: boolean = false;
   @Input() typeOrder?: string = null;
   @Input() justificationRefused: boolean = false;
@@ -74,12 +75,9 @@ export class ServiceTransportableGoodsFormComponent
 
     this.configTable();
 
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      //verificar si existe el order service id
-      if (this.orderServiceId != null) {
-        this.getOrderServiceProvided();
-      }
-    });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getOrderServiceProvided());
   }
 
   configTable() {
@@ -119,6 +117,36 @@ export class ServiceTransportableGoodsFormComponent
         selectMode: this.editable ? 'multi' : '',
         columns: this.columns,
       };
+
+      //Editar columnas comentarios, duracion y recursos
+      if (this.process == 'service-order-capture') {
+        this.columns.commentService = {
+          ...this.columns.commentService,
+          onComponentInitFunction: (instance?: any) => {
+            instance.input.subscribe((data: any) => {
+              this.setValues('commentService', data);
+            });
+          },
+        };
+
+        this.columns.durationTime = {
+          ...this.columns.durationTime,
+          onComponentInitFunction: (instance?: any) => {
+            instance.input.subscribe((data: any) => {
+              this.setValues('durationTime', data);
+            });
+          },
+        };
+
+        this.columns.resourcesNumber = {
+          ...this.columns.resourcesNumber,
+          onComponentInitFunction: (instance?: any) => {
+            instance.input.subscribe((data: any) => {
+              this.setValues('resourcesNumber', data);
+            });
+          },
+        };
+      }
 
       if (this.process == 'service-order-report') {
         this.columns.resourcesReal = {
@@ -169,32 +197,16 @@ export class ServiceTransportableGoodsFormComponent
         };
       }
 
-      this.columns.porcbreaches = {
-        ...this.columns.porcbreaches,
-        onComponentInitFunction: (instance?: any) => {
-          instance.input.subscribe((data: any) => {
-            this.setValues('porcbreaches', data);
-          });
-        },
-      };
-
-      this.columns.durationTime = {
-        ...this.columns.durationTime,
-        onComponentInitFunction: (instance?: any) => {
-          instance.input.subscribe((data: any) => {
-            this.setValues('durationTime', data);
-          });
-        },
-      };
-
-      this.columns.resourcesNumber = {
-        ...this.columns.resourcesNumber,
-        onComponentInitFunction: (instance?: any) => {
-          instance.input.subscribe((data: any) => {
-            this.setValues('resourcesNumber', data);
-          });
-        },
-      };
+      if (this.process == 'service-order-nnn') {
+        this.columns.porcbreaches = {
+          ...this.columns.porcbreaches,
+          onComponentInitFunction: (instance?: any) => {
+            instance.input.subscribe((data: any) => {
+              this.setValues('porcbreaches', data);
+            });
+          },
+        };
+      }
     }
   }
 
@@ -217,9 +229,17 @@ export class ServiceTransportableGoodsFormComponent
     /**
      * Obtener la data por el orderServiceId
      */
+    this.params['filter.orderServiceId'] = `$eq:${this.orderServiceId}`;
+    //params['filter.orderServiceId'] = 516;
+
     const params = new ListParams();
     params['filter.orderServiceId'] = `$eq:${this.orderServiceId}`;
-    //params['filter.orderServiceId'] = 516;
+    params.limit = this.params.value.limit;
+    params.page = this.params.value.page;
+    params.pageSize = this.params.value.pageSize;
+    params.take = this.params.value.take;
+    params.inicio = this.params.value.inicio;
+
     this.orderEntryService
       .getAllOrderServicesProvided(params)
       .pipe(
@@ -280,6 +300,7 @@ export class ServiceTransportableGoodsFormComponent
     config.initialState = {
       orderServId: this.orderServiceId,
       typeService: 'EN_TRANSPORTABLE',
+      programmingId: this.programmingId,
       callback: (data: any) => {
         if (data) {
           this.showButtonServiceManual = true;
@@ -297,6 +318,7 @@ export class ServiceTransportableGoodsFormComponent
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-content-centered' };
     config.initialState = {
       orderServiceId: this.orderServiceId,
+      programmingId: this.programmingId,
       callback: (data: any) => {
         if (data) {
           this.getOrderServiceProvided();
