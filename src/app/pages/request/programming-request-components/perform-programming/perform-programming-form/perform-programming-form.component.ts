@@ -6,7 +6,10 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, takeUntil, throwError } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { minDate } from 'src/app/common/validations/date.validators';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
@@ -61,6 +64,8 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
 import { ProgrammingGoodService } from '../../../../../core/services/ms-programming-request/programming-good.service';
+import { getConfigService } from '../../../reception-scheduling-service-order/service-order-task/service-order-task-case';
+import { isNullOrEmpty } from '../../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { WarehouseFormComponent } from '../../../shared-request/warehouse-form/warehouse-form.component';
 import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
 import { SearchUserFormComponent } from '../../schedule-reception/search-user-form/search-user-form.component';
@@ -225,6 +230,8 @@ export class PerformProgrammingFormComponent
   stationId: string | number;
   autorityId: string | number;
 
+  typeUserLog: string = '';
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -282,7 +289,7 @@ export class PerformProgrammingFormComponent
     );
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.getInfoUserLog();
     this.getRegionalDelegationSelect(new ListParams());
     this.getTypeRelevantSelect(new ListParams());
@@ -297,6 +304,38 @@ export class PerformProgrammingFormComponent
     this.prepareForm();
     this.getInfoTask();
     this.task = JSON.parse(localStorage.getItem('Task'));
+
+    const user: any = this.authService.decodeToken();
+    this.typeUserLog = user.employeetype;
+
+    this.taskInfo = await this.getTask();
+  }
+
+  taskInfo: any = {};
+
+  getTask() {
+    const task = JSON.parse(localStorage.getItem('Task'));
+
+    const param = new FilterParams();
+    param.addFilter('id', task.id);
+    const filter = param.getParams();
+
+    return new Promise((resolve, reject) => {
+      this.taskService.getAll(filter).subscribe({
+        next: resp => {
+          if (resp.data.length > 0) {
+            resolve(resp.data[0]);
+          } else {
+            reject(false);
+          }
+        },
+        error: error => {
+          this.loading = false;
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
+        },
+      });
+    });
   }
 
   getInfoTask() {
@@ -3064,6 +3103,7 @@ export class PerformProgrammingFormComponent
     if (error > 0) {
       this.alert('warning', 'Advertencia', `${message}`);
     } else if (error == 0) {
+      console.log('Info del transferente:', tranferId);
       this.alertQuestion(
         'question',
         'Confirmación',
@@ -3116,6 +3156,99 @@ export class PerformProgrammingFormComponent
               .updateProgramming(this.idProgramming, data)
               .subscribe({
                 next: async () => {
+                  const data = {
+                    folio: folio,
+                  };
+
+                  if (Number(tranferId) == 120 && this.typeUserLog == 'TE') {
+                    console.log(
+                      'Es SAT y usuario TE, crear tarea Orden de Servicio'
+                    );
+                    const {
+                      title,
+                      url,
+                      type,
+                      subtype,
+                      ssubtype,
+                      process,
+                      close,
+                      rollBack,
+                    } = getConfigService('service-order-request', data);
+
+                    const user: any = this.authService.decodeToken();
+                    let body: any = {};
+
+                    body['userProcess'] = user.username;
+                    body['type'] = type;
+                    body['subtype'] = subtype;
+                    body['ssubtype'] = ssubtype;
+
+                    let task: any = {};
+
+                    if (close) {
+                      body['idTask'] = this.taskInfo.id;
+                    }
+
+                    if (rollBack) {
+                      task['taskDefinitionId'] = this.taskInfo.id;
+
+                      if (!isNullOrEmpty(this.taskInfo.taskDefinitionId)) {
+                        task['taskDefinitionName'] =
+                          this.taskInfo.taskDefinitionId;
+                      }
+                    } else {
+                      task['taskDefinitionId'] = this.taskInfo.taskDefinitionId;
+                    }
+
+                    task['id'] = 0;
+                    task['assignees'] = user.username;
+                    task['assigneesDisplayname'] = user.nameUser;
+                    task['creator'] = user.username;
+                    task['reviewers'] = user.username;
+                    task['taskNumber'] = this.idProgramming;
+                    task['title'] = title;
+                    task['programmingId'] = this.idProgramming;
+                    task['requestId'] = this.idProgramming;
+                    task['expedientId'] = 0;
+                    task['urlNb'] = url;
+                    task['processName'] = process;
+                    task['idstation'] = this.taskInfo.idstation;
+                    task['idTransferee'] = this.taskInfo.idTransferee;
+                    task['idAuthority'] = this.taskInfo.idAuthority;
+                    task['idDelegationRegional'] = user.department;
+
+                    body['task'] = task;
+
+                    let orderservice: any = {};
+                    orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
+                    orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
+                    orderservice['pIdApplication'] = this.idProgramming;
+                    orderservice['pCurrentDate'] = new Date().toISOString();
+                    orderservice['pOrderServiceIn'] = '';
+
+                    const response: any = await this.createTaskOrderService(
+                      body
+                    );
+
+                    if (response && !isNullOrEmpty(response.task)) {
+                      this.onLoadToast(
+                        'success',
+                        'Orden de servicio enviada correctamente',
+                        'Orden enviada'
+                      );
+
+                      this.router.navigate([
+                        '/pages/siab-web/sami/consult-tasks',
+                      ]);
+                    } else {
+                      this.onLoadToast(
+                        'error',
+                        'No se pudo enviar la orden de servicio',
+                        ''
+                      );
+                    }
+                  }
+
                   this.performForm
                     .get('regionalDelegationNumber')
                     .setValue(this.delegation);

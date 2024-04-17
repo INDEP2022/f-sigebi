@@ -102,6 +102,10 @@
                     class="form-control"
                     formControlName="samplingPeriod"
                     placeholder=""
+                    [bsConfig]="{
+                      dateInputFormat: 'MM/YYYY',
+                      minMode: 'month'
+                    }"
                     bsDatepicker />
                 </form-field>
               </div>
