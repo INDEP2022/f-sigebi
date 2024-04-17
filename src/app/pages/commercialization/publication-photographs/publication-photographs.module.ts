@@ -5,6 +5,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 
+import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { PhotosListCommercialComponent } from './photos-list/app-photos-list-commercial.component';
 import { PhotoCommercialComponent } from './photos-list/photo/photo-commercial.component';
 import { PublicationPhotographsModalComponent } from './publication-photographs-modal/publication-photographs-modal.component';
@@ -24,6 +25,7 @@ import { PublicationPhotographsComponent } from './publication-photographs/publi
     SharedModule,
     PreviewDocumentsComponent,
     CarouselModule.forRoot(),
+    AccordionModule,
   ],
 })
 export class PublicationPhotographsModule {}

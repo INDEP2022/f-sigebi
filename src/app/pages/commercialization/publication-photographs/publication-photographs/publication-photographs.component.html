@@ -5,213 +5,182 @@
     </div>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
-      <div class="row mt-5 mb-0 d-block">
-        <div class="row d-flex justify-content-center align-content-center">
-          <div class="col-sm-6 col-md-6 mh-80">
-            <div class="row">
-              <div class="col-md-6">
-                <i
-                  class="bx bx-list-ul text-success me-2 d-inline float-icon"></i>
-                <h5 class="font-size-14 mb-2 d-inline">Evento</h5>
-                <form-field
-                  [control]="form.get('eventId')"
-                  class="form-group position-relative d-flex">
-                  <input
-                    type="number"
-                    class="form-control px-3"
-                    formControlName="eventId"
-                    (keyup.enter)="searchEvent()" />
-                  <!-- <button
-                            class="mt-2"
-                            type="button"
-                            (click)="selectedEvent ? enableInputEvent() : searchEvent()">
-                            <i
-                              [ngClass]="selectedEvent ? 'bx-x text-danger' : 'bx-search'"
-                              class="bx"></i>
-                          </button> -->
-                </form-field>
-              </div>
-              <div class="col-md-6">
-                <button
-                  type="button"
-                  [ngClass]="selectedEvent ? 'btn-danger' : 'btn-primary'"
-                  class="btn active btn-sm mt-5"
-                  (click)="selectedEvent ? enableInputEvent() : searchEvent()">
-                  {{ selectedEvent ? 'Limpiar' : 'Buscar' }}
-                  <i
-                    *ngIf="!selectedEvent"
-                    class="bx bx-search-alt bx-sm float-icon"></i>
-                  <i *ngIf="selectedEvent" class="fas fa-eraser"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div
-            class="col-sm-6 col-md-3"
-            *ngIf="selectedEvent != null"
-            @OnEventSelected>
-            <i
-              class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
-            <h5 class="font-size-14 mb-2 d-inline">Cve. Proceso</h5>
-            <p class="text-muted">{{ selectedEvent.processKey }}</p>
-          </div>
-          <div
-            class="col-sm-6 col-md-3"
-            *ngIf="selectedEvent != null"
-            @OnEventSelected>
-            <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
-            <h5 class="font-size-14 mb-2 d-inline">Fecha Evento</h5>
-            <p class="text-muted">
-              {{ selectedEvent.eventDate | date : 'medium' }}
-            </p>
-          </div>
-          <div
-            class="col-sm-12 col-md-6"
-            *ngIf="selectedEvent != null"
-            @OnEventSelected>
-            <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
-            <h5 class="font-size-14 mb-2 d-inline">Lugar</h5>
-            <p class="text-muted">
-              {{ selectedEvent.place }}
-            </p>
-          </div>
-          <div
-            class="col-sm-6 col-md-3"
-            *ngIf="selectedEvent != null"
-            @OnEventSelected>
-            <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
-            <h5 class="font-size-14 mb-2 d-inline">Fecha Fallo</h5>
-            <p class="text-muted">
-              {{ selectedEvent.failedDate | date : 'medium' }}
-            </p>
-          </div>
-          <div
-            class="col-sm-6 col-md-3"
-            *ngIf="selectedEvent != null"
-            @OnEventSelected>
-            <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
-            <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
-            <p class="text-muted">
-              {{ selectedEvent.statusvtaId }}
-            </p>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
-</app-card>
-
-<app-card [header]="true">
-  <div header>
-    <div class="ch-content">
-      <h5 class="title">Lotes</h5>
-    </div>
-  </div>
-  <div body>
-    <div class="row">
-      <!-- <div class="col-md-2">
-        <div class="w-200 m-1 img-container">
-          <img
-            src="https://samyak.co.in/wp-content/uploads/2021/04/image.jpg"
-            alt=""
-            class="w-50" />
-        </div>
-      </div> -->
-      <div class="col">
-        <div class="table-responsive">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              (userRowSelect)="selectRowGood($event.data)"
-              [attr.class]="'table-bordered table-responsive'"
-              [settings]="settings1"
-              [source]="data1">
-            </ng2-smart-table>
-          </div>
-        </div>
-      </div>
-    </div>
-    <app-pagination [params]="dataParams1" [totalItems]="totalItems1">
-    </app-pagination>
-  </div>
-</app-card>
-
-<app-card [header]="true" *ngIf="rowSelectedGood">
-  <div header>
-    <div class="ch-content">
-      <h5 class="title">Bienes del lote {{ rowAllotment }}</h5>
-    </div>
-  </div>
-  <div body>
-    <div class="table-responsive">
-      <div [class]="loading2 ? 'table-loading' : ''">
-        <ng2-smart-table
-          (userRowSelect)="selectRow($event.data)"
-          [attr.class]="'table-bordered table-responsive'"
-          [settings]="settings2"
-          [source]="data2">
-        </ng2-smart-table>
-      </div>
-    </div>
-    <app-pagination [params]="dataParams2" [totalItems]="totalItems2">
-    </app-pagination>
-  </div>
-</app-card>
-
-<app-card [header]="true" *ngIf="selectedGood">
-  <div header>
-    <div class="ch-content">
-      <h5 class="title">Fotograf&iacute;as</h5>
-    </div>
-  </div>
-  <div body>
-    <form class="form-material" [formGroup]="form">
+    <form class="form-material" [formGroup]="formEvent">
       <div class="row">
         <div class="col-md-4">
+          <form-field [control]="formEvent.get('id')">
+            <ngx-select
+              [searchOnInit]="true"
+              (change)="setValuesFormEvent($event)"
+              [form]="formEvent"
+              control="id"
+              [data]="comerEventSelect"
+              value="id"
+              bindLabel="id"
+              label="Evento"
+              (fetchItems)="getComerEvents($event)">
+            </ngx-select>
+            <!-- <input
+              class="form-control"
+              formControlName="eventId"
+              (keyup.enter)="searchEvent()" /> -->
+          </form-field>
+        </div>
+        <div class="col-md-8">
+          <form-field
+            [control]="formEvent.get('processKey')"
+            label="Cve Proceso">
+            <input readonly class="form-control" formControlName="processKey" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="formEvent.get('descType')" label="Tipo">
+            <input readonly class="form-control" formControlName="descType" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="formEvent.get('descStatus')" label="Estatus">
+            <input readonly class="form-control" formControlName="descStatus" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row text-center mt-2 mb-5">
+        <div>
           <button
-            (click)="public()"
             type="button"
-            class="btn btn-primary btn-sm active"
-            [disabled]="disableButton">
-            Publicar como favorito
+            class="btn active btn-primary btn-sm mr-3"
+            (click)="searchEvent()">
+            Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm"
+            (click)="clean()">
+            Limpiar
+            <i class="fas fa-eraser"></i>
           </button>
         </div>
       </div>
-      <div class="row">
-        <app-photos-list-commercial
-          (fileEmiter)="fileEmiter($event)"
-          [disabled]="disabled"
-          [goodNumber]="goodNumber"></app-photos-list-commercial>
-      </div>
-      <!-- <div class="row pt-5">
-        <carousel
-          [itemsPerSlide]="itemsPerSlide"
-          [singleSlideOffset]="singleSlideOffset"
-          [startFromIndex]="6"
-          [interval]="0">
-          <slide *ngFor="let slide of slides; let index = index">
-            <img
-              [src]="slide.image"
-              alt="image slide"
-              style="
-                display: block;
-                height: 250px;
-                width: 300px;
-                object-fit: cover;
-              " />
-            <form-check for="keep-{{ index }}" class="float-check">
-              <input
-                type="checkbox"
-                id="keep-{{ index }}"
-                formControlName="favorite"
-                class="form-control" />
-            </form-check>
-            <div class="carousel-csaption">
-              <h6>Fotograf&iacute;a {{ index }}</h6>
-            </div>
-          </slide>
-        </carousel>
-      </div> -->
     </form>
+
+    <accordion style="margin-bottom: 0px !important" [isAnimated]="true">
+      <accordion-group
+        id="testAcc"
+        style="margin-bottom: 0px !important"
+        [isOpen]="eventSelected"
+        [class.disabled]="!eventSelected">
+        <div accordion-heading class="d-flex justify-content-between">
+          <h5>LOTES</h5>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="table-responsive">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  (userRowSelect)="selectRowGood($event.data)"
+                  [attr.class]="'table-bordered table-responsive'"
+                  [settings]="settings1"
+                  [source]="data1">
+                </ng2-smart-table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <app-pagination [params]="params" [totalItems]="totalItems1">
+        </app-pagination>
+      </accordion-group>
+    </accordion>
+
+    <accordion
+      style="margin-bottom: 0px !important"
+      class="mt-3"
+      [isAnimated]="true">
+      <accordion-group
+        id="testAcc"
+        style="margin-bottom: 0px !important"
+        [isOpen]="eventSelected && rowAllotment"
+        [class.disabled]="!eventSelected || !rowAllotment">
+        <div accordion-heading class="d-flex justify-content-between">
+          <h5>BIENES DEL LOTE {{ rowAllotment }}</h5>
+        </div>
+        <div class="row">
+          <div class="table-responsive">
+            <div [class]="loading2 ? 'table-loading' : ''">
+              <ng2-smart-table
+                (userRowSelect)="selectRow($event.data)"
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings2"
+                [source]="data2">
+              </ng2-smart-table>
+            </div>
+          </div>
+          <app-pagination [params]="params2" [totalItems]="totalItems2">
+          </app-pagination>
+        </div>
+      </accordion-group>
+    </accordion>
+    <accordion
+      style="margin-bottom: 0px !important"
+      class="mt-3"
+      [isAnimated]="true">
+      <accordion-group
+        id="testAcc"
+        style="margin-bottom: 0px !important"
+        [isOpen]="eventSelected && rowAllotment && selectedGood"
+        [class.disabled]="!eventSelected || !rowAllotment || !selectedGood">
+        <div accordion-heading class="d-flex justify-content-between">
+          <h5>FOTOGRAFÍAS</h5>
+        </div>
+        <form class="form-material" [formGroup]="form">
+          <div class="row">
+            <div class="col-md-4">
+              <button
+                (click)="public()"
+                type="button"
+                class="btn btn-primary btn-sm active"
+                [disabled]="disableButton">
+                Publicar como favorito
+              </button>
+            </div>
+          </div>
+          <div class="row py-5">
+            <app-photos-list-commercial
+              (fileEmiter)="fileEmiter($event)"
+              [disabled]="disabled"
+              [goodNumber]="goodNumber"></app-photos-list-commercial>
+          </div>
+          <!-- <div class="row pt-5">
+            <carousel
+              [itemsPerSlide]="itemsPerSlide"
+              [singleSlideOffset]="singleSlideOffset"
+              [startFromIndex]="6"
+              [interval]="0">
+              <slide *ngFor="let slide of slides; let index = index">
+                <img
+                  [src]="slide.image"
+                  alt="image slide"
+                  style="
+                    display: block;
+                    height: 250px;
+                    width: 300px;
+                    object-fit: cover;
+                  " />
+                <form-check for="keep-{{ index }}" class="float-check">
+                  <input
+                    type="checkbox"
+                    id="keep-{{ index }}"
+                    formControlName="favorite"
+                    class="form-control" />
+                </form-check>
+                <div class="carousel-csaption">
+                  <h6>Fotograf&iacute;a {{ index }}</h6>
+                </div>
+              </slide>
+            </carousel>
+          </div> -->
+        </form>
+      </accordion-group>
+    </accordion>
   </div>
 </app-card>
