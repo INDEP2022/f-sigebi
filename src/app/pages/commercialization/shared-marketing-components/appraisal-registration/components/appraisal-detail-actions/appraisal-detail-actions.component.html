@@ -33,9 +33,12 @@
 </li>
 <li class="divider dropdown-divider"></li>
 <li role="menuitem">
-  <a class="dropdown-item" href="assets/csv/Comer_Descuento_Avaluos.csv">
+  <button
+    type="button"
+    class="dropdown-item"
+    (click)="onDownloadFormatDiscount()">
     Descargar Formato Descuento
-  </a>
+  </button>
 </li>
 <li role="menuitem">
   <button type="button" class="dropdown-item" (click)="onValidDisscountFile()">
