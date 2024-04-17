@@ -324,6 +324,7 @@ export class DeliveriesConstancyFormComponent
     };
     config.initialState = {
       idprogDel: data.certificateId,
+      typeEvent: this.typeEvent,
       report: data.certificateType,
       callback: (next: boolean) => {
         if (next) {
