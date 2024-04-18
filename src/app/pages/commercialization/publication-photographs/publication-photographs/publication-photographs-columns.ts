@@ -2,20 +2,24 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 
 export const PUBLICATION_PHOTO1 = {
   idLot: {
-    title: 'lote',
+    title: 'Lote',
     sort: false,
+    width: '15%',
   },
   description: {
     title: 'Descripción',
     sort: false,
+    width: '45%',
   },
-  idStatusVta: {
-    title: 'Estado',
+  descStatus: {
+    title: 'Estatus',
     sort: false,
+    width: '20%',
   },
-  idClient: {
+  nameClient: {
     title: 'Cliente',
     sort: false,
+    width: '20%',
   },
 };
 
@@ -24,11 +28,11 @@ export const PUBLICATION_PHOTO2 = {
     title: 'No. Bien',
     sort: false,
   },
-  status: {
-    title: 'Estado',
+  statusGood: {
+    title: 'Estatus',
     sort: false,
   },
-  description: {
+  descriptionGood: {
     title: 'Descripción',
     sort: false,
   },

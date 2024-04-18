@@ -128,21 +128,24 @@ export class MaintenanceDelegSubdelegComponent
 
   //Trae lista de delegaciones
   getDelegationAll() {
-    this.loading1 = true;
+    this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    params['sortBy'] = `id:DESC`;
     this.delegationService.getAll2(params).subscribe({
       next: response => {
         this.delegationList = response.data;
         this.data.load(response.data);
         this.totalItems = response.count;
-        this.loading1 = false;
+        this.loading = false;
       },
       error: error => {
-        this.loading1 = false;
-        console.log(error);
+        this.delegationList = [];
+        this.data.load([]);
+        this.totalItems = 0;
+        this.loading = false;
       },
     });
   }
@@ -229,7 +232,7 @@ export class MaintenanceDelegSubdelegComponent
 
   //Con el id seleccionado de delegaciones se obtienen sus subdelegaciones
   getSubDelegations(delegation: IDelegation) {
-    this.loading = true;
+    this.loading1 = true;
     /*if (delegation) {
       this.params2.getValue()['filter.delegationNumber'] = delegation.id;
     }*/
@@ -244,15 +247,15 @@ export class MaintenanceDelegSubdelegComponent
           this.data1.load(response.data);
           this.data1.refresh();
           this.totalItems2 = response.count;
-          this.loading = false;
+          this.loading1 = false;
         } else {
           this.subDelegationList = [];
           this.totalItems2 = 0;
-          this.loading = false;
+          this.loading1 = false;
         }
       },
       error: error => {
-        this.loading = false;
+        this.loading1 = false;
         this.data1.load([]);
         this.data1.refresh();
         this.totalItems2 = 0;

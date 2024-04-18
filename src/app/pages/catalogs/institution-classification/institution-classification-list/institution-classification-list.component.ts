@@ -50,9 +50,7 @@ export class InstitutionClassificationListComponent
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'description' ||
-            filter.field == 'numRegister'
+            filter.field == 'id' || filter.field == 'numRegister'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -110,9 +108,9 @@ export class InstitutionClassificationListComponent
 
   showDeleteAlert(institution: IInstitutionClassification) {
     this.alertQuestion(
-      'warning',
-      'Eliminar',
-      '¿Desea eliminar este Registro?'
+      'question',
+      'Se eliminará el registro',
+      '¿Desea continuar?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(institution.id);

@@ -53,17 +53,19 @@ export class RejectionJustifyFormComponent extends BasePage implements OnInit {
         this.loading = true;
         const orderServiceInfo: IOrderServiceDTO = {
           id: this.orderServiceId,
-          justification: this.form.get('justification').value,
+          observation: this.form.get('justification').value,
+          justification: 'Y',
         };
         this.orderServiceService
           .updateOrderService(orderServiceInfo)
           .subscribe({
             next: () => {
-              this.alert(
+              /*this.alert(
                 'success',
                 'Correcto',
                 'Justificación Enviada Correctamente'
-              );
+              );*/
+              this.modalRef.content.callback(true);
               this.loading = false;
               this.close();
             },

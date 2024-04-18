@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -24,8 +24,8 @@ import {
   isNullOrEmpty,
 } from 'src/app/pages/request/request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { environment } from 'src/environments/environment';
-import { LIST_REPORTS_COLUMN } from './list-reports-column';
 import { UploadFielsModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/upload-fiels-modal/upload-fiels-modal.component';
+import { LIST_REPORTS_COLUMN } from './list-reports-column';
 
 @Component({
   selector: 'app-order-signature-modal',
@@ -38,11 +38,13 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
   nameDoc: string = '';
   userName: string = null;
   chargeUser: string = null;
-  numSignature: number = 1;// en ingles
+  numSignature: number = 1;
 
 
+  nameTypeDoc: string = '';
   idTypeDoc: any; //ID Tipo de documento
   idReportAclara: any; //ID de los reportes
+
   sign: boolean = true;
   date: string = '';
   signatories: ISignatories[] = [];
@@ -129,26 +131,28 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-
     switch (this.nameDoc) {
       case 'orden_servicio':
-        this.src = 'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=orden_servicio.jasper&ordenServicioID=5668';
+        this.src = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=orden_servicio.jasper&ordenServicioID=${this.idReportAclara}`;
         break;
       case 'reporte_implementacion':
-        this.src = 'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=reporte_implementacion.jasper&ordenServicioID=5668';
+        this.src = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=reporte_implementacion.jasper&ordenServicioID=${this.idReportAclara}`;
         break;
       case 'anexo_ordenes_w':
-        this.src = 'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=AnexoOrdenesW.jasper&ID_MUESTREO_ORDEN=5668&ID_TIPO_DOCTO=198';
+        this.src = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=AnexoOrdenesW.jasper&ID_MUESTREO_ORDEN=${this.idReportAclara}&ID_TIPO_DOCTO=198`;
         break;
-
+      case 'formato_reclamacion':
+        this.src =
+          'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=FormatoReclamacion.jasper&ID_PROG_ENTREGA=' +
+          this.idProg +
+          '&ID_TIPO_DOCTO=3&FOLIO_PROG_ENTREGA=3';
+        break;
     }
 
     this.loadSignatories(true);
-
   }
 
   async loadSignatories(reset: boolean = false) {
-
     if (!reset) {
       this.signatories = await this.getSignatories();
       return;
@@ -159,7 +163,7 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
     //console.log('Firmantes -----------------');
 
     let signatories = await this.getSignatories();
-    signatories = signatories.filter(sign => isNullOrEmpty(sign.pass));
+    signatories = signatories.filter(sign => sign.validationocsp != 'true');
     console.log('Firmantes: ', signatories);
 
     let deletes = signatories.map(signatory => {
@@ -173,43 +177,36 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
         let create: any = await this.createSignatorie();
         //console.log('Firmante creado: ', create.signatoryId);
         return create;
-      }).then(async create => {
+      })
+      .then(async create => {
         let signatories = await this.getSignatories();
         this.signatories = signatories;
         //console.log('Firmantes: ', this.signatories);
         this.loadSingnatures = false;
-      }).catch(error => {
+      })
+      .catch(error => {
         // Si algo sale mal, el error se capturará aquí
         this.loadSingnatures = false;
       });
 
     //this.signatories = signatories;
-
   }
 
   async getSignatories() {
-
     let learnedId = this.idReportAclara;
     let learnedType = this.idTypeDoc;
 
-    if (this.isDynamic) {
-      learnedType = 217;
-      learnedId = 'SOLICITUDES-' + this.idReportAclara + '-' + this.idTypeDoc;
-    }
-
-    if (parseInt(this.idTypeDoc) == 223) {
-      learnedId = this.idReportAclara + '-2-' + this.idTypeDoc;
-    }
-
     return new Promise<any[]>((res, rej) => {
-      this.signatoriesService.getSignatoriesName(learnedType, learnedId).subscribe({
-        next: resp => {
-          res(resp.data);
-        },
-        error: err => {
-          res([]);
-        },
-      });
+      this.signatoriesService
+        .getSignatoriesName(learnedType, learnedId)
+        .subscribe({
+          next: resp => {
+            res(resp.data);
+          },
+          error: err => {
+            res([]);
+          },
+        });
     });
   }
 
@@ -227,7 +224,6 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
   }
 
   async createSignatorie() {
-
     let token = this.authService.decodeToken();
     let name = this.userName || token.name;
     let post = this.chargeUser || token.cargonivel1;
@@ -240,6 +236,7 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
       post: post,
       learnedType: learnedType,
       learnedId: learnedId,
+      version: this.numSignature,
     };
 
     return new Promise<any[]>((res, rej) => {
@@ -252,7 +249,6 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
         },
       });
     });
-
   }
 
   close(): void {
@@ -285,7 +281,7 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
             urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
             type: 'pdf',
           },
-          callback: (response: any) => { },
+          callback: (response: any) => {},
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
         keyboard: false,
@@ -295,7 +291,14 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
     });
   }
 
-  uploadData(signatories: ISignatories): void {
+  uploadData(signatories: any): void {
+
+    if (signatories['validationocsp'] == 'true') {
+      this.alertInfo('info', 'Firma Electrónica', 'El firmante seleccionado ya ha firmado el documento');
+      return;
+    }
+
+
     const idReportAclara = this.idReportAclara;
     this.loading = true;
     let config: ModalOptions = {
@@ -311,7 +314,7 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
         },
         onClose: (cancel: boolean) => {
           if (cancel) this.loading = false;
-        }
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       keyboard: false,
@@ -322,99 +325,10 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
   }
 
   rowsSelected(event: any) {
+
     this.valuesSign = event.data;
     const idDoc = this.idSolicitud;
 
-    const obj: Object = {
-      id: this.requestInfo.id,
-      recordId: this.requestInfo.recordId,
-      applicationDate: this.requestInfo.applicationDate,
-      receptionDate: this.requestInfo.receptionDate,
-      nameOfOwner: this.requestInfo.nameOfOwner,
-      holderCharge: this.requestInfo.holderCharge,
-      phoneOfOwner: this.requestInfo.phoneOfOwner,
-      emailOfOwner: this.requestInfo.emailOfOwner,
-      transferenceId: this.requestInfo.transferenceId,
-      //transferent: this.requestInfo.transferent, ¿Cambio?
-      stationId: this.requestInfo.stationId,
-      //emisora: this.requestInfo.emisora, ¿Cambio?
-      authorityId: this.requestInfo.authorityId,
-      regionalDelegationId: this.requestInfo.regionalDelegationId,
-      //regionalDelegation: this.requestInfo.regionalDelegation,
-      sender: this.requestInfo.sender,
-      observations: this.requestInfo.observations,
-      targetUser: this.requestInfo.targetUser,
-      urgentPriority: this.requestInfo.urgentPriority,
-      indicatedTaxpayer: this.requestInfo.indicatedTaxpayer,
-      transferenceFile: this.requestInfo.transferenceFile,
-      transferEntNotes: this.requestInfo.transferEntNotes,
-      idAddress: this.requestInfo.idAddress,
-      originInfo: this.requestInfo.originInfo,
-      circumstantialRecord: this.requestInfo.circumstantialRecord,
-      previousInquiry: this.requestInfo.previousInquiry,
-      lawsuit: this.requestInfo.lawsuit,
-      protectNumber: this.requestInfo.protectNumber,
-      tocaPenal: this.requestInfo.tocaPenal,
-      paperNumber: this.requestInfo.paperNumber,
-      paperDate: this.requestInfo.paperDate,
-      indicated: this.requestInfo.indicated,
-      publicMinistry: this.requestInfo.publicMinistry,
-      court: this.requestInfo.court,
-      crime: this.requestInfo.crime,
-      receiptRoute: this.requestInfo.receiptRoute,
-      destinationManagement: this.requestInfo.destinationManagement,
-      affair: this.requestInfo.affair,
-      satDeterminant: this.requestInfo.satDeterminant,
-      satDirectory: this.requestInfo.satDirectory,
-      //authority: this.requestInfo.authority,
-      satZoneCoordinator: this.requestInfo.satZoneCoordinator,
-      userCreated: this.requestInfo.userCreated,
-      creationDate: this.requestInfo.creationDate,
-      userModification: this.requestInfo.userModification,
-      modificationDate: this.requestInfo.modificationDate,
-      typeOfTransfer: this.requestInfo.typeOfTransfer,
-      domainExtinction: this.requestInfo.domainExtinction,
-      version: this.requestInfo.version,
-      targetUserType: this.requestInfo.targetUserType,
-      trialType: this.requestInfo.trialType,
-      typeRecord: this.requestInfo.typeRecord,
-      requestStatus: this.requestInfo.requestStatus,
-      fileLeagueType: this.requestInfo.fileLeagueType,
-      fileLeagueDate: this.requestInfo.fileLeagueDate,
-      rejectionComment: this.requestInfo.rejectionComment,
-      authorityOrdering: this.requestInfo.authorityOrdering,
-      instanceBpm: this.requestInfo.instanceBpm,
-      trial: this.requestInfo.trial,
-      compensationType: this.requestInfo.compensationType,
-      stateRequestId: this.requestInfo.stateRequestId,
-      searchSiab: this.requestInfo.searchSiab,
-      priorityDate: this.requestInfo.priorityDate,
-      ofRejectionsNumber: this.requestInfo.ofRejectionsNumber,
-      rulingDocumentId: this.requestInfo.rulingDocumentId,
-      reportSheet: this.requestInfo.reportSheet,
-      nameRecipientRuling: this.requestInfo.nameRecipientRuling,
-      postRecipientRuling: this.requestInfo.postRecipientRuling,
-      paragraphOneRuling: this.requestInfo.paragraphOneRuling,
-      paragraphTwoRuling: this.requestInfo.paragraphTwoRuling,
-      nameSignatoryRuling: this.valuesSign.name, //Info nueva que se inserta
-      postSignatoryRuling: this.valuesSign.post,
-      ccpRuling: this.requestInfo.ccpRuling,
-      rulingCreatorName: this.requestInfo.rulingCreatorName,
-      rulingSheetNumber: this.requestInfo.rulingSheetNumber,
-      registrationCoordinatorSae: this.requestInfo.registrationCoordinatorSae,
-      emailNotification: this.requestInfo.emailNotification,
-      keyStateOfRepublic: this.requestInfo.keyStateOfRepublic,
-      instanceBpel: this.requestInfo.instanceBpel,
-      verificationDateCump: this.requestInfo.verificationDateCump,
-      recordTmpId: this.requestInfo.recordTmpId,
-      coordregsae_ktl: this.requestInfo.coordregsae_ktl,
-    };
-
-    //Enviar nueva información a Request
-    this.requestService.update(idDoc, obj).subscribe({
-      next: data => { },
-      error: error => (this.loading = false),
-    });
   }
 
   selectRow(row?: any) {
@@ -582,7 +496,7 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
             this.modalRef.content.callback(false, null);
             this.close();
           },
-          error: error => { },
+          error: error => {},
         });
     });
   }
@@ -601,119 +515,15 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
   }
 
   firm() {
-    //Firmar reporte Documento Dinamico
-    if (this.isDynamic) {
-      let id = 'SOLICITUDES-' + this.idReportAclara + '-' + this.idTypeDoc;
 
-      const nameTypeReport = 'DocumentoDinamico';
-      const formData: Object = {
-        id: id,
-        firma: true,
-        tipoDocumento: nameTypeReport,
-      };
+    const formData: Object = {
+      id: this.idReportAclara,
+      firma: true,
+      tipoDocumento: this.nameTypeDoc,
+    };
 
-      this.firmReport(id, nameTypeReport, formData);
-      return;
-    }
+    this.firmReport(this.idReportAclara, this.nameTypeDoc, formData);
 
-    //String situacionJuridicaID = ID.split("-")[1];
-    //String solicitudID = ID.split("-")[0];
-    //String tipoDocumentoID = ID.split("-")[2];
-
-    //65991 - 2 - 223
-
-    if (parseInt(this.idTypeDoc) == 223) {
-      let id = this.idReportAclara + '-2-' + this.idTypeDoc;
-
-      const nameTypeReport = 'SituacionJuridicaAmparo';
-      const formData: Object = {
-        id: id,
-        firma: true,
-        tipoDocumento: nameTypeReport,
-      };
-
-      this.firmReport(id, nameTypeReport, formData);
-      return;
-    }
-
-    //Firmar reporte Dictamen Procedencia
-    if (this.idTypeDoc == 50) {
-      const requestInfo = this.requestInfo; //ID solicitud
-
-      const nameTypeReport = 'DictamenProcendecia';
-      const formData: Object = {
-        id: this.idReportAclara,
-        firma: true,
-        tipoDocumento: nameTypeReport,
-      };
-
-      this.firmReport(requestInfo.id, nameTypeReport, formData);
-    }
-    //Firmar reporte Oficio improcedencia / Oficio_Aclaracion
-    if (this.idTypeDoc == 111) {
-      const nameTypeReport = 'OficioImprocedencia';
-      const formData: Object = {
-        id: this.idReportAclara,
-        firma: true,
-        tipoDocumento: nameTypeReport,
-      };
-
-      this.firmReport(this.idReportAclara, nameTypeReport, formData);
-    }
-    if (this.idTypeDoc == 104) {
-      const nameTypeReport = 'OficioAclaracionTransferente';
-      const formData: Object = {
-        id: this.idReportAclara,
-        firma: true,
-        tipoDocumento: nameTypeReport,
-      };
-
-      this.firmReport(this.idReportAclara, nameTypeReport, formData);
-    }
-
-    if (this.idTypeDoc == 212) {
-      const nameTypeReport = 'AclaracionComercioExterior';
-      const formData: Object = {
-        id: this.idReportAclara,
-        firma: true,
-        tipoDocumento: nameTypeReport,
-      };
-
-      this.firmReport(this.idReportAclara, nameTypeReport, formData);
-    }
-
-    if (this.idTypeDoc == 211) {
-      const nameTypeReport = 'AclaracionAsegurados';
-      const formData: Object = {
-        id: this.idReportAclara,
-        firma: true,
-        tipoDocumento: nameTypeReport,
-      };
-
-      this.firmReport(this.idReportAclara, nameTypeReport, formData);
-    }
-
-    if (this.idTypeDoc == 213) {
-      const nameTypeReport = 'AclaracionTransferentesVoluntarias';
-      const formData: Object = {
-        id: this.idReportAclara,
-        firma: true,
-        tipoDocumento: nameTypeReport,
-      };
-
-      this.firmReport(this.idReportAclara, nameTypeReport, formData);
-    }
-
-    if (this.idTypeDoc == 216) {
-      const nameTypeReport = 'ImprocedenciaTransferentesVoluntarias';
-      const formData: Object = {
-        id: this.idReportAclara,
-        firma: true,
-        tipoDocumento: nameTypeReport,
-      };
-
-      this.firmReport(this.idReportAclara, nameTypeReport, formData);
-    }
   }
 
   xml: string = '';
@@ -893,8 +703,8 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
         };
 
         this.requestService.update(this.idReportAclara, obj).subscribe({
-          next: resp => { },
-          error: error => { },
+          next: resp => {},
+          error: error => {},
         });
         break;
       }
@@ -911,8 +721,8 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
         this.documentService
           .updateClarDocImp(this.infoReport.id, modelReport)
           .subscribe({
-            next: data => { },
-            error: error => { },
+            next: data => {},
+            error: error => {},
           });
 
         break;
@@ -930,5 +740,4 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
     this.loading = false;
     this.modalRef.content.callback(true, this.xml);
   }
-
 }

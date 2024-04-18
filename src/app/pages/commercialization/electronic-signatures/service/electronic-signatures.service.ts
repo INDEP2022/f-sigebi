@@ -49,8 +49,11 @@ export class ElectronicSignaturesService {
   getAllComerceDocumentsXmlH(params: _Params) {
     return this.msDocumentsComerceService.getAllComerceDocumentsXmlH(params);
   }
-  updateComerceDocumentsXmlH(params: Partial<ComerceDocumentsXmlH>) {
-    return this.msDocumentsComerceService.updateComerceDocumentsXmlH(params);
+  updateComerceDocumentsXmlH(params: Partial<ComerceDocumentsXmlH>, id: any) {
+    return this.msDocumentsComerceService._updateComerceDocumentsXmlH(
+      params,
+      id
+    );
   }
   comerModifyXML(body: Partial<IComerModifyXML>) {
     return this.msElectronicFirmService.comerModifyXML(body);

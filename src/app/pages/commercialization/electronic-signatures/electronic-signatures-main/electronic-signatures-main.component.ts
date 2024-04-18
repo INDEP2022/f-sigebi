@@ -617,6 +617,16 @@ export class ElectronicSignaturesMainComponent
         }
       },
       error: error => {
+        if (onlyReport == true) {
+          if (error.error.message == 'No se realizarón cambios') {
+            this.alert('success', 'Proceso terminado correctamente', '');
+            this.initRelDocs();
+            this.getRelationPersons();
+            this.getRelationHistorical();
+          } else {
+            this.alert('warning', 'No se pudo terminar el proceso', '');
+          }
+        }
         console.log(error);
       },
     });
@@ -831,8 +841,8 @@ export class ElectronicSignaturesMainComponent
   uploadFirmPDF() {
     let body: IComerModifyXML = {
       documXmlId: this.selectedRow.documensxmltid,
-      screenKey: this.selectedRow.screenkey,
-      reportKey: this.selectedRow.reportkey,
+      screenKey: 'FCOMEREPINGXMAND',
+      reportKey: 'RCOMERINGXMAND',
       referenceId: this.selectedRow.referenceid + '',
       documentId: this.selectedRow.documentid + '',
       consecutiveNumber: this.selectedRow.consecutivenumber,
@@ -850,24 +860,32 @@ export class ElectronicSignaturesMainComponent
   }
 
   updateComerActXml() {
+    const result = Number(String(this.selectedRow.documentid).substr(8, 2));
     let obj = {
-      pathNamePdf: '',
+      pathNamePdf:
+        '\\\\MXEXTW8SA19\\RepositorioPDF\\2023\\Evento-' +
+        this.selectedRow.referenceid +
+        '-' +
+        result +
+        '.PDF',
       documentStatus: 1,
     };
-    this.svElectronicSignatures.updateComerceDocumentsXmlH(obj).subscribe({
-      next: res => {
-        console.log('UPDATE COMER ACT', res);
-        this.updatePaysRef(this.selectedRow);
-      },
-      error: error => {
-        console.log(error);
-        this.alert(
-          'error',
-          'Error al Actualizar',
-          'No se pudo actualizar el PDF en la base de datos'
-        );
-      },
-    });
+    this.svElectronicSignatures
+      .updateComerceDocumentsXmlH(obj, this.selectedRow.documensxmltid)
+      .subscribe({
+        next: res => {
+          console.log('UPDATE COMER ACT', res);
+          this.updatePaysRef(this.selectedRow, true);
+        },
+        error: error => {
+          console.log(error);
+          this.alert(
+            'error',
+            'Error al Actualizar',
+            'No se pudo actualizar el PDF en la base de datos'
+          );
+        },
+      });
   }
 
   downloadFile() {

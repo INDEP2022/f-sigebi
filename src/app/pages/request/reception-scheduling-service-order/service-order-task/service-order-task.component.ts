@@ -4,26 +4,31 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { catchError, of } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { FilterParams, ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { IOrderServiceDTO } from 'src/app/core/models/ms-order-service/order-service.mode';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { ConfirmProgrammingComponent } from '../../shared-request/confirm-programming/confirm-programming.component';
 import { AnnexWFormComponent } from '../components/annex-w-form/annex-w-form.component';
 import { RejectionCommentFormComponent } from '../components/rejection-comment-form/rejection-comment-form.component';
 import { RejectionJustifyFormComponent } from '../components/rejection-justify-form/rejection-justify-form.component';
 import { OrderSignatureModalComponent } from '../components/service-order-signature-modal/order-signature-modal.component';
-import { getConfigService } from './service-order-task-case';
-import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
-import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { TypeSignatureModalComponent } from '../components/type-signature-modal/type-signature-modal..component';
+import { getConfigService } from './service-order-task-case';
+import { getConfigServiceEntrega } from './service-order-task-entrega';
 
 @Component({
   selector: 'app-service-order-task',
@@ -38,14 +43,11 @@ import { TypeSignatureModalComponent } from '../components/type-signature-modal/
     `,
   ],
 })
-export class ServiceOrderTaskComponent
-  extends BasePage
-  implements OnInit {
+export class ServiceOrderTaskComponent extends BasePage implements OnInit {
   claimRequest: boolean = false;
   form: FormGroup = new FormGroup({});
   ordServform: FormGroup = new FormGroup({});
   parentModal: BsModalRef;
-  op: number = null;
   showForm: boolean = false;
   orderServiceId: number = null;
   lsProgramming: string = null;
@@ -63,6 +65,9 @@ export class ServiceOrderTaskComponent
   readonly: boolean = true;
   typeTable: string = '';
   taskInfo: any = {};
+
+  dataOrder: any = {};
+  op = 0;
 
   //private programmingService = inject(ProgrammingRequestService);
   //private router = inject(ActivatedRoute);
@@ -82,7 +87,6 @@ export class ServiceOrderTaskComponent
   }
 
   async ngOnInit(): Promise<void> {
-
     this.taskInfo = await this.getTask();
     this.title = this.taskInfo.title;
     console.log(this.taskInfo);
@@ -92,11 +96,12 @@ export class ServiceOrderTaskComponent
     this.getOrderService();
 
     //Crear tarea inicial
-    //this.generateTask("service-order-request");
+    //this.programmingId = 8760;
+    //this.programming = {}:
+    //this.createTask("service-order-request");
   }
 
   prepareForm() {
-
     this.form = this.fb.group({
       location: [
         { value: null, disabled: true },
@@ -121,11 +126,11 @@ export class ServiceOrderTaskComponent
       userContainers: [null, [Validators.pattern(STRING_PATTERN)]],
       //
       transferLocation: [
-        { value: null, disabled: true },
+        { value: null, disabled: false },
         [Validators.pattern(STRING_PATTERN)],
       ],
       transferAddress: [
-        { value: null, disabled: true },
+        { value: null, disabled: false },
         [Validators.pattern(STRING_PATTERN)],
       ],
       //
@@ -139,25 +144,37 @@ export class ServiceOrderTaskComponent
       ],
       originPostalCode: [
         { value: null, disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(5),
+          Validators.minLength(5),
+        ],
       ],
       colonyOrigin: [
         { value: null, disabled: true },
         [Validators.pattern(STRING_PATTERN)],
       ],
       //
-      notes: [{ value: null, disabled: true }, [Validators.pattern(STRING_PATTERN)]],
-      observation: [{ value: null, disabled: true }, [Validators.pattern(STRING_PATTERN)]],
+      notes: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      observation: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
       justification: [null, [Validators.pattern(STRING_PATTERN)]],
       justificationReport: [null, [Validators.pattern(STRING_PATTERN)]],
-      commentRejection: [{ value: null, disabled: true }, [Validators.pattern(STRING_PATTERN)]],
+      commentRejection: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
       programmingId: [null],
       id: [null],
     });
 
     this.form.disable();
     this.ordServform.disable();
-
   }
 
   async sendOrderService() {
@@ -176,8 +193,16 @@ export class ServiceOrderTaskComponent
       `¿Desea enviar la orden de servicio con folio ${this.programming.folio}?`
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
-        this.createTask();
+        switch (this.process) {
+          case 'service-order-capture':
+            this.createTask();
+            break;
+          case 'service-order-report':
+            this.createTask('service-order-report');
+            break;
+          case 'service-order-validation-justification':
+            break;
+        }
       }
     });
   }
@@ -227,8 +252,6 @@ export class ServiceOrderTaskComponent
       `¿Desea guardar la orden de servicio con folio ${folio}?`
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
-
         let ordServiceForm = this.ordServform.getRawValue();
         this.isUpdate = true;
         this.updateOrderService(ordServiceForm);
@@ -246,18 +269,21 @@ export class ServiceOrderTaskComponent
       case 'service-order-capture':
         this.form.enable();
         this.ordServform.enable();
+
+        this.ordServform.get('justification').disable();
+        this.ordServform.get('justificationReport').disable();
+        this.ordServform.get('commentRejection').disable();
+
         break;
     }
-
-
   }
 
   setRelease() {
     this.btnReclamar = true;
-
     this.form.disable();
     this.ordServform.disable();
 
+    this.ngOnInit();
   }
 
   getOrderService() {
@@ -273,12 +299,40 @@ export class ServiceOrderTaskComponent
       )
       .subscribe({
         next: (resp: any) => {
-          // setTimeout(() => {
-          this.ordServform.patchValue(resp.data[0]);
-          this.orderServiceId = resp.data[0].id;
-          // }, 100);
+          if (resp.data.length > 0) {
+            this.dataOrder = resp.data[0];
+            this.ordServform.patchValue(resp.data[0]);
+            this.orderServiceId = resp.data[0].id;
+          } else {
+          }
         },
       });
+  }
+
+  getJustification(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.programmingId'] = `$eq:${this.programmingId}`;
+      this.orderService
+        .getAllOrderService(params)
+        .pipe(
+          catchError((e: any) => {
+            if (e.status == 400) return of({ data: [], count: 0 });
+            throw e;
+          })
+        )
+        .subscribe({
+          next: (resp: any) => {
+            this.dataOrder = resp.data[0];
+            this.ordServform.patchValue(resp.data[0]);
+            this.orderServiceId = resp.data[0].id;
+            resolve(resp.data[0].justification); // Resuelve la promesa con el valor de justification
+          },
+          error: (err: any) => {
+            reject(err); // Rechaza la promesa si hay un error
+          },
+        });
+    });
   }
 
   getOrderServiceProvided() {
@@ -302,22 +356,38 @@ export class ServiceOrderTaskComponent
     });
   }
 
-  updateOrderService(body: IOrderServiceDTO) {
+  updateOrderService(body: IOrderServiceDTO, alert = true) {
     this.orderService.updateOrderService(body).subscribe({
       next: resp => {
-        this.onLoadToast(
-          'success',
-          'La orden de servicio se guardada correctamente',
-          ''
-        );
+        if (alert)
+          this.onLoadToast(
+            'success',
+            'La orden de servicio se guardada correctamente',
+            ''
+          );
       },
       error: () => {
-        this.onLoadToast('error', 'No se pudo actualizar la orden de servicio');
+        if (alert)
+          this.onLoadToast(
+            'error',
+            'No se pudo actualizar la orden de servicio'
+          );
       },
     });
   }
 
+  generateReportImpl() {
+    this.nameDoc = 'reporte_implementacion';
+    this.typeDocId = 246;
+    this.typeDocName = 'ReporteImplementacion';
+
+    this.configuraModalFirma();
+  }
+
   generateOrdSerReport() {
+    this.nameDoc = 'orden_servicio';
+    this.typeDocId = 245;
+    this.typeDocName = 'FormatoOrdenServicio';
 
     this.configuraModalFirma();
     return;
@@ -325,7 +395,7 @@ export class ServiceOrderTaskComponent
     const config = MODAL_CONFIG;
     config.initialState = {
       idProgramming: this.programmingId,
-      type: this.op, //
+      type: null, //
       callback: (signatore: any) => {
         //ISignatories
         if (signatore.data) {
@@ -381,12 +451,31 @@ export class ServiceOrderTaskComponent
   }
 
   annexWReport() {
+    this.nameDoc = 'anexo_ordenes_w';
+    this.typeDocId = 198;
+    this.typeDocName = 'AnexoWMuestreoOrdenServicio';
+
     let config: ModalOptions = {
       initialState: {
-        callback: (next: boolean) => {
-          if (next) {
-            //this.getProgrammingId();
+        orderServiceId: this.orderServiceId,
+        idExhibitW: this.dataOrder.contentRepId,
+        callback: data => {
+          console.log(data);
+
+          if (data.next) {
+            if (isNullOrEmpty(this.dataOrder.contentRepId)) {
+              this.dataOrder.contentRepId = data.idExhibitW;
+              this.updateOrderService(
+                {
+                  id: this.orderServiceId,
+                  contentRepId: data.idExhibitW,
+                },
+                false
+              );
+            }
+
             this.isApprove = true;
+            this.openFirma(data.nameSignatorysae, data.postsae);
           }
         },
       },
@@ -402,31 +491,68 @@ export class ServiceOrderTaskComponent
 
   rejectOrder() {
     const folio = this.ordServform.get('serviceOrderFolio').value;
+    console.log(this.orderServiceId);
     let config: ModalOptions = {
       initialState: {
-        folio: folio,
+        orderServiceId: this.orderServiceId,
+        folioOrderservice: this.dataOrder.serviceOrderFolio,
         callback: (next: boolean) => {
           if (next) {
-            //this.getProgrammingId();
+            switch (this.process) {
+              case 'service-order-validation':
+              case 'service-order-aproval':
+              case 'service-order-report-validation':
+                new Promise(resolve => setTimeout(resolve, 1000)).then(() => {
+                  this.createTask('service-order-validation-reject');
+                });
+                break;
+              default:
+                new Promise(resolve => setTimeout(resolve, 1000)).then(() => {
+                  this.createTask();
+                });
+                break;
+            }
           }
         },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    //RejectionJustifyFormComponent
     this.modalService.show(RejectionCommentFormComponent, config);
   }
 
+  rejectOrderJustification() {
+    this.editServicios = true;
+    this.btnRechazarJustificacion = false;
+  }
+
   approve() {
-    const folio = this.ordServform.get('serviceOrderFolio').value;
+    let folio = this.dataOrder.serviceOrderFolio;
+
     this.alertQuestion(
       'question',
       `¿Deseas aprobar la orden de servicio con folio: ${folio}?`,
       ''
     ).then(question => {
       if (question.isConfirmed) {
-        this.onLoadToast('success', 'Solicitud Aprovada', 'falta la logica');
+        switch (this.process) {
+          case 'service-order-report-aprove':
+            //FALTA VALIDAR SI FINALIZA LA TAREA
+            //this.createTask('service-order-report-aprove');
+            let response = this.closeTask();
+            if (response) {
+              this.onLoadToast(
+                'success',
+                'Orden de servicio aprobada correctamente',
+                'Orden aprobada'
+              );
+              this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+            }
+            break;
+          default:
+            this.createTask();
+            break;
+        }
       }
     });
   }
@@ -435,11 +561,16 @@ export class ServiceOrderTaskComponent
     const folio = this.ordServform.get('serviceOrderFolio').value;
     let config: ModalOptions = {
       initialState: {
-        folio: folio,
-        op: this.op,
+        orderServiceId: this.orderServiceId,
+        folioOrderservice: this.dataOrder.serviceOrderFolio,
+        op: null,
         callback: (next: boolean) => {
           if (next) {
-            //this.getProgrammingId();
+            switch (this.process) {
+              default:
+                this.createTask();
+                break;
+            }
           }
         },
       },
@@ -447,10 +578,6 @@ export class ServiceOrderTaskComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(RejectionJustifyFormComponent, config);
-  }
-
-  refuseJustification() {
-    this.justificationRefused = true;
   }
 
   assignSign(signatore: any, typedoc: any = '') {
@@ -474,25 +601,28 @@ export class ServiceOrderTaskComponent
   }
 
   async openFirma(name, charge) {
-
     let token = this.authService.decodeToken();
     let today = new Date();
 
-    let idTypeDoc = "0";
+    let idTypeDoc = this.typeDocId;
+    let nameTypeDoc = this.typeDocName;
     let readOnly = false;
 
     const typeAnnex = 'approval-request';
     const requestInfo = { id: this.programmingId, type: 'programming' };
-    const idReportAclara = this.programmingId;
-    const nameTypeDoc = 'OrdenServicio';
+    const idReportAclara = this.orderServiceId;
     const nomenglatura = '';
 
     const nameDoc = this.nameDoc;
     const userName = name;
     const chargeUser = charge;
     const numSignature = this.numSignature;
+    const version = this.numSignature;
 
     //const readOnly = this.requestInfo.detail.version == "1";
+
+    this.btnAprobar = true;
+    this.btnRechazar = false;
 
     let config: ModalOptions = {
       initialState: {
@@ -500,8 +630,7 @@ export class ServiceOrderTaskComponent
         userName,
         chargeUser,
         numSignature,
-
-
+        version,
         idReportAclara,
         idTypeDoc,
         typeAnnex,
@@ -509,6 +638,7 @@ export class ServiceOrderTaskComponent
         nameTypeDoc,
         nomenglatura,
         readOnly,
+
         callback: (next, xml) => {
           //this.updateInfo = !this.updateInfo;
           if (next) {
@@ -530,6 +660,7 @@ export class ServiceOrderTaskComponent
   btnGuardar = false;
   btnEnviar = false;
   btnReporteOrdenServ = false;
+  btnReporteImpl = false;
   btnFirmaReporte = false;
   btnRechazar = false;
   btnAprobar = false;
@@ -547,24 +678,26 @@ export class ServiceOrderTaskComponent
   editDireccionOrigen = false;
   editComentarios = false;
 
-  nameDoc = '';
   numSignature = 1;
+  nameDoc = '';
 
+  typeDocId = 0;
+  typeDocName = '';
 
   configureProcess() {
-
     this.programmingId = +this.activeRouter.snapshot.params['id'];
     this.process = this.activeRouter.snapshot.params['process'];
 
     switch (this.process) {
       case 'service-order-capture':
-        this.title = this.taskInfo.title;
         this.btnReclamar = true;
         this.btnGuardar = true;
         this.btnLiberar = true;
         this.btnEnviar = true;
         this.editVehiculos = true;
         this.editServicios = true;
+        this.typeOrder = 'reception';
+
         break;
       case 'service-order-validation':
         this.btnReclamar = true;
@@ -574,9 +707,12 @@ export class ServiceOrderTaskComponent
         this.btnRechazar = true;
         this.numSignature = 1;
         this.nameDoc = 'orden_servicio';
+        this.typeDocId = 245;
+        this.typeDocName = 'FormatoOrdenServicio';
+        this.typeOrder = 'reception';
+
         break;
       case 'service-order-aproval':
-        this.title = `Aprobación de Servicios (Programación de recepción: )Para la orden de servicio con folio:  `;
         this.btnReclamar = true;
         this.btnReporteOrdenServ = true;
         this.btnGuardar = true;
@@ -584,73 +720,130 @@ export class ServiceOrderTaskComponent
         this.btnRechazar = true;
         this.numSignature = 2;
         this.nameDoc = 'orden_servicio';
+        this.typeDocId = 245;
+        this.typeDocName = 'FormatoOrdenServicio';
+        this.typeOrder = 'reception';
+
+        /*this.getJustification().then(justification => {
+          if (justification != null) {
+            this.btnRechazarJustificacion = true;
+          }
+        });*/
+
         break;
       case 'service-order-report':
-        this.title = `Reporte de implementación (Programación de recepción: )Para la orden de servicio con folio: `;
-
-        this.btnReclamar = true;
+        this.btnReclamar = false;
         this.btnGuardar = true;
         this.btnEnviar = true;
+        this.editBienesTrans = true;
+
+        this.typeOrder = 'reception';
+        this.typeTable = 'multi';
+
         break;
       case 'service-order-report-validation':
-        this.title = `Validación de reporte de Implementación (Programación de recepción: )Para la orden de servicio con folio: `;
-
-        this.btnReclamar = true;
-        this.btnReporteOrdenServ = true;
+        this.btnReclamar = false;
+        this.btnReporteImpl = true;
         this.btnGuardar = true;
         this.btnRechazar = true;
         this.btnAnexoW = true;
+
+        this.typeOrder = 'reception';
+
+        this.nameDoc = 'anexo_w';
+
         break;
       case 'service-order-report-signature':
-        this.title = `Validación de reporte de Implementación (Programación de recepción: )Para la orden de servicio con folio: `;
-
-        this.btnReclamar = true;
-        this.btnReporteOrdenServ = true;
+        this.btnReclamar = false;
+        this.btnReporteImpl = true;
         this.btnGuardar = true;
+
+        this.typeOrder = 'reception';
+
         break;
       case 'service-order-report-aprove':
-        this.title = `Reporte de Implementación Aprobado (Programación de recepción: )Para la orden de servicio con folio: `;
-        this.btnReclamar = true;
-        this.btnReporteOrdenServ = true;
+        this.btnReclamar = false;
+        this.btnReporteImpl = true;
         this.btnAnexoW = true;
+
+        this.typeOrder = 'reception';
+
         break;
       case 'service-order-validation-reject':
-        this.title = `Solicitud de Orden de Servicio (Validación de Servicios) con folio: `;
         this.btnReclamar = true;
         this.btnLiberar = true;
         this.btnReporteOrdenServ = true;
         this.btnGuardar = true;
         this.btnRechazar = true;
+
+        this.typeOrder = 'reception';
+
         break;
       case 'service-order-validation-justification':
-        this.title = `Solicitud de Orden de Servicio (Validación de Servicios) con folio: `;
-        this.btnReclamar = true;
-        this.btnReporteOrdenServ = true;
+        this.btnReclamar = false;
+        this.btnEnviarJustificacion = true;
+        this.btnEnviar = true;
         this.btnGuardar = true;
+        this.numSignature = 2;
+
+        this.typeOrder = 'reception';
+
         break;
       case 'service-order-report-reject':
-        this.title = `Solicitud orden de servicio (Validación de reporte) con folio: `;
-        this.btnReclamar = true;
+        this.btnReclamar = false;
         this.btnReporteOrdenServ = true;
         this.btnGuardar = true;
-        this.btnRechazar = true;
+        this.btnRechazarJustificacion = true;
+        this.numSignature = 1;
+
+        this.typeOrder = 'reception';
+
         break;
 
       case 'service-order-report-justification-validation':
+        this.btnReclamar = false;
+        this.btnReporteOrdenServ = true;
+        this.btnGuardar = true;
+        this.btnRechazar = true;
+        this.numSignature = 2;
+
+        this.typeOrder = 'reception';
+        break;
+      case 'service-order-report-justification-reject':
+        this.btnReclamar = false;
+        this.btnEnviar = true;
+        this.btnGuardar = true;
+        this.btnEnviarJustificacion = true;
+        this.numSignature = 1;
+        this.editServicios = true;
+
+        this.typeOrder = 'reception';
+
+        break;
+      case 'service-order-report-validation-justification':
+        this.btnReclamar = false;
+        this.btnReporteImpl = true;
+        this.btnGuardar = true;
+
+        this.typeOrder = 'reception';
 
         break;
       default:
         break;
     }
-
   }
 
   async createTask(current = this.process) {
-
     /** VERIFICAR VALIDACIONES PARA REALIZAR LA TAREA*/
 
+    let typeTask = this.taskInfo.activityName;
+
     this.loading = true;
-    const { title, url, type, subtype, ssubtype, process, close } = getConfigService(current, this.programming);
+    const { title, url, type, subtype, ssubtype, process, close, rollBack } =
+      typeTask === 'Programar_Recepcion'
+        ? getConfigService(current, this.programming)
+        : getConfigServiceEntrega(typeTask, this.programming);
+
     const user: any = this.authService.decodeToken();
     let body: any = {};
 
@@ -665,7 +858,7 @@ export class ServiceOrderTaskComponent
       body['idTask'] = this.taskInfo.id;
     }
 
-    /*if (rollBack) {
+    if (rollBack) {
       task['taskDefinitionId'] = this.taskInfo.id;
 
       if (!isNullOrEmpty(this.taskInfo.taskDefinitionId)) {
@@ -673,7 +866,7 @@ export class ServiceOrderTaskComponent
       }
     } else {
       task['taskDefinitionId'] = this.taskInfo.taskDefinitionId;
-    }*/
+    }
 
     task['id'] = 0;
     task['assignees'] = user.username;
@@ -687,9 +880,9 @@ export class ServiceOrderTaskComponent
     task['expedientId'] = 0;
     task['urlNb'] = url;
     task['processName'] = process;
-    //task['idstation'] = this.taskInfo.idstation;
-    //task['idTransferee'] = this.taskInfo.idTransferee;
-    //task['idAuthority'] = this.taskInfo.idAuthority;
+    task['idstation'] = this.taskInfo.idstation;
+    task['idTransferee'] = this.taskInfo.idTransferee;
+    task['idAuthority'] = this.taskInfo.idAuthority;
     task['idDelegationRegional'] = user.department;
 
     /*if (!isNullOrEmpty(this.delegation)) {
@@ -715,18 +908,12 @@ export class ServiceOrderTaskComponent
       this.onLoadToast(
         'success',
         'Orden de servicio enviada correctamente',
-        'Solicitud turnada'
+        'Orden enviada'
       );
 
       this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
-
     } else {
-
-      this.onLoadToast(
-        'error',
-        'No se pudo enviar la orden de servicio',
-        ''
-      );
+      this.onLoadToast('error', 'No se pudo enviar la orden de servicio', '');
     }
   }
 
@@ -746,7 +933,6 @@ export class ServiceOrderTaskComponent
   }
 
   getTask() {
-
     const task = JSON.parse(localStorage.getItem('Task'));
 
     const param = new FilterParams();
@@ -756,13 +942,11 @@ export class ServiceOrderTaskComponent
     return new Promise((resolve, reject) => {
       this.taskService.getAll(filter).subscribe({
         next: resp => {
-
           if (resp.data.length > 0) {
             resolve(resp.data[0]);
           } else {
             reject(false);
           }
-
         },
         error: error => {
           this.loading = false;
@@ -773,20 +957,34 @@ export class ServiceOrderTaskComponent
     });
   }
 
-
   updateTask(id, body) {
     return new Promise((resolve, reject) => {
       this.taskService.update(id, body).subscribe({
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
+      });
+    });
+  }
+
+  closeTask() {
+    return new Promise((resolve, reject) => {
+      const task = JSON.parse(localStorage.getItem('Task'));
+      const taskForm: ITask = {
+        State: 'FINALIZADA',
+        taskDefinitionId: null,
+      };
+      this.taskService.update(task.id, taskForm).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {},
       });
     });
   }
 
   configuraModalFirma() {
-
     const formOnly = true;
     const nameSignatoryRuling = this.taskInfo.participantName;
     const postSignatoryRuling = this.taskInfo.ownerRole;
@@ -805,7 +1003,6 @@ export class ServiceOrderTaskComponent
         typeSign,
         formOnly,
         callback: async (name, charge, typeSign) => {
-
           this.taskInfo.ownerRole = charge;
           this.taskInfo.participantName = name;
           this.taskInfo.componentName = typeSign;
@@ -820,8 +1017,6 @@ export class ServiceOrderTaskComponent
           this.openFirma(name, charge);
           //Actualizar la orden de servicio con los datos de la firma
           //this.updateOrderService(responsibleSae, saePosition, typeSign);
-
-
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -830,4 +1025,21 @@ export class ServiceOrderTaskComponent
     this.modalService.show(TypeSignatureModalComponent, config);
   }
 
+  async getSignatories() {
+    let learnedId = this.orderServiceId;
+    let learnedType = this.typeDocId;
+
+    return new Promise<any[]>((res, rej) => {
+      this.signatoriesService
+        .getSignatoriesName(learnedType, learnedId)
+        .subscribe({
+          next: resp => {
+            res(resp.data);
+          },
+          error: err => {
+            res([]);
+          },
+        });
+    });
+  }
 }

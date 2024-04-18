@@ -4,7 +4,10 @@ import { PhotoGoodEndpoints } from 'src/app/common/constants/endpoints/photo-goo
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IGoodPhoto } from '../../models/ms-goodphoto/good-photo.model';
+import {
+  GoodPhotoFav,
+  IGoodPhoto,
+} from '../../models/ms-goodphoto/good-photo.model';
 
 @Injectable({
   providedIn: 'root',
@@ -30,5 +33,20 @@ export class GoodPhotoService extends HttpService {
 
   save(body: IGoodPhoto) {
     return this.post(PhotoGoodEndpoints.BienFoto, body);
+  }
+
+  update(body: IGoodPhoto) {
+    return this.put(PhotoGoodEndpoints.BienFoto, body);
+  }
+  getComerPhotoFav(params: _Params) {
+    return this.get(PhotoGoodEndpoints.ComerPhotoFav, params);
+  }
+
+  createComerPhotoFav(params: GoodPhotoFav) {
+    return this.post(PhotoGoodEndpoints.ComerPhotoFav, params);
+  }
+
+  deleteComerPhotoFav(params: GoodPhotoFav) {
+    return this.delete(PhotoGoodEndpoints.ComerPhotoFav, params);
   }
 }

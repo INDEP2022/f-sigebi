@@ -245,4 +245,9 @@ export class ParameterModService
     const route = ParameterComerEndpoints.SpInsertGoodRes;
     return this.post(`${route}`, body);
   }
+
+  getAllComerStatusVta(params: _Params) {
+    const route = ParameterComerEndpoints.ComerStatusVta;
+    return this.get(`${route}`, params);
+  }
 }

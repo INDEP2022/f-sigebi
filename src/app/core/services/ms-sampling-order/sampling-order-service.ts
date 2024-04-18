@@ -16,4 +16,17 @@ export class SamplingOrderService extends HttpService {
   postAnnexesW(formData: IAnnexesW) {
     return this.post(SamplingOrderEndpoint.AnnexW, formData);
   }
+
+  getAnnexesW(id: number) {
+    return this.get(SamplingOrderEndpoint.AnnexW + `/${id}`);
+  }
+
+  saveAnnexesW(update, formData: any) {
+    if (update)
+      return this.put(
+        SamplingOrderEndpoint.AnnexW + `/${formData.idExhibitW}`,
+        formData
+      );
+    else return this.post(SamplingOrderEndpoint.AnnexW, formData);
+  }
 }

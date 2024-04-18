@@ -77,16 +77,11 @@ export class GenericsFormComponent extends BasePage implements OnInit {
       active: [null, [Validators.required]],
       editable: [null, [Validators.required]],
     });
-    const fieldName = document.getElementById('inputName');
-    const fieldKeyId = document.getElementById('inputKeyId');
     if (this.generics != null) {
-      this.render.addClass(fieldName, 'disabled');
-      this.render.addClass(fieldKeyId, 'disabled');
       this.edit = true;
       this.genericsForm.patchValue(this.generics);
-    } else {
-      this.render.removeClass(fieldName, 'disabled');
-      this.render.removeClass(fieldKeyId, 'disabled');
+      this.genericsForm.controls['name'].disable();
+      this.genericsForm.controls['keyId'].disable();
     }
   }
 
@@ -111,7 +106,7 @@ export class GenericsFormComponent extends BasePage implements OnInit {
     this.loading = true;
 
     console.log(this.genericsForm.value);
-    this.genericsService.create(this.genericsForm.value).subscribe({
+    this.genericsService.create(this.genericsForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => {
         this.alert('error', 'El Identficador Clave ya fue registrado', '');
@@ -124,7 +119,7 @@ export class GenericsFormComponent extends BasePage implements OnInit {
     // Corregir el repositorio del service cuando haya aclaracion del endpoint
     // porque ocupa dos valores para la url
     this.loading = true;
-    this.genericsService.newUpdate(this.genericsForm.value).subscribe({
+    this.genericsService.newUpdate(this.genericsForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });

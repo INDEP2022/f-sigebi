@@ -7,7 +7,7 @@ import { IServiceVehicle } from 'src/app/core/models/ms-order-service/order-serv
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -17,7 +17,8 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class CreateClassificateVehicleFormComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   item: any;
   title: string = 'Clasificación de vehiculos';
@@ -43,10 +44,20 @@ export class CreateClassificateVehicleFormComponent
   prepareForm() {
     this.form = this.fb.group({
       orderServiceId: [this.orderServiceId],
-      id: [null, [Validators.required]],
-      amountSale: [null, [Validators.pattern(STRING_PATTERN)]],
-      amountDonation: [null, [Validators.pattern(STRING_PATTERN)]],
-      amountDestruction: [null, [Validators.pattern(STRING_PATTERN)]],
+      id: [this.generateId()],
+      version: [null, [Validators.required]],
+      amountSale: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(3)],
+      ],
+      amountDonation: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(3)],
+      ],
+      amountDestruction: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(3)],
+      ],
     });
 
     if (this.serviceVehicleData) {
@@ -57,6 +68,23 @@ export class CreateClassificateVehicleFormComponent
 
   confirm() {
     this.edit ? this.update() : this.create();
+  }
+
+  generateId(): number {
+    const date = new Date();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+
+    // Genera un número aleatorio entre 100 y 999
+    const random = Math.floor(Math.random() * 900) + 100;
+
+    // Combina las horas, minutos, segundos y el número aleatorio en una cadena y conviértela a un número
+    return Number(
+      `${hours < 10 ? '0' + hours : hours}${
+        minutes < 10 ? '0' + minutes : minutes
+      }${seconds < 10 ? '0' + seconds : seconds}${random}`
+    );
   }
 
   update() {
@@ -81,7 +109,7 @@ export class CreateClassificateVehicleFormComponent
               this.modalRef.content.callback(true);
               this.modalRef.hide();
             },
-            error: error => { },
+            error: error => {},
           });
         //Ejecutar servicio
         /*
@@ -96,6 +124,7 @@ export class CreateClassificateVehicleFormComponent
       '¿Desea crear una clasificación de vehiculos?'
     ).then(question => {
       if (question.isConfirmed) {
+        console.log(this.form.value);
         this.orderService.postServiceVehicle(this.form.value).subscribe({
           next: response => {
             this.alert(
@@ -106,12 +135,12 @@ export class CreateClassificateVehicleFormComponent
             this.modalRef.content.callback(true);
             this.close();
           },
-          error: error => { },
+          error: error => {},
         });
         //this.onLoadToast('success', 'Clasificación creada correctamente', '');
         //this.modalRef.content.callback(this.form.value);
         //this.event.emit(this.form.value);
-        //this.close();
+        this.close();
       }
     });
   }
@@ -122,11 +151,23 @@ export class CreateClassificateVehicleFormComponent
       next: response => {
         this.typeVehicle = new DefaultSelect(response.data, response.count);
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
   close() {
     this.modalRef.hide();
+  }
+
+  //amountSale: [null, [Validators.pattern(STRING_PATTERN)]],
+  //amountDonation: [null, [Validators.pattern(STRING_PATTERN)]],
+  //amountDestruction:
+  isValid() {
+    let data = this.form.value;
+    return (
+      data.amountSale > 0 ||
+      data.amountDonation > 0 ||
+      data.amountDestruction > 0
+    );
   }
 }

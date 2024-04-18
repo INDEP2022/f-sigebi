@@ -15,7 +15,6 @@ import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive
 import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
 import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { FlatFileNotificationsService } from 'src/app/pages/documents-reception/flat-file-notifications/flat-file-notifications.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FormLoadAppraisalsModalComponent } from '../form-load-appraisals-modal/form-load-appraisals-modal/form-load-appraisals-modal.component';
 import {
@@ -154,7 +153,6 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     private formLoadAppraisalsService: FormLoadAppraisalsService,
     private router: Router,
     private excelService: ExcelService,
-    private fileNotificationServices: FlatFileNotificationsService,
     private massiveAppraise: MsMassiveappraiseService,
     private modalService: BsModalService,
     private massiveGoodService: MassiveGoodService,
@@ -173,8 +171,6 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     this.createForm();
   }
   async inicialize() {
-    this.cargaDDLEvento();
-
     if (!this.requested) {
       console.log('cargarEvento');
       this.cargaDDLEvento();
@@ -237,7 +233,10 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
       });
     });
   }
-
+  search() {
+    this.CargaGrids();
+    this.inicialize();
+  }
   async CargaGrids() {
     //this.ocultaDivNoti();
     this.carEvento = await this.obtenerEvento0(
@@ -261,6 +260,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     );
     let dataCarAvaluos: any = this.carAvaluos;
     console.log(this.carEvento, this.carBienes, this.carAvaluos);
+
     this.cargarAvaluos(dataCarAvaluos);
   }
 
@@ -1236,10 +1236,6 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     this.gvBienesRecahazados = false;
   }
 
-  search() {
-    this.CargaGrids();
-    this.inicialize();
-  }
   controlBotnoes(tipoProceso: string, estado: string) {
     if (tipoProceso == '1') {
       if (estado == 'V') {

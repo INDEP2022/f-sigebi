@@ -1,20 +1,23 @@
-<app-modal>
+<app-card [header]="true">
   <div class="w-100" header>
-    <div class="d-flex flex-wrap justify-content-between aling-items-center">
-      <h5 class="modal-title">Lista juzgados</h5>
-    </div>
+    <h5>LISTA MANTENIMIENTO A JUZGADOS</h5>
   </div>
-
   <div body>
     <div class="row">
       <div class="d-flex justify-content-end mb-2">
         <div>
-          <app-columns-select [(settings)]="settings"></app-columns-select>
-          <button class="btn btn-primary active btn-sm m-2" (click)="close()">
-            Regresar
-            <i class="fas fa-arrow-circle-left"></i>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            containerclass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-3"
+            (click)="openForm()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
+        <app-columns-select
+          [leftList]="true"
+          [(settings)]="settings"></app-columns-select>
       </div>
     </div>
     <div class="row pt-4">
@@ -25,7 +28,8 @@
               [attr.class]="'table-bordered table-responsive'"
               [settings]="settings"
               [source]="data"
-              (edit)="formDataCourt($event.data)"
+              (userRowSelect)="rowsSelected($event)"
+              (edit)="editCourt($event.data)"
               (delete)="deleteCourt($event.data.id)">
             </ng2-smart-table>
           </ng-scrollbar>
@@ -34,5 +38,36 @@
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
+    <div class="mt-5" *ngIf="idCourt">
+      <div class="d-flex justify-content-end mb-4">
+        <div>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            containerclass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-3"
+            (click)="openModalCity()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+        <app-columns-select
+          [leftList]="true"
+          [(settings)]="settings2"></app-columns-select>
+      </div>
+      <div [class]="loading2 ? 'table-loading' : ''">
+        <ng-scrollbar [track]="'all'" style="min-height: 300px">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            class="table-responsive"
+            [settings]="settings2"
+            [source]="dataCourtCity"
+            (edit)="(null)"
+            (delete)="deleteCity($event.data)">
+          </ng2-smart-table>
+        </ng-scrollbar>
+      </div>
+      <app-pagination [params]="params2" [totalItems]="dataCourtCity.count()">
+      </app-pagination>
+    </div>
   </div>
-</app-modal>
+</app-card>

@@ -324,6 +324,7 @@ export class DeliveriesConstancyFormComponent
     };
     config.initialState = {
       idprogDel: data.certificateId,
+      typeEvent: this.typeEvent,
       report: data.certificateType,
       callback: (next: boolean) => {
         if (next) {
@@ -394,6 +395,7 @@ export class DeliveriesConstancyFormComponent
     deliveryForm.userModification = userAuth.username;
     deliveryForm.creationDate = moment(new Date()).format('YYYY-MM-DD');
     deliveryForm.modificationDate = moment(new Date()).format('YYYY-MM-DD');
+    deliveryForm.participateCommissioned = 'N';
     deliveryForm.oficioDate =
       deliveryForm.oficioDate != null
         ? moment(deliveryForm.oficioDate).format('YYYY-MM-DD')
@@ -492,6 +494,8 @@ export class DeliveriesConstancyFormComponent
 
     //CREATE CERTIFICADO DE ENTREGA
     let deliveryForm = this.deliveryConstancyForm.getRawValue();
+    deliveryForm.participateCommissioned = 'N';
+
     deliveryForm.oficioDate =
       deliveryForm.oficioDate != null
         ? moment(deliveryForm.oficioDate).format('YYYY-MM-DD')
@@ -579,9 +583,9 @@ export class DeliveriesConstancyFormComponent
         resp.data.map(async (item: any) => {
           let body: any = {};
           body.goodId = item.goodId;
-          console.log(item)
-          const delGoodId: any = await this.getGoodId(item.goodId)
-          console.log(delGoodId)
+          console.log(item);
+          const delGoodId: any = await this.getGoodId(item.goodId);
+          console.log(delGoodId);
           body.id = delGoodId.id;
           body.transactionId = delGoodId.transactionId;
           body.siabGoodNumber = delGoodId.siabGoodNumber;
@@ -614,7 +618,7 @@ export class DeliveriesConstancyFormComponent
       params['filter.goodId'] = `$eq:${id}`;
       this.programmingGoodService.getProgrammingDeliveryGood(params).subscribe({
         next: (resp: any) => {
-          console.log(resp.data[0])
+          console.log(resp.data[0]);
           resolve(resp.data[0]);
         },
       });
@@ -930,8 +934,8 @@ export class DeliveriesConstancyFormComponent
       return;
     }
     this.goodSelected = event.data;
-    console.log(this.goodSelected)
-    console.log(this.typeConstancy)
+    console.log(this.goodSelected);
+    console.log(this.typeConstancy);
   }
   async separate() {
     this.blockButtons = true;

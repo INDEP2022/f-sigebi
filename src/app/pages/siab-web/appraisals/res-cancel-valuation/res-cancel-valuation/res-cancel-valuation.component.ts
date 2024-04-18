@@ -30,6 +30,7 @@ import { ClarificationsService } from 'src/app/core/services/ms-office-managemen
 import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
+import { RequestAppraisalService } from 'src/app/core/services/ms-request-appraisal/request-appraisal.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ButtonColumnAddComponent } from 'src/app/shared/components/button-column/button-column-add.component';
@@ -163,7 +164,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   dataGood2: LocalDataSource = new LocalDataSource();
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
-
+  tipoOficioView: number = 0;
   tipoOficio: number = 0;
 
   numOne: number;
@@ -194,7 +195,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     private clarificationsService: ClarificationsService,
     private parameterModService: ParameterModService,
     private siabService: SiabService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private requestAppraisalService: RequestAppraisalService
   ) {
     super();
     this.columnsTable();
@@ -206,7 +208,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         next: response => {
           console.log(response);
           if (response && this.form.get('radio').value) {
-            this.tipoOficio = response;
             this.changeRatio(this.form.get('radio').value);
           }
         },
@@ -218,7 +219,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         next: response => {
           console.log(response);
           if (response && this.form.get('event').value) {
-            this.tipoOficio = response;
+            this.tipoOficioView = response;
             this.changeRatio(response);
           }
         },
@@ -231,7 +232,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     if (this.event != '' && this.event != null) {
       this.btnMotCan = false;
       // this.resetVariables();
-      this.loadOffice(this.event, radioValue);
+      this.loadOffices(this.event, this.tipoOficio, radioValue);
       this.setButtons(3);
     } else {
       this.alert(
@@ -275,8 +276,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         let body: OfficesSend = new OfficesSend();
         body.eventId = +params['event'];
         body.officeType = +params['type'];
-        this.loadOffice(body.eventId, body.officeType);
-        this.tipoOficio = body.officeType;
+        this.folioCVE(body.eventId);
       }
     });
   }
@@ -512,8 +512,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     );
   }
 
-  getOfficeResponseTwo(body: OfficesSend): Promise<any[]> {
+  getOfficeResponseTwo(body: any): Promise<any[]> {
     return new Promise((resolve, reject) => {
+      console.log(body);
       this.serviceJobs.postByFilters(body).subscribe({
         next: response => {
           resolve(response.data);
@@ -533,7 +534,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
     let body: any = {};
     body.eventId = valorObjeto?.eventId;
-    body.officeId = valorObjeto?.jobType;
+    body.officeId = valorObjeto?.jobId;
     // this.form
     //   .get('office')
     //   .setValue(data.jobId, { onlySelf: true, emitEvent: false });
@@ -543,13 +544,37 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
     this.findOffice(body);
   }
-
+  folioCVE(event: number) {
+    let params = new ListParams();
+    params['filter.eventId'] = `$eq:${event}`;
+    this.serviceJobs.getAll(params).subscribe({
+      next: data => {
+        console.log(data);
+        let body: OfficesSend = new OfficesSend();
+        body.eventId = data.data[0].eventId;
+        body.officeType = data.data[0].jobType;
+        this.loadOffice(body.eventId, body.officeType);
+      },
+      error: () => {
+        // console.log();
+      },
+    });
+  }
   loadOffice(event: number, num: number, arrayLength?: number) {
     let body: OfficesSend = new OfficesSend();
+    console.log(event, num);
     body.eventId = event;
-    body.officeType = num ? num : 0;
+    body.officeType = num;
     this.columnsTable();
-    this.getOfficeResponse(body, num, arrayLength);
+    this.cargaOficio(body, num, arrayLength);
+  }
+  loadOffices(event: number, num: number, arrayLength?: number) {
+    let body: OfficesSend = new OfficesSend();
+    console.log(event, num);
+    body.eventId = event;
+    body.officeType = num;
+    this.columnsTable();
+    this.cargaOficio(body, arrayLength);
   }
 
   get officeType() {
@@ -622,7 +647,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
             this.dataGoodList[i].goodNumber,
             this.form.controls['event'].value,
             'NADA',
-            'NADA',
+            '0',
             'D'
           );
         }
@@ -810,9 +835,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       let body: OfficesSend = new OfficesSend();
       let myBody: MyBody = new MyBody();
       let tituloOficio: any;
-
+      console.log(this.tipoOficioView, this.tipoOficio);
       body.eventId = this.event;
-      body.officeType = this.officeType;
+      body.officeType =
+        this.tipoOficioView != 0 ? this.tipoOficioView : this.tipoOficio;
       dataOffice = await this.getOfficeRequest(body);
       console.log(dataOffice);
       for (const x of dataOffice) {
@@ -825,36 +851,53 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       if (type.typeOffice == 2) {
         console.log(this.form.get('radio').value);
         if (this.form.get('radio').value == 2) {
-          tituloOficio = this.getDescriptionParameters('OFI_RES_V');
+          tituloOficio = await this.getDescriptionParameters('OFI_RES_V');
+
           myBody = await this.getDataByOffice();
-          myBody.subject = tituloOficio;
+          myBody.subject = tituloOficio.path;
           this.generateReport(myBody, type.address);
         } else if (this.form.get('radio').value == 3) {
-          tituloOficio = this.getDescriptionParameters('OFI_CAN_V');
+          tituloOficio = await this.getDescriptionParameters('OFI_CAN_V');
+          console.log(tituloOficio);
+          myBody.subject = tituloOficio.path;
           myBody = await this.getDataByOffice();
-          myBody.subject = tituloOficio;
+          console.log(myBody);
           this.generateReport(myBody, type.address);
         }
       } else if (type.typeOffice == 1) {
         if (this.form.get('radio').value == 2) {
-          tituloOficio = this.getDescriptionParameters('OFI_RES_A');
+          tituloOficio = await this.getDescriptionParameters('OFI_RES_A');
           myBody = await this.getDataByOffice();
-          myBody.subject = tituloOficio;
+          myBody.subject = tituloOficio.path;
           this.generateReport(myBody, type.address);
         } else if (this.form.get('radio').value == 3) {
-          tituloOficio = this.getDescriptionParameters('OFI_CAN_A');
+          tituloOficio = await this.getDescriptionParameters('OFI_CAN_A');
           myBody = await this.getDataByOffice();
-          myBody.subject = tituloOficio;
+          myBody.subject = tituloOficio.path;
           this.generateReport(myBody, type.address);
         }
       }
     } catch (e: any) {
-      this.alert('warning', '', 'Problema para visualizar oficio');
+      this.alert('warning', '', 'Problema para visualizar oficio' + e);
+      this.loader.load = false;
     }
   }
-
-  //No esta en la documentacion
-  getDescriptionParameters(nameOffice: string) {}
+  getDescriptionParameters(nameOffice: string) {
+    return new Promise((resolve, reject) => {
+      let data = {
+        office: nameOffice,
+        folio: '4',
+      };
+      this.requestAppraisalService.postFaPathDoc(data).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          resolve(error);
+        },
+      });
+    });
+  }
 
   async getDataByOffice(): Promise<MyBody> {
     let myBody: MyBody = new MyBody();
@@ -863,9 +906,15 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     let listGoods: string = '';
 
     body.eventId = this.event;
-    body.officeType = this.officeType;
-    arrayDataOffice = await this.getOfficeResponseTwo(body);
+    body.officeType = this.idOficio;
+    let data = {
+      eventId: this.event,
+      officeId: this.idOficio,
+    };
+    console.log(body);
 
+    arrayDataOffice = await this.getOfficeResponseTwo(data);
+    console.log(arrayDataOffice);
     for (const x of arrayDataOffice) {
       myBody.level1 = x.nivel1;
       myBody.level2 = x.nivel2;
@@ -885,17 +934,19 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     let noGood: any;
     noGood = await this.getGoodsWithOffice(this.returnIdOffice());
     console.log(noGood);
-    let noGood2: any;
-    noGood2 = await this.getGoodsWithOfficeAll(
-      this.returnIdOffice(),
-      noGood.count
-    );
+    if (noGood != false) {
+      let noGood2: any;
+      noGood2 = await this.getGoodsWithOfficeAll(
+        this.returnIdOffice(),
+        noGood.count
+      );
 
-    for (const x of noGood2) {
-      listGoods = listGoods + x.goodNumber.goodId + ', ';
+      for (const x of noGood2) {
+        listGoods = listGoods + x.goodNumber.goodId + ', ';
+      }
+      console.log(listGoods);
+      myBody.goodsList = listGoods;
     }
-    console.log(listGoods);
-    myBody.goodsList = listGoods;
 
     return myBody;
   }
@@ -909,7 +960,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           resolve(response);
         },
         error: error => {
-          reject(error);
+          resolve(false);
         },
       });
     });
@@ -1000,11 +1051,24 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     );
   }
 
-  async getOfficeResponse(body: any, type?: number, arrayLength?: number) {
-    console.log(type);
+  // getOfficeRequestAvaluo(body: any) {
+  //   return firstValueFrom(
+  //     this.serviceJobs.postByFiltersResponseDB(body).pipe(
+  //       take(1),
+  //       catchError(x => of({ data: [] })),
+  //       map(x => x.data)
+  //     )
+  //   );
+  // }
+
+  async cargaOficio(body: any, type?: number, arrayLength?: number) {
+    console.log(body);
+
     let array = [];
+
     array = await this.getOfficeRequest(body);
     console.log(array);
+
     if (array.length > 0) {
       for (const i of array) {
         this.lblTipoAccOficio = i
@@ -1025,7 +1089,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           this.lblDireccion = ' ACTIVOS FINANCIEROS ';
         }
         this.lblCvlOfocio = i?.cve_oficio;
-
+        // this.form.get('office').setValue(i?.cve_oficio);
         this.form
           .get('event')
           .setValue(i?.id_evento, { onlySelf: true, emitEvent: false });
@@ -1049,6 +1113,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         this.form
           .get('radio')
           .setValue('2', { onlySelf: true, emitEvent: false });
+
         this.btnMotCan = true;
       } else if (type == 3) {
         this.obtainsCancelAssets(3, 0);
@@ -1113,7 +1178,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
               .setValue('3', { onlySelf: true, emitEvent: false });
           }
           if (index === array.length - 1) {
-            await this.loadOffice(body.eventId, body.officeId, array.length);
+            await this.loadOffice(i?.id_evento, i?.tipo_oficio, array.length);
           }
           console.log(i);
           this.form.patchValue({
@@ -1127,12 +1192,17 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
             fol: i?.num_cv_armada,
           });
         }
+        if (i?.tipo_oficio == '2' || i?.tipo_oficio == '3') {
+          this.pnlControles = false;
+        } else {
+          this.pnlControles = true;
+        }
         this.tipoOficio = i?.tipo_oficio;
         statusOffice = i?.estatus_of;
         this.statusOffice = i?.estatus_of;
 
         this.m_comer = i;
-        console.log(this.m_comer);
+        console.log(this.tipoOficio);
       }
       this.validateFindOfficeOne(statusOffice);
     } else {
@@ -1288,6 +1358,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.subscribeDelete = this.form
       .get('office')
       .valueChanges.subscribe(value => {
+        this.btnGuardar = true;
+        this.tipoOficio = 0;
+        this.tipoOficioView = 0;
         this.findOfficeService(value);
       });
   }
@@ -1794,6 +1867,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.dataGood2.refresh();
     this.totalItems = 0;
     this.totalItems2 = 0;
+    goodCheck.splice(0, goodCheck.length);
     this.setButtons(3);
   }
 

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
+import { DatePipe } from '@angular/common';
 import { LocalDataSource } from 'ng2-smart-table';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
@@ -48,12 +49,25 @@ export class SubDelegationListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
+            console.log(filter.search);
+            if (filter.field == 'dateDailyCon') {
+              if (filter.search) {
+                console.log(filter.search);
+                var raw = filter.search;
+                var formatted = new DatePipe('en-EN').transform(
+                  raw,
+                  'yyyy-MM-dd',
+                  'UTC'
+                );
+                filter.search = formatted;
+              }
+            }
             filter.field == 'id' ||
-              filter.field == 'description' ||
-              filter.field == 'delegationNumber' ||
-              filter.field == 'dailyConNumber' ||
-              filter.field == 'dateDailyCon' ||
-              filter.field == 'phaseEdo';
+            filter.field == 'description' ||
+            filter.field == 'delegationNumber' ||
+            filter.field == 'dailyConNumber' ||
+            filter.field == 'dateDailyCon' ||
+            filter.field == 'phaseEdo' ||
             filter.field == 'registerNumber'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
