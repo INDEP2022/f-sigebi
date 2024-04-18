@@ -115,7 +115,18 @@ export class ModalIdentifierUnivDbs extends BasePage implements OnInit {
     this.loading = true;
     this.rAsuntDicService.create(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        if (error.error.message == 'Ese registro ya existe') {
+          this.alert(
+            'warning',
+            'Ya existe un registro con estos datos',
+            'Verifique e intente nuevamente'
+          );
+        } else {
+          this.alert('warning', 'No se pudo guardar el registro', '');
+        }
+        this.loading = false;
+      },
     });
   }
 
@@ -126,14 +137,24 @@ export class ModalIdentifierUnivDbs extends BasePage implements OnInit {
       .update(this.rAsuntDic.code, this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
-
-        error: error => (this.loading = false),
+        error: error => {
+          if (error.error.message == 'Ese registro ya existe') {
+            this.alert(
+              'warning',
+              'Ya existe un registro con estos datos',
+              'Verifique e intente nuevamente'
+            );
+          } else {
+            this.alert('warning', 'No se pudo actualizar el registro', '');
+          }
+          this.loading = false;
+        },
       });
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    const message: string = this.edit ? 'actualizado' : 'guardado';
+    this.onLoadToast('success', `Asunto Dictamen ${message} correctamente`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

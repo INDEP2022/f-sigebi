@@ -117,7 +117,13 @@ export class CatIdentifierUniDbsComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.rAsuntDics = [];
+        this.totalItems = 0;
+        this.data.load([]);
+        this.data.refresh();
+        this.loading = false;
+      },
     });
   }
 
@@ -134,12 +140,20 @@ export class CatIdentifierUniDbsComponent extends BasePage implements OnInit {
 
   delete(rAsuntDic?: IRAsuntDic) {
     this.alertQuestion(
-      'warning',
-      'Eliminar',
-      '¿Desea eliminar este registro?'
+      'question',
+      'Se eliminará el registro',
+      '¿Desea continuar?'
     ).then(question => {
       if (question.isConfirmed) {
-        //this.rAsuntDicService.remove(rAsuntDic.code);
+        this.rAsuntDicService._remove(rAsuntDic).subscribe({
+          next: value => {
+            this.getExample();
+            this.alert('success', 'Registro eliminado correctamente', '');
+          },
+          error: err => {
+            this.alert('warning', 'No se pudo eliminar el registro', '');
+          },
+        });
       }
     });
   }

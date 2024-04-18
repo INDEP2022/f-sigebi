@@ -75,4 +75,7 @@ export class RAsuntDicService
       params
     );
   }
+  _remove(data: any): Observable<Object> {
+    return this.rAsuntDicRepository.remove3(this.route, data);
+  }
 }
