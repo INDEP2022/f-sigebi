@@ -63,11 +63,10 @@ export class RejectionCommentFormComponent extends BasePage implements OnInit {
         console.log('1');
         const orderServiceBody: IOrderServiceDTO = {
           id: this.orderServiceInfo.id,
-          commentRejection:
-            this.form.get('comments').value +
-            (this.orderServiceInfo.commentRejection
-              ? '\n' + this.orderServiceInfo.commentRejection
-              : ''),
+          commentRejection: this.form.get('comments').value,
+          // + (this.orderServiceInfo.commentRejection
+          //  ? '\n' + this.orderServiceInfo.commentRejection
+          //: ''),
         };
         console.log('2');
         this.orderServiceService

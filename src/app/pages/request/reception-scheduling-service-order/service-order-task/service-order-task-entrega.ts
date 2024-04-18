@@ -10,7 +10,7 @@ export function getConfigServiceEntrega(path, data) {
   switch (path) {
     case 'service-order-request':
       return {
-        title: `Solicitud orden de servicio (Captura de servicios)`,
+        title: `Captura de orden de servicio (Programación de entrega: ${progFolio}) con folio: ${folio}`,
         url: 'pages/request/entrega-service-order/service-order-capture',
         process: 'ServiceOrderCapture',
         type: 'SOLICITUD_PROGRAMACION',
@@ -21,7 +21,7 @@ export function getConfigServiceEntrega(path, data) {
       };
     case 'service-order-capture':
       return {
-        title: `Solicitud Orden de Servicio(Validación de Servicios) con folio: ${folio}`,
+        title: `Validación de Servicios(Programación de entrega: ${progFolio}) para la orden de servicio con folio: ${folio}`,
         url: 'pages/request/entrega-service-order/service-order-validation',
         process: 'ServiceOrderValidation',
         type: 'SOLICITUD_PROGRAMACION',
@@ -31,7 +31,7 @@ export function getConfigServiceEntrega(path, data) {
       };
     case 'service-order-validation':
       return {
-        title: `Aprobación de servicios (Programación de entrega: ${progFolio}) para la orden de servicio con folio: ${folio}`,
+        title: `Aprobación de servicios (Programación de recepción: Programación de entrega: ${progFolio}) para la orden de servicio con folio: ${folio}`,
         url: 'pages/request/entrega-service-order/service-order-aproval',
         process: 'ServiceOrderAproval',
         type: 'SOLICITUD_PROGRAMACION',
@@ -64,7 +64,7 @@ export function getConfigServiceEntrega(path, data) {
 
     case 'service-order-report-validation':
       return {
-        title: `Validación de reporte de Implementación (Programación de entrega: ${progFolio}) Para el orden de servicio con el folio: ${folio}`,
+        title: `Aprobación de servicios (Programación de recepción: Programación de entrega: ${progFolio}) Para el orden de servicio con el folio: ${folio}`,
         url: 'pages/request/entrega-service-order/service-order-report-signature',
         process: 'ServiceOrderReportSignature',
         type: 'SOLICITUD_PROGRAMACION',
@@ -85,7 +85,7 @@ export function getConfigServiceEntrega(path, data) {
     //Caso para rechazo de orden de servicio
     case 'service-order-validation-reject':
       return {
-        title: `Solicitud Orden de Servicio (Rechazo de Orden de Servicio) con el folio: ${folio}`,
+        title: `Validación de servicios (Programación de entrega: ${progFolio}) Para el orden de servicio con el folio: ${folio}`,
         url: 'pages/request/entrega-service-order/service-order-validation-justification',
         process: 'ServiceOrderReportValidationJustification',
         type: 'SOLICITUD_PROGRAMACION',
@@ -95,7 +95,7 @@ export function getConfigServiceEntrega(path, data) {
       };
     case 'service-order-validation-justification':
       return {
-        title: `Solicitud Orden de Servicio (Validación de Orden de Servicio) con el folio: ${folio}`,
+        title: `Rechazo de orden de Servicios (Programación de entrega: ${progFolio}) Para el orden de servicio con folio: ${folio}`,
         url: 'pages/request/entrega-service-order/service-order-report-reject',
         process: 'ServiceOrderReportReportReject',
         type: 'SOLICITUD_PROGRAMACION',

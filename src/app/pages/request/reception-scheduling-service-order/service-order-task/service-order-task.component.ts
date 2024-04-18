@@ -495,7 +495,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
     let config: ModalOptions = {
       initialState: {
         orderServiceId: this.orderServiceId,
-        folio: folio,
+        folioOrderservice: this.dataOrder.serviceOrderFolio,
         callback: (next: boolean) => {
           if (next) {
             switch (this.process) {
@@ -527,7 +527,8 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
   }
 
   approve() {
-    const folio = this.ordServform.get('serviceOrderFolio').value;
+    let folio = this.dataOrder.serviceOrderFolio;
+
     this.alertQuestion(
       'question',
       `¿Deseas aprobar la orden de servicio con folio: ${folio}?`,
@@ -561,7 +562,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
     let config: ModalOptions = {
       initialState: {
         orderServiceId: this.orderServiceId,
-        folio: folio,
+        folioOrderservice: this.dataOrder.serviceOrderFolio,
         op: null,
         callback: (next: boolean) => {
           if (next) {
@@ -838,8 +839,10 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
     let typeTask = this.taskInfo.activityName;
 
     this.loading = true;
-    const { title, url, type, subtype, ssubtype, process, close, rollBack } = (typeTask === 'Programar_Recepcion' ?
-      getConfigService(current, this.programming) : getConfigServiceEntrega(typeTask, this.programming));
+    const { title, url, type, subtype, ssubtype, process, close, rollBack } =
+      typeTask === 'Programar_Recepcion'
+        ? getConfigService(current, this.programming)
+        : getConfigServiceEntrega(typeTask, this.programming);
 
     const user: any = this.authService.decodeToken();
     let body: any = {};
@@ -960,7 +963,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -976,7 +979,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }

@@ -324,7 +324,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     }
 
     if (this.idTypeDoc == 197) {
-      learnedId = this.orderSampleId;
+      learnedId = this.orderSampleId + '-K';
     }
 
     this.loading = true;
