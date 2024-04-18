@@ -5,10 +5,24 @@
 
   <div body>
     <!-- form No Bien -->
-    <form
-      [formGroup]="form"
-      (submit)="mostrarInfo()"
-      class="container-fluid form-material">
+    <form [formGroup]="form" class="container-fluid form-material">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field [control]="form.get('noBien')">
+            <ngx-select
+              (fetchItems)="getGoods($event)"
+              [data]="goods"
+              [form]="form"
+              [showTooltip]="true"
+              bindLabel="bindLabel"
+              label="Bien"
+              [searchable]="true"
+              (change)="selectGood($event)"
+              control="noBien">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
       <div class="row w-100">
         <div
           class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
@@ -20,42 +34,7 @@
             </div>
           </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-12 p-2">
-          <div class="card">
-            <div class="card-header">
-              <form-field
-                class="col-sm-12 col-12 col-md-4 p-2"
-                [control]="form.get('noBien')"
-                label="No&#46; Bien">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="noBien" />
-              </form-field>
-              <div class="col-sm-12 col-12 col-md-8 p-2 text-end">
-                <button
-                  type="button"
-                  class="btn btn-primary btn-sm active"
-                  (click)="getGoodData()">
-                  Buscar
-                  <i aria-hidden="true" class="fa fa-search text-pink"></i>
-                </button>
-              </div>
-            </div>
-            <div class="card-body">
-              <form-field
-                class="col-sm-12 col-12 col-md-12 p-2"
-                [control]="form.get('descripcion')"
-                label="Descripci&oacute;n del Bien">
-                <textarea
-                  rows="5"
-                  [readonly]="true"
-                  class="form-control"
-                  formControlName="descripcion"></textarea>
-              </form-field>
-            </div>
-          </div>
-        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2"></div>
         <div class="col-12 col-sm-12 col-md-8">
           <h6>Pagos Recibidos en el Banco</h6>
         </div>
