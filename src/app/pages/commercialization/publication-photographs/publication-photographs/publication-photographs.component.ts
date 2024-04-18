@@ -17,6 +17,10 @@ import {
 
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
+import {
+  FilePhotoService,
+  IPhotoFile,
+} from 'src/app/core/services/ms-ldocuments/file-photo.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerLotService } from 'src/app/core/services/ms-parametercomer/comer-lot.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
@@ -108,6 +112,7 @@ export class PublicationPhotographsComponent
   columnFilters: any = [];
   columnFilters2: any = [];
   columnFilters3: any = [];
+  file: IPhotoFile;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -118,7 +123,8 @@ export class PublicationPhotographsComponent
     private prepareeventServices: ComerClientService,
     private comerTpEventosService: ComerTpEventosService,
     private parameterModService: ParameterModService,
-    private lotService: LotService
+    private lotService: LotService,
+    private filePhotoService: FilePhotoService
   ) {
     super();
     this.settings1 = {
@@ -413,12 +419,14 @@ export class PublicationPhotographsComponent
     this.selectedLot = event;
     this.rowAllotment = this.selectedLot.idLot;
     this.getcomerGoodxLot(this.selectedLot.idLot);
+    this.getDataImage();
   }
 
   selectRow(event: any) {
     console.log(event);
     this.selectedGood = event;
-    this.goodNumber = 21838744;
+    this.goodNumber = 0;
+    this.goodNumber = event.goodNumber;
   }
 
   userRowSelect(event: any) {
@@ -450,10 +458,12 @@ export class PublicationPhotographsComponent
   }
 
   public() {
+    console.log('AQUI');
     this.alert('success', this.title, 'Publicación realizada');
   }
-
+  files_: any[];
   fileEmiter(event: any[]) {
+    this.files_ = event;
     if (event.length > 0) {
       this.disableButton = false;
     }
@@ -465,5 +475,25 @@ export class PublicationPhotographsComponent
     } else {
       this.form.get(control).disable();
     }
+  }
+
+  refreshImageFavorite() {
+    this.getDataImage();
+  }
+
+  getDataImage(val?: boolean) {
+    this.filePhotoService
+      .getAll(1785644 + '')
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.file = response[4];
+          }
+        },
+        error: err => {
+          if (val) this.alert('warning', 'No se encontraron fotos', '');
+        },
+      });
   }
 }

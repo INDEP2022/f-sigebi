@@ -34,6 +34,26 @@ export class DetailIndParameterService
   }
 
   update3(model: IDetailIndParameter): Observable<Object> {
+    const { hoursLimNumber, initialDate, endDate } = model;
+    let _endDate =
+      typeof endDate == 'string'
+        ? endDate.split('/').reverse().join('-')
+        : endDate;
+    let _initialDate =
+      typeof initialDate == 'string'
+        ? initialDate.split('/').reverse().join('-')
+        : initialDate;
+    let _hoursLimNumber =
+      typeof hoursLimNumber == 'string'
+        ? hoursLimNumber.split(' ')[0].split('/').reverse().join('-') +
+          'T' +
+          hoursLimNumber.split(' ')[1] +
+          ':00.000Z'
+        : hoursLimNumber;
+
+    model.endDate = _endDate;
+    model.initialDate = _initialDate;
+    model.hoursLimNumber = _hoursLimNumber;
     return this.detailIndParameterRepository.update4(this.route, model);
   }
 

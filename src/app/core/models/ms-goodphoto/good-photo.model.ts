@@ -7,3 +7,9 @@ export interface IGoodPhoto {
   existsfs: number;
   existsproduction: number;
 }
+export interface GoodPhotoFav {
+  eventId: string | number;
+  batchId: string | number;
+  goodNumber: string | number;
+  consecNumber?: string | number;
+}

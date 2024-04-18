@@ -4,13 +4,18 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { catchError, firstValueFrom, map, of, takeUntil } from 'rxjs';
 import { FileUploadModalComponent } from 'src/app/@standalone/modals/file-upload-modal/file-upload-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { GoodPhotoFav } from 'src/app/core/models/ms-goodphoto/good-photo.model';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { FilePhotoSaveZipService } from 'src/app/core/services/ms-ldocuments/file-photo-save-zip.service';
 import {
   FilePhotoService,
   IPhotoFile,
 } from 'src/app/core/services/ms-ldocuments/file-photo.service';
+import { GoodPhotoService } from 'src/app/core/services/ms-photogood/good-photo.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared';
@@ -24,7 +29,10 @@ import { GoodPhotosService } from 'src/app/pages/general-processes/good-photos/s
 export class PhotosListCommercialComponent extends BasePage implements OnInit {
   @Input() disabled: boolean = true;
   @Input() origin: number;
+  @Input() lot: any;
+  @Input() event: any;
   @Output() fileEmiter = new EventEmitter<IPhotoFile[]>();
+  @Output() imageEmitter = new EventEmitter<any>();
   @Input()
   get goodNumber() {
     return this._goodNumber;
@@ -46,6 +54,7 @@ export class PhotosListCommercialComponent extends BasePage implements OnInit {
   files: IPhotoFile[] = [];
   form: FormGroup;
   errorImages: string[] = [];
+  loading2: boolean = false;
   constructor(
     private filePhotoService: FilePhotoService,
     private modalService: BsModalService,
@@ -54,7 +63,8 @@ export class PhotosListCommercialComponent extends BasePage implements OnInit {
     private proceedingService: ProceedingsService,
     private filePhotoSaveZipService: FilePhotoSaveZipService,
     private service: GoodPhotosService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private goodPhotoService: GoodPhotoService
   ) {
     super();
     this.form = this.fb.group({
@@ -149,9 +159,19 @@ export class PhotosListCommercialComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           if (response) {
-            this.files = [...response];
-            console.error(this.files);
-            this.fileEmiter.emit(this.files);
+            let result = response.map(async item => {
+              const params = new ListParams();
+              params['filter.eventId'] = `$eq:${this.event}`;
+              params['filter.batchId'] = `$eq:${this.lot}`;
+              params['filter.goodNumber'] = `$eq:${item.no_bien}`;
+              params['filter.consecNumber'] = `$eq:${item.no_consec}`;
+              item['favorite'] = await this.getFavPhoto(params);
+              item['post'] = item.publ_img_cat_web ? true : false;
+            });
+            Promise.all(result).then(resp => {
+              this.files = [...response];
+              this.fileEmiter.emit(this.files);
+            });
           }
         },
         error: err => {
@@ -160,6 +180,18 @@ export class PhotosListCommercialComponent extends BasePage implements OnInit {
       });
   }
 
+  getFavPhoto(params: ListParams): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.goodPhotoService.getComerPhotoFav(params).subscribe({
+        next(value) {
+          resolve(true);
+        },
+        error(err) {
+          resolve(false);
+        },
+      });
+    });
+  }
   validationUser(file: IPhotoFile) {
     if (!file.usuario_creacion) return true;
     if (file.usuario_creacion.length === 0) return true;
@@ -167,15 +199,169 @@ export class PhotosListCommercialComponent extends BasePage implements OnInit {
     return false;
   }
 
-  selectFile(image: IPhotoFile, event: Event) {
+  async selectFilePub(image: IPhotoFile, event: Event, index: number) {
     const target = event.target as HTMLInputElement;
     const checked = target.checked;
-    console.log(image);
-    /* if (checked) {
-      this.filesToDelete.push(image);
+    this.files[index]['post'] = checked;
+
+    const img = {
+      goodNumber: image.no_bien,
+      consecNumber: Number(image.no_consec),
+      publicImgcatWeb: checked ? 1 : 0,
+    };
+    // PUP_UPDATE_FOTO
+    this.loading = true;
+    const resp = await this.updatePhotoGood(img);
+    if (!resp) {
+      this.loading = false;
+      this.alert(
+        'warning',
+        `No se pudo publicar el bien ${image.no_bien}, consecutivo ${image.no_consec}`,
+        ''
+      );
     } else {
-      this.filesToDelete = this.filesToDelete.filter(file => file != image);
-    } */
+      this.loading = false;
+    }
+  }
+
+  async selectFileFav(image: IPhotoFile, event: Event, index: number) {
+    const target = event.target as HTMLInputElement;
+    const checked = target.checked;
+    this.files[index]['favorite'] = checked;
+    let V_FOTOFAVORITA = 0;
+    this.loading = true;
+    if (checked) {
+      V_FOTOFAVORITA = await this.pufValFavorite(); // PUF_VALFOTFAVORITA(:COMER_LOTES.ID_LOTE);
+      if (V_FOTOFAVORITA == 0) {
+        const img = {
+          goodNumber: image.no_bien,
+          consecNumber: Number(image.no_consec),
+          publicImgcatWeb: checked ? 1 : 0,
+        };
+        // PUP_UPDATE_FOTO
+        await this.updatePhotoGood(img);
+        // PUP_UPDFOTFAVORITA
+        let resp = await this.pupUpdateFavorite(
+          'I',
+          this.event,
+          this.lot,
+          Number(image.no_bien),
+          image.no_consec
+        );
+        if (!resp) {
+          this.files[index]['favorite'] = !checked;
+          this.loading = false;
+        } else {
+          // PUP_VISUALFOT
+          this.imageEmitter.emit();
+          this.files[index]['post'] = checked;
+          this.loading = false;
+        }
+      } else {
+        this.loading = false;
+        this.alert(
+          'warning',
+          'No es posible actualizar',
+          'Ya se ha asignado una fotografía favorita al Lote.'
+        );
+        this.files[index]['favorite'] = !checked;
+      }
+    } else {
+      await this.pupUpdateFavorite(
+        'D',
+        this.event,
+        this.lot,
+        Number(image.no_bien),
+        image.no_consec
+      );
+      // PUP_VISUALFOT
+      this.imageEmitter.emit();
+      this.loading = false;
+    }
+  }
+
+  async updatePhotoGood(image: any): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.goodPhotoService.update(image).subscribe({
+        next(value) {
+          resolve(true);
+        },
+        error(err) {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  async pufValFavorite(): Promise<number> {
+    // SERVICIO
+    return 0;
+  }
+  async pupUpdateFavorite(
+    pAction: string,
+    pEvento: number,
+    pLote: number,
+    pBien: number,
+    pConsec: number
+  ): Promise<boolean> {
+    if (pAction == 'I') {
+      const data: GoodPhotoFav = {
+        eventId: pEvento,
+        batchId: pLote,
+        goodNumber: pBien,
+        consecNumber: pConsec,
+      };
+      let resp = await this.createFavPhoto(data);
+      if (!resp)
+        this.alert(
+          'warning',
+          'Ya se encuentra una fotografía como favorita',
+          `Bien: ${pBien}, Consec. ${pConsec}`
+        );
+      return resp;
+    } else if (pAction == 'D') {
+      const data: GoodPhotoFav = {
+        eventId: pEvento,
+        batchId: pLote,
+        goodNumber: pBien,
+        consecNumber: pConsec,
+      };
+      let resp = await this.deleteFavPhoto(data);
+      if (!resp)
+        this.alert(
+          'warning',
+          'No se pudo eliminar de favoritos la fotografía',
+          `Bien: ${pBien}, Consec. ${pConsec}`
+        );
+      return resp;
+    } else {
+      return true;
+    }
+  }
+  async createFavPhoto(params: GoodPhotoFav): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.goodPhotoService.createComerPhotoFav(params).subscribe({
+        next(value) {
+          resolve(true);
+        },
+        error(err) {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  async deleteFavPhoto(params: GoodPhotoFav): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.goodPhotoService.deleteComerPhotoFav(params).subscribe({
+        next(value) {
+          resolve(true);
+        },
+        error(err) {
+          resolve(false);
+        },
+      });
+    });
   }
 
   openFileUploader() {

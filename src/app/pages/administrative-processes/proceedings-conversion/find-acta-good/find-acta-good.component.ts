@@ -73,44 +73,6 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
     };
   }
   ngOnInit(): void {
-    // this.providerForm.patchValue(this.actas);
-    // this.dataFactActas
-    //   .onChanged()
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(change => {
-    //     if (change.action === 'filter') {
-    //       let filters = change.filter.filters;
-    //       filters.map((filter: any) => {
-    //         let field = ``;
-    //         let searchFilter = SearchFilter.ILIKE;
-    //         this.cve = filter.field == 'cveActaConv';
-    //         field = `filter.${filter.field}`;
-    //         switch (filter.field) {
-    //           case 'statusProceedings':
-    //             searchFilter = SearchFilter.EQ;
-    //             break;
-    //           case 'numTransfer':
-    //             searchFilter = SearchFilter.EQ;
-    //             break;
-    //           case 'dateElaborationReceipt':
-    //             filter.search = this.returnParseDate(filter.search);
-    //             searchFilter = SearchFilter.EQ;
-    //             break;
-    //           default:
-    //             searchFilter = SearchFilter.ILIKE;
-    //             break;
-    //         }
-    //         if (filter.search !== '') {
-    //           this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-    //         } else {
-    //           delete this.columnFilters[field];
-    //         }
-    //       });
-    //       this.params = this.pageFilter(this.params);
-    //       this.getStatusDeliveryCve();
-    //     }
-    //   });
-
     this.dataFactActas
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
