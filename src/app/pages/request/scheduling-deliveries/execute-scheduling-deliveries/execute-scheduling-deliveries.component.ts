@@ -38,6 +38,7 @@ import {
   PROG_DELIVERY_GOOD_TYPE_REST_COLUMNS,
 } from './columns/good-delivery-columns';
 import { ShowSchedulingReportComponentComponent } from './show-scheduling-report-component/show-scheduling-report-component.component';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { EntregaSignatureModalComponent } from './entrega-signature-modal/entrega-signature-modal.component';
 
 @Component({
@@ -1122,7 +1123,7 @@ export class ExecuteSchedulingDeliveriesComponent
     } else {
       this.alertQuestion(
         'question',
-        'Turnar Solicitud',
+        'Enviar la programación',
         `¿Desea enviar la programación con folio: ${this.programmingDetailPanel.folio}?`
       ).then(async question => {
         if (question.isConfirmed) {
@@ -1131,8 +1132,8 @@ export class ExecuteSchedulingDeliveriesComponent
             this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
             this.alert(
               'success',
-              'Creación de Tarea Correcta',
-              `Se creó la tarea Realizar Programación con el folio: ${this.programmingId}`
+              'Entrega finalizada',
+              `Se finalizo la entrega con el folio: ${this.programmingDetailPanel.folio}`
             );
           }
         }
@@ -2082,25 +2083,20 @@ export class ExecuteSchedulingDeliveriesComponent
     });
   }
 
-  async closeTask() {
-    const user: any = this.authService.decodeToken();
-    const _task = JSON.parse(localStorage.getItem('Task'));
-    let body: any = {};
-
-    body['idTask'] = _task.id;
-    body['userProcess'] = user.username;
-    body['type'] = 'SOLICITUD_PROGRAMACION';
-    body['subtype'] = 'Realizar_Programacion';
-    body['ssubtype'] = 'ENVIAR';
-
-    const taskResult: any = await this.createTaskOrderService(body);
-    this.loading = false;
-    if (taskResult) {
-      return true;
-    } else if (taskResult == false) {
-      return false;
-    }
-    return false;
+  closeTask() {
+    return new Promise((resolve, reject) => {
+      const task = JSON.parse(localStorage.getItem('Task'));
+      const taskForm: ITask = {
+        State: 'FINALIZADA',
+        taskDefinitionId: null,
+      };
+      this.taskService.update(task.id, taskForm).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => { },
+      });
+    });
   }
 
   finishTask() {
