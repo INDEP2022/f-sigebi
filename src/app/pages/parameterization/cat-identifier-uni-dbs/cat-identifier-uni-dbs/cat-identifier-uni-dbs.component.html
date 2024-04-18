@@ -1,44 +1,40 @@
-<!--<app-card [header]="true">
-  <div header>
-    <div class="ch-content">
-      <h5 class="title">Relaci&oacute;n de asunto&#45;dictamen</h5>
-   </div>
-  </div>
-  <div body>
-    <div class="table-responsive">
-      <ng2-smart-table
-        [settings]="settings"
-        [source]="data"
-        (deleteConfirm)="onDeleteConfirm($event)"
-        (createConfirm)="onAddConfirm($event)"
-        (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
-    </div>
-  </div>
-</app-card>-->
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
       <h5 class="title">Relaci&oacute;n de asunto&#45;dictamen</h5>
-      <div class="col-md-5 buttons">
-        <div>
-          <button
-            class="btn btn-primary active btn-sm ml-3"
-            (click)="openForm()">
-            Nuevo
-          </button>
-        </div>
-      </div>
     </div>
   </div>
   <div body>
-    <div class="table-responsive">
-      <ng2-smart-table
-        [settings]="settings"
-        [source]="data"
-        (edit)="openForm($event.data)"
-        (delete)="delete($event.data)"></ng2-smart-table>
+    <div class="col-md-12">
+      <div class="row">
+        <div class="d-flex justify-content-end mb-2">
+          <div>
+            <button
+              type="button"
+              tooltip="Nuevo"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2"
+              (click)="openForm()">
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
+      </div>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
+    <div class="col-md-12">
+      <div class="table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="openForm($event.data)"
+            (delete)="delete($event.data)"></ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
   </div>
 </app-card>

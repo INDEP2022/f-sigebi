@@ -73,23 +73,36 @@
         <div accordion-heading class="d-flex justify-content-between">
           <h5>LOTES</h5>
         </div>
-        <div class="col-12">
-          <div class="row">
-            <form-loader *ngIf="loading"></form-loader>
+        <div class="row">
+          <div class="col-3 text-center">
+            <h6>FOTOGRAFÍA FAVORITA</h6>
+            <div
+              *ngIf="!file"
+              style="border: 1px solid grey; height: 160px"
+              class="row"></div>
+            <app-photo-commercial
+              *ngIf="file"
+              [goodNumber]="1785644 + ''"
+              [file]="file"></app-photo-commercial>
           </div>
-          <ng-scrollbar
-            [track]="'all'"
-            [ngStyle]="{ height: loading ? '0px' : '300px' }">
-            <ng2-smart-table
-              (userRowSelect)="selectRowGood($event.data)"
-              [attr.class]="'table-bordered table-responsive'"
-              [settings]="settings1"
-              [source]="data1">
-            </ng2-smart-table>
-          </ng-scrollbar>
+          <div class="col-9">
+            <div class="row">
+              <form-loader *ngIf="loading"></form-loader>
+            </div>
+            <ng-scrollbar
+              [track]="'all'"
+              [ngStyle]="{ height: loading ? '0px' : '300px' }">
+              <ng2-smart-table
+                (userRowSelect)="selectRowGood($event.data)"
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings1"
+                [source]="data1">
+              </ng2-smart-table>
+            </ng-scrollbar>
+            <app-pagination [params]="params" [totalItems]="totalItems1">
+            </app-pagination>
+          </div>
         </div>
-        <app-pagination [params]="params" [totalItems]="totalItems1">
-        </app-pagination>
         <div *ngIf="!loading" class="row mt-4">
           <form class="form-material" [formGroup]="form">
             <div class="col-md-6 text-center">
@@ -149,55 +162,18 @@
         [isOpen]="eventSelected && rowAllotment && selectedGood"
         [class.disabled]="!eventSelected || !rowAllotment || !selectedGood">
         <div accordion-heading class="d-flex justify-content-between">
-          <h5>FOTOGRAFÍAS</h5>
+          <h5>FOTOGRAFÍAS DEL BIEN {{ goodNumber }}</h5>
         </div>
         <form class="form-material" [formGroup]="form">
-          <div class="row">
-            <div class="col-md-4">
-              <button
-                (click)="public()"
-                type="button"
-                class="btn btn-primary btn-sm active"
-                [disabled]="disableButton">
-                Publicar como favorito
-              </button>
-            </div>
-          </div>
           <div class="row py-5">
             <app-photos-list-commercial
+              (imageEmitter)="refreshImageFavorite()"
+              [lot]="rowAllotment"
+              [event]="formEvent.get('id').value"
               (fileEmiter)="fileEmiter($event)"
               [disabled]="disabled"
               [goodNumber]="goodNumber"></app-photos-list-commercial>
           </div>
-          <!-- <div class="row pt-5">
-            <carousel
-              [itemsPerSlide]="itemsPerSlide"
-              [singleSlideOffset]="singleSlideOffset"
-              [startFromIndex]="6"
-              [interval]="0">
-              <slide *ngFor="let slide of slides; let index = index">
-                <img
-                  [src]="slide.image"
-                  alt="image slide"
-                  style="
-                    display: block;
-                    height: 250px;
-                    width: 300px;
-                    object-fit: cover;
-                  " />
-                <form-check for="keep-{{ index }}" class="float-check">
-                  <input
-                    type="checkbox"
-                    id="keep-{{ index }}"
-                    formControlName="favorite"
-                    class="form-control" />
-                </form-check>
-                <div class="carousel-csaption">
-                  <h6>Fotograf&iacute;a {{ index }}</h6>
-                </div>
-              </slide>
-            </carousel>
-          </div> -->
         </form>
       </accordion-group>
     </accordion>

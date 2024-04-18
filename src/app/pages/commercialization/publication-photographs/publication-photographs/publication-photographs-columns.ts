@@ -4,18 +4,22 @@ export const PUBLICATION_PHOTO1 = {
   idLot: {
     title: 'Lote',
     sort: false,
+    width: '15%',
   },
   description: {
     title: 'Descripción',
     sort: false,
+    width: '45%',
   },
   idStatusVta: {
     title: 'Estatus',
     sort: false,
+    width: '20%',
   },
   nameClient: {
     title: 'Cliente',
     sort: false,
+    width: '20%',
   },
 };
 

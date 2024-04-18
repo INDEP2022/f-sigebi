@@ -11,6 +11,9 @@ export const IDENTIFIER_DBS_COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value != null ? value.description : '';
     },
+    filterFunction: () => {
+      return true;
+    },
   },
   flyerType: {
     title: 'Tipo Volante',
