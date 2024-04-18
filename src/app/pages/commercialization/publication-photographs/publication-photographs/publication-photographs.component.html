@@ -77,13 +77,13 @@
           <div class="col-3 text-center">
             <h6>FOTOGRAFÍA FAVORITA</h6>
             <div
-              *ngIf="!file"
+              *ngIf="!_fileName"
               style="border: 1px solid grey; height: 160px"
               class="row"></div>
             <app-photo-commercial
-              *ngIf="file"
-              [goodNumber]="1785644 + ''"
-              [file]="file"></app-photo-commercial>
+              *ngIf="_fileName"
+              [goodNumber]="_goodNumber"
+              [_fileName]="_fileName"></app-photo-commercial>
           </div>
           <div class="col-9">
             <div class="row">
@@ -167,7 +167,7 @@
         <form class="form-material" [formGroup]="form">
           <div class="row py-5">
             <app-photos-list-commercial
-              (imageEmitter)="refreshImageFavorite()"
+              (imageEmitter)="refreshImageFavorite($event)"
               [lot]="rowAllotment"
               [event]="formEvent.get('id').value"
               (fileEmiter)="fileEmiter($event)"

@@ -356,4 +356,8 @@ export class GoodprocessService extends HttpService {
   postTbLotsEvent(body: any) {
     return this.post(`${GoodprocessEndpoints.TbLotsEvent}`, body);
   }
+
+  postApplicationGetExistGood(body: any) {
+    return this.post(`${GoodprocessEndpoints.ApplicationGetExistGood}`, body);
+  }
 }

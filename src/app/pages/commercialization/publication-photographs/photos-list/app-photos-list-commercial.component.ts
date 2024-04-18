@@ -32,7 +32,7 @@ export class PhotosListCommercialComponent extends BasePage implements OnInit {
   @Input() lot: any;
   @Input() event: any;
   @Output() fileEmiter = new EventEmitter<IPhotoFile[]>();
-  @Output() imageEmitter = new EventEmitter<any>();
+  @Output() imageEmitter = new EventEmitter<boolean>();
   @Input()
   get goodNumber() {
     return this._goodNumber;
@@ -253,7 +253,7 @@ export class PhotosListCommercialComponent extends BasePage implements OnInit {
           this.loading = false;
         } else {
           // PUP_VISUALFOT
-          this.imageEmitter.emit();
+          this.imageEmitter.emit(true);
           this.files[index]['post'] = checked;
           this.loading = false;
         }
@@ -275,7 +275,7 @@ export class PhotosListCommercialComponent extends BasePage implements OnInit {
         image.no_consec
       );
       // PUP_VISUALFOT
-      this.imageEmitter.emit();
+      this.imageEmitter.emit(false);
       this.loading = false;
     }
   }
