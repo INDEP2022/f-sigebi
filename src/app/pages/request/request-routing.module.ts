@@ -187,6 +187,17 @@ const routes: Routes = [
       ).ReceptionSchedulingServiceOrderModule,
   },
 
+  //Orden de servicio programación entrega//
+  {
+    path: 'entrega-service-order',
+    loadChildren: async () =>
+      (
+        await import(
+          './reception-scheduling-service-order/reception-scheduling-service-order.module'
+        )
+      ).ReceptionSchedulingServiceOrderModule,
+  },
+
   {
     path: 'delivery-service-order',
     loadChildren: async () =>
@@ -269,4 +280,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class RequestRoutingModule {}
+export class RequestRoutingModule { }

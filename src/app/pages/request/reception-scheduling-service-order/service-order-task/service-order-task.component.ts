@@ -28,6 +28,7 @@ import { RejectionJustifyFormComponent } from '../components/rejection-justify-f
 import { OrderSignatureModalComponent } from '../components/service-order-signature-modal/order-signature-modal.component';
 import { TypeSignatureModalComponent } from '../components/type-signature-modal/type-signature-modal..component';
 import { getConfigService } from './service-order-task-case';
+import { getConfigServiceEntrega } from './service-order-task-entrega';
 
 @Component({
   selector: 'app-service-order-task',
@@ -834,9 +835,12 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
   async createTask(current = this.process) {
     /** VERIFICAR VALIDACIONES PARA REALIZAR LA TAREA*/
 
+    let typeTask = this.taskInfo.activityName;
+
     this.loading = true;
-    const { title, url, type, subtype, ssubtype, process, close, rollBack } =
-      getConfigService(current, this.programming);
+    const { title, url, type, subtype, ssubtype, process, close, rollBack } = (typeTask === 'Programar_Recepcion' ?
+      getConfigService(current, this.programming) : getConfigServiceEntrega(typeTask, this.programming));
+
     const user: any = this.authService.decodeToken();
     let body: any = {};
 
@@ -956,7 +960,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -972,7 +976,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }

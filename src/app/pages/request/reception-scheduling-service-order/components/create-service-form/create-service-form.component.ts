@@ -133,7 +133,7 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
 
   getCatServiceCost(params: ListParams, form: any = null) {
     let body: any = {
-      serviceOrderId: 516,
+      serviceOrderId: this.programmingId,
       serviceType: this.typeService,
     };
 
