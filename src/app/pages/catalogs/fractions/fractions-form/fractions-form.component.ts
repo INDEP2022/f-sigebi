@@ -26,6 +26,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
   clasifications = new DefaultSelect<ISiabClasification>();
   edit: boolean = false;
   title: string = 'Fracción';
+  parentId: number;
 
   constructor(
     private modalRef: BsModalRef,
@@ -156,6 +157,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
       this.getClasificationSelect({ page: 1, text: '' });
       this.getFractionSelect({ page: 1, text: '' });
       this.fractionForm.controls['level'].setValue(this.oldFraction.level);
+      this.fractionForm.controls['parentId'].setValue(this.oldFraction.level);
       this.fractionForm.controls['level'].disable();
     }
   }
