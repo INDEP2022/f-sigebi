@@ -494,6 +494,8 @@ export class DeliveriesConstancyFormComponent
 
     //CREATE CERTIFICADO DE ENTREGA
     let deliveryForm = this.deliveryConstancyForm.getRawValue();
+    deliveryForm.participateCommissioned = "N";
+
     deliveryForm.oficioDate =
       deliveryForm.oficioDate != null
         ? moment(deliveryForm.oficioDate).format('YYYY-MM-DD')

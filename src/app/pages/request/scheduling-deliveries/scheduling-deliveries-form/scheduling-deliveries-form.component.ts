@@ -50,8 +50,7 @@ import { IClient, TypeEvent } from './type-events';
 })
 export class SchedulingDeliveriesFormComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   @Output() sourceChange = new EventEmitter<true>();
   schedulingDeliverieForm: FormGroup = new FormGroup({});
   showFileSaleForm: boolean = false;
@@ -197,6 +196,27 @@ export class SchedulingDeliveriesFormComponent
     this.prepareSearchDonationForm();
     this.prepareSearchSalesForm();
     this.getInfoUserLog();
+
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.showInfoProgrammingDelivery());
+
+    this.paramsSearchDest
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.showGoodsInventory(false));
+
+    this.paramsSearchDevol
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.showGoodsInventory(false));
+
+    this.paramsSearchSales
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.showGoodsInventory(false));
+
+    this.paramsSearchDonation
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.showGoodsInventory(false));
+
   }
   getInfoUserLog() {
     this.programmingRequestService.getUserInfo().subscribe({
@@ -210,7 +230,7 @@ export class SchedulingDeliveriesFormComponent
 
         //if (getClientName)
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -225,7 +245,7 @@ export class SchedulingDeliveriesFormComponent
           //this.clientName = response.data[0].client;
           resolve(true);
         },
-        error: () => {},
+        error: () => { },
       });
     });
   }
@@ -279,9 +299,6 @@ export class SchedulingDeliveriesFormComponent
           }
 
           this.schedulingDeliverieForm.patchValue(this.programmingDeliveryInfo);
-          this.params
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.showInfoProgrammingDelivery());
         },
         error: error => {
           const formData = {
@@ -298,7 +315,7 @@ export class SchedulingDeliveriesFormComponent
               next: (data: any) => {
                 //this.programmingDelId = data.id;
               },
-              error: error => {},
+              error: error => { },
             });
         },
       });
@@ -313,7 +330,7 @@ export class SchedulingDeliveriesFormComponent
         next: response => {
           resolve(response.data[0].nameTransferent);
         },
-        error: error => {},
+        error: error => { },
       });
       /*this.goodsQueryService.getCatStoresView(params.getValue()).subscribe({
         next: response => {
@@ -333,7 +350,7 @@ export class SchedulingDeliveriesFormComponent
         next: response => {
           resolve(response.data[0].name);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -677,7 +694,7 @@ export class SchedulingDeliveriesFormComponent
                 'Programación entrega guardada correctamente'
               );
             },
-            error: () => {},
+            error: () => { },
           });
       }
     });
@@ -706,7 +723,7 @@ export class SchedulingDeliveriesFormComponent
               console.log('response', response);
               resolve(true);
             },
-            error: error => {},
+            error: error => { },
           });
       }
     });
@@ -719,7 +736,7 @@ export class SchedulingDeliveriesFormComponent
           console.log('response', response);
           resolve(response.description);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -739,40 +756,27 @@ export class SchedulingDeliveriesFormComponent
     }
   }
 
-  showGoodsInventory() {
+  showGoodsInventory(alert = true) {
     const typeEvent = this.schedulingDeliverieForm.get('typeEvent').value;
     const transferId = this.schedulingDeliverieForm.get('transferId').value;
     const store = this.schedulingDeliverieForm.get('store').value;
     const client = this.schedulingDeliverieForm.get('client').value;
+
+    console.log('typeEvent', "showGoodsInventory");
+
     if (this.regionalDelegationNum && typeEvent && transferId && store) {
-      switch (typeEvent) {
-        case 5:
-          this.paramsSearchDest
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.showGoodInvDest(transferId, store));
-          break;
-        case 1:
-          this.paramsSearchSales
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.showGoodInvDest(transferId, store));
-          break;
-        case 4:
-          this.paramsSearchDevol
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.showGoodInvDest(transferId, store));
-          break;
-        case 2:
-          this.paramsSearchDonation
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.showGoodInvDest(transferId, store));
-          break;
-      }
+
+      this.showGoodInvDest(transferId, store);
+
     } else {
-      this.alert(
-        'warning',
-        'Acción Invalida',
-        'Se requiere seleccionar un almacén y una transferente'
-      );
+      if (alert) {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'Se requiere seleccionar un almacén y una transferente'
+        );
+      }
+
     }
   }
 
@@ -824,6 +828,9 @@ export class SchedulingDeliveriesFormComponent
     if (this.idTypeEvent == 1) {
       this.nameEvent = 'VENTAS';
       params = this.paramsSearchSales.getValue();
+
+      console.log('params ventas', params);
+
       const managementNum = this.searchSalesForm.get('managementNum').value;
       const descriptionGood = this.searchSalesForm.get('descriptionGood').value;
       const inventoryNum = this.searchSalesForm.get('inventoryNum').value;
@@ -995,7 +1002,7 @@ export class SchedulingDeliveriesFormComponent
         this.infoGoodDonation.load([]);
         this.infoGoodSales.load([]);
       },
-    }); 
+    });
     this.cleanSearchForm();
   }
 
@@ -1057,13 +1064,11 @@ export class SchedulingDeliveriesFormComponent
     this.infoGoodDonation.load([]);
     this.infoGoodSales.load([]);
 
-    this.params = new BehaviorSubject<ListParams>(new ListParams());
-    this.paramsSearchDest = new BehaviorSubject<ListParams>(new ListParams());
-    this.paramsSearchDevol = new BehaviorSubject<ListParams>(new ListParams());
-    this.paramsSearchDonation = new BehaviorSubject<ListParams>(
-      new ListParams()
-    );
-    this.paramsSearchSales = new BehaviorSubject<ListParams>(new ListParams());
+    //this.params = new BehaviorSubject<ListParams>(new ListParams());
+    //this.paramsSearchDest = new BehaviorSubject<ListParams>(new ListParams());
+    //this.paramsSearchDevol = new BehaviorSubject<ListParams>(new ListParams());
+    //this.paramsSearchDonation = new BehaviorSubject<ListParams>(new ListParams());
+    //this.paramsSearchSales = new BehaviorSubject<ListParams>(new ListParams());
   }
 
   goodsSelectDest(goodInvSelect: IGoodInvAvailableView[]) {
@@ -1133,11 +1138,9 @@ export class SchedulingDeliveriesFormComponent
               .subscribe({
                 next: async response => {
                   this.addedGoods.push(goodForm);
-                  this.params
-                    .pipe(takeUntil(this.$unSubscribe))
-                    .subscribe(() => this.showInfoProgrammingDelivery());
+                  this.showInfoProgrammingDelivery();
                 },
-                error: error => {},
+                error: error => { },
               });
           });
           this.alert(
@@ -1175,7 +1178,7 @@ export class SchedulingDeliveriesFormComponent
                   good => good.goodId !== row.goodId
                 );
               },
-              error: error => {},
+              error: error => { },
             });
         });
         this.alert(
@@ -1317,7 +1320,7 @@ export class SchedulingDeliveriesFormComponent
       });
   }
 
-  addEstate(event: Event) {}
+  addEstate(event: Event) { }
 
   generateConDestruccion() {
     this.goodsToProgramData.getElements().then(data => {
@@ -1379,7 +1382,7 @@ export class SchedulingDeliveriesFormComponent
     this.notificationService
       .createNotificationDestruction(this.schedulingDeliverieForm.value)
       .subscribe({
-        next: response => {},
+        next: response => { },
         error: error => {
           console.log('error', error);
         },
@@ -1572,8 +1575,8 @@ export class SchedulingDeliveriesFormComponent
       this.programmingRequestService
         .sendEmailProgrammingDelivery(formData)
         .subscribe({
-          next: () => {},
-          error: () => {},
+          next: () => { },
+          error: () => { },
         });
     } else {
       this.alert(
@@ -1606,7 +1609,7 @@ export class SchedulingDeliveriesFormComponent
               next: response => {
                 console.log('response', response);
               },
-              error: error => {},
+              error: error => { },
             });
           this.loading = true;
           this.programmingId = this.programmingDeliveryInfo.id;
