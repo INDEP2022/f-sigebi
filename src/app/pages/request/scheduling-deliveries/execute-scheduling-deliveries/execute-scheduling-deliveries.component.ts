@@ -5,7 +5,7 @@ import { BehaviorSubject, of, takeUntil } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams, ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IProgrammingDeliveryGood } from 'src/app/core/models/good-programming/programming-delivery-good.model';
 import { IGoodInvAvailableView } from 'src/app/core/models/ms-goodsinv/goodsinv.model';
@@ -38,6 +38,7 @@ import {
   PROG_DELIVERY_GOOD_TYPE_REST_COLUMNS,
 } from './columns/good-delivery-columns';
 import { ShowSchedulingReportComponentComponent } from './show-scheduling-report-component/show-scheduling-report-component.component';
+import { EntregaSignatureModalComponent } from './entrega-signature-modal/entrega-signature-modal.component';
 
 @Component({
   selector: 'app-execute-scheduling-deliveries',
@@ -46,8 +47,7 @@ import { ShowSchedulingReportComponentComponent } from './show-scheduling-report
 })
 export class ExecuteSchedulingDeliveriesComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   @ViewChild('table', { static: false }) table: any;
   @ViewChild('table2', { static: false }) table2: any;
   @ViewChild('tablePEGNE', { static: false }) tablePEGNE: any;
@@ -132,6 +132,7 @@ export class ExecuteSchedulingDeliveriesComponent
   private wcontet = inject(WContentService);
   private certifiGoodsService = inject(CertificatesGoodsService);
   private requestHelpService = inject(RequestHelperService);
+  private activeRouter = inject(ActivatedRoute);
 
   constructor(
     private modalService: BsModalService,
@@ -144,7 +145,13 @@ export class ExecuteSchedulingDeliveriesComponent
     super();
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+
+    this.programmingId = this.activeRouter.snapshot.params['id'];
+
+    this.taskInfo = await this.getTask();
+    this.title = this.taskInfo.title;
+
     if (this.programmingDetailPanel.status === 'RESTITUCION_BIENES') {
       this.active = true;
     }
@@ -1032,7 +1039,7 @@ export class ExecuteSchedulingDeliveriesComponent
         next: (resp: any) => {
           resolve(resp.data);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1384,7 +1391,7 @@ export class ExecuteSchedulingDeliveriesComponent
               'Se han actualizado los bienes'
             );
           },
-          error: () => {},
+          error: () => { },
         });
     }
   }
@@ -1426,10 +1433,10 @@ export class ExecuteSchedulingDeliveriesComponent
           'warning',
           'Acción Invalida',
           'El bien ' +
-            good.goodId +
-            '-' +
-            good.inventoryNumber +
-            ' debe tener asignado un tipo de restitución'
+          good.goodId +
+          '-' +
+          good.inventoryNumber +
+          ' debe tener asignado un tipo de restitución'
         );
         error = true;
         break;
@@ -1491,10 +1498,10 @@ export class ExecuteSchedulingDeliveriesComponent
           'warning',
           'Acción Invalida',
           'El bien ' +
-            good.goodId +
-            '-' +
-            good.inventoryNumber +
-            ' debe tener una restitución en especie'
+          good.goodId +
+          '-' +
+          good.inventoryNumber +
+          ' debe tener una restitución en especie'
         );
         error = true;
         break;
@@ -1549,8 +1556,8 @@ export class ExecuteSchedulingDeliveriesComponent
           infoProgramming
         )
         .subscribe({
-          next: async response => {},
-          error: () => {},
+          next: async response => { },
+          error: () => { },
         });
     }
 
@@ -1576,7 +1583,7 @@ export class ExecuteSchedulingDeliveriesComponent
           return;
         }
       });
-    } catch (error) {}
+    } catch (error) { }
   }
 
   claimmingForm() {
@@ -1589,7 +1596,7 @@ export class ExecuteSchedulingDeliveriesComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1604,7 +1611,7 @@ export class ExecuteSchedulingDeliveriesComponent
     let config: ModalOptions = {
       initialState: {
         requestId: this.programmingId,
-        reportId: '',
+        reportId: '218',
         idSample: this.programmingId,
         contentId: '',
         typeAnnex: typeAnnex,
@@ -1639,13 +1646,13 @@ export class ExecuteSchedulingDeliveriesComponent
     let token = this.authService.decodeToken();
     let today = new Date();
 
-    let idTypeDoc = '0';
+    let idTypeDoc = '101';
     let readOnly = false;
 
     const typeAnnex = 'approval-request';
     const requestInfo = { id: this.programmingId, type: 'programming' };
     const idReportAclara = this.programmingId;
-    const nameTypeDoc = 'OrdenServicio';
+    const nameTypeDoc = 'FormatoReclamacion';
     const nomenglatura = '';
 
     const nameDoc = 'formato_reclamacion';
@@ -1662,7 +1669,7 @@ export class ExecuteSchedulingDeliveriesComponent
         userName,
         chargeUser,
         numSignature,
-        idProg,
+        folio: this.programmingDetailPanel.folio,
 
         idReportAclara,
         idTypeDoc,
@@ -1682,7 +1689,7 @@ export class ExecuteSchedulingDeliveriesComponent
       keyboard: false,
       ignoreBackdropClick: true,
     };
-    this.modalService.show(OrderSignatureModalComponent, config);
+    this.modalService.show(EntregaSignatureModalComponent, config);
   }
 
   changeTypeRestitucion(tipoRest: string) {
@@ -1797,8 +1804,8 @@ export class ExecuteSchedulingDeliveriesComponent
               infoProgramming
             )
             .subscribe({
-              next: response => {},
-              error: error => {},
+              next: response => { },
+              error: error => { },
             });
           this.loading = true;
           this.programmingId = this.programmingDetailPanel.id;
@@ -1924,8 +1931,8 @@ export class ExecuteSchedulingDeliveriesComponent
               infoProgramming
             )
             .subscribe({
-              next: response => {},
-              error: error => {},
+              next: response => { },
+              error: error => { },
             });
           this.loading = true;
           this.programmingId = this.programmingDetailPanel.id;
@@ -2026,8 +2033,8 @@ export class ExecuteSchedulingDeliveriesComponent
               infoProgramming
             )
             .subscribe({
-              next: response => {},
-              error: error => {},
+              next: response => { },
+              error: error => { },
             });
           this.loading = true;
           this.programmingId = this.programmingDetailPanel.id;
@@ -2115,8 +2122,8 @@ export class ExecuteSchedulingDeliveriesComponent
               infoProgramming
             )
             .subscribe({
-              next: response => {},
-              error: error => {},
+              next: response => { },
+              error: error => { },
             });
           this.loading = true;
           this.programmingId = this.programmingDetailPanel.id;
@@ -2175,5 +2182,30 @@ export class ExecuteSchedulingDeliveriesComponent
     };
 
     this.modalService.show(ShowSchedulingReportComponentComponent, config);
+  }
+
+  getTask() {
+    const task = JSON.parse(localStorage.getItem('Task'));
+
+    const param = new FilterParams();
+    param.addFilter('id', task.id);
+    const filter = param.getParams();
+
+    return new Promise((resolve, reject) => {
+      this.taskService.getAll(filter).subscribe({
+        next: resp => {
+          if (resp.data.length > 0) {
+            resolve(resp.data[0]);
+          } else {
+            reject(false);
+          }
+        },
+        error: error => {
+          this.loading = false;
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
+        },
+      });
+    });
   }
 }

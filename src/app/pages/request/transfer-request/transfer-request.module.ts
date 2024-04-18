@@ -59,6 +59,7 @@ import { ClarificationsComponent } from './tabs/validate-asset-document-componen
 import { TransferRequestRoutingModule } from './transfer-request-routing.module';
 import { RequestSignatureModalComponent } from '../request-complementary-documentation/request-signature-modal/request-signature-modal.component';
 import { OrderSignatureModalComponent } from '../reception-scheduling-service-order/components/service-order-signature-modal/order-signature-modal.component';
+import { EntregaSignatureModalComponent } from '../scheduling-deliveries/execute-scheduling-deliveries/entrega-signature-modal/entrega-signature-modal.component';
 
 @NgModule({
   declarations: [
@@ -91,6 +92,7 @@ import { OrderSignatureModalComponent } from '../reception-scheduling-service-or
     PrintReportModalComponent,
     RequestSignatureModalComponent,
     OrderSignatureModalComponent,
+    EntregaSignatureModalComponent,
     InputFieldComponent,
     UploadFielsModalComponent,
     RefuseClarificationModalComponent,

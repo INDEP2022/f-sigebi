@@ -293,6 +293,9 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
       .getAllOrderService(params)
       .pipe(
         catchError((e: any) => {
+
+          this.createOrderService();
+
           if (e.status == 400) return of({ data: [], count: 0 });
           throw e;
         })
@@ -371,6 +374,29 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'error',
             'No se pudo actualizar la orden de servicio'
+          );
+      },
+    });
+  }
+
+  createOrderService() {
+
+    let request = {
+      "serviceOrderStatus": "NUEVA",
+      "serviceOrderFolio": this.programming.folio,
+      "serviceOrderType": "ORDEN_SERVICIO_REPORTE_IMPLEMENTACION",
+      "programmingId": this.programmingId,
+    }
+
+    this.orderService.createOrderService(request).subscribe({
+      next: resp => {
+        this.getOrderService();
+      },
+      error: () => {
+        if (alert)
+          this.onLoadToast(
+            'error',
+            'No se pudo inicializar la orden de servicio'
           );
       },
     });
