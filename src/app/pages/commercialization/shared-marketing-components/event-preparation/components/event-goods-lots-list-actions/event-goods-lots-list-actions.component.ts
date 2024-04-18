@@ -339,6 +339,10 @@ export class EventGoodsLotsListActionsComponent
 
   async onLotifyGoodsFromExcel() {
     const { eventTpId, statusVtaId } = this.controls;
+    console.log(eventTpId.value);
+    console.log(statusVtaId.value);
+    console.log(this.parameters.pValids);
+
     if ([6, 7].includes(Number(eventTpId.value))) {
       if (!(await this.validLotify())) {
         this.alert(
