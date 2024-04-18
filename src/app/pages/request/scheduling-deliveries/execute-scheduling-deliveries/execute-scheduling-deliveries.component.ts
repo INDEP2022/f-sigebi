@@ -522,7 +522,7 @@ export class ExecuteSchedulingDeliveriesComponent
 
           this.getProgrammingGoodDelivery(new ListParams());
           this.getCertificateDelivery(new ListParams());
-          this.getTitle();
+          //this.getTitle();
         },
       });
   }
@@ -2085,12 +2085,11 @@ export class ExecuteSchedulingDeliveriesComponent
 
   closeTask() {
     return new Promise((resolve, reject) => {
-      const task = JSON.parse(localStorage.getItem('Task'));
       const taskForm: ITask = {
         State: 'FINALIZADA',
         taskDefinitionId: null,
       };
-      this.taskService.update(task.id, taskForm).subscribe({
+      this.taskService.update(this.taskInfo.id, taskForm).subscribe({
         next: response => {
           resolve(true);
         },
@@ -2124,16 +2123,8 @@ export class ExecuteSchedulingDeliveriesComponent
           this.loading = true;
           this.programmingId = this.programmingDetailPanel.id;
           const user: any = this.authService.decodeToken();
-          const _task = JSON.parse(localStorage.getItem('Task'));
-          let body: any = {};
 
-          body['idTask'] = _task.id;
-          body['userProcess'] = user.username;
-          body['type'] = 'SOLICITUD_PROGRAMACION';
-          body['subtype'] = 'Realizar_Programacion';
-          body['ssubtype'] = 'ENVIAR';
-
-          const taskResult: any = await this.createTaskOrderService(body);
+          const taskResult: any = await this.closeTask();
           this.loading = false;
           if (taskResult) {
             this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
