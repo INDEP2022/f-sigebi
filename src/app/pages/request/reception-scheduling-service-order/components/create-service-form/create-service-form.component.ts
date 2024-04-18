@@ -33,6 +33,7 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
   orderServId: number = null;
   typeService: string = null;
   servicesSelected: any = [];
+  programmingId: number = null;
   user: any = null;
 
   private orderEntryService = inject(orderentryService);
@@ -109,6 +110,7 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
   clean() {
     this.form.reset();
     this.data = [];
+    this.totalItems = 0;
   }
   close() {
     this.modalRef.hide();
@@ -129,11 +131,17 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
     });
   }
 
-  getCatServiceCost(params: ListParams, form?: any) {
+  getCatServiceCost(params: ListParams, form: any = null) {
     let body: any = {
-      serviceOrderId: 516,
+      serviceOrderId: this.programmingId,
       serviceType: this.typeService,
     };
+
+    if (form && form.description) {
+      body['detServiceConter'] = form.description;
+      body['detuomConter'] = form.description;
+    }
+
     this.goodsinv.getCatServiceCost(body, params.page, params.limit).subscribe({
       next: resp => {
         this.data = resp.data;

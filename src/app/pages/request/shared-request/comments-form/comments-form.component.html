@@ -48,11 +48,23 @@
         <div class="col-md-12">
           <form-field
             [control]="ordServform.get('justification')"
-            label="Comentario de Rechazo">
+            label="Justificación">
             <textarea
               [disabled]="true"
               class="form-control"
               formControlName="justification"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3" *ngIf="getViewJustificationReport()">
+        <div class="col-md-12">
+          <form-field
+            [control]="ordServform.get('justificationReport')"
+            label="Justificación de reporte">
+            <textarea
+              [disabled]="true"
+              class="form-control"
+              formControlName="justificationReport"></textarea>
           </form-field>
         </div>
       </div>

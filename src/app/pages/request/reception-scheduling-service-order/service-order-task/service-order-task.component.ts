@@ -18,7 +18,7 @@ import { OrderServiceService } from 'src/app/core/services/ms-order-service/orde
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { ConfirmProgrammingComponent } from '../../shared-request/confirm-programming/confirm-programming.component';
@@ -28,6 +28,7 @@ import { RejectionJustifyFormComponent } from '../components/rejection-justify-f
 import { OrderSignatureModalComponent } from '../components/service-order-signature-modal/order-signature-modal.component';
 import { TypeSignatureModalComponent } from '../components/type-signature-modal/type-signature-modal..component';
 import { getConfigService } from './service-order-task-case';
+import { getConfigServiceEntrega } from './service-order-task-entrega';
 
 @Component({
   selector: 'app-service-order-task',
@@ -143,7 +144,11 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
       ],
       originPostalCode: [
         { value: null, disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(5),
+          Validators.minLength(5),
+        ],
       ],
       colonyOrigin: [
         { value: null, disabled: true },
@@ -264,15 +269,21 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
       case 'service-order-capture':
         this.form.enable();
         this.ordServform.enable();
+
+        this.ordServform.get('justification').disable();
+        this.ordServform.get('justificationReport').disable();
+        this.ordServform.get('commentRejection').disable();
+
         break;
     }
   }
 
   setRelease() {
     this.btnReclamar = true;
-
     this.form.disable();
     this.ordServform.disable();
+
+    this.ngOnInit();
   }
 
   getOrderService() {
@@ -824,9 +835,12 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
   async createTask(current = this.process) {
     /** VERIFICAR VALIDACIONES PARA REALIZAR LA TAREA*/
 
+    let typeTask = this.taskInfo.activityName;
+
     this.loading = true;
-    const { title, url, type, subtype, ssubtype, process, close, rollBack } =
-      getConfigService(current, this.programming);
+    const { title, url, type, subtype, ssubtype, process, close, rollBack } = (typeTask === 'Programar_Recepcion' ?
+      getConfigService(current, this.programming) : getConfigServiceEntrega(typeTask, this.programming));
+
     const user: any = this.authService.decodeToken();
     let body: any = {};
 
@@ -946,7 +960,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -962,7 +976,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
