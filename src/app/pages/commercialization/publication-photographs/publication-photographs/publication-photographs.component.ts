@@ -17,10 +17,8 @@ import {
 
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
-import {
-  FilePhotoService,
-  IPhotoFile,
-} from 'src/app/core/services/ms-ldocuments/file-photo.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerLotService } from 'src/app/core/services/ms-parametercomer/comer-lot.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
@@ -112,7 +110,8 @@ export class PublicationPhotographsComponent
   columnFilters: any = [];
   columnFilters2: any = [];
   columnFilters3: any = [];
-  file: IPhotoFile;
+  file: any = {} as any;
+  _fileName: string = '';
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -124,7 +123,8 @@ export class PublicationPhotographsComponent
     private comerTpEventosService: ComerTpEventosService,
     private parameterModService: ParameterModService,
     private lotService: LotService,
-    private filePhotoService: FilePhotoService
+    private filePhotoService: FilePhotoService,
+    private goodprocessService: GoodprocessService
   ) {
     super();
     this.settings1 = {
@@ -173,7 +173,10 @@ export class PublicationPhotographsComponent
             const search: any = {
               idLot: () => (searchFilter = SearchFilter.EQ),
               description: () => (searchFilter = SearchFilter.ILIKE),
-              idStatusVta: () => (searchFilter = SearchFilter.ILIKE),
+              descStatus: () => (
+                (searchFilter = SearchFilter.ILIKE),
+                (field = `filter.comerStatusvta.description`)
+              ),
               nameClient: () => (searchFilter = SearchFilter.ILIKE),
             };
             search[filter.field]();
@@ -207,8 +210,14 @@ export class PublicationPhotographsComponent
 
             const search: any = {
               goodNumber: () => (searchFilter = SearchFilter.EQ),
-              status: () => (searchFilter = SearchFilter.ILIKE),
-              description: () => (searchFilter = SearchFilter.ILIKE),
+              statusGood: () => (
+                (searchFilter = SearchFilter.ILIKE),
+                (field = `filter.good.status`)
+              ),
+              descriptionGood: () => (
+                (searchFilter = SearchFilter.ILIKE),
+                (field = `filter.good.description`)
+              ),
             };
             search[filter.field]();
 
@@ -369,6 +378,9 @@ export class PublicationPhotographsComponent
         console.log(data);
         const result = data.items.map((item: any) => {
           item['nameClient'] = item.client ? item.client.nomRazon : null;
+          item['descStatus'] = item.comerStatusvta
+            ? item.comerStatusvta.description
+            : null;
         });
         Promise.all(result).then(resp => {
           this.loading = false;
@@ -397,7 +409,10 @@ export class PublicationPhotographsComponent
       next: data => {
         console.log(data);
         this.loading2 = false;
-        const result = data.data.map((item: any) => {});
+        const result = data.data.map((item: any) => {
+          item['statusGood'] = item.good ? item.good.status : null;
+          item['descriptionGood'] = item.good ? item.good.description : null;
+        });
         Promise.all(result).then(resp => {
           this.data2.load(data.data);
           this.data2.refresh();
@@ -434,6 +449,10 @@ export class PublicationPhotographsComponent
   }
 
   clean(): void {
+    this._fileName = '';
+    this._goodNumber = null;
+
+    this.eventSelected = null;
     this.selectedEvent = null;
     this.selectedGood = null;
     this.selectedLot = null;
@@ -477,21 +496,40 @@ export class PublicationPhotographsComponent
     }
   }
 
-  refreshImageFavorite() {
-    this.getDataImage();
+  refreshImageFavorite(val: boolean) {
+    console.log(val);
+    if (val) {
+      this.getDataImage();
+    } else {
+      this._fileName = '';
+      this._goodNumber = null;
+    }
   }
 
+  _goodNumber: any = null;
   getDataImage(val?: boolean) {
-    this.filePhotoService
-      .getAll(1785644 + '')
+    const { id } = this.formEvent.value;
+    const body = {
+      lotId: this.rowAllotment,
+      eventId: id,
+    };
+    this.goodprocessService
+      .postApplicationGetExistGood(body)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
+          console.log(response);
           if (response) {
-            this.file = response[4];
+            this._goodNumber = response.data[0].goodNumber;
+            this._fileName = response.data[0].location.split('/')[5];
+            console.log(this._fileName);
+            this.file = response.data[0];
           }
         },
         error: err => {
+          this.file = {} as any;
+          this._goodNumber = null;
+          this._fileName = '';
           if (val) this.alert('warning', 'No se encontraron fotos', '');
         },
       });

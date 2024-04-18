@@ -50,7 +50,8 @@ import { IClient, TypeEvent } from './type-events';
 })
 export class SchedulingDeliveriesFormComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   @Output() sourceChange = new EventEmitter<true>();
   schedulingDeliverieForm: FormGroup = new FormGroup({});
   showFileSaleForm: boolean = false;
@@ -216,7 +217,6 @@ export class SchedulingDeliveriesFormComponent
     this.paramsSearchDonation
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.showGoodsInventory(false));
-
   }
   getInfoUserLog() {
     this.programmingRequestService.getUserInfo().subscribe({
@@ -230,7 +230,7 @@ export class SchedulingDeliveriesFormComponent
 
         //if (getClientName)
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -245,7 +245,7 @@ export class SchedulingDeliveriesFormComponent
           //this.clientName = response.data[0].client;
           resolve(true);
         },
-        error: () => { },
+        error: () => {},
       });
     });
   }
@@ -315,7 +315,7 @@ export class SchedulingDeliveriesFormComponent
               next: (data: any) => {
                 //this.programmingDelId = data.id;
               },
-              error: error => { },
+              error: error => {},
             });
         },
       });
@@ -330,7 +330,7 @@ export class SchedulingDeliveriesFormComponent
         next: response => {
           resolve(response.data[0].nameTransferent);
         },
-        error: error => { },
+        error: error => {},
       });
       /*this.goodsQueryService.getCatStoresView(params.getValue()).subscribe({
         next: response => {
@@ -350,7 +350,7 @@ export class SchedulingDeliveriesFormComponent
         next: response => {
           resolve(response.data[0].name);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -362,7 +362,7 @@ export class SchedulingDeliveriesFormComponent
       programmingDeliveryId: this.programmingDeliveryInfo?.id,
       typeNotification: [null],
       typeEvent: [null, [Validators.required]],
-      typeEventInfo: [null,],
+      typeEventInfo: [null],
       startDate: [null, [Validators.required]],
       store: [null, [Validators.required]],
       storeName: [null],
@@ -694,7 +694,7 @@ export class SchedulingDeliveriesFormComponent
                 'Programación entrega guardada correctamente'
               );
             },
-            error: () => { },
+            error: () => {},
           });
       }
     });
@@ -723,7 +723,7 @@ export class SchedulingDeliveriesFormComponent
               console.log('response', response);
               resolve(true);
             },
-            error: error => { },
+            error: error => {},
           });
       }
     });
@@ -736,7 +736,7 @@ export class SchedulingDeliveriesFormComponent
           console.log('response', response);
           resolve(response.description);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -762,12 +762,10 @@ export class SchedulingDeliveriesFormComponent
     const store = this.schedulingDeliverieForm.get('store').value;
     const client = this.schedulingDeliverieForm.get('client').value;
 
-    console.log('typeEvent', "showGoodsInventory");
+    console.log('typeEvent', 'showGoodsInventory');
 
     if (this.regionalDelegationNum && typeEvent && transferId && store) {
-
       this.showGoodInvDest(transferId, store);
-
     } else {
       if (alert) {
         this.alert(
@@ -776,7 +774,6 @@ export class SchedulingDeliveriesFormComponent
           'Se requiere seleccionar un almacén y una transferente'
         );
       }
-
     }
   }
 
@@ -1046,11 +1043,10 @@ export class SchedulingDeliveriesFormComponent
   }
 
   cleanSearchForm() {
-
     this.totalItemsSearchDest = 0;
     this.totalItemsSearchDevol = 0;
     this.totalItemsSearchDonation = 0;
-    this.totalItemsSearchSales = 0
+    this.totalItemsSearchSales = 0;
 
     this.searchDestructionForm.reset();
     this.searchDevolutionForm.reset();
@@ -1104,7 +1100,6 @@ export class SchedulingDeliveriesFormComponent
             `Los siguientes bienes ya han sido agregados a la programación de entrega: ${alreadyAddedGoodsNames}`
           );
         } else {
-
           this.goodDesSelect.map(good => {
             const goodForm: IGoodDelivery = {
               programmingDeliveryId: saveProgramming['id'],
@@ -1140,7 +1135,7 @@ export class SchedulingDeliveriesFormComponent
                   this.addedGoods.push(goodForm);
                   this.showInfoProgrammingDelivery();
                 },
-                error: error => { },
+                error: error => {},
               });
           });
           this.alert(
@@ -1178,7 +1173,7 @@ export class SchedulingDeliveriesFormComponent
                   good => good.goodId !== row.goodId
                 );
               },
-              error: error => { },
+              error: error => {},
             });
         });
         this.alert(
@@ -1293,10 +1288,7 @@ export class SchedulingDeliveriesFormComponent
     this.schedulingDeliverieForm
       .get('typeEventInfo')
       .setValue(this.typeEventname);
-    this.schedulingDeliverieForm
-      .get('clientName')
-      .setValue(this.clientName);
-
+    this.schedulingDeliverieForm.get('clientName').setValue(this.clientName);
   }
 
   showInfoProgrammingDelivery() {
@@ -1320,7 +1312,7 @@ export class SchedulingDeliveriesFormComponent
       });
   }
 
-  addEstate(event: Event) { }
+  addEstate(event: Event) {}
 
   generateConDestruccion() {
     this.goodsToProgramData.getElements().then(data => {
@@ -1382,7 +1374,7 @@ export class SchedulingDeliveriesFormComponent
     this.notificationService
       .createNotificationDestruction(this.schedulingDeliverieForm.value)
       .subscribe({
-        next: response => { },
+        next: response => {},
         error: error => {
           console.log('error', error);
         },
@@ -1408,7 +1400,6 @@ export class SchedulingDeliveriesFormComponent
                 if (next) {
                   this.showReportDestruction();
                   this.notification1exist = true;
-
                 }
               },
             };
@@ -1575,8 +1566,8 @@ export class SchedulingDeliveriesFormComponent
       this.programmingRequestService
         .sendEmailProgrammingDelivery(formData)
         .subscribe({
-          next: () => { },
-          error: () => { },
+          next: () => {},
+          error: () => {},
         });
     } else {
       this.alert(
@@ -1609,7 +1600,7 @@ export class SchedulingDeliveriesFormComponent
               next: response => {
                 console.log('response', response);
               },
-              error: error => { },
+              error: error => {},
             });
           this.loading = true;
           this.programmingId = this.programmingDeliveryInfo.id;
@@ -1683,11 +1674,7 @@ export class SchedulingDeliveriesFormComponent
 
   showDocuments(): void {
     if (this.selectedRows.length == 0 || this.selectedRows.length >= 2) {
-      this.alert(
-        'warning',
-        'Acción Invalida',
-        'Se debe seleccionar un bien '
-      );
+      this.alert('warning', 'Acción Invalida', 'Se debe seleccionar un bien ');
     } else {
       const idGood = this.selectedRows[0].id;
       const idRequest = 0;

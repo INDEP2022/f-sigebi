@@ -27,7 +27,8 @@ import { ShowSignatureProgrammingComponent } from '../../shared-request/show-sig
 })
 export class OrderServiceDeliveryFormComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   @Input() task: number;
   showForm: boolean = false;
   aprobateService: boolean = false;
@@ -311,7 +312,7 @@ export class OrderServiceDeliveryFormComponent
               ''
             );
           },
-          error: error => { },
+          error: error => {},
         });
       }
     });
