@@ -11,7 +11,7 @@ export const PUBLICATION_PHOTO1 = {
     sort: false,
     width: '45%',
   },
-  idStatusVta: {
+  descStatus: {
     title: 'Estatus',
     sort: false,
     width: '20%',
@@ -28,11 +28,11 @@ export const PUBLICATION_PHOTO2 = {
     title: 'No. Bien',
     sort: false,
   },
-  status: {
+  statusGood: {
     title: 'Estatus',
     sort: false,
   },
-  description: {
+  descriptionGood: {
     title: 'Descripción',
     sort: false,
   },
