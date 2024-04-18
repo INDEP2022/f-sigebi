@@ -142,10 +142,12 @@ export class FractionLvlComponent extends BasePage implements OnInit {
   openForm(fraction?: IFraction) {
     let oldFraction = null;
     if (fraction == undefined) oldFraction = this.data['data'][0];
+    let parentId = this.fractionLvl.level;
     let config: ModalOptions = {
       initialState: {
         fraction,
         oldFraction,
+        parentId,
         callback: (next: boolean) => {
           if (next) this.getFractions();
         },
