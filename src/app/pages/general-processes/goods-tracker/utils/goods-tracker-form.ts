@@ -29,8 +29,8 @@ export const PROCESSES = [
     label: 'DECOMISO',
   },
   {
-    value: 'EXT_DON',
-    label: 'EXT_DON',
+    value: 'EXT_DOM',
+    label: 'EXT_DOM',
   },
   {
     value: 'TRANSFERENTE',

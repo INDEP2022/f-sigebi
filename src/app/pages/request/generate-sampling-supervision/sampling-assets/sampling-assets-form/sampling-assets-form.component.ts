@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -127,7 +128,8 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     private deductiveService: DeductiveVerificationService,
     private router: Router,
     private goodsQueryService: GoodsQueryService,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private datePipe: DatePipe
   ) {
     super();
 
@@ -431,6 +433,8 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       error: error => {
         this.alert('warning', 'Acción Invalida', 'No se encontraron almacenes');
         this.loading = false;
+        this.paragraphs = [];
+        this.totalItems = 0;
       },
     });
   }
@@ -440,13 +444,32 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     this.params2.getValue()[
       'filter.organizationId'
     ] = `$eq:${this.storeSelected.organizationCode}`;
-    this.params2.getValue()['filter.initialPeriod'] = `$btw:${
-      this.dateForm.get('initialDate').value
-    }, ${this.dateForm.get('finalDate').value}`;
+    this.params2.getValue()[
+      'filter.initialPeriod'
+    ] = `$btw:${this.datePipe.transform(
+      this.dateForm.get('initialDate').value,
+      'yyyy-MM-dd'
+    )}T00:00:00.000Z,${this.datePipe.transform(
+      this.dateForm.get('finalPeriod').value,
+      'yyyy-MM-dd'
+    )}T23:59:59.999Z`;
+    this.params2.getValue()[
+      'filter.finalPeriod'
+    ] = `$btw:${this.datePipe.transform(
+      this.dateForm.get('initialDate').value,
+      'yyyy-MM-dd'
+    )}T00:00:00.000Z,${this.datePipe.transform(
+      this.dateForm.get('finalPeriod').value,
+      'yyyy-MM-dd'
+    )}T23:59:59.999Z`;
 
-    this.params2.getValue()['filter.finalPeriod'] = `$btw:${
-      this.dateForm.get('initialDate').value
-    }, ${this.dateForm.get('finalDate').value}`;
+    // this.params2.getValue()['filter.initialPeriod'] = `$btw:${
+    //   this.datePipe.transform(this.dateForm.get('initialDate').value, 'yyyy-MM-dd')
+    // }, ${this.datePipe.transform(this.dateForm.get('finalDate').value, 'yyyy-MM-dd')}`;
+
+    // this.params2.getValue()['filter.finalPeriod'] = `$btw:${
+    //   this.datePipe.transform(this.dateForm.get('initialDate').value, 'yyyy-MM-dd')
+    // }, ${this.datePipe.transform(this.dateForm.get('finalDate').value, 'yyyy-MM-dd')}`;
     //this.params2.getValue()['filter.delRegionalId'] = this.delegationId;
     this.samplingGoodService
       .getSamplingGoodFilter(this.params2.getValue())
@@ -469,7 +492,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
           Promise.all(showInfo).then(async info => {
             this.paragraphs2.load(info);
             this.loadingGoodInv = false;
-            this.totalItems2 = resp.data.length;
+            this.totalItems2 = resp.count;
             const checkExistSamplingOrder = await this.checkSamplingOrder();
             if (checkExistSamplingOrder) {
               this.params3
@@ -485,6 +508,13 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
                   .pipe(takeUntil(this.$unSubscribe))
                   .subscribe(() => this.getDeductives(deductivesRelSample));
               }
+            }
+            if (resp.count == 0) {
+              this.alert(
+                'warning',
+                'Datos no encontrados',
+                'No hay bienes relacionados al almacén seleccionado'
+              );
             }
           });
         },

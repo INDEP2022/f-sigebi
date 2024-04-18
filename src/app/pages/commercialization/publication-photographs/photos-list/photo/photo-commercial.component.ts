@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  Input,
   OnInit,
   Output,
   SimpleChanges,
@@ -9,7 +10,10 @@ import { takeUntil } from 'rxjs';
 import { FileUploadModalComponent } from 'src/app/@standalone/modals/file-upload-modal/file-upload-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilePhotoEditService } from 'src/app/core/services/ms-ldocuments/file-photo-edit.service';
-import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
+import {
+  FilePhotoService,
+  IPhotoFile,
+} from 'src/app/core/services/ms-ldocuments/file-photo.service';
 import {
   NO_IMAGE_FOUND,
   PhotoClassComponent,
@@ -26,14 +30,15 @@ export class PhotoCommercialComponent
 {
   @Output() refreshFiles = new EventEmitter<boolean>();
   // subscription: any;
+  @Input() _file: IPhotoFile = null;
   constructor(
     private service: FilePhotoService,
     private editService: FilePhotoEditService
   ) {
     super();
   }
-
   get filename() {
+    if (!this.file) return '';
     return this.file.name;
   }
 
@@ -43,6 +48,8 @@ export class PhotoCommercialComponent
     console.log(changes);
     if (changes['file']) {
       this.filenameChange();
+    } else if (changes['_file']) {
+      this._filenameChange();
     }
   }
 
@@ -54,6 +61,32 @@ export class PhotoCommercialComponent
     // console.log(index);
     this.service
       .getById(this.goodNumber, +this.file.name.substring(index + 1, finish))
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: base64 => {
+          this.loading = false;
+          this.error = false;
+          this.base64Change(base64);
+          // console.log(this.error);
+        },
+        error: error => {
+          // this.alert('error', 'Fotos', 'Ocurrio un error al cargar la foto');
+          this.loading = false;
+          this.error = true;
+          // console.log(this.error);
+          this.imgSrc = NO_IMAGE_FOUND;
+        },
+      });
+  }
+
+  private _filenameChange() {
+    this.loading = true;
+    console.log(this._file.name);
+    let index = this._file.name.indexOf('F');
+    let finish = this._file.name.indexOf('.');
+    // console.log(index);
+    this.service
+      .getById(this.goodNumber, +this._file.name.substring(index + 1, finish))
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: base64 => {

@@ -177,13 +177,24 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   }
 
   getData() {
+    const fecha = this.orderServiceForm.controls['samplingPeriod'].value;
+    const samplingPeriod = new Date(fecha);
+
+    const diasAAgregar = 1;
+    samplingPeriod.setDate(samplingPeriod.getDate() + diasAAgregar);
+
+    console.log(samplingPeriod);
+    console.log(
+      'contractNumber',
+      this.orderServiceForm.controls['contractNumber'].value
+    );
     this.loading = true;
     const deleReg = this.getDelegReg();
     const body = {
-      contractNumber: String(this.orderServiceForm.value.contractNumber),
-      pdDate: moment(this.orderServiceForm.value.samplingPeriod).format(
-        'YYYY-MM-DD'
+      contractNumber: String(
+        this.orderServiceForm.controls['contractNumber'].value
       ),
+      pdDate: moment(samplingPeriod).format('YYYY-MM-DD'),
       regionalDelegationId: deleReg,
     };
     this.orderService

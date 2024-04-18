@@ -244,6 +244,7 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
   }
 
   async signAnnex() {
+    console.log('typeAnnex', this.typeAnnex);
     const typeDocument = 219;
     if (this.typeAnnex == 'annex-assets-classification') {
       const providerK = this.form.get('providerK').value;
@@ -523,7 +524,7 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
   ) {
     return new Promise((resolve, reject) => {
       const learnedType = typeDocument;
-      const learnedId = this.idSampleOrder;
+      const learnedId = `${this.idSampleOrder}-K`;
       this.signatoriesService
         .getSignatoriesFilter(learnedType, learnedId)
         .subscribe({
@@ -538,6 +539,8 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
                 name: name,
                 post: charge,
               };
+
+              console.log('No Existen firmantes, crear 1', formData);
 
               this.signatoriesService.create(formData).subscribe({
                 next: () => {
@@ -556,6 +559,8 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
               post: charge,
             };
 
+            console.log('No Existen firmantes, crear 2', formData);
+
             this.signatoriesService.create(formData).subscribe({
               next: () => {
                 resolve(true);
@@ -567,6 +572,7 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
   }
 
   deleteSignatores(signatures: ISignatories[]) {
+    console.log('Existe firmantes, borrar');
     return new Promise((resolve, reject) => {
       signatures.map(item => {
         this.signatoriesService
