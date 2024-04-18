@@ -408,6 +408,9 @@ export class DeliveriesConstancyFormComponent
     ).value;
     deliveryForm.reasonsNotRetired =
       this.deliveryConstancyForm.get('reasonsNotRetired').value;
+
+    //deliveryForm.certificateType = 1;
+
     const created = await this.createCertificateDelivery(deliveryForm);
 
     //ACTUALIZA PROGRAMACION ENTREGA BIENES
