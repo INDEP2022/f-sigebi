@@ -561,7 +561,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
     let config: ModalOptions = {
       initialState: {
         orderServiceId: this.orderServiceId,
-        folio: folio,
+        folioOrderservice: this.dataOrder.serviceOrderFolio,
         op: null,
         callback: (next: boolean) => {
           if (next) {
