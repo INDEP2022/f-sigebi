@@ -49,6 +49,7 @@ export class ShowSchedulingReportComponentComponent
   idprogDel: number = 0;
   typeNotification: number = 0;
   report: number = 0;
+  typeEvent: number = 0;
 
   orderSampleId: number = 0;
   receiptId: number = 0;
@@ -165,6 +166,8 @@ export class ShowSchedulingReportComponentComponent
   showReportByTypeDoc() {
     console.log('idProgDel', this.idprogDel);
     console.log('report', this.report);
+    console.log('typeEvent', this.typeEvent);
+
     if (this.idprogDel) {
       let linkDoc: string = `${
         this.urlBaseReport
@@ -184,7 +187,7 @@ export class ShowSchedulingReportComponentComponent
 
     //NO ENTREGADOS
     if (this.idprogDel && this.report == 2) {
-      this.idprogDel = 119;
+
       let linkDoc: string = `${this.urlBaseReport}ConstanciaNoEntregados.jasper&ID_CONSTANCIA=${this.idprogDel}`;
       this.src = linkDoc;
 
@@ -193,7 +196,7 @@ export class ShowSchedulingReportComponentComponent
 
     //NO ACEPTADO
     if (this.idprogDel && this.report == 3) {
-      this.idprogDel = 122;
+
       let linkDoc: string = `${this.urlBaseReport}ConstanciaNoEntregados.jasper&ID_CONSTANCIA=${this.idprogDel}`;
       this.src = linkDoc;
 
@@ -203,6 +206,48 @@ export class ShowSchedulingReportComponentComponent
     //NO RETIRADOS
     if (this.idprogDel && this.report == 4) {
       let linkDoc: string = `${this.urlBaseReport}ConstanciaNoEntregados.jasper&ID_CONSTANCIA=${this.idprogDel}`;
+      this.src = linkDoc;
+
+      this.formLoading = false;
+    }
+    //Donación = 2 Venta = 1 Devolución = 4 Destrucción = 5
+    //Aplica para Donación
+    if (this.idprogDel && this.report == 1 && this.typeEvent == 2) {
+      let linkDoc: string = `${this.urlBaseReport}ConstanciaDonacion.jasper&ID_CONSTANCIA=${this.idprogDel}`;
+      this.src = linkDoc;
+
+      this.formLoading = false;
+    }
+    if (this.idprogDel && this.report == 2 && this.typeEvent == 2) {
+      let linkDoc: string = `${this.urlBaseReport}ConstanciaDonacion.jasper&ID_CONSTANCIA=${this.idprogDel}`;
+      this.src = linkDoc;
+
+      this.formLoading = false;
+    }
+
+    //Aplica para Devolución
+    if (this.idprogDel && this.report == 1 && this.typeEvent == 4) {
+      let linkDoc: string = `${this.urlBaseReport}ConstanciaDevolucion.jasper&ID_CONSTANCIA=${this.idprogDel}`;
+      this.src = linkDoc;
+
+      this.formLoading = false;
+    }
+    if (this.idprogDel && this.report == 2 && this.typeEvent == 4) {
+      let linkDoc: string = `${this.urlBaseReport}ConstanciaDevolucion.jasper&ID_CONSTANCIA=${this.idprogDel}`;
+      this.src = linkDoc;
+
+      this.formLoading = false;
+    }
+
+    //Aplica para Destrucción
+    if (this.idprogDel && this.report == 1 && this.typeEvent == 5) {
+      let linkDoc: string = `${this.urlBaseReport}ConstanciaDestruccion.jasper&ID_CONSTANCIA=${this.idprogDel}`;
+      this.src = linkDoc;
+
+      this.formLoading = false;
+    }
+    if (this.idprogDel && this.report == 2 && this.typeEvent == 5) {
+      let linkDoc: string = `${this.urlBaseReport}ConstanciaDestruccion.jasper&ID_CONSTANCIA=${this.idprogDel}`;
       this.src = linkDoc;
 
       this.formLoading = false;
