@@ -384,6 +384,99 @@
           </div>
         </div>
         <!-- FIN -->
+
+        <!-- TIPO EVENTO != 1 || TIPO EVENT == 1 Y CONSTANCIA != 4 RECEPTOR CLIENTE -->
+        <div class="row pt-3" *ngIf="typeEvent != 1">
+          <h5 class="title">
+            <p>
+              <a
+                class="text-color"
+                (click)="showClientForm = true"
+                *ngIf="!showClientForm">
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                {{ 'SAE' }}
+              </a>
+            </p>
+
+            <p>
+              <a
+                class="text-color"
+                (click)="showClientForm = false"
+                *ngIf="showClientForm">
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+                {{ 'SAE' }}
+              </a>
+            </p>
+          </h5>
+
+          <div class="row" *ngIf="showClientForm">
+            <div>
+              <div class="col-md-6 pt-4" *ngIf="typeEvent != 1">
+                <form-field
+                  [control]="deliveryConstancyForm.get('deliveryName')"
+                  label="Nombre">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="deliveryName" />
+                </form-field>
+              </div>
+              <div class="col-md-6 pt-4" *ngIf="typeEvent != 1">
+                <form-field
+                  [control]="deliveryConstancyForm.get('postDelivery')"
+                  label="Puesto">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="postDelivery" />
+                </form-field>
+              </div>
+              <div
+                class="col-md-12 form-group pt-4"
+                *ngIf="typeReceptor != 'REP_LEGAL'">
+                <form-field
+                  [control]="deliveryConstancyForm.get('deliveryIden')"
+                  label="Identificación">
+                  <select class="form-control" formControlName="deliveryIden">
+                    <option [value]="null">
+                      Seleccione identificaci&oacute;n
+                    </option>
+                    <option [value]="1">Credencial de elector</option>
+                    <option [value]="2">Pasaporte</option>
+                    <option [value]="3">Cartilla militar</option>
+                    <option [value]="4">C&eacute;dula profesional</option>
+                    <option [value]="5">Crendecial del SAT</option>
+                    <option [value]="6">Crendecial del INDEP</option>
+                  </select>
+                </form-field>
+              </div>
+
+              <div class="col-md-6 pt-2" *ngIf="typeReceptor != 'REP_LEGAL'">
+                <form-field
+                  [control]="deliveryConstancyForm.get('deliveryIden')"
+                  label="No&#46; identificaci&oacute;n">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="deliveryIden" />
+                </form-field>
+              </div>
+
+              <div class="col-md-6 pt-2" *ngIf="typeReceptor != 'REP_LEGAL'">
+                <form-field
+                  [control]="deliveryConstancyForm.get('deliveryProcIden')"
+                  label="Expedida por">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="deliveryProcIden" />
+                </form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- FIN -->
+
         <!-- TIPO EVENTO 1 -->
         <div class="row pt-4" *ngIf="typeEvent == 1">
           <h5 class="title">
@@ -480,11 +573,10 @@
             </form-field>
           </div>
         </div>
+
         <!-- FIN -->
-        <!-- INICIA TIPO EVENTO 2, 5 Y 4 -->
-        <div
-          class="row pt-4"
-          *ngIf="typeEvent == 2 || typeEvent == 5 || typeEvent == 4">
+        <!-- INICIA TIPO EVENTO 2, 5 Y 4 typeEvent == 2 || typeEvent == 5 || typeEvent == 4-->
+        <div class="row pt-4" *ngIf="false">
           <h5 class="title">
             <p>
               <a
@@ -762,8 +854,13 @@
         <!-- FIN -->
       </form>
       <div class="pt-4">
-        <button *ngIf="!edit" [disabled]="blockButtons" class="btn btn-primary btn-sm active"
-          (click)="separate()">Separar</button>
+        <button
+          *ngIf="!edit"
+          [disabled]="blockButtons"
+          class="btn btn-primary btn-sm active"
+          (click)="separate()">
+          Separar
+        </button>
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             #table
