@@ -1632,7 +1632,7 @@ export class ExecuteSchedulingDeliveriesComponent
             componentName: typeSign,
           });
 
-          this.openFirma(name, charge);
+          this.openFirma(name, charge, typeSign);
           //Actualizar la orden de servicio con los datos de la firma
           //this.updateOrderService(responsibleSae, saePosition, typeSign);
         },
@@ -1643,7 +1643,7 @@ export class ExecuteSchedulingDeliveriesComponent
     this.modalService.show(TypeSignatureModalComponent, config);
   }
 
-  async openFirma(name, charge) {
+  async openFirma(name, charge, typeSign) {
     let token = this.authService.decodeToken();
     let today = new Date();
 
@@ -1661,6 +1661,7 @@ export class ExecuteSchedulingDeliveriesComponent
     const chargeUser = charge;
     const numSignature = 1;
     const idProg = this.programmingDetailPanel.id;
+    const process = typeSign;
 
     //const readOnly = this.requestInfo.detail.version == "1";
 
@@ -1671,7 +1672,7 @@ export class ExecuteSchedulingDeliveriesComponent
         chargeUser,
         numSignature,
         folio: this.programmingDetailPanel.folio,
-
+        process,
         idReportAclara,
         idTypeDoc,
         typeAnnex,
