@@ -95,7 +95,8 @@ export class ConsigmentsGoodsComponent extends BasePage implements OnInit {
       return;
     }
     const validStatuses = this.preparation ? ['CPV'] : ['PRE', 'CXR'];
-    if (!validStatuses.includes(good?.bienes?.status)) {
+    console.log('Bien agregado pantalla: ', good);
+    if (!validStatuses.includes(good?.goodNumber?.status)) {
       this.alert(
         'error',
         'Error',
