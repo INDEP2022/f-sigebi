@@ -8,6 +8,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ISamplingOrder } from 'src/app/core/models/ms-order-service/sampling-order.model';
 import { ISamplingDeductive } from 'src/app/core/models/ms-sampling-good/sampling-deductive.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -73,9 +74,11 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
     this.sampleOrderId = Number(
       this.activatedRoute.snapshot.paramMap.get('id')
     );
-    this.title = `Captura de resultados ${this.sampleOrderId}`;
+    this.title = `Revisión Resultados ${this.sampleOrderId}`;
     this.initAnexForm();
     this.getSampleDeductives();
+    this.initFilterForm();
+    this.getSampleOrder();
   }
 
   getSampleDeductives() {
@@ -138,10 +141,19 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
   }
 
   async turnSampling() {
-    if (this.sampleOrderInfo.idcontentksae) {
-      /*if(this.sampleOrderInfo.statusSample == 'MUESTREO_NO_CUMPLE'){
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      '¿Esta de acuerdo que la información es correcta para turnar?'
+    ).then(async question => {
+      if (question.isConfirmed) {
+        const updateStatusSample = await this.updateStatusSample();
+        this.alert('success', 'Correcto', 'Muestreo actualizado correctamente');
+      }
+    });
 
-      } */
+    /*if (this.sampleOrderInfo.idcontentksae) {
+  
 
       this.alertQuestion(
         'question',
@@ -163,7 +175,7 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
         'Advertencia',
         'Debe firmar el Anexo K para Turnar.'
       );
-    }
+    }*/
     /*const sampleOrder = await this.getSampleOrder();
     if (this.lsEstatusMuestreo == 'MUESTREO_NO_CUMPLE') {
       this.validateTurn(sampleOrder);
@@ -220,8 +232,10 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
     this.modalService.show(AnnexKFormComponent, config);
   }
 
-  searchEvent(event: any) {
-    this.searchForm = event;
+  searchEvent() {
+    //this.filterForm.value;
+    this.searchForm = this.filterForm.value;
+    console.log('this.searchForm', this.searchForm);
   }
 
   showReportInfo(typeDocument: number, typeSign: string, typeAnnex: string) {
@@ -256,9 +270,12 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
     config.initialState = {
       typeDoc: typeDocument,
       idSampleOrder: this.sampleOrderId,
+      sampleOrder: this.sampleOrderInfo,
       callback: (data: boolean) => {
         if (data) {
           this.getSampleOrder();
+        } else {
+          this.openAnnexK();
         }
       },
     };
@@ -420,5 +437,24 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true, //ignora el click fuera del modal
     };
     this.modalService.show(PreviewDocumentsComponent, config);
+  }
+
+  saveResultCapture() {}
+
+  filterForm: ModelForm<any>;
+  initFilterForm() {
+    this.filterForm = this.fb.group({
+      id: [null],
+      serviceOrderFolio: [null, [Validators.pattern(STRING_PATTERN)]],
+      applicationId: [null],
+    });
+  }
+
+  // search(): void {
+
+  // }
+
+  reset(): void {
+    this.filterForm.reset();
   }
 }

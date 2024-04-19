@@ -17,6 +17,7 @@ export class AnnexDataComponent extends BasePage implements OnInit {
   @Input() SampleOrderId: number = null;
   @Input() typeComponent: string = null;
   readonly: boolean = false;
+  sampleOrderId: number = 0;
 
   private orderService = inject(OrderServiceService);
 

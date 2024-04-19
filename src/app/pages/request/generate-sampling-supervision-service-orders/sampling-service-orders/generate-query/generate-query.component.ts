@@ -341,6 +341,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     this.contractNumberSelected = new DefaultSelect([numbContract]);
   }
 
+  descriptionAreaGeo: string = '';
   getgeographicalAreaSelect(params: ListParams) {
     this.zoneGeoService.getAll(params).subscribe({
       next: resp => {
@@ -365,6 +366,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
         event.contractNumber
       );
       //this.getContractNumberSelect(value);
+      this.descriptionAreaGeo = event.description;
     }
   }
 
@@ -401,7 +403,17 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
       if (checkExistOrderInSample) {
         const checkExistDeductives = await this.checkExistDeductives();
         if (checkExistDeductives) {
-          if (this.sampleOrderInfo.idcontentk) {
+          this.alertQuestion(
+            'question',
+            'Confirmación',
+            '¿Esta seguro que la información es correcta para turnar?'
+          ).then(question => {
+            if (question.isConfirmed) {
+              this.generateTask();
+            }
+          });
+
+          /* if (this.sampleOrderInfo.idcontentk) {
             this.alertQuestion(
               'question',
               'Confirmación',
@@ -417,7 +429,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
               'Advertencia',
               'Ha agregado deductivas al muestreo, debe generar el Anexo K'
             );
-          }
+          }*/
         } else {
           this.alertQuestion(
             'question',
@@ -570,7 +582,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
           }
         },
       },
-      class: 'modal-lg modal-dialog-centered',
+      class: 'modal-xl modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(ShowReportComponentComponent, config);
@@ -1029,7 +1041,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
         idDelegationRegional: Number(this.authService.decodeToken().department),
         dateturned: moment(new Date()).format('YYYY-MM-DD'),
         numberContract: this.orderServiceForm.get('contractNumber').value,
-        cveZone: this.orderServiceForm.get('geographicalArea').value,
+        cveZone: this.descriptionAreaGeo,
         periodSampling: moment(
           this.orderServiceForm.get('samplingPeriod').value
         ).format('YYYY-MM-DD'),
