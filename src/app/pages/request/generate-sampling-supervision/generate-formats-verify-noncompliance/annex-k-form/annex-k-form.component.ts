@@ -74,6 +74,17 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
         const sampleOrder = response.data[0];
 
         if (this.typeAnnex == 'revition-results') {
+          //Deshabilitar campos de formulario
+          this.annexForm.get('competitorOne').disable();
+          this.annexForm.get('positionCompetitorOne').disable();
+          this.annexForm.get('competitorTwo').disable();
+          this.annexForm.get('positionCompetitorTwo').disable();
+
+          this.annexForm.get('managerNameAlm').disable();
+          this.annexForm.get('daterepService').disable();
+          this.annexForm.get('relevantFacts').disable();
+          this.annexForm.get('agreements').disable();
+
           if (sampleOrder.supplierk)
             this.annexForm
               .get('saeResponsibleK')

@@ -4,10 +4,46 @@
       <div class="mr-auto p-2">
         <h5 class="title">Muestreo Ordenes de Servicio&#58; {{ title }}</h5>
       </div>
+      <div class="p-2">
+        <button class="btn btn-primary btn-sm active" (click)="turnSampling()">
+          Turnar muestreo <i class="fa fa-share-square"></i>
+        </button>
+      </div>
+      <div class="p-2">
+        <button
+          *ngIf="!sampleOrderInfo?.idcontentksae"
+          class="btn btn-secondary btn-sm active"
+          (click)="openAnnexK()">
+          Anexo K <i class="bx bxs-file"></i>
+        </button>
+        <button
+          *ngIf="sampleOrderInfo?.idcontentksae"
+          class="btn btn-secondary btn-sm active"
+          (click)="openReport()">
+          Ver anexo K <i class="bx bxs-file"></i>
+        </button>
+      </div>
+      <div class="p-2">
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="saveResultCapture()">
+          Guardar <i class="fa fa-share-square"></i>
+        </button>
+      </div>
+      <!-- <div class="p-2">
+        <button class="btn btn-primary btn-sm active" (click)="sentRevision()">
+          Turnar a revisi&oacute;n <i class="fa fa-share-square"></i>
+        </button>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-primary btn-sm active" (click)="finish()">
+          Finalizar Muestreo <i class="fa fa-share-square"></i>
+        </button>
+      </div> -->
     </div>
   </div>
   <div body>
-    <div class="row">
+    <!-- <div class="row">
       <div class="d-flex justify-content-end">
         <div class="p-2">
           <button
@@ -29,11 +65,11 @@
           </button>
         </div>
       </div>
-    </div>
+    </div> -->
     <div id="detail">
       <app-card [header]="false">
         <div body>
-          <div class="row">
+          <!-- <div class="row">
             <div class="d-flex justify-content-end">
               <div class="p-2">
                 <button
@@ -50,7 +86,7 @@
                 </button>
               </div>
             </div>
-          </div>
+          </div> -->
           <div class="row pt-3">
             <div class="col-md-12">
               <h5 class="title">
@@ -87,7 +123,7 @@
     </div>
     <div id="assets">
       <div class="row pt-6">
-        <h5>Filtro de &Oacute;rdenes de Servicio</h5>
+        <h5>Filtrado de &Oacute;rdenes de Servicio</h5>
       </div>
       <div class="row pt-2">
         <div class="col-md-12">
@@ -115,8 +151,63 @@
         </div>
       </div>
       <div class="row" *ngIf="showFilterAssets" style="padding-left: 1rem">
-        <app-service-orders-filter
-          (searchEvent)="searchEvent($event)"></app-service-orders-filter>
+        <div>
+          <form [formGroup]="filterForm" class="form-material">
+            <div class="row pt-4"></div>
+            <div class="row pt-4">
+              <div class="col-md-4">
+                <form-field
+                  [control]="filterForm.get('id')"
+                  label="No&#46; Orden de Servicio">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="id" />
+                </form-field>
+              </div>
+              <div class="col-md-4">
+                <form-field
+                  [control]="filterForm.get('serviceOrderFolio')"
+                  label="Folio Orden de Servicio">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="serviceOrderFolio" />
+                </form-field>
+              </div>
+
+              <div class="col-md-4">
+                <form-field
+                  [control]="filterForm.get('applicationId')"
+                  label="No&#46; Solicitud">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="applicationId" />
+                </form-field>
+              </div>
+            </div>
+          </form>
+          <div class="row pt-4">
+            <div class="d-flex justify-content-end">
+              <div class="m-3">
+                <button
+                  class="btn btn-primary btn-sm active"
+                  (click)="searchEvent()">
+                  Buscar <i class="fa fa-search"></i>
+                </button>
+              </div>
+              <div class="m-3">
+                <button class="btn btn-danger btn-sm active" (click)="reset()">
+                  Limpiar <i class="fas fa-eraser"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- <app-service-orders-filter
+          (searchEvent)="searchEvent($event)"></app-service-orders-filter> -->
       </div>
     </div>
     <div class="tabs" *ngIf="sampleOrderId != null">
@@ -142,13 +233,13 @@
             [SampleOrderId]="sampleOrderId"
             [typeComponent]="'revition-results'"></app-create-deductives> -->
         </tab>
-        <!--<tab heading="Datos Anexo">
+        <tab heading="Datos Anexo">
           <app-annex-data
             [SampleOrderId]="sampleOrderId"
             [sampleOrderForm]="sampleOrderForm"
             [dataAnnex]="dataAnnex"
             [typeComponent]="'revition-results'"></app-annex-data>
-        </tab> -->
+        </tab>
       </tabset>
     </div>
   </div>
