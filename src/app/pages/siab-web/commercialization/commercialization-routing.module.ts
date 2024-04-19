@@ -136,7 +136,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./form-load-appraisals/form-load-appraisals.module'))
         .FormLoadAppraisalsModule,
-    data: { title: 'Caraga Avaluos', scree: 'CargaAvaluos' },
+    data: { title: 'Carga Avaluos', scree: 'CargaAvaluos' },
   },
   {
     path: 'automobiles',
