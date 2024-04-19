@@ -404,6 +404,7 @@ export class EventGoodsLotsListActionsComponent
     const user = this.loggedUser.preferred_username;
     this.loader.load = true;
     if (address == 'I') {
+      console.log('Entro a esta lotificación inmuebles');
       this.lotService
         .impLotExcelI2({
           file,
@@ -419,11 +420,13 @@ export class EventGoodsLotsListActionsComponent
             this.loader.load = false;
             this.goodsLotifyControl.reset();
             console.log(res);
+            this.alert('success', 'Proceso Terminado', '');
           },
           error: error => {
             this.loader.load = false;
             this.goodsLotifyControl.reset();
             console.log(error);
+            this.alert('error', 'Error', 'Ocurrió un Error Inesperado');
           },
         });
     } else {
@@ -442,11 +445,13 @@ export class EventGoodsLotsListActionsComponent
           next: res => {
             this.loader.load = false;
             this.goodsLotifyControl.reset();
+            this.alert('success', 'Proceso Terminado', '');
             console.log(res);
           },
           error: error => {
             this.loader.load = false;
             this.goodsLotifyControl.reset();
+            this.alert('error', 'Error', 'Ocurrió un Error Inesperado');
             console.log(error);
           },
         });
