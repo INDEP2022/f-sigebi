@@ -960,9 +960,9 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
 
   getTask() {
     const task = JSON.parse(localStorage.getItem('Task'));
-
+    console.log(task);
     const param = new FilterParams();
-    param.addFilter('id', task.id);
+    param.addFilter('id', task?.id);
     const filter = param.getParams();
 
     return new Promise((resolve, reject) => {
@@ -1001,7 +1001,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         State: 'FINALIZADA',
         taskDefinitionId: null,
       };
-      this.taskService.update(task.id, taskForm).subscribe({
+      this.taskService.update(task?.id, taskForm).subscribe({
         next: response => {
           resolve(true);
         },
