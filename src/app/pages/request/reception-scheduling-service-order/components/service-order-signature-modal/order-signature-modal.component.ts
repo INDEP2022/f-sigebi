@@ -153,6 +153,12 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
   }
 
   async loadSignatories(reset: boolean = false) {
+
+    if (this.process != 'electronica') {
+      this.btnTitle = 'Adjuntar Documento';
+      return;
+    }
+
     if (!reset) {
       this.signatories = await this.getSignatories();
       return;
@@ -281,7 +287,7 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
             urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
             type: 'pdf',
           },
-          callback: (response: any) => {},
+          callback: (response: any) => { },
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
         keyboard: false,
@@ -496,7 +502,7 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
             this.modalRef.content.callback(false, null);
             this.close();
           },
-          error: error => {},
+          error: error => { },
         });
     });
   }
@@ -703,8 +709,8 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
         };
 
         this.requestService.update(this.idReportAclara, obj).subscribe({
-          next: resp => {},
-          error: error => {},
+          next: resp => { },
+          error: error => { },
         });
         break;
       }
@@ -721,8 +727,8 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
         this.documentService
           .updateClarDocImp(this.infoReport.id, modelReport)
           .subscribe({
-            next: data => {},
-            error: error => {},
+            next: data => { },
+            error: error => { },
           });
 
         break;

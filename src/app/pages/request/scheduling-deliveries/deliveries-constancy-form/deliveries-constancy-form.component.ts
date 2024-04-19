@@ -503,6 +503,7 @@ export class DeliveriesConstancyFormComponent
       deliveryForm.oficioDate != null
         ? moment(deliveryForm.oficioDate).format('YYYY-MM-DD')
         : null;
+
     deliveryForm.modificationDate = moment(new Date()).format('YYYY-MM-DD');
     deliveryForm.userModification = userAuth.username;
 
@@ -767,8 +768,8 @@ export class DeliveriesConstancyFormComponent
         : null;
       data.oficioDate
         ? this.deliveryConstancyForm.controls['oficioDate'].setValue(
-            data.oficioDate
-          )
+          new Date(data.oficioDate)
+        )
         : null;
       data.acreditPerson
         ? this.deliveryConstancyForm.controls['acreditPerson'].setValue(

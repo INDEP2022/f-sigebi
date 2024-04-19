@@ -192,6 +192,7 @@
                 type="text"
                 class="form-control"
                 #dp="bsDatepicker"
+                formControlName="oficioDate"
                 bsDatepicker />
             </form-field>
           </div>
@@ -238,6 +239,7 @@
                 type="text"
                 class="form-control"
                 #dp="bsDatepicker"
+                formControlName="oficioDate" 
                 bsDatepicker />
             </form-field>
           </div>
@@ -453,12 +455,12 @@
 
               <div class="col-md-6 pt-2" *ngIf="typeReceptor != 'REP_LEGAL'">
                 <form-field
-                  [control]="deliveryConstancyForm.get('deliveryIden')"
+                  [control]="deliveryConstancyForm.get('deliveryNum')"
                   label="No&#46; identificaci&oacute;n">
                   <input
                     type="text"
                     class="form-control"
-                    formControlName="deliveryIden" />
+                    formControlName="deliveryNum" />
                 </form-field>
               </div>
 
