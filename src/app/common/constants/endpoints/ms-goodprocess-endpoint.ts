@@ -51,4 +51,5 @@ export enum GoodprocessEndpoints {
   TbClientsEvent = 'application/tb-clients-event',
   TbLotsEvent = 'application/tb-event-lotes',
   InitiationLabel = 'application/initiation-label',
+  ApplicationGetExistGood = 'application/get-exist-good',
 }

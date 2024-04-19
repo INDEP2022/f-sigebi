@@ -54,7 +54,7 @@ export class RejectionJustifyFormComponent extends BasePage implements OnInit {
         const orderServiceInfo: IOrderServiceDTO = {
           id: this.orderServiceId,
           observation: this.form.get('justification').value,
-          justification: "Y",
+          justification: 'Y',
         };
         this.orderServiceService
           .updateOrderService(orderServiceInfo)
@@ -69,7 +69,7 @@ export class RejectionJustifyFormComponent extends BasePage implements OnInit {
               this.loading = false;
               this.close();
             },
-            error: error => { },
+            error: error => {},
           });
       }
     });

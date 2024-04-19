@@ -5,9 +5,31 @@
         No hay fotos cargadas
       </h6>
       <div
-        class="col-md-4 col-sm-6 grid-square"
-        *ngFor="let image of files; let i = index">
+        *ngFor="let image of files; let i = index"
+        class="col-md-4 col-sm-12 grid-square">
         <div class="w-100 m-1 img-container">
+          <div class="d-flex justify-content-center items-align-center">
+            <form-check for="post-{{ i }}" class="float-check" label="Publicar">
+              <input
+                type="checkbox"
+                id="post-{{ i }}"
+                [disabled]="image['favorite'] && image['post']"
+                [checked]="image['post']"
+                (change)="selectFilePub(image, $event, i)"
+                class="form-control" />
+            </form-check>
+            <form-check
+              for="favorite-{{ i }}"
+              class="float-check"
+              label="Favorito">
+              <input
+                type="checkbox"
+                id="favorite-{{ i }}"
+                [checked]="image['favorite']"
+                (change)="selectFileFav(image, $event, i)"
+                class="form-control" />
+            </form-check>
+          </div>
           <div class="row">
             <div class="col-md-12">
               <app-photo-commercial
@@ -17,16 +39,6 @@
                 [goodNumber]="goodNumber + ''"></app-photo-commercial>
             </div>
           </div>
-          <form-check
-            for="keep-{{ i }}"
-            class="float-check"
-            *ngIf="validationUser(image)">
-            <input
-              type="checkbox"
-              id="keep-{{ i }}"
-              (change)="selectFile(image, $event)"
-              class="form-control" />
-          </form-check>
         </div>
       </div>
     </div>

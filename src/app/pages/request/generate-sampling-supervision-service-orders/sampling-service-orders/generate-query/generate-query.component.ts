@@ -118,6 +118,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     this.initForm();
     this.initAnexForm();
     this.getgeographicalAreaSelect(new ListParams());
+    this.orderServiceForm.get('contractNumber').disable();
   }
 
   initForm() {
@@ -160,6 +161,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   async searchOrders() {
     const checkExistSampleOrder: any = await this.checkExistSampleOrder();
     if (checkExistSampleOrder) {
+      console.log('Existen muestreo_ordenes');
       const deductivesRelSample: any = await this.checkExistDeductives();
       if (deductivesRelSample == false) {
         this.getDeductivesNew();
@@ -175,13 +177,24 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   }
 
   getData() {
+    const fecha = this.orderServiceForm.controls['samplingPeriod'].value;
+    const samplingPeriod = new Date(fecha);
+
+    const diasAAgregar = 1;
+    samplingPeriod.setDate(samplingPeriod.getDate() + diasAAgregar);
+
+    console.log(samplingPeriod);
+    console.log(
+      'contractNumber',
+      this.orderServiceForm.controls['contractNumber'].value
+    );
     this.loading = true;
     const deleReg = this.getDelegReg();
     const body = {
-      contractNumber: this.orderServiceForm.value.contractNumber,
-      pdDate: moment(this.orderServiceForm.value.samplingPeriod).format(
-        'YYYY-MM-DD'
+      contractNumber: String(
+        this.orderServiceForm.controls['contractNumber'].value
       ),
+      pdDate: moment(samplingPeriod).format('YYYY-MM-DD'),
       regionalDelegationId: deleReg,
     };
     this.orderService
@@ -206,7 +219,9 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
             this.loading = false;
           });
         },
-        error: error => {},
+        error: error => {
+          this.loading = false;
+        },
       });
   }
 
@@ -265,6 +280,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
           resolve(true);
         },
         error: async () => {
+          console.log('Mo existe muestreo_ordenes');
           const createOrder: any = await this.newSampleOrder();
           if (createOrder) resolve(true);
         },
@@ -325,6 +341,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     this.contractNumberSelected = new DefaultSelect([numbContract]);
   }
 
+  descriptionAreaGeo: string = '';
   getgeographicalAreaSelect(params: ListParams) {
     this.zoneGeoService.getAll(params).subscribe({
       next: resp => {
@@ -344,8 +361,12 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
       this.geographicalAreaSelected = new DefaultSelect();
       this.contractNumberSelected = new DefaultSelect();
     } else {
-      const value = { contractNumber: event.contractNumber };
-      this.getContractNumberSelect(value);
+      //const value = { contractNumber: event.contractNumber };
+      this.orderServiceForm.controls['contractNumber'].setValue(
+        event.contractNumber
+      );
+      //this.getContractNumberSelect(value);
+      this.descriptionAreaGeo = event.description;
     }
   }
 
@@ -382,7 +403,17 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
       if (checkExistOrderInSample) {
         const checkExistDeductives = await this.checkExistDeductives();
         if (checkExistDeductives) {
-          if (this.sampleOrderInfo.idcontentk) {
+          this.alertQuestion(
+            'question',
+            'Confirmación',
+            '¿Esta seguro que la información es correcta para turnar?'
+          ).then(question => {
+            if (question.isConfirmed) {
+              this.generateTask();
+            }
+          });
+
+          /* if (this.sampleOrderInfo.idcontentk) {
             this.alertQuestion(
               'question',
               'Confirmación',
@@ -398,7 +429,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
               'Advertencia',
               'Ha agregado deductivas al muestreo, debe generar el Anexo K'
             );
-          }
+          }*/
         } else {
           this.alertQuestion(
             'question',
@@ -551,7 +582,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
           }
         },
       },
-      class: 'modal-lg modal-dialog-centered',
+      class: 'modal-xl modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(ShowReportComponentComponent, config);
@@ -584,6 +615,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
       };
       this.orderService.createSampleOrder(body).subscribe({
         next: resp => {
+          console.log('se creó muestreo_ordenes');
           this.sampleOrderId = resp.data.idSamplingOrder;
           resp.data.dateCreation = moment(resp.data.dateCreation).format(
             'DD/MM/YYYY'
@@ -811,9 +843,11 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
         .getAllSampleDeductives(params.getValue())
         .subscribe({
           next: response => {
+            console.log('Existen deductivas');
             resolve(response.data);
           },
           error: error => {
+            console.log('No Existen deductivas');
             resolve(false);
           },
         });
@@ -845,9 +879,12 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     this.deductiveService.getAll(params.getValue()).subscribe({
       next: response => {
+        console.log('Existen deductivas new');
         this.paragraphsDeductivas.load(response.data);
       },
-      error: error => {},
+      error: error => {
+        console.log('No Existen deducivas new');
+      },
     });
   }
 
@@ -1004,7 +1041,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
         idDelegationRegional: Number(this.authService.decodeToken().department),
         dateturned: moment(new Date()).format('YYYY-MM-DD'),
         numberContract: this.orderServiceForm.get('contractNumber').value,
-        cveZone: this.orderServiceForm.get('geographicalArea').value,
+        cveZone: this.descriptionAreaGeo,
         periodSampling: moment(
           this.orderServiceForm.get('samplingPeriod').value
         ).format('YYYY-MM-DD'),

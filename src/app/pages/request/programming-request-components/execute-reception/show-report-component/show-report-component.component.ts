@@ -93,6 +93,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   signed: boolean = true;
   requestId: number = 0;
   contentId: string = '';
+  dataUserSig: any;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -324,7 +325,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     }
 
     if (this.idTypeDoc == 197) {
-      learnedId = this.orderSampleId;
+      learnedId = this.orderSampleId + '-K';
     }
 
     this.loading = true;
@@ -553,53 +554,14 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   openMessage(message: string): void {
     let electronic = [
       2, 174, 185, 186, 187, 192, 108, 183, 221, 26, 27, 50, 68, 217, 94, 40,
-      101, 105, 104, 72, 222, 223, 224, 225, 245, 246, 249, 223,
+      101, 105, 104, 72, 222, 223, 224, 225, 245, 246, 249, 223, 197,
     ];
 
     this.alertQuestion('question', 'Confirmación', `${message}`).then(
       question => {
         if (question.isConfirmed) {
           this.loadingButton = true;
-          /*if (electronic.includes(parseInt('' + this.idTypeDoc))) {
-            this.gelectronicFirmService
-              .firmDocument(210, 'ProgramacionRecibo', {})
-              .subscribe({
-                next: response => {
-                  if (this.isXML(response)) {
-                    let node = this.getXMLNode(response, 'boolProcesoFirma');
-                    if (node?.textContent == 'false') {
-                      let text = this.getXMLNode(response, 'strError');
-                      this.alert(
-                        'error',
-                        'Error al firmar el documento',
-                        `${text?.textContent}`
-                      );
-                      this.loadingButton = false;
-                      this.msjCheck = false;
-                      return;
-                    }
-                  }
 
-                  this.alert(
-                    'success',
-                    'Correcto',
-                    'Documento firmado correctamente'
-                  );
-
-                  this.loadingButton = false;
-                  this.msjCheck = true;
-                },
-                error: () => {
-                  this.alert(
-                    'error',
-                    'Acción Invalida',
-                    'Errror al firmar el documento'
-                  );
-                  this.loadingButton = false;
-                },
-              });
-            return;
-          }*/
           if (this.idTypeDoc == 218) {
             this.gelectronicFirmService
               .firmDocument(this.programming?.id, 'ProgramacionRecibo', {})
@@ -805,7 +767,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             this.gelectronicFirmService
               .firmDocument(idKeyDoc, 'AnexoKMuestreoOrdenServicio', {})
               .subscribe({
-                next: () => {
+                next: xml => {
                   this.msjCheck = true;
                   this.loadingButton = false;
                   this.alert(
@@ -813,9 +775,14 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                     'Correcto',
                     'Documento firmado correctamente'
                   );
+
+                  this.uploadFirmSignatorie(xml);
+
+                  /*const idKeyDoc = this.orderSampleId + '-K';
+                  this.saveElectronicSign(idKeyDoc, 'AnexoKMuestreoOrdenServicio'); */
                 },
                 error: () => {
-                  //this.msjCheck = true;
+                  this.msjCheck = true;
                   this.loadingButton = false;
                   this.alertInfo(
                     'error',
@@ -825,9 +792,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 },
               });
             return;
-
-            /* const idKeyDoc = this.orderSampleId + '-K';
-            this.saveElectronicSign(idKeyDoc, 'AnexoKMuestreoOrdenServicio'); */
           }
           if (this.idTypeDoc == 221) {
             const nameTypeReport = 'ProgramacionRecibo';
@@ -904,6 +868,44 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     }
   }
 
+  certiFile: File | null = null;
+  keyCertiFile: File | null = null;
+
+  uploadFirmSignatorie(xml: string) {
+    const id = this.signatories[0].signatoryId;
+
+    const formData = new FormData();
+    formData.append('learnedType', this.signatories[0].learnedType);
+    formData.append('signatoryId', String(this.signatories[0].signatoryId));
+    formData.append('learnedId', this.signatories[0].learnedId);
+    formData.append('name', this.signatories[0].name);
+    formData.append('pass', this.signatories[0].pass);
+    formData.append('post', this.signatories[0].post);
+    formData.append('rfcUser', this.signatories[0].rfcUser);
+    formData.append('validationocsp', 'true');
+    formData.append('identifierSystem', '1');
+    formData.append('identifierSignatory', '1');
+
+    //formData.append('certificate', this.signatories[0].certificate[0].data);
+    //formData.append('keycertificate', this.signatories[0].keycertificate[0].data);
+    formData.append('signature', xml);
+    formData.append('boardSignatory', this.signatories[0].boardSignatory);
+    formData.append('columnSignatory', this.signatories[0].columnSignatory);
+    formData.append('certificatebase64', this.signatories[0].certificatebase64);
+
+    console.log('Nueva información del firmante: ', formData);
+
+    this.signatoriesService.update(id, formData).subscribe({
+      next: resp => {
+        console.log('Firmante actualizado', resp);
+      },
+      error: error => {
+        console.log('Firmante no actualizado', error);
+      },
+    });
+    console.log('Firma: ', xml);
+  }
+
   uploadData(signatories: ISignatories): void {
     const idReportAclara = this.receiptId;
     let config: ModalOptions = {
@@ -925,6 +927,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   selectRow(row?: any) {
+    console.log('Información del firmante: ', row);
+    this.signatories[0] = row;
     this.selectedRow = row;
     this.rowSelected = true;
   }
