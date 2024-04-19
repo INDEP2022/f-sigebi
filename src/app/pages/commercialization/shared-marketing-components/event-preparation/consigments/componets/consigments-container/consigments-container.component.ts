@@ -76,6 +76,7 @@ export class ConsigmentsContainerComponent
 
   onAcceptPreparation(goods: IComerGoodXLot[]) {
     const { id, eventTpId } = this.controls;
+    console.log();
     const blkPrepGood = goods.map(good => this.consigmentItem(good));
     return this.utilComerV1Service
       .acceptPreparation({
@@ -135,10 +136,12 @@ export class ConsigmentsContainerComponent
 
   consigmentItem(good: IComerGoodXLot) {
     return {
-      goodNumber: good.goodNumber ? Number(good.goodNumber) : null,
+      goodNumber: good.goodNumber.id ? Number(good.goodNumber.id) : null,
       statusAnt: good.previousStatus,
       statusComer: good.commercialStatus,
-      transferenceNumber: good.transferNumber ? `${good.transferNumber}` : null,
+      transferenceNumber: good.transferNumber?.id
+        ? `${good.transferNumber?.id}`
+        : null,
       storeNumber: good.warehouseNumber ? Number(good.warehouseNumber) : null,
       eventId: good.commercialEventId ? Number(good.commercialEventId) : null,
       lotId: good.idLot ? Number(good.idLot) : null,

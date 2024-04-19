@@ -30,7 +30,7 @@ export interface IComerGoodXLot {
   calculationStatus: any;
   warrantyPrice: any;
   commercialStatus: string;
-  transferNumber: number;
+  transferNumber: any;
   advance: any;
   lotPercentage: string;
   creationDate: Date;
