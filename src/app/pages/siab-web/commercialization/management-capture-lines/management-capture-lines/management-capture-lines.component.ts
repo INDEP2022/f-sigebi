@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
@@ -118,23 +118,18 @@ export class managementCaptureLinesComponent
       ],
     });
   }
-
-  openModal(context?: Partial<managementCaptureLinesModalComponent>) {
-    const modalRef = this.modalService.show(
-      managementCaptureLinesModalComponent,
-      {
-        initialState: { ...context },
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
-    );
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getData();
-    });
-  }
-
   openForm(allotment?: any) {
-    this.openModal({ allotment });
+    let config: ModalOptions = {
+      initialState: {
+        allotment,
+        callback: (next: boolean) => {
+          if (next) this.getData();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(managementCaptureLinesModalComponent, config);
   }
 
   getData() {

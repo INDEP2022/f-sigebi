@@ -9,12 +9,14 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { FormLoadAppraisalsService } from 'src/app/core/services/catalogs/form-load-appraisals.service';
 import { AppraiseService } from 'src/app/core/services/ms-appraise/appraise.service';
+import { AppraisesService } from 'src/app/core/services/ms-appraises/appraises.service';
 import { ComerEventosServiceTwo } from 'src/app/core/services/ms-event/comer-eventos-ms-new.service';
 import { MsMassiveappraiseService } from 'src/app/core/services/ms-massiveappraise/ms-massiveappraise.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
 import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FormLoadAppraisalsModalComponent } from '../form-load-appraisals-modal/form-load-appraisals-modal/form-load-appraisals-modal.component';
 import {
@@ -35,7 +37,6 @@ interface IExcelToJson {
 })
 export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
   form: FormGroup;
-  form1: FormGroup;
   maxDate = new Date();
 
   requested: boolean = false;
@@ -60,6 +61,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
   avaluo: string;
   idEvento: number;
   tipoOficio: number;
+  elementsToExport: any[];
   ///
   params = new BehaviorSubject<ListParams>(new ListParams());
   params1 = new BehaviorSubject<ListParams>(new ListParams());
@@ -88,7 +90,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
   lnkInsAvaluos: boolean = false;
   lnkAddAvaluo: boolean = false;
   lnkUpdAvaluo: boolean = false;
-
+  file: any;
   Divreg: boolean = false;
 
   gvAvaluosRechazados: boolean = false;
@@ -158,17 +160,43 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     private massiveGoodService: MassiveGoodService,
     private appraiseService: AppraiseService,
     private comerEventosServiceTwo: ComerEventosServiceTwo,
-    private officeManagementService: OfficeManagementService
+    private officeManagementService: OfficeManagementService,
+    private appraisesService: AppraisesService
   ) {
     super();
     this.apraisalsSettings.columns = APPRAISALS_COLUMNS;
-    this.goodSettings.columns = GOODS_COLUMNS;
+    this.goodSettings.columns = {
+      ...GOODS_COLUMNS,
+      valuado: {
+        title: 'Avalúo',
+        sort: false,
+        type: 'custom',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'Todos',
+            list: [
+              // { value: '', title: 'Todos' },
+              { value: '1', title: 'Si' },
+              { value: '0', title: 'No' },
+            ],
+          },
+        },
+        renderComponent: CheckboxElementComponent,
+        showAlways: true,
+        valuePrepareFunction: (isSelected: boolean, row: any) =>
+          row.item_avaluo == '1',
+        onComponentInitFunction: (instance: CheckboxElementComponent) =>
+          (instance.disabled = true),
+      },
+    };
     this.detailApraisalsSettings.columns = DETAIL_APPRAISALS_COLUMNS;
     this.dtRejectedSettings.columns = DT_RECHAZADOS_COLUMNS;
   }
 
   ngOnInit(): void {
     this.createForm();
+    this.inicialize();
   }
   async inicialize() {
     if (!this.requested) {
@@ -183,7 +211,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
   }
   createForm() {
     this.form = new FormGroup({
-      numeroEvento: new FormControl(1471, [Validators.pattern(STRING_PATTERN)]),
+      numeroEvento: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
       claveProceso: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
       fechaEvento: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
       Observaciones: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
@@ -191,12 +219,15 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
       Tipo: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
       Estatus: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
       Referencia: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
+      TipoOficio: new FormControl(null),
     });
-    this.form1 = new FormGroup({
-      TipoOficio: new FormControl('', [Validators.required]),
-    });
-    this.form.disable();
-    this.form.controls['numeroEvento'].enable();
+    this.form.controls['claveProceso'].disable();
+    this.form.controls['fechaEvento'].disable();
+    this.form.controls['Observaciones'].disable();
+    this.form.controls['FecSolicitud'].disable();
+    this.form.controls['Tipo'].disable();
+    this.form.controls['Estatus'].disable();
+    this.form.controls['Referencia'].disable();
     //this.inicialize();
   }
   async cargaDDLEvento() {
@@ -205,7 +236,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     if (this.estatusLotes.length == 0) {
       // this.onLoadToast('warning', 'Advertencia', 'Selecciona oficio');
       this.onLoadToast('warning', 'Advertencia', 'No exixte ningun evento');
-      this.form1.controls['TipoOficio'].setValue('0');
+      this.form.controls['TipoOficio'].setValue('0');
     }
   }
   async CargaDDLDrop() {
@@ -267,6 +298,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
   lnkBuscar_Click() {
     if (this.form.value.numeroEvento != '') {
       this.CargaGrids();
+      this.inicialize();
       this.lnkDesFormato = true;
       this.lnkValArchivo = true;
     } else {
@@ -296,8 +328,9 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     );
     console.log(avaluo);
     let dataAva: any = avaluo;
+    console.log(dataAva.data[0].descripcion);
     if (avaluo != null) {
-      this.avaluo = dataAva.data;
+      this.avaluo = dataAva.data[0].descripcion;
     } else {
       this.avaluo = '';
     }
@@ -314,7 +347,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     ) {
       this.controlBotnoes(evento.data[0].item_tipo_proceso, 'V');
     } else {
-      //this.controlBotnoes('1', 'I');
+      // this.controlBotnoes('1', 'I');
     }
   }
 
@@ -396,7 +429,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
         let body2: any = {};
         body2['option'] = 2;
         body2['event'] = this.form.value.numeroEvento;
-        body2['idtpooficio'] = this.form1.value.TipoOficio;
+        body2['idtpooficio'] = this.form.value.TipoOficio;
 
         let V_CAUSA_INVALIDO = await this.PC_VAL_EVENTO(
           'GO',
@@ -404,7 +437,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
           this.tipoEvent,
           this.direccion,
           this.avaluo,
-          this.form1.value.TipoOficio,
+          this.form.value.TipoOficio,
           ''
         );
         let dataVCausa: any = V_CAUSA_INVALIDO;
@@ -427,7 +460,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
               }
             });
           } else {
-            this.onLoadToast('error', `${dataVCausa.dual}`, '');
+            this.onLoadToast('warning', `${dataVCausa.dual}`, '');
           }
         }
       } else {
@@ -497,9 +530,95 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
       'Generado Correctamente'
     );
   }
-
+  async leerExcelInsert(proceso: string) {
+    if (proceso == 'I' || proceso == 'U' || proceso == 'A') {
+      let body = {
+        pEventId: this.idEvento,
+        pTypeAppraisal: this.form.controls['TipoOficio'].value,
+        file: this.file,
+      };
+      let res = {};
+      this.appraisesService.deleteTmpeatAppraisal(res).subscribe({
+        next: res => {
+          console.log(res);
+          this.massiveGoodService.getPupInsertTmpComer(body).subscribe({
+            next: async data => {
+              console.log(data);
+              let body = {
+                pProcess: proceso,
+                pEvent: this.form.get('numeroEvento').value,
+                pAddress: 'A',
+                pNomScreen: 'FCOMERREGAVALUO',
+                user: localStorage.getItem('username'),
+              };
+              this.appraiseService.postPupInseertAppraisal(body).subscribe({
+                next: async resp => {
+                  console.log(resp);
+                  let dataAvaluo: any = resp;
+                  // let bienesRec = await this.pupConsult(8, 0, '', '');
+                  // let dataBienesRec: any = bienesRec;
+                  // let avaluosRec = await this.pupConsult(9, 0, '', '');
+                  console.log(dataAvaluo.data);
+                  this.CargaGrids();
+                  if (dataAvaluo.length > 0 && dataAvaluo.data[0].P_DATA != 0) {
+                    if (dataAvaluo.length > 0) {
+                      if (proceso == 'I') {
+                        this.onLoadToast(
+                          'success',
+                          'Se insertaron los Avalúos correctamente, pero hay bienes con error no procesados.',
+                          ``
+                        );
+                      } else {
+                        this.onLoadToast(
+                          'success',
+                          'Se actualizarón los Avalúos correctamente, pero hay bienes con error no procesados.',
+                          ``
+                        );
+                      }
+                    }
+                  } else {
+                    if (proceso == 'I') {
+                      this.onLoadToast(
+                        'success',
+                        'Se insertaron los Avalúos correctamente.',
+                        ``
+                      );
+                    } else if (proceso == 'U') {
+                      this.onLoadToast(
+                        'success',
+                        'Se actualizarón los Avalúos correctamente.',
+                        ``
+                      );
+                    } else {
+                      this.onLoadToast(
+                        'success',
+                        'Se Agregaron los Avalúos correctamente.',
+                        ``
+                      );
+                    }
+                  }
+                },
+                error: err => {
+                  console.log(err);
+                },
+              });
+            },
+            error: err => {
+              console.log(err);
+              this.alert('warning', err.error.message, '');
+              this.loader.load = false;
+            },
+          });
+        },
+        error: eror => {
+          this.loader.load = false;
+        },
+      });
+    }
+  }
   async leerExcel(proceso: string) {
     try {
+      this.rejected = [];
       console.log(this.dataExcel);
       this.loader.load = true;
       for (let i = 0; i < this.dataExcel.length; i++) {
@@ -516,7 +635,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
             this.dataExcel[i].VC_IVA,
             this.dataExcel[i].NOMBRE_VALUADOR,
             this.dataExcel[i].NOMENCLATURA_OFICIO,
-            this.dataExcel[i].APTO
+            this.dataExcel[i].APTO_NO_APTO
           );
           let err = dataExcel1[0].V_ERROR_JUSTIF;
           console.log(dataExcel1);
@@ -529,114 +648,29 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
             };
             //console.log(err);
             this.rejected.push(rechazados);
+
             console.log(this.rejected);
-          }
-        } else if (proceso == 'I' || proceso == 'U' || proceso == 'A') {
-          let dataAvaluo = await this.insertTmpComerAvaluo(
-            '0.16',
-            this.dataExcel[i].CVE_AVALUO,
-            this.dataExcel[i].FECHA_AVALUO,
-            this.dataExcel[i].VIGENCIA_AVALUO,
-            this.dataExcel[i].NO_BIEN,
-            this.dataExcel[i].VRI_IVA,
-            this.dataExcel[i].VRI_IVA_REDONDEADO,
-            this.dataExcel[i].VC,
-            this.dataExcel[i].VC_IVA,
-            this.dataExcel[i].NOMBRE_VALUADOR,
-            this.dataExcel[i].NOMENCLATURA_OFICIO,
-            this.dataExcel[i].APTO,
-            ''
-          );
-          let errAvaluo = dataAvaluo[0].V_ERROR_JUSTIF;
-          if (errAvaluo != '') {
-            let rechazadosAvaluo = {
-              noBien: this.dataExcel[i].NO_BIEN,
-              descripcion: '',
-              status: '',
-              causa: errAvaluo,
-            };
-            //console.log(err);
-            this.rejected.push(rechazadosAvaluo);
           }
         }
         if (this.dataExcel.length == i + 1) {
           this.cargaTabla(proceso);
         }
       }
-      /*const promises = this.dataExcel.forEach(async element => {
-        console.log(proceso);
-        if (proceso == 'V') {
-          let dataExcel1 = await this.validArchivo('0.16', element.CVE_AVALUO, element.FECHA_AVALUO, element.VIGENCIA_AVALUO, element.NO_BIEN, element.VRI_IVA, element.VRI_IVA_REDONDEADO, element.VC, element.VC_IVA, element.NOMBRE_VALUADOR, element.NOMENCLATURA_OFICIO, element.APTO);
-          let err = dataExcel1[0].V_ERROR_JUSTIF;
-          console.log(dataExcel1);
-          if (err != null) {
-            let rechazados = {
-              noBien: element.NO_BIEN,
-              descripcion: '',
-              status: '',
-              causa: err
-            }
-            //console.log(err);
-            this.rejected.push(rechazados);
-            console.log(this.rejected);
-          }
-        } else if (proceso == 'I' || proceso == 'U' || proceso == 'A') {
-
-          let dataAvaluo = await this.insertTmpComerAvaluo('0.16', element.CVE_AVALUO, element.FECHA_AVALUO, element.VIGENCIA_AVALUO, element.NO_BIEN, element.VRI_IVA, element.VRI_IVA_REDONDEADO, element.VC, element.VC_IVA, element.NOMBRE_VALUADOR, element.NOMENCLATURA_OFICIO, element.APTO, '');
-          let errAvaluo = dataAvaluo[0].V_ERROR_JUSTIF;
-          if (errAvaluo != '') {
-            let rechazadosAvaluo = {
-              noBien: element.NO_BIEN,
-              descripcion: '',
-              status: '',
-              causa: errAvaluo
-            }
-            //console.log(err);
-            this.rejected.push(rechazadosAvaluo);
-          }
-        }
-      });
-      let vari = await Promise.all(promises)
-      console.log(vari);
-      
-      if (proceso == 'V') {
-        this.openModalAppraisals(proceso, this.rejected);
-        console.log(this.rejected);
-      } else if (proceso == 'I' || proceso == 'U' || proceso == 'A') {
-        if (this.rejected.length > 0) {
-          this.openModalAppraisals(proceso, this.rejected);
-        } else {
-          let avaluoRe = await this.pupInsertAvaluo(proceso, this.form.get('numeroEvento').value, 'A', 'FCOMERREGAVALUO', '');
-          let dataAvaluo: any = avaluoRe;
-          let bienesRec = await this.pupConsult(8, 0, '', '');
-          let dataBienesRec: any = bienesRec;
-          let avaluosRec = await this.pupConsult(9, 0, '', '');
-          console.log(dataAvaluo.data[0].P_DATA);
-          if (dataAvaluo.length > 0 && dataAvaluo.data[0].P_DATA != 0) {
-            if (dataBienesRec.count > 0) {
-              if (proceso == 'I') {
-                this.onLoadToast('success', 'Se insertaron los Avalúos correctamente, pero hay bienes con error no procesados.', ``);
-              } else {
-                this.onLoadToast('success', 'Se actualizarón los Avalúos correctamente, pero hay bienes con error no procesados.', ``);
-              }
-            } else {
-              if (proceso == 'I') {
-                this.onLoadToast('success', 'Se insertaron los Avalúos correctamente.', ``);
-              } else {
-                this.onLoadToast('success', 'Se actualizarón los Avalúos correctamente.', ``);
-              }
-            }
-          }
-        }
-        //this.rejected
-      }*/
     } catch {}
   }
 
   async cargaTabla(proceso: string) {
     if (proceso == 'V') {
-      this.openModalAppraisals(proceso, this.rejected);
-      console.log(this.rejected);
+      if (this.rejected.length > 0) {
+        this.openModalAppraisals(proceso, this.rejected);
+      } else {
+        this.loader.load = false;
+        this.onLoadToast(
+          'success',
+          'No se encontraron errores en el archivo.',
+          ``
+        );
+      }
     } else if (proceso == 'I' || proceso == 'U' || proceso == 'A') {
       if (this.rejected.length > 0) {
         this.openModalAppraisals(proceso, this.rejected);
@@ -646,7 +680,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
           this.form.get('numeroEvento').value,
           'A',
           'FCOMERREGAVALUO',
-          ''
+          localStorage.getItem('username')
         );
         let dataAvaluo: any = avaluoRe;
         let bienesRec = await this.pupConsult(8, 0, '', '');
@@ -748,6 +782,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
 
   openModalAppraisals(proceso: string, dataBienes: any) {
     console.log(dataBienes);
+    this.loader.load = false;
     let dataBien1: boolean = true;
     if (dataBienes && proceso) {
       let config: ModalOptions = {
@@ -838,33 +873,14 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
   }
 
   async insertTmpComerAvaluo(
-    pIva: string,
-    pAppraiseKey: string,
-    pAppraiseDate: string,
-    pValidityAppraise: string,
-    pGoodNumber: string,
-    pVriIva: string,
-    pVriIvaRounding: string,
-    pVc: string,
-    pVcIva: string,
-    pNameAppraiser: string,
-    pNomenclatureJob: string,
-    pAct: string,
-    pTypeAppraiser: string
+    pEventId: string,
+    pTypeAppraisal: string,
+    file: any
   ) {
     let body = {
-      pIva: pIva,
-      pAppraiseKey: pAppraiseKey,
-      pAppraiseDate: pAppraiseDate,
-      pValidityAppraise: pValidityAppraise,
-      pGoodNumber: pGoodNumber,
-      pVriIva: pVriIva,
-      pVriIvaRounding: pVriIvaRounding,
-      pVc: pVc,
-      pVcIva: pVcIva,
-      pNameAppraiser: pNameAppraiser,
-      pJobKey: pNomenclatureJob,
-      ptypeAppraise: pTypeAppraiser,
+      pEventId: pEventId,
+      pTypeAppraisal: pTypeAppraisal,
+      file: file,
     };
     return new Promise((resolve, reject) => {
       this.massiveGoodService.getPupInsertTmpComer(body).subscribe({
@@ -881,7 +897,11 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
 
   async lnkInsAvaluos_Click() {
     if (this.lnkInsAvaluos) {
-      if (this.form1.controls['TipoOficio'].value != 0) {
+      console.log(this.form.controls['TipoOficio'].value);
+      if (
+        this.form.controls['TipoOficio'].value != 0 &&
+        this.form.controls['TipoOficio'].value != null
+      ) {
         try {
           let V_CAUSA_INVALIDO = await this.PC_VAL_EVENTO(
             'I',
@@ -889,7 +909,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
             this.tipoEvent,
             this.direccion,
             this.avaluo,
-            this.form1.value.TipoOficio,
+            this.form.value.TipoOficio,
             ''
           );
           let dataVCausa: any = V_CAUSA_INVALIDO;
@@ -902,7 +922,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
               console.log(dataVCausa.dual);
               this.alertQuestion(
                 'question',
-                `${dataVCausa.dual} ¿Ingresar Avalúos del evento ${this.form.value.numeroEvento}, referencia ${this.form.value.Referencia}?`,
+                `${dataVCausa.dual} ¿Ingresar Avalúos del evento ${this.form.value.numeroEvento}, referencia ${this.form.controls['Referencia'].value}?`,
                 '',
                 'Continuar',
                 'Cancelar'
@@ -910,7 +930,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
                 if (question.isConfirmed) {
                   this.rejected = [];
                   this.lnkInsAvaluos = false;
-                  this.leerExcel('I');
+                  this.leerExcelInsert('I');
                 }
               });
             }
@@ -924,7 +944,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
 
   async lnkAddAvaluo_Click() {
     if (this.lnkAddAvaluo) {
-      if (this.form1.controls['TipoOficio'].value != 0) {
+      if (this.form.controls['TipoOficio'].value != 0) {
         try {
           let V_CAUSA_INVALIDO = await this.PC_VAL_EVENTO(
             'A',
@@ -932,7 +952,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
             this.tipoEvent,
             this.direccion,
             this.avaluo,
-            this.form1.value.TipoOficio,
+            this.form.value.TipoOficio,
             ''
           );
           let dataVCausa: any = V_CAUSA_INVALIDO;
@@ -943,7 +963,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
             } else {
               this.alertQuestion(
                 'question',
-                `${dataVCausa.dual} ¿Agregar bienes a los Avalúos del evento ${this.form.value.numeroEvento}, referencia ${this.form.value.Referencia}?`,
+                `${dataVCausa.dual} ¿Agregar bienes a los Avalúos del evento ${this.form.value.numeroEvento}, referencia ${this.form.controls['Referencia'].value}?`,
                 '',
                 'Continuar',
                 'Cancelar'
@@ -951,7 +971,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
                 if (question.isConfirmed) {
                   this.rejected = [];
                   this.lnkAddAvaluo = false;
-                  this.leerExcel('A');
+                  this.leerExcelInsert('A');
                 }
               });
             }
@@ -964,7 +984,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
   }
 
   async lnkUpdAvaluo_Click() {
-    if (this.form1.controls['TipoOficio'].value != 0) {
+    if (this.form.controls['TipoOficio'].value != 0) {
       try {
         let V_CAUSA_INVALIDO = await this.PC_VAL_EVENTO(
           'U',
@@ -972,7 +992,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
           this.tipoEvent,
           this.direccion,
           this.avaluo,
-          this.form1.value.TipoOficio,
+          this.form.value.TipoOficio,
           ''
         );
         let dataVCausa: any = V_CAUSA_INVALIDO;
@@ -983,7 +1003,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
           } else {
             this.alertQuestion(
               'question',
-              `${dataVCausa.dual} ¿Actualizar los Avalúos del evento ${this.form.value.numeroEvento}, referencia ${this.form.value.Referencia}?`,
+              `${dataVCausa.dual} ¿Actualizar los Avalúos del evento ${this.form.value.numeroEvento}, referencia ${this.form.controls['Referencia'].value}?`,
               '',
               'Continuar',
               'Cancelar'
@@ -991,7 +1011,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
               if (question.isConfirmed) {
                 this.rejected = [];
                 this.lnkInsAvaluos = false;
-                this.leerExcel('U');
+                this.leerExcelInsert('U');
               }
             });
           }
@@ -1025,20 +1045,20 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
           console.log(value);
           //this.rejected = [];
           //this.dataExcel = [];
+
           const files = (event.target as HTMLInputElement).files;
           if (!files || files.length !== 1) {
             throw new Error('Please select one file.');
           }
-          this.fileReader.onload = null;
-          this.fileReader.onload = loadEvent => {
-            if (loadEvent.target && loadEvent.target.result) {
-              this.readExcel(loadEvent.target.result, value);
-              (event.target as HTMLInputElement).value = '';
-            }
-            console.log(this.fileReader.onload);
-          };
+          const fileReader = new FileReader();
+          this.file = files[0];
+          fileReader.readAsBinaryString(files[0]);
+          fileReader.onload = loadEvent => {
+            this.readExcel(loadEvent.target.result, value);
+            (event.target as HTMLInputElement).value = '';
 
-          this.fileReader.readAsBinaryString(files[0]);
+            console.log(fileReader.onload);
+          };
         }
       });
     } catch (error) {
@@ -1055,7 +1075,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
       if (validate) {
         this.dataExcel = validExcel;
         this.leerExcel(value);
-        this.lnkValArchivo = false;
+        this.lnkValArchivo = true;
         this.lnkAvaRechazados = true;
         this.lnkInsAvaluos = true;
         this.lnkAddAvaluo = true;
@@ -1078,11 +1098,12 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
       'VIGENCIA_AVALUO',
       'NO_BIEN',
       'VRI_IVA',
+      'VRI_IVA_REDONDEADO',
       'VC',
       'VC_IVA',
       'NOMBRE_VALUADOR',
       'NOMENCLATURA_OFICIO',
-      'APTO/NOAPTO',
+      'APTO_NO_APTO',
     ];
     const todosCamposPresentes = camposRequeridos.every(campo =>
       array.hasOwnProperty(campo)
@@ -1300,8 +1321,6 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
             this.lnkAddAvaluo = false;
             this.lnkUpdAvaluo = false;
             this.bottonDesible = false;
-            this.form.disable();
-            this.form.controls['numeroEvento'].enable();
             //
           }
         }
@@ -1315,8 +1334,53 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     if (this.lnkDesFormato) {
       this.ocultaDivNoti();
       if (this.dataGood.count() > 0) {
-        const filename: string = `Comer_Avaluos_${new Date().toDateString()}`;
-        this.excelService.export(this.jsonToCsv, { type: 'xlsx', filename });
+        this.loader.load = true;
+        const fecha = new Date();
+        const anio = fecha.getFullYear();
+        const mes = fecha.getMonth() + 1;
+        const dia = fecha.getDate();
+        console.log(anio, mes, dia);
+        const filename: string = `Comer_Avaluos_${anio}-${mes}-${dia}`;
+        let bienesArray = [];
+        let params = new ListParams();
+        params.limit = 1000000;
+        let body: any = {};
+        body['pOption'] = 2;
+        body['pEvent'] = this.form.value.numeroEvento;
+        body['pAddress'] = 'A';
+        body['pIdAppraisal'] = '';
+        this.formLoadAppraisalsService.obtenerEvento(body, params).subscribe({
+          next: resp => {
+            bienesArray = resp.data.map((x: any) => {
+              let newRow: any = {
+                CVE_AVALUO: '',
+                FECHA_AVALUO: '',
+                VIGENCIA_AVALUO: '',
+                NO_BIEN: x.no_bien,
+                VRI_IVA: '',
+                VRI_IVA_REDONDEADO: '',
+                VC: '',
+                VC_IVA: '',
+                NOMBRE_VALUADOR: '',
+                NOMENCLATURA_OFICIO: '',
+                APTO_NO_APTO: '',
+              };
+              return newRow;
+            });
+            this.excelService.export(bienesArray, { type: 'xlsx', filename });
+            this.loader.load = false;
+          },
+          error: error => {
+            if (error.status == 400) {
+              this.loader.load = false;
+              this.alert(
+                'warning',
+                'El avaluo no contiene bienes para generar el Layout. Verifiquelo por favor.',
+                ''
+              );
+            }
+          },
+        });
       } else {
         this.onLoadToast(
           'warning',
@@ -1393,4 +1457,5 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     if (this.lnkUpdAvaluo) {
     }
   }*/
+  cleanForm() {}
 }

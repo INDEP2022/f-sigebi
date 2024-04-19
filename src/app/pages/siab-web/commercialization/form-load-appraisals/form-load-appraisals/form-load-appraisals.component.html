@@ -3,301 +3,276 @@
     <h5 class="title">Carga Avaluos</h5>
   </div>
   <div body>
-    <div class="row mt-3">
-      <div class="col-sm-12 col-md-12 col-lg-12">
-        <div class="col-md-6 ch-content">
-          <h5 class="title">EVENTO</h5>
+    <div class="row">
+      <div class="col-md-12">
+        <h5 class="title">Evento</h5>
+      </div>
+    </div>
+    <hr class="row" />
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <form-field
+          class="col-md-2"
+          [control]="form.get('numeroEvento')"
+          label="No. Evento">
+          <input
+            class="form-control"
+            type="number"
+            formControlName="numeroEvento" />
+        </form-field>
+        <div class="col-md-2 d-flex">
+          <div class="mr-2">
+            <button
+              (click)="lnkBuscar_Click()"
+              tooltip="Buscar"
+              type="button"
+              class="btn btn-primary active btn-sm">
+              <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div>
+            <button
+              (click)="cleanForm()"
+              tooltip="Limpiar"
+              class="btn btn-danger btn-sm active mr-3">
+              <i class="fas fa-eraser"> </i>
+            </button>
+          </div>
         </div>
-        <div class="col-md-12">
-          <form class="form-material" [formGroup]="form">
-            <div class="row mt-5">
-              <div class="col-sm-12 col-md-6">
-                <form-field
-                  [control]="form.get('numeroEvento')"
-                  label="No. Evento">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="numeroEvento"
-                    maxlength="20" />
-                </form-field>
-              </div>
-              <div class="col-sm-12 col-md-6">
-                <form-field
-                  [control]="form.get('claveProceso')"
-                  label="Cve Proceso">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="claveProceso"
-                    maxlength="20" />
-                </form-field>
-              </div>
-              <div class="col-sm-12 col-md-6">
-                <form-field
-                  [control]="form.get('fechaEvento')"
-                  label="Fecha Evento">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="fechaEvento"
-                    bsDatepicker
-                    [maxDate]="maxDate" />
-                </form-field>
-              </div>
-              <div class="col-sm-12 col-md-6">
-                <form-field
-                  [control]="form.get('Observaciones')"
-                  label="Observaciones">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="Observaciones" />
-                </form-field>
-              </div>
-              <div class="col-sm-12 col-md-6">
-                <form-field
-                  [control]="form.get('FecSolicitud')"
-                  label="Fecha Solicitud">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="FecSolicitud"
-                    bsDatepicker
-                    [maxDate]="maxDate" />
-                </form-field>
-              </div>
-              <div class="col-sm-12 col-md-6">
-                <form-field [control]="form.get('Tipo')" label="Tipo">
-                  <!--<ngx-select
-                    [form]="form"
-                    [data]="selectedTipo"
-                    value="valor"
-                    bindLabel="descripcion"
-                    label="Tipo"
-                    (fetchItems)="CargaDDLDrop()"
-                    control="Tipo">
-                  </ngx-select>-->
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="Tipo" />
-                </form-field>
-              </div>
-              <div class="col-sm-12 col-md-6">
-                <form-field [control]="form.get('Estatus')" label="Estatus">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="Estatus" />
-                </form-field>
-              </div>
-              <div class="col-sm-12 col-md-6">
-                <form-field
-                  [control]="form.get('Referencia')"
-                  label="Referencia">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="Referencia" />
-                </form-field>
-              </div>
-            </div>
-          </form>
-          <form class="form-material" [formGroup]="form1">
-            <div class="row mt-5">
-              <div class="col-sm-12 col-md-6">
-                <form-field [control]="form1.get('TipoOficio')">
-                  <ngx-select
-                    [form]="form1"
-                    [data]="selectedTipo"
-                    value="valor"
-                    bindLabel="valueDescription"
-                    label="Tipo Oficio"
-                    (fetchItems)="CargaDDLDrop()"
-                    control="TipoOficio">
-                  </ngx-select>
-                </form-field>
-              </div>
-            </div>
-          </form>
-        </div>
-        <div class="d-flex justify-content-center">
-          <button class="btn-primary btn-sm active ml-2" (click)="search()">
-            Buscar
-            <i class="bx bx-search-alt bx-sm float-icon"></i>
+        <form-field
+          class="col-md-3"
+          [control]="form.get('claveProceso')"
+          label="Cve. Proceso">
+          <input class="form-control" formControlName="claveProceso" />
+        </form-field>
+
+        <form-field
+          class="col-md-2"
+          [control]="form.get('fechaEvento')"
+          label="Fecha Evento">
+          <input
+            class="form-control"
+            formControlName="fechaEvento"
+            bsDatepicker />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="form.get('Estatus')"
+          label="Estatus">
+          <input class="form-control" type="text" formControlName="Estatus" />
+        </form-field>
+      </div>
+
+      <div class="row pt-3">
+        <form-field [control]="form.get('Observaciones')" label="Observaciones">
+          <textarea
+            class="form-control"
+            formControlName="Observaciones"></textarea>
+        </form-field>
+      </div>
+
+      <div class="row pt-3">
+        <form-field
+          class="col-md-2"
+          [control]="form.get('FecSolicitud')"
+          label="Fecha Solicitud">
+          <input
+            class="form-control"
+            formControlName="FecSolicitud"
+            bsDatepicker />
+        </form-field>
+
+        <form-field class="col-md-3" [control]="form.get('Tipo')" label="Tipo">
+          <input class="form-control" formControlName="Tipo" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="form.get('Referencia')"
+          label="Referencia">
+          <input class="form-control" formControlName="Referencia" />
+        </form-field>
+      </div>
+
+      <div class="row pt-3">
+        <form-field [control]="form.get('TipoOficio')" class="col-md-4">
+          <ngx-select
+            [form]="form"
+            [data]="selectedTipo"
+            value="valor"
+            bindLabel="valueDescription"
+            label="Tipo de Oficio"
+            (fetchItems)="CargaDDLDrop()"
+            control="TipoOficio">
+          </ngx-select>
+        </form-field>
+
+        <div class="col-3">
+          <button
+            containerClass="tooltip-style"
+            class="btn btn-secondary btn-sm active m-1"
+            (click)="btnGenoficio_Click()">
+            Generar Oficio
+            <i class="bx bxs-file-find"></i>
           </button>
         </div>
       </div>
-    </div>
-    <div class="row margin-input">
-      <div class="col-sm-12 col-md-6 col-lg-6">
-        <div class="col-md-6 ch-content">
-          <h5 class="title">AVALÚOS</h5>
-        </div>
-      </div>
-      <div class="col-sm-12 col-md-6 col-lg-6">
-        <div class="d-flex flex-row-reverse">
-          <app-columns-select
-            [(settings)]="apraisalsSettings"></app-columns-select>
-        </div>
-      </div>
-      <div class="col-sm-12 pt-3">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered table-responsive'"
-            id="applicantTable"
-            [settings]="apraisalsSettings"
-            [source]="dataApraisals"
-            (userRowSelect)="avaluosRowSelect($event)">
-          </ng2-smart-table>
-          <app-pagination [params]="params1" [totalItems]="totalItems1">
-          </app-pagination>
-          <div class="table-padding"></div>
-        </div>
-      </div>
-    </div>
-    <div class="row margin-input">
-      <div class="col-sm-12 col-md-6 col-lg-6">
-        <div class="col-md-6 ch-content">
-          <h5 class="title">BIENES</h5>
-        </div>
-      </div>
-      <div class="col-sm-12 col-md-6 col-lg-6">
-        <div class="d-flex flex-row-reverse">
-          <app-columns-select [(settings)]="goodSettings"></app-columns-select>
-        </div>
-      </div>
-      <div class="col-sm-12 pt-3">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered table-responsive'"
-            id="applicantTable"
-            [settings]="goodSettings"
-            [source]="dataGood">
-          </ng2-smart-table>
-          <div class="table-padding"></div>
-        </div>
-        <app-pagination [params]="params2" [totalItems]="totalItems">
-        </app-pagination>
-      </div>
-    </div>
+    </form>
 
-    <!-- *ngIf="Divreg" -->
-    <div class="row margin-input">
-      <div class="col-sm-12 col-md-6 col-lg-6">
-        <div class="col-md-6 ch-content">
-          <h5 class="title">DETALLE AVALÚOS</h5>
-        </div>
-      </div>
-      <div class="col-sm-12 col-md-6 col-lg-6">
-        <div class="d-flex flex-row-reverse">
-          <app-columns-select
-            [(settings)]="detailApraisalsSettings"
-            class="p-2"></app-columns-select>
-          <div class="p-2">
-            <div class="btn-group" dropdown placement="bottom right">
-              <button
-                id="button-alignment"
-                dropdownToggle
-                type="button"
-                class="btn btn-info btn-sm active dropdown-toggle"
-                aria-controls="dropdown-alignment">
-                Acciones <span class="caret"></span>
-              </button>
-              <ul
-                id="dropdown-alignment"
-                *dropdownMenu
-                class="dropdown-menu dropdown-menu-right"
-                role="menu"
-                aria-labelledby="button-alignment">
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item"
-                    [ngStyle]="{ color: lnkDesFormato ? 'blue' : 'grey' }"
-                    (click)="downloadDocument()">
-                    <i class="bx bx-layer"></i> Descargar Formato
-                  </a>
-                </li>
-                <li role="menuitem">
-                  <!--(click)="validateDocument()"-->
-                  <a
-                    class="dropdown-item"
-                    [ngStyle]="{ color: lnkValArchivo ? 'blue' : 'grey' }"
-                    (click)="lnkValArchivo ? file1.click() : null">
-                    <i class="bx bx-layer"></i> Validar Archivo
-                  </a>
-                  <input
-                    type="file"
-                    name="file1"
-                    #file1
-                    class="d-none"
-                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                    (change)="onFileChange($event, 'V')" />
-                </li>
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item"
-                    [ngStyle]="{ color: lnkAvaRechazados ? 'blue' : 'grey' }"
-                    (click)="apraisalReyect()">
-                    <i class="bx bx-layer"></i> Avalúo Rechazados
-                  </a>
-                </li>
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item"
-                    [ngStyle]="{ color: lnkInsAvaluos ? 'blue' : 'grey' }"
-                    (click)="lnkInsAvaluos_Click()">
-                    <i class="bx bx-layer"></i> Insertar Avalúo
-                  </a>
-                </li>
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item"
-                    [ngStyle]="{ color: lnkAddAvaluo ? 'blue' : 'grey' }"
-                    (click)="lnkAddAvaluo_Click()">
-                    <i class="bx bx-layer"></i> Agregar Avalúo
-                  </a>
-                </li>
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item"
-                    [ngStyle]="{ color: lnkUpdAvaluo ? 'blue' : 'grey' }"
-                    (click)="lnkUpdAvaluo_Click()">
-                    <i class="bx bx-layer"></i> Actualizar Avalúo
-                  </a>
-                </li>
-              </ul>
+    <div class="row">
+      <tabset [justified]="true" class="fill-custom-tab" #tasksTabs>
+        <tab heading="Bienes">
+          <div class="row">
+            <div class="col-sm-12 pt-3">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive'"
+                  id="applicantTable"
+                  [settings]="goodSettings"
+                  [source]="dataGood">
+                </ng2-smart-table>
+                <div class="table-padding"></div>
+              </div>
+              <app-pagination [params]="params2" [totalItems]="totalItems">
+              </app-pagination>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="col-sm-12 pt-3" *ngIf="Divreg">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered table-responsive'"
-            id="applicantTable"
-            [settings]="detailApraisalsSettings"
-            [source]="dataDetailApraisal">
-          </ng2-smart-table>
-          <div class="table-padding"></div>
-          <app-pagination [params]="params2" [totalItems]="totalItems2">
-          </app-pagination>
-        </div>
-      </div>
+        </tab>
+        <tab heading="Avalúos">
+          <div class="row">
+            <div class="col-sm-12 pt-3">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive'"
+                  id="applicantTable"
+                  [settings]="apraisalsSettings"
+                  [source]="dataApraisals"
+                  (userRowSelect)="avaluosRowSelect($event)">
+                </ng2-smart-table>
+                <app-pagination [params]="params1" [totalItems]="totalItems1">
+                </app-pagination>
+                <div class="table-padding"></div>
+              </div>
+            </div>
+          </div>
+          <div class="row margin-input">
+            <div class="col-sm-12 col-md-6 col-lg-6">
+              <div class="col-md-6 ch-content">
+                <h5 class="title">DETALLE AVALÚOS</h5>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-6">
+              <div class="d-flex flex-row-reverse">
+                <app-columns-select
+                  [(settings)]="detailApraisalsSettings"
+                  class="p-2"></app-columns-select>
+                <div class="p-2">
+                  <div class="btn-group" dropdown placement="bottom right">
+                    <button
+                      id="button-alignment"
+                      dropdownToggle
+                      type="button"
+                      class="btn btn-primary dropdown-toggle btn-sm active"
+                      aria-controls="dropdown-alignment">
+                      Acciones <span class="caret"></span>
+                    </button>
+                    <ul
+                      id="dropdown-alignment"
+                      *dropdownMenu
+                      class="dropdown-menu dropdown-menu-right"
+                      role="menu"
+                      aria-labelledby="button-alignment">
+                      <li role="menuitem">
+                        <a
+                          class="dropdown-item"
+                          [ngStyle]="{ color: lnkDesFormato ? 'blue' : 'grey' }"
+                          (click)="downloadDocument()">
+                          <i class="bx bx-layer"></i> Descargar Formato
+                        </a>
+                      </li>
+                      <li role="menuitem">
+                        <!--(click)="validateDocument()"-->
+                        <a
+                          class="dropdown-item"
+                          [ngStyle]="{ color: lnkValArchivo ? 'blue' : 'grey' }"
+                          (click)="lnkValArchivo ? file1.click() : null">
+                          <i class="bx bx-layer"></i> Validar Archivo
+                        </a>
+                        <input
+                          type="file"
+                          name="file1"
+                          #file1
+                          class="d-none"
+                          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                          (change)="onFileChange($event, 'V')" />
+                      </li>
+                      <li role="menuitem">
+                        <a
+                          class="dropdown-item"
+                          [ngStyle]="{
+                            color: lnkAvaRechazados ? 'blue' : 'grey'
+                          }"
+                          (click)="apraisalReyect()">
+                          <i class="bx bx-layer"></i> Avalúo Rechazados
+                        </a>
+                      </li>
+                      <li role="menuitem">
+                        <a
+                          class="dropdown-item"
+                          [ngStyle]="{ color: lnkInsAvaluos ? 'blue' : 'grey' }"
+                          (click)="lnkInsAvaluos_Click()">
+                          <i class="bx bx-layer"></i> Insertar Avalúo
+                        </a>
+                      </li>
+                      <li role="menuitem">
+                        <a
+                          class="dropdown-item"
+                          [ngStyle]="{ color: lnkAddAvaluo ? 'blue' : 'grey' }"
+                          (click)="lnkAddAvaluo_Click()">
+                          <i class="bx bx-layer"></i> Agregar Avalúo
+                        </a>
+                      </li>
+                      <li role="menuitem">
+                        <a
+                          class="dropdown-item"
+                          [ngStyle]="{ color: lnkUpdAvaluo ? 'blue' : 'grey' }"
+                          (click)="lnkUpdAvaluo_Click()">
+                          <i class="bx bx-layer"></i> Actualizar Avalúo
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-12 pt-3">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive'"
+                  id="applicantTable"
+                  [settings]="detailApraisalsSettings"
+                  [source]="dataDetailApraisal">
+                </ng2-smart-table>
+                <div class="table-padding"></div>
+                <app-pagination [params]="params2" [totalItems]="totalItems2">
+                </app-pagination>
+              </div>
+            </div>
+          </div>
+        </tab>
+      </tabset>
     </div>
+    <!-- *ngIf="Divreg" -->
   </div>
-  <div footer>
+  <!-- <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button
-          type="button"
-          (click)="btnGenoficio_Click()"
-          class="btn btn-primary btn-sm active"
+        <button type="button" (click)="btnGenoficio_Click()" class="btn btn-primary btn-sm active"
           [disabled]="!form1.valid || !form.valid">
           Generar Oficio
         </button>
       </div>
     </div>
-  </div>
+  </div> -->
 </app-card>
