@@ -197,6 +197,26 @@ export class SchedulingDeliveriesFormComponent
     this.prepareSearchDonationForm();
     this.prepareSearchSalesForm();
     this.getInfoUserLog();
+
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.showInfoProgrammingDelivery());
+
+    this.paramsSearchDest
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.showGoodsInventory(false));
+
+    this.paramsSearchDevol
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.showGoodsInventory(false));
+
+    this.paramsSearchSales
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.showGoodsInventory(false));
+
+    this.paramsSearchDonation
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.showGoodsInventory(false));
   }
   getInfoUserLog() {
     this.programmingRequestService.getUserInfo().subscribe({
@@ -279,9 +299,6 @@ export class SchedulingDeliveriesFormComponent
           }
 
           this.schedulingDeliverieForm.patchValue(this.programmingDeliveryInfo);
-          this.params
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.showInfoProgrammingDelivery());
         },
         error: error => {
           const formData = {
@@ -345,7 +362,7 @@ export class SchedulingDeliveriesFormComponent
       programmingDeliveryId: this.programmingDeliveryInfo?.id,
       typeNotification: [null],
       typeEvent: [null, [Validators.required]],
-      typeEventInfo: [null,],
+      typeEventInfo: [null],
       startDate: [null, [Validators.required]],
       store: [null, [Validators.required]],
       storeName: [null],
@@ -739,40 +756,24 @@ export class SchedulingDeliveriesFormComponent
     }
   }
 
-  showGoodsInventory() {
+  showGoodsInventory(alert = true) {
     const typeEvent = this.schedulingDeliverieForm.get('typeEvent').value;
     const transferId = this.schedulingDeliverieForm.get('transferId').value;
     const store = this.schedulingDeliverieForm.get('store').value;
     const client = this.schedulingDeliverieForm.get('client').value;
+
+    console.log('typeEvent', 'showGoodsInventory');
+
     if (this.regionalDelegationNum && typeEvent && transferId && store) {
-      switch (typeEvent) {
-        case 5:
-          this.paramsSearchDest
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.showGoodInvDest(transferId, store));
-          break;
-        case 1:
-          this.paramsSearchSales
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.showGoodInvDest(transferId, store));
-          break;
-        case 4:
-          this.paramsSearchDevol
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.showGoodInvDest(transferId, store));
-          break;
-        case 2:
-          this.paramsSearchDonation
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.showGoodInvDest(transferId, store));
-          break;
-      }
+      this.showGoodInvDest(transferId, store);
     } else {
-      this.alert(
-        'warning',
-        'Acción Invalida',
-        'Se requiere seleccionar un almacén y una transferente'
-      );
+      if (alert) {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'Se requiere seleccionar un almacén y una transferente'
+        );
+      }
     }
   }
 
@@ -824,6 +825,9 @@ export class SchedulingDeliveriesFormComponent
     if (this.idTypeEvent == 1) {
       this.nameEvent = 'VENTAS';
       params = this.paramsSearchSales.getValue();
+
+      console.log('params ventas', params);
+
       const managementNum = this.searchSalesForm.get('managementNum').value;
       const descriptionGood = this.searchSalesForm.get('descriptionGood').value;
       const inventoryNum = this.searchSalesForm.get('inventoryNum').value;
@@ -995,7 +999,7 @@ export class SchedulingDeliveriesFormComponent
         this.infoGoodDonation.load([]);
         this.infoGoodSales.load([]);
       },
-    }); 
+    });
     this.cleanSearchForm();
   }
 
@@ -1039,11 +1043,10 @@ export class SchedulingDeliveriesFormComponent
   }
 
   cleanSearchForm() {
-
     this.totalItemsSearchDest = 0;
     this.totalItemsSearchDevol = 0;
     this.totalItemsSearchDonation = 0;
-    this.totalItemsSearchSales = 0
+    this.totalItemsSearchSales = 0;
 
     this.searchDestructionForm.reset();
     this.searchDevolutionForm.reset();
@@ -1057,13 +1060,11 @@ export class SchedulingDeliveriesFormComponent
     this.infoGoodDonation.load([]);
     this.infoGoodSales.load([]);
 
-    this.params = new BehaviorSubject<ListParams>(new ListParams());
-    this.paramsSearchDest = new BehaviorSubject<ListParams>(new ListParams());
-    this.paramsSearchDevol = new BehaviorSubject<ListParams>(new ListParams());
-    this.paramsSearchDonation = new BehaviorSubject<ListParams>(
-      new ListParams()
-    );
-    this.paramsSearchSales = new BehaviorSubject<ListParams>(new ListParams());
+    //this.params = new BehaviorSubject<ListParams>(new ListParams());
+    //this.paramsSearchDest = new BehaviorSubject<ListParams>(new ListParams());
+    //this.paramsSearchDevol = new BehaviorSubject<ListParams>(new ListParams());
+    //this.paramsSearchDonation = new BehaviorSubject<ListParams>(new ListParams());
+    //this.paramsSearchSales = new BehaviorSubject<ListParams>(new ListParams());
   }
 
   goodsSelectDest(goodInvSelect: IGoodInvAvailableView[]) {
@@ -1099,7 +1100,6 @@ export class SchedulingDeliveriesFormComponent
             `Los siguientes bienes ya han sido agregados a la programación de entrega: ${alreadyAddedGoodsNames}`
           );
         } else {
-
           this.goodDesSelect.map(good => {
             const goodForm: IGoodDelivery = {
               programmingDeliveryId: saveProgramming['id'],
@@ -1133,9 +1133,7 @@ export class SchedulingDeliveriesFormComponent
               .subscribe({
                 next: async response => {
                   this.addedGoods.push(goodForm);
-                  this.params
-                    .pipe(takeUntil(this.$unSubscribe))
-                    .subscribe(() => this.showInfoProgrammingDelivery());
+                  this.showInfoProgrammingDelivery();
                 },
                 error: error => {},
               });
@@ -1290,10 +1288,7 @@ export class SchedulingDeliveriesFormComponent
     this.schedulingDeliverieForm
       .get('typeEventInfo')
       .setValue(this.typeEventname);
-    this.schedulingDeliverieForm
-      .get('clientName')
-      .setValue(this.clientName);
-
+    this.schedulingDeliverieForm.get('clientName').setValue(this.clientName);
   }
 
   showInfoProgrammingDelivery() {
@@ -1405,7 +1400,6 @@ export class SchedulingDeliveriesFormComponent
                 if (next) {
                   this.showReportDestruction();
                   this.notification1exist = true;
-
                 }
               },
             };
@@ -1680,11 +1674,7 @@ export class SchedulingDeliveriesFormComponent
 
   showDocuments(): void {
     if (this.selectedRows.length == 0 || this.selectedRows.length >= 2) {
-      this.alert(
-        'warning',
-        'Acción Invalida',
-        'Se debe seleccionar un bien '
-      );
+      this.alert('warning', 'Acción Invalida', 'Se debe seleccionar un bien ');
     } else {
       const idGood = this.selectedRows[0].id;
       const idRequest = 0;

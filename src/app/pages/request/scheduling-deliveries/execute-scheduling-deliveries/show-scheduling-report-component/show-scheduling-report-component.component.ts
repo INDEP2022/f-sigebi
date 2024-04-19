@@ -37,8 +37,7 @@ import { UploadFielsModalComponent } from '../../../transfer-request/tabs/notify
 })
 export class ShowSchedulingReportComponentComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   private pdf: PDFDocumentProxy;
   idTypeDoc: number = 0;
   reportName: string = '';
@@ -169,11 +168,9 @@ export class ShowSchedulingReportComponentComponent
     console.log('typeEvent', this.typeEvent);
 
     if (this.idprogDel) {
-      let linkDoc: string = `${
-        this.urlBaseReport
-      }FormatoReclamacionMuestreo.jasper&ID_MUESTREO=${
-        this.idprogDel
-      }&ID_TIPO_DOCTO=${218}`;
+      let linkDoc: string = `${this.urlBaseReport
+        }FormatoReclamacionMuestreo.jasper&ID_MUESTREO=${this.idprogDel
+        }&ID_TIPO_DOCTO=${218}`;
       this.src = linkDoc;
       this.formLoading = false;
     }
@@ -264,7 +261,7 @@ export class ShowSchedulingReportComponentComponent
           this.src = fileURL;
           this.formLoading = false;
         },
-        error: error => {},
+        error: error => { },
       });
     } else if (this.dynamic) {
       let linkDoc: string = `${this.urlBaseReport}${this.reportName}&ID_TABLA=NOMBRE_TABLA,ID_REGISTRO,ID_TIPO_DOCTO&NOM_TABLA=REPORTES_DINAMICOS&NOM_CAMPO=CONTENIDO&ID_REGISTRO=${this.tableName},${this.requestId},${this.idTypeDoc}`;
@@ -291,7 +288,7 @@ export class ShowSchedulingReportComponentComponent
       next: response => {
         //this.createPersonsSing(response.data[0]);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -357,7 +354,7 @@ export class ShowSchedulingReportComponentComponent
             urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
             type: 'pdf',
           },
-          callback: (response: any) => {},
+          callback: (response: any) => { },
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
         keyboard: false,
@@ -490,7 +487,7 @@ export class ShowSchedulingReportComponentComponent
                 );
                 if (createSignatore) this.getSignatories();
               },
-              error: error => {},
+              error: error => { },
             });
         },
         error: async error => {
@@ -529,7 +526,7 @@ export class ShowSchedulingReportComponentComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -978,7 +975,7 @@ export class ShowSchedulingReportComponentComponent
                 this.close();
               }
             },
-            error: error => {},
+            error: error => { },
           });
       });
     } else {
@@ -1051,7 +1048,7 @@ export class ShowSchedulingReportComponentComponent
                   }
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 107 && this.typeFirm == 'electronica') {
@@ -1107,7 +1104,7 @@ export class ShowSchedulingReportComponentComponent
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 210 && this.typeFirm == 'electronica') {
@@ -1163,7 +1160,7 @@ export class ShowSchedulingReportComponentComponent
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 106 && this.typeFirm == 'electronica') {
@@ -1219,7 +1216,7 @@ export class ShowSchedulingReportComponentComponent
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 197 && this.typeFirm == 'electronica') {
@@ -1269,7 +1266,7 @@ export class ShowSchedulingReportComponentComponent
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idOrderService && this.typeFirm == 'electronica') {
@@ -1323,7 +1320,7 @@ export class ShowSchedulingReportComponentComponent
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 218 && this.typeFirm == 'electronica') {
@@ -1371,7 +1368,7 @@ export class ShowSchedulingReportComponentComponent
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 219 && this.typeFirm == 'electronica') {
@@ -1420,7 +1417,7 @@ export class ShowSchedulingReportComponentComponent
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (electronic.includes(parseInt('' + this.idTypeDoc))) {
@@ -1467,7 +1464,7 @@ export class ShowSchedulingReportComponentComponent
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       }
@@ -1487,7 +1484,7 @@ export class ShowSchedulingReportComponentComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1505,7 +1502,7 @@ export class ShowSchedulingReportComponentComponent
           next: response => {
             resolve(true);
           },
-          error: error => {},
+          error: error => { },
         });
       });
     });
@@ -1542,7 +1539,7 @@ export class ShowSchedulingReportComponentComponent
           next: response => {
             resolve(true);
           },
-          error: error => {},
+          error: error => { },
         });
       });
     });

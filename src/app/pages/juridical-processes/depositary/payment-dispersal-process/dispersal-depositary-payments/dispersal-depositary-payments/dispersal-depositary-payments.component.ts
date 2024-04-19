@@ -91,6 +91,7 @@ export class DispersalDepositaryPaymentsComponent
         this.origin = params['origin'] ?? null;
         console.log(params);
       });
+
     this.loading = true;
     const id = this.activatedRoute.snapshot.paramMap.get('id');
     if (id) {

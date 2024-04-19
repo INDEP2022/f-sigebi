@@ -11,4 +11,5 @@ export enum EmailEndPoint {
   DataEmail = 'data-mail',
   DataEmailCentral = 'transf-num-detail/generate-body-email-cheque',
   IniEmailCentral = 'application/pup-ini-co',
+  SendGenericEmail = 'send-generic-mail',
 }
