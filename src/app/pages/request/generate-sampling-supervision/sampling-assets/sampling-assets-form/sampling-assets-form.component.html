@@ -35,6 +35,7 @@
           <ngx-select
             [form]="dateForm"
             control="transferent"
+            [searchOnInit]="true"
             (fetchItems)="getTransferent($event)"
             [data]="selectTransferent"
             bindLabel="nameTransferent"
@@ -252,9 +253,9 @@
             Agregar <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
-        <div class="m-3">
+        <!-- <div class="m-3">
           <button class="btn btn-danger btn-sm active">Separar</button>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="row pt-4">

@@ -394,7 +394,9 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
         const fileURL = URL.createObjectURL(file);
         this.openPrevPdf(fileURL);
       },
-      error: error => {},
+      error: error => {
+        this.alert('warning', 'No se pudo obtener el documento', '');
+      },
     });
   }
 
@@ -406,7 +408,9 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
         const fileURL = URL.createObjectURL(file);
         this.openPrevPdf(fileURL);
       },
-      error: error => {},
+      error: error => {
+        this.alert('warning', 'No se pudo obtener el documento', '');
+      },
     });
   }
 
