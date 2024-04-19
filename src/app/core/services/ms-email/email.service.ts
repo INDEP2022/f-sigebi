@@ -100,4 +100,8 @@ export class EmailService extends HttpService {
     //formData.append('files', documentProgramming);
     return this.post(`${EmailEndPoint.EmailProgrammingDocs}`, data);
   }
+
+  sendGenericMail(data: any) {
+    return this.post(`${EmailEndPoint.SendGenericEmail}`, data);
+  }
 }

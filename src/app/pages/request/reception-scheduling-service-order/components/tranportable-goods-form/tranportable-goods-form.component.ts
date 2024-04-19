@@ -5,6 +5,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SERVICE_ORDER_COLUMNS } from '../../columns/service-order-columns';
+import { isNullOrEmpty } from '../../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-tranportable-goods-form',
@@ -63,7 +64,7 @@ export class TranportableGoodsFormComponent extends BasePage implements OnInit {
     params['filter.programmingId'] = `$eq:${id}`;
     this.programmingGood.getGoodsProgramming(params).subscribe({
       next: resp => {
-        resp.data.map((item: any) => {
+        resp.data.filter(x => !isNullOrEmpty(x.view)).map((item: any) => {
           item.uniqueKey = item.view.uniqueKey;
           item.goodDescription = item.view.goodDescription;
           item.unitMeasure = item.view.unitMeasure;

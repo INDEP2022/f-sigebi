@@ -37,7 +37,7 @@ export const GOOD_DELIVERY_COLUMN = {
     sort: false,
   },
   nosae: {
-    title: 'No. SAE',
+    title: 'No. INDEP',
     type: 'string',
     sort: false,
   },
@@ -224,7 +224,7 @@ export const PROG_DELIVERY_GOOD_TYPE_REST_COLUMNS = {
     sort: false,
   },
   siabGoodNumber: {
-    title: 'No. SAE',
+    title: 'No. INDEP',
     type: 'string',
     sort: false,
   },
@@ -304,7 +304,7 @@ export const PROG_DELIVERY_GOOD_NO_DELIVERED = {
     sort: false,
   },
   siabGoodNumber: {
-    title: 'No. SAE',
+    title: 'No. INDEP',
     type: 'string',
     sort: false,
   },

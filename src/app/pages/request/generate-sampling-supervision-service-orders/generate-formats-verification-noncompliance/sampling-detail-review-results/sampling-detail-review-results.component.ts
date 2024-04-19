@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -15,9 +16,11 @@ export class SamplingDetailReviewResultsComponent implements OnInit {
 
   sampleOrderForm: ISamplingOrder;
   delegationRegional: string = null;
+  fechaFormateada: string;
 
   private orderService = inject(OrderServiceService);
   private deleRegService = inject(RegionalDelegationService);
+  private datePipe: DatePipe;
 
   constructor(private fb: FormBuilder) {}
 
@@ -43,6 +46,8 @@ export class SamplingDetailReviewResultsComponent implements OnInit {
     this.orderService.getAllSampleOrder(params).subscribe({
       next: async resp => {
         this.sampleOrderForm = resp.data[0] as ISamplingOrder;
+
+        this.formatedDate();
         this.delegationRegional = (await this.getDelegationRegional(
           this.sampleOrderForm.idDelegationRegional
         )) as string;
@@ -58,5 +63,33 @@ export class SamplingDetailReviewResultsComponent implements OnInit {
         },
       });
     });
+  }
+
+  formatedDate() {
+    console.log('info de la fecha', this.sampleOrderForm.periodSampling);
+
+    const fechaString = this.sampleOrderForm.periodSampling;
+
+    const [year, month, day] = fechaString.split('-');
+
+    // Nombre del mes en español
+    const meses = [
+      'enero',
+      'febrero',
+      'marzo',
+      'abril',
+      'mayo',
+      'junio',
+      'julio',
+      'agosto',
+      'septiembre',
+      'octubre',
+      'noviembre',
+      'diciembre',
+    ];
+    const mes = meses[parseInt(month, 10) - 1];
+
+    // Formatear la fecha
+    this.fechaFormateada = `${mes}-${year}`;
   }
 }

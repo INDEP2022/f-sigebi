@@ -190,9 +190,11 @@ export class ConciliationDepositaryPaymentsComponent
       );
     }
   }
+
   btnSalirDispersion() {
     console.log('btnSalirDispersion');
   }
+
   btnDispersar(dispersar: any) {
     console.log('btnDispersar', dispersar);
     if (dispersar.validDate) {
@@ -550,13 +552,13 @@ export class ConciliationDepositaryPaymentsComponent
       });
   }
 
-  async getParamsDep() {
+  getParamsDep() {
     this.loading = true;
     let params: IPaymendtDepParamsDep = {
       name: Number(this.depositaryAppointment.appointmentNum),
       address: 'D',
     };
-    await this.svConciliationDepositaryPaymentsService
+    this.svConciliationDepositaryPaymentsService
       .getPaymentRefParamsDep(params)
       .subscribe({
         next: res => {

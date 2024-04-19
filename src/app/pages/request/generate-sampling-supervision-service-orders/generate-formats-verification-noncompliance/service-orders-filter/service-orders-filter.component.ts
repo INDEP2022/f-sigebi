@@ -15,6 +15,7 @@ export class ServiceOrdersFilterComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
+    console.log('Se activo boton buscar o limpiar de ordnees de servicio');
     this.initFilterForm();
   }
 

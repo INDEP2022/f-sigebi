@@ -238,7 +238,7 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     formData.append('validationocsp', 'true');
     formData.append('identifierSystem', '1');
     formData.append('identifierSignatory', '1');
-    //formData.append('certificatebase64', this.base64Cer); La conversión ya lo hace el endpoint
+    formData.append('certificatebase64', this.base64Cer);
     this.signatoriesService
       .update(this.signatories.signatoryId, formData)
       .subscribe(

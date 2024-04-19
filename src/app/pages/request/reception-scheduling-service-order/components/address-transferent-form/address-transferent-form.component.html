@@ -38,12 +38,13 @@
           <form-field
             [control]="ordServform.get('transferAddress')"
             label="Direcci&oacute;n">
-            <input
+            <textarea
               type="text"
               class="form-control"
               formControlName="transferAddress"
               max="100"
-              maxlength="100" />
+              maxlength="100">
+            </textarea>
           </form-field>
         </div>
       </form>

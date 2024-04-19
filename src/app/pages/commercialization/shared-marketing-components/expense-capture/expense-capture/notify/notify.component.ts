@@ -7,6 +7,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IUsersTracking } from 'src/app/core/models/ms-security/pup-user.model';
+import { EmailService } from 'src/app/core/services/ms-email/email.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -29,7 +30,8 @@ export class NotifyComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private usersService: SecurityService,
     private expenseCaptureDataService: ExpenseCaptureDataService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private emailService: EmailService
   ) {
     super();
   }
@@ -119,8 +121,38 @@ export class NotifyComponent extends BasePage implements OnInit {
       ', respecto al número de siab. ' +
       V_TOTAL_B +
       '  Por lo que esta venta queda cancelada, esto con el fin de que se realicen las acciones correspondientes por cada área.';
-    this.alert('warning', 'Esta función aún no ha sido habilitada', '');
+    // this.alert('warning', 'Esta función aún no ha sido habilitada', '');
     console.log(this.form.get('para'), this.form.get('cc'));
     console.log(message);
+
+    /* const body: any = {
+      header: 'aetiru@gmail.com',
+      // destination: PARA ?? [],
+      destination: ['dgm3036@gmail.com'],
+      copy: [],
+      subject: this.form.get('asunto').value,
+      message: message,
+    }; */
+
+    const body: any = {
+      sender: 'aetiru@gmail.com',
+      recipients: 'dgm3036@gmail.com',
+      cc: '',
+      bcc: '',
+      subject: this.form.get('asunto').value,
+      message: message,
+      typeText: '1',
+      shippingInd: 1,
+      mailOrigin: 'dgm3036@gmail.com',
+    };
+
+    this.emailService.sendGenericMail(body).subscribe(
+      res => {
+        console.log(res);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 }
