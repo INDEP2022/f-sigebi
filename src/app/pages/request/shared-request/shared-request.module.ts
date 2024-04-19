@@ -108,6 +108,7 @@ import { WarehouseFormComponent } from './warehouse-form/warehouse-form.componen
 import { WarehouseShowComponent } from './warehouse-show/warehouse-show.component';
 import { WitnessFormComponent } from './witness-form/witness-form.component';
 import { CustomHeaderComponent } from './verify-compliance-goods/check-verify-compliance/custom-header.component';
+import { InputFieldNumComponent } from './service-transportable-goods-form/input-field-num/input-field-num.component';
 
 @NgModule({
   declarations: [
@@ -207,6 +208,7 @@ import { CustomHeaderComponent } from './verify-compliance-goods/check-verify-co
     MailFieldModalComponent,
     GrouperGoodFieldComponent,
     InputFieldComponent,
+    InputFieldNumComponent,
     EvaluationSelectFieldComponent,
     ViewDetailGoodsComponent,
   ],
