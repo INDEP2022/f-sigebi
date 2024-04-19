@@ -147,9 +147,16 @@ export class EntregaSignatureModalComponent extends BasePage implements OnInit {
     }
 
     this.loadSignatories(true);
+
   }
 
   async loadSignatories(reset: boolean = false) {
+
+    if (this.process != 'electronica') {
+      this.btnTitle = 'Adjuntar Documento';
+      return;
+    }
+
     if (!reset) {
       this.signatories = await this.getSignatories();
       return;

@@ -145,7 +145,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
     this.initDateForm();
     this.initSearchForm();
-    this.getTransferent(new ListParams());
+    // this.getTransferent(new ListParams());
     this.settings4.columns = LIST_DEDUCTIVES_COLUMNS;
 
     this.columns4.selected = {
@@ -153,7 +153,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       onComponentInitFunction: this.deductiveSelected.bind(this),
     };
 
-    this.getTransferent(new ListParams());
+    // this.getTransferent(new ListParams());
     this.setDelegation();
   }
 
@@ -234,25 +234,26 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     const startPeriod = this.dateForm.get('initialDate').value;
     const endPeriod = this.dateForm.get('finalDate').value;
     const transferent = this.dateForm.get('transferent').value;
-    if (transferent) {
-      if (startPeriod && endPeriod) {
-        this.params2
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getGoods());
-      } else {
-        this.alert(
-          'warning',
-          'Advertencia',
-          'Se debe capturar una fecha de periodo inicial y final'
-        );
-      }
+    console.log('AQUI', this.dateForm.value);
+    // if (transferent) {
+    if (startPeriod && endPeriod) {
+      this.params2
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getGoods());
     } else {
       this.alert(
         'warning',
-        'Acción Invalida',
-        'Se requiere seleccionar una transferente'
+        'Advertencia',
+        'Se debe capturar una fecha de periodo inicial y final'
       );
     }
+    // } else {
+    //   this.alert(
+    //     'warning',
+    //     'Acción Invalida',
+    //     'Se requiere seleccionar una transferente'
+    //   );
+    // }
   }
 
   selectAssts(event: any) {
@@ -450,26 +451,18 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       this.dateForm.get('initialDate').value,
       'yyyy-MM-dd'
     )}T00:00:00.000Z,${this.datePipe.transform(
-      this.dateForm.get('finalPeriod').value,
+      this.dateForm.get('finalDate').value,
       'yyyy-MM-dd'
     )}T23:59:59.999Z`;
-    this.params2.getValue()[
-      'filter.finalPeriod'
-    ] = `$btw:${this.datePipe.transform(
-      this.dateForm.get('initialDate').value,
-      'yyyy-MM-dd'
-    )}T00:00:00.000Z,${this.datePipe.transform(
-      this.dateForm.get('finalPeriod').value,
-      'yyyy-MM-dd'
-    )}T23:59:59.999Z`;
-
-    // this.params2.getValue()['filter.initialPeriod'] = `$btw:${
-    //   this.datePipe.transform(this.dateForm.get('initialDate').value, 'yyyy-MM-dd')
-    // }, ${this.datePipe.transform(this.dateForm.get('finalDate').value, 'yyyy-MM-dd')}`;
-
-    // this.params2.getValue()['filter.finalPeriod'] = `$btw:${
-    //   this.datePipe.transform(this.dateForm.get('initialDate').value, 'yyyy-MM-dd')
-    // }, ${this.datePipe.transform(this.dateForm.get('finalDate').value, 'yyyy-MM-dd')}`;
+    // this.params2.getValue()[
+    //   'filter.finalDate'
+    // ] = `$btw:${this.datePipe.transform(
+    //   this.dateForm.get('initialDate').value,
+    //   'yyyy-MM-dd'
+    // )}T00:00:00.000Z,${this.datePipe.transform(
+    //   this.dateForm.get('finalDate').value,
+    //   'yyyy-MM-dd'
+    // )}T23:59:59.999Z`;
     //this.params2.getValue()['filter.delRegionalId'] = this.delegationId;
     this.samplingGoodService
       .getSamplingGoodFilter(this.params2.getValue())
@@ -876,6 +869,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   saveDeductives() {
+    console.log(this.deductivesSel);
     if (this.deductivesSel.length > 0) {
       const deleteDeductives = this.deductivesSel.filter((data: any) => {
         if (data.selected) return data;
@@ -1039,7 +1033,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
           if (filterGoodCump.length == data.length) {
             //const deductivesSelect = await this.checkDeductives();
-            const updateSample = this.updateSample('BIENES CUMPLEN');
+            const updateSample = await this.updateSample('BIENES CUMPLEN');
             if (updateSample) {
               this.alertQuestion(
                 'info',
@@ -1058,7 +1052,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
           } else {
             const deductivesSelect = await this.checkDeductives();
             if (deductivesSelect) {
-              const updateSample = this.updateSample('BIENES NO CUMPLEN');
+              const updateSample = await this.updateSample('BIENES NO CUMPLEN');
               if (updateSample) {
                 this.alertQuestion(
                   'question',
@@ -1115,7 +1109,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     });
   }
 
-  updateSample(status: string) {
+  updateSample(status: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const sample: ISample = {
         sampleId: this.sampleId,
