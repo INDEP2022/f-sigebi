@@ -395,6 +395,7 @@ export class EventGoodsLotsListActionsComponent
   lotifyGoods(event: Event) {
     const file = this.getFileFromEvent(event);
     const { id, eventTpId, statusVtaId } = this.controls;
+    console.log(this.controls);
     const eventType = eventTpId.value;
     const validGood = 'S';
     const clean = 'S';
@@ -402,29 +403,54 @@ export class EventGoodsLotsListActionsComponent
     const address = this.parameters.pDirection;
     const user = this.loggedUser.preferred_username;
     this.loader.load = true;
-    this.lotService
-      .impLotExcel({
-        file,
-        event: `${id.value}`,
-        eventType: eventType as string,
-        validGood,
-        clean,
-        statusVta,
-        address,
-        user,
-      })
-      .subscribe({
-        next: res => {
-          this.loader.load = false;
-          this.goodsLotifyControl.reset();
-          console.log(res);
-        },
-        error: error => {
-          this.loader.load = false;
-          this.goodsLotifyControl.reset();
-          console.log(error);
-        },
-      });
+    if (address == 'I') {
+      this.lotService
+        .impLotExcelI2({
+          file,
+          event: `${id.value}`,
+          eventType: eventType as string,
+          user: user,
+          step: '1',
+          address: address,
+          bank: this.parameters.pBank,
+        })
+        .subscribe({
+          next: res => {
+            this.loader.load = false;
+            this.goodsLotifyControl.reset();
+            console.log(res);
+          },
+          error: error => {
+            this.loader.load = false;
+            this.goodsLotifyControl.reset();
+            console.log(error);
+          },
+        });
+    } else {
+      this.lotService
+        .impLotExcel({
+          file,
+          event: `${id.value}`,
+          eventType: eventType as string,
+          validGood,
+          clean,
+          statusVta,
+          address,
+          user,
+        })
+        .subscribe({
+          next: res => {
+            this.loader.load = false;
+            this.goodsLotifyControl.reset();
+            console.log(res);
+          },
+          error: error => {
+            this.loader.load = false;
+            this.goodsLotifyControl.reset();
+            console.log(error);
+          },
+        });
+    }
   }
 
   // ? ------------------------------ CREAR ACTA, EVENTO PÚBLICO
@@ -1152,33 +1178,63 @@ export class EventGoodsLotsListActionsComponent
     const { id, baseCost } = this.controls;
     this.loader.load = true;
     const file = this.getFileFromEvent(event);
-    return this.lotService
-      .createBases({
-        eventId: id.value,
-        costBase: baseCost.value,
-        file,
-      })
-      .pipe(
-        catchError(error => {
-          this.loader.load = false;
-
-          this.alert('error', ' Error', UNEXPECTED_ERROR);
-          return throwError(() => error);
-        }),
-        tap(response => {
-          this.loader.load = false;
-          console.log(response);
-
-          if (response.updatedLots == 0 && response.insertLots == 0) {
-            this.alert(
-              'warning',
-              'No se procesaron servicios',
-              `Se intentaron cargar ${response.verifiedRows}`
-            );
-            throw new Error('No se procesaron servicios');
-          }
+    if (this.parameters.pDirection == 'I') {
+      return this.lotService
+        .createBasesI({
+          event: id.value,
+          costBase: baseCost.value,
+          file,
         })
-      );
+        .pipe(
+          catchError(error => {
+            this.loader.load = false;
+
+            this.alert('error', ' Error', UNEXPECTED_ERROR);
+            return throwError(() => error);
+          }),
+          tap(response => {
+            this.loader.load = false;
+            console.log(response);
+
+            if (response.updatedLots == 0 && response.insertLots == 0) {
+              this.alert(
+                'warning',
+                'No se procesaron servicios',
+                `Se intentaron cargar ${response.verifiedRows}`
+              );
+              throw new Error('No se procesaron servicios');
+            }
+          })
+        );
+    } else {
+      return this.lotService
+        .createBases({
+          eventId: id.value,
+          costBase: baseCost.value,
+          file,
+        })
+        .pipe(
+          catchError(error => {
+            this.loader.load = false;
+
+            this.alert('error', ' Error', UNEXPECTED_ERROR);
+            return throwError(() => error);
+          }),
+          tap(response => {
+            this.loader.load = false;
+            console.log(response);
+
+            if (response.updatedLots == 0 && response.insertLots == 0) {
+              this.alert(
+                'warning',
+                'No se procesaron servicios',
+                `Se intentaron cargar ${response.verifiedRows}`
+              );
+              throw new Error('No se procesaron servicios');
+            }
+          })
+        );
+    }
   }
 
   /** CALCULA_PRECIOS_SALIDA */
@@ -1237,23 +1293,50 @@ export class EventGoodsLotsListActionsComponent
       lot: null,
       base: null,
     };
-    return this.lotService.importCustomersBase(body).pipe(
-      catchError(error => {
-        this.loader.load = false;
-        this.customersBasecontrol.reset();
-        this.alert('error', 'Error', UNEXPECTED_ERROR);
-        return throwError(() => error);
-      }),
-      tap(response => {
-        this.loader.load = false;
-        this.customersBasecontrol.reset();
-        if (typeof response == 'string') {
-          this.alert('info', response, '');
-          return;
-        }
-        this.alert('success', 'Proceso Terminado', '');
-      })
-    );
+
+    const bodyI: any = {
+      file,
+      event: id.value,
+      base: null,
+    };
+
+    if (this.parameters.pDirection == 'I') {
+      return this.lotService.importCustomersBase(bodyI).pipe(
+        catchError(error => {
+          this.loader.load = false;
+          this.customersBasecontrol.reset();
+          this.alert('error', 'Error', UNEXPECTED_ERROR);
+          return throwError(() => error);
+        }),
+        tap(response => {
+          this.loader.load = false;
+          this.customersBasecontrol.reset();
+          if (typeof response == 'string') {
+            this.alert('info', response, '');
+            return;
+          }
+          this.alert('success', 'Proceso Terminado', '');
+        })
+      );
+    } else {
+      return this.lotService.importCustomersBase(body).pipe(
+        catchError(error => {
+          this.loader.load = false;
+          this.customersBasecontrol.reset();
+          this.alert('error', 'Error', UNEXPECTED_ERROR);
+          return throwError(() => error);
+        }),
+        tap(response => {
+          this.loader.load = false;
+          this.customersBasecontrol.reset();
+          if (typeof response == 'string') {
+            this.alert('info', response, '');
+            return;
+          }
+          this.alert('success', 'Proceso Terminado', '');
+        })
+      );
+    }
   }
 
   // ? --------------- Carga Factura
