@@ -385,6 +385,26 @@ export class LotService extends HttpService {
     return this.post('apps/pup-imp-excel-lote', formData);
   }
 
+  impLotExcelI2(body: {
+    file: File;
+    event: string;
+    eventType: string;
+    user: string;
+    step: string;
+    address: string;
+    bank: string;
+  }) {
+    const formData = new FormData();
+    formData.append('file', body.file);
+    formData.append('event', body.event);
+    formData.append('eventType', body.eventType);
+    formData.append('user', body.user);
+    formData.append('step', body.step);
+    formData.append('address', body.address);
+    formData.append('bank', body.bank);
+    return this.post('apps/pup-imp-excel-lote', formData);
+  }
+
   impLotExcelI(body: {
     file: File;
     eventId: string;

@@ -395,6 +395,7 @@ export class EventGoodsLotsListActionsComponent
   lotifyGoods(event: Event) {
     const file = this.getFileFromEvent(event);
     const { id, eventTpId, statusVtaId } = this.controls;
+    console.log(this.controls);
     const eventType = eventTpId.value;
     const validGood = 'S';
     const clean = 'S';
@@ -402,29 +403,54 @@ export class EventGoodsLotsListActionsComponent
     const address = this.parameters.pDirection;
     const user = this.loggedUser.preferred_username;
     this.loader.load = true;
-    this.lotService
-      .impLotExcel({
-        file,
-        event: `${id.value}`,
-        eventType: eventType as string,
-        validGood,
-        clean,
-        statusVta,
-        address,
-        user,
-      })
-      .subscribe({
-        next: res => {
-          this.loader.load = false;
-          this.goodsLotifyControl.reset();
-          console.log(res);
-        },
-        error: error => {
-          this.loader.load = false;
-          this.goodsLotifyControl.reset();
-          console.log(error);
-        },
-      });
+    if (address == 'I') {
+      this.lotService
+        .impLotExcelI2({
+          file,
+          event: `${id.value}`,
+          eventType: eventType as string,
+          user: user,
+          step: '1',
+          address: address,
+          bank: this.parameters.pBank,
+        })
+        .subscribe({
+          next: res => {
+            this.loader.load = false;
+            this.goodsLotifyControl.reset();
+            console.log(res);
+          },
+          error: error => {
+            this.loader.load = false;
+            this.goodsLotifyControl.reset();
+            console.log(error);
+          },
+        });
+    } else {
+      this.lotService
+        .impLotExcel({
+          file,
+          event: `${id.value}`,
+          eventType: eventType as string,
+          validGood,
+          clean,
+          statusVta,
+          address,
+          user,
+        })
+        .subscribe({
+          next: res => {
+            this.loader.load = false;
+            this.goodsLotifyControl.reset();
+            console.log(res);
+          },
+          error: error => {
+            this.loader.load = false;
+            this.goodsLotifyControl.reset();
+            console.log(error);
+          },
+        });
+    }
   }
 
   // ? ------------------------------ CREAR ACTA, EVENTO PÚBLICO
