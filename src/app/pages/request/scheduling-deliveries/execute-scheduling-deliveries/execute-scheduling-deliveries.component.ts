@@ -1647,13 +1647,13 @@ export class ExecuteSchedulingDeliveriesComponent
     let token = this.authService.decodeToken();
     let today = new Date();
 
-    let idTypeDoc = '101';
+    let idTypeDoc = '345';
     let readOnly = false;
 
     const typeAnnex = 'approval-request';
     const requestInfo = { id: this.programmingId, type: 'programming' };
     const idReportAclara = this.programmingId;
-    const nameTypeDoc = 'FormatoReclamacion';
+    const nameTypeDoc = 'AnexoJ';
     const nomenglatura = '';
 
     const nameDoc = 'formato_reclamacion';

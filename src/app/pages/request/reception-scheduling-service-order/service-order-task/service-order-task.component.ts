@@ -262,6 +262,12 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
     });
   }
 
+  saveBackProcess() {
+    let ordServiceForm = this.ordServform.getRawValue();
+    this.isUpdate = true;
+    this.updateOrderService(ordServiceForm, false);
+  }
+
   setClaimRequest() {
     this.btnReclamar = false;
 
