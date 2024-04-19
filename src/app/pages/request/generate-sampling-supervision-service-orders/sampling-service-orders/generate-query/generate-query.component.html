@@ -2,12 +2,12 @@
   <div class="ch-content" header>
     <div class="d-flex">
       <div class="mr-auto p-2">
-        <h5 class="title">Muestreo Ordenes de Servicio&#58; {{ title }}</h5>
+        <h5 class="title">Muestreo Órdenes de Servicio&#58; {{ title }}</h5>
       </div>
 
       <div class="p-2">
         <button class="btn btn-primary btn-sm active" (click)="turnSampling()">
-          Turnar muestreo <i class="fa fa-share-square"></i>
+          Turnar Verificación <i class="fa fa-share-square"></i>
         </button>
       </div>
       <div class="p-2">
@@ -46,7 +46,7 @@
             <confirm-button
               [disabled]="!orderServiceForm.valid"
               [loading]="loading"
-              [text]="'Buscar Ordenes'"
+              [text]="'Buscar Órdenes'"
               [loadingText]="'Buscando'"
               [icon]="'bx bxs-component'"
               [btnSmall]="true"
@@ -166,7 +166,7 @@
     <div id="tabs">
       <div class="row pt-4">
         <tabset class="md-tabs">
-          <tab heading="Ordenes Servicio" id="tab1">
+          <tab heading="Órdenes Servicio" id="tab1">
             <app-list-service-orders
               [sampleOrderId]="sampleOrderId"
               [reloadInfo]="reloadInfo"
@@ -197,13 +197,13 @@
               </div>
             </div>
           </tab>
-          <!--<tab heading="Datos Anexo">
+          <tab heading="Datos Anexo">
             <app-annex-data
-              [SampleOrderId]="SampleOrderId"
+              [SampleOrderId]="sampleOrderId"
               [sampleOrderForm]="sampleOrderForm"
               [dataAnnex]="dataAnnex"
               [typeComponent]="'generate-query'"></app-annex-data>
-          </tab> -->
+          </tab>
           <tab heading="Detalles Almacén">
             <app-warehouse-detail
               [SampleOrderId]="sampleOrderId"
