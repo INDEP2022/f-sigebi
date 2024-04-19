@@ -197,6 +197,19 @@ export class LotService extends HttpService {
     return this.post('apps/create-bases', formData);
   }
 
+  createBasesI(body: {
+    event: string | number;
+    costBase: string | number;
+    file: File;
+  }) {
+    const { event, costBase, file } = body;
+    const formData = new FormData();
+    formData.append('event', event ? `${event}` : null);
+    formData.append('base', costBase ? `${costBase}` : null);
+    formData.append('file', file);
+    return this.post('apps/pup-imp-excel-bases-i', formData);
+  }
+
   getPagosRefMonto(body: any) {
     return this.post('apps/get-pagos-ref-monto', body);
   }
@@ -346,6 +359,19 @@ export class LotService extends HttpService {
     formData.append('lot', lot ? `${eventId}` : null);
     formData.append('base', base ? `${eventId}` : null);
     return this.post('apps/pup-imp-excel-bases-client', formData);
+  }
+
+  importCustomersBaseI(body: {
+    file: File;
+    event: string | number;
+    base: string | number;
+  }) {
+    const { file, event, base } = body;
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('eventId', event ? `${event}` : null);
+    formData.append('base', base ? `${base}` : null);
+    return this.post('apps/pup-imp-excel-bases-cliente-i', formData);
   }
 
   lotifyThirdTable(body: {
