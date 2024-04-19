@@ -45,7 +45,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   actId: number;
   folioPro: string = '';
   userInfo: any;
-  sampleOrder: ISamplingOrder = null;
+  sampleOrder: ISamplingOrder;
   idSample: number = 0;
   fileSelected: boolean = false;
   requestId: number = 0;
@@ -109,7 +109,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       next: response => {
         this.folioPro = response.data[0].folioProceedings;
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -122,7 +122,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           this.goodId += item.idGood + ' ';
         });
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -135,7 +135,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           this.goodId += item.goodId;
         });
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -146,7 +146,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       next: response => {
         this.receipt = response.data[0];
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -158,7 +158,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         this.proceeding = response.data[0];
         this.getGoodsReceipt();
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -175,7 +175,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           this.goodId += item.goodId + ' ';
         });
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -184,7 +184,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       next: response => {
         this.programming = response;
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -496,7 +496,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       const formData = {
         xNivelRegistroNSBDB: 'Solicitud',
         xNombreProceso: 'Muestreo Ordenes',
-        xDelegacionRegional: this.sampleOrder.idDelegationRegional,
+        //xDelegacionRegional: this.sampleOrder.idDelegationRegional, //Revisar elid
         ddocTitle: 'Anexo K',
         dSecurityGroup: 'Public',
         dDocName: this.sampleOrder.idcontentk,
@@ -719,7 +719,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => { },
+          error: error => {},
         });
     });
   }
@@ -738,7 +738,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -778,7 +778,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => { },
+          error: error => {},
         });
       });
     });
@@ -797,7 +797,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => { },
+          error: error => {},
         });
       });
     });
@@ -819,7 +819,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => { },
+          error: error => {},
         });
       });
     });
@@ -840,6 +840,11 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         },
       });
     });
+  }
+
+  lastStep() {
+    this.modalRef.content.callback(false);
+    this.modalRef.hide();
   }
 
   close() {

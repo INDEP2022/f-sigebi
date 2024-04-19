@@ -852,8 +852,13 @@ export class ExpenseCompositionComponent
     // if (this.expenseCaptureDataService.formaModificada()) {
     //   return;
     // }
+    console.log(this.v_tip_gast);
     if (!this.validChargeGoods) {
-      this.alert('warning', 'No tiene permisos para cargar bienes', '');
+      this.alert(
+        'warning',
+        'No tiene permisos para cargar bienes',
+        `Su tipo de gasto es ${this.v_tip_gast}, y los tipos de gastos permitidos son GASTOINMU, GASTOADMI, GASTOVIG, GASTOSEG`
+      );
       return;
     }
     if (

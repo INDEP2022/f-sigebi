@@ -2,13 +2,18 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { LEGAL_DESTINITY_2_COLUMNS } from './columns/request-legal-destination-goods.columns';
 import { RequestLegalDestinationGoodsService } from './services/request-legal-destination-goods.service';
 import {
@@ -94,15 +99,19 @@ export class RequestLegalDestinationGoodsComponent
   good: IGood;
   loadingTable: boolean = false;
 
+  goods = new DefaultSelect();
+
   constructor(
     private fb: FormBuilder,
-    private svRequestLegalDestinationGoodsService: RequestLegalDestinationGoodsService
+    private svRequestLegalDestinationGoodsService: RequestLegalDestinationGoodsService,
+    private goodFinderServices: GoodFinderService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getGoods();
     this.loading = false;
     this.tableFactGenSettings.actions = {
       columnTitle: '',
@@ -134,6 +143,47 @@ export class RequestLegalDestinationGoodsComponent
   mostrarInfo(): any {
     console.log(this.form.value);
   }
+
+  selectGood(data: any) {
+    console.log(data);
+    console.log(this.form.get('noBien').value);
+  }
+
+  getGoods(params?: any) {
+    console.log(params);
+    const paramsF = new FilterParams();
+    if (params) {
+      paramsF.page = params.page;
+      if (params.text != '') {
+        if (isNaN(Number(params.text))) {
+          paramsF.addFilter('description', params.text, SearchFilter.LIKE);
+        } else {
+          paramsF.addFilter('id', params.text);
+        }
+      }
+    }
+
+    this.loading = true;
+    this.goodFinderServices.goodFinder(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        const newData = res.data.map((item: any) => {
+          return {
+            ...item,
+            bindLabel: `${item.id} - ${item.description}`,
+          };
+        });
+        this.goods = new DefaultSelect(newData);
+        this.loading = false;
+      },
+      err => {
+        console.log(err);
+        this.goods = new DefaultSelect();
+        this.loading = false;
+      }
+    );
+  }
+
   async getGoodData() {
     if (this.form.get('noBien').valid) {
       this.loading = true;
