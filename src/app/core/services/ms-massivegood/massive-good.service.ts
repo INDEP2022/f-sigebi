@@ -64,7 +64,11 @@ export class MassiveGoodService extends HttpService {
   }
 
   getPupInsertTmpComer(body: any) {
-    return this.post(this.route.pupInsertTmpComer, body);
+    const formData = new FormData();
+    formData.append('pEventId', body.pEventId);
+    formData.append('pTypeAppraisal', body.pTypeAppraisal);
+    formData.append('file', body.file);
+    return this.post(this.route.pupInsertTmpComer, formData);
   }
 
   getIdentifier(params: ListParams) {
