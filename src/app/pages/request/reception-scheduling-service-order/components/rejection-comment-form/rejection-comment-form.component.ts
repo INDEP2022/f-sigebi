@@ -43,7 +43,7 @@ export class RejectionCommentFormComponent extends BasePage implements OnInit {
           //.setValue(this.orderServiceInfo?.commentRejection);
         }
       },
-      error: () => {},
+      error: () => { },
     });
   }
   prepareForm() {
@@ -87,7 +87,7 @@ export class RejectionCommentFormComponent extends BasePage implements OnInit {
               this.alert(
                 'error',
                 'Error',
-                'Error al rechazar la órden de servicio'
+                'Error al rechazar la orden de servicio'
               );
             },
           });

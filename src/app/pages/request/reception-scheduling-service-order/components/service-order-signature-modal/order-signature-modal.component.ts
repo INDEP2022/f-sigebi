@@ -94,6 +94,8 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
   notificationValidate: any; //Parámetro que identifica si es notificación Y= si lo es
   loadSingnatures: boolean = false;
 
+  finish: boolean = false;
+
   noBien: any;
   constructor(
     public modalService: BsModalService,
@@ -169,7 +171,8 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
     //console.log('Firmantes -----------------');
 
     let signatories = await this.getSignatories();
-    signatories = signatories.filter(sign => sign.validationocsp != 'true');
+    signatories = signatories.filter(sign => sign.version == this.numSignature && !this.finish);
+
     console.log('Firmantes: ', signatories);
 
     let deletes = signatories.map(signatory => {
@@ -543,46 +546,35 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
 
           this.xml = data;
 
-          if (this.isDynamic || this.idTypeDoc == 223) {
-            //this.updateRequest();
-            let content = getXMLNode(this.xml, 'strXmlFirmado')?.textContent;
+          let content = getXMLNode(this.xml, 'strXmlFirmado')?.textContent;
 
-            if (!isNullOrEmpty(content)) {
-              this.msjCheck = true;
-              this.handleSuccess();
-              //Plasmar la clave
-              this.claveInReport();
-              this.updateStatusSigned(content);
-            } else {
-              this.selectedRow = null;
-              this.rowSelected = false;
+          if (!isNullOrEmpty(content)) {
 
-              this.valuesSign.validationocsp = false;
+            this.finish = true;
 
-              this.updateStatusSigned();
-
-              let error = getXMLNode(this.xml, 'strError')?.textContent;
-
-              this.alertInfo(
-                'error',
-                'Acción Inválida',
-                'Error al generar firma electrónica\nFavor de revisar la información'
-                //+ error.split('.')[0] + ''
-              );
-            }
-
-            return;
-          }
-
-          this.msjCheck = true;
-
-          if (nameTypeReport === 'DictamenProcendecia') {
-            //this.updateRequest();
+            this.msjCheck = true;
+            this.handleSuccess();
+            //Plasmar la clave
+            this.claveInReport();
+            this.updateStatusSigned(content);
           } else {
-            this.updateStatusclarifications();
+            this.selectedRow = null;
+            this.rowSelected = false;
+
+            this.valuesSign.validationocsp = false;
+
+            this.updateStatusSigned();
+
+            let error = getXMLNode(this.xml, 'strError')?.textContent;
+
+            this.alertInfo(
+              'error',
+              'Acción Inválida',
+              'Error al generar firma electrónica\nFavor de revisar la información'
+              //+ error.split('.')[0] + ''
+            );
           }
 
-          //this.updateStatusSigned();
         },
         error: error => {
           this.loadingButton = false;
