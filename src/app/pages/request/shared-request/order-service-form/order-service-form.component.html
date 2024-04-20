@@ -5,7 +5,8 @@
         class="text-color"
         (click)="showOrderservice = true"
         *ngIf="!showOrderservice">
-        <i class="fa fa-angle-right" aria-hidden="true"></i> Órden deServicio</a
+        <i class="fa fa-angle-right" aria-hidden="true"></i> Orden de
+        Servicio</a
       >
     </p>
 
@@ -14,7 +15,7 @@
         class="text-color"
         (click)="showOrderservice = false"
         *ngIf="showOrderservice">
-        <i class="fa fa-angle-down" aria-hidden="true"></i> Órden de Servicio</a
+        <i class="fa fa-angle-down" aria-hidden="true"></i> Orden de Servicio</a
       >
     </p>
   </h5>
@@ -28,7 +29,7 @@
         <div class="col-md-4">
           <div class="form-group">
             <label class="ml-3 col-lg-6 text-right"
-              >Folio Órden Servicio&#58;</label
+              >Folio Orden Servicio&#58;</label
             >
             <span> {{ orderService?.serviceOrderFolio }} </span>
           </div>
@@ -119,11 +120,8 @@
       </div>
 
       <div class="row pl-3">
-        <div class="col-md-4">
-          <form-field
-            [control]="ordServform.get('folioTlp')"
-            label="Folio TLP"
-            class="ml-4">
+        <div class="col-md-4" style="margin-left: 20px !important">
+          <form-field [control]="ordServform.get('folioTlp')" label="Folio TLP">
             <input
               style="width: 80% !important"
               type="text"
@@ -131,7 +129,7 @@
               formControlName="folioTlp" />
           </form-field>
         </div>
-        <div class="col-md-4"></div>
+        <div class="col-md-3"></div>
         <div class="col-md-4">
           <div class="justify-content-end">
             <div class="font-size-45" style="margin-top: 15px !important">
