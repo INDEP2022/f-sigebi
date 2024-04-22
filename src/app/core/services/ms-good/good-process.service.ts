@@ -445,4 +445,8 @@ export class GoodProcessService extends HttpService {
       params
     );
   }
+
+  _getacceptGoodStatusScreen(model: IAcceptGoodStatusScreen) {
+    return this.post(GoodProcessPoints.acceptGoodStatusScreen, model);
+  }
 }

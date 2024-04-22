@@ -3,10 +3,25 @@
     <h5 class="title">Reporte Devoluciones y Decomisos de Bienes</h5>
   </div>
 
-  <div body>
+  <div body class="mb-5">
     <form [formGroup]="returnConfiscationForm" class="form-material">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-12">
+          <app-delegation-shared
+            [valPhaseEdo]="true"
+            [init]="true"
+            [form]="returnConfiscationForm"
+            [subdelegationField]="'subdelegation'"
+            [delegationField]="'delegation'"
+            [showDelegation]="true"
+            [showSubdelegation]="true"
+            (emitSubdelegation)="seleccionarSubDelegacion($event)"
+            (emitDelegation)="seleccionarDelegation($event)">
+          </app-delegation-shared>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-3">
           <form-field
             [control]="returnConfiscationForm.get('ofTheGood')"
             label="Del Bien">
@@ -18,7 +33,7 @@
               formControlName="ofTheGood" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field
             [control]="returnConfiscationForm.get('toGood')"
             label="Al Bien">
@@ -26,16 +41,16 @@
               type="number"
               [min]="returnConfiscationForm.get('ofTheGood').value + 1"
               [maxlength]="15"
-              class="form-control"
-              [class]="
-                this.returnConfiscationForm.get('ofTheGood').value != null
-                  ? ''
-                  : 'disabled'
+              [disabled]="
+                returnConfiscationForm.get('ofTheGood').value != null
+                  ? true
+                  : false
               "
+              class="form-control"
               formControlName="toGood" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field
             [control]="returnConfiscationForm.get('receiptDateOf')"
             label="Desde">
@@ -46,20 +61,7 @@
               formControlName="receiptDateOf" />
           </form-field>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4" style="margin-top: -0.65%">
-          <app-delegation-shared
-            [form]="returnConfiscationForm"
-            [subdelegationField]="'subdelegation'"
-            [delegationField]="'delegation'"
-            [showDelegation]="true"
-            [showSubdelegation]="true"
-            (emitSubdelegation)="seleccionarSubDelegacion($event)"
-            (emitDelegation)="seleccionarDelegation($event)">
-          </app-delegation-shared>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field
             [control]="returnConfiscationForm.get('receptionDateTo')"
             label="Hasta">
@@ -76,37 +78,35 @@
               formControlName="receptionDateTo" />
           </form-field>
         </div>
-        <div class="col-md-4">
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-3">
           <form-field
             label="Tipo Movimiento"
             [control]="returnConfiscationForm.get('movementType')">
-            <select class="form-control" formControlName="movementType">
-              <option [value]="null">Seleccione un tipo</option>
-              <option [value]="'DEVOLUCION'">DEVOLUCIÓN</option>
-              <option [value]="'DECOMISO'">DECOMISO</option>
-            </select>
+            <ng-select class="form-control" formControlName="movementType">
+              <ng-option [value]="'DEVOLUCION'">DEVOLUCIÓN</ng-option>
+              <ng-option [value]="'DECOMISO'">DECOMISO</ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-4"></div>
-        <div class="col-md-2">
+
+      <div class="text-center justify-content-center d-flex">
+        <div class="">
           <button
             type="button"
-            class="btn btn-primary active btn-sm"
+            class="btn btn-primary active btn-sm mr-2"
             (click)="validaGood()"
             [disabled]="!returnConfiscationForm.valid">
             Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
           </button>
         </div>
-        <div class="col-md-2">
-          <button
-            class="btn btn-danger btn-sm active mr-3"
-            (click)="clearAll()">
+        <div class="">
+          <button class="btn btn-danger btn-sm active" (click)="clearAll()">
             Limpiar <i class="fas fa-eraser"> </i>
           </button>
         </div>
-        <div class="col-md-4"></div>
       </div>
     </form>
   </div>

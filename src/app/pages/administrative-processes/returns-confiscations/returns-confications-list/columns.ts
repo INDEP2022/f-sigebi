@@ -1,4 +1,4 @@
-import { DatePickerComponent } from 'src/app/shared/render-components/date-picker/date-picker.component';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const COLUMNS = {
   id: {
@@ -16,14 +16,14 @@ export const COLUMNS = {
     sort: false,
     editable: false,
   },
-  dateRenderDecoDev: {
+  scheduledDateDecoDev: {
     title: 'Fecha Decomiso',
     valuePrepareFunction: (text: string) => {
       return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
-    editor: {
+    filter: {
       type: 'custom',
-      component: DatePickerComponent,
+      component: CustomDateFilterComponent,
     },
     sort: false,
   },
@@ -48,11 +48,14 @@ export const COLUMNS = {
   },
   tesofeDate: {
     title: 'Fecha Tesofe',
-    sort: false,
-    editable: false,
     valuePrepareFunction: (text: string) => {
       return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    sort: false,
   },
   /*confRet: {
     title: 'Dev/Conf',

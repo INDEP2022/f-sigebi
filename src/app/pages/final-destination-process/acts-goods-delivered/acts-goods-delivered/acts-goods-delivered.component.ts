@@ -1562,7 +1562,9 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
           item['process'] = item.good ? item.good.extDomProcess : null;
           item['status'] = item.good ? item.good.status : null;
 
-          let resValGoodScreen = this.valGoodStatusScreen(item.numberGood);
+          let resValGoodScreen = await this.valGoodStatusScreen(
+            item.numberGood
+          );
 
           let resCveAct = await this.proceedingsDeliveryReceptionCount({
             good: item.numberGood,
