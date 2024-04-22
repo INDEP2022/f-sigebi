@@ -62,6 +62,7 @@
           <event-goods-lots-list-actions
             [viewRejectedGoods]="viewRejectedGoods"
             (viewRejectedGoodsChange)="viewRejectedGoodsChange.emit($event)"
+            (executeChangeLots)="goodsLotifyFunction($event)"
             [params]="params"
             [lotSelected]="lotSelected"
             [parameters]="parameters"

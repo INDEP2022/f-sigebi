@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BehaviorSubject,
@@ -44,13 +51,33 @@ export class ConsigmentsEventsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('Se llamó?');
+
+    this.getEvents(this.params.getValue()).subscribe();
     this.columnsFilter().subscribe();
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
-        tap(params => this.getEvents(params).subscribe())
+        tap(params => {
+          console.log('Parametros desde: ', params);
+          this.getEvents(params).subscribe();
+        })
       )
       .subscribe();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['parameters']) {
+      console.log('parameters', this.parameters);
+    }
+
+    if (changes['preparation']) {
+      console.log('preparation', this.preparation);
+    }
+
+    if (changes['eventSelected']) {
+      console.log('eventSelected', this.eventSelected);
+    }
   }
 
   columnsFilter() {
@@ -83,6 +110,7 @@ export class ConsigmentsEventsComponent extends BasePage implements OnInit {
   }
   getEvents(params: FilterParams) {
     this.loading = true;
+    console.log('Se llamo la lista de eventos');
     params.addFilter('address', this.parameters.pDirection);
     params.addFilter('eventTpId', this.preparation ? 10 : 6);
 

@@ -61,6 +61,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   @Input() viewRejectedGoods: boolean;
   @Output() viewRejectedGoodsChange = new EventEmitter<boolean>();
   @Output() fillStadistics = new EventEmitter<void>();
+  @Output() goodsLotifyControl = new EventEmitter<boolean>();
   @ViewChild('validFileInput', { static: true })
   validFileInput: ElementRef<HTMLInputElement>;
   totalItems = 0;
@@ -134,8 +135,12 @@ export class EventLotsListComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     console.log('Se inicializó la lista de eventos');
-    this.refreshTable();
+    console.log(this.viewRejectedGoodsChange);
+    if (!this.viewRejectedGoodsChange.closed) {
+      this.getLots(this.params.getValue()).subscribe();
+    }
     this.subscribe();
+    this.refreshTable();
 
     // this.returnTracker(); //!Se está realizando en otro lado y se cicla
   }
@@ -735,5 +740,10 @@ export class EventLotsListComponent extends BasePage implements OnInit {
         map(resp => resp.count ?? 0)
       )
     );
+  }
+
+  goodsLotifyFunction(e: any) {
+    console.log(e);
+    this.getLots(this.params.getValue()).subscribe();
   }
 }
