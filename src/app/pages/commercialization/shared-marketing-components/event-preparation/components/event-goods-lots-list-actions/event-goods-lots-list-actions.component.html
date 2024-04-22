@@ -150,3 +150,11 @@
   [style.display]="'none'"
   accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
   #customersBaseInput />
+
+<input
+  type="file"
+  [formControl]="invoiceDataControl"
+  (change)="loadInvoiceDataChange($event)"
+  [style.display]="'none'"
+  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+  #invoiceDataInput />
