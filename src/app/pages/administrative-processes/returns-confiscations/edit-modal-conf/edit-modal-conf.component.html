@@ -1,56 +1,98 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Editar Registro</h5>
+    <h5 class="modal-title">Editar Bien {{ goodNumber }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row d-flex justify-content-center">
-        <div class="col-md-4">
-          <form-field [control]="form.get('fecha')" label="Fecha">
+      <div class="row">
+        <div class="col-md-4 mt-2">
+          <form-field [control]="form.get('id')" label="No. Bien">
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-4 mt-2">
+          <form-field [control]="form.get('extDomProcess')" label="Ext Dominio">
+            <input
+              maxlength="20"
+              type="text"
+              class="form-control"
+              formControlName="extDomProcess" />
+          </form-field>
+        </div>
+        <div class="col-md-4 mt-2">
+          <form-field [control]="form.get('quantity')" label="Cantidad">
+            <input
+              max="999999999999999"
+              type="number"
+              class="form-control"
+              formControlName="quantity" />
+          </form-field>
+        </div>
+        <div class="col-md-4 mt-2">
+          <form-field [control]="form.get('appraisedValue')" label="Importe">
+            <input
+              max="99999999999999999"
+              type="number"
+              class="form-control"
+              formControlName="appraisedValue" />
+          </form-field>
+        </div>
+        <div class="col-md-4 mt-2">
+          <form-field [control]="form.get('tesofeFolio')" label="Folio Tesofe">
+            <input
+              maxlength="20"
+              type="text"
+              class="form-control"
+              formControlName="tesofeFolio" />
+          </form-field>
+        </div>
+        <div class="col-md-4 mt-2">
+          <form-field [control]="form.get('tesofeDate')" label="Fecha Tesofe">
             <input
               type="text"
               class="form-control"
-              formControlName="fecha"
+              formControlName="tesofeDate"
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <!-- <form-field [control]="form.get('promoter')">
+        <div class="col-md-4 mt-2">
+          <form-field
+            [control]="form.get('scheduledDateDecoDev')"
+            label="Fecha Decomiso">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="scheduledDateDecoDev"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-8 mt-2">
+          <form-field [control]="form.get('promoterUserDecoDevo')">
             <ngx-select
-              [form]="form"
-              [data]="user1"
-              value="user"
-              bindLabel="name"
-              label="Promovente"
-              (fetchItems)="getAllSegUser1($event)"
-              (change)="changeUser1($event)"
-              control="promoter">
-            </ngx-select>
-          </form-field> -->
-          <!-- <form-field [control]="form.get('promoter')" label="Promovente">
-            <select class="form-control" formControlName="promoter">
-              <option [value]="item.user" *ngFor="let item of userName">
-                {{ item.name }}
-              </option>
-            </select>
-          </form-field> -->
-          <!-- <app-user-shared
-            class="col-md-12"
-            [form]="form"
-            [userField]="'promoter'"
-            [label]="'Usuario'"
-            [id]="true"
-            (change)="onChangeUser($event)"></app-user-shared> -->
-          <form-field [control]="form.get('user')">
-            <ngx-select
+              [searchOnInit]="true"
               (fetchItems)="getUser($event)"
               [data]="userSele"
               [form]="form"
               value="user"
               bindLabel="name"
               label="Usuario"
-              control="user">
+              control="promoterUserDecoDevo">
             </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-12 mt-2">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <textarea
+              maxlenght="600"
+              rows="4"
+              type="text"
+              class="form-control"
+              formControlName="description">
+            </textarea>
           </form-field>
         </div>
       </div>

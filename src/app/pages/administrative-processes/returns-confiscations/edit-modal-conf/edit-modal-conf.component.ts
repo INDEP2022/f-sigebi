@@ -1,8 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
@@ -17,11 +16,11 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class EditModalConfComponent extends BasePage implements OnInit {
-  form: ModelForm<any>;
+  form: FormGroup = new FormGroup({});
   data: any;
   user1 = new DefaultSelect();
   edit: boolean = false;
-
+  goodNumber: any;
   userName: any[];
   userSele: any;
   @Output() refresh = new EventEmitter<any>();
@@ -43,89 +42,44 @@ export class EditModalConfComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.getAllSegUser1(null);
-    if (this.data) {
-      console.log(' his.data.dateRenderDecoDev ', this.data.dateRenderDecoDev);
-      console.log(
-        'Fecha Formateada ',
-        this.formatDate(this.data.dateRenderDecoDev)
-      );
-      console.log('promoterUserDecoDevo ', this.data.promoterUserDecoDevo);
-      this.form.patchValue({
-        fecha:
-          this.data.dateRenderDecoDev != null
-            ? this.formatDate(this.data.dateRenderDecoDev)
-            : null,
-      });
-
-      if (this.data.promoterUserDecoDevo != null) {
-        console.log(
-          'this.data.promoterUserDecoDevo -> ',
-          this.data.promoterUserDecoDevo
-        );
-        this.getAllSegUserFind(this.data.promoterUserDecoDevo);
-      }
-    }
   }
 
   private prepareForm() {
     this.form = this.fb.group({
-      fecha: [null, [Validators.required]],
-      user: [null, [Validators.required]],
+      id: [],
+      goodId: [],
+      description: [],
+      extDomProcess: [],
+      scheduledDateDecoDev: [],
+      promoterUserDecoDevo: [],
+      quantity: [],
+      appraisedValue: [],
+      tesofeDate: [],
+      tesofeFolio: [],
     });
-    //this.form.controls['promoter'].setValue('SUPERUSUARIO');
-    //this.form.get('promoter').setValue('SUPERUSUARIO');
+    this.form.patchValue(this.data);
+    console.log(this.data);
   }
 
   close() {
     this.modalRef.hide();
-    this.modalRef.content.callback(this.refresh);
   }
 
   update() {
     this.loading = true;
-    /*const model: any = {
-      inventoryNumber: this.form.get('noInventario').value,
-      //goodNumber: this.goodId,
-      dateInventory: this.form.get('fechaInventario').value,
-      responsible: this.form.get('responsable').value,
-    };*/
-    console.log('Update-> ', this.data.dateRenderDecoDev);
-    let item = {
-      id: this.data.id,
-      goodId: this.data.goodId,
-      scheduledDateDecoDev:
-        this.formatDate2(this.form.get('fecha').value) == undefined ||
-        'NaN-NaN-NaN'
-          ? this.data.dateRenderDecoDev
-          : this.formatDate2(this.form.get('fecha').value),
-      promoterUserDecoDevo: this.form.get('promoter').value,
-    };
-    console.log('item a upd-> ', item);
-    this.goodService.updateGood(item).subscribe(
+    this.goodService.updateGood(this.form.value).subscribe(
       resp => {
-        if (resp != null && resp != undefined) {
-          console.log('Resp UpdateGood-> ', resp);
-          this.alert('success', '', 'Registro Actualizado Correctamente');
-          this.close();
-        }
+        this.alert('success', 'Registro actualizado correctamente', '');
+        this.modalRef.content.callback(true);
+        this.close();
       },
       err => {
-        this.alert('error', '', 'Error al Actualizar Registros');
+        this.alert('error', 'Error al actualizar el registro', '');
       }
     );
   }
 
-  params(user: any) {
-    let params = {
-      page: 1,
-      limit: 10,
-      'filter.user': `$ilike:${user}`,
-    };
-    this.getAllSegUserFind(params);
-  }
-
   getAllSegUser1(params?: ListParams) {
-    console.log('params: ', params);
     this.usersService.getAllSegUsers2(params).subscribe({
       next: resp => {
         this.user1 = new DefaultSelect(resp.data, resp.count);
@@ -179,12 +133,11 @@ export class EditModalConfComponent extends BasePage implements OnInit {
   changeUser1(event: any) {
     //name otvalor
     console.log(event);
-    // this.form.get('promoter').setValue(event.otvalor);
   }
 
   onChangeUser(event: any) {
     console.log(event);
-    this.form.get('promoter').patchValue(event.id);
+    // this.form.get('promoter').patchValue(event.id);
   }
 
   public getUser(params: ListParams) {
@@ -204,7 +157,7 @@ export class EditModalConfComponent extends BasePage implements OnInit {
     this.indUserService.getUser(user).subscribe({
       next: response => {
         this.userSele = new DefaultSelect(response.data, response.count);
-        this.form.get('user').setValue(response.data[0].user);
+        // this.form.get('user').setValue(response.data[0].user);
       },
     });
   }

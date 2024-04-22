@@ -3,71 +3,70 @@
     <h5 class="title">DEVOLUCIONES Y DECOMISOS</h5>
   </div>
   <div body>
-    <form class="form-material mb-3 mt-3" [formGroup]="form">
-      <div class="row mb-3 mt-3">
-        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
-          <form-field label="Expediente" [control]="form.get('idExpedient')">
-            <input class="form-control" formControlName="idExpedient" />
-          </form-field>
+    <accordion [isAnimated]="true">
+      <accordion-group [isOpen]="true">
+        <div accordion-heading class="d-flex justify-content-between">
+          <h5>EXPEDIENTE</h5>
         </div>
-        <div
-          class="col-xs-12 col-12 col-md-4 mb-3 mt-3"
-          *ngIf="form.get('criminalCase').value !== null">
-          <form-field
-            label="Averiguación Previa"
-            [control]="form.get('preliminaryInquiry')">
-            <input class="form-control" formControlName="preliminaryInquiry" />
-          </form-field>
-        </div>
-        <div
-          class="col-xs-12 col-12 col-md-4 mb-3 mt-3"
-          *ngIf="form.get('criminalCase').value !== null">
-          <form-field label="Causa Penal" [control]="form.get('criminalCase')">
-            <input class="form-control" formControlName="criminalCase" />
-          </form-field>
-        </div>
-        <div
-          class="col-6 d-flex justify-content-right mb-3 mt-3 align-items-center">
-          <button
-            class="btn btn-primary active btn-sm w-50"
-            (click)="getExpedientById()">
-            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
-          </button>
-        </div>
-        <!--Records Shared Component-->
-        <!--<div class="col-md-6 mb-3 mt-3">
-          <app-records-shared [form]="form"></app-records-shared>
-        </div>-->
-        <!--<div class="col-xs-12 col-12 col-md-3 mb-3 mt-3">
+        <form class="form-material mb-3 mt-3" [formGroup]="form">
           <div class="row mb-3 mt-3">
-            <div class="col-md-12">
+            <div class="col-xs-12 col-12 col-md-2">
+              <form-field label="Expediente" [control]="form.get('id')">
+                <input class="form-control mt-2" formControlName="id" />
+              </form-field>
+            </div>
+            <div class="col-xs-12 col-12 col-md-4">
               <form-field
                 label="Averiguación Previa"
                 [control]="form.get('preliminaryInquiry')">
                 <input
-                  class="form-control"
+                  class="form-control mt-2"
                   formControlName="preliminaryInquiry" />
               </form-field>
             </div>
-          </div>
-        </div>
-        <div class="col-xs-12 col-12 col-md-3 mb-3 mt-3">
-          <div class="row mb-3 mt-3">
-            <div class="col-md-12">
-              <form-field label="Importe" [control]="form.get('criminalCase')">
-                <input class="form-control" formControlName="criminalCase" />
+            <div class="col-xs-12 col-12 col-md-4">
+              <form-field
+                label="Causa Penal"
+                [control]="form.get('criminalCase')">
+                <input
+                  class="form-control mt-2"
+                  formControlName="criminalCase" />
               </form-field>
             </div>
+            <div class="col-2 d-flex justify-content-center text-center">
+              <div>
+                <button
+                  (click)="resetForm()"
+                  class="btn btn-danger btn-sm active m-1">
+                  Limpiar <i class="fas fa-eraser"> </i>
+                </button>
+              </div>
+              <div>
+                <button
+                  (click)="searchExpediente()"
+                  class="btn btn-primary btn-sm active m-1"
+                  tooltip="Lista de Expedientes"
+                  containerClass="tooltip-style">
+                  <i class="bx bx-list-plus bx-sm float-icon"></i>
+                </button>
+              </div>
+            </div>
           </div>
-        </div>-->
-      </div>
-    </form>
-    <div
-      class="row mb-3 mt-3 justify-content-end"
-      *ngIf="form.get('criminalCase').value !== null">
-      <!--Actions-->
-      <div class="col-lg-6 col-md-6 col-sm-12 col-12 offset-md-2">
-        <label for="">Aplicar Fecha y Promovente</label>
+        </form>
+      </accordion-group>
+    </accordion>
+    <accordion
+      class="mt-3"
+      style="margin-bottom: 0px !important"
+      [isAnimated]="true">
+      <accordion-group
+        id="testAcc"
+        style="margin-bottom: 0px !important"
+        [isOpen]="expedientNumber ? true : false"
+        [class.disabled]="!expedientNumber">
+        <div accordion-heading class="d-flex justify-content-between">
+          <h5>APLICAR FECHA Y PROMOVENTE</h5>
+        </div>
         <form class="form-material mb-3 mt-3" [formGroup]="formMA">
           <div class="row mb-3 mt-3">
             <div
@@ -82,11 +81,6 @@
               </form-field>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-              <!-- <app-user-shared
-                [form]="formMA"
-                [userField]="'promoter'"
-                [label]="'Promovente'"></app-user-shared> -->
-
               <form-field [control]="formMA.get('promoter')">
                 <ngx-select
                   (fetchItems)="getAllSegUser1($event)"
@@ -101,106 +95,89 @@
               </form-field>
             </div>
             <div
-              class="col d-flex justify-content-center mb-3 mt-3 align-items-center">
-              <button
-                class="btn btn-primary active btn-sm w-50"
-                [disabled]="!this.formMA.valid"
-                (click)="massiveApplication()">
-                Aplicar
-              </button>
+              class="d-flex text-center justify-content-center mb-3 mt-3 align-items-center">
+              <div class="col-3">
+                <button
+                  class="btn btn-block btn-primary active btn-sm"
+                  (click)="massiveApplication()">
+                  Aplicar
+                </button>
+              </div>
             </div>
           </div>
         </form>
-      </div>
-    </div>
-    <!--COLUMNS -->
-    <div class="d-flex justify-content-end mr-1">
-      <!--Info Good
-      <div class="col-lg-4 col-md-4 col-sm-12 col-12">
-        <label for="">Estatus Bien</label>
+      </accordion-group>
+    </accordion>
+
+    <accordion
+      [isAnimated]="true"
+      class="mt-3"
+      style="margin-bottom: 0px !important">
+      <accordion-group
+        id="testAcc"
+        style="margin-bottom: 0px !important"
+        [isOpen]="expedientNumber ? true : false"
+        [class.disabled]="!expedientNumber">
+        <div accordion-heading class="d-flex justify-content-between">
+          <h5>BIENES ASOCIADOS AL EXPEDIENTE {{ expedientNumber }}</h5>
+        </div>
+        <div class="d-flex justify-content-end mr-1">
+          <app-columns-select
+            [defaultColumns]="5"
+            (settingsChange)="settingsChange($event)"
+            [settings]="settings"
+            [leftList]="true">
+          </app-columns-select>
+        </div>
+        <div class="row pt-4">
+          <form-loader *ngIf="loading"></form-loader>
+          <div class="col-md-12">
+            <ng-scrollbar
+              [track]="'all'"
+              [ngStyle]="{ height: loading ? '0px' : '400px' }">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings"
+                [source]="data"
+                (edit)="openModal($event.data)"
+                (userRowSelect)="selectRow($event.data)">
+              </ng2-smart-table>
+            </ng-scrollbar>
+          </div>
+        </div>
         <div class="row mb-3 mt-3">
-          <div class="col-lg-6 col-md-6 col-sm-12 col-12 align-content-end">
-            <div class="mt-4">
+          <div class="col-lg-2 col-md-2 col-sm-12 col-12 align-content-end">
+            <div class="">
               <h5 class="font-size-14 text-success">
-                <i class="bx bxs-circle me-1 text-success"></i>
+                <i class="bx bxs-square me-1 text-success"></i>
                 Disponible
               </h5>
             </div>
           </div>
-          <div class="col-lg-6 col-md-6 col-sm-12 col-12 align-content-end">
-            <div class="mt-4">
-              <h5 class="font-size-14 text-danger">
-                <i class="bx bxs-circle me-1 text-danger"></i>
-                No disponible
+          <div class="col-lg-2 col-md-2 col-sm-12 col-12 align-content-end">
+            <div class="">
+              <h5 class="font-size-14 text-dark">
+                <i class="bx bxs-square me-1 text-dark"></i>
+                No Disponible
               </h5>
             </div>
           </div>
+          <div class="col-8 pt-2">
+            <app-pagination [params]="params" [totalItems]="totalItems">
+            </app-pagination>
+          </div>
         </div>
         <div class="row mb-3 mt-3" *ngIf="rowSelected">
-          <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="mt-4">
-              <h5 class="font-size-14">Estatus</h5>
+              <h5 class="font-size-14">Estatus Bien</h5>
               <p class="text-muted mb-0">
                 {{ selectedRow?.estatus.descriptionStatus }}
               </p>
             </div>
           </div>
         </div>
-      </div>-->
-      <div class="align-self-end">
-        <app-columns-select
-          class="mx-1"
-          (settingsChange)="settingsChange($event)"
-          [settings]="settings"
-          [leftList]="true">
-        </app-columns-select>
-      </div>
-    </div>
-    <!--TABLE-->
-    <div class="row pt-4">
-      <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered table-responsive'"
-            [settings]="settings"
-            [source]="data"
-            (edit)="openModal($event.data)"
-            (userRowSelect)="selectRow($event.data)">
-          </ng2-smart-table>
-        </div>
-      </div>
-    </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
-    <!--Status Good-->
-    <label for="">Estatus Bien</label>
-    <div class="row mb-3 mt-3">
-      <div class="col-lg-2 col-md-2 col-sm-12 col-12 align-content-end">
-        <div class="mt-4">
-          <h5 class="font-size-14 text-success">
-            <i class="bx bxs-circle me-1 text-success"></i>
-            Disponible
-          </h5>
-        </div>
-      </div>
-      <div class="col-lg-2 col-md-2 col-sm-12 col-12 align-content-end">
-        <div class="mt-4">
-          <h5 class="font-size-14 text-danger">
-            <i class="bx bxs-circle me-1 text-danger"></i>
-            No Disponible
-          </h5>
-        </div>
-      </div>
-    </div>
-    <div class="row mb-3 mt-3" *ngIf="rowSelected">
-      <div class="col-lg-3 col-md-6 col-sm-12 col-12">
-        <div class="mt-4">
-          <h5 class="font-size-14">Estatus</h5>
-          <p class="text-muted mb-0">
-            {{ selectedRow?.estatus.descriptionStatus }}
-          </p>
-        </div>
-      </div>
-    </div>
+      </accordion-group>
+    </accordion>
   </div>
 </app-card>
