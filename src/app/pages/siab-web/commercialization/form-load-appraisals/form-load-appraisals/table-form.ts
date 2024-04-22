@@ -57,11 +57,6 @@ export const GOODS_COLUMNS = {
     type: 'string',
     sort: false,
   }, //delegation
-  valuado: {
-    title: 'Avalúo',
-    type: 'string',
-    sort: false,
-  },
 };
 export const DETAIL_APPRAISALS_COLUMNS = {
   num: {

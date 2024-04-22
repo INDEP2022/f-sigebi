@@ -371,7 +371,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         if (alert)
           this.onLoadToast(
             'success',
-            'La orden de servicio se guardada correctamente',
+            'La orden de servicio se guardo correctamente',
             ''
           );
       },
@@ -655,7 +655,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
     //const readOnly = this.requestInfo.detail.version == "1";
 
     this.btnAprobar = true;
-    this.btnRechazar = false;
+    this.btnRechazar = true;
 
     let config: ModalOptions = {
       initialState: {
