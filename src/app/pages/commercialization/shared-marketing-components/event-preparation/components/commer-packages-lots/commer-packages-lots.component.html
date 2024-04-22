@@ -30,7 +30,7 @@
 <div class="row" *ngIf="viewRejectedGoods">
   <div class="col-md-12">
     <rejected-goods-list
-      [(viewRejectedGoods)]="viewRejectedGoods"
+      (viewRejectedGoodsChange)="listenviewRejectedGoods($event)"
       [eventForm]="eventForm"></rejected-goods-list>
   </div>
 </div>
