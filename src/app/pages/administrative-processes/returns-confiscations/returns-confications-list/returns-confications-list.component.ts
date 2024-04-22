@@ -8,15 +8,17 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
 //Models
 //Services
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { IAcceptGoodStatusScreen } from 'src/app/core/models/ms-good/good';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { SearchExpedientComponent } from 'src/app/pages/final-destination-process/donation-acts/donation-acts/search-expedient/search-expedient.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EditModalConfComponent } from '../edit-modal-conf/edit-modal-conf.component';
 
@@ -30,7 +32,8 @@ import { EditModalConfComponent } from '../edit-modal-conf/edit-modal-conf.compo
 })
 export class ReturnsConficationsListComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   formMA: FormGroup = new FormGroup({});
 
@@ -52,7 +55,7 @@ export class ReturnsConficationsListComponent
 
   user1 = new DefaultSelect();
   childModal: BsModalRef;
-
+  expedientNumber: number;
   constructor(
     private datePipe: DatePipe,
     private goodService: GoodService,
@@ -60,7 +63,8 @@ export class ReturnsConficationsListComponent
     private fb: FormBuilder,
     private usersService: UsersService,
     private modalService: BsModalService,
-    private screenStatusService: ScreenStatusService
+    private screenStatusService: ScreenStatusService,
+    private goodProcessService: GoodProcessService
   ) {
     super();
     this.settings = {
@@ -73,67 +77,34 @@ export class ReturnsConficationsListComponent
         delete: false,
         position: 'right',
       },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning pl-4 mx-2"></i>',
+      },
       rowClassFunction: (row: any) => {
-        console.log('rowClassFunction ', row);
-        if (row.data.estatus.active === '1') {
-          return 'text-success';
+        if (row.data.disponible == true) {
+          return 'bg-success text-black';
         } else {
-          return 'text-danger';
+          return 'bg-dark text-white';
         }
       },
-      /*edit: {
-        ...this.settings.edit,
-        saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent:
-          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-        confirmSave: true,
-      },*/
-      /*mode: '',
-      rowClassFunction: (row: any) => {
-        if (row.data.estatus.active === '1') {
-          return 'text-success';
-        } else {
-          return 'text-danger';
-        }
-      },*/
       columns: COLUMNS,
     };
-    this.filterParamsGoods();
   }
 
   ngOnInit(): void {
     this.prepareForm();
-    //this.data.load(goodsData);
-    /**
-     * Instance renderComponent
-     **/
-    /*this.columns.dateConfiscation.editor={
-      ...this.columns.dateConfiscation.editor,
-      onComponentInitFunction: (instance: any) => {
-        instance.toggle.subscribe((data: any) => {
-          alert(data)
-           //this.otherFn(data);
-        });
-      }
-    }*/
+    this.filterParamsGoods();
   }
 
   private prepareForm(): void {
-    //Form
     this.form = this.fb.group({
-      idExpedient: [null, [Validators.required]],
-      preliminaryInquiry: [
-        { value: null, disabled: true },
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      criminalCase: [
-        { value: null, disabled: true },
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      identifies: [{ value: null, disabled: true }],
-      noCourt: [{ value: null, disabled: true }],
+      id: [{ value: null, disabled: true }, [Validators.required]],
+      preliminaryInquiry: [{ value: null, disabled: true }],
+      criminalCase: [{ value: null, disabled: true }],
+      identifies: [],
+      noCourt: [],
     });
-    //Massive Application Form
     this.formMA = this.fb.group({
       dateConfiscation: [null, Validators.required],
       promoter: [null, [Validators.required]],
@@ -162,7 +133,7 @@ export class ReturnsConficationsListComponent
               case 'extDomProcess':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'dateRenderDecoDev':
+              case 'scheduledDateDecoDev':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'promoterUserDecoDevo':
@@ -172,7 +143,7 @@ export class ReturnsConficationsListComponent
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'appraisedValue':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'tesofeDate':
                 searchFilter = SearchFilter.ILIKE;
@@ -191,170 +162,113 @@ export class ReturnsConficationsListComponent
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getGoods(this.form.get('idExpedient').value);
-          let i = 0;
-          console.log('entra ', i++);
+          this.getGoods();
         }
       });
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoods(this.form.get('idExpedient').value));
-    let i = 0;
-    console.log('entra2 ', i++);
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      if (this.totalItems > 0) this.getGoods();
+    });
   }
 
-  getExpedientById(): void {
-    this.formMA.reset();
-    this.goods = [];
-    console.log('Lenght Goods', this.goods.length);
-    this.data.load(this.goods);
-    this.data.refresh();
-    let _id = this.form.controls['idExpedient'].value;
+  getGoods(): void {
+    if (!this.expedientNumber) return;
     this.loading = true;
-    this.expedientService.getById(_id).subscribe(
-      response => {
-        console.log(response);
-        //TODO: Validate Response
-        if (response !== null) {
-          this.form.patchValue(response);
-          this.form.updateValueAndValidity();
-          this.getGoods(response.id);
-        } else {
-          //TODO: CHECK MESSAGE
-          this.alert('info', 'No se encontrarón registros', '');
-        }
-      },
-      error => (this.loading = false)
-    );
-  }
-
-  getGoods(id: string | number): void {
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    console.log('Params Filter-> ', params);
-
-    this.goods = [];
-    this.goodService.getByExpedient(id, params).subscribe({
+    this.goodService.getByExpedient(this.expedientNumber, params).subscribe({
       next: response => {
-        console.log('response getGoogByExp ', response.data);
-        for (let i = 0; i < response.data.length; i++) {
-          if (response.data[i] != null && response.data[i] != undefined) {
-            this.usersService
-              .getAllSegUsersbykey(response.data[i].promoterUserDecoDevo)
-              .subscribe({
-                next: resp => {
-                  console.log('response getAllSegUsersbykey ', resp.data);
-                  let dataB = {
-                    id: response.data[i].goodId,
-                    description: response.data[i].description,
-                    extDomProcess: response.data[i].extDomProcess,
-                    dateRenderDecoDev: response.data[i].scheduledDateDecoDev,
-                    promoterUserDecoDevo: resp.data[0].name,
-                    quantity: response.data[i].quantity,
-                    appraisedValue: response.data[i].appraisedValue,
-                    tesofeDate: response.data[i].tesofeDate,
-                    tesofeFolio: response.data[i].tesofeFolio,
-                    goodId: response.data[i].goodId,
-                    estatus: response.data[i].estatus,
-                  };
-                  console.log('data ', dataB);
-                  this.goods.push(dataB);
-                  this.data.load(this.goods);
-                  this.data.refresh();
-                  this.totalItems = response.count;
-                },
-                error: err => {
-                  let dataB = {
-                    id: response.data[i].goodId,
-                    description: response.data[i].description,
-                    extDomProcess: response.data[i].extDomProcess,
-                    dateRenderDecoDev: response.data[i].scheduledDateDecoDev,
-                    promoterUserDecoDevo: response.data[i].promoterUserDecoDevo,
-                    quantity: response.data[i].quantity,
-                    appraisedValue: response.data[i].appraisedValue,
-                    tesofeDate: response.data[i].tesofeDate,
-                    tesofeFolio: response.data[i].tesofeFolio,
-                    goodId: response.data[i].goodId,
-                    estatus: response.data[i].estatus,
-                  };
-                  console.log('data ', dataB);
-                  this.goods.push(dataB);
-                  this.data.load(this.goods);
-                  this.data.refresh();
-                  this.totalItems = response.count;
-                  this.loading = false;
-                },
-              });
-            this.loading = false;
-          }
-        }
+        let result = response.data.map(async item => {
+          let resValGoodScreen = await this.valGoodStatusScreen(item.id);
+          console.log(resValGoodScreen);
+          if (
+            resValGoodScreen &&
+            !item.appraisedValue &&
+            !item.scheduledDateDecoDev &&
+            !item.promoterUserDecoDevo &&
+            !item.tesofeDate &&
+            !item.tesofeFolio
+          )
+            item['disponible'] = true;
+          else item['disponible'] = false;
+        });
+        Promise.all(result).then(resp => {
+          this.data.load(response.data);
+          this.data.refresh();
+          this.totalItems = response.count;
+          this.loading = false;
+        });
       },
       error: err => {
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
         this.loading = false;
       },
-      /*let data = response.data.map((item: IGood) => {
-          //console.log(item);
-          item.promoter = item.promoterUserDecoDevo;
-
-          let dateDecoDev = item.scheduledDateDecoDev;
-          item.dateRenderDecoDev = this.datePipe.transform(
-            dateDecoDev,
-            'dd/MM/yyyy'
-          );
-
-          let dateTeso = item.tesofeDate;
-
-          item.tesofeDate = this.datePipe.transform(dateTeso, 'dd/MM/yyyy');
-          return item;
-        });*/
-
-      //console.log('getGoods-> ', response);
     });
   }
 
-  settingsChange($event: any): void {
-    this.settings = $event;
+  async valGoodStatusScreen(good: number) {
+    let obj: IAcceptGoodStatusScreen = {
+      pNumberGood: good,
+      pVcScreen: 'FACTADBCONDEVYDEC',
+    };
+    return new Promise((resolve, reject) => {
+      this.goodProcessService._getacceptGoodStatusScreen(obj).subscribe({
+        next(value) {
+          console.log(value);
+          if (typeof value === 'number') {
+            resolve(value);
+          } else {
+            resolve(value.data);
+          }
+        },
+        error(err) {
+          resolve(null);
+        },
+      });
+    });
   }
 
-  massiveApplication(): void {
+  async massiveApplication() {
     console.log('form ', this.formMA);
-    let maVal = this.formMA.value;
-    this.alertQuestion(
-      'warning',
-      'Actualización Masiva',
-      '¿Desea Actualizar Todos los Bienes?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.putGoodUpMasive();
-        /*
-        //Ejecutar el servicio
-        if (maVal.dateConfiscation !== null) {
-          goodsData.map(good => {
-            let date = `${maVal.dateConfiscation.getFullYear()}-
-                ${maVal.dateConfiscation.getMonth() + 1}-
-                ${maVal.dateConfiscation.getDate()}`;
+    const { dateConfiscation, promoter } = this.formMA.value;
+    let message = '';
+    if (!dateConfiscation && !promoter)
+      return this.alert(
+        'warning',
+        'Debe seleccionar un promovente o una fecha decomiso',
+        ''
+      );
+    else if (!dateConfiscation && promoter)
+      message = 'Se actualizará el Promovente de los bienes disponibles';
+    else if (dateConfiscation && !promoter)
+      message = 'Se actualizará el Fecha Decomiso de los bienes disponibles';
+    else if (dateConfiscation && promoter)
+      message =
+        'Se actualizará el Promovente y la Fecha Decomiso de los bienes disponibles';
 
-            good.dateConfiscation = date;
-          });
-          //Update Table
-          this.data.refresh();
-        }
-
-        if (maVal.promoter !== null) {
-          goodsData.map(good => {
-            good.promoter = maVal.promoter;
-          });
-          //Update Table
-          this.data.refresh();
-        }
-
-        this.onLoadToast('success', 'Elementos Actualizados', '');
-        */
-        this.onLoadToast('success', 'Elementos Actualizados', '');
+    let data = await this.data.getAll();
+    if (data.length == 0) {
+      return this.alert('warning', 'No hay bienes para actualizar', '');
+    } else if (data.length > 0) {
+      let dataDispo = data.filter(item => item['disponible'] == true);
+      if (dataDispo.length == 0) {
+        return this.alert(
+          'warning',
+          'No hay bienes disponibles para actualizar',
+          ''
+        );
       }
-    });
+    }
+    this.alertQuestion('question', message, '¿Desea continuar?').then(
+      question => {
+        if (question.isConfirmed) {
+          this.putGoodUpMasive(dateConfiscation, promoter);
+        }
+      }
+    );
   }
 
   selectRow(row: any) {
@@ -368,81 +282,42 @@ export class ReturnsConficationsListComponent
     }
   }
 
-  onSaveConfirm(event: any) {
-    console.log('evento-> ', event.data);
-    //this.putGoodUp(event.newData);
-    event.confirm.resolve();
-    //this.goodService.update()
-    if (this.rowSelected) {
-      this.putGoodUp(event.newData);
-    } else {
-      this.onLoadToast('error', 'Debe Seleccionar un Registro', '');
-    }
-
-    //this.onLoadToast('success', 'Elemento Actualizado', '');
-  }
-
-  putGoodUp(params?: any) {
-    console.log('data up -> ', params);
-    /* let item = {
-      id: params.id,
-      goodId: params.goodId,
-      scheduledDateDecoDev: null
-      promoterUserDecoDevo: ,
-    }; */
-    /*this.goodService.updateGood(params).subscribe(resp => {
-      if (resp != null && resp != undefined) {
-        console.log('Resp UpdateGood-> ', resp);
+  async putGoodUpMasive(dateConfiscation: any, promoter: any) {
+    let data = await this.data.getAll();
+    let fine = 0;
+    let result = data.map(async item => {
+      if (item['disponible']) {
+        let body = {
+          id: item.id,
+          goodId: item.goodId,
+          scheduledDateDecoDev: await this.dateFormat(dateConfiscation),
+          promoterUserDecoDevo: promoter,
+        };
+        let res = await this.updateGood(body);
+        if (res) fine = fine + 1;
       }
-    });*/
+    });
+    Promise.all(result).then(resp => {
+      this.alert('success', 'Se actualizaron los bienes correctamente', '');
+      this.getGoods();
+    });
   }
 
-  putGoodUpMasive() {
-    //console.log('data up -> ', this.data['data'].length);
-    for (let i = 0; i < this.data['data'].length; i++) {
-      //console.log("this.data['data'][i] ", this.data['data'][i]);
-      let item = {
-        id: this.data['data'][i].id,
-        goodId: this.data['data'][i].goodId,
-        scheduledDateDecoDev: this.formatDate(
-          this.formMA.get('dateConfiscation').value
-        ),
-        promoterUserDecoDevo: this.formMA.get('promoter').value,
-      };
-      this.loading = true;
-      console.log('item a upd ', item);
-      this.goodService.updateGood(item).subscribe(
-        resp => {
-          if (resp != null && resp != undefined) {
-            console.log('Resp UpdateGood-> ', resp);
-            //let id = this.form.get('idExpedient').value;
-            //this.getGoods(id);
-            this.loading = false;
-          }
+  updateGood(body: any) {
+    return new Promise((resolve, reject) => {
+      this.goodService.updateGood(body).subscribe({
+        next(value) {
+          resolve(true);
         },
-        err => { }
-      );
-    }
-    setTimeout(() => {
-      this.loading = true;
-      let id = this.form.get('idExpedient').value;
-      this.getGoods(id);
-    }, 3000);
-    this.loading = false;
-    //this.getExpedientById();
+        error(err) {
+          resolve(false);
+        },
+      });
+    });
   }
 
-  paramsUser(user: any) {
-    let params = {
-      page: 1,
-      limit: 10,
-      'filter.user': `$ilike:${user}`,
-    };
-    //this.getAllSegUser1(params);
-  }
-
-  dateFormat(date: any) {
-    let dateLocal: any;
+  async dateFormat(date: any): Promise<string> {
+    let dateLocal: string = '';
     dateLocal = this.datePipe.transform(date, 'yyyy-MM-dd');
     return dateLocal;
   }
@@ -472,15 +347,17 @@ export class ReturnsConficationsListComponent
   }
 
   openModal(data: any) {
+    if (!data['disponible'])
+      return this.alert(
+        'warning',
+        'El bien no está disponible para actualizar',
+        ''
+      );
     let config: ModalOptions = {
       initialState: {
         data,
-        dataChild: 'Modal Hijo',
         callback: (data: any) => {
-          console.log('Entra al callback');
-          console.log(data);
-          let id = this.form.get('idExpedient').value;
-          this.getGoods(id);
+          if (data) this.getGoods();
         },
       },
 
@@ -488,5 +365,53 @@ export class ReturnsConficationsListComponent
       ignoreBackdropClick: true,
     };
     this.childModal = this.modalService.show(EditModalConfComponent, config);
+  }
+
+  searchExpediente() {
+    const modalConfig = {
+      initialState: {},
+      class: 'modal-xl modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    modalConfig.initialState = {
+      otherColumns: {
+        id: {
+          title: 'No. Expediente',
+          type: 'string',
+          sort: false,
+        },
+        preliminaryInquiry: {
+          title: 'Averiguación Previa',
+          type: 'string',
+          sort: false,
+        },
+        criminalCase: {
+          title: 'Causa Penal',
+          type: 'string',
+          sort: false,
+        },
+      },
+    };
+
+    let modalRef = this.modalService.show(
+      SearchExpedientComponent,
+      modalConfig
+    );
+    modalRef.content.onSave.subscribe((next: any) => {
+      if (next) {
+        this.form.patchValue(next);
+        this.expedientNumber = next.id;
+        this.getGoods();
+        this.getAllSegUser1(new ListParams());
+      }
+    });
+  }
+  resetForm() {
+    this.form.reset();
+    this.expedientNumber = null;
+  }
+
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
 }

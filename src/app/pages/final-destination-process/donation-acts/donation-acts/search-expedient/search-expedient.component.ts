@@ -22,6 +22,7 @@ export class SearchExpedientComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   selectedRow: any | null = null;
   @Output() onSave = new EventEmitter<any>();
+  otherColumns: any;
   constructor(
     private modalRef: BsModalRef,
     private expedientService: ExpedientService
@@ -38,6 +39,8 @@ export class SearchExpedientComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.otherColumns);
+    if (this.otherColumns) this.settings.columns = this.otherColumns;
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
