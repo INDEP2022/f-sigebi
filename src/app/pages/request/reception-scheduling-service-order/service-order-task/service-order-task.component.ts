@@ -262,6 +262,12 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
     });
   }
 
+  saveBackProcess() {
+    let ordServiceForm = this.ordServform.getRawValue();
+    this.isUpdate = true;
+    this.updateOrderService(ordServiceForm, false);
+  }
+
   setClaimRequest() {
     this.btnReclamar = false;
 
@@ -365,7 +371,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         if (alert)
           this.onLoadToast(
             'success',
-            'La orden de servicio se guardada correctamente',
+            'La orden de servicio se guardo correctamente',
             ''
           );
       },
@@ -501,7 +507,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
             }
 
             this.isApprove = true;
-            this.openFirma(data.nameSignatorysae, data.postsae);
+            this.openFirma(data.nameSignatorysae, data.postsae, 'electronica');
           }
         },
       },
@@ -626,13 +632,14 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
     });
   }
 
-  async openFirma(name, charge) {
+  async openFirma(name, charge, typeSign) {
     let token = this.authService.decodeToken();
     let today = new Date();
 
     let idTypeDoc = this.typeDocId;
     let nameTypeDoc = this.typeDocName;
     let readOnly = false;
+    let process = typeSign;
 
     const typeAnnex = 'approval-request';
     const requestInfo = { id: this.programmingId, type: 'programming' };
@@ -648,7 +655,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
     //const readOnly = this.requestInfo.detail.version == "1";
 
     this.btnAprobar = true;
-    this.btnRechazar = false;
+    this.btnRechazar = true;
 
     let config: ModalOptions = {
       initialState: {
@@ -664,7 +671,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         nameTypeDoc,
         nomenglatura,
         readOnly,
-
+        process,
         callback: (next, xml) => {
           //this.updateInfo = !this.updateInfo;
           if (next) {
@@ -989,7 +996,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1005,7 +1012,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1040,7 +1047,11 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
             componentName: typeSign,
           });
 
-          this.openFirma(name, charge);
+          this.openFirma(name, charge, typeSign);
+
+
+
+
           //Actualizar la orden de servicio con los datos de la firma
           //this.updateOrderService(responsibleSae, saePosition, typeSign);
         },

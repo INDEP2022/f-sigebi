@@ -846,6 +846,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         type.descriptionTypeOffice = x.des_tipo_oficio;
         type.typeOffice = x.id_tpsolaval;
         type.address = x.direccion;
+        type.idEvent = x.id_evento;
+        type.idOficio = x.id_oficio;
       }
       console.log(type.typeOffice);
       if (type.typeOffice == 2) {
@@ -855,26 +857,26 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
           myBody = await this.getDataByOffice();
           myBody.subject = tituloOficio.path;
-          this.generateReport(myBody, type.address);
+          this.generateReport(type, type.address);
         } else if (this.form.get('radio').value == 3) {
           tituloOficio = await this.getDescriptionParameters('OFI_CAN_V');
           console.log(tituloOficio);
           myBody.subject = tituloOficio.path;
           myBody = await this.getDataByOffice();
           console.log(myBody);
-          this.generateReport(myBody, type.address);
+          this.generateReport(type, type.address);
         }
       } else if (type.typeOffice == 1) {
         if (this.form.get('radio').value == 2) {
           tituloOficio = await this.getDescriptionParameters('OFI_RES_A');
           myBody = await this.getDataByOffice();
           myBody.subject = tituloOficio.path;
-          this.generateReport(myBody, type.address);
+          this.generateReport(type, type.address);
         } else if (this.form.get('radio').value == 3) {
           tituloOficio = await this.getDescriptionParameters('OFI_CAN_A');
           myBody = await this.getDataByOffice();
           myBody.subject = tituloOficio.path;
-          this.generateReport(myBody, type.address);
+          this.generateReport(type, type.address);
         }
       }
     } catch (e: any) {
@@ -999,40 +1001,48 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   //   });
   // }
 
-  generateReport(myBody: MyBody, address: any) {
+  generateReport(myBody: ValidationResponseFile, address: any) {
     console.log(myBody);
     console.log(address);
     this.loader.load = false;
-    let params = {};
-    this.siabService.fetchReport('blank', params).subscribe(response => {
-      //  response= null;
-      if (response !== null) {
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        let config = {
-          initialState: {
-            documento: {
-              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-              type: 'pdf',
-            },
-            callback: (data: any) => {
-              if (data) {
-                data.map((item: any) => {
-                  return item;
-                });
-              }
-            },
-          }, //pasar datos por aca
-          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-          ignoreBackdropClick: true,
-        };
-        this.modalService.show(PreviewDocumentsComponent, config);
-        this.loader.load = false;
-      } else {
-        this.onLoadToast('warning', 'advertencia', '');
-        this.loader.load = false;
-      }
-    });
+    let params = {
+      ID_EVENTO: myBody.idEvent,
+      ID_OFICIO: myBody.idOficio,
+      P_DIRECCION: myBody.address,
+      TIPO_OFICIO: myBody.typeOffice,
+      TIPO_OFICIO_D: null,
+    };
+    this.siabService
+      .fetchReport('RCOMERRespuestaAvaluo', params)
+      .subscribe(response => {
+        //  response= null;
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {
+                if (data) {
+                  data.map((item: any) => {
+                    return item;
+                  });
+                }
+              },
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+          this.loader.load = false;
+        } else {
+          this.onLoadToast('warning', 'advertencia', '');
+          this.loader.load = false;
+        }
+      });
   }
 
   returnIdOffice(): number {

@@ -109,8 +109,7 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
 
   clean() {
     this.form.reset();
-    this.data = [];
-    this.totalItems = 0;
+    this.search();
   }
   close() {
     this.modalRef.hide();
@@ -146,6 +145,11 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
       next: resp => {
         this.data = resp.data;
         this.totalItems = resp.count;
+      },
+      error: () => {
+        this.data = [];
+        this.totalItems = 0;
+        this.onLoadToast('error', 'Error', 'No se encontraron resultados');
       },
     });
   }
