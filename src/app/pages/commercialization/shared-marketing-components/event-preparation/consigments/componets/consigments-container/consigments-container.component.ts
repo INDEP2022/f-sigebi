@@ -80,6 +80,7 @@ export class ConsigmentsContainerComponent
   }
 
   confirm(goods: IComerGoodXLot[]) {
+    console.log('Es preparación? ', this.preparation);
     if (!this.preparation) {
       this.onAcceptConsigment(goods).subscribe();
     } else {
@@ -138,10 +139,12 @@ export class ConsigmentsContainerComponent
       })
       .pipe(
         catchError(error => {
+          console.log('Error: ', error);
           this.alert('error', 'Error', UNEXPECTED_ERROR);
           return throwError(() => error);
         }),
-        tap(() => {
+        tap(response => {
+          console.log('Respuesta: ', response);
           this.exit.emit({ refresh: true, preparation: this.preparation });
         })
       );
