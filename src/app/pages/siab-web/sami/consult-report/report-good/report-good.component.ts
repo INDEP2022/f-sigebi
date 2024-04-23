@@ -307,6 +307,15 @@ export class ReportGoodComponent extends BasePage implements OnInit {
   }
 
   async reportGoods() {
+    const formValues = this.form.getRawValue();
+
+    const infoForm = Object.values(formValues).some(value => !!value);
+
+    if (!infoForm) {
+      this.alert('warning', 'Advertencia', 'Realice al menos un filtro');
+      return;
+    }
+
     this.loadingReport = true;
     const params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -320,7 +329,17 @@ export class ReportGoodComponent extends BasePage implements OnInit {
           this.downloadExcel(response.base64File, 'Reporte_Bienes.xlsx');
           this.loadingReport = false;
         },
-        error: () => {},
+        error: error => {
+          if (error.message == 'Invalid array length') {
+            this.alert(
+              'warning',
+              'No se puede generar archivo Excel',
+              'Disminuya la cantidad de bienes a exportar'
+            );
+
+            this.alert('warning', 'No se puede generar archivo Excel', '');
+          }
+        },
       });
     } else {
       this.alert(
