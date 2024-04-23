@@ -70,6 +70,12 @@ export class CommerPackagesLotsComponent
     console.warn('INIT');
   }
 
+  listenviewRejectedGoods(e: any) {
+    console.log('listenviewRejectedGoods', e);
+    console.log(this.comerLotsListParams);
+    this.viewRejectedGoods = e;
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes['change']) {
       console.log('onlyBase ha cambiado a', changes['change']);
