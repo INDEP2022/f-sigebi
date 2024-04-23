@@ -57,6 +57,19 @@ export class ConsigmentsContainerComponent
       this.title = this.preparation
         ? 'Evento de Preparación'
         : 'Evento de Remesas';
+      console.log('Evento de preparación: ', this.preparation);
+    }
+
+    if (changes['parentLot']) {
+      console.log('Lote seleccionado: ', this.parentLot);
+    }
+
+    if (changes['eventForm']) {
+      console.log('Formulario de evento: ', this.eventForm);
+    }
+
+    if (changes['parameters']) {
+      console.log('Parametros: ', this.parameters);
     }
   }
 
