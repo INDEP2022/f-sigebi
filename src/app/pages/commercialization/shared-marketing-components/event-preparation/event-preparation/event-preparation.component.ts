@@ -477,7 +477,8 @@ export class EventPreparationComponent
       return;
     }
 
-    console.log(this.lotSelected);
+    console.log('LotSelected: ', this.lotSelected);
+    this.lotSelected = this.lotSelected;
 
     this.preparation = !(eventTpId.value == 10);
   }
