@@ -43,7 +43,7 @@ export class RejectionCommentFormComponent extends BasePage implements OnInit {
           //.setValue(this.orderServiceInfo?.commentRejection);
         }
       },
-      error: () => { },
+      error: () => {},
     });
   }
   prepareForm() {

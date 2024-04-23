@@ -1,25 +1,16 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">
-      Muestreo Bienes&#58; Muestreo de Verificación de Bienes
-    </h5>
+    <h5 class="title">Muestreo Bienes: Genera Consulta</h5>
+    <div class="p-2">
+      <button (click)="turnSampling()" class="btn btn-primary btn-sm active">
+        Turnar Muestreo <i class="fa fa-share-square"></i>
+      </button>
+    </div>
   </div>
   <div body>
-    <div class="row pt-4">
-      <div class="d-flex justify-content-end">
-        <div class="p-2">
-          <button
-            (click)="turnSampling()"
-            class="btn btn-primary btn-sm active">
-            Turnar Muestreo <i class="fa fa-share-square"></i>
-          </button>
-        </div>
-      </div>
-    </div>
     <form [formGroup]="dateForm" class="form-material">
-      <h5 class="title">Detalle Muestreo</h5>
       <div class="row pt-4">
-        <div class="col-md-3">
+        <!-- <div class="col-md-3">
           <form-field
             [control]="dateForm.get('delegationName')"
             label="Delegación regional">
@@ -41,7 +32,7 @@
             bindLabel="nameTransferent"
             label="Transferente"
             value="id"></ngx-select>
-        </div>
+        </div> -->
 
         <div class="col-md-3">
           <form-field
@@ -197,8 +188,7 @@
                 maxlength="150"></textarea>
             </form-field>
           </div>
-          <div
-            class="col-md-4 d-flex align-items-center justify-content-center">
+          <div class="col-md-4 d-flex align-items-center justify-content-end">
             <div class="p-2">
               <confirm-button
                 [disabled]="!searchForm.valid"
@@ -208,12 +198,6 @@
                 [icon]="'bx bx-search-alt-2'"
                 [btnSmall]="true"
                 (click)="search()"></confirm-button>
-              <!--<button
-              
-                class="btn btn-primary active btn-sm"
-                style="height: 36px">
-                Buscar <i class="bx bx-search-alt-2"></i>
-              </button> -->
             </div>
             <div class="p-2">
               <button (click)="clean()" class="btn btn-danger active btn-sm">

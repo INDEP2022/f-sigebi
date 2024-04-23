@@ -5,7 +5,7 @@ export const REPORT_GOOD_COLUMNS = {
     sort: false,
   },
 
-  inventoryNum: {
+  inventoryNumber: {
     title: 'No. Inventario',
     type: 'number',
     sort: false,
@@ -23,19 +23,19 @@ export const REPORT_GOOD_COLUMNS = {
     sort: false,
   },
 
-  relevantTypeName: {
+  descriptionRelevantType: {
     title: 'Tipo Relevante',
     type: 'string',
     sort: false,
   },
 
-  solicitudId: {
+  requestId: {
     title: 'No. Solicitud',
     type: 'number',
     sort: false,
   },
 
-  statusGood: {
+  status: {
     title: 'Estatus Bien',
     type: 'string',
     sort: false,
@@ -47,25 +47,25 @@ export const REPORT_GOOD_COLUMNS = {
     sort: false,
   },
 
-  fileNum: {
+  fileNumber: {
     title: 'No. Expediente',
     type: 'number',
     sort: false,
   },
 
-  unitMeasurement: {
+  measureTlUnitView: {
     title: 'Unidad de Medida',
     type: 'string',
     sort: false,
   },
 
-  physicalStatus: {
+  descriptionPhysicalStatus: {
     title: 'Estado Físico',
     type: 'string',
     sort: false,
   },
 
-  conservationStatus: {
+  descriptionConservationStatus: {
     title: 'Estado de Conservación',
     type: 'string',
     sort: false,
@@ -77,25 +77,25 @@ export const REPORT_GOOD_COLUMNS = {
     sort: false,
   },
   ////Vamos aqui prrte
-  transferFile: {
+  transferNumberExpedient: {
     title: 'Expediente Transferente',
     type: 'string',
     sort: false,
   },
 
-  officeNum: {
+  paperNumberRequest: {
     title: 'No. Oficio',
     type: 'number',
     sort: false,
   },
 
-  delegationName: {
+  descriptionDelegation: {
     title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },
 
-  stateName: {
+  stateKeyDelegation: {
     title: 'Estado',
     type: 'string',
     sort: false,
@@ -119,49 +119,49 @@ export const REPORT_GOOD_COLUMNS = {
     sort: false,
   },
 
-  fileType: {
+  fileTypeExpedient: {
     title: 'Tipo Expediente',
     type: 'string',
     sort: false,
   },
 
-  wayRecept: {
+  receiptRouteRequest: {
     title: 'Vía de Recepción',
     type: 'string',
     sort: false,
   },
 
-  warehouseCode: {
+  storeNumber: {
     title: 'Codigo Almacén',
     type: 'string',
     sort: false,
   },
 
-  organizationId: {
+  organizationIdResDev: {
     title: 'No. Organización',
     type: 'string',
     sort: false,
   },
 
-  locatorId: {
+  localityCodeWarehouse: {
     title: 'No. Localizador',
     type: 'string',
     sort: false,
   },
 
-  destination: {
+  descriptionDestiny: {
     title: 'Destino',
     type: 'string',
     sort: false,
   },
 
-  transferQuantity: {
+  quantityResDev: {
     title: 'Cantidad de Transferencia',
     type: 'number',
     sort: false,
   },
 
-  totalQuantity: {
+  quantity: {
     title: 'Cantidad Total',
     type: 'number',
     sort: false,
@@ -173,19 +173,19 @@ export const REPORT_GOOD_COLUMNS = {
     sort: false,
   },
 
-  quantity: {
+  quantityToReserveResDev: {
     title: 'Cantidad',
     type: 'number',
     sort: false,
   },
 
-  byExit: {
+  missingAmountResDev: {
     title: 'Por Salir',
     type: 'number',
     sort: false,
   },
 
-  folioAct: {
+  actFolioResDev: {
     title: 'Folio Acta',
     type: 'string',
     sort: false,

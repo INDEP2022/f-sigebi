@@ -141,17 +141,14 @@ export class EntregaSignatureModalComponent extends BasePage implements OnInit {
         this.src = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=AnexoOrdenesW.jasper&ID_MUESTREO_ORDEN=${this.idReportAclara}&ID_TIPO_DOCTO=198`;
         break;
       case 'formato_reclamacion':
-        this.src =
-          `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=FormatoReclamacion.jasper&ID_PROG_ENTREGA=${this.idReportAclara}&ID_TIPO_DOCTO=${this.idTypeDoc}&FOLIO_PROG_ENTREGA=${this.folio}`;
+        this.src = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=FormatoReclamacion.jasper&ID_PROG_ENTREGA=${this.idReportAclara}&ID_TIPO_DOCTO=${this.idTypeDoc}&FOLIO_PROG_ENTREGA=${this.folio}`;
         break;
     }
 
     this.loadSignatories(true);
-
   }
 
   async loadSignatories(reset: boolean = false) {
-
     if (this.process != 'electronica') {
       this.btnTitle = 'Adjuntar Documento';
       return;
@@ -284,7 +281,7 @@ export class EntregaSignatureModalComponent extends BasePage implements OnInit {
             urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
             type: 'pdf',
           },
-          callback: (response: any) => { },
+          callback: (response: any) => {},
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
         keyboard: false,
@@ -295,12 +292,14 @@ export class EntregaSignatureModalComponent extends BasePage implements OnInit {
   }
 
   uploadData(signatories: any): void {
-
     if (signatories['validationocsp'] == 'true') {
-      this.alertInfo('info', 'Firma Electrónica', 'El firmante seleccionado ya ha firmado el documento');
+      this.alertInfo(
+        'info',
+        'Firma Electrónica',
+        'El firmante seleccionado ya ha firmado el documento'
+      );
       return;
     }
-
 
     const idReportAclara = this.idReportAclara;
     this.loading = true;
@@ -328,10 +327,8 @@ export class EntregaSignatureModalComponent extends BasePage implements OnInit {
   }
 
   rowsSelected(event: any) {
-
     this.valuesSign = event.data;
     const idDoc = this.idSolicitud;
-
   }
 
   selectRow(row?: any) {
@@ -499,7 +496,7 @@ export class EntregaSignatureModalComponent extends BasePage implements OnInit {
             this.modalRef.content.callback(false, null);
             this.close();
           },
-          error: error => { },
+          error: error => {},
         });
     });
   }
@@ -518,7 +515,6 @@ export class EntregaSignatureModalComponent extends BasePage implements OnInit {
   }
 
   firm() {
-
     const formData: Object = {
       id: this.idReportAclara,
       firma: true,
@@ -526,7 +522,6 @@ export class EntregaSignatureModalComponent extends BasePage implements OnInit {
     };
 
     this.firmReport(this.idReportAclara, this.nameTypeDoc, formData);
-
   }
 
   xml: string = '';
@@ -706,8 +701,8 @@ export class EntregaSignatureModalComponent extends BasePage implements OnInit {
         };
 
         this.requestService.update(this.idReportAclara, obj).subscribe({
-          next: resp => { },
-          error: error => { },
+          next: resp => {},
+          error: error => {},
         });
         break;
       }
@@ -724,8 +719,8 @@ export class EntregaSignatureModalComponent extends BasePage implements OnInit {
         this.documentService
           .updateClarDocImp(this.infoReport.id, modelReport)
           .subscribe({
-            next: data => { },
-            error: error => { },
+            next: data => {},
+            error: error => {},
           });
 
         break;

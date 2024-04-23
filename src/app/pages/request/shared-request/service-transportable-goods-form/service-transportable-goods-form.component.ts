@@ -36,7 +36,8 @@ import { RequestHelperService } from '../../request-helper-services/request-help
 })
 export class ServiceTransportableGoodsFormComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   @ViewChild('table', { static: false }) table: any;
   @Input() op: number;
   @Input() showForm: boolean;

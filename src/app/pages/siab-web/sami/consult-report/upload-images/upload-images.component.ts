@@ -86,8 +86,8 @@ export class UploadImagesComponent extends BasePage implements OnInit {
           service: this.massiveFilePhotoSaveZipService,
           multiple: false,
           good: this.goodSelect,
-          titleFinishUpload: 'Imagenes Cargadas Correctamente',
-          questionFinishUpload: '¿Desea subir más imagenes?',
+          titleFinishUpload: 'Imágenes Cargadas Correctamente',
+          questionFinishUpload: '¿Desea subir mas imágenes?',
           callback: (refresh: boolean) => {
             if (refresh) {
               this.loading = true;
