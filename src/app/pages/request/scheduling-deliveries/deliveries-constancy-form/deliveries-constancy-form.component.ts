@@ -726,7 +726,9 @@ export class DeliveriesConstancyFormComponent
         : null;
       data.writedate
         ? this.deliveryConstancyForm.controls['writedate'].setValue(
-          moment(data.writedate ? data.writedate.split('T')[0] : null).format('DD/MM/YYYY')
+            moment(data.writedate ? data.writedate.split('T')[0] : null).format(
+              'DD/MM/YYYY'
+            )
           )
         : null;
       data.adjudicator
@@ -773,8 +775,10 @@ export class DeliveriesConstancyFormComponent
         : null;
       data.oficioDate
         ? this.deliveryConstancyForm.controls['oficioDate'].setValue(
-          moment(data.oficioDate ? data.oficioDate.split('T')[0] : null).format('DD/MM/YYYY')
-        )
+            moment(
+              data.oficioDate ? data.oficioDate.split('T')[0] : null
+            ).format('DD/MM/YYYY')
+          )
         : null;
       data.acreditPerson
         ? this.deliveryConstancyForm.controls['acreditPerson'].setValue(

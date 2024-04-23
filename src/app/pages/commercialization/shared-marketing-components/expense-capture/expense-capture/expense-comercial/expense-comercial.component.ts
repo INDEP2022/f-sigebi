@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -53,6 +53,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   @Input() get address() {
     return this.dataService.address;
   }
+  @ViewChild('dateOfResolutionInput') dateOfResolutionInput: ElementRef;
   set address(value) {
     const list = [];
     // //
@@ -213,6 +214,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   set showLote(value) {
     this.dataService.showLote = value;
+  }
+
+  public checkConditionAndBlur(): void {
+    this.dateOfResolutionInput.nativeElement.blur();
   }
 
   private getBody() {

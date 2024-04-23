@@ -32,7 +32,8 @@
           <div class="col-md-4">
             <form-field [control]="form.get('goodId')" label="No. Bien">
               <input
-                type="text"
+                type="number"
+                min="0"
                 class="form-control"
                 maxlength="100"
                 formControlName="goodId" />
@@ -41,13 +42,14 @@
 
           <div class="col-md-4">
             <form-field
-              [control]="form.get('inventoryNum')"
+              [control]="form.get('inventoryNumber')"
               label="No. Inventario">
               <input
-                type="text"
+                type="number"
+                min="0"
                 class="form-control"
                 maxlength="50"
-                formControlName="inventoryNum" />
+                formControlName="inventoryNumber" />
             </form-field>
           </div>
 
@@ -66,10 +68,10 @@
 
         <div class="row pt-5">
           <div class="col-md-4">
-            <form-field [control]="form.get('typeRelevantId')">
+            <form-field [control]="form.get('idRelevantType')">
               <ngx-select
                 [form]="form"
-                control="typeRelevantId"
+                control="idRelevantType"
                 [data]="typeRelevant"
                 value="id"
                 bindLabel="description"
@@ -79,25 +81,34 @@
           </div>
 
           <div class="col-md-4">
-            <form-field
-              [control]="form.get('solicitudId')"
-              label="No. Solicitud">
+            <form-field [control]="form.get('requestId')" label="No. Solicitud">
               <input
-                type="text"
+                type="number"
+                min="0"
                 class="form-control"
                 maxlength="50"
-                formControlName="solicitudId" />
+                formControlName="requestId" />
             </form-field>
           </div>
+          <!-- Agregar ms de estatus -->
 
           <div class="col-md-4">
-            <form-field [control]="form.get('statusGood')" label="Estatus Bien">
+            <ng-custom-select-loading
+              [form]="form"
+              [path]="path"
+              label="Estatus"
+              formControlName="status"
+              value="status"
+              bindLabel="status"
+              paramSearch="filter.status"
+              prefixSearch="$ilike"></ng-custom-select-loading>
+            <!-- <form-field [control]="form.get('status')" label="Estatus Bien">
               <input
                 type="text"
                 class="form-control"
                 maxlength="100"
-                formControlName="statusGood" />
-            </form-field>
+                formControlName="status" />
+            </form-field> -->
           </div>
         </div>
 
@@ -113,12 +124,14 @@
           </div>
 
           <div class="col-md-4">
-            <form-field [control]="form.get('fileNum')" label="No. Expediente">
+            <form-field
+              [control]="form.get('fileNumber')"
+              label="No. Expediente">
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 maxlength="50"
-                formControlName="fileNum" />
+                formControlName="fileNumber" />
             </form-field>
           </div>
 
@@ -135,13 +148,13 @@
               </form-field>
             -->
 
-            <form-field [control]="form.get('unitMeasurement')">
+            <form-field [control]="form.get('measureTlUnitView')">
               <ngx-select
                 [form]="form"
-                control="unitMeasurement"
+                control="measureTlUnitView"
                 [showTooltip]="true"
                 [data]="measureUnits"
-                value="uomCode"
+                value="measureTlUnit"
                 bindLabel="measureTlUnit"
                 label="Unidad de Medida"
                 (fetchItems)="getUnitMeasure($event)"></ngx-select>
@@ -151,10 +164,10 @@
 
         <div class="row pt-5">
           <div class="col-md-4">
-            <form-field [control]="form.get('physicalStatus')">
+            <form-field [control]="form.get('descriptionPhysicalStatus')">
               <ngx-select
                 [form]="form"
-                control="physicalStatus"
+                control="descriptionPhysicalStatus"
                 [showTooltip]="true"
                 [data]="physicalStatusData"
                 value="name"
@@ -164,10 +177,10 @@
           </div>
 
           <div class="col-md-4">
-            <form-field [control]="form.get('conservationStatus')">
+            <form-field [control]="form.get('descriptionConservationStatus')">
               <ngx-select
                 [form]="form"
-                control="conservationStatus"
+                control="descriptionConservationStatus"
                 [showTooltip]="true"
                 [data]="conservationStatus"
                 value="name"

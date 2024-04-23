@@ -216,12 +216,18 @@ export class ExpenseCompositionModalComponent
       this.isrWithholding.setValue(this.comerDetExpense.retencionIsr);
       this.vatWithholding.setValue(this.comerDetExpense.retencionIva);
       this.budgetItem.setValue(this.comerDetExpense.departure);
-      this.vatWithholding.setValidators(
-        Validators.max(this.comerDetExpense.iva)
-      );
-      this.isrWithholding.setValidators(
-        Validators.max(this.comerDetExpense.amount)
-      );
+      this.vatWithholding.setValidators([
+        Validators.max(this.comerDetExpense.iva),
+        Validators.required,
+        Validators.pattern(NUMBERS_POINT_PATTERN),
+        Validators.min(0),
+      ]);
+      this.isrWithholding.setValidators([
+        Validators.max(this.comerDetExpense.amount),
+        Validators.required,
+        Validators.pattern(NUMBERS_POINT_PATTERN),
+        Validators.min(0),
+      ]);
     }
     if (this.eventNumber) {
       this.fillCvmans();
@@ -230,13 +236,25 @@ export class ExpenseCompositionModalComponent
     this.vat.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
         console.log(response);
-        this.vatWithholding.setValidators(Validators.max(response));
+        this.vatWithholding.setValidators([
+          Validators.max(response),
+          Validators.required,
+          Validators.pattern(NUMBERS_POINT_PATTERN),
+          Validators.min(0),
+        ]);
       },
     });
     this.amount.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
         console.log(response);
-        this.isrWithholding.setValidators(Validators.max(response));
+        this.isrWithholding.setValidators([
+          Validators.required,
+          Validators.max(response),
+          Validators.pattern(NUMBERS_POINT_PATTERN),
+          Validators.min(0),
+        ]);
+        this.isrWithholding.updateValueAndValidity();
+        // this.isrWithholding.updateValueAndValidity();
       },
     });
   }
