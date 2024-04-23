@@ -1,14 +1,14 @@
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const CONTROLSERVICEORDERS_COLUMNS = {
-  serviceOrder: {
+  formatKey: {
     title: 'Orden de Servicio',
     width: '10%',
     sort: false,
   },
   captureDate: {
     title: 'Fecha Captura',
-    width: '10%',
+    width: '15%',
     sort: false,
     valuePrepareFunction: (text: string) => {
       return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
@@ -22,30 +22,69 @@ export const CONTROLSERVICEORDERS_COLUMNS = {
     title: 'Estado',
     width: '10%',
     sort: false,
+    filterFunction: () => {
+      return true;
+    },
   },
-  noProcess: {
-    title: 'No. Proceso',
-    width: '5%',
-    sort: false,
-  },
-  process: {
+  descriptionProcess: {
     title: 'Proceso',
-    width: '10%',
+    width: '30%',
     sort: false,
-  },
-  noRegionalDelegation: {
-    title: 'No. Delegación Regional',
-    width: '5%',
-    sort: false,
+    filterFunction: () => {
+      return true;
+    },
   },
   regionalDelegation: {
     title: 'Delegación Regional',
-    width: '10%',
+    width: '30%',
     sort: false,
+    filterFunction: () => {
+      return true;
+    },
   },
   implementationReport: {
     title: 'Reporte Implementación',
     width: '5%',
+    filter: false,
     sort: false,
+  },
+};
+
+export const BITACORA_COLUMNS = {
+  changeDate: {
+    title: 'Fecha de Cambio',
+    width: '15%',
+    sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  justification: {
+    title: 'Justificación',
+    width: '10%',
+    sort: false,
+    filterFunction: () => {
+      return true;
+    },
+  },
+  status: {
+    title: 'Estatus',
+    width: '30%',
+    sort: false,
+    filterFunction: () => {
+      return true;
+    },
+  },
+  user: {
+    title: 'Usuario',
+    width: '30%',
+    sort: false,
+    filterFunction: () => {
+      return true;
+    },
   },
 };
