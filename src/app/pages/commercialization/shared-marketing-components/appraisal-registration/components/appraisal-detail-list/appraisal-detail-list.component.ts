@@ -59,7 +59,6 @@ export class AppraisalDetailListComponent
       )
       .subscribe();
   }
-
   columnsFilter() {
     return this.appraisals.onChanged().pipe(
       distinctUntilChanged(),
@@ -152,6 +151,7 @@ export class AppraisalDetailListComponent
 
   resetTable() {
     this.appraisals.load([]);
+    console.log('sdsdsdsdds');
     this.appraisals.refresh();
     this.totalItems = 0;
     const params = new FilterParams();
@@ -162,7 +162,8 @@ export class AppraisalDetailListComponent
     return this.$selectedAppraisal.pipe(
       takeUntil(this.$unSubscribe),
       tap(aprraisal => {
-        if (!aprraisal) {
+        console.log(aprraisal);
+        if (!aprraisal && aprraisal == null) {
           this.resetTable();
 
           return;

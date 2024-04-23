@@ -890,6 +890,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   saveDeductives() {
+    console.log(this.deductivesSel);
     if (this.deductivesSel.length > 0) {
       const deleteDeductives = this.deductivesSel.filter((data: any) => {
         if (data.selected) return data;
@@ -1053,7 +1054,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
           if (filterGoodCump.length == data.length) {
             //const deductivesSelect = await this.checkDeductives();
-            const updateSample = this.updateSample('BIENES CUMPLEN');
+            const updateSample = await this.updateSample('BIENES CUMPLEN');
             if (updateSample) {
               this.alertQuestion(
                 'info',
@@ -1072,7 +1073,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
           } else {
             const deductivesSelect = await this.checkDeductives();
             if (deductivesSelect) {
-              const updateSample = this.updateSample('BIENES NO CUMPLEN');
+              const updateSample = await this.updateSample('BIENES NO CUMPLEN');
               if (updateSample) {
                 this.alertQuestion(
                   'question',
@@ -1129,7 +1130,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     });
   }
 
-  updateSample(status: string) {
+  updateSample(status: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const sample: ISample = {
         sampleId: this.sampleId,

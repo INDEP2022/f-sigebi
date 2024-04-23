@@ -428,7 +428,7 @@ export class LotService extends HttpService {
     formData.append('step', body.step);
     formData.append('address', body.address);
     formData.append('bank', body.bank);
-    return this.post('apps/pup-imp-excel-lote', formData);
+    return this.post('apps/pup-imp-excel-lotes-i', formData);
   }
 
   impLotExcelI(body: {

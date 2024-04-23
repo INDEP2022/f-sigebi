@@ -26,6 +26,7 @@
           <ngx-select
             [form]="dateForm"
             control="transferent"
+            [searchOnInit]="true"
             (fetchItems)="getTransferent($event)"
             [data]="selectTransferent"
             bindLabel="nameTransferent"

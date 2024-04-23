@@ -1,0 +1,10 @@
+<div style="width: 100px !important">
+  <input
+    type="text"
+    maxlength="6"
+    id="text-input"
+    class="form-control"
+    [(ngModel)]="value"
+    onKeypress="if (event.keyCode < 45 || event.keyCode > 57) event.returnValue = false;"
+    (change)="changeInput($event)" />
+</div>

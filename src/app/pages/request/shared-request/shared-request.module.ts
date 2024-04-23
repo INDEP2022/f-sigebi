@@ -84,6 +84,7 @@ import { ModalAssignGoodGrouperComponent } from './select-similar-goods/modal-as
 import { ModalModifyDatesComponent } from './select-similar-goods/modal-modify-dates/modal-modify-dates.component';
 import { SelectSimilarGoodsComponent } from './select-similar-goods/select-similar-goods.component';
 import { EvaluationSelectFieldComponent } from './service-transportable-goods-form/evaluation-select-field/evaluation-select-field.component';
+import { InputFieldNumComponent } from './service-transportable-goods-form/input-field-num/input-field-num.component';
 import { InputFieldComponent } from './service-transportable-goods-form/input-field/input-field.component';
 import { ServiceTransportableGoodsFormComponent } from './service-transportable-goods-form/service-transportable-goods-form.component';
 import { ShowProgrammingComponent } from './show-programming/show-programming.component';
@@ -100,6 +101,7 @@ import { ConfirmValidationComponent } from './validate-visit-result/confirm-vali
 import { ValidateVisitResultComponent } from './validate-visit-result/validate-visit-result.component';
 import { ViewExpedientComponent } from './validate-visit-result/view-expedient/view-expedient.component';
 import { CheckVerifyComplianceComponent } from './verify-compliance-goods/check-verify-compliance/check-verify-compliance.component';
+import { CustomHeaderComponent } from './verify-compliance-goods/check-verify-compliance/custom-header.component';
 import { VerifyComplianceGoodsComponent } from './verify-compliance-goods/verify-compliance-goods.component';
 import { ViewDocumentsComponent } from './view-documents/view-documents.component';
 import { ViewReportComponent } from './view-report/view-report.component';
@@ -107,7 +109,6 @@ import { WarehouseConfirmComponent } from './warehouse-confirm/warehouse-confirm
 import { WarehouseFormComponent } from './warehouse-form/warehouse-form.component';
 import { WarehouseShowComponent } from './warehouse-show/warehouse-show.component';
 import { WitnessFormComponent } from './witness-form/witness-form.component';
-import { CustomHeaderComponent } from './verify-compliance-goods/check-verify-compliance/custom-header.component';
 
 @NgModule({
   declarations: [
@@ -207,6 +208,7 @@ import { CustomHeaderComponent } from './verify-compliance-goods/check-verify-co
     MailFieldModalComponent,
     GrouperGoodFieldComponent,
     InputFieldComponent,
+    InputFieldNumComponent,
     EvaluationSelectFieldComponent,
     ViewDetailGoodsComponent,
   ],
@@ -267,4 +269,4 @@ import { CustomHeaderComponent } from './verify-compliance-goods/check-verify-co
     ValidateEyeVisitComponent,
   ],
 })
-export class SharedRequestModule { }
+export class SharedRequestModule {}

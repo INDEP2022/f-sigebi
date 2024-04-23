@@ -1,4 +1,5 @@
 import { EvaluationSelectFieldComponent } from '../../shared-request/service-transportable-goods-form/evaluation-select-field/evaluation-select-field.component';
+import { InputFieldNumComponent } from '../../shared-request/service-transportable-goods-form/input-field-num/input-field-num.component';
 import { InputFieldComponent } from '../../shared-request/service-transportable-goods-form/input-field/input-field.component';
 
 export const SERVICE_TRANSPORTABLE_COLUMNS = {
@@ -26,7 +27,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS = {
   amountNumbercomplies: {
     title: 'No. Recursos No Cumple',
     type: 'custom',
-    renderComponent: InputFieldComponent,
+    renderComponent: InputFieldNumComponent,
     onComponentInitFunction(instance?: any) {},
     sort: false,
   },
@@ -34,7 +35,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS = {
   porcbreaches: {
     title: 'Incumplimiento (%)',
     type: 'custom',
-    renderComponent: InputFieldComponent,
+    renderComponent: InputFieldNumComponent,
     onComponentInitFunction(instance?: any) {},
     sort: false,
   },
@@ -72,7 +73,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS = {
     class: 'custom',
     filter: false,
     sort: false,
-    renderComponent: InputFieldComponent,
+    renderComponent: InputFieldNumComponent,
     onComponentInitFunction(instance?: any) {},
   },
 
@@ -82,7 +83,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS = {
     class: 'custom',
     filter: false,
     sort: false,
-    renderComponent: InputFieldComponent,
+    renderComponent: InputFieldNumComponent,
     onComponentInitFunction(instance?: any) {},
   },
   //17.1.4 reporte de implementacion enviada
@@ -93,7 +94,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS = {
     class: 'custom',
     filter: false,
     sort: false,
-    renderComponent: InputFieldComponent,
+    renderComponent: InputFieldNumComponent,
     onComponentInitFunction(instance?: any) {},
   },
 
@@ -279,7 +280,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE = {
     class: 'custom',
     filter: false,
     sort: false,
-    renderComponent: InputFieldComponent,
+    renderComponent: InputFieldNumComponent,
     onComponentInitFunction(instance?: any) {},
   },
 
@@ -289,7 +290,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE = {
     class: 'custom',
     filter: false,
     sort: false,
-    renderComponent: InputFieldComponent,
+    renderComponent: InputFieldNumComponent,
     onComponentInitFunction(instance?: any) {},
   },
   //17.1.4 reporte de implementacion enviada
@@ -424,7 +425,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_APROVE = {
     type: 'custom',
     class: 'custom',
     filter: false,
-    renderComponent: InputFieldComponent,
+    renderComponent: InputFieldNumComponent,
     onComponentInitFunction(instance?: any) {},
   },
 
@@ -463,7 +464,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_VALIDATE = {
   amountNumbercomplies: {
     title: 'No. Recursos No Cumple',
     type: 'custom',
-    renderComponent: InputFieldComponent,
+    renderComponent: InputFieldNumComponent,
     onComponentInitFunction(instance?: any) {},
     sort: false,
   },
@@ -471,7 +472,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_VALIDATE = {
   porcbreaches: {
     title: 'Incumplimiento (%)',
     type: 'custom',
-    renderComponent: InputFieldComponent,
+    renderComponent: InputFieldNumComponent,
     onComponentInitFunction(instance?: any) {},
     sort: false,
   },

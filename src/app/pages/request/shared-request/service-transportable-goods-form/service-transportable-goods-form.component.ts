@@ -60,6 +60,7 @@ export class ServiceTransportableGoodsFormComponent
   columns: any;
   data: any[] = [];
   @Output() totEvent: EventEmitter<string> = new EventEmitter();
+  @Output() saveBackProcess: EventEmitter<string> = new EventEmitter();
   totalAmount: string = '0.00';
 
   private orderEntryService = inject(orderentryService);
@@ -303,6 +304,7 @@ export class ServiceTransportableGoodsFormComponent
       programmingId: this.programmingId,
       callback: (data: any) => {
         if (data) {
+          this.saveBackProcess.emit();
           this.showButtonServiceManual = true;
           this.getOrderServiceProvided();
         }
@@ -321,6 +323,7 @@ export class ServiceTransportableGoodsFormComponent
       programmingId: this.programmingId,
       callback: (data: any) => {
         if (data) {
+          this.saveBackProcess.emit();
           this.getOrderServiceProvided();
         }
       },

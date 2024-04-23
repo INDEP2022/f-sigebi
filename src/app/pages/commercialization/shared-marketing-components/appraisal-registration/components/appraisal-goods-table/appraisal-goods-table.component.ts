@@ -76,6 +76,8 @@ export class AppraisalGoodsTableComponent
   }
 
   ngOnInit(): void {
+    console.log('ssssssssssss');
+    this.$selectedAppraisal.next(null);
     this.onDownloadGoodsFormat().subscribe();
     this.onComerEventChange().subscribe();
     this.columnsFilter().subscribe();

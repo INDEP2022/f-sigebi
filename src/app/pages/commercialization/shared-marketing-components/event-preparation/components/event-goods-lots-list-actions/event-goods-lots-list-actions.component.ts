@@ -57,6 +57,7 @@ export class EventGoodsLotsListActionsComponent
   @Input() eventForm: FormGroup<ComerEventForm>;
   @Input() parameters: IEventPreparationParameters;
   @Input() loggedUser: TokenInfoModel;
+
   @ViewChild('goodsLotifyInput', { static: true })
   goodsLotifyInput: ElementRef<HTMLInputElement>;
   @ViewChild('customersImportInput', { static: true })
@@ -87,6 +88,8 @@ export class EventGoodsLotsListActionsComponent
   @Input() viewRejectedGoods: boolean;
   @Output() viewRejectedGoodsChange = new EventEmitter<boolean>();
   @Output() fillStadistics = new EventEmitter<void>();
+  @Output() executeChangeLots = new EventEmitter<boolean>();
+
   @Input() totalItems = 0;
   constructor(
     private router: Router,
@@ -404,6 +407,7 @@ export class EventGoodsLotsListActionsComponent
     const user = this.loggedUser.preferred_username;
     this.loader.load = true;
     if (address == 'I') {
+      console.log('Entro a esta lotificación inmuebles');
       this.lotService
         .impLotExcelI2({
           file,
@@ -419,11 +423,56 @@ export class EventGoodsLotsListActionsComponent
             this.loader.load = false;
             this.goodsLotifyControl.reset();
             console.log(res);
+            this.alert('success', 'Proceso Terminado', '');
           },
           error: error => {
-            this.loader.load = false;
-            this.goodsLotifyControl.reset();
             console.log(error);
+            console.log(error.status);
+
+            if (error.status == 400) {
+              this.alertQuestion('question', '', error.error.message).then(
+                res => {
+                  if (res.isConfirmed) {
+                    this.lotService
+                      .impLotExcelI2({
+                        file,
+                        event: `${id.value}`,
+                        eventType: eventType as string,
+                        user: user,
+                        step: '2',
+                        address: address,
+                        bank: this.parameters.pBank,
+                      })
+                      .subscribe({
+                        next: res => {
+                          this.loader.load = false;
+                          this.goodsLotifyControl.reset();
+                          console.log(res);
+                          this.alert('success', 'Proceso Terminado', '');
+                          return;
+                        },
+                        error: error => {
+                          this.loader.load = false;
+                          this.goodsLotifyControl.reset();
+                          console.log(error);
+                          this.alert(
+                            'error',
+                            'Error',
+                            'Ocurrió un Error Inesperado'
+                          );
+                          return;
+                        },
+                      });
+                  } else {
+                    return;
+                  }
+                }
+              );
+            } else {
+              this.goodsLotifyControl.reset();
+              this.loader.load = false;
+              this.alert('error', 'Error', 'Ocurrió un Error Inesperado');
+            }
           },
         });
     } else {
@@ -441,12 +490,16 @@ export class EventGoodsLotsListActionsComponent
         .subscribe({
           next: res => {
             this.loader.load = false;
+            this.executeChangeLots.emit(true);
             this.goodsLotifyControl.reset();
+            this.alert('success', 'Proceso Terminado', '');
             console.log(res);
           },
           error: error => {
             this.loader.load = false;
+            this.executeChangeLots.emit(true);
             this.goodsLotifyControl.reset();
+            this.alert('error', 'Error', 'Ocurrió un Error Inesperado');
             console.log(error);
           },
         });
@@ -876,6 +929,7 @@ export class EventGoodsLotsListActionsComponent
   }
 
   loadInvoiceDataChange(event: Event) {
+    console.log(event);
     if (!this.isValidFile(event)) {
       this.invoiceDataControl.reset();
       return;

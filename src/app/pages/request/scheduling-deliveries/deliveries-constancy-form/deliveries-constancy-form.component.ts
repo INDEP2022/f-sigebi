@@ -503,6 +503,12 @@ export class DeliveriesConstancyFormComponent
       deliveryForm.oficioDate != null
         ? moment(deliveryForm.oficioDate).format('YYYY-MM-DD')
         : null;
+
+    deliveryForm.writedate =
+      deliveryForm.writedate != null
+        ? moment(deliveryForm.writedate).format('YYYY-MM-DD')
+        : null;
+
     deliveryForm.modificationDate = moment(new Date()).format('YYYY-MM-DD');
     deliveryForm.userModification = userAuth.username;
 
@@ -720,7 +726,9 @@ export class DeliveriesConstancyFormComponent
         : null;
       data.writedate
         ? this.deliveryConstancyForm.controls['writedate'].setValue(
-            data.writedate
+            moment(data.writedate ? data.writedate.split('T')[0] : null).format(
+              'DD/MM/YYYY'
+            )
           )
         : null;
       data.adjudicator
@@ -767,7 +775,9 @@ export class DeliveriesConstancyFormComponent
         : null;
       data.oficioDate
         ? this.deliveryConstancyForm.controls['oficioDate'].setValue(
-            data.oficioDate
+            moment(
+              data.oficioDate ? data.oficioDate.split('T')[0] : null
+            ).format('DD/MM/YYYY')
           )
         : null;
       data.acreditPerson

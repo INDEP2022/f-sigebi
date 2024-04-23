@@ -9,6 +9,8 @@ export class ValidationResponseFile {
   descriptionTypeOffice: any;
   typeOffice: any;
   address: any;
+  idEvent?: string;
+  idOficio?: string;
 }
 
 export class OfficesSend {

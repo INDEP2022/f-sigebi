@@ -40,7 +40,6 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
   chargeUser: string = null;
   numSignature: number = 1;
 
-
   nameTypeDoc: string = '';
   idTypeDoc: any; //ID Tipo de documento
   idReportAclara: any; //ID de los reportes
@@ -93,6 +92,8 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
   idRegionalDelegation: any;
   notificationValidate: any; //Parámetro que identifica si es notificación Y= si lo es
   loadSingnatures: boolean = false;
+
+  finish: boolean = false;
 
   noBien: any;
   constructor(
@@ -153,6 +154,11 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
   }
 
   async loadSignatories(reset: boolean = false) {
+    if (this.process != 'electronica') {
+      this.btnTitle = 'Adjuntar Documento';
+      return;
+    }
+
     if (!reset) {
       this.signatories = await this.getSignatories();
       return;
@@ -163,7 +169,10 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
     //console.log('Firmantes -----------------');
 
     let signatories = await this.getSignatories();
-    signatories = signatories.filter(sign => sign.validationocsp != 'true');
+    signatories = signatories.filter(
+      sign => sign.version == this.numSignature && !this.finish
+    );
+
     console.log('Firmantes: ', signatories);
 
     let deletes = signatories.map(signatory => {
@@ -292,12 +301,14 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
   }
 
   uploadData(signatories: any): void {
-
     if (signatories['validationocsp'] == 'true') {
-      this.alertInfo('info', 'Firma Electrónica', 'El firmante seleccionado ya ha firmado el documento');
+      this.alertInfo(
+        'info',
+        'Firma Electrónica',
+        'El firmante seleccionado ya ha firmado el documento'
+      );
       return;
     }
-
 
     const idReportAclara = this.idReportAclara;
     this.loading = true;
@@ -325,10 +336,8 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
   }
 
   rowsSelected(event: any) {
-
     this.valuesSign = event.data;
     const idDoc = this.idSolicitud;
-
   }
 
   selectRow(row?: any) {
@@ -515,7 +524,6 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
   }
 
   firm() {
-
     const formData: Object = {
       id: this.idReportAclara,
       firma: true,
@@ -523,7 +531,6 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
     };
 
     this.firmReport(this.idReportAclara, this.nameTypeDoc, formData);
-
   }
 
   xml: string = '';
@@ -537,46 +544,33 @@ export class OrderSignatureModalComponent extends BasePage implements OnInit {
 
           this.xml = data;
 
-          if (this.isDynamic || this.idTypeDoc == 223) {
-            //this.updateRequest();
-            let content = getXMLNode(this.xml, 'strXmlFirmado')?.textContent;
+          let content = getXMLNode(this.xml, 'strXmlFirmado')?.textContent;
 
-            if (!isNullOrEmpty(content)) {
-              this.msjCheck = true;
-              this.handleSuccess();
-              //Plasmar la clave
-              this.claveInReport();
-              this.updateStatusSigned(content);
-            } else {
-              this.selectedRow = null;
-              this.rowSelected = false;
+          if (!isNullOrEmpty(content)) {
+            this.finish = true;
 
-              this.valuesSign.validationocsp = false;
-
-              this.updateStatusSigned();
-
-              let error = getXMLNode(this.xml, 'strError')?.textContent;
-
-              this.alertInfo(
-                'error',
-                'Acción Inválida',
-                'Error al generar firma electrónica\nFavor de revisar la información'
-                //+ error.split('.')[0] + ''
-              );
-            }
-
-            return;
-          }
-
-          this.msjCheck = true;
-
-          if (nameTypeReport === 'DictamenProcendecia') {
-            //this.updateRequest();
+            this.msjCheck = true;
+            this.handleSuccess();
+            //Plasmar la clave
+            this.claveInReport();
+            this.updateStatusSigned(content);
           } else {
-            this.updateStatusclarifications();
-          }
+            this.selectedRow = null;
+            this.rowSelected = false;
 
-          //this.updateStatusSigned();
+            this.valuesSign.validationocsp = false;
+
+            this.updateStatusSigned();
+
+            let error = getXMLNode(this.xml, 'strError')?.textContent;
+
+            this.alertInfo(
+              'error',
+              'Acción Inválida',
+              'Error al generar firma electrónica\nFavor de revisar la información'
+              //+ error.split('.')[0] + ''
+            );
+          }
         },
         error: error => {
           this.loadingButton = false;

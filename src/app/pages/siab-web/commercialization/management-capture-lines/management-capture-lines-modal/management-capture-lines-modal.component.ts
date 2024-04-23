@@ -46,7 +46,7 @@ export class managementCaptureLinesModalComponent
       idClient: [null],
       cliente: [null, [Validators.required]],
       monto_pena: [null, [Validators.required]],
-      note: [
+      tipo_ref: [
         null,
         [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
@@ -55,10 +55,13 @@ export class managementCaptureLinesModalComponent
       this.edit = true;
       console.log(this.allotment);
       this.form.patchValue(this.allotment);
+      this.form.disable();
+      this.form.controls['estatus'].enable();
     }
   }
 
   close() {
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
   update() {
@@ -66,7 +69,7 @@ export class managementCaptureLinesModalComponent
     let data = {
       status: this.form.controls['estatus'].value,
       captureLine: this.form.controls['lc'].value,
-      flag: this.form.controls['note'].value,
+      flag: this.form.controls['tipo_ref'].value,
     };
     this.capturelineService.getPaUpdateUniqueKey(data).subscribe({
       next: resp => {
