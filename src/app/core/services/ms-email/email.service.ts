@@ -104,4 +104,20 @@ export class EmailService extends HttpService {
   sendGenericMail(data: any) {
     return this.post(`${EmailEndPoint.SendGenericEmail}`, data);
   }
+
+  sendEmailFormData(body: {
+    emails_send: string;
+    emails_cc: string;
+    subject: string;
+    template: string;
+    attachments?: string;
+  }) {
+    const formData = new FormData();
+    formData.append('emails_send', JSON.stringify(body.emails_send));
+    formData.append('emails_cc', JSON.stringify(body.emails_cc));
+    formData.append('subject', body.subject);
+    formData.append('template', body.template);
+    formData.append('attachments', body.attachments || '');
+    return this.post(`email`, formData);
+  }
 }
