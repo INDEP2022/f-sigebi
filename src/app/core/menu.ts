@@ -112,6 +112,10 @@ export const MENU: IMenuItem[] = [
             label: 'Solicitud de Documentación Complementaria',
             link: '/pages/request/request-comp-doc/create',
           },
+          {
+            label: 'Muestreo Ordenes Servicio',
+            link: '/pages/request/generate-sampling-service-orders/generate-query',
+          },
         ],
       },
       // APP -- GESTIONAR DEVOLUCION -- Registro de Solicitud de Devolución

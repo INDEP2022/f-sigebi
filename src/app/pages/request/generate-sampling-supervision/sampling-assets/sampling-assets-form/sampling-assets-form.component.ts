@@ -141,11 +141,11 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.delegationId = Number(this.getRegionalDelegationId());
+    //this.delegationId = Number(this.getRegionalDelegationId());
 
     this.initDateForm();
     this.initSearchForm();
-    this.getTransferent(new ListParams());
+    //this.getTransferent(new ListParams());
     this.settings4.columns = LIST_DEDUCTIVES_COLUMNS;
 
     this.columns4.selected = {
@@ -153,8 +153,8 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       onComponentInitFunction: this.deductiveSelected.bind(this),
     };
 
-    this.getTransferent(new ListParams());
-    this.setDelegation();
+    //this.getTransferent(new ListParams());
+    //this.setDelegation();
   }
 
   async setDelegation() {
@@ -211,8 +211,8 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     this.dateForm = this.fb.group({
       initialDate: [null, [Validators.required]],
       finalDate: [null, [Validators.required]],
-      transferent: [null, [Validators.required]],
-      delegationName: [null],
+      // transferent: [null, [Validators.required]],
+      // delegationName: [null],
     });
   }
 
@@ -233,8 +233,19 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   goodSearch() {
     const startPeriod = this.dateForm.get('initialDate').value;
     const endPeriod = this.dateForm.get('finalDate').value;
-    const transferent = this.dateForm.get('transferent').value;
-    if (transferent) {
+    //const transferent = this.dateForm.get('transferent').value;
+    if (startPeriod && endPeriod) {
+      this.params2
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getGoods());
+    } else {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Se debe capturar una fecha de periodo inicial y final'
+      );
+    }
+    /*if (transferent) {
       if (startPeriod && endPeriod) {
         this.params2
           .pipe(takeUntil(this.$unSubscribe))
@@ -249,10 +260,10 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'Acción Invalida',
+        'Acción inválida',
         'Se requiere seleccionar una transferente'
       );
-    }
+    }*/
   }
 
   selectAssts(event: any) {
@@ -306,7 +317,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'Acción Invalida',
+        'Acción inválida',
         'Selecciona bienes para el muestreo'
       );
     }
@@ -353,7 +364,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'Acción Invalida',
+        'Acción inválida',
         'Se requiere seleccionar al menos un bien'
       );
     }
@@ -362,7 +373,8 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   uploadImages(): void {
     if (this.listAssetsCopiedSelected.length == 0) {
       this.onLoadToast(
-        'info',
+        'warning',
+        'Acción Inválida',
         'Se tiene que tener seleccionado al menos un registro'
       );
       return;
@@ -398,12 +410,14 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     const code = this.searchForm.get('code').value;
     const nameWarehouse = this.searchForm.get('nameWarehouse').value;
     const address = this.searchForm.get('address').value;
-    const transferent = this.dateForm.get('transferent').value;
+    //const transferent = this.dateForm.get('transferent').value;
 
-    if (id) this.params.getValue()['filter.organizationCode'] = id;
+    if (id) this.params.getValue()['filter.stockSiabNumber'] = id;
     if (code) this.params.getValue()['filter.postalCode'] = code;
-    if (nameWarehouse) this.params.getValue()['filter.name'] = nameWarehouse;
-    if (address) this.params.getValue()['filter.address1'] = address;
+    if (nameWarehouse)
+      this.params.getValue()['filter.name'] = `$ilike:${nameWarehouse}`;
+    if (address)
+      this.params.getValue()['filter.address1'] = `$ilike:${address}`;
     //if (transferent)
     //this.params.getValue()['filter.organizationCode'] = transferent;
 
@@ -418,9 +432,9 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   getCatAlmacenView() {
-    this.params.getValue()[
+    /*this.params.getValue()[
       'filter.regionalDelegation'
-    ] = `$eq:${this.delegationId}`;
+    ] = `$eq:${this.delegationId}`;*/
     const filter = this.params.value;
 
     this.goodsqueryService.getCatStoresView(filter).subscribe({
@@ -431,7 +445,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: error => {
-        this.alert('warning', 'Acción Invalida', 'No se encontraron almacenes');
+        this.alert('warning', 'Sin registros', 'No se encontraron almacenes');
         this.loading = false;
         this.paragraphs = [];
         this.totalItems = 0;
@@ -450,7 +464,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       this.dateForm.get('initialDate').value,
       'yyyy-MM-dd'
     )}T00:00:00.000Z,${this.datePipe.transform(
-      this.dateForm.get('finalPeriod').value,
+      this.dateForm.get('finalDate').value,
       'yyyy-MM-dd'
     )}T23:59:59.999Z`;
     this.params2.getValue()[
@@ -459,7 +473,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       this.dateForm.get('initialDate').value,
       'yyyy-MM-dd'
     )}T00:00:00.000Z,${this.datePipe.transform(
-      this.dateForm.get('finalPeriod').value,
+      this.dateForm.get('finalDate').value,
       'yyyy-MM-dd'
     )}T23:59:59.999Z`;
 
@@ -576,12 +590,12 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
         'YYYY-MM-DD'
       );
 
-      const transferent = this.dateForm.get('transferent').value;
+      //const transferent = this.dateForm.get('transferent').value;
       const params = new BehaviorSubject<ListParams>(new ListParams());
 
       params.getValue()['filter.startDate'] = initialDate;
       params.getValue()['filter.endDate'] = finalDate;
-      params.getValue()['filter.transfereeId'] = `$eq:${transferent}`;
+      //params.getValue()['filter.transfereeId'] = `$eq:${transferent}`;
 
       this.samplingGoodService.getSample(params.getValue()).subscribe({
         next: response => {
@@ -598,7 +612,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
             numeraryInstance: 'INSTANCIA_INICIADA',
             warehouseId: this.storeSelected.organizationCode,
             version: 1,
-            transfereeId: this.dateForm.get('transferent').value,
+            //transfereeId: this.dateForm.get('transferent').value,
           };
 
           this.samplingGoodService.createSample(sample).subscribe({
@@ -783,7 +797,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'Acción Invalida',
+        'Acción inválida',
         'Se requiere seleccionar al menos un bien muestreo'
       );
     }
@@ -834,7 +848,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'Acción Invalida',
+        'Acción inválida',
         'Se requiere seleccionar al menos un bien muestreo'
       );
     }
@@ -869,7 +883,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'Acción Invalida',
+        'Acción inválida',
         'Se requiere seleccionar al menos un bien muestreo'
       );
     }
@@ -949,7 +963,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'Acción Invalida',
+        'Acción inválida',
         'Se requiere seleccionar o deseleccionar una deductiva'
       );
     }
@@ -1011,7 +1025,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'Acción Invalida',
+        'Acción inválida',
         'La deductiva no ha sido seleccionada a el muestreo'
       );
     }
@@ -1073,7 +1087,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
             } else {
               this.alert(
                 'warning',
-                'Acción Invalida',
+                'Acción inválida',
                 'Selecciona una deductiva para continuar'
               );
             }
@@ -1081,14 +1095,14 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
         } else {
           this.alert(
             'warning',
-            'Acción Invalida',
+            'Acción inválida',
             'Todos los bienes deben contar con un resultado de evaluación"'
           );
         }
       } else {
         this.alert(
           'warning',
-          'Acción Invalida',
+          'Acción inválida',
           'Se requiere tener bienes en el muestreo'
         );
       }
