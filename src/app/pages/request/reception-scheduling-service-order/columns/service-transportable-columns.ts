@@ -20,7 +20,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS = {
     title: 'Resultado Evaluación',
     type: 'custom',
     renderComponent: EvaluationSelectFieldComponent,
-    onComponentInitFunction(instance?: any) { },
+    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
   //17.1.5 reporte de implementacion autorizada
@@ -28,7 +28,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS = {
     title: 'No. Recursos No Cumple',
     type: 'custom',
     renderComponent: InputFieldNumComponent,
-    onComponentInitFunction(instance?: any) { },
+    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
   //17.1.5 reporte de implementacion autorizada
@@ -36,7 +36,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS = {
     title: 'Incumplimiento (%)',
     type: 'custom',
     renderComponent: InputFieldNumComponent,
-    onComponentInitFunction(instance?: any) { },
+    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
   description: {
@@ -63,7 +63,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS = {
     class: 'custom',
     filter: false,
     renderComponent: InputFieldComponent,
-    onComponentInitFunction(instance?: any) { },
+    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
 
@@ -74,7 +74,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS = {
     filter: false,
     sort: false,
     renderComponent: InputFieldNumComponent,
-    onComponentInitFunction(instance?: any) { },
+    onComponentInitFunction(instance?: any) {},
   },
 
   resourcesNumber: {
@@ -84,7 +84,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS = {
     filter: false,
     sort: false,
     renderComponent: InputFieldNumComponent,
-    onComponentInitFunction(instance?: any) { },
+    onComponentInitFunction(instance?: any) {},
   },
   //17.1.4 reporte de implementacion enviada
   //17.1.5 reporte de implementacion autorizada
@@ -95,7 +95,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS = {
     filter: false,
     sort: false,
     renderComponent: InputFieldNumComponent,
-    onComponentInitFunction(instance?: any) { },
+    onComponentInitFunction(instance?: any) {},
   },
 
   priceUnitary: {
@@ -118,7 +118,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS = {
     filter: false,
     sort: false,
     renderComponent: InputFieldComponent,
-    onComponentInitFunction(instance?: any) { },
+    onComponentInitFunction(instance?: any) {},
   },
 };
 
@@ -270,7 +270,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE = {
     class: 'custom',
     filter: false,
     renderComponent: InputFieldComponent,
-    onComponentInitFunction(instance?: any) { },
+    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
 
@@ -281,7 +281,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE = {
     filter: false,
     sort: false,
     renderComponent: InputFieldNumComponent,
-    onComponentInitFunction(instance?: any) { },
+    onComponentInitFunction(instance?: any) {},
   },
 
   resourcesNumber: {
@@ -291,7 +291,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE = {
     filter: false,
     sort: false,
     renderComponent: InputFieldNumComponent,
-    onComponentInitFunction(instance?: any) { },
+    onComponentInitFunction(instance?: any) {},
   },
   //17.1.4 reporte de implementacion enviada
   //17.1.5 reporte de implementacion autorizada
@@ -426,7 +426,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_APROVE = {
     class: 'custom',
     filter: false,
     renderComponent: InputFieldNumComponent,
-    onComponentInitFunction(instance?: any) { },
+    onComponentInitFunction(instance?: any) {},
   },
 
   priceUnitary: {
@@ -447,7 +447,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_APROVE = {
     class: 'custom',
     filter: false,
     renderComponent: InputFieldComponent,
-    onComponentInitFunction(instance?: any) { },
+    onComponentInitFunction(instance?: any) {},
   },
 };
 
@@ -457,7 +457,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_VALIDATE = {
     title: 'Resultado Evaluación',
     type: 'custom',
     renderComponent: EvaluationSelectFieldComponent,
-    onComponentInitFunction(instance?: any) { },
+    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
   //17.1.5 reporte de implementacion autorizada
@@ -465,7 +465,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_VALIDATE = {
     title: 'No. Recursos No Cumple',
     type: 'custom',
     renderComponent: InputFieldNumComponent,
-    onComponentInitFunction(instance?: any) { },
+    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
   //17.1.5 reporte de implementacion autorizada
@@ -473,7 +473,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_VALIDATE = {
     title: 'Incumplimiento (%)',
     type: 'custom',
     renderComponent: InputFieldNumComponent,
-    onComponentInitFunction(instance?: any) { },
+    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
 

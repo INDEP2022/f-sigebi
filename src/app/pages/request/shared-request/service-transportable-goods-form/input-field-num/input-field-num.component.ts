@@ -11,9 +11,9 @@ export class InputFieldNumComponent implements ViewCell, OnInit {
   @Input() rowData: any = null;
   @Output() input: EventEmitter<any> = new EventEmitter();
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   changeInput(event: any) {
     this.input.emit({ row: this.rowData, text: this.value });
@@ -28,5 +28,4 @@ export class InputFieldNumComponent implements ViewCell, OnInit {
       e.preventDefault();
     }
   }
-
 }

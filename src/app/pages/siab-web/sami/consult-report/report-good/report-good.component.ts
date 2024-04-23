@@ -10,6 +10,7 @@ import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared';
@@ -39,6 +40,10 @@ export class ReportGoodComponent extends BasePage implements OnInit {
   physicalStatusData = new DefaultSelect(phisycalStatusData);
   userInfo: any;
   delRegUserLog: string = '';
+
+  get path() {
+    return 'good/api/v1/status-good?sortBy=status:ASC';
+  }
   constructor(
     private goodProcessService: GoodProcessService,
     private typeRelevantService: TypeRelevantService,
@@ -49,7 +54,8 @@ export class ReportGoodComponent extends BasePage implements OnInit {
     private stationService: StationService,
     private fb: FormBuilder,
     private goodsQueryService: GoodsQueryService,
-    private programmingService: ProgrammingRequestService
+    private programmingService: ProgrammingRequestService,
+    private goodFinderService: GoodFinderService
   ) {
     super();
     this.settings = {
@@ -70,16 +76,16 @@ export class ReportGoodComponent extends BasePage implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       goodId: [null, [Validators.maxLength(100)]],
-      inventoryNum: [null, [Validators.maxLength(50)]],
+      inventoryNumber: [null, [Validators.maxLength(50)]],
       goodDescription: [null, [Validators.maxLength(100)]],
-      typeRelevantId: [null, [Validators.maxLength(100)]],
-      solicitudId: [null, [Validators.maxLength(50)]],
-      statusGood: [null, [Validators.maxLength(100)]],
+      idRelevantType: [null, [Validators.maxLength(100)]],
+      requestId: [null, [Validators.maxLength(50)]],
+      status: [null, [Validators.maxLength(100)]],
       uniqueKey: [null, [Validators.maxLength(100)]],
-      fileNum: [null, [Validators.maxLength(50)]],
-      unitMeasurement: [null, [Validators.maxLength(100)]],
-      physicalStatus: [null, [Validators.maxLength(100)]],
-      conservationStatus: [null, [Validators.maxLength(50)]],
+      fileNumber: [null, [Validators.maxLength(50)]],
+      measureTlUnitView: [null, [Validators.maxLength(100)]],
+      descriptionPhysicalStatus: [null, [Validators.maxLength(100)]],
+      descriptionConservationStatus: [null, [Validators.maxLength(50)]],
       transferId: [null, [Validators.maxLength(100)]],
     });
   }
@@ -98,49 +104,25 @@ export class ReportGoodComponent extends BasePage implements OnInit {
   getGoodsResDevInv() {
     this.loading = true;
     this.params.getValue()[
-      'filter.regionalDelegationId'
+      'filter.delegationNumber'
     ] = `$eq:${this.delRegUserLog}`;
 
-    this.goodProcessService.goodResDevInv(this.params.getValue()).subscribe({
-      next: response => {
-        const info = response.data.map(async data => {
-          const typeRelevatName: any = await this.getTypeRelevant(
-            data.typeRelevantId
-          );
-
-          const authorityName: any = await this.getAuthorityName(
-            data.authorityId
-          );
-
-          const regDelegationName: any = await this.getRegionalDelName(
-            data.regionalDelegationId
-          );
-          const stateName: any = await this.getStateName(data.stateKey);
-          const transferentName: any = await this.getTransferentName(
-            data.transferId
-          );
-
-          const stationName: any = await this.getStationName(data.stationId);
-          data.relevantTypeName = typeRelevatName;
-          data.authorityName = authorityName;
-          data.delegationName = regDelegationName;
-          data.stateName = stateName;
-          data.transferentName = transferentName;
-          data.stationName = stationName;
-          return data;
-        });
-
-        Promise.all(info).then(data => {
-          this.paragraphs.load(data);
-          this.totalItems = response.count;
-          this.loading = false;
-        });
+    this.goodFinderService.goodFinder(this.params.getValue()).subscribe({
+      next: resp => {
+        this.paragraphs.load(resp.data);
+        this.totalItems = resp.count;
+        this.loading = false;
       },
-      error: () => {},
+      error: error => {
+        this.paragraphs.load([]);
+        this.paragraphs.refresh();
+        this.totalItems = 0;
+        this.loading = false;
+      },
     });
   }
 
-  getTypeRelevant(id: number) {
+  /*getTypeRelevant(id: number) {
     return new Promise((resolve, reject) => {
       this.typeRelevantService.getById(id).subscribe({
         next: response => {
@@ -151,7 +133,7 @@ export class ReportGoodComponent extends BasePage implements OnInit {
         },
       });
     });
-  }
+  }*/
 
   getAuthorityName(id: number) {
     return new Promise((resolve, reject) => {
@@ -265,35 +247,47 @@ export class ReportGoodComponent extends BasePage implements OnInit {
 
   search() {
     const goodId = this.form.get('goodId').value;
-    const inventoryNum = this.form.get('inventoryNum').value;
+    const inventoryNumber = this.form.get('inventoryNumber').value;
     const goodDescription = this.form.get('goodDescription').value;
-    const typeRelevantId = this.form.get('typeRelevantId').value;
-    const solicitudId = this.form.get('solicitudId').value;
-    const statusGood = this.form.get('statusGood').value;
+    const idRelevantType = this.form.get('idRelevantType').value;
+    const requestId = this.form.get('requestId').value;
+    const status = this.form.get('status').value;
     const uniqueKey = this.form.get('uniqueKey').value;
-    const fileNum = this.form.get('fileNum').value;
-    const unitMeasurement = this.form.get('unitMeasurement').value;
-    const physicalStatus = this.form.get('physicalStatus').value;
-    const conservationStatus = this.form.get('conservationStatus').value;
+    const fileNumber = this.form.get('fileNumber').value;
+    const measureTlUnitView = this.form.get('measureTlUnitView').value;
+    const descriptionPhysicalStatus = this.form.get(
+      'descriptionPhysicalStatus'
+    ).value;
+    const descriptionConservationStatus = this.form.get(
+      'descriptionConservationStatus'
+    ).value;
     const transferId = this.form.get('transferId').value;
 
     if (goodId) this.params.getValue()['filter.goodId'] = `$eq:${goodId}`;
-    if (inventoryNum)
-      this.params.getValue()['filter.inventoryNum'] = inventoryNum;
+    if (inventoryNumber)
+      this.params.getValue()['filter.inventoryNumber'] = inventoryNumber;
     if (goodDescription)
-      this.params.getValue()['filter.goodDescription'] = goodDescription;
-    if (typeRelevantId)
-      this.params.getValue()['filter.typeRelevantId'] = typeRelevantId;
-    if (solicitudId) this.params.getValue()['filter.solicitudId'] = solicitudId;
-    if (statusGood) this.params.getValue()['filter.statusGood'] = statusGood;
+      this.params.getValue()[
+        'filter.goodDescription'
+      ] = `$ilike:${goodDescription}`;
+    if (idRelevantType)
+      this.params.getValue()['filter.idRelevantType'] = idRelevantType;
+    if (requestId) this.params.getValue()['filter.requestId'] = requestId;
+    if (status) this.params.getValue()['filter.status'] = `$ilike:${status}`;
     if (uniqueKey) this.params.getValue()['filter.uniqueKey'] = uniqueKey;
-    if (fileNum) this.params.getValue()['filter.fileNum'] = fileNum;
-    if (unitMeasurement)
-      this.params.getValue()['filter.unitMeasurement'] = unitMeasurement;
-    if (physicalStatus)
-      this.params.getValue()['filter.physicalStatus'] = physicalStatus;
-    if (conservationStatus)
-      this.params.getValue()['filter.conservationStatus'] = conservationStatus;
+    if (fileNumber) this.params.getValue()['filter.fileNumber'] = fileNumber;
+    if (measureTlUnitView)
+      this.params.getValue()[
+        'filter.measureTlUnitView'
+      ] = `$eq:${measureTlUnitView}`;
+    if (descriptionPhysicalStatus)
+      this.params.getValue()[
+        'filter.descriptionPhysicalStatus'
+      ] = `$ilike:${descriptionPhysicalStatus}`;
+    if (descriptionConservationStatus)
+      this.params.getValue()[
+        'filter.descriptionConservationStatus'
+      ] = `$ilike:${descriptionConservationStatus}`;
     if (transferId) {
       this.params.getValue()['filter.transferId'] = `$eq:${transferId}`;
     }
@@ -313,6 +307,15 @@ export class ReportGoodComponent extends BasePage implements OnInit {
   }
 
   async reportGoods() {
+    const formValues = this.form.getRawValue();
+
+    const infoForm = Object.values(formValues).some(value => !!value);
+
+    if (!infoForm) {
+      this.alert('warning', 'Advertencia', 'Realice al menos un filtro');
+      return;
+    }
+
     this.loadingReport = true;
     const params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -326,7 +329,17 @@ export class ReportGoodComponent extends BasePage implements OnInit {
           this.downloadExcel(response.base64File, 'Reporte_Bienes.xlsx');
           this.loadingReport = false;
         },
-        error: () => {},
+        error: error => {
+          if (error.message == 'Invalid array length') {
+            this.alert(
+              'warning',
+              'No se puede generar archivo Excel',
+              'Disminuya la cantidad de bienes a exportar'
+            );
+
+            this.alert('warning', 'No se puede generar archivo Excel', '');
+          }
+        },
       });
     } else {
       this.alert(
