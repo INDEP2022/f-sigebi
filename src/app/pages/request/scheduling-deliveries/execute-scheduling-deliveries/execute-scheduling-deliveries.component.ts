@@ -1613,11 +1613,11 @@ export class ExecuteSchedulingDeliveriesComponent
 
     let config: ModalOptions = {
       initialState: {
-        requestId: this.programmingId,
-        reportId: '218',
-        idSample: this.programmingId,
-        contentId: '',
-        typeAnnex: typeAnnex,
+        //requestId: this.programmingId,
+        //reportId: '218',
+        //idSample: this.programmingId,
+        //contentId: '',
+        // typeAnnex: typeAnnex,
         nameSignatoryRuling,
         postSignatoryRuling,
         typeSign,
@@ -1649,7 +1649,7 @@ export class ExecuteSchedulingDeliveriesComponent
     let token = this.authService.decodeToken();
     let today = new Date();
 
-    let idTypeDoc = '345';
+    let idTypeDoc = '218';
     let readOnly = false;
 
     const typeAnnex = 'approval-request';
