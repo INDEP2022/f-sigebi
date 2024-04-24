@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -53,6 +53,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   @Input() get address() {
     return this.dataService.address;
   }
+  @ViewChild('dateOfResolutionInput') dateOfResolutionInput: ElementRef;
   set address(value) {
     const list = [];
     // //
@@ -213,6 +214,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   set showLote(value) {
     this.dataService.showLote = value;
+  }
+
+  public checkConditionAndBlur(): void {
+    this.dateOfResolutionInput.nativeElement.blur();
   }
 
   private getBody() {
@@ -968,6 +973,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   private async getDocuments(addNumexp = false) {
+    console.log('getDocuments');
     let filterParams = new FilterParams();
     filterParams.addFilter(
       'id',
@@ -988,6 +994,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         SearchFilter.NULL
       );
     }
+    console.log('Llega aquí');
     let documents = await firstValueFrom(
       this.documentService.getAll(filterParams.getParams()).pipe(
         take(1),
@@ -997,6 +1004,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         })
       )
     );
+    console.log('Documents: ', documents);
     return documents;
   }
 
@@ -1005,7 +1013,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     let documents = await this.getDocuments();
     if (!documents) {
       this.loader.load = false;
-      this.alert('error', 'No a escaneado los documentos', '');
+      this.alert('error', 'Falta escanear los documentos', '');
       return;
     }
     // if (this.address !== 'M') {
@@ -1016,6 +1024,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     //     return;
     //   }
     // }
+    console.log('Documento en modal: ', documents);
     this.expenseGoodProcessService
       .replyFolio({
         goodArray: this.dataService.dataCompositionExpenses
@@ -1031,6 +1040,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: response => {
+          console.log(response);
           let config: ModalOptions = {
             initialState: {
               asunto: 'Cancelación de Venta ' + this.provider,
@@ -1058,7 +1068,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   async notify() {
-    // console.log('Notificar');
+    console.log('Notificar');
     if (this.dataService.formaModificada()) {
       return;
     }

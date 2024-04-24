@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -38,53 +38,55 @@ export class ReturnConfiscationPropertyComponent
   }
   private prepareForm() {
     this.returnConfiscationForm = this.fb.group({
-      delegation: [null, [Validators.required]],
-      subdelegation: [null, [Validators.required]],
-      ofTheGood: [null, Validators.required],
-      toGood: [null, Validators.required],
-      receiptDateOf: [null, Validators.required],
-      receptionDateTo: [null, Validators.required],
-      movementType: [null, Validators.required],
+      delegation: [null, []],
+      subdelegation: [null, []],
+      ofTheGood: [null],
+      toGood: [null],
+      receiptDateOf: [null],
+      receptionDateTo: [null],
+      movementType: [null],
     });
   }
 
   seleccionarSubDelegacion(subdelegacion: any) {
     console.log('object ', subdelegacion);
-    this.descripcion = subdelegacion.description;
-    this.idsubdelegation = subdelegacion.id;
+    if (subdelegacion)
+      (this.descripcion = subdelegacion.description),
+        (this.idsubdelegation = subdelegacion.id);
+    else (this.descripcion = null), (this.idsubdelegation = null);
   }
   seleccionarDelegation(event: IDelegation) {
-    console.log('event ', event);
-    this.iddelegation = event.id;
-    console.log('delegation ', event, 'this.iddelegation ', this.iddelegation);
+    if (event) this.iddelegation = event.id;
+    else this.iddelegation = null;
   }
 
   validaGood() {
-    let good1 = this.returnConfiscationForm.get('ofTheGood').value;
-    let good2 = this.returnConfiscationForm.get('toGood').value;
-    this.GoodService.getGoodByNoGood(good1).subscribe({
-      next: response => {
-        this.GoodService.getGoodByNoGood(good2).subscribe({
-          next: response => {
-            this.PupLanzaReporte();
-          },
-          error: err => {
-            this.alert(
-              'error',
-              'Error',
-              'El No. de Bien Final no Existe, Favor de Verificar.'
-            );
-          },
-        });
-      },
-      error: err => {
-        this.alert(
-          'error',
-          'Error',
-          'El No. de Bien Inicial no Existe, Favor de Verificar.'
-        );
-      },
-    });
+    this.PupLanzaReporte();
+    // let good1 = this.returnConfiscationForm.get('ofTheGood').value;
+    // let good2 = this.returnConfiscationForm.get('toGood').value;
+    // this.GoodService.getGoodByNoGood(good1).subscribe({
+    //   next: response => {
+    //     this.GoodService.getGoodByNoGood(good2).subscribe({
+    //       next: response => {
+    //         this.PupLanzaReporte();
+    //       },
+    //       error: err => {
+    //         this.alert(
+    //           'error',
+    //           'Error',
+    //           'El No. de Bien Final no Existe, Favor de Verificar.'
+    //         );
+    //       },
+    //     });
+    //   },
+    //   error: err => {
+    //     this.alert(
+    //       'error',
+    //       'Error',
+    //       'El No. de Bien Inicial no Existe, Favor de Verificar.'
+    //     );
+    //   },
+    // });
   }
 
   PupLanzaReporte() {
@@ -100,19 +102,21 @@ export class ReturnConfiscationPropertyComponent
         : null;
     const formattedfecHasta = Hasta != null ? this.formatDate(Hasta) : null;
 
-    let params = {
-      pn_delegation: this.iddelegation,
-      pn_subdelegation: this.idsubdelegation,
-      pn_nobien_ini: this.returnConfiscationForm.get('ofTheGood').value,
-      pn_nobien_fin: this.returnConfiscationForm.get('toGood').value,
-      para_desde: formattedfecDesde,
-      para_hasta: formattedfecHasta,
-      para_tipo_devolucion:
-        this.returnConfiscationForm.get('movementType').value,
-    };
+    let params: any = {};
+    if (this.iddelegation) params.PN_DELEGACION = this.iddelegation;
+    if (this.idsubdelegation) params.PN_SUBDELEGACION = this.idsubdelegation;
+    if (this.returnConfiscationForm.get('ofTheGood').value)
+      params.PN_NOBIEN_INI = this.returnConfiscationForm.get('ofTheGood').value;
+    if (this.returnConfiscationForm.get('toGood').value)
+      params.PN_NOBIEN_FIN = this.returnConfiscationForm.get('toGood').value;
+    if (formattedfecDesde) params.PARA_DESDE = formattedfecDesde;
+    if (formattedfecHasta) params.PARA_HASTA = formattedfecHasta;
+    if (this.returnConfiscationForm.get('movementType').value)
+      params.PARA_TIPO_DEVOLUCION =
+        this.returnConfiscationForm.get('movementType').value;
     console.log('params ', params);
     //reporte RGERADBDEVDECBIEN
-    this.siabService.fetchReport('blank', params).subscribe({
+    this.siabService.fetchReport('RGERADBDEVDECBIEN', params).subscribe({
       next: res => {
         if (res !== null) {
           const blob = new Blob([res], { type: 'application/pdf' });

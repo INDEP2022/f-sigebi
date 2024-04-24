@@ -5,10 +5,14 @@ import { BehaviorSubject, of, takeUntil } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { FilterParams, ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IProgrammingDeliveryGood } from 'src/app/core/models/good-programming/programming-delivery-good.model';
 import { IGoodInvAvailableView } from 'src/app/core/models/ms-goodsinv/goodsinv.model';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { CertificatesDeliveryService } from 'src/app/core/services/ms-delivery-constancy/certificates-delivery.service';
@@ -21,7 +25,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { JSON_TO_CSV } from 'src/app/pages/admin/home/constants/json-to-csv';
 import { IprogrammingDelivery } from 'src/app/pages/siab-web/sami/receipt-generation-sami/receipt-table-goods/ireceipt';
 import Swal from 'sweetalert2';
-import { OrderSignatureModalComponent } from '../../reception-scheduling-service-order/components/service-order-signature-modal/order-signature-modal.component';
 import { TypeSignatureModalComponent } from '../../reception-scheduling-service-order/components/type-signature-modal/type-signature-modal..component';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
@@ -37,9 +40,8 @@ import {
   PROG_DELIVERY_GOOD_NO_DELIVERED,
   PROG_DELIVERY_GOOD_TYPE_REST_COLUMNS,
 } from './columns/good-delivery-columns';
-import { ShowSchedulingReportComponentComponent } from './show-scheduling-report-component/show-scheduling-report-component.component';
-import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { EntregaSignatureModalComponent } from './entrega-signature-modal/entrega-signature-modal.component';
+import { ShowSchedulingReportComponentComponent } from './show-scheduling-report-component/show-scheduling-report-component.component';
 
 @Component({
   selector: 'app-execute-scheduling-deliveries',
@@ -48,7 +50,8 @@ import { EntregaSignatureModalComponent } from './entrega-signature-modal/entreg
 })
 export class ExecuteSchedulingDeliveriesComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   @ViewChild('table', { static: false }) table: any;
   @ViewChild('table2', { static: false }) table2: any;
   @ViewChild('tablePEGNE', { static: false }) tablePEGNE: any;
@@ -147,7 +150,6 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   async ngOnInit(): Promise<void> {
-
     this.programmingId = this.activeRouter.snapshot.params['id'];
 
     this.taskInfo = await this.getTask();
@@ -1040,7 +1042,7 @@ export class ExecuteSchedulingDeliveriesComponent
         next: (resp: any) => {
           resolve(resp.data);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -1392,7 +1394,7 @@ export class ExecuteSchedulingDeliveriesComponent
               'Se han actualizado los bienes'
             );
           },
-          error: () => { },
+          error: () => {},
         });
     }
   }
@@ -1434,10 +1436,10 @@ export class ExecuteSchedulingDeliveriesComponent
           'warning',
           'Acción Invalida',
           'El bien ' +
-          good.goodId +
-          '-' +
-          good.inventoryNumber +
-          ' debe tener asignado un tipo de restitución'
+            good.goodId +
+            '-' +
+            good.inventoryNumber +
+            ' debe tener asignado un tipo de restitución'
         );
         error = true;
         break;
@@ -1499,10 +1501,10 @@ export class ExecuteSchedulingDeliveriesComponent
           'warning',
           'Acción Invalida',
           'El bien ' +
-          good.goodId +
-          '-' +
-          good.inventoryNumber +
-          ' debe tener una restitución en especie'
+            good.goodId +
+            '-' +
+            good.inventoryNumber +
+            ' debe tener una restitución en especie'
         );
         error = true;
         break;
@@ -1557,8 +1559,8 @@ export class ExecuteSchedulingDeliveriesComponent
           infoProgramming
         )
         .subscribe({
-          next: async response => { },
-          error: () => { },
+          next: async response => {},
+          error: () => {},
         });
     }
 
@@ -1584,7 +1586,7 @@ export class ExecuteSchedulingDeliveriesComponent
           return;
         }
       });
-    } catch (error) { }
+    } catch (error) {}
   }
 
   claimmingForm() {
@@ -1597,7 +1599,7 @@ export class ExecuteSchedulingDeliveriesComponent
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -1611,11 +1613,11 @@ export class ExecuteSchedulingDeliveriesComponent
 
     let config: ModalOptions = {
       initialState: {
-        requestId: this.programmingId,
-        reportId: '218',
-        idSample: this.programmingId,
-        contentId: '',
-        typeAnnex: typeAnnex,
+        //requestId: this.programmingId,
+        //reportId: '218',
+        //idSample: this.programmingId,
+        //contentId: '',
+        // typeAnnex: typeAnnex,
         nameSignatoryRuling,
         postSignatoryRuling,
         typeSign,
@@ -1647,7 +1649,7 @@ export class ExecuteSchedulingDeliveriesComponent
     let token = this.authService.decodeToken();
     let today = new Date();
 
-    let idTypeDoc = '345';
+    let idTypeDoc = '218';
     let readOnly = false;
 
     const typeAnnex = 'approval-request';
@@ -1806,8 +1808,8 @@ export class ExecuteSchedulingDeliveriesComponent
               infoProgramming
             )
             .subscribe({
-              next: response => { },
-              error: error => { },
+              next: response => {},
+              error: error => {},
             });
           this.loading = true;
           this.programmingId = this.programmingDetailPanel.id;
@@ -1933,8 +1935,8 @@ export class ExecuteSchedulingDeliveriesComponent
               infoProgramming
             )
             .subscribe({
-              next: response => { },
-              error: error => { },
+              next: response => {},
+              error: error => {},
             });
           this.loading = true;
           this.programmingId = this.programmingDetailPanel.id;
@@ -2035,8 +2037,8 @@ export class ExecuteSchedulingDeliveriesComponent
               infoProgramming
             )
             .subscribe({
-              next: response => { },
-              error: error => { },
+              next: response => {},
+              error: error => {},
             });
           this.loading = true;
           this.programmingId = this.programmingDetailPanel.id;
@@ -2094,7 +2096,7 @@ export class ExecuteSchedulingDeliveriesComponent
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -2118,8 +2120,8 @@ export class ExecuteSchedulingDeliveriesComponent
               infoProgramming
             )
             .subscribe({
-              next: response => { },
-              error: error => { },
+              next: response => {},
+              error: error => {},
             });
           this.loading = true;
           this.programmingId = this.programmingDetailPanel.id;

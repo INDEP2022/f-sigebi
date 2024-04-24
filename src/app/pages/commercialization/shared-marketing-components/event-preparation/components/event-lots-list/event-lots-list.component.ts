@@ -61,6 +61,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   @Input() viewRejectedGoods: boolean;
   @Output() viewRejectedGoodsChange = new EventEmitter<boolean>();
   @Output() fillStadistics = new EventEmitter<void>();
+  @Output() goodsLotifyControl = new EventEmitter<boolean>();
   @ViewChild('validFileInput', { static: true })
   validFileInput: ElementRef<HTMLInputElement>;
   totalItems = 0;
@@ -130,17 +131,36 @@ export class EventLotsListComponent extends BasePage implements OnInit {
         changes['change'].currentValue
       );
     }
+
+    if (changes['params']) {
+      console.log('params', this.params.getValue());
+    }
   }
+
+  /* override ngOnDestroy(): void {
+    console.log('Se destruyó la lista de eventos');
+    if (this.params) {
+      this.params.unsubscribe();
+    }
+  } */
 
   ngOnInit(): void {
     console.log('Se inicializó la lista de eventos');
-    this.refreshTable();
+    console.log('params: ', this.params.getValue());
+    if (!this.viewRejectedGoods) {
+      this.params = new BehaviorSubject(new FilterParams());
+    }
     this.subscribe();
-
-    // this.returnTracker(); //!Se está realizando en otro lado y se cicla
+    this.refreshTable();
   }
 
   subscribe() {
+    this.params
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(params => this.getLots(params).subscribe())
+      )
+      .subscribe();
     this.eventPreparationService.$refreshLots
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -151,12 +171,6 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       )
       .subscribe();
     this.columnsFilter().subscribe();
-    this.params
-      .pipe(
-        takeUntil(this.$unSubscribe),
-        tap(params => this.getLots(params).subscribe())
-      )
-      .subscribe();
   }
 
   returnTracker() {
@@ -283,6 +297,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   }
 
   getLots(params: FilterParams) {
+    console.log('Se ejecutó get Lots');
     this.onSelectLot.emit(null);
     this.loading = true;
     const { id } = this.controls;
@@ -735,5 +750,10 @@ export class EventLotsListComponent extends BasePage implements OnInit {
         map(resp => resp.count ?? 0)
       )
     );
+  }
+
+  goodsLotifyFunction(e: any) {
+    console.log(e);
+    this.getLots(this.params.getValue()).subscribe();
   }
 }

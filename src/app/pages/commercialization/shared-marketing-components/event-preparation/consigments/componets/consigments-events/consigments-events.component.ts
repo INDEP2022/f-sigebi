@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BehaviorSubject,
@@ -44,13 +51,34 @@ export class ConsigmentsEventsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('Se llamó?');
+
+    this.getEvents(this.params.getValue()).subscribe();
     this.columnsFilter().subscribe();
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
-        tap(params => this.getEvents(params).subscribe())
+        tap(params => {
+          console.log('Parametros desde: ', params);
+          this.getEvents(params).subscribe();
+        })
       )
       .subscribe();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['parameters']) {
+      console.log('parameters', this.parameters);
+    }
+
+    if (changes['preparation']) {
+      console.log('preparation', this.preparation);
+      this.getEvents(this.params.getValue()).subscribe();
+    }
+
+    if (changes['eventSelected']) {
+      console.log('eventSelected', this.eventSelected);
+    }
   }
 
   columnsFilter() {
@@ -72,6 +100,15 @@ export class ConsigmentsEventsComponent extends BasePage implements OnInit {
         if (!filter.search) {
           return;
         }
+
+        if (filter.field === 'eventDate') {
+          return;
+        }
+
+        if (filter.field === 'address') {
+          return;
+        }
+
         params.addFilter(
           filter.field,
           filter.search,
@@ -81,21 +118,35 @@ export class ConsigmentsEventsComponent extends BasePage implements OnInit {
       this.params.next(params);
     }
   }
+
   getEvents(params: FilterParams) {
     this.loading = true;
-    params.addFilter('address', this.parameters.pDirection);
-    params.addFilter('eventTpId', this.preparation ? 10 : 6);
+    const paramsF = new FilterParams();
+    console.log('Se llamo la lista de eventos');
+    paramsF.addFilter('address', this.parameters.pDirection);
+    paramsF.addFilter('eventTpId', this.preparation ? 10 : 6);
+
+    paramsF.page = params.page;
+    paramsF.limit = params.limit;
 
     for (const key in params.filters) {
       const str = params.filters[key];
       const subStr = 'filter.catDelegation';
       const newSubStr = 'filter.catDelegation.description';
       if (str.includes(subStr)) {
-        params.filters[key] = str.replace(subStr, newSubStr);
+        paramsF.filters[key] = str.replace(subStr, newSubStr);
+      }
+
+      if (
+        !params.filters[key].includes('filter.address') &&
+        !params.filters[key].includes('filter.eventTpId')
+      ) {
+        paramsF.addFilter2(params.filters[key]);
       }
     }
-    console.log(params);
-    return this.comerEventService.getEatEvents(params.getParams()).pipe(
+
+    console.log('Parametros en eventos: ', params);
+    return this.comerEventService.getEatEvents(paramsF.getParams()).pipe(
       catchError(error => {
         this.loading = false;
         this.events.load([]);
@@ -105,7 +156,7 @@ export class ConsigmentsEventsComponent extends BasePage implements OnInit {
       }),
       tap(response => {
         this.loading = false;
-        console.log(response.data);
+        console.log('Respuesta de lista de eventos: ', response);
 
         this.events.load(response.data);
         this.events.refresh();

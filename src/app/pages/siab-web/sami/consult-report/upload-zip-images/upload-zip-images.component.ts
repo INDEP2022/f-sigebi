@@ -85,6 +85,8 @@ export class UploadZipImagesComponent extends BasePage implements OnInit {
       });
 
       if (filterData.length == entries.length) {
+        console.log(filterData);
+        console.log(entries);
         let result = entries.map(async (entrie, index) => {
           const blob = await entrie.getData(new BlobWriter());
           const formData = {
@@ -105,14 +107,20 @@ export class UploadZipImagesComponent extends BasePage implements OnInit {
               entrie.filename
             )
             .subscribe({
-              next: data => {},
-              error: () => {},
+              next: data => {
+                Promise.all(result).then(resp => {
+                  this.modalRef.content.callback(true);
+                  this.close();
+                });
+              },
+              error: error => {
+                this.alert(
+                  'warning',
+                  `No se pudo agregar la imagen ${entrie.filename}`,
+                  'Favor de intentar más tarde'
+                );
+              },
             });
-        });
-
-        Promise.all(result).then(resp => {
-          this.modalRef.content.callback(true);
-          this.close();
         });
       } else {
         this.alert(

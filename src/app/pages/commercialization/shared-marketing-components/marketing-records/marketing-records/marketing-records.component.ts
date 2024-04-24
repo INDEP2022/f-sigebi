@@ -403,8 +403,8 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     } else if (portafolio == null) {
       this.alertQuestion(
         'info',
-        'El portafolio está vacío, debe ingresarlo!',
-        '',
+        'El portafolio está vacío',
+        '¿Desea ingresarlo manualmente?',
         'Aceptar',
         'Cancelar'
       ).then(res => {
@@ -2962,7 +2962,10 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
           this.goods.push(param);
         });
 
-        this.totalGoods = response.count;
+        console.log(response);
+        console.log(response.data);
+        console.log(response.data.length);
+        this.totalGoods = response.data.length;
         this.localGoods.load(this.goods);
         //FALTA
         /*

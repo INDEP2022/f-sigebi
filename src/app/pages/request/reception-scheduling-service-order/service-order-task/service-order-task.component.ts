@@ -299,7 +299,6 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
       .getAllOrderService(params)
       .pipe(
         catchError((e: any) => {
-
           this.createOrderService();
 
           if (e.status == 400) return of({ data: [], count: 0 });
@@ -371,7 +370,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         if (alert)
           this.onLoadToast(
             'success',
-            'La orden de servicio se guardada correctamente',
+            'La orden de servicio se guardo correctamente',
             ''
           );
       },
@@ -386,13 +385,12 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
   }
 
   createOrderService() {
-
     let request = {
-      "serviceOrderStatus": "NUEVA",
-      "serviceOrderFolio": this.programming.folio,
-      "serviceOrderType": "ORDEN_SERVICIO_REPORTE_IMPLEMENTACION",
-      "programmingId": this.programmingId,
-    }
+      serviceOrderStatus: 'NUEVA',
+      serviceOrderFolio: this.programming.folio,
+      serviceOrderType: 'ORDEN_SERVICIO_REPORTE_IMPLEMENTACION',
+      programmingId: this.programmingId,
+    };
 
     this.orderService.createOrderService(request).subscribe({
       next: resp => {
@@ -655,7 +653,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
     //const readOnly = this.requestInfo.detail.version == "1";
 
     this.btnAprobar = true;
-    this.btnRechazar = false;
+    this.btnRechazar = true;
 
     let config: ModalOptions = {
       initialState: {
@@ -996,7 +994,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -1012,7 +1010,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -1048,9 +1046,6 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
           });
 
           this.openFirma(name, charge, typeSign);
-
-
-
 
           //Actualizar la orden de servicio con los datos de la firma
           //this.updateOrderService(responsibleSae, saePosition, typeSign);

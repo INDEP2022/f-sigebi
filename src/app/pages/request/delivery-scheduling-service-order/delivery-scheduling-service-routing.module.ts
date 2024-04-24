@@ -23,7 +23,7 @@ const routes: Routes = [
   {
     path: 'capture-service-order/:id',
     component: CaptureServiceOrderFormComponent,
-    data: { title: 'Captura Órden de Servicio' },
+    data: { title: 'Captura orden de Servicio' },
   },
   {
     path: 'validate-service-order/:id',

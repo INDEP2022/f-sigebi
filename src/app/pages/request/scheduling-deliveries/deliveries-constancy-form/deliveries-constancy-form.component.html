@@ -218,6 +218,7 @@
                 type="text"
                 class="form-control"
                 #dp="bsDatepicker"
+                formControlName="writedate"
                 bsDatepicker />
             </form-field>
           </div>
@@ -239,7 +240,7 @@
                 type="text"
                 class="form-control"
                 #dp="bsDatepicker"
-                formControlName="oficioDate" 
+                formControlName="oficioDate"
                 bsDatepicker />
             </form-field>
           </div>
@@ -639,7 +640,9 @@
                 (click)="showRepLegar = true"
                 *ngIf="!showRepLegar">
                 <i class="fa fa-angle-right" aria-hidden="true"></i>
-                <span *ngIf="typeEvent == 5">Representante Legal Empresa</span>
+                <span *ngIf="typeEvent == 5 || typeEvent == 1"
+                  >Representante Legal Empresa</span
+                >
                 <span *ngIf="typeEvent == 2"
                   >Representante Legal Donatario</span
                 >
@@ -658,7 +661,9 @@
                 (click)="showRepLegar = false"
                 *ngIf="showRepLegar">
                 <i class="fa fa-angle-down" aria-hidden="true"></i>
-                <span *ngIf="typeEvent == 1">Representante Legal Empresa</span>
+                <span *ngIf="typeEvent == 5 || typeEvent == 1"
+                  >Representante Legal Empresa</span
+                >
                 <span *ngIf="typeEvent == 2"
                   >Representante Legal Donatario</span
                 >

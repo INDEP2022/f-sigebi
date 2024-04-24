@@ -198,9 +198,11 @@
                 [control]="dateOfResolution"
                 label="Fecha de Resolución">
                 <input
+                  #dateOfResolutionInput
                   class="form-control"
                   ngModel
                   bsDatepicker
+                  [bsConfig]="{ adaptivePosition: true }"
                   formControlName="dateOfResolution"
                   onkeydown="return false" />
               </form-field>

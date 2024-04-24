@@ -26,13 +26,12 @@
 
             <confirm-button
               *ngIf="process != 'electronica' && !readOnly"
-              class="btn btn-primary btn-sm active"
               [text]="btnTitle"
               [loadingText]="'Cargando'"
               [loading]="loadSingnatures"
               [btnSmall]="true"
-              (click)="uploadReport()">
-              <i class="bx bx-edit-alt"></i>{{ btnTitle }}
+              [icon]="'bx bx-edit-alt'"
+              (confirm)="uploadReport()">
             </confirm-button>
           </div>
         </div>

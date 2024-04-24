@@ -57,6 +57,19 @@ export class ConsigmentsContainerComponent
       this.title = this.preparation
         ? 'Evento de Preparación'
         : 'Evento de Remesas';
+      console.log('Evento de preparación: ', this.preparation);
+    }
+
+    if (changes['parentLot']) {
+      console.log('Lote seleccionado: ', this.parentLot);
+    }
+
+    if (changes['eventForm']) {
+      console.log('Formulario de evento: ', this.eventForm);
+    }
+
+    if (changes['parameters']) {
+      console.log('Parametros: ', this.parameters);
     }
   }
 
@@ -67,6 +80,7 @@ export class ConsigmentsContainerComponent
   }
 
   confirm(goods: IComerGoodXLot[]) {
+    console.log('Es preparación? ', this.preparation);
     if (!this.preparation) {
       this.onAcceptConsigment(goods).subscribe();
     } else {
@@ -125,10 +139,12 @@ export class ConsigmentsContainerComponent
       })
       .pipe(
         catchError(error => {
+          console.log('Error: ', error);
           this.alert('error', 'Error', UNEXPECTED_ERROR);
           return throwError(() => error);
         }),
-        tap(() => {
+        tap(response => {
+          console.log('Respuesta: ', response);
           this.exit.emit({ refresh: true, preparation: this.preparation });
         })
       );
