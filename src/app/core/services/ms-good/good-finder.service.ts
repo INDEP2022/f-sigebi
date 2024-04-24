@@ -85,4 +85,14 @@ export class GoodFinderService extends HttpService {
   goodFinder3(params?: ListParams | string): Observable<IListResponse<IGood>> {
     return this.get<IListResponse<IGood>>(GoodFinderEndpoint.GoodQuery, params);
   }
+
+  goodFinderJoin(params?: _Params) {
+    const route = GoodFinderEndpoint.GoodQueryJoin;
+    return this.get(route, params);
+  }
+
+  goodFinderJoinCsv(params?: _Params) {
+    const route = GoodFinderEndpoint.GoodQueryJoinCsv;
+    return this.get(route, params);
+  }
 }
