@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -32,7 +33,7 @@ export class PartializationGoodsDonationComponent
   delegation: string;
   good: any;
   classif: boolean = false;
-
+  screem: string;
   constructor(
     private fb: FormBuilder,
     private goodService: GoodService,
@@ -41,7 +42,8 @@ export class PartializationGoodsDonationComponent
     private screenStatusService: ScreenStatusService,
     private goodprocessService: GoodprocessService,
     private historyGoodService: HistoryGoodService,
-    private authService: AuthService
+    private authService: AuthService,
+    private route: ActivatedRoute
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -51,6 +53,15 @@ export class PartializationGoodsDonationComponent
   ngOnInit(): void {
     this.initForm();
     this.getuser();
+    this.route.queryParams.subscribe(params => {
+      if (params['good'] != undefined && params['screem'] != undefined) {
+        this.form.controls['goodNumb'].setValue(params['good']);
+        this.screem = params['screem'];
+        this.loadGood();
+      } else {
+        this.screem = this.screem;
+      }
+    });
   }
 
   initForm() {
@@ -89,7 +100,7 @@ export class PartializationGoodsDonationComponent
     let descriptionGood: any = null;
     let classgood: any = 0;
     let cvePantalla = {
-      pScreemKey: 'FACTGENPARCDON',
+      pScreemKey: this.screem,
     };
     this.goodprocessService.getGoodByScreeen(good, cvePantalla).subscribe({
       next: response => {
@@ -102,14 +113,19 @@ export class PartializationGoodsDonationComponent
           next: resp => {
             console.log('Response status ', resp);
             descriptionGood = resp.data[0].description;
-            this.searchStatus('FACTGENPARCDON', status);
+            this.searchStatus(this.screem, status);
             this.searchClasif(response, descriptionGood, classgood, good);
           },
           error: err => {
+            this.form.reset();
             this.searchClasif(response, descriptionGood, classgood, good);
-            this.searchStatus('FACTGENPARCDON', status);
+            this.searchStatus(this.screem, status);
           },
         });
+      },
+      error: err => {
+        this.form.reset();
+        this.alert('warning', 'No se encontro el Bien', '');
       },
     });
   }
@@ -193,7 +209,7 @@ export class PartializationGoodsDonationComponent
     let vestatus: any;
     let vestatus1: any;
     let vaccion: any;
-    let vc_pantalla: any = 'FACTGENPARCDON';
+    let vc_pantalla: any = this.screem;
     let vn_bien_new: any;
     let vobserv_padre: any;
     let vobservaciones: any;

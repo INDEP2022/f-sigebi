@@ -118,6 +118,10 @@ const routes: Routes = [
       import('./donation-processes/donation-processes.module').then(
         m => m.DonationProcessesModule
       ),
+    data: {
+      title: 'Procesos de donación',
+      screen: 'FPROCDONACIONES',
+    },
   },
 ];
 
