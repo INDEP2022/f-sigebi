@@ -722,6 +722,11 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   onFileChange(event: any) {
+    const files = (event.target as HTMLInputElement).files;
+    console.log(
+      'const files = (event.target as HTMLInputElement).files;',
+      files
+    );
     this.loadingBtn2 = true;
     console.log('Ejecutando: OnFileChange');
     if (this.form.controls['eventId'].value != null) {
@@ -781,8 +786,13 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
                 this.readExcel(fileReader.result);
                 (event.target as HTMLInputElement).value = '';
               };
-            } else return;
+            } else {
+              this.loadingBtn2 = false;
+            }
+            return;
           });
+        } else {
+          this.loadingBtn2 = false;
         }
       });
     }
@@ -792,6 +802,18 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     try {
       this.data = this.excelService.getData<IExcelToJson>(binaryExcel);
       this.numRecordsCsv = this.data.length;
+      console.log('this.data', this.data);
+      console.log('this.numRecordsCsv', this.numRecordsCsv);
+
+      if (this.numRecordsCsv == 0) {
+        this.onLoadToast(
+          'error',
+          'Archivo sin registros',
+          'No existe información a insertar'
+        );
+        this.loadingBtn2 = false;
+        return;
+      }
       //Verificar que el archivo sea correcto
       //Subir archivo
       this.uploadToTpmLcComer(this.numRecordsCsv, this.data);
