@@ -122,36 +122,45 @@ export class NotifyComponent extends BasePage implements OnInit {
       V_TOTAL_B +
       '  Por lo que esta venta queda cancelada, esto con el fin de que se realicen las acciones correspondientes por cada área.';
     // this.alert('warning', 'Esta función aún no ha sido habilitada', '');
-    console.log(this.form.get('para'), this.form.get('cc'));
+    console.log(this.form.get('para').value, this.form.get('cc').value);
     console.log(message);
 
-    /* const body: any = {
-      header: 'aetiru@gmail.com',
-      // destination: PARA ?? [],
-      destination: ['dgm3036@gmail.com'],
-      copy: [],
-      subject: this.form.get('asunto').value,
-      message: message,
-    }; */
+    if (this.form.get('para').value.length === 0) {
+      this.alert(
+        'warning',
+        'Para',
+        'Debe seleccionar al menos un destinatario'
+      );
+      return;
+    }
 
     const body: any = {
-      sender: 'aetiru@gmail.com',
-      recipients: 'dgm3036@gmail.com',
-      cc: '',
-      bcc: '',
+      emails_send: this.form.get('para').value.join(','),
+      emails_cc: this.form.get('cc').value.join(','),
       subject: this.form.get('asunto').value,
-      message: message,
-      typeText: '1',
-      shippingInd: 1,
-      mailOrigin: 'dgm3036@gmail.com',
+      template: message,
     };
 
-    this.emailService.sendGenericMail(body).subscribe(
+    console.log(body.emails_send);
+    console.log(body.emails_send);
+
+    this.emailService.sendEmailFormData(body).subscribe(
       res => {
         console.log(res);
+        this.alert(
+          'success',
+          'Correo enviado',
+          'El correo ha sido enviado correctamente'
+        );
+        this.modalRef.hide();
       },
       err => {
         console.log(err);
+        this.alert(
+          'error',
+          'Error al enviar correo',
+          'Ocurrió un error al enviar el correo'
+        );
       }
     );
   }

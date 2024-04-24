@@ -143,7 +143,7 @@ export class EntryOrdersComponent
         catchError(x => of({ data: null, message: x })),
         map(x => {
           if (!x.data) {
-            this.alert('error', 'No a escaneado los documentos', '');
+            this.alert('error', 'Falta escanear los documentos', '');
           }
           return x.data;
         })
