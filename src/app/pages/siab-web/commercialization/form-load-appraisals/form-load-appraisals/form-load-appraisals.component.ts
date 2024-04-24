@@ -416,7 +416,9 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     if (event) {
       console.log(event.data.id_avaluo);
       //this.cargarDetAvaluos(await this.obtenerEvento1(6, 0, '', event.data.id_avaluo));
-      this.cargarDetAvaluos(await this.obtenerEvento1(6, 0, '', '24176'));
+      this.cargarDetAvaluos(
+        await this.obtenerEvento1(6, 0, '', event.data.id_avaluo)
+      );
     }
   }
 
