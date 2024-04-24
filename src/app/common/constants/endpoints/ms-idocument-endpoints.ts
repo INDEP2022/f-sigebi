@@ -12,4 +12,5 @@ export enum IDocumentEndpoints {
   savePhotoZIP = 'file-photo/savePhotoZip',
   massiveSavePhotoZip = 'file-photo/saveFilePhotoZip',
   filePhotosHistoric = 'file-photo/historicalPhotos',
+  fileProceedings = 'file-proceedings',
 }

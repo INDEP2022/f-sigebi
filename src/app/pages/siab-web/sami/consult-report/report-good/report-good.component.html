@@ -45,8 +45,7 @@
               [control]="form.get('inventoryNumber')"
               label="No. Inventario">
               <input
-                type="number"
-                min="0"
+                type="text"
                 class="form-control"
                 maxlength="50"
                 formControlName="inventoryNumber" />
@@ -73,7 +72,7 @@
                 [form]="form"
                 control="idRelevantType"
                 [data]="typeRelevant"
-                value="id"
+                value="description"
                 bindLabel="description"
                 label="Tipo Relevante"
                 (fetchItems)="getTypeRelevantSelect($event)"></ngx-select>
