@@ -336,9 +336,9 @@ export class ReportGoodComponent extends BasePage implements OnInit {
               'No se puede generar archivo Excel',
               'Disminuya la cantidad de bienes a exportar'
             );
-
-            this.alert('warning', 'No se puede generar archivo Excel', '');
           }
+
+          this.alert('warning', 'No se puede generar archivo Excel', '');
         },
       });
     } else {

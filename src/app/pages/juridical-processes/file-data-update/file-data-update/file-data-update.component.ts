@@ -88,6 +88,7 @@ export class FileDataUpdateComponent
   }
 
   selectData(data: INotification) {
+    console.log('selectData', data);
     this.selectedRow = data;
     this.changeDetectorRef.detectChanges();
   }

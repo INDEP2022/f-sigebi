@@ -480,6 +480,11 @@ export class JuridicalRecordUpdateComponent
     });
   }
 
+  formatoFecha(fecha: string): string {
+    const partesFecha = fecha.split('-');
+    return `${partesFecha[2]}/${partesFecha[1]}/${partesFecha[0]}`;
+  }
+
   // numero de prueba 624187
   async fillForm(notif: INotification) {
     this.fileDataUpdateForm.enable();
@@ -530,9 +535,10 @@ export class JuridicalRecordUpdateComponent
     );
     this.formControls.receiptDate.disable();
     this.formControls.externalOfficeDate.enable();
-    this.formControls.externalOfficeDate.setValue(
-      format(this.parseDateNoOffset(notif.externalOfficeDate), 'dd/MM/yyyy')
-    );
+
+    const fechaFormateada = this.formatoFecha(String(notif.externalOfficeDate));
+
+    this.formControls.externalOfficeDate.setValue(fechaFormateada);
     this.formControls.externalOfficeDate.disable();
     this.formControls.wheelType.enable();
     if (notif.wheelType != null)

@@ -226,6 +226,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   selectWarehouse(event: any): any {
+    console.log('almacen seleccionado', event);
     this.displaySearchAssetsBtn = event.isSelected ? true : false;
     this.storeSelected = event.data;
   }
@@ -457,7 +458,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     this.loadingGoodInv = true;
     this.params2.getValue()[
       'filter.organizationId'
-    ] = `$eq:${this.storeSelected.organizationCode}`;
+    ] = `$like:${this.storeSelected.organizationCode}`;
     this.params2.getValue()[
       'filter.initialPeriod'
     ] = `$btw:${this.datePipe.transform(
