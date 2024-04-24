@@ -416,7 +416,9 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     if (event) {
       console.log(event.data.id_avaluo);
       //this.cargarDetAvaluos(await this.obtenerEvento1(6, 0, '', event.data.id_avaluo));
-      this.cargarDetAvaluos(await this.obtenerEvento1(6, 0, '', '24176'));
+      this.cargarDetAvaluos(
+        await this.obtenerEvento1(6, 0, '', event.data.id_avaluo)
+      );
     }
   }
 
@@ -551,57 +553,57 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
                 pNomScreen: 'FCOMERREGAVALUO',
                 user: localStorage.getItem('username'),
               };
-              this.appraiseService.postPupInseertAppraisal(body).subscribe({
-                next: async resp => {
-                  console.log(resp);
-                  let dataAvaluo: any = resp;
-                  // let bienesRec = await this.pupConsult(8, 0, '', '');
-                  // let dataBienesRec: any = bienesRec;
-                  // let avaluosRec = await this.pupConsult(9, 0, '', '');
-                  console.log(dataAvaluo.data);
-                  this.CargaGrids();
-                  if (dataAvaluo.length > 0 && dataAvaluo.data[0].P_DATA != 0) {
-                    if (dataAvaluo.length > 0) {
-                      if (proceso == 'I') {
-                        this.onLoadToast(
-                          'success',
-                          'Se insertaron los Avalúos correctamente, pero hay bienes con error no procesados.',
-                          ``
-                        );
-                      } else {
-                        this.onLoadToast(
-                          'success',
-                          'Se actualizarón los Avalúos correctamente, pero hay bienes con error no procesados.',
-                          ``
-                        );
-                      }
-                    }
-                  } else {
-                    if (proceso == 'I') {
-                      this.onLoadToast(
-                        'success',
-                        'Se insertaron los Avalúos correctamente.',
-                        ``
-                      );
-                    } else if (proceso == 'U') {
-                      this.onLoadToast(
-                        'success',
-                        'Se actualizarón los Avalúos correctamente.',
-                        ``
-                      );
-                    } else {
-                      this.onLoadToast(
-                        'success',
-                        'Se Agregaron los Avalúos correctamente.',
-                        ``
-                      );
-                    }
-                  }
-                },
-                error: err => {
-                  console.log(err);
-                },
-              });
+              // this.appraiseService.postPupInseertAppraisal(body).subscribe({
+              //   next: async resp => {
+              //     console.log(resp);
+              //     let dataAvaluo: any = resp;
+              //     // let bienesRec = await this.pupConsult(8, 0, '', '');
+              //     // let dataBienesRec: any = bienesRec;
+              //     // let avaluosRec = await this.pupConsult(9, 0, '', '');
+              //     console.log(dataAvaluo.data);
+              //     this.CargaGrids();
+              //     if (dataAvaluo.length > 0 && dataAvaluo.data[0].P_DATA != 0) {
+              //       if (dataAvaluo.length > 0) {
+              //         if (proceso == 'I') {
+              //           this.onLoadToast(
+              //             'success',
+              //             'Se insertaron los Avalúos correctamente, pero hay bienes con error no procesados.',
+              //             ``
+              //           );
+              //         } else {
+              //           this.onLoadToast(
+              //             'success',
+              //             'Se actualizarón los Avalúos correctamente, pero hay bienes con error no procesados.',
+              //             ``
+              //           );
+              //         }
+              //       }
+              //     } else {
+              //       if (proceso == 'I') {
+              //         this.onLoadToast(
+              //           'success',
+              //           'Se insertaron los Avalúos correctamente.',
+              //           ``
+              //         );
+              //       } else if (proceso == 'U') {
+              //         this.onLoadToast(
+              //           'success',
+              //           'Se actualizarón los Avalúos correctamente.',
+              //           ``
+              //         );
+              //       } else {
+              //         this.onLoadToast(
+              //           'success',
+              //           'Se Agregaron los Avalúos correctamente.',
+              //           ``
+              //         );
+              //       }
+              //     }
+              //   },
+              //   error: err => {
+              //     console.log(err);
+              //   },
+              // });
             },
             error: err => {
               console.log(err);

@@ -25,4 +25,8 @@ export class IDocumentService extends HttpService {
       body
     );
   }
+  getFileExp(id: string) {
+    const route = `${IDocumentEndpoints.fileProceedings}/${id}`;
+    return this.get(route);
+  }
 }
