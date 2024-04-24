@@ -349,6 +349,8 @@ export class FormSearchHandlerComponent
   }
 
   selectRow(row: IUserRowSelectEvent<any>) {
+    console.log('Info del seleccionado', row);
+
     this.selectedRow = row.data;
     this.rowSelected = true;
     if (this.selectOnClick) {
