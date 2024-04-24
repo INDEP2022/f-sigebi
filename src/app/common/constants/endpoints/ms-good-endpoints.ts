@@ -121,6 +121,8 @@ export enum GoodFinderEndpoint {
 
   /* Good Data Aset */
   GoodDataAsetBase = 'gooddataset',
+  GoodQueryJoin = 'good-query/join',
+  GoodQueryJoinCsv = 'good-query/join-csv',
 }
 
 export enum GoodActaConvertion {
