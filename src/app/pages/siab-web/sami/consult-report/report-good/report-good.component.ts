@@ -104,10 +104,10 @@ export class ReportGoodComponent extends BasePage implements OnInit {
   getGoodsResDevInv() {
     this.loading = true;
     this.params.getValue()[
-      'filter.delegationNumber'
+      'filter.no_delegacion'
     ] = `$eq:${this.delRegUserLog}`;
 
-    this.goodFinderService.goodFinder(this.params.getValue()).subscribe({
+    this.goodFinderService.goodFinderJoin(this.params.getValue()).subscribe({
       next: resp => {
         this.paragraphs.load(resp.data);
         this.totalItems = resp.count;
@@ -246,50 +246,57 @@ export class ReportGoodComponent extends BasePage implements OnInit {
   }
 
   search() {
-    const goodId = this.form.get('goodId').value;
-    const inventoryNumber = this.form.get('inventoryNumber').value;
-    const goodDescription = this.form.get('goodDescription').value;
-    const idRelevantType = this.form.get('idRelevantType').value;
-    const requestId = this.form.get('requestId').value;
-    const status = this.form.get('status').value;
-    const uniqueKey = this.form.get('uniqueKey').value;
-    const fileNumber = this.form.get('fileNumber').value;
-    const measureTlUnitView = this.form.get('measureTlUnitView').value;
-    const descriptionPhysicalStatus = this.form.get(
+    const id_bien = this.form.get('goodId').value;
+    const no_inventario = this.form.get('inventoryNumber').value;
+    const descripcion_bien = this.form.get('goodDescription').value;
+    const tipo_relevante_descricpcion = this.form.get('idRelevantType').value;
+    const id_solicitud = this.form.get('requestId').value;
+    const estatus = this.form.get('status').value;
+    const clave_unica = this.form.get('uniqueKey').value;
+    const no_expediente = this.form.get('fileNumber').value;
+    const unidad_view_unit_of_measure_tl =
+      this.form.get('measureTlUnitView').value;
+    const descripcion_estado_fisico = this.form.get(
       'descriptionPhysicalStatus'
     ).value;
-    const descriptionConservationStatus = this.form.get(
+    const descripcion_estado_conservacion = this.form.get(
       'descriptionConservationStatus'
     ).value;
-    const transferId = this.form.get('transferId').value;
+    const id_transferente = this.form.get('transferId').value;
 
-    if (goodId) this.params.getValue()['filter.goodId'] = `$eq:${goodId}`;
-    if (inventoryNumber)
-      this.params.getValue()['filter.inventoryNumber'] = inventoryNumber;
-    if (goodDescription)
+    if (id_bien) this.params.getValue()['filter.id_bien'] = `$eq:${id_bien}`;
+    if (no_inventario)
+      this.params.getValue()['filter.no_inventario'] = `$eq:${no_inventario}`;
+    if (descripcion_bien)
       this.params.getValue()[
-        'filter.goodDescription'
-      ] = `$ilike:${goodDescription}`;
-    if (idRelevantType)
-      this.params.getValue()['filter.idRelevantType'] = idRelevantType;
-    if (requestId) this.params.getValue()['filter.requestId'] = requestId;
-    if (status) this.params.getValue()['filter.status'] = `$ilike:${status}`;
-    if (uniqueKey) this.params.getValue()['filter.uniqueKey'] = uniqueKey;
-    if (fileNumber) this.params.getValue()['filter.fileNumber'] = fileNumber;
-    if (measureTlUnitView)
+        'filter.descripcion_bien'
+      ] = `$ilike:${descripcion_bien}`;
+    if (tipo_relevante_descricpcion)
       this.params.getValue()[
-        'filter.measureTlUnitView'
-      ] = `$eq:${measureTlUnitView}`;
-    if (descriptionPhysicalStatus)
+        'filter.tipo_relevante_descricpcion'
+      ] = `$ilike:${tipo_relevante_descricpcion}`;
+    if (id_solicitud)
+      this.params.getValue()['filter.id_solicitud'] = id_solicitud;
+    if (estatus) this.params.getValue()['filter.estatus'] = `$ilike:${estatus}`;
+    if (clave_unica) this.params.getValue()['filter.clave_unica'] = clave_unica;
+    if (no_expediente)
+      this.params.getValue()['filter.no_expediente'] = no_expediente;
+    if (unidad_view_unit_of_measure_tl)
       this.params.getValue()[
-        'filter.descriptionPhysicalStatus'
-      ] = `$ilike:${descriptionPhysicalStatus}`;
-    if (descriptionConservationStatus)
+        'filter.unidad_view_unit_of_measure_tl'
+      ] = `$eq:${unidad_view_unit_of_measure_tl}`;
+    if (descripcion_estado_fisico)
       this.params.getValue()[
-        'filter.descriptionConservationStatus'
-      ] = `$ilike:${descriptionConservationStatus}`;
-    if (transferId) {
-      this.params.getValue()['filter.transferId'] = `$eq:${transferId}`;
+        'filter.descripcion_estado_fisico'
+      ] = `$ilike:${descripcion_estado_fisico}`;
+    if (descripcion_estado_conservacion)
+      this.params.getValue()[
+        'filter.descripcion_estado_conservacion'
+      ] = `$ilike:${descripcion_estado_conservacion}`;
+    if (id_transferente) {
+      this.params.getValue()[
+        'filter.solicitudes_id_transferente'
+      ] = `$eq:${id_transferente}`;
     }
 
     this.params
@@ -317,30 +324,33 @@ export class ReportGoodComponent extends BasePage implements OnInit {
     }
 
     this.loadingReport = true;
+
     const params = new BehaviorSubject<ListParams>(new ListParams());
 
     if (this.totalItems > 0) {
-      params.getValue()[
-        'filter.regionalDelegationId'
+      this.params.getValue()[
+        'filter.no_delegacion'
       ] = `$eq:${this.delRegUserLog}`;
       params.getValue().limit = this.totalItems;
-      this.goodProcessService.goodResDevInvReport(params.getValue()).subscribe({
-        next: response => {
-          this.downloadExcel(response.base64File, 'Reporte_Bienes.xlsx');
-          this.loadingReport = false;
-        },
-        error: error => {
-          if (error.message == 'Invalid array length') {
-            this.alert(
-              'warning',
-              'No se puede generar archivo Excel',
-              'Disminuya la cantidad de bienes a exportar'
-            );
-          }
+      this.goodFinderService
+        .goodFinderJoinCsv(this.params.getValue())
+        .subscribe({
+          next: response => {
+            this.downloadExcel(response.base64File, 'Reporte_Bienes.xlsx');
+            this.loadingReport = false;
+          },
+          error: error => {
+            if (error.message == 'Invalid array length') {
+              this.alert(
+                'warning',
+                'No se puede generar archivo Excel',
+                'Disminuya la cantidad de bienes a exportar'
+              );
+            }
 
-          this.alert('warning', 'No se puede generar archivo Excel', '');
-        },
-      });
+            this.alert('warning', 'No se puede generar archivo Excel', '');
+          },
+        });
     } else {
       this.alert(
         'warning',
