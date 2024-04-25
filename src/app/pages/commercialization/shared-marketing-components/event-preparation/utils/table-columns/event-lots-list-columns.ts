@@ -44,17 +44,23 @@ export const EVENT_LOT_LIST_COLUMNS = {
     title: 'Precio Garantía',
     sort: false,
   },
-  transferent: {
+  'transferent.nameTransferent': {
     title: 'Transferente',
     sort: false,
-    valuePrepareFunction: (value: any) =>
-      value?.cvman ? `${value?.cvman} - ${value?.nameTransferent}` : null,
+    valuePrepareFunction: (value: any, row: any) =>
+      row?.transferent?.nameTransferent ?? null,
+    filterFunction: (cell?: any, search?: string) => {
+      return true;
+    },
   },
-  cvman: {
+  'transferent.cvman': {
     title: 'Mandato',
     sort: false,
     valuePrepareFunction: (value: any, row: any) =>
       row?.transferent?.cvman ?? null,
+    filterFunction: (cell?: any, search?: string) => {
+      return true;
+    },
   },
   finalPrice: {
     title: 'Precio Final',
