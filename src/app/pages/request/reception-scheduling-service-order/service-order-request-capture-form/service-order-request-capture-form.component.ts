@@ -473,7 +473,7 @@ export class ServiceOrderRequestCaptureFormComponent
     } else if (this.task == 9) {
       this.title = `Solicitud Orden de Servicio (Rechazo de Orden de Servicio) con el folio: ${folio}`;
     } else if (this.task == 10) {
-      this.title = `Solicitud Orden de Servicio_ (Validación de Servicio) con el folio: ${folio}`;
+      this.title = `Solicitud Orden de Servicio (Validación de Servicio) con el folio: ${folio}`;
     } else if (this.task == 11) {
       this.title = `Solicitud Orden de Servicio (Validación de Reporte) con el folio: ${folio}`;
     } else if (this.task == 12) {
