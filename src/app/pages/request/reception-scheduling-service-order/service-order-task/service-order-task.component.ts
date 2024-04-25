@@ -88,7 +88,7 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.taskInfo = await this.getTask();
-    this.title = 'this.taskInfo.title';
+    this.title = this.taskInfo.title;
     console.log(this.taskInfo);
 
     this.prepareForm();
