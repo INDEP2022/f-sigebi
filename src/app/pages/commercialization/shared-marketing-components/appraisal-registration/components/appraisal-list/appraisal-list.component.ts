@@ -57,6 +57,8 @@ export class AppraisalListComponent
           if (!id_evento.value) {
             return;
           }
+          this.$selectedAppraisal.next(null);
+          console.log('appraisalsappraisalsappraisalsappraisalsappraisals');
           this.getGoods(params).subscribe();
         })
       )
