@@ -2,3 +2,8 @@
     background-color: yellow;
     color: black;
 }
+
+.scrollable-row {
+    overflow-x: auto;
+    /* Desplazamiento horizontal */
+}

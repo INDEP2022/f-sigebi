@@ -185,20 +185,20 @@ export class GoodsTendersComponent extends BasePage implements OnInit {
     }
   }
 
-  getDelegation(paramsData: ListParams) {
-    const params: any = new FilterParams();
-    if (paramsData['search'] == undefined || paramsData['search'] == null) {
-      paramsData['search'] = '';
-    }
-    params.removeAllFilters();
-    params.search = paramsData['search'];
-    // params['sortBy'] = 'name:ASC';
+  getDelegation(params: ListParams) {
+    params.limit = 100;
+    // const params: any = new FilterParams();
+    // if (paramsData['search'] == undefined || paramsData['search'] == null) {
+    //   paramsData['search'] = '';
+    // }
+    // params.search = paramsData['search'];
+    if (params.text) params['filter.description'] = `$ilike:${params.text}`;
+    params['sortBy'] = 'name:DESC';
     let subscription = this.msDelegationService
-      .getAllPaginated(params.getParams())
+      .getAllPaginated(params)
       .subscribe({
         next: data => {
           this.dataDelegation = new DefaultSelect(data.data, data.count);
-          console.log(data, this.dataDelegation);
           subscription.unsubscribe();
         },
         error: error => {
@@ -208,34 +208,32 @@ export class GoodsTendersComponent extends BasePage implements OnInit {
       });
   }
 
-  getSubDelegation(paramsData: ListParams) {
-    const params: any = new FilterParams();
-    if (paramsData['search'] == undefined || paramsData['search'] == null) {
-      paramsData['search'] = '';
-    }
+  getSubDelegation(params: ListParams) {
+    // const params: any = new FilterParams();
+
+    // if (paramsData['search'] == undefined || paramsData['search'] == null) {
+    //   paramsData['search'] = '';
+    // }
     if (!this.form.controls['delegation'].value) {
       this.dataSubDelegation = new DefaultSelect();
       return;
     }
-    params.removeAllFilters();
-    params.search = paramsData['search'];
-    params.addFilter(
-      'delegationNumber',
-      this.form.controls['delegation'].value
-    );
-    let subscription = this.msSubdelegationService
-      .getAll(params.getParams())
-      .subscribe({
-        next: data => {
-          this.dataSubDelegation = new DefaultSelect(data.data, data.count);
-          console.log(data, this.dataSubDelegation);
-          subscription.unsubscribe();
-        },
-        error: error => {
-          this.dataSubDelegation = new DefaultSelect();
-          subscription.unsubscribe();
-        },
-      });
+    if (params.text) params['filter.description'] = `$ilike:${params.text}`;
+    params[
+      'filter.delegationNumber'
+    ] = `$eq:${this.form.controls['delegation'].value}`;
+
+    let subscription = this.msSubdelegationService.getAll(params).subscribe({
+      next: data => {
+        this.dataSubDelegation = new DefaultSelect(data.data, data.count);
+        console.log(data, this.dataSubDelegation);
+        subscription.unsubscribe();
+      },
+      error: error => {
+        this.dataSubDelegation = new DefaultSelect();
+        subscription.unsubscribe();
+      },
+    });
   }
 
   changeBidding(event: any) {
