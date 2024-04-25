@@ -122,7 +122,7 @@ export class ControlServiceOrdersComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-
+    console.log(params);
     this.loading = true;
     this.goodPosessionThirdpartyService.getAllStrategyV2(params).subscribe({
       next: response => {
@@ -200,22 +200,22 @@ export class ControlServiceOrdersComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'descriptionProcess':
-                if (!isNaN(parseInt(filter.search))) {
-                  field = `filter.processNumber`;
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  field = `filter.StrategyProcess.description`;
-                  searchFilter = SearchFilter.ILIKE;
-                }
+                // if (!isNaN(parseInt(filter.search))) {
+                //   field = `filter.processNumber`;
+                //   searchFilter = SearchFilter.EQ;
+                // } else {
+                field = `filter.StrategyProcess.description`;
+                searchFilter = SearchFilter.ILIKE;
+                // }
                 break;
               case 'regionalDelegation':
-                if (!isNaN(parseInt(filter.search))) {
-                  field = `filter.delegation1Number`;
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  field = `filter.delegationNumber.description`;
-                  searchFilter = SearchFilter.ILIKE;
-                }
+                // if (!isNaN(parseInt(filter.search))) {
+                //   field = `filter.delegation1Number`;
+                //   searchFilter = SearchFilter.EQ;
+                // } else {
+                field = `filter.delegationNumber.description`;
+                searchFilter = SearchFilter.ILIKE;
+                // }
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -248,17 +248,18 @@ export class ControlServiceOrdersComponent extends BasePage implements OnInit {
         '¿Deseas continuar?'
       ).then(res => {
         if (res.isConfirmed) {
+          const data = {
+            NO_FORMATO: this.selectedRow.id,
+            NO_DELEGACION_1: ![0, 11].includes(Number(this.dataUser.department))
+              ? this.dataUser.department
+              : null,
+          };
+          localStorage.setItem('global', JSON.stringify(data));
           this.router.navigate(
             ['/pages/administrative-processes/service-orders-format'],
             {
               queryParams: {
                 origin: 'FESTCONSULTA_0001',
-                NO_FORMATO: this.selectedRow.id,
-                NO_DELEGACION_1: ![0, 11].includes(
-                  Number(this.dataUser.department)
-                )
-                  ? this.dataUser.department
-                  : null,
               },
             }
           );
