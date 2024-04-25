@@ -10,6 +10,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
@@ -86,7 +87,8 @@ export class FormSearchHandlerComponent
     private activatedRoute: ActivatedRoute,
     // private docDataService: DocumentsReceptionDataService,
     private juridicalFileUpdate: JuridicalFileUpdateService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private fb: FormBuilder
   ) {
     super();
 
@@ -96,12 +98,12 @@ export class FormSearchHandlerComponent
     this._settings.actions.add = false;
     this._settings = {
       ...this._settings,
-      hideSubHeader: false,
+      hideSubHeader: true,
     };
 
     this._settings = {
       ...this._settings,
-      hideSubHeader: false,
+      hideSubHeader: true,
       // ...this.settings,
       // selectedRowIndex: -1,
       // // columns: { ...this.columnsType },
@@ -109,6 +111,7 @@ export class FormSearchHandlerComponent
   }
 
   ngOnInit(): void {
+    this.prepareForm();
     this.autoLoad();
     // if (!this.dataObservableFn) {
     this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
@@ -116,13 +119,23 @@ export class FormSearchHandlerComponent
       if (this.modal?.isShown) {
         this._settings = {
           ...this._settings,
-          hideSubHeader: false,
+          hideSubHeader: true,
         };
         this.getData();
       }
     });
     // }
     this.settingColumns();
+  }
+
+  formSearch: FormGroup = new FormGroup({});
+
+  prepareForm() {
+    this.formSearch = this.fb.group({
+      wheelNumber: [null],
+      officeExternalKey: [null],
+      expedientNumber: [null],
+    });
   }
 
   settingColumns() {
@@ -186,16 +199,16 @@ export class FormSearchHandlerComponent
     this.onSearchStart.emit(false);
   }
 
-  // searchForFilter() {
-  //   const values: any = this.formSearch.value;
-  //   const params = this.filterParams.getValue();
-  //   Object.keys(values).forEach((key: any) => {
-  //     if (values[key]) {
-  //       params.addFilter(key, values[key]);
-  //     }
-  //   });
-  //   this.filterParams.next(params);
-  // }
+  searchForFilter() {
+    const values: any = this.formSearch.value;
+    const params = this.filterParams.getValue();
+    Object.keys(values).forEach((key: any) => {
+      if (values[key]) {
+        params.addFilter(key, values[key]);
+      }
+    });
+    this.filterParams.next(params);
+  }
 
   getData(): void {
     this.loading = true;
@@ -368,5 +381,10 @@ export class FormSearchHandlerComponent
     this.onSelect.emit(this.selectedRow);
     this.filters = [];
     this.modal.hide();
+  }
+
+  resetFilter() {
+    this.formSearch.reset();
+    this.columns = [];
   }
 }
