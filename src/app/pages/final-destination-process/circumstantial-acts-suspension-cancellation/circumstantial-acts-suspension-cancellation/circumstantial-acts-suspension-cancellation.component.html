@@ -476,6 +476,7 @@
         [title]="'Agregar bien'">
         <i class="bx bx-chevron-down bx-md"></i>
       </button>
+      Agregar bien
       <button
         class="btn btn-secondary btn-sm active m-3 p-1 pointer"
         type="button"
@@ -485,12 +486,7 @@
         <!-- Quitar uno -->
         <i class="bx bx-chevron-up bx-md"></i>
       </button>
-    </div>
-
-    <div class="row mt-5 justify-content-end mt-3">
-      <div class="col-md-5 buttons pt-3 text-right">
-        <app-columns-select [settings]="settings2"> </app-columns-select>
-      </div>
+      Eliminar bien
     </div>
 
     <div class="row mt-5 scroll-table">
@@ -545,6 +541,7 @@
               [data]="dataSubject"
               [form]="formSubject"
               [searchable]="false"
+              class="top-layer"
               bindLabel="label"
               label="Asunto"
               [showTooltip]="true"

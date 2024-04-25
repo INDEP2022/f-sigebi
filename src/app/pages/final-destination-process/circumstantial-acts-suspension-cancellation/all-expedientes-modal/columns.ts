@@ -23,5 +23,8 @@ export const columns = {
         ],
       },
     },
+    filterFunction(cell: any, search?: string): boolean {
+      return true;
+    },
   },
 };

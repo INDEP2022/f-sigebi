@@ -86,7 +86,14 @@ interface IBlkControl {
 @Component({
   selector: 'app-circumstantial-acts-suspension-cancellation',
   templateUrl: './circumstantial-acts-suspension-cancellation.component.html',
-  styles: [],
+  styles: [
+    `
+      .top-layer {
+        position: relative;
+        z-index: 9999;
+      }
+    `,
+  ],
 })
 export class CircumstantialActsSuspensionCancellationComponent
   extends BasePage
@@ -1032,7 +1039,7 @@ export class CircumstantialActsSuspensionCancellationComponent
     } else {
       if (this.form.get('statusAct').value === 'CERRADA') {
         this.alert(
-          'error',
+          'warning',
           this.title,
           'El acta ya esta cerrada, no puede realizar modificaciones a esta'
         );
@@ -1066,11 +1073,7 @@ export class CircumstantialActsSuspensionCancellationComponent
         console.log(response.data);
         this.selectedGood2 = null;
         this.getDetailProceedingsDevolution(numberProceedings);
-        this.alert(
-          'success',
-          this.title,
-          'Se ha eliminado el registro correctamente'
-        );
+        this.alert('success', 'Se ha eliminado el registro correctamente', '');
       },
       error: err => {
         console.log(err);
@@ -1104,10 +1107,12 @@ export class CircumstantialActsSuspensionCancellationComponent
     this.proceedingService.createDetailProceedingsDevolution(model).subscribe({
       next: (response: any) => {
         console.log(response);
+        this.alert('success', 'Se ha agregado el registro correctamente', '');
         this.getGoods();
         this.getDetailProceedingsDevolution(numberProceedings);
       },
       error: error => {
+        this.alert('warning', 'Error al agregar el registro', '');
         console.log(error);
       },
     });
@@ -1836,6 +1841,7 @@ export class CircumstantialActsSuspensionCancellationComponent
     //TODO Agregar loading
     const exists = await this.existProceeding();
     console.log(exists);
+    this.form.markAllAsTouched();
 
     if (exists) {
       this.alert(
