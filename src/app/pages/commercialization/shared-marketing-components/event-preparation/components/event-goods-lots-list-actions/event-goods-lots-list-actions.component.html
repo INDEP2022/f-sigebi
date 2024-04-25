@@ -16,7 +16,11 @@
   </li>
   <li role="menuitem">
     <button type="button" class="dropdown-item" (click)="onCreateCertificate()">
-      Crear Acta Evento Público
+      {{
+        parameters.pDirection == 'M'
+          ? 'Crear Acta Evento Público'
+          : 'Publicar Evento'
+      }}
     </button>
   </li>
   <li role="menuitem">
