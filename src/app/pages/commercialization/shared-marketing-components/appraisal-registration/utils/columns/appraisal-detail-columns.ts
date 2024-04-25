@@ -82,6 +82,19 @@ export const APPRAISAL_DETAIL_COLUMNS = {
     title: 'Apto',
     sort: false,
     operator: SearchFilter.ILIKE,
+    valuePrepareFunction: (isSelected: any, row: any) => {
+      return row.apto == '1' ? 'NO APTO' : 'APTO';
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: '1', title: 'NO APTO' },
+          { value: '0', title: 'APTO' },
+        ],
+      },
+    },
   },
   iva: {
     title: 'IVA',
