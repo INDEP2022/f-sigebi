@@ -102,7 +102,7 @@ export class AnnexWFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Desea crear el anexo W'
+      '¿Desea crear el anexo W?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

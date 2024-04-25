@@ -28,7 +28,7 @@
       <div class="row pt-2">
         <div class="col-md-4">
           <div class="form-group">
-            <label class="ml-3 col-lg-6 text-right"
+            <label class="ml-3 col-lg-6 text-center"
               >Folio Orden Servicio&#58;</label
             >
             <span> {{ orderService?.serviceOrderFolio }} </span>
@@ -58,19 +58,26 @@
       <div class="row pt-4">
         <div class="col-md-4">
           <div class="form-group">
-            <label class="ml-3 col-lg-6 text-right"
-              >Folio reporte<br />implementación</label
+            <label class="ml-3 col-lg-6 text-center"
+              >Folio reporte<br />implementación:</label
             >
             <span> {{ orderService?.serviceOrderFolio }} </span>
           </div>
         </div>
 
         <div class="col-md-4">
-          <div class="form-group">
-            <label class="mr-2 col-lg-6">No&#46; Contrato&#58;</label>
+          <div class="form-group col-lg-6">
+            <label class="ml-3 text-right">No&#46; Contrato&#58;</label>
             <span> {{ orderService?.contractNumber }} </span>
           </div>
         </div>
+
+        <!-- <div class="col-md-4">
+          <div class="form-group">
+            <label class="mr-3 col-lg-6">No&#46; Contrato&#58;</label>
+            <span> {{ orderService?.contractNumber }} </span>
+          </div>
+        </div> -->
 
         <div class="col-md-4">
           <form-field
@@ -87,22 +94,24 @@
       <div class="row pt-4">
         <div class="col-md-4">
           <div class="form-group">
-            <label class="ml-3 col-lg-6 text-right"
-              >Fecha de Turnano&#58;</label
+            <label class="ml-3 col-lg-6 text-center"
+              >Fecha de Turnado&#58;</label
             >
             <span> {{ orderService?.shiftDate | date : 'dd/MM/yyyy' }} </span>
           </div>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="ordServform.get('transportationZone')"
-            label="Transporte Zona">
-            <input
-              style="width: 80% !important"
-              type="text"
-              class="form-control"
-              formControlName="transportationZone" />
-          </form-field>
+          <div style="margin-left: 25px">
+            <form-field
+              [control]="ordServform.get('transportationZone')"
+              label="Transporte Zona">
+              <input
+                style="width: 80% !important"
+                type="text"
+                class="form-control"
+                formControlName="transportationZone" />
+            </form-field>
+          </div>
         </div>
 
         <div class="col-md-4">
@@ -123,17 +132,17 @@
         <div class="col-md-4" style="margin-left: 20px !important">
           <form-field [control]="ordServform.get('folioTlp')" label="Folio TLP">
             <input
-              style="width: 80% !important"
+              style="width: 90% !important"
               type="text"
               class="form-control"
               formControlName="folioTlp" />
           </form-field>
         </div>
-        <div class="col-md-3"></div>
-        <div class="col-md-4">
-          <div class="justify-content-end">
+        <div class="col-md-4"></div>
+        <div class="col-md-3">
+          <div class="justify-content-left">
             <div class="font-size-45" style="margin-top: 15px !important">
-              <label class="col-lg-8 text-right"
+              <label class="col-lg-4 text-left"
                 ><b style="font-size: 23px">Total&#58;</b></label
               >
               <span>

@@ -21,7 +21,7 @@ export function getConfigService(path, data) {
       };
     case 'service-order-capture':
       return {
-        title: `Solicitud Orden de Servicio(Validación de Servicios) con folio: ${folio}`,
+        title: `Solicitud Orden de Servicio (Validación de Servicios) con folio: ${folio}`,
         url: 'pages/request/reception-service-order/service-order-validation',
         process: 'ServiceOrderValidation',
         type: 'SOLICITUD_PROGRAMACION',

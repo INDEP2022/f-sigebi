@@ -36,7 +36,8 @@ import { OrderSignatureModalComponent } from '../components/service-order-signat
 })
 export class ServiceOrderRequestCaptureFormComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   claimRequest: boolean = false;
   form: FormGroup = new FormGroup({});
   ordServform: FormGroup = new FormGroup({});
@@ -72,11 +73,9 @@ export class ServiceOrderRequestCaptureFormComponent
   constructor() {
     super();
     this.prepareOrderServiceForm();
-
   }
 
   ngOnInit(): void {
-
     const task = JSON.parse(localStorage.getItem('Task'));
     this.task = task['op'];
     this.op = this.task;
@@ -142,11 +141,20 @@ export class ServiceOrderRequestCaptureFormComponent
         [Validators.pattern(STRING_PATTERN)],
       ],
       //
-      notes: [{ value: null, disabled: true }, [Validators.pattern(STRING_PATTERN)]],
-      observation: [{ value: null, disabled: true }, [Validators.pattern(STRING_PATTERN)]],
+      notes: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      observation: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
       justification: [null, [Validators.pattern(STRING_PATTERN)]],
       justificationReport: [null, [Validators.pattern(STRING_PATTERN)]],
-      commentRejection: [{ value: null, disabled: true }, [Validators.pattern(STRING_PATTERN)]],
+      commentRejection: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
       programmingId: [null],
       id: [null],
     });
@@ -154,7 +162,7 @@ export class ServiceOrderRequestCaptureFormComponent
     this.readonly = true;
   }
 
-  showDocument() { }
+  showDocument() {}
 
   async sendOrderService() {
     const orderServProvi: any = await this.getOrderServiceProvided();
@@ -255,7 +263,6 @@ export class ServiceOrderRequestCaptureFormComponent
       //this.ordServform.controls['observation'].enable();
       this.showForm = true;
     }
-
   }
 
   setRelease() {
@@ -333,7 +340,6 @@ export class ServiceOrderRequestCaptureFormComponent
   }
 
   generateOrdSerReport() {
-
     this.openFirma();
     return;
 
@@ -524,11 +530,10 @@ export class ServiceOrderRequestCaptureFormComponent
   }
 
   async openFirma(dynamic = false) {
-
     let token = this.authService.decodeToken();
     let today = new Date();
 
-    let idTypeDoc = "0";
+    let idTypeDoc = '0';
     let readOnly = false;
 
     const typeAnnex = 'approval-request';
