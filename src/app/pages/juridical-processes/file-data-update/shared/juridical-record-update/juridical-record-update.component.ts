@@ -530,15 +530,15 @@ export class JuridicalRecordUpdateComponent
       );
     }
     this.formControls.receiptDate.enable();
-    this.formControls.receiptDate.setValue(
-      format(this.parseDateNoOffset(notif.receiptDate), 'dd/MM/yyyy')
-    );
+    const fechaFormateada1 = this.formatoFecha(String(notif.receiptDate));
+    this.formControls.receiptDate.setValue(fechaFormateada1);
     this.formControls.receiptDate.disable();
     this.formControls.externalOfficeDate.enable();
 
-    const fechaFormateada = this.formatoFecha(String(notif.externalOfficeDate));
-
-    this.formControls.externalOfficeDate.setValue(fechaFormateada);
+    const fechaFormateada2 = this.formatoFecha(
+      String(notif.externalOfficeDate)
+    );
+    this.formControls.externalOfficeDate.setValue(fechaFormateada2);
     this.formControls.externalOfficeDate.disable();
     this.formControls.wheelType.enable();
     if (notif.wheelType != null)
