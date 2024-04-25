@@ -55,6 +55,7 @@ export class AppraisalEventFormComponent
         catchError(error => {
           this.alert('error', 'Ocurrió un error inesperado', '');
           this.searchGoods.next(null);
+          this.comerEventForm.reset();
           return throwError(() => error);
         }),
         tap(comerEvent => this.handleComerEvent(comerEvent))
@@ -62,8 +63,10 @@ export class AppraisalEventFormComponent
   }
 
   handleComerEvent(comerEvent: IComerEventApp) {
+    this.searchGoods.next(null);
     if (!comerEvent?.id_evento) {
       this.searchGoods.next(null);
+      this.comerEventForm.reset();
       this.alert('warning', 'No Existe el Evento', '');
       return;
     }
@@ -80,7 +83,12 @@ export class AppraisalEventFormComponent
   }
 
   cleanForm() {
+    this.searchGoods.next(null);
+
     this.comerEventForm.reset();
+    setTimeout(() => {
+      this.searchGoods.next(null);
+    }, 4000);
   }
 
   getDocumentTypes() {
