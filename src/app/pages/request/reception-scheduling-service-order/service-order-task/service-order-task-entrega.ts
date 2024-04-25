@@ -21,7 +21,7 @@ export function getConfigServiceEntrega(path, data) {
       };
     case 'service-order-capture':
       return {
-        title: `Validación de Servicios(Programación de entrega: ${progFolio}) para la orden de servicio con folio: ${folio}`,
+        title: `Validación de Servicios (Programación de entrega: ${progFolio}) para la orden de servicio con folio: ${folio}`,
         url: 'pages/request/entrega-service-order/service-order-validation',
         process: 'ServiceOrderValidation',
         type: 'SOLICITUD_PROGRAMACION',

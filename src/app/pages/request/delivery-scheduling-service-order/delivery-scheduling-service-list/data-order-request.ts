@@ -166,7 +166,7 @@ export const orderRequestData = [
   },
 
   {
-    title: 'Solicitud Orden de Servicio(Captura de Servicios)',
+    title: 'Solicitud Orden de Servicio (Captura de Servicios)',
     number: 512,
     created: 45018,
     assigned: '09/04/2018 04:31 PM',
@@ -177,7 +177,7 @@ export const orderRequestData = [
   },
   {
     title:
-      'Solicitud Orden de Servicio(Validación de Servicios) con folio: METROPOLITANA-SAT-1340-OS',
+      'Solicitud Orden de Servicio (Validación de Servicios) con folio: METROPOLITANA-SAT-1340-OS',
     number: 512,
     created: 45018,
     assigned: '09/04/2018 04:31 PM',
