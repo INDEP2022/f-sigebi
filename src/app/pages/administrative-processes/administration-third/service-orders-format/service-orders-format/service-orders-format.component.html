@@ -51,7 +51,7 @@
               </form-field>
             </div>
             <div class="col-md-6 mt-2">
-              <form-field [control]="serviceOrdersForm.get('process')">
+              <form-field [control]="serviceOrdersForm.get('processNumber')">
                 <ngx-select
                   [searchOnInit]="true"
                   (fetchItems)="getProcess($event)"
@@ -60,7 +60,7 @@
                   value="processNumber"
                   bindLabel="idDesc"
                   label="Proceso"
-                  [control]="'process'"
+                  [control]="'processNumber'"
                   [showTooltip]="true">
                 </ngx-select>
                 <!-- <input type="number" formControlName="process" class="form-control" min="0" max="99"
@@ -89,11 +89,11 @@
             </div>
             <div class="col-md-6 mt-2">
               <form-field
-                [control]="serviceOrdersForm.get('dateCapture')"
+                [control]="serviceOrdersForm.get('captureDate')"
                 label="Fecha de captura">
                 <input
                   type="text"
-                  formControlName="dateCapture"
+                  formControlName="captureDate"
                   class="form-control disable"
                   bsDatepicker />
               </form-field>

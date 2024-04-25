@@ -140,8 +140,8 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.serviceOrdersForm = this.fb.group({
       type: [null, Validators.required],
-      process: [null, Validators.required],
-      dateCapture: [null, Validators.required],
+      processNumber: [null, Validators.required],
+      captureDate: [null, Validators.required],
       regionalCoordination: [null, [Validators.required]],
       serviceOrderKey: [null],
       cancellationAuthorizationDate: [null, Validators.required],
@@ -162,31 +162,28 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
       status: [null, Validators.required],
       // CAMBIAR
       id: 'Número del formato de la Estrategia de Administración',
-      processNumber: 'Número de proceso',
+      // processNumber: 'Número de proceso',
       // "status": "Estatus de la Estrategia de Administración",
-      captureDate: 'Fecha de Captura',
-      delegation1Number:
-        'Coordinación regional que elabora la Estrategia de Administración',
-      formatKey: 'Clave del formato de la Estrategia de Administración',
-      authorizeDate:
-        'Fecha de autorización o cambio de estatus de la Estrategia de Administración',
-      folSupplier: 'Folio del proveedor',
-      transferenceNumber: 'Número de transferente',
-      stationNumber: 'Número de emisora',
-      authorityNumber: 'Número de autoridad',
-      storeNumber: 'Número de almacen',
-      iniEventDate: 'Fecha de page de la Estrategia de Administración',
-      finEventDate: 'Fecha final de la Estrategia de Administración',
-      hraEvent: 'Horas del evento',
-      minEvent: 'Minutos del evento',
-      hriEvent: 'Horario del evento',
-      usrElaborated: 'Usuario que capturo la Estrategia de Administración',
-      usrIapprove:
-        'Usuario que modifica el estatus de la Estrategia de Administración',
-      recordNumber: 'Número de registro',
-      typeStrategy: 'Tipo de estrategia N=Normal E=Expecial',
-      repImplements: 'Si tiene reporte de implementacion N=No S=Si',
-      nbOrigin: 'Dato de tipo texto',
+      // captureDate: 'Fecha de Captura',
+      delegation1Number: [],
+      formatKey: [],
+      authorizeDate: [],
+      folSupplier: [],
+      transferenceNumber: [],
+      stationNumber: [],
+      authorityNumber: [],
+      storeNumber: [],
+      iniEventDate: [],
+      finEventDate: [],
+      hraEvent: [],
+      minEvent: [],
+      hriEvent: [],
+      usrElaborated: [],
+      usrIapprove: [],
+      recordNumber: [],
+      typeStrategy: [],
+      repImplements: [],
+      nbOrigin: [],
       vir_delegation: [null],
     });
   }
@@ -410,9 +407,9 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
           .get('type')
           .setValue(response.data[0].typeStrategy);
         this.serviceOrdersForm
-          .get('process')
+          .get('processNumber')
           .setValue(response.data[0].processNumber);
-        this.serviceOrdersForm.get('dateCapture').setValue(formattedfecCapture);
+        this.serviceOrdersForm.get('captureDate').setValue(formattedfecCapture);
         this.serviceOrdersForm
           .get('regionalCoordination')
           .setValue(response.data[0].delegation1Number);
@@ -749,7 +746,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   }
 
   Incorpora() {
-    let proceso = this.serviceOrdersForm.get('process').value;
+    let proceso = this.serviceOrdersForm.get('processNumber').value;
     if (proceso != null) {
       this.strategyProcessService.ByIdProces(proceso).subscribe({
         next: response => {
@@ -955,7 +952,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
     console.log('this.NoFormat ', this.NoFormat);
     data = {
       noformato: this.NoFormat,
-      noProcess: this.serviceOrdersForm.get('process').value,
+      noProcess: this.serviceOrdersForm.get('processNumber').value,
       status: this.serviceOrdersForm.get('status').value,
     };
     let BIENES = this.BIENES;
@@ -988,7 +985,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
               'Continuar'
             ).then(q => {
               if (q.isConfirmed) {
-                let process = this.serviceOrdersForm.get('process').value;
+                let process = this.serviceOrdersForm.get('processNumber').value;
                 let status = this.serviceOrdersForm.get('status').value;
                 let params = {
                   numpro: 2,
@@ -1014,7 +1011,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   }
 
   Gprogram() {
-    let process = this.serviceOrdersForm.get('process').value;
+    let process = this.serviceOrdersForm.get('processNumber').value;
     let dateIni = this.serviceOrdersForm.get('start').value;
     let dateFin = this.serviceOrdersForm.get('finished').value;
     if (process == 3) {
@@ -1083,7 +1080,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
     const now = new Date();
     let lv_ANIO = now.getFullYear().toString().slice(-2);
     let lv_MES = (now.getMonth() + 1).toString();
-    let id = this.serviceOrdersForm.get('process').value;
+    let id = this.serviceOrdersForm.get('processNumber').value;
     this.strategyProcessService.getStrategiProcess(id).subscribe({
       next: resp => {
         this.parameterBaseCatService.getnomencla(this.delegation).subscribe({
@@ -1162,9 +1159,9 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
       return;
     }
     let params = {
-      processNumber: this.serviceOrdersForm.get('process').value,
+      processNumber: this.serviceOrdersForm.get('processNumber').value,
       status: 'PROCESO',
-      captureDate: this.serviceOrdersForm.get('dateCapture').value,
+      captureDate: this.serviceOrdersForm.get('captureDate').value,
       delegation1Number: this.serviceOrdersForm.get('regionalCoordination')
         .value,
       formatKey: cveFormat,
@@ -1214,7 +1211,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
             'Error',
             'El No. de Proceso ya existe, intenta uno diferente'
           );
-          this.serviceOrdersForm.get('process').reset();
+          this.serviceOrdersForm.get('processNumber').reset();
         }
       },
     });
@@ -1240,17 +1237,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   }
 
   update() {
-    console.log(
-      'dateCapture ',
-      this.serviceOrdersForm.get('dateCapture').value
-    );
-    console.log(
-      'cancellationAuthorizationDate ',
-      this.serviceOrdersForm.get('cancellationAuthorizationDate').value
-    );
-    console.log('start ', this.serviceOrdersForm.get('start').value);
-    console.log('finished ', this.serviceOrdersForm.get('finished').value);
-    let captureFecha = this.serviceOrdersForm.get('dateCapture').value;
+    let captureFecha = this.serviceOrdersForm.get('captureDate').value;
     let Capture =
       captureFecha != null ? this.formatDateUTC(captureFecha) : null;
     let authorizeFecha = this.serviceOrdersForm.get(
@@ -1266,7 +1253,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
     let FinEven =
       finEventFecha != null ? this.formatDateUTC(finEventFecha) : null;
     let params = {
-      processNumber: this.serviceOrdersForm.get('process').value,
+      processNumber: this.serviceOrdersForm.get('processNumber').value,
       status: this.serviceOrdersForm.get('status').value,
       captureDate: Capture,
       delegation1Number: this.serviceOrdersForm.get('regionalCoordination')
