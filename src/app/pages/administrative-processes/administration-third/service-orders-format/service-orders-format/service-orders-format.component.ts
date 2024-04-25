@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -9,9 +10,13 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ParameterBaseCatService } from 'src/app/core/services/catalogs/rate-catalog.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { ProgrammingGoodReceiptService } from 'src/app/core/services/ms-programming-good/programming-good-receipt.service';
 import { StrategyProcessService } from 'src/app/core/services/ms-strategy/strategy-process.service';
 import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
@@ -25,7 +30,12 @@ import {
   CONTROLSERVICEORDERS_COLUMNS,
   SERVICEORDERSFORMAT_COLUMNS,
 } from './service-orders-format-columns';
-
+export interface global {
+  bienes?: number;
+  INDICADOR?: number;
+  NO_FORMATO?: number;
+  NO_DELEGACION_1?: number;
+}
 @Component({
   selector: 'app-service-orders-format',
   templateUrl: './service-orders-format.component.html',
@@ -52,8 +62,8 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   NoFormat: number = 0;
   selectedTransference: any;
-  transferenceChange: boolean = true;
-  tranferencebool: boolean = false;
+  transferenceChange: any = null;
+  stationChange: any = null;
   typePrograming: any;
   user: any;
   INDICADOR: number = 0;
@@ -79,7 +89,14 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   public station = new DefaultSelect();
   public authority = new DefaultSelect();
   public keyStore = new DefaultSelect();
-
+  public origin: string = '';
+  public numberFormat: number;
+  public delegation1: number;
+  public delegations = new DefaultSelect<IDelegation>();
+  public processSelect = new DefaultSelect();
+  public dataUser: TokenInfoModel = {} as TokenInfoModel;
+  public phaseEdo: number;
+  public global: global = {} as global;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -90,12 +107,15 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
     private programmingGoodReceiptService: ProgrammingGoodReceiptService,
     private authService: AuthService,
     private router: Router,
-    private parameterBaseCatService: ParameterBaseCatService
+    private parameterBaseCatService: ParameterBaseCatService,
+    private parametersService: ParametersService,
+    private service: DelegationService
   ) {
     super();
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
+        this.origin = params['origin'] ? params['origin'] : null;
         this.NO_ACTA = params['NO_ACTA'] ? Number(params['NO_ACTA']) : null;
       });
     this.settings = {
@@ -110,6 +130,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.initialForm();
     this.filterI();
     this.filterB();
     this.getTransference(new ListParams());
@@ -139,7 +160,58 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
       minute: [null, Validators.required],
       ampm: [null, Validators.required],
       status: [null, Validators.required],
+      // CAMBIAR
+      id: 'Número del formato de la Estrategia de Administración',
+      processNumber: 'Número de proceso',
+      // "status": "Estatus de la Estrategia de Administración",
+      captureDate: 'Fecha de Captura',
+      delegation1Number:
+        'Coordinación regional que elabora la Estrategia de Administración',
+      formatKey: 'Clave del formato de la Estrategia de Administración',
+      authorizeDate:
+        'Fecha de autorización o cambio de estatus de la Estrategia de Administración',
+      folSupplier: 'Folio del proveedor',
+      transferenceNumber: 'Número de transferente',
+      stationNumber: 'Número de emisora',
+      authorityNumber: 'Número de autoridad',
+      storeNumber: 'Número de almacen',
+      iniEventDate: 'Fecha de page de la Estrategia de Administración',
+      finEventDate: 'Fecha final de la Estrategia de Administración',
+      hraEvent: 'Horas del evento',
+      minEvent: 'Minutos del evento',
+      hriEvent: 'Horario del evento',
+      usrElaborated: 'Usuario que capturo la Estrategia de Administración',
+      usrIapprove:
+        'Usuario que modifica el estatus de la Estrategia de Administración',
+      recordNumber: 'Número de registro',
+      typeStrategy: 'Tipo de estrategia N=Normal E=Expecial',
+      repImplements: 'Si tiene reporte de implementacion N=No S=Si',
+      nbOrigin: 'Dato de tipo texto',
+      vir_delegation: [null],
     });
+  }
+
+  initialForm() {
+    // PUP_INICIALIZA_FORMA
+    this.pupValUser();
+    const global = localStorage.getItem('global');
+    if (global && global !== 'undefined') {
+      this.global = JSON.parse(global);
+      this.numberFormat = this.global.NO_FORMATO;
+      this.global.bienes = 0;
+      this.global.INDICADOR = 0;
+    } else {
+      this.global.bienes = 0;
+      this.global.INDICADOR = 0;
+    }
+  }
+  pupValUser() {
+    // PUP_VAL_USUARIO
+    this.dataUser = this.authService.decodeToken();
+    const str = this.dataUser.preferred_username.substr(1, 3);
+    if (str == 'TLP') {
+      this.serviceOrdersForm.get('status').disable();
+    }
   }
 
   getuser() {
@@ -153,7 +225,12 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
     params.take = 100;
     this.authorityService.getTranfer(params).subscribe(
       data => {
-        this.transferenceSele = new DefaultSelect(data.data, data.count);
+        let result = data.data.map(item => {
+          item['idDesc'] = item.id + ' - ' + item.nameTransferent;
+        });
+        Promise.all(result).then(resp => {
+          this.transferenceSele = new DefaultSelect(data.data, data.count);
+        });
       },
       err => {
         this.transferenceSele = new DefaultSelect();
@@ -162,78 +239,70 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
     );
   }
 
-  ontransferenceChange(type: any) {
-    console.log('seleccionado  : ', type);
-    this.tranferencebool = true;
-    if (this.transferenceChange) {
-      this.station = new DefaultSelect();
+  ontransferenceChange(transferente: any) {
+    this.transferenceChange = transferente;
+    if (transferente) {
+      this.stationChange = null;
+      this.serviceOrdersForm.get('station').reset();
+      this.serviceOrdersForm.get('authority').reset();
       this.getStation(new ListParams());
+    } else {
+      this.stationChange = null;
+      this.serviceOrdersForm.get('authority').reset();
+      this.serviceOrdersForm.get('station').reset();
     }
   }
 
   public getStation(event: any) {
-    if (this.serviceOrdersForm.get('transference').value != null) {
-      const paramsF = new FilterParams();
-      paramsF.addFilter(
-        'idTransferent',
-        this.serviceOrdersForm.get('transference').value
-      );
+    const paramsF = new FilterParams();
+    paramsF.addFilter(
+      'idTransferent',
+      this.serviceOrdersForm.get('transference').value
+    );
 
-      this.authorityService
-        .getTranferIdandEmisora(paramsF.getParams())
-        .subscribe({
-          next: data => {
-            this.stationSele = new DefaultSelect(data.data, data.count);
-          },
-          error: err => {
-            this.stationSele = new DefaultSelect();
-          },
-        });
+    this.authorityService
+      .getTranferIdandEmisora(paramsF.getParams())
+      .subscribe({
+        next: data => {
+          this.stationSele = new DefaultSelect(data.data, data.count);
+        },
+        error: err => {
+          this.stationSele = new DefaultSelect();
+        },
+      });
+  }
+
+  onStationChange(station: any) {
+    this.stationChange = station;
+    if (station) {
+      this.serviceOrdersForm.get('authority').reset();
+      this.getAuthority(new ListParams());
     } else {
-      this.alert(
-        'error',
-        'Error',
-        'Primero debe seleccionar un No. de Tranferente'
-      );
+      this.serviceOrdersForm.get('authority').reset();
     }
   }
 
-  public getAuthority(event: any) {
-    if (this.serviceOrdersForm.get('transference').value != null) {
-      if (this.serviceOrdersForm.get('transference').value != null) {
-        const paramsF = new FilterParams();
-        paramsF.addFilter(
-          'idTransferer',
-          this.serviceOrdersForm.get('transference').value
-        );
-        paramsF.addFilter(
-          'idStation',
-          this.serviceOrdersForm.get('station').value
-        );
-        let params = {
-          delegationNumber: this.serviceOrdersForm.get('regionalCoordination')
-            .value,
-        };
-        this.authorityService
-          .getAllUthorities(paramsF.getParams(), params)
-          .subscribe({
-            next: data => {
-              this.autoritySele = new DefaultSelect(data.data, data.count);
-            },
-            error: err => {
-              this.autoritySele = new DefaultSelect();
-            },
-          });
-      } else {
-        this.alert('error', 'Error', 'Primero debe seleccionar una Emisora');
-      }
-    } else {
-      this.alert(
-        'error',
-        'Error',
-        'Primero debe seleccionar un No. de Tranferente'
-      );
-    }
+  public getAuthority(event: ListParams) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter(
+      'idTransferer',
+      this.serviceOrdersForm.get('transference').value
+    );
+    paramsF.addFilter('idStation', this.serviceOrdersForm.get('station').value);
+    let params = {
+      delegationNumber: this.serviceOrdersForm.get('regionalCoordination')
+        .value,
+    };
+    this.authorityService
+      .getAllUthorities(paramsF.getParams(), params)
+      .subscribe({
+        next: data => {
+          this.autoritySele = new DefaultSelect(data.data, data.count);
+        },
+        error: err => {
+          this.autoritySele = new DefaultSelect([], 0);
+        },
+      });
   }
 
   public getKeyStore(params: ListParams) {
@@ -1151,7 +1220,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
     });
   }
 
-  updatevalid() {
+  save() {
     if (this.updatebool == false) {
       this.alertQuestion(
         'question',
@@ -1278,5 +1347,77 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
       }
     }
     return inputDate;
+  }
+
+  getDelegations(params: ListParams) {
+    params.limit = 100;
+    params.take = 100;
+    if (params.text) {
+      if (!isNaN(parseInt(params.text))) {
+        params['filter.id'] = `$eq:${params.text}`;
+        params['search'] = '';
+      } else if (typeof params.text === 'string') {
+        params['filter.description'] = `$ilike:${params.text}`;
+      }
+    }
+
+    if (this.phaseEdo) params['filter.etapaEdo'] = `$eq:${this.phaseEdo}`;
+
+    params['sortBy'] = 'id:DESC';
+    this.service.getAll(params).subscribe({
+      next: data => {
+        data.data.map(async (item: any) => {
+          item['idDesc'] = item.id + ' - ' + item.description;
+        });
+        this.delegations = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.delegations = new DefaultSelect();
+      },
+    });
+  }
+
+  async paEtapaEdo(): Promise<number> {
+    return new Promise((resolve, reject) => {
+      this.parametersService
+        .getPhaseEdo(`date=${format(new Date(), 'yyyy-MM-dd')}`)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(
+          (res: any) => {
+            console.log('REESS', res);
+            if (!res.stagecreated) {
+              resolve(2);
+            } else {
+              resolve(res.stagecreated);
+            }
+          },
+          err => {
+            resolve(2);
+            console.log(err);
+          }
+        );
+    });
+  }
+
+  onDelegationsChange(type: any) {
+    console.log(type);
+  }
+
+  async getProcess(params: ListParams) {
+    params['sortBy'] = 'processNumber:ASC';
+    this.strategyProcessService.getAll(params).subscribe({
+      next: value => {
+        console.log(value);
+        let result = value.data.map(item => {
+          item['idDesc'] = item.processNumber + ' - ' + item.description;
+        });
+        Promise.all(result).then(resp => {
+          this.processSelect = new DefaultSelect(value.data, value.count);
+        });
+      },
+      error: err => {
+        this.processSelect = new DefaultSelect([], 0);
+      },
+    });
   }
 }
