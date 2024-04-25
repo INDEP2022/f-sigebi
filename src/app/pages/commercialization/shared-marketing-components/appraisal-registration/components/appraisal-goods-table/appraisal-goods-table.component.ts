@@ -76,10 +76,11 @@ export class AppraisalGoodsTableComponent
   }
 
   ngOnInit(): void {
-    console.log('ssssssssssss');
-    this.$selectedAppraisal.next(null);
     this.onDownloadGoodsFormat().subscribe();
     this.onComerEventChange().subscribe();
+    this.goods.load([]);
+    this.goods.refresh();
+    this.totalItems = 0;
     this.columnsFilter().subscribe();
     this.params
       .pipe(
