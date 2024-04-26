@@ -557,6 +557,8 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
   }
 
   approve() {
+    console.log('Aprobando...');
+    console.log('Proceso...', this.process);
     let folio = this.dataOrder.serviceOrderFolio;
 
     this.alertQuestion(
@@ -569,8 +571,8 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
           case 'service-order-report-aprove':
             //FALTA VALIDAR SI FINALIZA LA TAREA
             //this.createTask('service-order-report-aprove');
-            let response = this.closeTask();
-            if (response) {
+            let response1 = this.closeTask();
+            if (response1) {
               this.onLoadToast(
                 'success',
                 'Orden de servicio aprobada correctamente',
@@ -579,6 +581,19 @@ export class ServiceOrderTaskComponent extends BasePage implements OnInit {
               this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
             }
             break;
+          case 'service-order-report-signature':
+            //Tarea -> Validación de reporte de Implementación (Programación de recepción
+            let response2 = this.closeTask();
+            if (response2) {
+              this.onLoadToast(
+                'success',
+                'Orden de servicio aprobada correctamente',
+                'Orden aprobada'
+              );
+              this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+            }
+            break;
+
           default:
             this.createTask();
             break;

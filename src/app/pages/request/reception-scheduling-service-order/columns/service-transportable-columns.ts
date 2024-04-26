@@ -259,13 +259,13 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE = {
   },
 
   classificationService: {
-    title: 'Clasificación de servicio',
+    title: 'Clasificación de Servicio',
     type: 'string',
     sort: false,
   },
 
   commentService: {
-    title: 'Comentarios de servicio',
+    title: 'Comentarios de Servicio',
     type: 'custom',
     class: 'custom',
     filter: false,
@@ -305,7 +305,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE = {
   }, */
 
   priceUnitary: {
-    title: 'Precio unitario',
+    title: 'Precio Unitario',
     type: 'string',
     sort: false,
   },
@@ -341,13 +341,13 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_READONLY = {
   },
 
   classificationService: {
-    title: 'Clasificación de servicio',
+    title: 'Clasificación de Servicio',
     type: 'string',
     sort: false,
   },
 
   commentService: {
-    title: 'Comentarios de servicio',
+    title: 'Comentarios de Servicio',
     type: 'string',
     filter: false,
     sort: false,
@@ -368,7 +368,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_READONLY = {
   },
 
   priceUnitary: {
-    title: 'Precio unitario',
+    title: 'Precio Unitario',
     type: 'string',
     sort: false,
   },
@@ -394,13 +394,13 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_APROVE = {
   },
 
   classificationService: {
-    title: 'Clasificación de servicio',
+    title: 'Clasificación de Servicio',
     type: 'string',
     sort: false,
   },
 
   commentService: {
-    title: 'Comentarios de servicio',
+    title: 'Comentarios de Servicio',
     type: 'string',
     filter: false,
     sort: false,
@@ -430,7 +430,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_APROVE = {
   },
 
   priceUnitary: {
-    title: 'Precio unitario',
+    title: 'Precio Unitario',
     type: 'string',
     sort: false,
   },
@@ -490,13 +490,13 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_VALIDATE = {
   },
 
   classificationService: {
-    title: 'Clasificación de servicio',
+    title: 'Clasificación de Servicio',
     type: 'string',
     sort: false,
   },
 
   commentService: {
-    title: 'Comentarios de servicio',
+    title: 'Comentarios de Servicio',
     type: 'string',
     filter: false,
     sort: false,
@@ -524,7 +524,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_VALIDATE = {
   },
 
   priceUnitary: {
-    title: 'Precio unitario',
+    title: 'Precio Unitario',
     type: 'string',
     sort: false,
   },
@@ -573,13 +573,13 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_VALIDATE_READONLY = {
   },
 
   classificationService: {
-    title: 'Clasificación de servicio',
+    title: 'Clasificación de Servicio',
     type: 'string',
     sort: false,
   },
 
   commentService: {
-    title: 'Comentarios de servicio',
+    title: 'Comentarios de Servicio',
     type: 'string',
     filter: false,
     sort: false,
@@ -607,7 +607,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE_VALIDATE_READONLY = {
   },
 
   priceUnitary: {
-    title: 'Precio unitario',
+    title: 'Precio Unitario',
     type: 'string',
     sort: false,
   },
