@@ -47,27 +47,23 @@ export class ServiceOrdersSelectModalComponent
   }
 
   getAll() {
-    this.data1 = [];
-    this.datalocal.load([]);
+    this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.goodPosessionThirdpartyService.getAllStrategyFormat(params).subscribe({
+    this.goodPosessionThirdpartyService.getAllStrategyV2(params).subscribe({
       next: response => {
-        console.log('respuesta modal ', response);
-        for (let i = 0; i < response.data.length; i++) {
-          let paramstable = {
-            id: response.data[i].id,
-            processNumber: response.data[i].processNumber,
-            status: response.data[i].status,
-            formatKey: response.data[i].formatKey,
-            recordNumber: response.data[i].recordNumber,
-          };
-          this.data1.push(paramstable);
-          this.datalocal.load(this.data1);
-          this.totalItems = response.count;
-        }
+        this.datalocal.load(response.data);
+        this.datalocal.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: err => {
+        this.datalocal.load([]);
+        this.datalocal.refresh();
+        this.totalItems = 0;
+        this.loading = false;
       },
     });
   }
@@ -126,11 +122,11 @@ export class ServiceOrdersSelectModalComponent
 
   selected() {
     if (this.selectedRow == null) {
-      this.alert('warning', 'Es Necesario Seleccionar un Registro', '');
+      this.alert('warning', 'Es necesario seleccionar un registro', '');
     } else {
       this.modalRef.content.callback(
         true,
-        this.selectedRow.formatKey,
+        this.selectedRow,
         this.selectedRow.id
       );
       this.modalRef.hide();
