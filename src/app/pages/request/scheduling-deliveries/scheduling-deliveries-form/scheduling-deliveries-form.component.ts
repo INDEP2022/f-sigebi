@@ -1324,6 +1324,7 @@ export class SchedulingDeliveriesFormComponent
         error: error => {
           if ((error.statusCode = 400)) {
             this.goodsToProgramData.empty();
+            this.goodsToProgramData.refresh();
             this.totalItems = 0;
             console.log(this.goodsToProgramData);
           }
