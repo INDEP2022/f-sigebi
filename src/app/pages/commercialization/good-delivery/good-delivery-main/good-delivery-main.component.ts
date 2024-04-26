@@ -188,7 +188,7 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
       );
     this.alertQuestion(
       'question',
-      'Se realizará el cambio de estatus de los bienes seleccionados',
+      'Se realizará el cambio de estatus de los Bienes seleccionados',
       '¿Desea continuar?'
     ).then(question => {
       if (question.isConfirmed) {
@@ -213,7 +213,7 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'Estatus cambiados correctamente',
-            `Se cambiaron el estatus de ${this.goodsSelected.length} bienes.`
+            `Se cambiaron el estatus de ${this.goodsSelected.length} Bienes.`
           );
           this.goodsSelected = [];
           this.getGoodStatus();
@@ -252,7 +252,7 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
         if (alert == 'si') {
           this.alert(
             'warning',
-            'No se encontraron los bienes seleccionados en el Rastreador',
+            'No se encontraron los Bienes seleccionados en el Rastreador',
             ''
           );
           delete this.params.getValue()['filter.id'];
@@ -315,7 +315,7 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
         });
       },
       error: err => {
-        this.alert('warning', `No se cargaron bienes del rastreador`, '');
+        this.alert('warning', `No se cargaron Bienes del rastreador`, '');
         this.params = new BehaviorSubject<ListParams>(new ListParams());
         this.getGoodStatus();
       },
