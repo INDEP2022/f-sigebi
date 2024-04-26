@@ -39,6 +39,10 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./query-interconnection/query-interconnection.module'))
         .QueryInterconnectionModule,
+    data: {
+      title: 'Consulta de Interconexión',
+      screen: 'frmConsultaInterconexion.aspx',
+    },
   },
 ];
 
