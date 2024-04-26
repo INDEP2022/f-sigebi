@@ -1949,6 +1949,10 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
           })
         );
 
+        if (this.statusProceeding == 'ABIERTA') {
+          this.labelSaveProceeding = 'Guardar cambios';
+        }
+
         console.log(newData);
         this.data1.load(newData);
         this.totalItems = res.count;
@@ -2073,7 +2077,7 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
       err => {
         console.log(err);
         this.alert(
-          'error',
+          'warning',
           'Error al agregar el bien al acta',
           err.error.message
         );

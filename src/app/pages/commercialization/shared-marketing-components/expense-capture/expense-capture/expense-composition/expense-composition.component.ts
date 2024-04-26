@@ -135,7 +135,7 @@ export class ExpenseCompositionComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          console.log(response);
+          console.log('Actualizó información: ', response);
         },
       });
     this.dataPaginated
@@ -143,7 +143,7 @@ export class ExpenseCompositionComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          console.log(response);
+          console.log('Cambio información: ', response);
         },
       });
     this.expenseModalService.selectedMotivesSubject

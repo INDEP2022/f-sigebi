@@ -52,12 +52,13 @@
     </div>
     <div body>
       <div class="row mt-n3">
-        <!-- <form
+        -
+        <form
           [formGroup]="formSearch"
           (ngSubmit)="searchForFilter()"
           class="col-12 form-material">
           <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
               <form-field
                 label="No. Volante"
                 [control]="formSearch.get('wheelNumber')">
@@ -67,7 +68,17 @@
                   type="number" />
               </form-field>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
+              <form-field
+                label="No. Expediente"
+                [control]="formSearch.get('expedientNumber')">
+                <input
+                  formControlName="expedientNumber"
+                  class="form-control"
+                  type="number" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
               <form-field
                 label="No. Oficio"
                 [control]="formSearch.get('officeExternalKey')">
@@ -77,13 +88,19 @@
                   type="text" />
               </form-field>
             </div>
-            <div class="col">
+
+            <div class="col-md-3 text-right">
               <button type="submit" class="btn btn-sm btn-primary active">
                 Buscar <i class="ml-2 fas fa-search"></i>
               </button>
             </div>
+            <!-- <div class="col-md-2 text-right">
+              <button class="btn btn-danger btn-sm active mr-3" (click)="resetFilter()">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+            </div> -->
           </div>
-        </form> -->
+        </form>
         <div class="col-md-12 heigth-limit">
           <div class="d-flex justify-content-end mb-2">
             <app-columns-select [(settings)]="_settings"></app-columns-select>
@@ -102,7 +119,7 @@
           </ng-scrollbar>
         </div>
       </div>
-      <div class="overflow-auto card-header-span-fix mt-5">
+      <div class="overflow-auto card-header-span-fix">
         <app-pagination
           *ngIf="dataObservableFn"
           [filterParams]="filterParams"
