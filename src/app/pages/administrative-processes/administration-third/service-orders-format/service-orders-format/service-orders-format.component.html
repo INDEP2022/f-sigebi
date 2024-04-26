@@ -8,6 +8,7 @@
         <div class="d-flex justify-content-end mb-5">
           <div class="">
             <button
+              [disabled]="form.invalid"
               type="button"
               class="btn btn-primary btn-sm active m-1"
               (click)="save()">
@@ -38,29 +39,27 @@
             </button>
           </div>
         </div>
-        <form [formGroup]="serviceOrdersForm" class="form-material">
+        <form [formGroup]="form" class="form-material">
           <div class="row">
             <div class="col-md-6 mt-2">
-              <form-field
-                [control]="serviceOrdersForm.get('type')"
-                label="Tipo">
-                <ng-select class="form-control" formControlName="type">
+              <form-field [control]="form.get('typeStrategy')" label="Tipo">
+                <ng-select class="form-control" formControlName="typeStrategy">
                   <ng-option value="N">Normal</ng-option>
                   <ng-option value="E">Especial</ng-option>
                 </ng-select>
               </form-field>
             </div>
             <div class="col-md-6 mt-2">
-              <form-field [control]="serviceOrdersForm.get('process')">
+              <form-field [control]="form.get('processNumber')">
                 <ngx-select
                   [searchOnInit]="true"
                   (fetchItems)="getProcess($event)"
                   [data]="processSelect"
-                  [form]="serviceOrdersForm"
+                  [form]="form"
                   value="processNumber"
                   bindLabel="idDesc"
                   label="Proceso"
-                  [control]="'process'"
+                  [control]="'processNumber'"
                   [showTooltip]="true">
                 </ngx-select>
                 <!-- <input type="number" formControlName="process" class="form-control" min="0" max="99"
@@ -70,18 +69,17 @@
           </div>
           <div class="row">
             <div class="col-md-6 mt-2">
-              <form-field
-                [control]="serviceOrdersForm.get('regionalCoordination')">
+              <form-field [control]="form.get('delegation1Number')">
                 <ngx-select
                   [readonly]="true"
                   [searchOnInit]="true"
                   (fetchItems)="getDelegations($event)"
                   [data]="delegations"
-                  [form]="serviceOrdersForm"
+                  [form]="form"
                   value="id"
                   bindLabel="idDesc"
                   label="Coordinación Regional"
-                  [control]="'regionalCoordination'"
+                  [control]="'delegation1Number'"
                   (change)="onDelegationsChange($event)"
                   [showTooltip]="true">
                 </ngx-select>
@@ -89,42 +87,40 @@
             </div>
             <div class="col-md-6 mt-2">
               <form-field
-                [control]="serviceOrdersForm.get('dateCapture')"
+                [control]="form.get('captureDate')"
                 label="Fecha de captura">
                 <input
                   type="text"
-                  formControlName="dateCapture"
+                  formControlName="captureDate"
                   class="form-control disable"
                   bsDatepicker />
               </form-field>
             </div>
             <div class="col-md-6 mt-2">
               <form-field
-                [control]="serviceOrdersForm.get('serviceOrderKey')"
+                [control]="form.get('formatKey')"
                 label="Cve. Orden de servicio">
                 <input
                   type="text"
-                  formControlName="serviceOrderKey"
+                  formControlName="formatKey"
                   class="form-control"
                   [readonly]="true" />
               </form-field>
             </div>
             <div class="col-md-6 mt-2">
               <form-field
-                [control]="
-                  serviceOrdersForm.get('cancellationAuthorizationDate')
-                "
+                [control]="form.get('authorizeDate')"
                 label="Fecha Autorización/Cancelación">
                 <input
                   type="text"
-                  formControlName="cancellationAuthorizationDate"
+                  formControlName="authorizeDate"
                   class="form-control"
                   bsDatepicker />
               </form-field>
             </div>
             <div class="col-md-6 mt-2">
               <form-field
-                [control]="serviceOrdersForm.get('uniqueKey')"
+                [control]="form.get('uniqueKey')"
                 label="Cve. única de 3 niveles">
                 <input
                   type="text"
@@ -136,42 +132,42 @@
           </div>
           <div class="row">
             <div class="col-md-6 mt-2">
-              <form-field [control]="serviceOrdersForm.get('transference')">
+              <form-field [control]="form.get('transferenceNumber')">
                 <ngx-select
                   [searchOnInit]="true"
                   (fetchItems)="getTransference($event)"
                   [data]="transferenceSele"
-                  [form]="serviceOrdersForm"
+                  [form]="form"
                   value="id"
-                  bindLabel="idDesc"
+                  bindLabel="nameTransferent"
                   label="Transferente"
-                  control="transference"
+                  control="transferenceNumber"
                   (change)="ontransferenceChange($event)">
                 </ngx-select>
               </form-field>
             </div>
             <div class="col-md-6 mt-2">
-              <form-field [control]="serviceOrdersForm.get('station')">
+              <form-field [control]="form.get('stationNumber')">
                 <ngx-select
                   [readonly]="!transferenceChange"
                   (fetchItems)="getStation($event)"
                   [data]="stationSele"
-                  [form]="serviceOrdersForm"
+                  [form]="form"
                   value="id"
                   (change)="onStationChange($event)"
                   bindLabel="stationName"
                   label="Emisora"
-                  control="station">
+                  control="stationNumber">
                 </ngx-select>
               </form-field>
             </div>
             <div class="col-md-6 mt-2">
-              <form-field [control]="serviceOrdersForm.get('authority')">
+              <form-field [control]="form.get('authority')">
                 <ngx-select
                   [readonly]="!transferenceChange || !stationChange"
                   (fetchItems)="getAuthority($event)"
                   [data]="autoritySele"
-                  [form]="serviceOrdersForm"
+                  [form]="form"
                   value="idAuthority"
                   bindLabel="authorityName"
                   label="Autoridad"
@@ -180,12 +176,12 @@
               </form-field>
             </div>
             <div class="col-md-6 mt-2">
-              <form-field [control]="serviceOrdersForm.get('keyStore')">
+              <form-field [control]="form.get('keyStore')">
                 <ngx-select
                   [searchOnInit]="true"
                   (fetchItems)="getKeyStore($event)"
                   [data]="storeSele"
-                  [form]="serviceOrdersForm"
+                  [form]="form"
                   value="noStore"
                   bindLabel="store"
                   label="Clave almacén"
@@ -196,9 +192,7 @@
           </div>
           <div class="row">
             <div class="col-md-12 mt-2">
-              <form-field
-                [control]="serviceOrdersForm.get('location')"
-                label="Ubicación">
+              <form-field [control]="form.get('location')" label="Ubicación">
                 <input
                   type="text"
                   formControlName="location"
@@ -208,7 +202,7 @@
             </div>
             <div class="col-md-12 mt-2">
               <form-field
-                [control]="serviceOrdersForm.get('municipality')"
+                [control]="form.get('municipality')"
                 label="Municipio">
                 <input
                   type="text"
@@ -218,9 +212,7 @@
               </form-field>
             </div>
             <div class="col-md-12 mt-2">
-              <form-field
-                [control]="serviceOrdersForm.get('entity')"
-                label="Entidad">
+              <form-field [control]="form.get('entity')" label="Entidad">
                 <input
                   type="text"
                   formControlName="entity"
@@ -230,11 +222,11 @@
             </div>
             <div class="col-md-3 mt-2">
               <form-field
-                [control]="serviceOrdersForm.get('supplierFolio')"
+                [control]="form.get('folSupplier')"
                 label="Folio Proveedor">
                 <input
                   type="text"
-                  formControlName="supplierFolio"
+                  formControlName="folSupplier"
                   class="form-control"
                   [readonly]="false" />
               </form-field>
@@ -266,7 +258,7 @@
           <div>
             <button
               class="btn btn-danger btn-sm active mr-2"
-              (click)="Delete()">
+              (click)="deleteGoods()">
               Eliminar Bienes
             </button>
           </div>
@@ -289,50 +281,44 @@
             <h5 class="title">Fechas Eventos</h5>
           </div>
           <div body class="row">
-            <form [formGroup]="serviceOrdersForm" class="form-material">
+            <form [formGroup]="form" class="form-material">
               <div class="col-12">
-                <form-field
-                  [control]="serviceOrdersForm.get('start')"
-                  label="Inicio">
+                <form-field [control]="form.get('iniEventDate')" label="Inicio">
                   <input
                     type="text"
-                    formControlName="start"
+                    formControlName="iniEventDate"
                     class="form-control"
                     bsDatepicker />
                 </form-field>
               </div>
               <div class="col-12">
                 <form-field
-                  [control]="serviceOrdersForm.get('finished')"
+                  [control]="form.get('finEventDate')"
                   label="Término">
                   <input
                     type="text"
-                    formControlName="finished"
+                    formControlName="finEventDate"
                     class="form-control"
                     bsDatepicker
-                    [minDate]="serviceOrdersForm.get('start').value" />
+                    [minDate]="form.get('iniEventDate').value" />
                 </form-field>
               </div>
               <div class="col-md-4 mt-2">
-                <form-field
-                  [control]="serviceOrdersForm.get('hour')"
-                  label="Hora">
+                <form-field [control]="form.get('hraEvent')" label="Hora">
                   <input
                     type="number"
-                    formControlName="hour"
+                    formControlName="hraEvent"
                     class="form-control"
                     min="1"
-                    max="12"
+                    max="23"
                     [readonly]="false" />
                 </form-field>
               </div>
               <div class="col-md-4 mt-2">
-                <form-field
-                  [control]="serviceOrdersForm.get('minute')"
-                  label="Minuto">
+                <form-field [control]="form.get('minEvent')" label="Minuto">
                   <input
                     type="number"
-                    formControlName="minute"
+                    formControlName="minEvent"
                     class="form-control"
                     min="0"
                     max="59"
@@ -340,12 +326,10 @@
                 </form-field>
               </div>
               <div class="col-md-4 mt-2">
-                <form-field
-                  [control]="serviceOrdersForm.get('ampm')"
-                  label="Horario">
-                  <ng-select class="form-control" formControlName="ampm">
-                    <ng-option value="AM">AM</ng-option>
-                    <ng-option value="PM">PM</ng-option>
+                <form-field [control]="form.get('hriEvent')" label="Horario">
+                  <ng-select class="form-control" formControlName="hriEvent">
+                    <ng-option value="AM">A.M</ng-option>
+                    <ng-option value="PM">P.M</ng-option>
                   </ng-select>
                 </form-field>
               </div>
@@ -359,11 +343,9 @@
             <h5 class="title">Cambio Estatus</h5>
           </div>
           <div body class="row">
-            <form [formGroup]="serviceOrdersForm" class="form-material">
+            <form [formGroup]="form" class="form-material">
               <div class="col-12">
-                <form-field
-                  [control]="serviceOrdersForm.get('status')"
-                  label="Estatus">
+                <form-field [control]="form.get('status')" label="Estatus">
                   <ng-select class="form-control" formControlName="status">
                     <ng-option value="AUTORIZADA">Autorizada</ng-option>
                     <ng-option value="CANCELADA">Cancelada</ng-option>
@@ -374,7 +356,7 @@
                 <div>
                   <button
                     class="btn btn-primary btn-block btn-sm active"
-                    (click)="openEstate('')">
+                    (click)="openEstate()">
                     Histórico
                   </button>
                 </div>

@@ -1163,7 +1163,26 @@ export class SchedulingDeliveriesFormComponent
   }
   async deleteGoodProgrammingDelivery() {
     if (this.selectedRows.length > 0) {
-      if (this.selectedRows.length != this.totalItems) {
+      this.selectedRows.forEach(row => {
+        this.programmingRequestService
+          .deleteGoodProgrammingDevilery(row.id)
+          .subscribe({
+            next: async response => {
+              this.addedGoods = this.addedGoods.filter(
+                good => good.goodId !== row.goodId
+              );
+            },
+            error: error => {},
+          });
+      });
+      this.alert(
+        'success',
+        'Acción Exitosa',
+        `Se eliminaron correctamente los bienes seleccionados`
+      );
+      this.showInfoProgrammingDelivery();
+      this.deselectAll();
+      /*if (this.selectedRows.length != this.totalItems) {
         this.selectedRows.forEach(row => {
           this.programmingRequestService
             .deleteGoodProgrammingDevilery(row.id)
@@ -1189,7 +1208,7 @@ export class SchedulingDeliveriesFormComponent
           'Acción Invalida',
           'Se requiere al menos un bien para programación de entrega'
         );
-      }
+      }*/
     } else {
       this.alert(
         'warning',
@@ -1305,6 +1324,7 @@ export class SchedulingDeliveriesFormComponent
         error: error => {
           if ((error.statusCode = 400)) {
             this.goodsToProgramData.empty();
+            this.goodsToProgramData.refresh();
             this.totalItems = 0;
             console.log(this.goodsToProgramData);
           }

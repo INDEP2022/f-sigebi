@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ServiceOrdersExpedientModalComponent } from './service-orders-expedient-modal/service-orders-expedient-modal.component';
@@ -12,7 +13,6 @@ import { ServiceOrdersFormatRoutingModule } from './service-orders-format-routin
 import { ServiceOrdersFormatComponent } from './service-orders-format/service-orders-format.component';
 import { ServiceOrdersSelectModalComponent } from './service-orders-select-modal/service-orders-select-modal.component';
 import { ServiceTypeProgModalComponent } from './service-type-prog-modal/service-type-prog-modal.component';
-// import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +31,7 @@ import { ServiceTypeProgModalComponent } from './service-type-prog-modal/service
     FormsModule,
     DelegationSharedComponent,
     AccordionModule,
-    // FormLoaderComponent,
+    FormLoaderComponent,
   ],
 })
 export class ServiceOrdersFormatModule {}
