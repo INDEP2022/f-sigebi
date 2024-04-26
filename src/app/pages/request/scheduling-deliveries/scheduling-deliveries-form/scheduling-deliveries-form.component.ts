@@ -1171,45 +1171,27 @@ export class SchedulingDeliveriesFormComponent
               this.addedGoods = this.addedGoods.filter(
                 good => good.goodId !== row.goodId
               );
+
+              this.alert(
+                'success',
+                'Acción Exitosa',
+                `Se eliminaron correctamente los bienes seleccionados`
+              );
             },
-            error: error => {},
+            error: error => {
+              this.alert(
+                'warning',
+                'Acción Invalida',
+                'Se requiere seleccionar un bien para eliminar de la programación de entrega'
+              );
+            },
           });
       });
-      this.alert(
-        'success',
-        'Acción Exitosa',
-        `Se eliminaron correctamente los bienes seleccionados`
-      );
+
       this.showInfoProgrammingDelivery();
       this.deselectAll();
-      /*if (this.selectedRows.length != this.totalItems) {
-        this.selectedRows.forEach(row => {
-          this.programmingRequestService
-            .deleteGoodProgrammingDevilery(row.id)
-            .subscribe({
-              next: async response => {
-                this.addedGoods = this.addedGoods.filter(
-                  good => good.goodId !== row.goodId
-                );
-              },
-              error: error => {},
-            });
-        });
-        this.alert(
-          'success',
-          'Acción Exitosa',
-          `Se eliminaron correctamente los bienes seleccionados`
-        );
-        this.showInfoProgrammingDelivery();
-        this.deselectAll();
-      } else {
-        this.alert(
-          'warning',
-          'Acción Invalida',
-          'Se requiere al menos un bien para programación de entrega'
-        );
-      }*/
-    } else {
+    }
+    if (this.selectedRows.length == 0) {
       this.alert(
         'warning',
         'Acción Invalida',
