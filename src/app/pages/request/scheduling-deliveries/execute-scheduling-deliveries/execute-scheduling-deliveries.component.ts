@@ -128,6 +128,7 @@ export class ExecuteSchedulingDeliveriesComponent
   programmingId = '';
 
   title: string = '';
+  cerrada: string = '';
 
   private programmingService = inject(ProgrammingGoodService);
   private transferenteService = inject(TransferenteService);
@@ -437,6 +438,15 @@ export class ExecuteSchedulingDeliveriesComponent
         'warning',
         'Advertencia',
         'Es necesario seleccionar una constancia'
+      );
+      return;
+    }
+
+    if (this.cerrada == 'Y') {
+      this.alert(
+        'warning',
+        'Constancia Cerrada',
+        'No es posible modificar una constancia cerrada'
       );
       return;
     }
@@ -1076,6 +1086,9 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   selectConstance(event: any) {
+    this.cerrada = event.data.closing;
+    console.log('Cosntancia seleccionada', event);
+    console.log('¿Cerrada?', this.cerrada);
     if (event.isSelected == false) {
       this.constanceSelected = {};
       return;
