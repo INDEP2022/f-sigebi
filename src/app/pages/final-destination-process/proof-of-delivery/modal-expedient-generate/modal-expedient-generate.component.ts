@@ -228,7 +228,7 @@ export class ModalExpedientGenerateComponent
                     this.alert(
                       'error',
                       'Se presentó un error al generar las constancias',
-                      ''
+                      err.error.message
                     );
                   }
                 );
@@ -238,7 +238,7 @@ export class ModalExpedientGenerateComponent
               this.alert(
                 'error',
                 'Se presentó un error al generar las constancias',
-                ''
+                err.error.message
               );
             }
           );
