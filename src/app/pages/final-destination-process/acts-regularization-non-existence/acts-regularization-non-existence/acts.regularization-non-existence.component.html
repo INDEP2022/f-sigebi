@@ -123,8 +123,6 @@
                   [disabled]="!dataExpediente"
                   button
                   type="button"
-                  tooltip="Nuevo"
-                  containerClass="tooltip-style"
                   class="btn btn-danger btn-sm active mr-3"
                   (click)="cleanActa()">
                   Limpiar
@@ -220,7 +218,7 @@
                           label="Folio">
                           <input
                             [readonly]="!valClave || !actaCerrada"
-                            [max-length]="4"
+                            [max]="9999"
                             pattern="^[0-9]+"
                             type="number"
                             class="form-control pt-1"

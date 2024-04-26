@@ -115,6 +115,7 @@ export class ModalMantenimientoEstatusActComponent
     });
   }
   close() {
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 
