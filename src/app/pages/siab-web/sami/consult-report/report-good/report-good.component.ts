@@ -114,6 +114,7 @@ export class ReportGoodComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: error => {
+        this.searchButton = false;
         this.paragraphs.load([]);
         this.paragraphs.refresh();
         this.totalItems = 0;
@@ -245,7 +246,19 @@ export class ReportGoodComponent extends BasePage implements OnInit {
       });
   }
 
+  searchButton: boolean = false;
   search() {
+    this.searchButton = true;
+
+    const formValues = this.form.getRawValue();
+
+    const infoForm = Object.values(formValues).some(value => !!value);
+
+    if (!infoForm) {
+      this.alert('warning', 'Advertencia', 'Realice al menos un filtro');
+      this.loadingReport = false;
+      return;
+    }
     const id_bien = this.form.get('goodId').value;
     const no_inventario = this.form.get('inventoryNumber').value;
     const descripcion_bien = this.form.get('goodDescription').value;
@@ -314,16 +327,21 @@ export class ReportGoodComponent extends BasePage implements OnInit {
   }
 
   async reportGoods() {
+    if (this.searchButton == false) {
+      this.alert('warning', 'Advertencia', 'Realice al menos un filtro');
+      return;
+    }
+
+    this.loadingReport = true;
     const formValues = this.form.getRawValue();
 
     const infoForm = Object.values(formValues).some(value => !!value);
 
     if (!infoForm) {
       this.alert('warning', 'Advertencia', 'Realice al menos un filtro');
+      this.loadingReport = false;
       return;
     }
-
-    this.loadingReport = true;
 
     const params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -346,9 +364,11 @@ export class ReportGoodComponent extends BasePage implements OnInit {
                 'No se puede generar archivo Excel',
                 'Disminuya la cantidad de bienes a exportar'
               );
+              this.loadingReport = false;
             }
 
             this.alert('warning', 'No se puede generar archivo Excel', '');
+            this.loadingReport = false;
           },
         });
     } else {
