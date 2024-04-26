@@ -6,7 +6,7 @@ import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, skip, takeUntil, tap } from 'rxjs';
 import {
   FilterParams,
@@ -23,7 +23,6 @@ import { ParametersService } from 'src/app/core/services/ms-parametergood/parame
 import { RNomenclaService } from 'src/app/core/services/ms-parametergood/r-nomencla.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { MODAL_CONFIG } from '../../../../common/constants/modal-config';
 
 import { DatePipe } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -605,10 +604,18 @@ export class ActsRegularizationNonExistenceComponent
         'Usuario sin privilegios para mantenimiento de estatus.',
         ''
       );
-    this.modalService.show(ModalMantenimientoEstatusActComponent, {
-      ...MODAL_CONFIG,
-      class: 'modal-dialog-centered modal-lg',
-    });
+    let config: ModalOptions = {
+      initialState: {
+        callback: (data: any) => {
+          console.log(data);
+          if (this.dataExpediente)
+            this.getGoodsByExpedient(this.dataExpediente.id);
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ModalMantenimientoEstatusActComponent, config);
   }
 
   getCurrentDate(): string {
@@ -1234,7 +1241,6 @@ export class ActsRegularizationNonExistenceComponent
                     resp.data[0].max,
                     false
                   );
-                  await this.getReport();
                 },
                 error: err => {
                   this.alert(
@@ -1306,6 +1312,7 @@ export class ActsRegularizationNonExistenceComponent
           this.formActReception.patchValue({
             universalFolio: response.id,
           });
+          await this.getReport();
           await this.actualizarActa(response.id);
           this.alert('success', `Folio de Escaneo generado correctamente`, ``);
         }
