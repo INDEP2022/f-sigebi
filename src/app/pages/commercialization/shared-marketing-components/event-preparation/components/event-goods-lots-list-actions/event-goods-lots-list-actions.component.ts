@@ -529,6 +529,8 @@ export class EventGoodsLotsListActionsComponent
       return;
     }
 
+    console.log('Estado de venta: ', statusVtaId.value);
+
     if (['PREP', 'APRO'].includes(statusVtaId.value)) {
       this.fillComerTmp().subscribe();
     } else if (['PUB', 'ACT'].includes(statusVtaId.value)) {

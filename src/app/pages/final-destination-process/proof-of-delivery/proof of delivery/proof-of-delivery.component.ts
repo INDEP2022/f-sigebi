@@ -1972,6 +1972,7 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
 
   //MODAL DE ACTAS
   openListProceeding() {
+    this.formExp.get('capture').patchValue('normal');
     let modalConfig = MODAL_CONFIG;
     (modalConfig.class = 'modal-lg modal-dialog-centered'),
       (modalConfig.ignoreBackdropClick = true),
@@ -2530,21 +2531,18 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
           },
           err => {
             console.log(err);
+
             this.alert(
               'error',
-              'Se presentó un error inesperado',
-              'Se presentó un error inesperado abriendo el acta, intentelo nuevamente'
+              'No se puede abrir el acta',
+              'Se presentó un error inesperado'
             );
           }
         );
       },
       err => {
         console.log(err);
-        this.alert(
-          'error',
-          'Se presentó un error inesperado',
-          'Se presentó un error inesperado abriendo el acta, intentelo nuevamente'
-        );
+        this.alert('warning', 'No se puede abrir el acta', err.error.message);
       }
     );
   }
