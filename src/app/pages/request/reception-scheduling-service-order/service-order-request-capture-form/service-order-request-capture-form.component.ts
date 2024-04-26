@@ -79,6 +79,7 @@ export class ServiceOrderRequestCaptureFormComponent
     const task = JSON.parse(localStorage.getItem('Task'));
     this.task = task['op'];
     this.op = this.task;
+    console.log('this.op', this.op);
 
     this.programmingId = +this.activeRouter.snapshot.params['id'];
     this.prepareProgForm();
@@ -440,6 +441,7 @@ export class ServiceOrderRequestCaptureFormComponent
   }
 
   approve() {
+    console.log('Aprobando...');
     const folio = this.ordServform.get('serviceOrderFolio').value;
     this.alertQuestion(
       'question',
