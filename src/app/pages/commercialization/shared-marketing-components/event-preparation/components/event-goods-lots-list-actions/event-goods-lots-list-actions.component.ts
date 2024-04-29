@@ -486,14 +486,63 @@ export class EventGoodsLotsListActionsComponent
           statusVta,
           address,
           user,
+          validate: true,
         })
         .subscribe({
           next: res => {
-            this.loader.load = false;
-            this.executeChangeLots.emit(true);
-            this.goodsLotifyControl.reset();
-            this.alert('success', 'Proceso Terminado', '');
             console.log(res);
+            console.log(res.message);
+            if (res.vaudsid) {
+              const resVausid = res.vaudsid;
+              this.alertQuestion(
+                'question',
+                'El número de bienes del archivo no coincide con los datos originales del evento',
+                '¿Desea cargar los datos de cualquier modo?'
+              ).then(res => {
+                if (res.isConfirmed) {
+                  this.lotService
+                    .impLotExcel({
+                      file,
+                      event: `${id.value}`,
+                      eventType: eventType as string,
+                      validGood,
+                      clean,
+                      statusVta,
+                      address,
+                      user,
+                      vaudsid: resVausid,
+                      validate: false,
+                    })
+                    .subscribe({
+                      next: res => {
+                        this.loader.load = false;
+                        this.goodsLotifyControl.reset();
+                        console.log(res);
+                        this.alert('success', 'Proceso Terminado', '');
+                      },
+                      error: error => {
+                        this.loader.load = false;
+                        this.goodsLotifyControl.reset();
+                        console.log(error);
+                        this.alert(
+                          'error',
+                          'Error',
+                          'Ocurrió un Error Inesperado'
+                        );
+                      },
+                    });
+                } else {
+                  this.loader.load = false;
+                  this.goodsLotifyControl.reset();
+                }
+              });
+            } else {
+              this.loader.load = false;
+              this.executeChangeLots.emit(true);
+              this.goodsLotifyControl.reset();
+              this.alert('success', 'Proceso Terminado', '');
+              console.log(res);
+            }
           },
           error: error => {
             this.loader.load = false;
