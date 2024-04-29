@@ -1,0 +1,124 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar' : 'Agregar' }} Control orden de servicio
+    </h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-6 mt-4">
+          <form-field [control]="form.get('serviceNumber')">
+            <ngx-select
+              (change)="changeStrategyService($event)"
+              [searchOnInit]="true"
+              (fetchItems)="getStrategyService($event)"
+              [data]="strategyService"
+              [form]="form"
+              value="serviceNumber"
+              bindLabel="idAndDesc"
+              label="Servicio"
+              [control]="'serviceNumber'"
+              [showTooltip]="true">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-4">
+          <form-field [control]="form.get('typeServiceNumber')">
+            <ngx-select
+              (change)="changeStrategyTypeService($event)"
+              (fetchItems)="getStrategyTypeService($event)"
+              [data]="typeServiceNumber"
+              [form]="form"
+              value="serviceTypeNumber"
+              bindLabel="idAndDesc"
+              label="Especificación"
+              [control]="'typeServiceNumber'"
+              [showTooltip]="true">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-4">
+          <form-field [control]="form.get('turnNumber')">
+            <ngx-select
+              (change)="changeTurnNumber($event)"
+              (fetchItems)="getTurnNumber($event)"
+              [data]="turnNumber"
+              [form]="form"
+              value="shiftNumber"
+              bindLabel="idAndDesc"
+              label="Turno/Tipo"
+              [control]="'turnNumber'"
+              [showTooltip]="true">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-4">
+          <form-field [control]="form.get('varCostNumber')">
+            <ngx-select
+              (change)="changeVarCostNumber($event)"
+              (fetchItems)="getVarCostNumber($event)"
+              [data]="varCostNumber"
+              [form]="form"
+              value="varCostNumber"
+              bindLabel="idAndDesc"
+              label="Variable de Costo"
+              [control]="'varCostNumber'"
+              [showTooltip]="true">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-3 mt-4">
+          <form-field label="Costo" [control]="form.get('totAmount')">
+            <input
+              [readonly]="typeStrategy == 'E' ? false : true"
+              currencyMask
+              type="text"
+              maxlength="11"
+              class="form-control"
+              formControlName="totAmount" />
+          </form-field>
+        </div>
+        <div class="col-md-3 mt-4">
+          <form-field label="Cantidad" [control]="form.get('totQuantity')">
+            <input
+              type="number"
+              [max]="99999999999"
+              class="form-control"
+              formControlName="totQuantity" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-4">
+          <form-field label="Observación" [control]="form.get('observation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observation"
+              maxlength="11" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [btnSmall]="true"
+          [disabled]="form.invalid"
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

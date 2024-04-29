@@ -57,6 +57,7 @@
                   [data]="processSelect"
                   [form]="form"
                   value="processNumber"
+                  (change)="changeProcess($event)"
                   bindLabel="idDesc"
                   label="Proceso"
                   [control]="'processNumber'"
@@ -90,6 +91,7 @@
                 [control]="form.get('captureDate')"
                 label="Fecha de captura">
                 <input
+                  [ngClass]="{ 'not-press bg-gray': true }"
                   type="text"
                   formControlName="captureDate"
                   class="form-control disable"
@@ -112,6 +114,7 @@
                 [control]="form.get('authorizeDate')"
                 label="Fecha Autorización/Cancelación">
                 <input
+                  [ngClass]="{ 'not-press bg-gray': true }"
                   type="text"
                   formControlName="authorizeDate"
                   class="form-control"
@@ -125,8 +128,7 @@
                 <input
                   type="text"
                   formControlName="uniqueKey"
-                  class="form-control"
-                  [readonly]="true" />
+                  class="form-control" />
               </form-field>
             </div>
           </div>
@@ -162,7 +164,7 @@
               </form-field>
             </div>
             <div class="col-md-6 mt-2">
-              <form-field [control]="form.get('authority')">
+              <form-field [control]="form.get('authorityNumber')">
                 <ngx-select
                   [readonly]="!transferenceChange || !stationChange"
                   (fetchItems)="getAuthority($event)"
@@ -171,21 +173,21 @@
                   value="idAuthority"
                   bindLabel="authorityName"
                   label="Autoridad"
-                  control="authority">
+                  control="authorityNumber">
                 </ngx-select>
               </form-field>
             </div>
             <div class="col-md-6 mt-2">
-              <form-field [control]="form.get('keyStore')">
+              <form-field [control]="form.get('storeNumber')">
                 <ngx-select
-                  [searchOnInit]="true"
+                  (change)="changeAlmacen($event)"
                   (fetchItems)="getKeyStore($event)"
                   [data]="storeSele"
                   [form]="form"
                   value="noStore"
                   bindLabel="store"
                   label="Clave almacén"
-                  control="keyStore">
+                  control="storeNumber">
                 </ngx-select>
               </form-field>
             </div>
@@ -257,6 +259,7 @@
           </div>
           <div>
             <button
+              [disabled]="deleteGoodsDisabled"
               class="btn btn-danger btn-sm active mr-2"
               (click)="deleteGoods()">
               Eliminar Bienes
@@ -346,7 +349,10 @@
             <form [formGroup]="form" class="form-material">
               <div class="col-12">
                 <form-field [control]="form.get('status')" label="Estatus">
-                  <ng-select class="form-control" formControlName="status">
+                  <ng-select
+                    [readonly]="!form.get('id').value"
+                    class="form-control"
+                    formControlName="status">
                     <ng-option value="AUTORIZADA">Autorizada</ng-option>
                     <ng-option value="CANCELADA">Cancelada</ng-option>
                     <ng-option value="PROCESO">Proceso</ng-option>
@@ -365,6 +371,37 @@
           </div>
         </app-card>
       </div>
+      <div class="col-12">
+        <app-card [header]="true">
+          <div class="ch-content" header>
+            <h5 class="title">Justificación</h5>
+          </div>
+          <div body class="row">
+            <form [formGroup]="form3" class="form-material">
+              <div class="col-12">
+                <form-field
+                  [control]="form3.get('justification')"
+                  label="Justificación">
+                  <textarea
+                    maxlength="200"
+                    formControlName="justification"
+                    class="form-control"
+                    cols="5"
+                    rows="5"></textarea>
+                </form-field>
+                <div>
+                  <button
+                    [disabled]="!numberFormat"
+                    class="btn btn-primary btn-block btn-sm active"
+                    (click)="insertBitacora()">
+                    Aplica
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </app-card>
+      </div>
     </div>
   </div>
   <div class="col-12">
@@ -372,24 +409,54 @@
       <div class="ch-content" header>
         <h5 class="title">Control de las Ordenes de Servicio</h5>
       </div>
-      <div body class="row">
+      <div body>
         <div class="d-flex justify-content-end">
-          <app-columns-select [(settings)]="settings2"></app-columns-select>
+          <div class="">
+            <button
+              button
+              type="button"
+              class="btn btn-info btn-sm active mr-3"
+              (click)="formImport()">
+              Nuevo
+              <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+          <app-columns-select
+            [defaultColumns]="8"
+            [leftList]="true"
+            [(settings)]="settings2"></app-columns-select>
         </div>
-        <div class="row pt-4">
-          <div class="col-md-12">
-            <div [class]="loading ? 'table-loading' : ''">
-              <ng2-smart-table
-                [settings]="settings2"
-                [source]="dataLocalI"
-                [attr.class]="'table-bordered table-responsive'">
-              </ng2-smart-table>
-            </div>
+        <div class="row pt-3">
+          <form-loader *ngIf="loading2"></form-loader>
+          <div>
+            <ng2-smart-table
+              [ngStyle]="{
+                height: loading2 ? '0px' : totalItemsI > 10 ? '300px' : 'auto'
+              }"
+              [settings]="settings2"
+              (edit)="formImport($event.data)"
+              (delete)="removeImport($event)"
+              [source]="dataLocalI"
+              [attr.class]="'table-bordered table-responsive'">
+            </ng2-smart-table>
           </div>
           <app-pagination
             [params]="paramsI"
             [totalItems]="totalItemsI"></app-pagination>
         </div>
+        <form [formGroup]="form2">
+          <div class="d-flex justify-content-end">
+            <form-field [control]="form2.get('totalStrategy')">
+              <label for="">Total Importe</label>
+              <input
+                currencyMask
+                readonly
+                type="text"
+                class="form-control"
+                formControlName="totalStrategy" />
+            </form-field>
+          </div>
+        </form>
       </div>
     </app-card>
   </div>

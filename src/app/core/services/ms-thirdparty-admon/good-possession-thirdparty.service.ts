@@ -113,6 +113,25 @@ export class GoodPosessionThirdpartyService extends HttpService {
     return this.get(route, params);
   }
 
+  getAllStrategyImports(params: _Params) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyImports}`;
+    return this.get(route, params);
+  }
+
+  createStrategyImport(body: any) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyImports}`;
+    return this.post(route, body);
+  }
+
+  updateStrategyImport(body: any) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyImports}`;
+    return this.put(route, body);
+  }
+
+  deleteStrategyImport(body: any) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyImports}`;
+    return this.delete(route, body);
+  }
   getAllStrategyGoodsById(id: any, params: any) {
     const route = `${ThirdPartyAdmonEndpoints.StrategyGoods}?filter.formatNumber=$eq:${id}`;
     return this.get(route, params);
