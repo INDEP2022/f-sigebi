@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const SERVICEORDERSFORMATEXPEDIENT_COLUMNS = {
@@ -44,10 +43,8 @@ export const SERVICEORDERSFORMATEXPEDIENTGOOD_COLUMNS = {
     title: 'Fecha Inicial de Programación',
     width: '15%',
     sort: false,
-    valuePrepareFunction: (date: Date) => {
-      var raw = new Date(date);
-      var formatted = new DatePipe('en-EN').transform(raw, 'yyyy/MM/dd', 'UTC');
-      return formatted;
+    valuePrepareFunction: (date: string) => {
+      return `${date ? date.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
       type: 'custom',
@@ -58,10 +55,8 @@ export const SERVICEORDERSFORMATEXPEDIENTGOOD_COLUMNS = {
     title: 'Fecha Final de Programación',
     width: '15%',
     sort: false,
-    valuePrepareFunction: (date: Date) => {
-      var raw = new Date(date);
-      var formatted = new DatePipe('en-EN').transform(raw, 'yyyy/MM/dd', 'UTC');
-      return formatted;
+    valuePrepareFunction: (date: string) => {
+      return `${date ? date.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
       type: 'custom',

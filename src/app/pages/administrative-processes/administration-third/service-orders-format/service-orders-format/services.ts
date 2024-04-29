@@ -6,6 +6,7 @@ import { DelegationService } from 'src/app/core/services/catalogs/delegation.ser
 import { RNomenclaService } from 'src/app/core/services/ms-parametergood/r-nomencla.service';
 import { StrategyProcessService } from 'src/app/core/services/ms-strategy/strategy-process.service';
 import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
+import { ThirdPartyService } from 'src/app/core/services/ms-thirdparty/thirdparty.service';
 @Injectable({
   providedIn: 'root',
 })
@@ -14,7 +15,8 @@ export class ServiceFormatService {
     private goodPosessionThirdpartyService: GoodPosessionThirdpartyService,
     private rNomenclaService: RNomenclaService,
     private delegationService: DelegationService,
-    private strategyProcessService: StrategyProcessService
+    private strategyProcessService: StrategyProcessService,
+    private thirdPartyService: ThirdPartyService
   ) {}
 
   async countFormatService(params: ListParams): Promise<number> {
@@ -70,11 +72,13 @@ export class ServiceFormatService {
       });
     });
   }
+  //
   async getStrategyService(
+    numberProcess: number | string,
     params: ListParams
   ): Promise<{ data: Array<any>; count: number }> {
     return new Promise((resolve, reject) => {
-      this.strategyProcessService.getStrategyService(params).subscribe({
+      this.thirdPartyService.getLOV_SERVICIOS(numberProcess, params).subscribe({
         next: value => {
           let result = value.data.map(item => {
             item['idAndDesc'] = item.serviceNumber + ' - ' + item.description;
@@ -90,10 +94,11 @@ export class ServiceFormatService {
     });
   }
   async getStrategyServiceType(
+    body: any,
     params: ListParams
   ): Promise<{ data: Array<any>; count: number }> {
     return new Promise((resolve, reject) => {
-      this.strategyProcessService.getStrategyServiceType(params).subscribe({
+      this.thirdPartyService.getLOV_TIPOSERVI(body, params).subscribe({
         next: value => {
           let result = value.data.map(item => {
             item['idAndDesc'] =
@@ -110,13 +115,14 @@ export class ServiceFormatService {
     });
   }
   async getTurnNumber(
+    body: any,
     params: ListParams
   ): Promise<{ data: Array<any>; count: number }> {
     return new Promise((resolve, reject) => {
-      this.strategyProcessService.getTurnNumber(params).subscribe({
+      this.thirdPartyService.getLOV_TURNO(body, params).subscribe({
         next: value => {
           let result = value.data.map(item => {
-            item['idAndDesc'] = item.shiftNumber + ' - ' + item.description;
+            item['idAndDesc'] = item.turnNumber + ' - ' + item.description;
           });
           Promise.all(result).then(resp => {
             resolve({ data: value.data, count: value.count });
@@ -130,10 +136,11 @@ export class ServiceFormatService {
   }
 
   async getVarCostNumber(
+    body: any,
     params: ListParams
   ): Promise<{ data: Array<any>; count: number }> {
     return new Promise((resolve, reject) => {
-      this.strategyProcessService.getVarCostNumber(params).subscribe({
+      this.thirdPartyService.getLOV_VARCOSTO(body, params).subscribe({
         next: value => {
           let result = value.data.map(item => {
             item['idAndDesc'] = item.varCostNumber + ' - ' + item.description;
@@ -148,6 +155,27 @@ export class ServiceFormatService {
       });
     });
   }
+
+  async getLOV_CAT3NIVELES(
+    params: ListParams
+  ): Promise<{ data: Array<any>; count: number }> {
+    return new Promise((resolve, reject) => {
+      this.thirdPartyService.getLOV_CAT3NIVELES(params).subscribe({
+        next: value => {
+          let result = value.data.map(item => {
+            // item['idAndDesc'] = item.varCostNumber + ' - ' + item.description;
+          });
+          Promise.all(result).then(resp => {
+            resolve({ data: value.data, count: value.count });
+          });
+        },
+        error: err => {
+          resolve({ data: [], count: 0 });
+        },
+      });
+    });
+  }
+
   async createStrategyImport(params: any): Promise<number> {
     return new Promise((resolve, reject) => {
       this.goodPosessionThirdpartyService
@@ -177,7 +205,25 @@ export class ServiceFormatService {
         });
     });
   }
-
+  async getQueryVtransferoLevelXcity(
+    body: any
+  ): Promise<{ data: Array<any>; count: number }> {
+    return new Promise((resolve, reject) => {
+      this.thirdPartyService.getQueryVtransferoLevelXcity(body).subscribe({
+        next: value => {
+          let result = value.data.map(item => {
+            // item['idAndDesc'] = item.varCostNumber + ' - ' + item.description;
+          });
+          Promise.all(result).then(resp => {
+            resolve({ data: value.data, count: value.count });
+          });
+        },
+        error: err => {
+          resolve({ data: [], count: 0 });
+        },
+      });
+    });
+  }
   async deleteStrategyImport(params: any): Promise<number> {
     return new Promise((resolve, reject) => {
       this.goodPosessionThirdpartyService

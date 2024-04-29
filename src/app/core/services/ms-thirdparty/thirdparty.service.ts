@@ -48,4 +48,59 @@ export class ThirdPartyService extends HttpService {
       params
     );
   }
+
+  // ---
+  getLOV_SERVICIOS(
+    numberProcess: number | string,
+    params?: _Params
+  ): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      ThirdPartyEndpoints.LOV_SERVICIOS + '/' + numberProcess,
+      params
+    );
+  }
+
+  getLOV_TIPOSERVI(
+    body: any,
+    params?: _Params
+  ): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      ThirdPartyEndpoints.LOV_TIPOSERVI,
+      body,
+      params
+    );
+  }
+
+  getLOV_TURNO(body: any, params?: _Params): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      ThirdPartyEndpoints.LOV_TURNO,
+      body,
+      params
+    );
+  }
+
+  getLOV_VARCOSTO(body: any, params?: _Params): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      ThirdPartyEndpoints.LOV_VARCOSTO,
+      body,
+      params
+    );
+  }
+
+  getLOV_CAT3NIVELES(params?: _Params): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      ThirdPartyEndpoints.LOV_CAT3NIVELES,
+      params
+    );
+  }
+  getQueryVtransferoLevelXcity(
+    body: any,
+    params?: _Params
+  ): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      ThirdPartyEndpoints.QueryVtransferoLevelXcity,
+      body,
+      params
+    );
+  }
 }

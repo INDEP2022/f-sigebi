@@ -96,7 +96,10 @@ export class AddUpdateControlOrderComponent extends BasePage implements OnInit {
   // ------------------------------------------------------------ //
   async getStrategyService(params: ListParams) {
     params.limit = 100;
-    const data = await this.serviceFormatService.getStrategyService(params);
+    const data = await this.serviceFormatService.getStrategyService(
+      this.processNumber,
+      params
+    );
     this.strategyService = new DefaultSelect(data.data, data.count);
   }
   changeStrategyService(event: any) {
@@ -124,7 +127,14 @@ export class AddUpdateControlOrderComponent extends BasePage implements OnInit {
   // ------------------------------------------------------------ //
   async getStrategyTypeService(params: ListParams) {
     params.limit = 100;
-    const data = await this.serviceFormatService.getStrategyServiceType(params);
+    const body = {
+      processNumber: this.processNumber,
+      serviceNumber: this.form.value.serviceNumber,
+    };
+    const data = await this.serviceFormatService.getStrategyServiceType(
+      body,
+      params
+    );
     this.typeServiceNumber = new DefaultSelect(data.data, data.count);
   }
 
@@ -148,7 +158,12 @@ export class AddUpdateControlOrderComponent extends BasePage implements OnInit {
   // ------------------------------------------------------------ //
   async getTurnNumber(params: ListParams) {
     params.limit = 100;
-    const data = await this.serviceFormatService.getTurnNumber(params);
+    const body = {
+      processNumber: this.processNumber,
+      serviceNumber: this.form.value.serviceNumber,
+      serviceTypeNumber: this.form.value.typeServiceNumber,
+    };
+    const data = await this.serviceFormatService.getTurnNumber(body, params);
     this.turnNumber = new DefaultSelect(data.data, data.count);
   }
 
@@ -167,7 +182,13 @@ export class AddUpdateControlOrderComponent extends BasePage implements OnInit {
   // ------------------------------------------------------------ //
   async getVarCostNumber(params: ListParams) {
     params.limit = 100;
-    const data = await this.serviceFormatService.getVarCostNumber(params);
+    const body = {
+      processNumber: this.processNumber,
+      serviceNumber: this.form.value.serviceNumber,
+      serviceTypeNumber: this.form.value.typeServiceNumber,
+      turnNumber: this.form.value.turnNumber,
+    };
+    const data = await this.serviceFormatService.getVarCostNumber(body, params);
     this.varCostNumber = new DefaultSelect(data.data, data.count);
   }
   changeVarCostNumber(event: any) {

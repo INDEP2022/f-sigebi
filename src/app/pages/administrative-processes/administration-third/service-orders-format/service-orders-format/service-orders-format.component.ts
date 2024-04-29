@@ -106,6 +106,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   public station = new DefaultSelect();
   public authority = new DefaultSelect();
   public keyStore = new DefaultSelect();
+  public cat3levels = new DefaultSelect();
   public origin: string = '';
   public numberFormat: number;
   public delegation1: number;
@@ -319,7 +320,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
     params.limit = 100;
     params.take = 100;
     let delegation =
-      this.dataUser.department || this.form.get('delegation1Number').value;
+      this.form.get('delegation1Number').value || this.dataUser.department;
     this.authorityService.getAllDataQuery(params, delegation).subscribe({
       next: data => {
         this.storeSele = new DefaultSelect(data.data, data.count);
@@ -737,6 +738,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   }
 
   Incorpora() {
+    this.LoadTMPESTGOOD();
     const { processNumber, type_programming } = this.form.value;
     if (processNumber) {
       if (type_programming == 'D' || type_programming == 'R') {
@@ -748,7 +750,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   }
 
   PuGenGood() {
-    const { processNumber, type_programming } = this.form.value;
+    const { type_programming } = this.form.value;
     let lv_PROCESO: any;
     let lv_TIPOPR: any;
     this.global.INDICADOR = 0;
@@ -794,98 +796,105 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
           }
         },
       },
-      class: 'modal-lg modal-dialog-centered',
+      class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(ServiceTypeProgModalComponent, config);
   }
 
   validationPuGenGood(lv_PROCESO: any, lv_TIPOPR: any) {
-    let transferente = this.form.get('transferenceNumber').value;
-    let delegation =
-      this.form.get('delegation1Number').value != null
-        ? this.form.get('delegation1Number')
-        : null;
-    let transfer =
-      this.form.get('transferenceNumber').value != null
-        ? this.form.get('transferenceNumber').value
-        : null;
-    let Emisora =
-      this.form.get('stationNumber').value != null
-        ? this.form.get('stationNumber').value
-        : null;
-    let autority =
-      this.form.get('authorityNumber').value != null
-        ? this.form.get('authorityNumber').value
-        : null;
-    if (transfer == null || transfer == '') {
+    const {
+      transferenceNumber,
+      vir_delegation,
+      stationNumber,
+      authorityNumber,
+      type_programming,
+    } = this.form.value;
+
+    if (!transferenceNumber) {
       this.alert(
-        'error',
-        'Error',
-        'Para Realizar la búsqueda de programaciones es necesario el transferente'
+        'warning',
+        'Es necesario seleccionar una Transferente para continuar',
+        ''
       );
       return;
-    } else if (delegation == null) {
+    } else if (!vir_delegation) {
       this.alert(
-        'error',
-        'Error',
-        'Para Realizar la búsqueda de programaciones es necesaria la coordinación regional'
+        'warning',
+        'Es necesario seleccionar una Coordinación Regional para continuar',
+        ''
       );
       return;
-    } else if (Emisora == null || Emisora == '') {
+    } else if (!stationNumber) {
       this.alert(
-        'error',
-        'Error',
-        'Para Realizar la búsqueda de programaciones es necesaria la emisora'
+        'warning',
+        'Es necesiario seleccionar una Emisora para continuar',
+        ''
       );
       return;
-    } else if (autority == null || autority == '') {
+    } else if (!authorityNumber) {
       this.alert(
-        'error',
-        'Error',
-        'Para Realizar la búsqueda de programaciones es necesaria una autoridad'
+        'warning',
+        'Es necesaria seleccionar una Autoridad para continuar',
+        ''
       );
       return;
     } else {
-      if ((this.typePrograming = 'R')) {
+      if (type_programming == 'R') {
         this.alertQuestion(
           'question',
-          'Los Bienes a incorporar cuentan con una programacion Previa?',
-          '¿Deseas continuar?',
-          'Si'
+          '¿Los Bienes a incorporar cuentan con una programación previa?',
+          '',
+          'Si',
+          'No'
         ).then(q => {
           if (q.isConfirmed) {
-            this.BIENES = 0;
+            this.global.bienes = 0;
             let params = {
               process: lv_PROCESO,
-              regional: delegation.value,
-              tranfer: transfer,
-              station: Emisora,
-              autorid: autority,
+              regional: vir_delegation,
+              tranfer: transferenceNumber,
+              station: stationNumber,
+              autorid: authorityNumber,
             };
             console.log('strategy ', params);
+            // PA_EST_BIENES_PROG_TRANS
             this.strategyProcessService.PaEstGoodProgTrans(params).subscribe({
               next: response => {
                 console.log('strategy 1');
                 this.validGoodsByUserPrograming(lv_TIPOPR);
               },
+              error: err => {
+                this.alert(
+                  'warning',
+                  'No se pudo completar la incorporación de bienes',
+                  ''
+                );
+              },
             });
           } else {
-            this.BIENES = 1;
+            this.global.bienes = 1;
             let params = {
               pProcess: lv_PROCESO,
-              pRegional: delegation,
-              pTransfer: transfer,
-              pStation: Emisora,
-              pAuthority: autority,
-              user: this.user,
+              pRegional: vir_delegation,
+              pTransfer: transferenceNumber,
+              pStation: stationNumber,
+              pAuthority: authorityNumber,
+              user: this.dataUser.preferred_username,
             };
-            //-----------------------
+            // PA_EST_PROG_TRANS_BIE
             this.programmingGoodReceiptService
               .paEstProgTransBie(params)
               .subscribe({
                 next: response => {
                   this.validGoodsByUserPrograming(lv_TIPOPR);
+                },
+                error: err => {
+                  this.alert(
+                    'warning',
+                    'No se pudo completar la incorporación de bienes',
+                    ''
+                  );
                 },
               });
           }
@@ -893,14 +902,22 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
       } else {
         let params = {
           process: lv_PROCESO,
-          regional: delegation,
-          tranfer: transfer,
-          station: Emisora,
-          autorid: autority,
+          regional: vir_delegation,
+          tranfer: transferenceNumber,
+          station: stationNumber,
+          autorid: authorityNumber,
         };
+        // PA_EST_BIENES_PROG_TRANS
         this.strategyProcessService.PaEstGoodProgTrans(params).subscribe({
           next: response => {
             this.validGoodsByUserPrograming(lv_TIPOPR);
+          },
+          error: err => {
+            this.alert(
+              'warning',
+              'No se pudo completar la incorporación de bienes',
+              ''
+            );
           },
         });
       }
@@ -913,33 +930,42 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
       next: response => {
         console.log('response puGengood user: ', response);
         lv_TOTBIE = response.count;
-        if (this.BIENES == 1) {
-          this.LoadTMPESTGOOD();
+        if (lv_TOTBIE > 0) {
+          if (this.global.bienes == 1) {
+            this.LoadTMPESTGOOD();
+          } else {
+            this.LoadTMPESTGOOD();
+          }
         } else {
-          this.LoadTMPESTGOOD();
+          this.alert(
+            'warning',
+            'No hay Bienes programados para ' +
+              lv_TIPOPR +
+              ' en esta Cordinación Regional en este mes',
+            ''
+          );
         }
       },
       error: err => {
         lv_TOTBIE = 0;
         this.alert(
-          'error',
-          'Error',
+          'warning',
           'No hay Bienes programados para ' +
             lv_TIPOPR +
-            ' en esta Cordinación Regional en este mes'
+            ' en esta Cordinación Regional en este mes',
+          ''
         );
       },
     });
   }
 
-  LoadTMPESTGOOD(data?: any) {
-    console.log('this.numberFormat ', this.numberFormat);
-    data = {
+  LoadTMPESTGOOD() {
+    const data = {
       noformato: this.numberFormat,
       noProcess: this.form.get('processNumber').value,
       status: this.form.get('status').value,
     };
-    let BIENES = this.BIENES;
+    let BIENES = this.global.bienes;
     let config: ModalOptions = {
       initialState: {
         data,
@@ -948,7 +974,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
           console.log('callback ', typeProg);
         },
       },
-      class: 'modal-lg modal-dialog-centered',
+      class: 'modal-xl modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(ServiceOrdersExpedientModalComponent, config);
@@ -957,7 +983,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   async deleteGoods() {
     let data = await this.dataLocalB.getAll();
     if (data.length == 0) {
-      this.alert('warning', 'No tienen bienes asociados para eliminar', '');
+      this.alert('warning', 'No tienen Bienes asociados para eliminar', '');
       return;
     } else {
       let lv_CTABIEN: any;
@@ -996,10 +1022,20 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   }
 
   Gprogram() {
-    const { processNumber, iniEventDate, finEventDate } = this.form.value;
+    const { id, processNumber, iniEventDate, finEventDate } = this.form.value;
+    if (!id)
+      return this.alert(
+        'warning',
+        'Debe crear o seleccionar una Orden de Servicio para continuar',
+        ''
+      );
     if (processNumber == 3) {
       if (!iniEventDate && !finEventDate) {
-        this.alert('warning', 'Es necesario generar la estrategia', '');
+        this.alert(
+          'warning',
+          'Es necesario generar la estrategia',
+          'Ingresar fechas Inicio y Termino de la sección Fechas Eventos'
+        );
       } else {
         this.puProgram();
       }
@@ -1035,21 +1071,18 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   }
 
   newOrden() {
-    if (this.accion == 'Nuevo') {
-      this.accion = 'Guardar';
-      this.consult = false;
-      this.form.reset();
-      this.numberFormat = null;
-      this.dataLocalB.load([]);
-      this.dataLocalB.refresh();
-      this.dataLocalI.load([]);
-      this.dataLocalI.refresh();
-      this.updatebtn = false;
-      this.numberFormat = null;
-      this.btnDeleteIncorp = false;
-    } else if (this.accion == 'Guardar') {
-      this.gencve();
-    }
+    // if (this.accion == 'Nuevo') {
+
+    this.form.reset();
+    this.form.get('captureDate').setValue(new Date());
+    this.form.get('repImplements').setValue('N');
+    this.form.get('status').setValue('PROCESO');
+    this.numberFormat = null;
+    this.dataLocalB.load([]);
+    this.dataLocalB.refresh();
+    this.dataLocalI.load([]);
+    this.dataLocalI.refresh();
+    this.btnDeleteIncorp = false;
   }
 
   gencve() {
@@ -1552,6 +1585,33 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
     };
     let resp = await this.serviceFormatService.createBitacora(body);
     return resp;
+  }
+  async getLOV_CAT3NIVELES(params: ListParams) {
+    // params.limit = 100;
+    if (params.text) params['filter.unitKey'] = `$eq:${params.text}`;
+    const data = await this.serviceFormatService.getLOV_CAT3NIVELES(params);
+    this.cat3levels = new DefaultSelect(data.data, data.count);
+  }
+  async on3LevelsChange(event: any) {
+    if (event) {
+      const body = {
+        delegation1Number:
+          this.form.value.delegation1Number || this.dataUser.department,
+        unitKeyNumbe: event.unitKey,
+      };
+      const data = await this.serviceFormatService.getQueryVtransferoLevelXcity(
+        body
+      );
+      if (data.data.length > 0) {
+        console.log(data);
+        this.form.get('stationNumber').setValue(data[0].stationNumber);
+        this.form.get('authorityNumber').setValue(data[0].authorityNumber);
+        this.form.get('transferenceNumber').setValue(data[0].transferorNumber);
+      }
+      // transferorDesc
+      // stationDesc
+      // authorityDesc
+    }
   }
   async correctDate(date: string) {
     const dateUtc = new Date(date);

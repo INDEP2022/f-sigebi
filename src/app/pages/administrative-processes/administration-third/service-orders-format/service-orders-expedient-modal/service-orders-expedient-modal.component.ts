@@ -48,6 +48,7 @@ export class ServiceOrdersExpedientModalComponent
     hideSubHeader: false,
     columns: SERVICEORDERSFORMATEXPEDIENT_COLUMNS,
   };
+  loading2: boolean = false;
   constructor(
     private modalRef: BsModalRef,
     private authService: AuthService,
@@ -70,7 +71,6 @@ export class ServiceOrdersExpedientModalComponent
     this.getuser();
     this.filterB();
     this.filterA();
-    //this.getAllByUser();
     console.log('BIENES ', this.BIENES);
     console.log('data ', this.data);
   }
@@ -83,31 +83,36 @@ export class ServiceOrdersExpedientModalComponent
     let token = this.authService.decodeToken();
     this.user = token.username.toUpperCase();
   }
-  getAllByUser() {
+  getAllByUser(msg?: boolean) {
     let params = {
       ...this.params2.getValue(),
       ...this.columnFilters,
     };
-    this.data2 = [];
-    this.localData2.load(this.data2);
-    let proceedingNumbers: any = [];
+    this.loading = true;
     this.detailProceeDelRecService
       .getByUserTmpEst(this.user, params)
       .subscribe({
         next: response => {
-          console.log('respuesta primer servicio ', response);
-          for (let i = 0; i < response.data.length; i++) {
-            let params = {
-              key: response.data[i].programmation.minutesKey,
-              status: response.data[i].programmation.statusMinutes,
-              user: response.data[i].programmation.user,
-              noActa: response.data[i].minutesNum,
-            };
-            this.data2.push(params);
-            this.localData2.load(this.data2);
+          let result = response.data.map(item => {
+            item['key'] = item.programmation.minutesKey;
+            item['status'] = item.programmation.statusMinutes;
+            item['user'] = item.programmation.user;
+            item['noActa'] = item.minutesNum;
+          });
+          Promise.all(result).then(resp => {
+            this.localData2.load(response.data);
             this.localData2.refresh();
             this.totalItems2 = response.count;
-          }
+            this.loading = false;
+          });
+        },
+        error: err => {
+          if (msg)
+            this.alert('warning', 'El Usuario no tiene Actas asociadas', '');
+          this.localData2.load([]);
+          this.localData2.refresh();
+          this.totalItems2 = 0;
+          this.loading = false;
         },
       });
   }
@@ -159,56 +164,50 @@ export class ServiceOrdersExpedientModalComponent
       });
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAllByUser());
+      .subscribe(() => this.getAllByUser(true));
   }
 
   onRowSelect(event: any) {
     this.selectedRow = event.data;
     console.log('this.selectedRow ', this.selectedRow);
     this.selectedRow.noActa;
-    this.getGoodByNoActa(this.selectedRow.noActa);
+    this.getGoodByNoActa(this.selectedRow.noActa, true);
   }
 
-  getGoodByNoActa(NoActa: number) {
-    if (this.selectedRow.noActa == null) {
+  getGoodByNoActa(NoActa: number, val?: boolean) {
+    if (!this.selectedRow.noActa) {
       return;
     }
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.data1 = [];
-    this.localData.load(this.data1);
+    this.loading2 = true;
     this.programmingGoodReceiptService.getTmpGoods(NoActa, params).subscribe({
       next: response => {
         console.log('respuesta TMP GOODS ', response);
-        for (let i = 0; i < response.data.length; i++) {
-          //this.getGood(response.data[i].numberGood, NoActa);
-          const Ini =
-            response.data[i].vindprogrammation.iniDate != null
-              ? new Date(response.data[i].vindprogrammation.iniDate)
-              : null;
-          const formattedfecIni = Ini != null ? this.formatDate(Ini) : null;
-          const Fin =
-            response.data[i].vindprogrammation.endDate != null
-              ? new Date(response.data[i].vindprogrammation.endDate)
-              : null;
-          const formattedfecFin = Fin != null ? this.formatDate(Fin) : null;
-          let params = {
-            NumberGood: response.data[i].numberGood,
-            status: response.data[i].good.status,
-            description: response.data[i].good.description,
-            quantity: response.data[i].good.quantity,
-            DateIni: formattedfecIni,
-            DateFin: formattedfecFin,
-          };
-          this.data1.push(params);
-          this.localData.load(this.data1);
-        }
-        this.totalItems = response.count;
+        let result = response.data.map(item => {
+          item['NumberGood'] = item.numberGood;
+          item['status'] = item.good.status;
+          item['description'] = item.good.description;
+          item['quantity'] = item.good.quantity;
+          item['DateIni'] = item.vindprogrammation.iniDate;
+          item['DateFin'] = item.vindprogrammation.endDate;
+        });
+
+        Promise.all(result).then(resp => {
+          this.localData.load(response.data);
+          this.localData.refresh();
+          this.totalItems = response.count;
+          this.loading2 = false;
+        });
       },
       error: err => {
-        this.alert('error', 'Error', 'El Acta no Tiene asociado Ningun Bien');
+        this.localData.load([]);
+        this.localData.refresh();
+        this.totalItems = 0;
+        this.loading2 = false;
+        if (val) this.alert('warning', 'El Acta no tiene Bienes asociados', '');
       },
     });
   }
