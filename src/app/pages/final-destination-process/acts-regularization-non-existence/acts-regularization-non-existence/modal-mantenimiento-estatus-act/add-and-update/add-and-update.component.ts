@@ -40,7 +40,14 @@ export class AddAndUpdateComponent extends BasePage implements OnInit {
     });
   }
 
-  save() {
+  async save() {
+    const { status } = this.form.value;
+    if (!(await this.valStatus(status)))
+      return this.alert(
+        'warning',
+        'Ya existe el estatus ' + status + ' registrado',
+        ''
+      );
     this.screenStatusService.createStatusXScreen(this.form.value).subscribe({
       next: (response: any) => {
         this.alert('success', 'Registro guardado correctamente', '');
@@ -68,6 +75,21 @@ export class AddAndUpdateComponent extends BasePage implements OnInit {
       error: error => {
         this.status = new DefaultSelect();
       },
+    });
+  }
+  valStatus(status: string): Promise<boolean> {
+    const params = new ListParams();
+    params['filter.screenKey'] = `$eq:FACTDESACTASRIF`;
+    params['filter.status'] = `$eq:${status}`;
+    return new Promise((resolve, reject) => {
+      this.screenStatusService.getAllFiltered(params).subscribe({
+        next: (response: any) => {
+          resolve(false);
+        },
+        error: () => {
+          resolve(true);
+        },
+      });
     });
   }
   selectStatus($event: any) {

@@ -2049,6 +2049,14 @@ export class CircumstantialActsSuspensionCancellationComponent
         this.alert('success', res.msg, '');
       },
       err => {
+        if (err.status == 400) {
+          this.alert(
+            'warning',
+            'No se puede validar los bienes',
+            err.error.message
+          );
+          return;
+        }
         this.alert('error', 'Se presentó un error al validar los bienes', '');
         console.log(err);
       }
