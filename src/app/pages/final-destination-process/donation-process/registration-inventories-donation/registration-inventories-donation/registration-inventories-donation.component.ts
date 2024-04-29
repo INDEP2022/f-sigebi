@@ -317,8 +317,10 @@ export class RegistrationInventoriesDonationComponent
   }
 
   authorize() {
+    console.log(this.form.value);
     const { authorizeCve, authorizeDate, authorizeType } = this.form.value;
     const type = ['D', 'A'];
+    console.log(authorizeType);
     if (!type.includes(authorizeType)) {
       this.onLoadToast('warning', 'Se Debe Especificar el Tipo de Trámite', '');
       return;
@@ -388,7 +390,9 @@ export class RegistrationInventoriesDonationComponent
         ...context,
         callback: (next: boolean, data: any) => {
           if (next) {
+            console.log(data);
             this.form.patchValue(data);
+            this.form.get('authorizeType').patchValue(data.sunStatus);
             if (data.requestId) {
               this.form.get('requestId').patchValue(data.requestId.id);
             }

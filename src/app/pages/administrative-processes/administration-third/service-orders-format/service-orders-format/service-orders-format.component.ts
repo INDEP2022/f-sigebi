@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -23,6 +24,7 @@ import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdpa
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BitacoraComponent } from '../../control-service-orders/control-service-orders/bitacora/bitacora.component';
+import { AddUpdateControlOrderComponent } from '../add-update-control-order/add-update-control-order.component';
 import { ServiceOrdersExpedientModalComponent } from '../service-orders-expedient-modal/service-orders-expedient-modal.component';
 import { ServiceOrdersSelectModalComponent } from '../service-orders-select-modal/service-orders-select-modal.component';
 import { ServiceTypeProgModalComponent } from '../service-type-prog-modal/service-type-prog-modal.component';
@@ -30,6 +32,7 @@ import {
   CONTROLSERVICEORDERS_COLUMNS,
   SERVICEORDERSFORMAT_COLUMNS,
 } from './service-orders-format-columns';
+import { ServiceFormatService } from './services';
 export interface global {
   bienes?: number;
   INDICADOR?: number;
@@ -39,7 +42,13 @@ export interface global {
 @Component({
   selector: 'app-service-orders-format',
   templateUrl: './service-orders-format.component.html',
-  styles: [],
+  styles: [
+    `
+      .bg-gray {
+        background-color: #eee !important;
+      }
+    `,
+  ],
 })
 export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   dataLocalI: LocalDataSource = new LocalDataSource();
@@ -53,10 +62,18 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   consult: boolean = true;
   settings2 = {
     ...this.settings,
-    actions: false,
+    actions: {
+      columnTitle: 'Acciones',
+      position: 'right',
+      add: false,
+      edit: true,
+      delete: true,
+    },
     hideSubHeader: false,
   };
   form: FormGroup;
+  form2: FormGroup;
+  form3: FormGroup;
   NO_ACTA: any;
   select: boolean = false;
   columnFilters: any = [];
@@ -97,6 +114,8 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   public dataUser: TokenInfoModel = {} as TokenInfoModel;
   public phaseEdo: number;
   public global: global = {} as global;
+  public deleteGoodsDisabled: boolean = true;
+  public loading2: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -109,7 +128,9 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
     private router: Router,
     private parameterBaseCatService: ParameterBaseCatService,
     private parametersService: ParametersService,
-    private service: DelegationService
+    private service: DelegationService,
+    private serviceFormatService: ServiceFormatService,
+    private datePipe: DatePipe
   ) {
     super();
     this.activatedRoute.queryParams
@@ -134,68 +155,58 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
     this.filterI();
     this.filterB();
     this.getTransference(new ListParams());
+    this.getKeyStore(new ListParams());
     this.getuser();
   }
 
-  private prepareForm() {
+  private async prepareForm() {
     this.form = this.fb.group({
       id: [],
       typeStrategy: [null, Validators.required],
       processNumber: [null, Validators.required],
-      captureDate: [null, Validators.required],
+      captureDate: [new Date(), Validators.required],
       delegation1Number: [null, [Validators.required]],
-
       formatKey: [null],
       authorizeDate: [null],
-      uniqueKey: [null],
       transferenceNumber: [null, [Validators.required]],
       stationNumber: [null, [Validators.required]],
-      authority: [null, [Validators.required]],
-      keyStore: [null, [Validators.required]],
-
+      storeNumber: [null, [Validators.required]],
+      authorityNumber: [null, [Validators.required]],
       folSupplier: [null],
-
       iniEventDate: [null, Validators.required],
       finEventDate: [null, Validators.required],
       hraEvent: [null, Validators.required],
       minEvent: [null, Validators.required],
       hriEvent: [null, Validators.required],
-      status: [null, Validators.required],
-      // CAMBIAR
-
-      // processNumber: 'Número de proceso',
-      // "status": "Estatus de la Estrategia de Administración",
-      // captureDate: 'Fecha de Captura',
-      // delegation1Number: [],
-      // formatKey: [],
-      // authorizeDate: [],
-      // folSupplier: [],
-      // transferenceNumber: [],
-      // stationNumber: [],
-      authorityNumber: [],
-      storeNumber: [],
-      // iniEventDate: [],
-      // finEventDate: [],
-      // hraEvent: [],
-      // minEvent: [],
-      // hriEvent: [],
+      status: ['PROCESO', Validators.required],
       usrElaborated: [],
       usrIapprove: [],
       recordNumber: [],
-      // typeStrategy: [],
-      repImplements: [],
+      repImplements: ['N'],
       nbOrigin: [],
+
+      uniqueKey: [null],
       vir_delegation: [null],
+      des_cordina: [null],
       type_programming: [null],
       location: [null],
       municipality: [null],
       entity: [null],
     });
+    this.form2 = this.fb.group({
+      totalStrategy: [''],
+    });
+
+    this.form3 = this.fb.group({
+      justification: [''],
+    });
   }
 
-  initialForm() {
+  async initialForm() {
+    this.phaseEdo = await this.paEtapaEdo();
     // PUP_INICIALIZA_FORMA
     this.pupValUser();
+    localStorage.removeItem('global');
     const global = localStorage.getItem('global');
     if (global && global !== 'undefined') {
       this.global = JSON.parse(global);
@@ -247,41 +258,37 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
     if (transferente) {
       this.stationChange = null;
       this.form.get('stationNumber').reset();
-      this.form.get('authority').reset();
+      this.form.get('authorityNumber').reset();
       this.getStation(new ListParams());
     } else {
       this.stationChange = null;
-      this.form.get('authority').reset();
+      this.form.get('authorityNumber').reset();
       this.form.get('stationNumber').reset();
     }
   }
 
-  public getStation(event: any) {
-    const paramsF = new FilterParams();
-    paramsF.addFilter(
-      'idTransferent',
+  public getStation(params: ListParams) {
+    params['filter.idTransferent'] = `$eq:${
       this.form.get('transferenceNumber').value
-    );
-
-    this.authorityService
-      .getTranferIdandEmisora(paramsF.getParams())
-      .subscribe({
-        next: data => {
-          this.stationSele = new DefaultSelect(data.data, data.count);
-        },
-        error: err => {
-          this.stationSele = new DefaultSelect();
-        },
-      });
+    }`;
+    this.authorityService.getTranferIdandEmisora(params).subscribe({
+      next: data => {
+        console.log(data);
+        this.stationSele = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.stationSele = new DefaultSelect();
+      },
+    });
   }
 
   onStationChange(stationNumber: any) {
     this.stationChange = stationNumber;
     if (stationNumber) {
-      this.form.get('authority').reset();
+      this.form.get('authorityNumber').reset();
       this.getAuthority(new ListParams());
     } else {
-      this.form.get('authority').reset();
+      this.form.get('authorityNumber').reset();
     }
   }
 
@@ -293,7 +300,8 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
     );
     paramsF.addFilter('idStation', this.form.get('stationNumber').value);
     let params = {
-      delegationNumber: this.form.get('delegation1Number').value,
+      delegationNumber:
+        this.dataUser.department || this.form.get('delegation1Number').value,
     };
     this.authorityService
       .getAllUthorities(paramsF.getParams(), params)
@@ -310,7 +318,8 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   public getKeyStore(params: ListParams) {
     params.limit = 100;
     params.take = 100;
-    let delegation = this.form.get('delegation1Number').value;
+    let delegation =
+      this.dataUser.department || this.form.get('delegation1Number').value;
     this.authorityService.getAllDataQuery(params, delegation).subscribe({
       next: data => {
         this.storeSele = new DefaultSelect(data.data, data.count);
@@ -320,7 +329,14 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
       },
     });
   }
-
+  changeAlmacen(event: any) {
+    if (event) {
+      this.form.get('location').setValue(event.location);
+      this.form.get('municipality').setValue(event.municipality);
+      this.form.get('entity').setValue(event.otvalor);
+    } else {
+    }
+  }
   openEstate() {
     if (!this.numberFormat) {
       this.alert(
@@ -367,8 +383,6 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
         console.log(response);
         this.numberFormat = response.data[0].id;
         this.loadDataFormat(response.data[0]);
-        // this.strategyImports(response.data[0].id);
-        // this.getGoodsByid(response.data[0].id);
         //--------------------
         // this.loadTranfer(
         //   response.data[0].transferenceNumber,
@@ -380,14 +394,18 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
         //   response.data[0].storeNumber
         // );
       },
+      error: err => {
+        this.alert('warning', 'No se encontró el registro', '');
+      },
     });
   }
 
   async loadDataFormat(data: any) {
     this.form.reset();
     this.pupDesStrategy(data); // PU_DES_ESTRATEGIA
+    this.pupValStrategy(data); // PU_VAL_ESTRATEGIA
     this.pupValUser(); // PUP_VAL_USUARIO
-    this.pupTypeProgramation(data); // PUP_TIPO_PROGRAMACION
+    this.pupTypeProgramation(data.StrategyProcess.TypeProgramming); // PUP_TIPO_PROGRAMACION
     this.form.patchValue(data);
     this.form.patchValue({
       finEventDate: data.finEventDate
@@ -406,6 +424,26 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
     this.form.get('location').setValue(data.catWarehouses.location);
     this.form.get('municipality').setValue(data.catWarehouses.codeMunicipality);
     this.form.get('entity').setValue(data.catWarehouses.codeCity);
+    this.strategyImports(data.id);
+    this.getGoodsByid(data.id);
+  }
+
+  async pupValStrategy(data: any) {
+    // PU_VAL_ESTRATEGIA
+    const params = new ListParams();
+    params['filter.processNumber'] = `$eq:${data.processNumber}`;
+    const process = await this.serviceFormatService.getProcess(params);
+    if (['AUTORIZADA', 'CANCELADA'].includes(data.status)) {
+      this.deleteGoodsDisabled = true;
+      this.valDisabledAll = true;
+      this.form.disable();
+    } else {
+      if (process?.relayEstate == 'S') {
+        this.deleteGoodsDisabled = true;
+      }
+      this.valDisabledAll = false;
+      this.form.enable();
+    }
   }
   pupDesStrategy(data: any) {
     // PU_DES_ESTRATEGIA
@@ -415,11 +453,9 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
       data.authorityNumber
     );
   }
-  pupTypeProgramation(data: any) {
-    if (data.StrategyProcess)
-      this.form
-        .get('type_programming')
-        .setValue(data.StrategyProcess.TypeProgramming);
+  pupTypeProgramation(type: any) {
+    // PUP_TIPO_PROGRAMACION
+    if (type) this.form.get('type_programming').setValue(type);
   }
   loadTranfer(transfer: number, stationNumber: number, autority: any) {
     this.authorityService.getTranferId(transfer).subscribe({
@@ -453,10 +489,12 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           this.autoritySele = new DefaultSelect(response.data, response.count);
-          this.form.get('authority').setValue(response.data[0].idAuthority);
+          this.form
+            .get('authorityNumber')
+            .setValue(response.data[0].idAuthority);
         },
         error: err => {
-          this.form.get('authority').setValue(autority);
+          this.form.get('authorityNumber').setValue(autority);
         },
       });
   }
@@ -465,10 +503,10 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
     this.authorityService.getDataQuery(delegation, warehouse).subscribe({
       next: response => {
         this.storeSele = new DefaultSelect(response.data, response.count);
-        this.form.get('keyStore').setValue(response.data[0].noStore);
+        this.form.get('storeNumber').setValue(response.data[0].noStore);
       },
       error: err => {
-        this.form.get('keyStore').setValue(warehouse);
+        this.form.get('storeNumber').setValue(warehouse);
       },
     });
   }
@@ -485,48 +523,40 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
       ...this.paramsI.getValue(),
       ...this.columnFilters,
     };
+    this.loading2 = true;
     this.goodPosessionThirdpartyService
       .getAllStrategyImportsById(id, params)
       .subscribe({
         next: response => {
-          console.log(' respuesta Tabla 2 ', response);
-          for (let i = 0; i < response.data.length; i++) {
-            let params = {
-              service:
-                response.data[i].Service.id +
-                ' - ' +
-                response.data[i].Service.description,
-              typeServiceNumber:
-                response.data[i].Typeservice.id +
-                ' - ' +
-                response.data[i].Typeservice.description,
-              turnNumber:
-                response.data[i].Turno.shiftNumber +
-                ' - ' +
-                response.data[i].Turno.description,
-              varCostNumber:
-                response.data[i].VariableCosto.varcostoNumber +
-                ' - ' +
-                response.data[i].VariableCosto.description,
-              observation: response.data[i].observation,
-              totAmount: response.data[i].totAmount,
-              totQuantity: response.data[i].totQuantity,
-              amount: response.data[i].totAmount,
-              noProcess: response.data[i].processNumber,
-              idCost: response.data[i].costId,
-              numberFormat: response.data[i].formatNumberId,
-            };
-            this.dataI.push(params);
-            this.dataLocalI.load(this.dataI);
+          console.log(response);
+          let totalStrategy = 0;
+          if (response.data) {
+            let result = response.data.map(item => {
+              item['amount'] =
+                Number(item.totAmount) * Number(item.totQuantity);
+              totalStrategy = totalStrategy + item['amount'];
+            });
+            Promise.all(result).then(resp => {
+              this.form2.get('totalStrategy').setValue(totalStrategy);
+              this.dataLocalI.load(response.data);
+              this.dataLocalI.refresh();
+              this.totalItemsI = response.count;
+              this.loading2 = false;
+            });
+          } else {
+            this.form2.get('totalStrategy').setValue(totalStrategy);
+            this.dataLocalI.load([]);
             this.dataLocalI.refresh();
-            this.totalItemsI = response.count;
+            this.totalItemsI = 0;
+            this.loading2 = false;
           }
         },
         error: err => {
-          this.dataI = [];
-          this.dataLocalI.load(this.dataI);
+          this.dataLocalI.load([]);
           this.dataLocalI.refresh();
           this.totalItemsI = 0;
+          this.loading2 = false;
+          this.form.get('totalStrategy').setValue(0);
         },
       });
   }
@@ -707,38 +737,31 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   }
 
   Incorpora() {
-    let proceso = this.form.get('processNumber').value;
-    if (proceso != null) {
-      this.strategyProcessService.ByIdProces(proceso).subscribe({
-        next: response => {
-          console.log('Respuesta by format ', response);
-          this.typePrograming = response.data[0].programmingType;
-          if (this.typePrograming == 'D' || this.typePrograming == 'R') {
-            this.PuGenGood();
-          }
-        },
-      });
+    const { processNumber, type_programming } = this.form.value;
+    if (processNumber) {
+      if (type_programming == 'D' || type_programming == 'R') {
+        this.PuGenGood();
+      }
     } else {
-      this.alert('error', 'Error', 'Es necesaria una orden de Servicio');
-      return;
+      this.alert('warning', 'Es necesario seleccionar un proceso', '');
     }
   }
 
   PuGenGood() {
+    const { processNumber, type_programming } = this.form.value;
     let lv_PROCESO: any;
     let lv_TIPOPR: any;
-    if (this.INDICADOR == 0) {
-      if (this.typePrograming == 'R') {
-        lv_PROCESO = 1;
-        lv_TIPOPR = 'recepción';
-        this.validationPuGenGood(lv_PROCESO, lv_TIPOPR);
-      } else if (this.typePrograming == 'D') {
-        lv_PROCESO = 3;
-        lv_TIPOPR = 'donaciones';
-        this.validationPuGenGood(lv_PROCESO, lv_TIPOPR);
-      } else {
-        this.loadModalTypePrograming();
-      }
+    this.global.INDICADOR = 0;
+    if (type_programming == 'R') {
+      lv_PROCESO = 1;
+      lv_TIPOPR = 'recepción';
+      this.validationPuGenGood(lv_PROCESO, lv_TIPOPR);
+    } else if (type_programming == 'D') {
+      lv_PROCESO = 3;
+      lv_TIPOPR = 'donaciones';
+      this.validationPuGenGood(lv_PROCESO, lv_TIPOPR);
+    } else {
+      this.loadModalTypePrograming();
     }
   }
 
@@ -792,8 +815,8 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
         ? this.form.get('stationNumber').value
         : null;
     let autority =
-      this.form.get('authority').value != null
-        ? this.form.get('authority').value
+      this.form.get('authorityNumber').value != null
+        ? this.form.get('authorityNumber').value
         : null;
     if (transfer == null || transfer == '') {
       this.alert(
@@ -1127,8 +1150,8 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
           : null,
       transferenceNumber: this.form.get('transferenceNumber').value,
       stationNumber: this.form.get('stationNumber').value,
-      authorityNumber: this.form.get('authority').value,
-      storeNumber: this.form.get('keyStore').value,
+      authorityNumber: this.form.get('authorityNumber').value,
+      storeNumber: this.form.get('storeNumber').value,
       iniEventDate: this.form.get('iniEventDate').value,
       finEventDate: this.form.get('finEventDate').value,
       hraEvent: this.form.get('hraEvent').value,
@@ -1172,12 +1195,12 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   }
 
   save() {
-    if (this.updatebool == false) {
+    const { id } = this.form.value;
+    if (!id) {
       this.alertQuestion(
         'question',
-        'Esta seguro que quiere actualizar este Registro?',
-        '¿Deseas continuar?',
-        'Continuar'
+        'Se guardará el registro',
+        '¿Desea continuar?'
       ).then(q => {
         if (q.isConfirmed) {
           this.consult = false;
@@ -1185,12 +1208,29 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
         }
       });
     } else {
-      console.log('entra al ese');
-      this.update();
+      this.alertQuestion(
+        'question',
+        'Se actualizará el registro',
+        '¿Desea continuar?'
+      ).then(q => {
+        if (q.isConfirmed) {
+          this.update();
+        }
+      });
     }
   }
 
   update() {
+    const data = {
+      ...this.form.value,
+    };
+    delete data.vir_delegation;
+    delete data.des_cordina;
+    delete data.type_programming;
+    delete data.location;
+    delete data.municipality;
+    delete data.entity;
+
     let captureFecha = this.form.get('captureDate').value;
     let Capture =
       captureFecha != null ? this.formatDateUTC(captureFecha) : null;
@@ -1214,8 +1254,8 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
       folSupplier: this.form.get('folSupplier').value,
       transferenceNumber: this.form.get('transferenceNumber').value,
       stationNumber: this.form.get('stationNumber').value,
-      authorityNumber: this.form.get('authority').value,
-      storeNumber: this.form.get('keyStore').value,
+      authorityNumber: this.form.get('authorityNumber').value,
+      storeNumber: this.form.get('storeNumber').value,
       iniEventDate: IniEvent,
       finEventDate: FinEven,
       hraEvent: this.form.get('hraEvent').value,
@@ -1343,6 +1383,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
 
   async getProcess(params: ListParams) {
     params['sortBy'] = 'processNumber:ASC';
+    params['filter.relayStrategy'] = `$eq:S`;
     this.strategyProcessService.getAll(params).subscribe({
       next: value => {
         console.log(value);
@@ -1358,7 +1399,160 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
       },
     });
   }
+  changeProcess(event: any) {
+    if (event) {
+      if (!event.description) {
+        this.alert('warning', 'El proceso no está registrado', '');
+      } else {
+        // DES_CORTA
+        console.log(this.form.value.formatKey, this.numberFormat);
+        if (!this.numberFormat) this.pupGenKey(event.desShort); // PU_GENCLAVE
+      }
+    } else {
+    }
+  }
+  async pupGenKey(desShort: string) {
+    // PU_GENCLAVE
+    const { typeStrategy, usrIapprove } = this.form.value;
+    let year = this.datePipe.transform(new Date(), 'yyyy');
+    const params = new ListParams();
+    params['filter.delegation1Number'] = `$eq:${this.dataUser.department}`;
+    params[
+      'filter.captureDate'
+    ] = `$btw:${year}-01-01T00:00:00.000Z,${year}-12-31T00:00:00.000Z`;
+    let count: number = await this.serviceFormatService.countFormatService(
+      params
+    );
+    count = count + 1;
+    const params2 = new ListParams();
+    params2['filter.numberDelegation2'] = `$eq:${this.dataUser.department}`;
+    params2['filter.stageedo'] = `$eq:${this.phaseEdo}`;
 
+    const delegationRNomencla = await this.serviceFormatService.getrNomencla(
+      params2
+    );
+    console.log(delegationRNomencla);
+    // const params3 = new ListParams()
+    // params['filter.id'] = `$eq:${this.dataUser.department}`
+    // const catDelegation = await this.serviceFormatService.getCatDelegation(params3)
+    // if (!catDelegation) return this.alert('warning', 'No se encontró la Delegación', '')
+    // catDelegation.description
+
+    if (delegationRNomencla.count != 0) {
+      this.form
+        .get('des_cordina')
+        .setValue(delegationRNomencla.data.delegation);
+    } else {
+      if (!delegationRNomencla)
+        return this.alert(
+          'warning',
+          'No se encontró la nomenclatura de la Delegación',
+          ''
+        );
+      // lv_LISTVALUES:= show_lov('LOV_CORDINA');
+    }
+    this.form
+      .get('captureDate')
+      .setValue(
+        await this.correctDate(
+          this.datePipe.transform(new Date(), 'yyyy-MM-dd')
+        )
+      );
+    this.form.get('delegation1Number').setValue(this.dataUser.department);
+    if (!usrIapprove) {
+      this.form.get('status').setValue('PROCESO');
+    }
+    // CONSTRUCCIÓN DE LA CLAVE
+    let lvFolio: string | number = count + 1;
+    lvFolio = lvFolio.toString().padStart(5, '0');
+    const _year = this.datePipe.transform(new Date(), 'yy');
+    const _mes = this.datePipe.transform(new Date(), 'MM');
+    console.log(typeStrategy);
+    const cveFormat: string = `${typeStrategy}/${desShort}/${delegationRNomencla.data.delegation}/${lvFolio}/${_year}/${_mes}`;
+    this.form.get('formatKey').setValue(cveFormat);
+  }
+  valDisabledAll: boolean = false;
+  formImport(data?: any) {
+    if (this.valDisabledAll)
+      return this.alert(
+        'warning',
+        'No se puede realizar esta acción',
+        'El estatus de la Orden de Servicio es Autorizada o Cancelada'
+      );
+    const { id, processNumber, typeStrategy } = this.form.value;
+    if (!id) {
+      this.alert(
+        'warning',
+        'Primero debe crear o seleccionar una Estrategia de Administración',
+        ''
+      );
+    } else {
+      let config: ModalOptions = {
+        initialState: {
+          numberFormat: this.numberFormat,
+          processNumber,
+          typeStrategy,
+          data,
+          callback: (next: boolean) => {
+            this.strategyImports(this.numberFormat);
+          },
+        },
+        class: 'modal-xl modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(AddUpdateControlOrderComponent, config);
+    }
+  }
+  removeImport(event: any) {
+    if (this.valDisabledAll)
+      return this.alert(
+        'warning',
+        'No se puede realizar esta acción',
+        'El estatus de la Orden de Servicio es Autorizada o Cancelada'
+      );
+    this.alertQuestion(
+      'question',
+      'Se eliminará el registro',
+      '¿Desea continuar?'
+    ).then(async resp => {
+      if (resp.isConfirmed) {
+        const data = await this.serviceFormatService.deleteStrategyImport(
+          event.data
+        );
+        if (data)
+          this.alert('success', 'Registro eliminado correctamente', ''),
+            this.strategyImports(this.numberFormat);
+        else
+          this.alert(
+            'warning',
+            'No se pudo eliminar el registro',
+            'verifique e intente nuevamente'
+          );
+      }
+    });
+  }
+
+  async insertBitacora(): Promise<boolean> {
+    const { justification } = this.form3.value;
+    const { status } = this.form.value;
+    if (!justification) {
+      this.alert(
+        'warning',
+        'La justificación del cambio de estatus no puede ser nula',
+        ''
+      );
+      return false;
+    }
+    let body = {
+      formatNumber: this.numberFormat,
+      changeDate: new Date(),
+      justification: justification,
+      status: status,
+      usrRegister: this.dataUser.preferred_username,
+    };
+    let resp = await this.serviceFormatService.createBitacora(body);
+    return resp;
+  }
   async correctDate(date: string) {
     const dateUtc = new Date(date);
     return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);

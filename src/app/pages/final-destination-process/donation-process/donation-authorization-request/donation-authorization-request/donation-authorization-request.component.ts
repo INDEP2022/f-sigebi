@@ -31,8 +31,8 @@ import { ProposelServiceService } from 'src/app/core/services/ms-proposel/propos
 import { BasePage } from 'src/app/core/shared/base-page';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 import { DonationProcessService } from '../../../shared-final-destination/view-donation-contracts/donation-process.service';
-import { CreateRequestComponent } from '../create-request/create-request.component';
 import { FindProposeComponent } from '../find-propose/find-propose.component';
 import { ModalViewComponent } from '../modal-view/modal-view.component';
 import { ListParams } from './../../../../../common/repository/interfaces/list-params';
@@ -144,9 +144,9 @@ export class DonationAuthorizationRequestComponent
   columnFilters2: any[] = [];
   columnFilters3: any[] = [];
   totalItems: number = 0;
-  loadingReq: boolean = true;
-  goodLoading: boolean = true;
-  loading2: boolean = true;
+  loadingReq: boolean = false;
+  goodLoading: boolean = false;
+  loading2: boolean = false;
   totalItemsIn: number = 0;
   itemRequest: number = 0;
   settings4: any;
@@ -270,11 +270,14 @@ export class DonationAuthorizationRequestComponent
         },
         description: {
           title: 'Descripción',
-          type: 'string',
           sort: false,
           valuePrepareFunction(cell: any, row: any) {
-            return row.good?.description;
+            return row.good?.description != undefined
+              ? row.good?.description
+              : '';
           },
+          type: 'custom',
+          renderComponent: SeeMoreComponent,
         },
 
         status: {
@@ -315,7 +318,8 @@ export class DonationAuthorizationRequestComponent
 
   ngOnInit(): void {
     console.log(this.data);
-    console.log(this.files);
+
+    // console.log(this.files);
     console.log(this.fillSelectedRows);
     if (typeof Storage !== 'undefined') {
       let params = new ListParams();
@@ -348,6 +352,12 @@ export class DonationAuthorizationRequestComponent
           console.log(this.paramsScreen);
         }
       });
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getRequestGood());
+    this.params3
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getInventary());
   }
 
   initForm() {
@@ -467,6 +477,7 @@ export class DonationAuthorizationRequestComponent
       this.dataGoodsFact.load([]);
       this.dataFactInventary.load([]);
       this.proposeDefault = next;
+      console.log(next);
       localStorage.setItem('proposalId', next.ID_PROPUESTA);
       localStorage.setItem('request', next.ID_SOLICITUD);
       await this.getProposalId(next.ID_PROPUESTA);
@@ -476,6 +487,7 @@ export class DonationAuthorizationRequestComponent
     modalRef.content.cleanForm.subscribe(async (next: any) => {
       if (next) {
         this.cleanPropose();
+        console.log(next);
       }
     });
   }
@@ -524,11 +536,12 @@ export class DonationAuthorizationRequestComponent
         this.loadingReq = false;
         console.log(data.data);
         this.request = data.data;
+        console.log(this.request[0].proposalCve);
         this.loading2 = false;
         this.dataFacRequest.load(this.request);
         this.dataFacRequest.refresh();
-        this.proposalCve = this.request.proposalKey;
-        localStorage.setItem('cvePropose', this.request.proposalKey);
+        this.proposalCve = this.request[0].proposalCve;
+        localStorage.setItem('cvePropose', this.request[0].proposalCve);
         this.itemRequest = data.count;
         this.totalSunQuantity = this.request.reduce(
           (acc: any, item: any) => acc + item.sunQuantity,
@@ -546,6 +559,8 @@ export class DonationAuthorizationRequestComponent
         this.getRequestGood();
       },
       error: () => {
+        this.dataFacRequest.load([]);
+        this.dataFacRequest.refresh();
         this.loadingReq = false;
       },
     });
@@ -570,9 +585,10 @@ export class DonationAuthorizationRequestComponent
         this.dataGoodsFact.load(this.goods);
         console.log(this.goods);
         this.totalGoods = this.goods.reduce(
-          (acc: any, item: any) => acc + item.allotmentAmount ?? 0,
+          (acc: any, item: any) => acc + Number(item.allotmentAmount),
           0
         );
+        console.log(this.totalGoods);
         this.getInventary();
         this.formTable2
           .get('quantityToAssign')
@@ -615,49 +631,56 @@ export class DonationAuthorizationRequestComponent
     });
   }
   addrequest(request?: any) {
-    if (this.proposalId == null) {
-      this.alertInfo(
-        'warning',
-        'No se puede crear una nueva solicitud sin selecccionar la propuesta',
-        ''
-      );
-      return;
-    }
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.initialState = {
-      request,
-    };
-    let modalRef = this.modalService.show(CreateRequestComponent, modalConfig);
-    modalRef.content.onSave.subscribe(async (next: any) => {
-      if (next) {
-        this.alert(
-          'success',
-          'Se cargó la información de la solicitud',
-          next.proposalCve
-        );
-        localStorage.setItem('cvePropose', next.proposalCve);
+    this.alert(
+      'warning',
+      'En construcción.....',
+      'Selección de Propuestas del Sistema de Donaciones a Incorporar'
+    );
+    // console.log(this.proposalId);
+    // if (this.proposalId == null) {
+    //   this.alertInfo(
+    //     'warning',
+    //     'No se puede crear una nueva solicitud sin selecccionar la propuesta',
+    //     ''
+    //   );
+    //   return;
+    // }
+    // const modalConfig = MODAL_CONFIG;
+    // modalConfig.initialState = {
+    //   request,
+    // };
+    // let modalRef = this.modalService.show(CreateRequestComponent, modalConfig);
+    // modalRef.content.onSave.subscribe(async (next: any) => {
+    //   if (next) {
+    //     this.alert(
+    //       'success',
+    //       'Se cargó la información de la solicitud',
+    //       next.proposalCve
+    //     );
+    //     localStorage.setItem('cvePropose', next.proposalCve);
 
-        //   this.requestModel = {
-        //     solQuantity: next.solQuantity,
-        //     requestId: next.requestId.id,
-        //     requestDate: this.fromF = this.datePipe.transform(
-        //       this.form.controls['from'].value,
-        //       'dd/MM/yyyy'
-        //     ),
-        //     clasifGood: this.request.classifNumbGood,
-        //     justification: this.request.justification,
-        //     sunStatus: this.request.totalSunQuantity,
-        //     proposalCve: thi
-        // requestTypeId: string;
-        //   }
-      }
-    });
+    //     //   this.requestModel = {
+    //     //     solQuantity: next.solQuantity,
+    //     //     requestId: next.requestId.id,
+    //     //     requestDate: this.fromF = this.datePipe.transform(
+    //     //       this.form.controls['from'].value,
+    //     //       'dd/MM/yyyy'
+    //     //     ),
+    //     //     clasifGood: this.request.classifNumbGood,
+    //     //     justification: this.request.justification,
+    //     //     sunStatus: this.request.totalSunQuantity,
+    //     //     proposalCve: thi
+    //     // requestTypeId: string;
+    //     //   }
+    //   }
+    // });
   }
 
   selectedGooodsValid: any[] = [];
   goodsValid: any;
 
   async addSelect() {
+    console.log(this.proposeDefault);
     if (this.proposeDefault == null) {
       this.alert(
         'warning',
@@ -991,7 +1014,6 @@ export class DonationAuthorizationRequestComponent
       if (this.selectedGooods && this.selectedGooods.length > 0) {
         this.table.grid.getRows().forEach(row => {
           // console.log(row);
-
           if (
             this.selectedGooods.find(item => row.getData()['id'] === item.id)
           ) {
@@ -1006,6 +1028,17 @@ export class DonationAuthorizationRequestComponent
         this.table.isAllSelected = allSelected;
       }
     }, 300);
+  }
+  aplicarEstatus() {
+    this.alertQuestion(
+      'question',
+      'El siguiente proceso aplicará el cambio de estatus y la parcializacion de los bienes (si aplica).',
+      '¿Desea continuar?'
+    ).then(async question => {
+      if (question.isConfirmed) {
+        //aplicar endpoint
+      }
+    });
   }
 }
 
