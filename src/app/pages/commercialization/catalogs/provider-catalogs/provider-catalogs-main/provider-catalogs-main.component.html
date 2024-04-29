@@ -8,6 +8,7 @@
         <div class="d-flex flex-row-reverse my-3">
           <div class="">
             <app-columns-select
+              [leftList]="true"
               [(settings)]="providerSettings"></app-columns-select>
           </div>
           <div>
@@ -35,6 +36,7 @@
         [ngStyle]="{ height: loading ? '0px' : '300px' }">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="providerSettings"
             [source]="data"
             (userRowSelect)="selectProvider($event.data)"
