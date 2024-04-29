@@ -398,6 +398,8 @@ export class LotService extends HttpService {
     statusVta: string;
     address: string;
     user: string;
+    validate: boolean;
+    vaudsid?: string;
   }) {
     const formData = new FormData();
     formData.append('file', body.file);
@@ -408,6 +410,10 @@ export class LotService extends HttpService {
     formData.append('statusVta', body.statusVta);
     formData.append('address', body.address);
     formData.append('user', body.user);
+    formData.append('validate', body.validate ? 'true' : 'false');
+    if (body.vaudsid) {
+      formData.append('vaudsid', body.vaudsid);
+    }
     return this.post('apps/pup-imp-excel-lote', formData);
   }
 

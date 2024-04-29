@@ -505,7 +505,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
     );
   }
 
-  async pupImpLotes(event: Event) {
+  /* async pupImpLotes(event: Event) {
     this.loader.load = true;
 
     const { id, statusVtaId, eventTpId } = this.controls;
@@ -537,7 +537,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
         this.refreshTable();
       })
     );
-  }
+  } */
 
   async pupImpExcelLotes(event: Event) {
     this.loader.load = true;
