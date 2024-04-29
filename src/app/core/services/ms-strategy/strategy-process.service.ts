@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { StrategyEndpoints } from 'src/app/common/constants/endpoints/ms-strategy-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IStrategyProcess,
@@ -123,5 +123,27 @@ export class StrategyProcessService extends HttpService {
   updateStrategyReport(model: IStrategyReport) {
     const route = `${StrategyEndpoints.StrategyRepIm}`;
     return this.put(route, model);
+  }
+  // -----------------
+  getStrategyService(params: _Params) {
+    const route = `${StrategyEndpoints.StrategyService}`;
+    return this.get(route, params);
+  }
+  getStrategyServiceType(params: _Params) {
+    const route = `${StrategyEndpoints.StrategyServiceType}`;
+    return this.get(route, params);
+  }
+  getTurnNumber(params: _Params) {
+    const route = `${StrategyEndpoints.StrategyShift}`;
+    return this.get(route, params);
+  }
+  getVarCostNumber(params: _Params) {
+    const route = `${StrategyEndpoints.StrategyVariableCost}`;
+    return this.get(route, params);
+  }
+
+  getStrategyCost(params: _Params) {
+    const route = `${StrategyEndpoints.StrategyCost2}`;
+    return this.get(route, params);
   }
 }

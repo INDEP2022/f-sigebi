@@ -16,29 +16,29 @@ export const SERVICEORDERSFORMAT_COLUMNS = {
   },
 };
 export const CONTROLSERVICEORDERS_COLUMNS = {
-  service: {
+  serviceNumber: {
     title: 'Servicio',
     width: '10%',
     sort: false,
   },
   typeServiceNumber: {
     title: 'Especificación',
-    width: '10%',
+    width: '15%',
     sort: false,
   },
   turnNumber: {
     title: 'Turno/Tipo',
-    width: '10%',
+    width: '15%',
     sort: false,
   },
   varCostNumber: {
     title: 'Variable de costo',
-    width: '10%',
+    width: '15%',
     sort: false,
   },
   observation: {
     title: 'Observaciones',
-    width: '20%',
+    width: '15%',
     sort: false,
   },
   totAmount: {
@@ -55,5 +55,6 @@ export const CONTROLSERVICEORDERS_COLUMNS = {
     title: 'Importe',
     width: '10%',
     sort: false,
+    filter: false,
   },
 };

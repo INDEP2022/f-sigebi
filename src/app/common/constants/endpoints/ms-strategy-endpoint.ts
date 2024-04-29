@@ -29,4 +29,5 @@ export enum StrategyEndpoints {
   paEstGoodsProgTrans = 'aplication/pa-est-goods-prog-trans',
   paEstGoodIncor = 'aplication/pa-est-goods-incor',
   MedUnits = 'med-units',
+  StrategyCost2 = 'strategy-cost',
 }
