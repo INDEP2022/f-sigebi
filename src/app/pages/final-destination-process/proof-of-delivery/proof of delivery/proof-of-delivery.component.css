@@ -4,6 +4,6 @@
 }
 
 .scrollable-row {
-    overflow-x: auto;
+    overflow-x: clip;
     /* Desplazamiento horizontal */
 }

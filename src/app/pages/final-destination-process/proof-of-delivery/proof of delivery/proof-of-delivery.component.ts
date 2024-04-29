@@ -1451,6 +1451,10 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
     this.totalItems = 0;
     this.totalItems2 = 0;
 
+    this.buttonActive.goodDon = false;
+    this.buttonActive.tracker = false;
+    this.buttonActive.generateConst = false;
+
     /* this.statusProceeding = null;
     this.share = false;
     this.form.reset();
@@ -1559,6 +1563,9 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
         'El tipo de constancia no corresponde con el tipo programación de bienes',
         ''
       );
+      this.buttonActive.goodDon = false;
+      this.buttonActive.tracker = false;
+      this.buttonActive.generateConst = false;
       return;
     }
 
@@ -1594,6 +1601,11 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
         this.folio.reset();
         this.year.reset();
         this.month.reset();
+
+        this.formExp.get('capture').patchValue('normal');
+        this.buttonActive.goodDon = false;
+        this.buttonActive.tracker = false;
+        this.buttonActive.generateConst = false;
 
         const jsonResp = JSON.parse(JSON.stringify(res));
         this.idProceeding = jsonResp.id;
