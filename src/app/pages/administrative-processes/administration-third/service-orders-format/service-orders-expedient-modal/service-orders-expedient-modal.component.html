@@ -1,18 +1,20 @@
-<app-card [header]="true">
-  <div class="ch-content" header>
-    <h5 class="title">Histórico</h5>
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Programación de Bienes</h5>
   </div>
   <div body>
-    <div class="row pt-4">
-      <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered table-responsive'"
-            [settings]="settings2"
-            [source]="localData2"
-            (userRowSelect)="onRowSelect($event)">
-          </ng2-smart-table>
-        </div>
+    <div class="row pt-3">
+      <form-loader *ngIf="loading"></form-loader>
+      <div>
+        <ng2-smart-table
+          [ngStyle]="{
+            height: loading ? '0px' : totalItems2 > 10 ? '300px' : 'auto'
+          }"
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settings2"
+          [source]="localData2"
+          (userRowSelect)="onRowSelect($event)">
+        </ng2-smart-table>
       </div>
       <app-pagination
         [params]="params2"
@@ -21,34 +23,41 @@
     <div class="d-flex justify-content-end">
       <app-columns-select [(settings)]="settings"></app-columns-select>
     </div>
-    <div class="row pt-4">
-      <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered table-responsive'"
-            [settings]="settings"
-            [source]="localData"
-            (userRowSelect)="selectRows($event.selected)">
-          </ng2-smart-table>
-        </div>
+    <div class="row pt-3">
+      <form-loader *ngIf="loading2"></form-loader>
+      <div>
+        <ng2-smart-table
+          [ngStyle]="{
+            height: loading2 ? '0px' : totalItems > 10 ? '300px' : 'auto'
+          }"
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settings"
+          [source]="localData"
+          (userRowSelect)="selectRows($event.selected)">
+        </ng2-smart-table>
       </div>
       <app-pagination
         [params]="params"
         [totalItems]="totalItems"></app-pagination>
     </div>
-    <div class="row d-flex justify-content-center">
-      <div class="col-md-4"></div>
-      <div class="col-md-2">
-        <button class="btn btn-primary btn-sm active" (click)="close()">
-          Salir
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [text]="'Aplica'"
+          [btnSmall]="true"
+          [type]="'button'"
+          (confirm)="Apply()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
+          Cerrar
         </button>
       </div>
-      <div class="col-md-2">
-        <button class="btn btn-primary btn-sm active" (click)="Apply()">
-          Aplica
-        </button>
-      </div>
-      <div class="col-md-4"></div>
     </div>
   </div>
-</app-card>
+</app-modal>
