@@ -9,4 +9,12 @@ export enum ThirdPartyEndpoints {
   FindItemV2 = 'third-party/findItemV2',
   FindItemCustom = 'third-party/findItemCustom',
   TypeEventfindItemV2 = 'type-events-xter-comer/findItemV2',
+
+  //
+  LOV_SERVICIOS = 'application/query-type-service-xprocess',
+  LOV_TIPOSERVI = 'application/query-type-ervice',
+  LOV_TURNO = 'application/query-turn',
+  LOV_VARCOSTO = 'application/query-varcost',
+  LOV_CAT3NIVELES = 'application/query-vtransferor-level',
+  QueryVtransferoLevelXcity = 'application/query-vtransferor-levelXcity',
 }

@@ -1,41 +1,51 @@
-<app-card [header]="true">
-  <div class="ch-content" header>
-    <h5 class="title">Tipo de Programación</h5>
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Tipo de Programación</h5>
   </div>
   <div body>
     <form [formGroup]="form" class="form-material">
-      <div class="row margin-input">
-        <div class="col-md-2">
-          <h5 class="title pt-4">Seleccione un tipo:</h5>
+      <div class="row">
+        <div class="col-md-6">
           <form-radio label="Entrega Comercialización">
             <input type="radio" formControlName="space" value="2" />
           </form-radio>
+        </div>
+        <div class="col-md-6">
           <form-radio label="Entrega Donaciones">
             <input type="radio" formControlName="space" value="3" />
           </form-radio>
+        </div>
+        <div class="col-md-6">
           <form-radio label="Entrega Destrucción">
             <input type="radio" formControlName="space" value="4" />
           </form-radio>
+        </div>
+        <div class="col-md-6">
           <form-radio label="Entrega Devolución">
             <input type="radio" formControlName="space" value="5" />
           </form-radio>
         </div>
       </div>
     </form>
-    <div class="row d-flex justify-contend-center">
-      <div class="col-md-2">
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [text]="'Seleccionar'"
+          [btnSmall]="true"
+          [disabled]="form.invalid"
+          [type]="'button'"
+          (confirm)="selected()"></confirm-button>
+      </div>
+      <div class="m-3">
         <button
           type="button"
-          class="btn btn-primary active btn-sm"
-          (click)="selected()">
-          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
-        </button>
-      </div>
-      <div class="col-md-2">
-        <button class="btn btn-primary btn-sm active" (click)="close()">
-          Salir
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
+          Cancelar
         </button>
       </div>
     </div>
   </div>
-</app-card>
+</app-modal>

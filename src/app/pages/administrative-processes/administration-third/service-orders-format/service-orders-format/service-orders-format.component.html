@@ -122,13 +122,23 @@
               </form-field>
             </div>
             <div class="col-md-6 mt-2">
-              <form-field
-                [control]="form.get('uniqueKey')"
-                label="Cve. única de 3 niveles">
-                <input
+              <form-field [control]="form.get('uniqueKey')">
+                <ngx-select
+                  [searchOnInit]="true"
+                  (fetchItems)="getLOV_CAT3NIVELES($event)"
+                  [data]="cat3levels"
+                  [form]="form"
+                  value="unitKey"
+                  bindLabel="unitKey"
+                  label="Cve. única de 3 niveles"
+                  [control]="'uniqueKey'"
+                  (change)="on3LevelsChange($event)"
+                  [showTooltip]="true">
+                </ngx-select>
+                <!-- <input
                   type="text"
                   formControlName="uniqueKey"
-                  class="form-control" />
+                  class="form-control" /> -->
               </form-field>
             </div>
           </div>
